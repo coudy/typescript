@@ -1,2 +1,2 @@
 var a = new any();
-var b = new bool(); // error
+var b = new boolean(); // error

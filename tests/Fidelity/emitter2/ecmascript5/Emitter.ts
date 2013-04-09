@@ -236,7 +236,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private changeIndentation(node: SyntaxNode,
-                              changeFirstToken: bool,
+                              changeFirstToken: boolean,
                               indentAmount: number): SyntaxNode {
         if (indentAmount === 0) {
             return node;
@@ -499,7 +499,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
-                                       static: bool,
+                                       static: boolean,
                                        memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
         var isStatic = memberDeclaration.staticKeyword() !== null;
         if ((static && !isStatic) ||
@@ -538,7 +538,7 @@ class Emitter extends SyntaxRewriter {
     }
 
     private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
-                                        static: bool): ExpressionStatementSyntax[] {
+                                        static: boolean): ExpressionStatementSyntax[] {
         var result: ExpressionStatementSyntax[] = [];
 
         // TODO: handle alignment here.
@@ -949,7 +949,7 @@ class Emitter extends SyntaxRewriter {
 
     private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
                                         variableDeclarator: VariableDeclaratorSyntax,
-                                        assignDefaultValues: bool,
+                                        assignDefaultValues: boolean,
                                         index: number): ExpressionSyntax {
         if (variableDeclarator.equalsValueClause() !== null) {
             // Use the value if one is provided.
@@ -1097,12 +1097,12 @@ class Emitter extends SyntaxRewriter {
         return result;
     }
 
-    private static isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
+    private static isSuperInvocationExpressionStatement(node: SyntaxNode): boolean {
         return node.kind() === SyntaxKind.ExpressionStatement &&
             Emitter.isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
     }
 
-    private static isSuperInvocationExpression(node: SyntaxNode): bool {
+    private static isSuperInvocationExpression(node: SyntaxNode): boolean {
         return node.kind() === SyntaxKind.InvocationExpression &&
             (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperExpression;
     }

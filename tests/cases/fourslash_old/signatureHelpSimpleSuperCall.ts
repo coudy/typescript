@@ -1,7 +1,7 @@
 /// <reference path='fourslash.ts' />
 
 ////class SuperCallBase {
-////    constructor(b: bool) {
+////    constructor(b: boolean) {
 ////    }
 ////}
 ////class SuperCall extends SuperCallBase {
@@ -14,4 +14,4 @@ goTo.marker('superCall');
 verify.currentSignatureHelpCountIs(1);
 verify.currentSignatureHelpReturnTypeIs("SuperCallBase");
 verify.currentParameterHelpArgumentNameIs("b");
-verify.currentParameterHelpType("bool");
+verify.currentParameterHelpType("boolean");

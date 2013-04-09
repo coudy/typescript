@@ -6,7 +6,7 @@ describe("Generic assignment compatibility", function () {
     var any = typeFactory.any;
     var number = typeFactory.number;
     var string = typeFactory.string;
-    var bool = typeFactory.bool;
+    var boolean = typeFactory.boolean;
 
     // var anyArray     = typeFactory.get('var arr = []', 'arr');
     // var someFunction = typeFactory.get('function f() {}', 'f');
@@ -22,7 +22,7 @@ describe("Generic assignment compatibility", function () {
     "       (): T;" +
     "       (value: T): any;" +
     "       N: number;" +
-    "       g: bool;" +
+    "       g: boolean;" +
     "       r: T;" +
     "   }" +
     "   export function observable<T>(value: T): Observable<T>;" +
@@ -35,14 +35,14 @@ describe("Generic assignment compatibility", function () {
     "var age_v = o.age();" + // should be 'number'
     "var name_v = o.name(\"Robert\");" + // should be 'any'
     "var zz_v = o.name.N;" + // should be 'number'
-    "var yy_v = o.name.g;" + // should be 'bool'
+    "var yy_v = o.name.g;" + // should be 'boolean'
     "var rr_v = o.name.r;"; // should be 'string'
 
     var respecializeCode =
     "class Cell {" +
     "}" +
     "class Ship {" +
-    "   isSunk: bool;" +
+    "   isSunk: boolean;" +
     "}" +
     "var shipVar: Ship;" +
     "class Board {" +
@@ -88,7 +88,7 @@ describe("Generic assignment compatibility", function () {
 
         it("generic type flows through field 2", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("yy_v"));
-            Harness.Assert.equal(t.type, 'bool');
+            Harness.Assert.equal(t.type, 'boolean');
         });
 
         it("generic type flows through field 3", function () {

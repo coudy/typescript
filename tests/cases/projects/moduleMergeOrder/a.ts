@@ -1,7 +1,7 @@
 module Test {
     class A {
         one: string;
-        two: bool;
+        two: boolean;
         constructor (t: string) {
             this.one = t;
             this.two = false;

@@ -137,35 +137,35 @@ module TypeScript.SyntaxFacts {
         return result !== undefined ? result : null;
     }
 
-    export function isTokenKind(kind: SyntaxKind): bool {
+    export function isTokenKind(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
     }
 
-    export function isAnyKeyword(kind: SyntaxKind): bool {
+    export function isAnyKeyword(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
     }
 
-    export function isStandardKeyword(kind: SyntaxKind): bool {
+    export function isStandardKeyword(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
     }
 
-    export function isFutureReservedKeyword(kind: SyntaxKind): bool {
+    export function isFutureReservedKeyword(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
     }
 
-    export function isFutureReservedStrictKeyword(kind: SyntaxKind): bool {
+    export function isFutureReservedStrictKeyword(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
     }
 
-    export function isAnyPunctuation(kind: SyntaxKind): bool {
+    export function isAnyPunctuation(kind: SyntaxKind): boolean {
         return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
     }
 
-    export function isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
+    export function isPrefixUnaryExpressionOperatorToken(tokenKind: SyntaxKind): boolean {
         return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
-    export function isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): bool {
+    export function isBinaryExpressionOperatorToken(tokenKind: SyntaxKind): boolean {
         return getBinaryExpressionFromOperatorToken(tokenKind) !== SyntaxKind.None;
     }
 
@@ -320,7 +320,7 @@ module TypeScript.SyntaxFacts {
         }
     }
 
-    export function isAnyDivideToken(kind: SyntaxKind): bool {
+    export function isAnyDivideToken(kind: SyntaxKind): boolean {
         switch (kind) {
             case SyntaxKind.SlashToken:
             case SyntaxKind.SlashEqualsToken:
@@ -330,7 +330,7 @@ module TypeScript.SyntaxFacts {
         }
     }
 
-    export function isAnyDivideOrRegularExpressionToken(kind: SyntaxKind): bool {
+    export function isAnyDivideOrRegularExpressionToken(kind: SyntaxKind): boolean {
         switch (kind) {
             case SyntaxKind.SlashToken:
             case SyntaxKind.SlashEqualsToken:
@@ -341,7 +341,7 @@ module TypeScript.SyntaxFacts {
         }
     }
 
-    export function isParserGenerated(kind: SyntaxKind): bool {
+    export function isParserGenerated(kind: SyntaxKind): boolean {
         switch (kind) {
             case SyntaxKind.GreaterThanGreaterThanToken:
             case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
@@ -354,7 +354,7 @@ module TypeScript.SyntaxFacts {
         }
     }
 
-    export function isAnyBinaryExpression(kind: SyntaxKind): bool {
+    export function isAnyBinaryExpression(kind: SyntaxKind): boolean {
         switch (kind) {
             case SyntaxKind.CommaExpression:
             case SyntaxKind.AssignmentExpression:

@@ -238,10 +238,10 @@ module TypeScript.Syntax {
 
         public kind() { return this.tokenKind; }
 
-        public isToken(): bool { return true; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
+        public isToken(): boolean { return true; }
+        public isNode(): boolean { return false; }
+        public isList(): boolean { return false; }
+        public isSeparatedList(): boolean { return false; }
 
         public childCount(): number {
             return 0;
@@ -349,12 +349,12 @@ module TypeScript.Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public isToken(): bool { return true; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
+        public isToken(): boolean { return true; }
+        public isNode(): boolean { return false; }
+        public isList(): boolean { return false; }
+        public isSeparatedList(): boolean { return false; }
+        public isTrivia(): boolean { return false; }
+        public isTriviaList(): boolean { return false; }
 
         public fullWidth(): number { return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth(); }
         public width(): number { return this.text().length; }
@@ -365,19 +365,19 @@ module TypeScript.Syntax {
         public value(): any { return this._value; }
         public valueText(): string { return this._valueText; }
 
-        public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
-        public hasLeadingComment(): bool { return this._leadingTrivia.hasComment(); }
-        public hasLeadingNewLine(): bool { return this._leadingTrivia.hasNewLine(); }
-        public hasLeadingSkippedText(): bool { return this._leadingTrivia.hasSkippedText(); }
+        public hasLeadingTrivia(): boolean { return this._leadingTrivia.count() > 0; }
+        public hasLeadingComment(): boolean { return this._leadingTrivia.hasComment(); }
+        public hasLeadingNewLine(): boolean { return this._leadingTrivia.hasNewLine(); }
+        public hasLeadingSkippedText(): boolean { return this._leadingTrivia.hasSkippedText(); }
         public leadingTriviaWidth(): number { return this._leadingTrivia.fullWidth(); }
 
-        public hasTrailingTrivia(): bool { return this._trailingTrivia.count() > 0; }
-        public hasTrailingComment(): bool { return this._trailingTrivia.hasComment(); }
-        public hasTrailingNewLine(): bool { return this._trailingTrivia.hasNewLine(); }
-        public hasTrailingSkippedText(): bool { return this._trailingTrivia.hasSkippedText(); }
+        public hasTrailingTrivia(): boolean { return this._trailingTrivia.count() > 0; }
+        public hasTrailingComment(): boolean { return this._trailingTrivia.hasComment(); }
+        public hasTrailingNewLine(): boolean { return this._trailingTrivia.hasNewLine(); }
+        public hasTrailingSkippedText(): boolean { return this._trailingTrivia.hasSkippedText(); }
         public trailingTriviaWidth(): number { return this._trailingTrivia.fullWidth(); }
 
-        public hasSkippedText(): bool { return this.hasLeadingSkippedText() || this.hasTrailingSkippedText(); }
+        public hasSkippedText(): boolean { return this.hasLeadingSkippedText() || this.hasTrailingSkippedText(); }
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }

@@ -1,6 +1,6 @@
 export interface IOptions {
-    italic?: bool;
-    bold?: bool;
+    italic?: boolean;
+    bold?: boolean;
 }
 export interface IMap {
     [s: string]: IOptions;

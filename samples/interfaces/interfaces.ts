@@ -3,13 +3,13 @@ interface Drivable {
     // Starts the car's ignition so that it can drive.
     start(): void;
     // Attempt to drive a distance. Returns true or false based on whether or not the drive was successful.
-    drive(distance: number): bool;
+    drive(distance: number): boolean;
     // Give the distance from the start.
     getPosition(): number;
 }
 
 class Car implements Drivable {
-    private _isRunning: bool;
+    private _isRunning: boolean;
     private _distanceFromStart: number;
 
     constructor() {
@@ -29,9 +29,9 @@ class Car implements Drivable {
     *
     *   @param {number} distance The distance attempting to cover
     *
-    *   @returns {bool} Whether or not the drive was successful
+    *   @returns {boolean} Whether or not the drive was successful
     */
-    public drive(distance: number): bool {
+    public drive(distance: number): boolean {
         if (this._isRunning) {
             this._distanceFromStart += distance;
             return true;

@@ -18,20 +18,20 @@
 module TypeScript.Formatting {
 
     export class RuleOperationContext {
-        private customContextChecks: { (context: FormattingContext): bool; }[];
+        private customContextChecks: { (context: FormattingContext): boolean; }[];
         
-        constructor(...funcs: { (context: FormattingContext): bool; }[]) {
+        constructor(...funcs: { (context: FormattingContext): boolean; }[]) {
             this.customContextChecks = funcs;
         }
 
         static Any: RuleOperationContext = new RuleOperationContext();
 
 
-        public IsAny(): bool {
+        public IsAny(): boolean {
             { return this == RuleOperationContext.Any; }
         }
 
-        public  InContext(context: FormattingContext): bool {
+        public  InContext(context: FormattingContext): boolean {
             if (this.IsAny()) {
                 return true;
             }

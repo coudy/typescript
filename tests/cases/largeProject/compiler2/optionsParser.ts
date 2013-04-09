@@ -17,12 +17,12 @@
 
 interface IOptions2 {
     name?: string;
-    flag?: bool;
+    flag?: boolean;
     short?: string;
     usage?: string;
     set?: (s: string) => void;
     type?: string;
-    experimental?: bool;
+    experimental?: boolean;
 }
 
 class OptionsParser2 {

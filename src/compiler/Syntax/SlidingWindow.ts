@@ -47,7 +47,7 @@ module TypeScript {
             return this.windowAbsoluteStartIndex + this.windowCount;
         }
 
-        private addMoreItemsToWindow(argument: any): bool {
+        private addMoreItemsToWindow(argument: any): boolean {
             if (this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
                 return false;
             }
@@ -116,7 +116,7 @@ module TypeScript {
             return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
         }
 
-        public isAtEndOfSource(): bool {
+        public isAtEndOfSource(): boolean {
             return this.absoluteIndex() >= this.sourceLength;
         }
 

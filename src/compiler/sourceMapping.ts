@@ -48,7 +48,7 @@ module TypeScript {
                     public sourceMapFileName: string,
                     public jsFile: ITextWriter,
                     public sourceMapOut: ITextWriter,
-                    emitFullPathOfSourceMap: bool) {
+                    emitFullPathOfSourceMap: boolean) {
             this.currentMappings.push(this.sourceMappings);
 
             jsFileName = switchToForwardSlashes(jsFileName);

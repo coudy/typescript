@@ -84,7 +84,7 @@ module TypeScript2 {
             this.logger.log("linemap: " + result);
         }
 
-        private addPadding(s: string, targetLength: number, paddingString: string, leftPadding: bool): string {
+        private addPadding(s: string, targetLength: number, paddingString: string, leftPadding: boolean): string {
             var result = (leftPadding ? "" : s);
             for (var i = s.length; i < targetLength; i++) {
                 result = result + paddingString;

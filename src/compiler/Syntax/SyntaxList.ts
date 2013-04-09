@@ -5,10 +5,10 @@ module TypeScript.Syntax {
     export class EmptySyntaxList implements ISyntaxList {
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
-        public isNode(): bool { return false; }
-        public isToken(): bool { return false; }
-        public isList(): bool { return true; }
-        public isSeparatedList(): bool { return false; }
+        public isNode(): boolean { return false; }
+        public isToken(): boolean { return false; }
+        public isList(): boolean { return true; }
+        public isSeparatedList(): boolean { return false; }
 
         public toJSON(key) {
             return [];
@@ -65,11 +65,11 @@ module TypeScript.Syntax {
             return "";
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             return false;
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return false;
         }
 
@@ -94,10 +94,10 @@ module TypeScript.Syntax {
 
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return true; }
-        public isSeparatedList(): bool { return false; }
+        public isToken(): boolean { return false; }
+        public isNode(): boolean { return false; }
+        public isList(): boolean { return true; }
+        public isSeparatedList(): boolean { return false; }
 
         public toJSON(key) {
             return [this.item];
@@ -159,11 +159,11 @@ module TypeScript.Syntax {
             return this.item.fullText();
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             return this.item.isTypeScriptSpecific();
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return this.item.isIncrementallyUnusable();
         }
 
@@ -188,10 +188,10 @@ module TypeScript.Syntax {
 
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
-        public isNode(): bool { return false; }
-        public isToken(): bool { return false; }
-        public isList(): bool { return true; }
-        public isSeparatedList(): bool { return false; }
+        public isNode(): boolean { return false; }
+        public isToken(): boolean { return false; }
+        public isList(): boolean { return true; }
+        public isSeparatedList(): boolean { return false; }
 
         public toJSON(key) {
             return this.nodeOrTokens;
@@ -248,7 +248,7 @@ module TypeScript.Syntax {
             return elements.join("");
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
                 if (this.nodeOrTokens[i].isTypeScriptSpecific()) {
                     return true;
@@ -258,7 +258,7 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
         }
 

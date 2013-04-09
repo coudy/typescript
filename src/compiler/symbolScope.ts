@@ -49,25 +49,25 @@ module TypeScript {
     export class SymbolScope {
         constructor (public container: Symbol) { }
         public printLabel() { return "base"; }
-        public getAllSymbolNames(members: bool): string[]{
+        public getAllSymbolNames(members: boolean): string[]{
             return ["please", "implement", "in", "derived", "classes"];
         }
-        public getAllTypeSymbolNames(members: bool): string[]{
+        public getAllTypeSymbolNames(members: boolean): string[]{
             return ["please", "implement", "in", "derived", "classes"];
         }
-        public getAllValueSymbolNames(members: bool): string[]{
+        public getAllValueSymbolNames(members: boolean): string[]{
             return ["please", "implement", "in", "derived", "classes"];
         }
         // advanced search using a filter
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool): Symbol { return null; }
+        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         // find in this immediate scope
-        public findLocal(name: string, publicOnly: bool, typespace: bool): Symbol { return null; }
+        public findLocal(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         // find in value namespace 
-        public find(name: string, publicOnly: bool, typespace: bool): Symbol { return null; }
+        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         // find symbol that supplies an implementation
-        public findImplementation(name: string, publicOnly: bool, typespace: bool): Symbol { return null; }
+        public findImplementation(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         // restrict the search to ambient values
-        public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol { return null; }
+        public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         public print(outfile: ITextWriter) {
             if (this.container) {
                 outfile.WriteLine(this.printLabel() + " scope with container: " + this.container.name + "...");
@@ -77,8 +77,8 @@ module TypeScript {
             }
         }
 
-        public enter(container: Symbol, ast: AST, symbol: Symbol, errorReporter: ErrorReporter, publicOnly: bool,
-            typespace: bool, ambient: bool): void {
+        public enter(container: Symbol, ast: AST, symbol: Symbol, errorReporter: ErrorReporter, publicOnly: boolean,
+            typespace: boolean, ambient: boolean): void {
             throw new Error("please implement in derived class");
         }
 
@@ -109,7 +109,7 @@ module TypeScript {
             this.container = container;
         }
 
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool) {
+        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean) {
             if (this.parents) {
                 for (var i = 0; i < this.parents.length; i++) {
                     var sym = this.parents[i].search(filter, name, publicOnly, typespace);
@@ -123,7 +123,7 @@ module TypeScript {
             return filter.result;
         }
 
-        public getAllSymbolNames(members: bool): string[]{
+        public getAllSymbolNames(members: boolean): string[]{
             var result: string[] = [];
             if (this.parents) {
                 for (var i = 0; i < this.parents.length; i++) {
@@ -136,7 +136,7 @@ module TypeScript {
             return result;
         }
 
-        public getAllTypeSymbolNames(members: bool): string[]{
+        public getAllTypeSymbolNames(members: boolean): string[]{
             var result: string[] = [];
             if (this.parents) {
                 for (var i = 0; i < this.parents.length; i++) {
@@ -149,7 +149,7 @@ module TypeScript {
             return result;
         }
 
-        public getAllValueSymbolNames(members: bool): string[]{
+        public getAllValueSymbolNames(members: boolean): string[]{
             var result: string[] = [];
             if (this.parents) {
                 for (var i = 0; i < this.parents.length; i++) {
@@ -171,7 +171,7 @@ module TypeScript {
             }
         }
 
-        public findImplementation(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findImplementation(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var i = 0;
             var implCache = this.valueImplCache;
@@ -208,7 +208,7 @@ module TypeScript {
             return sym;
         }
 
-        public find(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var i = 0;
             var cache = this.valueCache;
@@ -245,7 +245,7 @@ module TypeScript {
             return sym;
         }
 
-        public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var i = 0;
             var cache = this.valueAmbientCache;
@@ -300,13 +300,13 @@ module TypeScript {
 
         public printLabel() { return "table"; }
 
-        public getAllSymbolNames(members: bool): string[]{
+        public getAllSymbolNames(members: boolean): string[]{
             var result = this.getAllTypeSymbolNames(members);
 
             return result.concat(this.getAllValueSymbolNames(members));
         }
 
-        public getAllTypeSymbolNames(members: bool): string[]{
+        public getAllTypeSymbolNames(members: boolean): string[]{
             var result = [];
             if (this.ambientEnclosedTypes) {
                 result = result.concat(this.ambientEnclosedTypes.allMembers.getAllKeys());
@@ -317,7 +317,7 @@ module TypeScript {
             return result;
         }
 
-        public getAllValueSymbolNames(members: bool): string[]{
+        public getAllValueSymbolNames(members: boolean): string[]{
             var result = [];
             if (this.ambientValueMembers) {
                 result = result.concat(this.ambientValueMembers.allMembers.getAllKeys());
@@ -328,13 +328,13 @@ module TypeScript {
             return result;
         }
 
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool) {
+        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean) {
             var sym = this.find(name, publicOnly, typespace);
             filter.update(sym);
             return filter.result;
         }
 
-        public find(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var table: IHashTable = null;
             var ambientTable: IHashTable = null;
 
@@ -364,7 +364,7 @@ module TypeScript {
             return null;
         }
 
-        public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
@@ -399,7 +399,7 @@ module TypeScript {
             }
         }
 
-        public findImplementation(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findImplementation(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym = this.find(name, publicOnly, typespace);
             if (sym) {
                 if (sym.kind() === SymbolKind.Type) {
@@ -440,12 +440,12 @@ module TypeScript {
         }
 
         public printLabel() { return "builder"; }
-        public getAllSymbolNames(members: bool): string[]{
+        public getAllSymbolNames(members: boolean): string[]{
             var result: string[] = this.getAllTypeSymbolNames(members);
             return result.concat(this.getAllValueSymbolNames(members));
         }
 
-        public getAllTypeSymbolNames(members: bool): string[]{
+        public getAllTypeSymbolNames(members: boolean): string[]{
             var result: string[] = [];
             if (this.ambientEnclosedTypes) {
                 result = result.concat(this.ambientEnclosedTypes.allMembers.getAllKeys());
@@ -462,7 +462,7 @@ module TypeScript {
             return result;
         }
 
-        public getAllValueSymbolNames(members: bool): string[]{
+        public getAllValueSymbolNames(members: boolean): string[]{
             var result: string[] = [];
             if (this.ambientValueMembers) {
                 result = result.concat(this.ambientValueMembers.allMembers.getAllKeys());
@@ -479,7 +479,7 @@ module TypeScript {
             return result;
         }
 
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool) {
+        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean) {
             var sym: Symbol = null;
             var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
@@ -547,7 +547,7 @@ module TypeScript {
             }
         }
 
-        public find(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
@@ -571,7 +571,7 @@ module TypeScript {
             return null;
         }
 
-        public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
@@ -588,7 +588,7 @@ module TypeScript {
             return null;
         }
 
-        public findLocal(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findLocal(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
             var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
@@ -613,7 +613,7 @@ module TypeScript {
             return null;
         }
 
-        public enter(container: Symbol, ast: AST, symbol: Symbol, errorReporter: ErrorReporter, insertAsPublic: bool, typespace: bool, ambient: bool): void {
+        public enter(container: Symbol, ast: AST, symbol: Symbol, errorReporter: ErrorReporter, insertAsPublic: boolean, typespace: boolean, ambient: boolean): void {
             var table = null;
 
             if (ambient) {
@@ -659,18 +659,18 @@ module TypeScript {
             this.scope.print(outfile);
         }
 
-        public find(name: string, publicOnly: bool, typespace: bool) {
+        public find(name: string, publicOnly: boolean, typespace: boolean) {
             this.filter.reset();
             return this.scope.search(this.filter, name, publicOnly, typespace);
         }
-        public findLocal(name: string, publicOnly: bool, typespace: bool) { return this.scope.findLocal(name, publicOnly, typespace); }
+        public findLocal(name: string, publicOnly: boolean, typespace: boolean) { return this.scope.findLocal(name, publicOnly, typespace); }
     }
 
     export class FilteredSymbolScopeBuilder extends SymbolScopeBuilder {
-        constructor (valueMembers: ScopedMembers, parent: SymbolScope, container: Symbol, public filter: (sym: Symbol) =>bool) {
+        constructor (valueMembers: ScopedMembers, parent: SymbolScope, container: Symbol, public filter: (sym: Symbol) =>boolean) {
             super(valueMembers, null, null, null, parent, container);
         }
-        public findLocal(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public findLocal(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym = super.findLocal(name, publicOnly, typespace);
             if (sym) {
                 if (!this.filter(sym)) {
@@ -680,11 +680,11 @@ module TypeScript {
             return sym;
         }
 
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool):Symbol {
+        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean):Symbol {
             throw new Error("please implement");
         }
 
-        public find(name: string, publicOnly: bool, typespace: bool): Symbol {
+        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym = super.findLocal(name, publicOnly, typespace);
             if (sym) {
                 if (!this.filter(sym)) {

@@ -71,11 +71,11 @@ module TypeScript2 {
             return this.toStringHelper(false, false, null);
         }
 
-        public toStringHelper(shortform: bool, brackets: bool, scope: SymbolScope) {
+        public toStringHelper(shortform: boolean, brackets: boolean, scope: SymbolScope) {
             return this.toStringHelperEx(shortform, brackets, scope).toString();
         }
 
-        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix? : string = "") : MemberName {
+        public toStringHelperEx(shortform: boolean, brackets: boolean, scope: SymbolScope, prefix? : string = "") : MemberName {
             var builder = new MemberNameArray();
             if (brackets) {
                 builder.prefix =  prefix + "[";
@@ -150,7 +150,7 @@ module TypeScript2 {
         }
 
         public toString() { return this.signatures.toString(); }
-        public toStrings(prefix: string, shortform: bool, scope: SymbolScope) {
+        public toStrings(prefix: string, shortform: boolean, scope: SymbolScope) {
             var result : MemberName[] = [];  
             var len = this.signatures.length;
             if (len > 1) {
@@ -213,7 +213,7 @@ module TypeScript2 {
             }
         }
 
-        public typeCheck(checker: TypeChecker, ast: AST2, hasConstruct:bool) {
+        public typeCheck(checker: TypeChecker, ast: AST2, hasConstruct:boolean) {
             
             if (this.hasBeenTypechecked) {
                 return;

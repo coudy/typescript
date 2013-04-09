@@ -207,13 +207,13 @@ module TypeScript2 {
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeName(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope): string {
+        public getMemberTypeName(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope): string {
             var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, scope);
             return memberName.toString();
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeNameEx(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope): MemberName {
+        public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope): MemberName {
             if (this.elementType) {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
             }
@@ -347,7 +347,7 @@ module TypeScript2 {
                 this.elementType;
         }
 
-        public specializeType(pattern: Type2, replacement: Type2, checker: TypeChecker, membersOnly: bool): Type2 {
+        public specializeType(pattern: Type2, replacement: Type2, checker: TypeChecker, membersOnly: boolean): Type2 {
             if (pattern == this) {
                 return replacement;
             }
@@ -408,7 +408,7 @@ module TypeScript2 {
             return result;
         }
 
-        public hasBase(baseType: Type2): bool {
+        public hasBase(baseType: Type2): boolean {
             if (baseType == this) {
                 return true;
             }
@@ -424,7 +424,7 @@ module TypeScript2 {
             return false;
         }
 
-        public mergeOrdered(b: Type2, checker: TypeChecker, acceptVoid: bool, comparisonInfo?: TypeComparisonInfo): Type2 {
+        public mergeOrdered(b: Type2, checker: TypeChecker, acceptVoid: boolean, comparisonInfo?: TypeComparisonInfo): Type2 {
             if ((this == checker.anyType) || (b == checker.anyType)) {
                 return checker.anyType;
             }
@@ -563,7 +563,7 @@ module TypeScript2 {
         public ast: AST2 = null;
     }
 
-    export function getTypeLink(ast: AST2, checker: TypeChecker, autoVar: bool): TypeLink {
+    export function getTypeLink(ast: AST2, checker: TypeChecker, autoVar: boolean): TypeLink {
         var result = new TypeLink();
 
         result.ast = ast;

@@ -36,7 +36,7 @@ module Services {
             }
         }
 
-        private findMemberOverridesImpl(memberSym: TypeScript.Symbol, lookInBases:bool, lookInDerived:bool): SymbolSet {
+        private findMemberOverridesImpl(memberSym: TypeScript.Symbol, lookInBases:boolean, lookInDerived:boolean): SymbolSet {
             var result = new SymbolSet();
             result.add(memberSym);
             if (memberSym.container === null)

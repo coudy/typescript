@@ -66,7 +66,7 @@ module Services {
             return indentation;
         }
 
-        private static belongsToBracket(sourceText: TypeScript.IScriptSnapshot, token: TypeScript.PositionedToken, position: number): bool {
+        private static belongsToBracket(sourceText: TypeScript.IScriptSnapshot, token: TypeScript.PositionedToken, position: number): boolean {
             switch (token.token().kind()) {
                 case TypeScript.SyntaxKind.OpenBraceToken:
                 case TypeScript.SyntaxKind.CloseBraceToken:
@@ -88,7 +88,7 @@ module Services {
             return false;
         }
 
-        private static isInContainerNode(parent: TypeScript.ISyntaxElement, element: TypeScript.ISyntaxElement): bool {
+        private static isInContainerNode(parent: TypeScript.ISyntaxElement, element: TypeScript.ISyntaxElement): boolean {
             switch (parent.kind()) {
                 case TypeScript.SyntaxKind.ClassDeclaration:
                 case TypeScript.SyntaxKind.ModuleDeclaration:

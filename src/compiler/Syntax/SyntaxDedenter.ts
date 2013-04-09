@@ -2,9 +2,9 @@
 
 module TypeScript {
     export class SyntaxDedenter extends SyntaxRewriter {
-        private lastTriviaWasNewLine: bool;
+        private lastTriviaWasNewLine: boolean;
 
-        constructor(dedentFirstToken: bool,
+        constructor(dedentFirstToken: boolean,
                     private dedentationAmount: number,
                     private minimumIndent: number,
                     private options: FormattingOptions) {
@@ -17,7 +17,7 @@ module TypeScript {
             this.dedentationAmount = 0;
         }
 
-        private isAborted(): bool {
+        private isAborted(): boolean {
             return this.dedentationAmount === 0;
         }
 
@@ -107,7 +107,7 @@ module TypeScript {
             return Syntax.triviaList(result);
         }
 
-        private dedentSegment(segment: string, hasFollowingNewLineTrivia: bool): string {
+        private dedentSegment(segment: string, hasFollowingNewLineTrivia: boolean): string {
             // Find the position of the first non whitespace character in the segment.
             var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
 
@@ -178,7 +178,7 @@ module TypeScript {
             return Syntax.multiLineComment(result);
         }
 
-        public static dedentNode(node: ISyntaxNode, dedentFirstToken: bool, dedentAmount: number, minimumIndent: number, options: FormattingOptions): ISyntaxNode {
+        public static dedentNode(node: ISyntaxNode, dedentFirstToken: boolean, dedentAmount: number, minimumIndent: number, options: FormattingOptions): ISyntaxNode {
             var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
             var result = node.accept(dedenter);
 

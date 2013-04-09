@@ -1,6 +1,6 @@
 class C  {
-    private a(): bool {
+    private a(): boolean {
 
-    private b(): bool {
+    private b(): boolean {
     }
 }

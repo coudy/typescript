@@ -218,7 +218,7 @@ module Services {
             return result;
         }
 
-        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol): FormalSignatureInfo {
+        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: boolean, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol): FormalSignatureInfo {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
@@ -249,7 +249,7 @@ module Services {
             return result;
         }
 
-        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number, atEOF: bool): ActualSignatureInfo {
+        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number, atEOF: boolean): ActualSignatureInfo {
             if (!TypeScript.isValidAstNode(ast))
                 return null;
 
@@ -351,7 +351,7 @@ module Services {
             return result;
         }
 
-        private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentSymbol?: TypeScript.PullSymbol, parentkindName?: string, includeSubcontainers:bool = true): void {
+        private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentSymbol?: TypeScript.PullSymbol, parentkindName?: string, includeSubcontainers:boolean = true): void {
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
                 var symbol = declaration.getSymbol();
@@ -395,7 +395,7 @@ module Services {
             }
         }
 
-        private isContainerDeclaration(declaration: TypeScript.PullDecl): bool {
+        private isContainerDeclaration(declaration: TypeScript.PullDecl): boolean {
             switch (declaration.getKind()) {
                 case TypeScript.PullElementKind.Script:
                 case TypeScript.PullElementKind.Container:
@@ -409,7 +409,7 @@ module Services {
             return false;
         }
 
-        private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl, includeSubcontainers: bool): bool {
+        private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl, includeSubcontainers: boolean): boolean {
             switch (declaration.getKind()) {
                 case TypeScript.PullElementKind.Script:
                     // Do not include the script item
@@ -509,7 +509,7 @@ module Services {
         // New Pull stuff
         //
 
-        private getTypeInfoEligiblePath(fileName: string, position: number, isConstructorValidPosition: bool) {
+        private getTypeInfoEligiblePath(fileName: string, position: number, isConstructorValidPosition: boolean) {
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
@@ -550,10 +550,10 @@ module Services {
             var symbol: TypeScript.PullSymbol;
             var typeSymbol: TypeScript.PullTypeSymbol;
             var enclosingScopeSymbol: TypeScript.PullSymbol;
-            var isCallExpression: bool = false;
+            var isCallExpression: boolean = false;
             var resolvedSignatures: TypeScript.PullSignatureSymbol[];
             var candidateSignature: TypeScript.PullSignatureSymbol;
-            var isConstructorCall: bool;
+            var isConstructorCall: boolean;
 
             if (path.isNameOfClass() || path.isNameOfInterface() || path.isNameOfFunction() || path.isNameOfVariable()) {
                 // Skip the name and get to the declaration
@@ -656,7 +656,7 @@ module Services {
             return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
         }
 
-        public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: bool): CompletionInfo {
+        public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo {
             this.refresh();
 
             var completions = new CompletionInfo();
@@ -753,7 +753,7 @@ module Services {
             }
 
             var existingMemberSymbols = existingMembers.symbols;
-            var existingMemberNames: { [s: string]: bool; } = {};
+            var existingMemberNames: { [s: string]: boolean; } = {};
             for (var i = 0, n = existingMemberSymbols.length; i < n; i++) {
                 existingMemberNames[existingMemberSymbols[i].getName()]= true;
             }
@@ -769,18 +769,18 @@ module Services {
             return filteredMembers;
         }
 
-        private isRightOfDot(path: TypeScript.AstPath, position: number): bool {
+        private isRightOfDot(path: TypeScript.AstPath, position: number): boolean {
             return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) ||
                    (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
         }
 
-        private isInObjectExpressionContext(path: TypeScript.AstPath): bool {
+        private isInObjectExpressionContext(path: TypeScript.AstPath): boolean {
             return (path.count() >= 0 && path.asts[path.top].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = {
                 (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.List && path.asts[path.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = { a:1, 
                 (path.count() >= 3 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
         }
 
-        private isCompletionListBlocker(path: TypeScript.AstPath): bool {
+        private isCompletionListBlocker(path: TypeScript.AstPath): boolean {
             var asts = path.asts;
             var node = path.count() >= 1 && path.ast();
             if (node) {
@@ -793,7 +793,7 @@ module Services {
             return false;
         }
 
-        private isCompletionListTriggerPoint(path: TypeScript.AstPath): bool {
+        private isCompletionListTriggerPoint(path: TypeScript.AstPath): boolean {
 
             if (path.isNameOfVariable() // var <here>
                 || path.isNameOfArgument() // function foo(a, b<here>
@@ -851,15 +851,15 @@ module Services {
             return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.DynamicModule);
         }
 
-        private isConstructorMethod(symbol: TypeScript.PullSymbol): bool {
+        private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {
             return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.ConstructorMethod);
         }
 
-        private isClass(symbol: TypeScript.PullSymbol): bool {
+        private isClass(symbol: TypeScript.PullSymbol): boolean {
             return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Class);
         }
 
-        private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): bool {
+        private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): boolean {
             var decls = symbol.getDeclarations();
             for (var i = 0; i < decls.length; i++) {
                 if (decls[i].getKind() === kind) {
@@ -870,7 +870,7 @@ module Services {
             return false;
         }
 
-        private mapPullElementKind(kind: TypeScript.PullElementKind, symbol?: TypeScript.PullSymbol, useConstructorAsClass?: bool, varIsFunction?: bool, functionIsConstructor?: bool): string {
+        private mapPullElementKind(kind: TypeScript.PullElementKind, symbol?: TypeScript.PullSymbol, useConstructorAsClass?: boolean, varIsFunction?: boolean, functionIsConstructor?: boolean): string {
             if (functionIsConstructor) {
                 return ScriptElementKind.constructorImplementationElement;
             }
@@ -1002,8 +1002,8 @@ module Services {
         }
 
         // Gets breakpoint span in the statement depending on context
-        private getBreakpointInStatement(pos: number, astSpan: TypeScript.ASTSpan, verifyASTPos: bool,
-            existingResult: TypeScript.ASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.ASTSpan {
+        private getBreakpointInStatement(pos: number, astSpan: TypeScript.ASTSpan, verifyASTPos: boolean,
+            existingResult: TypeScript.ASTSpan, forceFirstStatement: boolean, isAst: boolean): TypeScript.ASTSpan {
             if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
                 return existingResult;
             }

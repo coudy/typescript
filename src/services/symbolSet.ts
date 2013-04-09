@@ -25,7 +25,7 @@ module Services {
             this.values = [];
         }
 
-        public add(sym: TypeScript.Symbol): bool {
+        public add(sym: TypeScript.Symbol): boolean {
             if (this.contains(sym))
                 return false;
 
@@ -33,7 +33,7 @@ module Services {
             return true;
         }
 
-        public contains(sym: TypeScript.Symbol): bool {
+        public contains(sym: TypeScript.Symbol): boolean {
             return this.values.indexOf(sym) >= 0;
         }
 
@@ -53,11 +53,11 @@ module Services {
             this.table = new TypeScript.StringHashTable();
         }
 
-        private isSymbolArraySet(value: any): bool {
+        private isSymbolArraySet(value: any): boolean {
             return value.rtti === SymbolArraySet.rtti_id;
         }
 
-        public add(sym: TypeScript.Symbol): bool {
+        public add(sym: TypeScript.Symbol): boolean {
             var key = sym.name;
             var element = this.table.lookup(key);
             if (element === null) {
@@ -80,7 +80,7 @@ module Services {
             }
         }
 
-        public contains(sym: TypeScript.Symbol): bool {
+        public contains(sym: TypeScript.Symbol): boolean {
             var key = sym.name;
             var element = this.table.lookup(key);
             if (element === null) {
@@ -95,7 +95,7 @@ module Services {
             }
         }
 
-        public isEmpty(): bool {
+        public isEmpty(): boolean {
             return this.table.count() === 0;
         }
 

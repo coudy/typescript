@@ -8,7 +8,7 @@ interface IDataSeries {
 
 interface IRun {
     date: Date;
-    pass: bool;
+    pass: boolean;
 }
 
 interface IPerfDataSeries {

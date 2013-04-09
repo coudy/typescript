@@ -2,26 +2,26 @@
 
 module Base {
     export interface IList {
-        isHead: bool;
+        isHead: boolean;
         next: IList;
         prev: IList;
         insertAfter(entry: IList): IList;
         insertBefore(entry: IList): IList;
         item();
-        empty(): bool;
+        empty(): boolean;
     }
 
     export class List implements IList {
         next: IList;
         prev: IList;
         
-        constructor (public isHead: bool, public data) { }
+        constructor (public isHead: boolean, public data) { }
 
         item() {
             return this.data;
         }
 
-        empty(): bool {
+        empty(): boolean {
             return this.next == this;
         }
 

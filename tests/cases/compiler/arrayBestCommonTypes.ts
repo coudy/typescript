@@ -5,7 +5,7 @@ class derived extends base { }
 
 
 class f {
-    public voidIfAny(x: bool, y = false): number;
+    public voidIfAny(x: boolean, y = false): number;
     public voidIfAny(x: string, y = false): number;
     public voidIfAny(x: number, y = false): number;
     public voidIfAny(x: any, y =false): any { return null; }
@@ -29,7 +29,7 @@ class f {
         
         
         var t1: { x: number; y: base; }[] = [ { x: 7, y: new derived() }, { x: 5, y: new base() } ];
-        var t2: { x: bool; y: base; }[] = [ { x: true, y: new derived() }, { x: false, y: new base() } ];
+        var t2: { x: boolean; y: base; }[] = [ { x: true, y: new derived() }, { x: false, y: new base() } ];
         var t3: { x: string; y: base; }[] = [ { x: undefined, y: new base() }, { x: '', y: new derived() } ];
 
         var anyObj: any = null;

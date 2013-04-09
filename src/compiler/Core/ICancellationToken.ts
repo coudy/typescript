@@ -1,3 +1,3 @@
 interface ICancellationToken {
-    isCancellationRequested(): bool;
+    isCancellationRequested(): boolean;
 }

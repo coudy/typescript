@@ -24,7 +24,7 @@ declare module WinJS {
             public splice(index: number, count: number, newelems: any[]): any[];
             public splice(index: number, count: number): any[];
             public splice(index: number): any[];
-            public createFiltered(predicate: (x: any) => bool): List;
+            public createFiltered(predicate: (x: any) => boolean): List;
             public createGrouped(keySelector: (x: any) => any, dataSelector: (x:any) => any): List;
             public groups: any;
             public dataSource: any;
@@ -43,7 +43,7 @@ declare module WinJS {
     export function xhr(options: { type: string; url: string; user: string; password: string; headers: any; data: any; responseType: string; }): WinJS.Promise;
     export module Application {
         export interface IOHelper {
-            exists(filename: string): bool;
+            exists(filename: string): boolean;
             readText(fileName: string, def: string): WinJS.Promise;
             readText(fileName: string): WinJS.Promise;
             writeText(fileName: string, text: string): WinJS.Promise;
@@ -57,7 +57,7 @@ declare module WinJS {
             detail: any;
             setPromise(p: Promise): any;
         }
-        export function addEventListener(type: string, listener: EventListener, capture?: bool): void;
+        export function addEventListener(type: string, listener: EventListener, capture?: boolean): void;
         export var oncheckpoint: EventListener;  
         export function start(): void;
         export function stop(): void;
@@ -70,16 +70,16 @@ declare module WinJS {
     }
     export module Navigation {
         export var history: any;
-        export var canGoBack: bool;
-        export var canGoForward: bool;
+        export var canGoBack: boolean;
+        export var canGoForward: boolean;
         export var location: string;
         export var state: any;
-        export function addEventListener(type: string, listener: EventListener, capture: bool): void;
+        export function addEventListener(type: string, listener: EventListener, capture: boolean): void;
 		export function back(): void;
 		export function forward(): void;
 		export function navigate(location: any, initialState: any);
 		export function navigate(location: any);	
-		export function removeEventListener(type: string, listener: EventListener, capture: bool): void;	
+		export function removeEventListener(type: string, listener: EventListener, capture: boolean): void;	
 		export var onbeforenavigate: CustomEvent;
 		export var onnavigated: CustomEvent;
 		export var onnavigating: CustomEvent;

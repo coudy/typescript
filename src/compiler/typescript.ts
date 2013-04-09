@@ -67,13 +67,13 @@ module TypeScript {
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
-        createFile(path: string, useUTF8?: bool): ITextWriter;
+        createFile(path: string, useUTF8?: boolean): ITextWriter;
 
         // function to check if file exists on the disk
-        fileExists(path: string): bool;
+        fileExists(path: string): boolean;
 
         // Function to check if the directory exists on the disk
-        directoryExists(path: string): bool;
+        directoryExists(path: string): boolean;
 
         // Resolves the path
         resolvePath(path: string): string;
@@ -85,7 +85,7 @@ module TypeScript {
         enclosingScopeSymbol: PullSymbol;
         candidateSignature: PullSignatureSymbol;
         callSignatures: PullSignatureSymbol[];
-        isConstructorCall: bool;
+        isConstructorCall: boolean;
     }
 
     export interface PullSymbolInfo {
@@ -98,7 +98,7 @@ module TypeScript {
         targetSymbol: PullSymbol;
         resolvedSignatures: TypeScript.PullSignatureSymbol[];
         candidateSignature: TypeScript.PullSignatureSymbol;
-        isConstructorCall: bool;
+        isConstructorCall: boolean;
         ast: AST;
         enclosingScopeSymbol: PullSymbol;
     }
@@ -118,7 +118,7 @@ module TypeScript {
                     private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
                     public version: number,
-                    public isOpen: bool,
+                    public isOpen: boolean,
                     syntaxTree: SyntaxTree) {
 
             if (isOpen) {
@@ -153,7 +153,7 @@ module TypeScript {
                 LanguageVersion.EcmaScript5);
         }
 
-        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, textChangeRange: TextChangeRange): Document {
+        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
             var oldScript = this.script;
             var oldSyntaxTree = this._syntaxTree;
 
@@ -168,7 +168,7 @@ module TypeScript {
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
         }
 
-        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, referencedFiles: IFileReference[], compilationSettings): Document {
+        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
 
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
@@ -213,7 +213,7 @@ module TypeScript {
         public addSourceUnit(fileName: string,
                              scriptSnapshot: IScriptSnapshot,
                              version: number,
-                             isOpen: bool,
+                             isOpen: boolean,
                              referencedFiles: IFileReference[] = []): Document {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var document = Document.create(fileName, scriptSnapshot, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
@@ -223,7 +223,7 @@ module TypeScript {
             } );
         }
 
-        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, textChangeRange: TextChangeRange): Document {
+        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
                 var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange);
@@ -236,7 +236,7 @@ module TypeScript {
             });
         }
 
-        private isDynamicModuleCompilation(): bool {
+        private isDynamicModuleCompilation(): boolean {
             var fileNames = this.fileNameToDocument.getAllKeys();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
@@ -354,7 +354,7 @@ module TypeScript {
             }
         }
 
-        static mapToDTSFileName(fileName: string, wholeFileNameReplaced: bool) {
+        static mapToDTSFileName(fileName: string, wholeFileNameReplaced: boolean) {
             return getDeclareFilePath(fileName);
         }
 
@@ -429,7 +429,7 @@ module TypeScript {
             return [];
         }
 
-        static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: bool) {
+        static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: boolean) {
             if (wholeFileNameReplaced) {
                 // The complete output is redirected in this file so do not change extension
                 return fileName;
@@ -441,7 +441,7 @@ module TypeScript {
             }
         }
 
-        static mapToJSFileName(fileName: string, wholeFileNameReplaced: bool) {
+        static mapToJSFileName(fileName: string, wholeFileNameReplaced: boolean) {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
@@ -537,11 +537,11 @@ module TypeScript {
             return [];
         }
 
-        private outputScriptToUTF8(script: Script): bool {
+        private outputScriptToUTF8(script: Script): boolean {
             return script.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && script.containsUnicodeCharInComment);
         }
 
-        private outputScriptsToUTF8(scripts: Script[]): bool {
+        private outputScriptsToUTF8(scripts: Script[]): boolean {
             for (var i = 0, len = scripts.length; i < len; i++) {
                 var script = scripts[i];
                 if (this.outputScriptToUTF8(script)) {
@@ -551,7 +551,7 @@ module TypeScript {
             return false;
         }
 
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
             return this.emitOptions.ioHost.createFile(fileName, useUTF8);
         }
@@ -560,7 +560,7 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        private pullResolveFile(fileName: string): bool {
+        private pullResolveFile(fileName: string): boolean {
             if (!this.pullTypeChecker) {
                 return false;
             }
@@ -1042,7 +1042,7 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromPath(path: AstPath, document: Document): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
+        private extractResolutionContextFromPath(path: AstPath, document: Document): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 

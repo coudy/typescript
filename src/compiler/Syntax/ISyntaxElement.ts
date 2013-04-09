@@ -4,16 +4,16 @@ module TypeScript {
     export interface ISyntaxElement {
         kind(): SyntaxKind;
 
-        isNode(): bool;
-        isToken(): bool;
-        isList(): bool;
-        isSeparatedList(): bool;
+        isNode(): boolean;
+        isToken(): boolean;
+        isList(): boolean;
+        isSeparatedList(): boolean;
 
         childCount(): number;
         childAt(index: number): ISyntaxElement;
 
         // True if this element is typescript specific and would not be legal in pure javascript.
-        isTypeScriptSpecific(): bool;
+        isTypeScriptSpecific(): boolean;
 
         // True if this element cannot be reused in incremental parsing.  There are several situations
         // in which an element can not be reused.  They are:
@@ -38,7 +38,7 @@ module TypeScript {
         //    
         //    Then even though only the 'return' and ';' colons were touched, we'd want to rescan the '/'
         //    token which we would then realize was a regex.
-        isIncrementallyUnusable(): bool;
+        isIncrementallyUnusable(): boolean;
 
         // With of this element, including leading and trailing trivia.
         fullWidth(): number;

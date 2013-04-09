@@ -69,7 +69,7 @@ interfaceType2Object2.bar2 = 2;
 
 // arguments
 class testClass { 
-    public func(arg1: number, arg\u0032: string, arg\u0033: bool, arg4: number) { 
+    public func(arg1: number, arg\u0032: string, arg\u0033: boolean, arg4: number) { 
         arg\u0031 = 1;
         arg2 = 'string';
         arg\u0033 = true;
@@ -79,7 +79,7 @@ class testClass {
 
 // constructors
 class constructorTestClass { 
-    constructor (public arg1: number,public arg\u0032: string,public arg\u0033: bool,public arg4: number) { 
+    constructor (public arg1: number,public arg\u0032: string,public arg\u0033: boolean,public arg4: number) { 
     }
 }
 var constructorTestObject = new constructorTestClass(1, 'string', true, 2);

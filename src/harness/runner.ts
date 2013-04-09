@@ -205,7 +205,7 @@ function runTests(tests: RunnerBase[]) {
 
 var runners: RunnerBase[] = [];
 global.runners = runners;
-var reverse: bool = false;
+var reverse: boolean = false;
 var iterations: number = 1;
 
 var opts = new OptionsParser(IO);

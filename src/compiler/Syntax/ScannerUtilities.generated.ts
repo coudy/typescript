@@ -59,7 +59,7 @@ module TypeScript {
             }
 
             case 4:
-                // case, else, null, this, true, void, with, enum, bool
+                // case, else, null, this, true, void, with, enum, boolean
             switch(array[startIndex]) {
             case CharacterCodes.c:
                 // case
@@ -100,7 +100,7 @@ module TypeScript {
                 // with
                 return (array[startIndex + 1] === CharacterCodes.i && array[startIndex + 2] === CharacterCodes.t && array[startIndex + 3] === CharacterCodes.h) ? SyntaxKind.WithKeyword : SyntaxKind.IdentifierName;
             case CharacterCodes.b:
-                // bool
+                // boolean
                 return (array[startIndex + 1] === CharacterCodes.o && array[startIndex + 2] === CharacterCodes.o && array[startIndex + 3] === CharacterCodes.l) ? SyntaxKind.BoolKeyword : SyntaxKind.IdentifierName;
             default:
                 return SyntaxKind.IdentifierName;

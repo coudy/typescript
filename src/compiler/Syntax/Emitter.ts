@@ -59,7 +59,7 @@ module TypeScript.Emitter1 {
             return this.indentationTrivia(column);
         }
 
-        private changeIndentation(node: ISyntaxNode, changeFirstToken: bool, indentAmount: number): ISyntaxNode {
+        private changeIndentation(node: ISyntaxNode, changeFirstToken: boolean, indentAmount: number): ISyntaxNode {
             if (indentAmount === 0) {
                 return node;
             }
@@ -139,7 +139,7 @@ module TypeScript.Emitter1 {
             return <ISyntaxToken>name;
         }
 
-        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): boolean {
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (list.childAt(i).kind() === kind) {
                     return true;
@@ -256,7 +256,7 @@ module TypeScript.Emitter1 {
         private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
                                          moduleName: ISyntaxToken,
                                          moduleElements: IModuleElementSyntax[],
-                                         outermost: bool): IModuleElementSyntax[] {
+                                         outermost: boolean): IModuleElementSyntax[] {
             moduleName = moduleName.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
             var moduleIdentifier = moduleName;
 
@@ -525,7 +525,7 @@ module TypeScript.Emitter1 {
         }
 
         private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
-                                           static: bool,
+                                           static: boolean,
                                            memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
             var isStatic = this.containsToken(memberDeclaration.modifiers, SyntaxKind.StaticKeyword);
             var declarator = memberDeclaration.variableDeclarator;
@@ -548,7 +548,7 @@ module TypeScript.Emitter1 {
         }
 
         private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
-                                            static: bool): ExpressionStatementSyntax[] {
+                                            static: boolean): ExpressionStatementSyntax[] {
             var result: ExpressionStatementSyntax[] = [];
 
             // TODO: handle alignment here.
@@ -964,7 +964,7 @@ module TypeScript.Emitter1 {
 
         private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
                                             enumElement: EnumElementSyntax,
-                                            assignDefaultValues: bool,
+                                            assignDefaultValues: boolean,
                                             index: number): IExpressionSyntax {
             if (enumElement.equalsValueClause !== null) {
                 // Use the value if one is provided.
@@ -1195,22 +1195,22 @@ module TypeScript.Emitter1 {
                 ]))).withLeadingTrivia(this.indentationTrivia(indentationColumn)).withTrailingTrivia(this.newLine);
         }
 
-        private mustCaptureThisInConstructor(constructorDeclaration: ConstructorDeclarationSyntax): bool {
+        private mustCaptureThisInConstructor(constructorDeclaration: ConstructorDeclarationSyntax): boolean {
             // TODO: use typecheck to answer this question properly.
             return false;
         }
 
-        private mustCaptureThisInClass(classDeclaratoin: ClassDeclarationSyntax): bool {
+        private mustCaptureThisInClass(classDeclaratoin: ClassDeclarationSyntax): boolean {
             // TODO: use typecheck to answer this question properly.
             return false;
         }
 
-        private mustCaptureThisInModule(moduleDeclaration: ModuleDeclarationSyntax): bool {
+        private mustCaptureThisInModule(moduleDeclaration: ModuleDeclarationSyntax): boolean {
             // TODO: use typecheck to answer this question properly.
             return false;
         }
 
-        private mustCaptureThisInFunction(functionDeclaration: FunctionDeclarationSyntax): bool {
+        private mustCaptureThisInFunction(functionDeclaration: FunctionDeclarationSyntax): boolean {
             // TODO: use typecheck to answer this question properly.
             return false;
         }

@@ -26,7 +26,7 @@ module Services {
 
         getScriptFileNames(): string[];
         getScriptVersion(fileName: string): number;
-        getScriptIsOpen(fileName: string): bool;
+        getScriptIsOpen(fileName: string): boolean;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
@@ -43,7 +43,7 @@ module Services {
         getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
         getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
 
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
+        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean): CompletionInfo;
         getTypeAtPosition(fileName: string, pos: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
         getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo;
@@ -76,7 +76,7 @@ module Services {
     }
 
     export class ReferenceEntry {
-        constructor(public fileName: string, public ast: TypeScript.AST, public isWriteAccess: bool) {
+        constructor(public fileName: string, public ast: TypeScript.AST, public isWriteAccess: boolean) {
         }
 
         public getHashCode(): number {
@@ -87,7 +87,7 @@ module Services {
                         TypeScript.numberHashFn(this.ast.limChar)));
         }
 
-        public equals(other: ReferenceEntry): bool {
+        public equals(other: ReferenceEntry): boolean {
             if (other === null || other === undefined)
                 return false;
 
@@ -138,18 +138,18 @@ module Services {
         public IndentSize: number = 4;
         public TabSize: number = 4;
         public NewLineCharacter: string = "\r\n";
-        public ConvertTabsToSpaces: bool = true;
+        public ConvertTabsToSpaces: boolean = true;
     }
 
     export class FormatCodeOptions extends EditorOptions {
-        public InsertSpaceAfterCommaDelimiter: bool = true;
-        public InsertSpaceAfterSemicolonInForStatements: bool = true;
-        public InsertSpaceBeforeAndAfterBinaryOperators: bool = true;
-        public InsertSpaceAfterKeywordsInControlFlowStatements: bool = true;
-        public InsertSpaceAfterFunctionKeywordForAnonymousFunctions: bool = false;
-        public InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: bool = false;
-        public PlaceOpenBraceOnNewLineForFunctions: bool = false;
-        public PlaceOpenBraceOnNewLineForControlBlocks: bool = false;
+        public InsertSpaceAfterCommaDelimiter: boolean = true;
+        public InsertSpaceAfterSemicolonInForStatements: boolean = true;
+        public InsertSpaceBeforeAndAfterBinaryOperators: boolean = true;
+        public InsertSpaceAfterKeywordsInControlFlowStatements: boolean = true;
+        public InsertSpaceAfterFunctionKeywordForAnonymousFunctions: boolean = false;
+        public InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: boolean = false;
+        public PlaceOpenBraceOnNewLineForFunctions: boolean = false;
+        public PlaceOpenBraceOnNewLineForControlBlocks: boolean = false;
     }
 
     export class DefinitionInfo {
@@ -189,7 +189,7 @@ module Services {
 
     export class FormalSignatureInfo {
         public name: string;
-        public isNew: bool;
+        public isNew: boolean;
         public openParen: string;
         public closeParen: string;
         public docComment: string;
@@ -205,8 +205,8 @@ module Services {
     export class FormalParameterInfo {
         public name: string;        // Parameter name
         public type: string;        // String representation of parameter type
-        public isOptional: bool;    // true if parameter is optional
-        public isVariable: bool;    // true if parameter is var args
+        public isOptional: boolean;    // true if parameter is optional
+        public isVariable: boolean;    // true if parameter is var args
         public docComment: string; // Comments that contain help for the parameter
     }
 
@@ -328,7 +328,7 @@ module Services {
 
     export interface IOutputFile {
         name: string;
-        useUTF8encoding: bool;
+        useUTF8encoding: boolean;
         text: string;
     }
 }

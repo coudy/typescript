@@ -5,7 +5,7 @@
 ////     constructor(public name: string) {
 ////         this.amount = 100;
 ////     }
-////     public eat(amountToEat: number): bool {
+////     public eat(amountToEat: number): boolean {
 ////         this.amount -= amountToEat;
 ////         if (this.amount <= 0) {
 ////             this.amount = 0;
@@ -17,13 +17,13 @@
 ////     }
 //// }
 //// class IceCream extends Food {
-////     private isDairyFree: bool;
+////     private isDairyFree: boolean;
 ////     constructor(public flavor: string) {
 ////         super("Ice Cream");
 ////     }
 //// }
 //// class Cookie extends Food {
-////     constructor(public flavor: string, public isGlutenFree: bool) {
+////     constructor(public flavor: string, public isGlutenFree: boolean) {
 ////         super("Cookie");
 ////     }
 //// }
@@ -33,8 +33,8 @@
 //// class GenericMonster<T extends Food, V> {
 ////     private name: string;
 ////     private age: number;
-////     private isFriendly: bool;
-////     constructor(name: string, age: number, isFriendly: bool, private food: T, public variant: V) {
+////     private isFriendly: boolean;
+////     constructor(name: string, age: number, isFriendly: boolean, private food: T, public variant: V) {
 ////         this.name = name;
 ////         this.age = age;
 ////         this.isFriendly = isFriendly;
@@ -45,7 +45,7 @@
 ////     public getVariant(): V {
 ////         return this.variant;
 ////     }
-////     public eatFood(amountToEat: number): bool {
+////     public eatFood(amountToEat: number): boolean {
 ////         return this.food.eat(amountToEat);
 ////     }
 ////     public sayGreeting(): string {

@@ -23,9 +23,9 @@ module TypeScript.Formatting {
         public currentTokenParent: IndentationNodeContext = null;
         public nextTokenParent: IndentationNodeContext = null;
 
-        private contextNodeAllOnSameLine: bool = null;
-        private tokensAreOnSameLine: bool = null;
-        private tokensAreSiblingNodesOnSameLine: bool = null;
+        private contextNodeAllOnSameLine: boolean = null;
+        private tokensAreOnSameLine: boolean = null;
+        private tokensAreSiblingNodesOnSameLine: boolean = null;
 
         constructor (private snapshot: ITextSnapshot, public formattingRequestKind: FormattingRequestKind) {
             Debug.assert(this.snapshot != null, "snapshot is null");
@@ -49,7 +49,7 @@ module TypeScript.Formatting {
             this.tokensAreSiblingNodesOnSameLine = null;
         }
 
-        public ContextNodeAllOnSameLine(): bool {
+        public ContextNodeAllOnSameLine(): boolean {
             if (this.contextNodeAllOnSameLine === null) {
                 var startLine = this.snapshot.getLineNumberFromPosition(this.contextNode.start());
                 var endLine = this.snapshot.getLineNumberFromPosition(this.contextNode.end());
@@ -60,7 +60,7 @@ module TypeScript.Formatting {
             return this.contextNodeAllOnSameLine;
         }
 
-        public TokensAreOnSameLine(): bool {
+        public TokensAreOnSameLine(): boolean {
             if (this.tokensAreOnSameLine === null) {
                 var startLine = this.snapshot.getLineNumberFromPosition(this.currentTokenSpan.start());
                 var endLine = this.snapshot.getLineNumberFromPosition(this.nextTokenSpan.start())

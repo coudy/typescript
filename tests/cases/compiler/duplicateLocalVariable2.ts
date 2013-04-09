@@ -1,9 +1,9 @@
 export class TestCase {
-    constructor (public name: string, public test: ()=>bool, public errorMessageRegEx?: string) {
+    constructor (public name: string, public test: ()=>boolean, public errorMessageRegEx?: string) {
     }
 }
 export class TestRunner { 
-    static arrayCompare(arg1: any[], arg2: any[]): bool {
+    static arrayCompare(arg1: any[], arg2: any[]): boolean {
         return false;
     }
 

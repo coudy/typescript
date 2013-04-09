@@ -7,7 +7,7 @@ describe('Ternary expressions have the correct types', function () {
     typeFactory.isOfType('false ? undefined : 0', 'number');
 
     typeFactory.isOfType('false ? 1 : 0', 'number');
-    typeFactory.isOfType('false ? false : true', 'bool');
+    typeFactory.isOfType('false ? false : true', 'boolean');
     typeFactory.isOfType('false ? "foo" : "bar"', 'string');
     typeFactory.isOfType('false ? null : undefined', 'any');
     

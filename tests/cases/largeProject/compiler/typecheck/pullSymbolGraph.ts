@@ -61,7 +61,7 @@ module TypeScript {
         }
 
         // PULLTODO: Register callbacks for caching
-        public find(p: (rn: any) => bool) {
+        public find(p: (rn: any) => boolean) {
             var node = this.head;
             var vals: any[] = [];
 
@@ -76,7 +76,7 @@ module TypeScript {
             return vals;
         }
 
-        public remove(p: (item: any) => bool) {
+        public remove(p: (item: any) => boolean) {
             var node = this.head;
             var prev: IListItem = null;
             var next: IListItem = null;

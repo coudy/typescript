@@ -20,7 +20,7 @@
             }
         }
 
-        export function assert(condition: bool, s: string) {
+        export function assert(condition: boolean, s: string) {
             if (debug) {
                 if (!condition) {
                     Alert(s);

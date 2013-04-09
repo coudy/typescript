@@ -17,9 +17,9 @@ module TypeScript.Syntax {
         fullWidth: (): number => 0,
         fullText: (): string => "",
 
-        hasComment: (): bool => false,
-        hasNewLine: (): bool => false,
-        hasSkippedText: (): bool => false,
+        hasComment: (): boolean => false,
+        hasNewLine: (): boolean => false,
+        hasSkippedText: (): boolean => false,
 
         toJSON: (key) => [],
 
@@ -45,7 +45,7 @@ module TypeScript.Syntax {
         return triviaList(trivia);
     }
 
-    function isComment(trivia: ISyntaxTrivia): bool {
+    function isComment(trivia: ISyntaxTrivia): boolean {
         return trivia.kind() === SyntaxKind.MultiLineCommentTrivia || trivia.kind() === SyntaxKind.SingleLineCommentTrivia;
     }
 
@@ -82,15 +82,15 @@ module TypeScript.Syntax {
             return this.item.fullText();
         }
 
-        public hasComment(): bool {
+        public hasComment(): boolean {
             return isComment(this.item);
         }
 
-        public hasNewLine(): bool {
+        public hasNewLine(): boolean {
             return this.item.kind() === SyntaxKind.NewLineTrivia;
         }
 
-        public hasSkippedText(): bool {
+        public hasSkippedText(): boolean {
             return this.item.kind() === SyntaxKind.SkippedTextTrivia;
         }
 
@@ -150,7 +150,7 @@ module TypeScript.Syntax {
             return result;
         }
 
-        public hasComment(): bool {
+        public hasComment(): boolean {
             for (var i = 0; i < this.trivia.length; i++) {
                 if (isComment(this.trivia[i])) {
                     return true;
@@ -160,7 +160,7 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasNewLine(): bool {
+        public hasNewLine(): boolean {
             for (var i = 0; i < this.trivia.length; i++) {
                 if (this.trivia[i].kind() === SyntaxKind.NewLineTrivia) {
                     return true;
@@ -170,7 +170,7 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasSkippedText(): bool {
+        public hasSkippedText(): boolean {
             for (var i = 0; i < this.trivia.length; i++) {
                 if (this.trivia[i].kind() === SyntaxKind.SkippedTextTrivia) {
                     return true;

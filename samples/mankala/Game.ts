@@ -59,7 +59,7 @@ module Mankala {
             this.showMove();
         }
 
-        private step(): bool {
+        private step(): boolean {
             var move = this.findMove();
             if (move != NoMove) {
                 this.position.move(move, this.nextSeedCounts, this.features);

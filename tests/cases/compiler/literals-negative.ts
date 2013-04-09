@@ -2,7 +2,7 @@
 // Null can be converted to anything except Void
 var n = <number>(null);
 var s = <string>(null);
-var b = <bool>(n);
+var b = <boolean>(n);
 
 function isVoid() : void { }
 

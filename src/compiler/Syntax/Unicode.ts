@@ -74,7 +74,7 @@ module TypeScript {
             65296, 65305, 65343, 65343
         ];
 
-        static lookupInUnicodeMap(code: number, map: number[]): bool {
+        static lookupInUnicodeMap(code: number, map: number[]): boolean {
             // Bail out quickly if it couldn't possibly be in the map.
             if (code < map[0]) {
                 return false;

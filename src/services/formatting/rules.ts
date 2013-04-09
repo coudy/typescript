@@ -420,15 +420,15 @@ module TypeScript.Formatting {
         /// Contexts
         ///
 
-        static IsForContext(context: FormattingContext): bool {
+        static IsForContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ForStatement;
         }
 
-        static IsNotForContext(context: FormattingContext): bool {
+        static IsNotForContext(context: FormattingContext): boolean {
             return !Rules.IsForContext(context);
         }
 
-        static IsBinaryOpContext(context: FormattingContext): bool {
+        static IsBinaryOpContext(context: FormattingContext): boolean {
 
             switch (context.contextNode.kind()) {
                 // binary expressions
@@ -578,11 +578,11 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsNotBinaryOpContext(context: FormattingContext): bool {
+        static IsNotBinaryOpContext(context: FormattingContext): boolean {
             return !Rules.IsBinaryOpContext(context);
         }
 
-        static IsBlockContext(context: FormattingContext): bool {
+        static IsBlockContext(context: FormattingContext): boolean {
             if (Rules.IsTypeScriptDeclWithBlockContext(context)) {
                 return true;
             }
@@ -597,21 +597,21 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsSingleLineBlockContext(context: FormattingContext): bool {
+        static IsSingleLineBlockContext(context: FormattingContext): boolean {
             if (!Rules.IsBlockContext(context))
                 return false;
 
             return context.ContextNodeAllOnSameLine();
         }
 
-        static IsMultilineBlockContext(context: FormattingContext): bool {
+        static IsMultilineBlockContext(context: FormattingContext): boolean {
             if (!Rules.IsBlockContext(context))
                 return false;
 
             return !context.ContextNodeAllOnSameLine();
         }
 
-        static IsFunctionDeclContext(context: FormattingContext): bool {
+        static IsFunctionDeclContext(context: FormattingContext): boolean {
             switch (context.contextNode.kind()) {
                 case SyntaxKind.FunctionDeclaration:
                 case SyntaxKind.MemberFunctionDeclaration:
@@ -626,7 +626,7 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsTypeScriptDeclWithBlockContext(context: FormattingContext): bool {
+        static IsTypeScriptDeclWithBlockContext(context: FormattingContext): boolean {
             switch (context.contextNode.kind()) {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.EnumDeclaration:
@@ -638,7 +638,7 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsControlDeclContext(context: FormattingContext): bool {
+        static IsControlDeclContext(context: FormattingContext): boolean {
             switch (context.contextNode.kind()) {
                 case SyntaxKind.IfStatement:
                 case SyntaxKind.SwitchStatement:
@@ -658,27 +658,27 @@ module TypeScript.Formatting {
             }
         }
 
-        static  IsObjectContext(context: FormattingContext): bool {
+        static  IsObjectContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ObjectLiteralExpression;
         }
 
-        static IsFunctionCallContext(context: FormattingContext): bool {
+        static IsFunctionCallContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.InvocationExpression;
         }
 
-        static IsNewContext(context: FormattingContext): bool {
+        static IsNewContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ObjectCreationExpression;
         }
 
-        static IsFunctionCallOrNewContext(context: FormattingContext): bool {
+        static IsFunctionCallOrNewContext(context: FormattingContext): boolean {
             return Rules.IsFunctionCallContext(context) || Rules.IsNewContext(context);
         }
 
-        static IsSameLineTokenContext(context: FormattingContext): bool {
+        static IsSameLineTokenContext(context: FormattingContext): boolean {
             return context.TokensAreOnSameLine();
         }
 
-        static IsCodeBlockContext(context: FormattingContext): bool {
+        static IsCodeBlockContext(context: FormattingContext): boolean {
             switch (context.currentTokenParent.kind()) {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.ModuleDeclaration:
@@ -690,7 +690,7 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsMultilineChildParentContext(context: FormattingContext): bool {
+        static IsMultilineChildParentContext(context: FormattingContext): boolean {
             /// TODO: Figure out if we still need this rule
             return false;
 
@@ -702,11 +702,11 @@ module TypeScript.Formatting {
             //return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && IsMultilineBlockContext(context);
         }
 
-        static IsNotFormatOnEnter(context: FormattingContext): bool {
+        static IsNotFormatOnEnter(context: FormattingContext): boolean {
             return context.formattingRequestKind != FormattingRequestKind.FormatOnEnter;
         }
 
-        static IsSameLineTokenOrMultilineBlockContext(context: FormattingContext): bool {
+        static IsSameLineTokenOrMultilineBlockContext(context: FormattingContext): boolean {
             //// This check is mainly used inside SpaceBeforeOpenBraceInControl and SpaceBeforeOpenBraceInFunction.
             ////
             //// Ex: 
@@ -727,11 +727,11 @@ module TypeScript.Formatting {
             return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
         }
 
-        static IsFunctionOrGetSetDeclContext(context: FormattingContext): bool {
+        static IsFunctionOrGetSetDeclContext(context: FormattingContext): boolean {
             return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
         }
 
-        static IsGetSetMemberContext(context: FormattingContext): bool {
+        static IsGetSetMemberContext(context: FormattingContext): boolean {
             switch (context.contextNode.kind()) {
                 case SyntaxKind.GetAccessorPropertyAssignment:
                 case SyntaxKind.GetMemberAccessorDeclaration:
@@ -743,20 +743,20 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsModuleDeclContext(context: FormattingContext): bool {
+        static IsModuleDeclContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ModuleDeclaration;
         }
 
-        static IsInterfaceContext(context: FormattingContext): bool {
+        static IsInterfaceContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ObjectType;
         }
 
-        static IsTypeArgumentOrParameter(tokenKind: SyntaxKind, parentKind: SyntaxKind): bool {
+        static IsTypeArgumentOrParameter(tokenKind: SyntaxKind, parentKind: SyntaxKind): boolean {
             return ((tokenKind === SyntaxKind.LessThanToken || tokenKind === SyntaxKind.GreaterThanToken) &&
                 (parentKind === SyntaxKind.TypeParameterList || parentKind === SyntaxKind.TypeArgumentList));
         }
 
-        static IsTypeArgumentOrParameterContext(context: FormattingContext): bool {
+        static IsTypeArgumentOrParameterContext(context: FormattingContext): boolean {
             return Rules.IsTypeArgumentOrParameter(context.currentTokenSpan.kind(), context.currentTokenParent.kind()) ||
              Rules.IsTypeArgumentOrParameter(context.nextTokenSpan.kind(), context.nextTokenParent.kind());
         }

@@ -56,7 +56,7 @@ module TypeScript {
         public isInferenceSymbol() { return false; }
         public isWith() { return false; }
         public writeable() { return false; }
-        public isType(): bool { return false; }
+        public isType(): boolean { return false; }
         public getType(): Type { return null; }
         public flags: SymbolFlags = SymbolFlags.None;
         public refs: Identifier[];
@@ -365,9 +365,9 @@ module TypeScript {
         public expansions: Type[] = []; // For types that may be "split", keep track of the subsequent definitions
         public expansionsDeclAST: AST[] = [];
         public isDynamic = false;
-        public onlyReferencedAsTypeRef: bool;
+        public onlyReferencedAsTypeRef: boolean;
 
-        constructor(locName: string, location: number, length: number, fileName: string, public type: Type, optimizeModuleCodeGen: bool) {
+        constructor(locName: string, location: number, length: number, fileName: string, public type: Type, optimizeModuleCodeGen: boolean) {
             super(locName, location, length, fileName);
             this.prettyName = this.name;
             this.onlyReferencedAsTypeRef = optimizeModuleCodeGen;
@@ -382,7 +382,7 @@ module TypeScript {
         public isMethod = false;
         public aliasLink:ImportDeclaration = null;
         public kind() { return SymbolKind.Type; }
-        public isType(): bool { return true; }
+        public isType(): boolean { return true; }
         public getType() { return this.type; }
         public prettyName: string;
 
@@ -488,7 +488,7 @@ module TypeScript {
     }
 
     export class WithSymbol extends TypeSymbol {
-        constructor(location: number, fileName: string, withType: Type, optimizeModuleCodeGen: bool) {
+        constructor(location: number, fileName: string, withType: Type, optimizeModuleCodeGen: boolean) {
             super("with", location, 4, fileName, withType, optimizeModuleCodeGen);
         }
         public isWith() { return true; }
@@ -498,7 +498,7 @@ module TypeScript {
         public name: string;
         public location: number;
 
-        constructor (name: string, location: number, fileName: string, public canWrite: bool,
+        constructor (name: string, location: number, fileName: string, public canWrite: boolean,
                       public field: ValueLocation) {
 
             super(name, location, name.length, fileName);

@@ -11,7 +11,7 @@ class RunnerBase {
         this.tests.push(fileName);
     }
 
-    public enumerateFiles(folder: string, recursive: bool = false): string[] {
+    public enumerateFiles(folder: string, recursive: boolean = false): string[] {
         return IO.dir(Harness.userSpecifiedroot + folder, /\.ts$/);
     }
 

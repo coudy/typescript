@@ -15,7 +15,7 @@ module TypeScript {
         public goNextSibling = true;
         public reverseSiblings = false; // visit siblings in reverse execution order
 
-        public stopWalk(stop:bool = true) {
+        public stopWalk(stop:boolean = true) {
             this.goChildren = !stop;
             this.goNextSibling = !stop;
         }

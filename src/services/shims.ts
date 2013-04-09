@@ -46,7 +46,7 @@ module Services {
         // string[]
         getScriptFileNames(): string;
         getScriptVersion(fileName: string): number;
-        getScriptIsOpen(fileName: string): bool;
+        getScriptIsOpen(fileName: string): boolean;
         getScriptSnapshot(fileName: string): IScriptSnapshotShim;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
@@ -77,12 +77,12 @@ module Services {
 
         dispose(dummy: any): void;
 
-        refresh(throwOnError: bool): void;
+        refresh(throwOnError: boolean): void;
         
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
+        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean);
         getTypeAtPosition(fileName: string, pos: number): string;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
         getBreakpointStatementAtPosition(fileName: string, pos: number): string;
@@ -95,15 +95,15 @@ module Services {
         getDefinitionAtPosition(fileName: string, pos: number): string;
 
         // Returns a JSON encoded value of the type:
-        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
         getReferencesAtPosition(fileName: string, pos: number): string;
 
         // Returns a JSON encoded value of the type:
-        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
         getOccurrencesAtPosition(fileName: string, pos: number): string;
 
         // Returns a JSON encoded value of the type:
-        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
         getImplementorsAtPosition(fileName: string, pos: number): string;
 
         // Returns a JSON encoded value of the type:
@@ -167,23 +167,23 @@ module Services {
         constructor(private shimHost: ILanguageServiceShimHost) {
         }
 
-        public information(): bool {
+        public information(): boolean {
             return this.shimHost.information();
         }
 
-        public debug(): bool {
+        public debug(): boolean {
             return this.shimHost.debug();
         }
 
-        public warning(): bool {
+        public warning(): boolean {
             return this.shimHost.warning();
         }
 
-        public error(): bool {
+        public error(): boolean {
             return this.shimHost.error();
         }
 
-        public fatal(): bool {
+        public fatal(): boolean {
             return this.shimHost.fatal();
         }
 
@@ -213,7 +213,7 @@ module Services {
             return this.shimHost.getScriptVersion(fileName);
         }
 
-        public getScriptIsOpen(fileName: string): bool {
+        public getScriptIsOpen(fileName: string): boolean {
             return this.shimHost.getScriptIsOpen(fileName);
         }
 
@@ -235,7 +235,7 @@ module Services {
         return result;
     }
 
-    export function forwardCall(logger: TypeScript.ILogger, actionDescription: string, action: () =>any, throwOnError: bool = false): any {
+    export function forwardCall(logger: TypeScript.ILogger, actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
         try {
             return simpleForwardCall(logger, actionDescription, action);
         }
@@ -276,7 +276,7 @@ module Services {
             this.logger = this.host;
         }
 
-        public forwardCall(actionDescription: string, action: () =>any, throwOnError: bool = false): any {
+        public forwardCall(actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
             return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
         }
 
@@ -297,7 +297,7 @@ module Services {
 
         // REFRESH
         // Update the list of scripts known to the compiler
-        public refresh(throwOnError: bool): void {
+        public refresh(throwOnError: boolean): void {
             this.forwardCall(
                 "refresh(" + throwOnError + ")",
                 () => {
@@ -456,7 +456,7 @@ module Services {
         }
 
         private _referencesToResult(entries: Services.ReferenceEntry[]): string {
-            var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: bool; }[] = [];
+            var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean; }[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
                 result.push({ fileName: entry.fileName, minChar: entry.ast.minChar, limChar: entry.ast.limChar, isWriteAccess: entry.isWriteAccess });
@@ -469,7 +469,7 @@ module Services {
         /// Get a string based representation of the completions 
         /// to provide at the given source position and providing a member completion 
         /// list if requested.
-        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool) {
+        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean) {
             return this.forwardJSONCall(
                 "getCompletionsAtPosition(\"" + fileName + "\", " + pos + ", " + isMemberCompletion + ")",
                 () => {
@@ -638,7 +638,7 @@ module Services {
             this.services = new Services.CoreServices(this.host);
         }
 
-        private forwardCall(actionDescription: string, action: () =>any, throwOnError: bool = false): any {
+        private forwardCall(actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
             return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
         }
 

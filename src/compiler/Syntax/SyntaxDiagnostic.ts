@@ -44,7 +44,7 @@ module TypeScript {
             return this._length;
         }
 
-        public static equals(diagnostic1: SyntaxDiagnostic, diagnostic2: SyntaxDiagnostic): bool {
+        public static equals(diagnostic1: SyntaxDiagnostic, diagnostic2: SyntaxDiagnostic): boolean {
             return diagnostic1._start === diagnostic2._start &&
                    diagnostic1._length === diagnostic2._length &&
                    Diagnostic1.equals(diagnostic1, diagnostic2);

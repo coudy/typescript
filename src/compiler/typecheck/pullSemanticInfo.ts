@@ -39,6 +39,8 @@ module TypeScript {
 
         private dynamicModuleImports: PullTypeAliasSymbol[] = [];
 
+        private properties = new SemanticInfoProperties();
+
         private hasBeenTypeChecked = false;
 
         constructor(compilationUnitPath: string) {
@@ -147,6 +149,18 @@ module TypeScript {
                 getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }
         }
+        
+        public getProperties() {
+            return this.properties;
+        }
+    }
+
+    /**
+     * This class will contain any miscellaneous flags that pertain to the semantic status of the file.
+     * This is for properties that are not tied to a specific AST, decl, symbol or syntax element, but are global to the file.
+     */
+    export class SemanticInfoProperties {
+        public unitContainsBool = false;
     }
 
     export class SemanticInfoChain {
@@ -156,7 +170,7 @@ module TypeScript {
         private unitCache = <any>new BlockIntrinsics();
 
         public anyTypeSymbol: PullTypeSymbol = null;
-        public boolTypeSymbol: PullTypeSymbol = null;
+        public booleanTypeSymbol: PullTypeSymbol = null;
         public numberTypeSymbol: PullTypeSymbol = null;
         public stringTypeSymbol: PullTypeSymbol = null;
         public nullTypeSymbol: PullTypeSymbol = null;
@@ -187,7 +201,7 @@ module TypeScript {
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitive("any", globalDecl);
-            this.boolTypeSymbol = this.addPrimitive("bool", globalDecl);
+            this.booleanTypeSymbol = this.addPrimitive("boolean", globalDecl);
             this.numberTypeSymbol = this.addPrimitive("number", globalDecl);
             this.stringTypeSymbol = this.addPrimitive("string", globalDecl);
             this.nullTypeSymbol = this.addPrimitive("null", globalDecl);

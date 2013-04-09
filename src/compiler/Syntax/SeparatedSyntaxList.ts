@@ -72,10 +72,10 @@ module TypeScript.Syntax {
 
         public kind() { return SyntaxKind.SeparatedList; }
 
-        public isNode(): bool { return false; }
-        public isToken(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return true; }
+        public isNode(): boolean { return false; }
+        public isToken(): boolean { return false; }
+        public isList(): boolean { return false; }
+        public isSeparatedList(): boolean { return true; }
 
         public childCount() { return 1; }
         public nonSeparatorCount() { return 1; }
@@ -144,11 +144,11 @@ module TypeScript.Syntax {
             return this.item.trailingTriviaWidth();
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             return this.item.isTypeScriptSpecific();
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return this.item.isIncrementallyUnusable();
         }
 
@@ -173,10 +173,10 @@ module TypeScript.Syntax {
 
         public kind() { return SyntaxKind.SeparatedList; }
 
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return true; }
+        public isToken(): boolean { return false; }
+        public isNode(): boolean { return false; }
+        public isList(): boolean { return false; }
+        public isSeparatedList(): boolean { return true; }
         public toJSON(key) { return this.elements; }
 
         public childCount() { return this.elements.length; }
@@ -268,7 +268,7 @@ module TypeScript.Syntax {
             return elements.join("");
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             for (var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
                 if (this.nonSeparatorAt(i).isTypeScriptSpecific()) {
                     return true;
@@ -278,7 +278,7 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
         }
 
@@ -372,7 +372,7 @@ module TypeScript.Syntax {
         return separatedListAndValidate(nodes, false);
     }
 
-    function separatedListAndValidate(nodes: ISyntaxNodeOrToken[], validate: bool): ISeparatedSyntaxList {
+    function separatedListAndValidate(nodes: ISyntaxNodeOrToken[], validate: boolean): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return emptySeparatedList;
         }

@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 module TypeScript.SyntaxFacts {
-    export function isDirectivePrologueElement(node: ISyntaxNodeOrToken): bool {
+    export function isDirectivePrologueElement(node: ISyntaxNodeOrToken): boolean {
         if (node.kind() === SyntaxKind.ExpressionStatement) {
             var expressionStatement = <ExpressionStatementSyntax>node;
             var expression = expressionStatement.expression;
@@ -14,7 +14,7 @@ module TypeScript.SyntaxFacts {
         return false
     }
 
-    export function isUseStrictDirective(node: ISyntaxNodeOrToken): bool {
+    export function isUseStrictDirective(node: ISyntaxNodeOrToken): boolean {
         var expressionStatement = <ExpressionStatementSyntax>node;
         var stringLiteral = <ISyntaxToken>expressionStatement.expression;
 
@@ -22,7 +22,7 @@ module TypeScript.SyntaxFacts {
         return text === '"use strict"' || text === "'use strict'";
     }
 
-    export function isIdentifierNameOrAnyKeyword(token: ISyntaxToken): bool {
+    export function isIdentifierNameOrAnyKeyword(token: ISyntaxToken): boolean {
         var tokenKind = token.tokenKind;
         return tokenKind === SyntaxKind.IdentifierName || SyntaxFacts.isAnyKeyword(tokenKind);
     }

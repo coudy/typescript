@@ -2,10 +2,10 @@
 
 module TypeScript {
     export class SyntaxIndenter extends SyntaxRewriter {
-        private lastTriviaWasNewLine: bool;
+        private lastTriviaWasNewLine: boolean;
         private indentationTrivia: ISyntaxTrivia;
 
-        constructor(indentFirstToken: bool,
+        constructor(indentFirstToken: boolean,
                     private indentationAmount: number,
                     private options: FormattingOptions) {
             super();
@@ -101,7 +101,7 @@ module TypeScript {
             return indentationString + segment.substring(firstNonWhitespacePosition);
         }
 
-        private indentWhitespace(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        private indentWhitespace(trivia: ISyntaxTrivia, indentThisTrivia: boolean, result: ISyntaxTrivia[]): void {
             if (!indentThisTrivia) {
                 // Line didn't start with this trivia.  So no need to touch it.  Just add to the result
                 // and continue on.
@@ -116,7 +116,7 @@ module TypeScript {
             result.push(Syntax.whitespace(newIndentation));
         }
 
-        private indentSingleLineOrSkippedText(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        private indentSingleLineOrSkippedText(trivia: ISyntaxTrivia, indentThisTrivia: boolean, result: ISyntaxTrivia[]): void {
             if (indentThisTrivia) {
                 // The line started with a comment or skipped text.  Add an indentation based 
                 // on the desired settings, and then add the trivia itself.
@@ -126,7 +126,7 @@ module TypeScript {
             result.push(trivia);
         }
 
-        private indentMultiLineComment(trivia: ISyntaxTrivia, indentThisTrivia: bool, result: ISyntaxTrivia[]): void {
+        private indentMultiLineComment(trivia: ISyntaxTrivia, indentThisTrivia: boolean, result: ISyntaxTrivia[]): void {
             if (indentThisTrivia) {
                 // The line started with a multiline comment.  Add an indentation based 
                 // on the desired settings, and then add the trivia itself.
@@ -145,12 +145,12 @@ module TypeScript {
             result.push(Syntax.multiLineComment(newText));
         }
 
-        public static indentNode(node: ISyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {
+        public static indentNode(node: ISyntaxNode, indentFirstToken: boolean, indentAmount: number, options: FormattingOptions): SyntaxNode {
             var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
             return node.accept(indenter);
         }
 
-        public static indentNodes(nodes: SyntaxNode[], indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode[] {
+        public static indentNodes(nodes: SyntaxNode[], indentFirstToken: boolean, indentAmount: number, options: FormattingOptions): SyntaxNode[] {
             // Note: it is necessary for correctness that we reuse the same SyntaxIndenter here.  
             // That's because when working on nodes 1-N, we need to know if the previous node ended
             // with a newline.  The indenter will track that for us.

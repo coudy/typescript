@@ -60,7 +60,7 @@ module Harness {
     export interface ITestMetadata {
         id: string;
         desc: string;
-        pass: bool;
+        pass: boolean;
         perfResults: {
             mean: number;
             min: number;
@@ -72,7 +72,7 @@ module Harness {
     export interface IScenarioMetadata {
         id: string;
         desc: string;
-        pass: bool;
+        pass: boolean;
         bugs: string[];
     }
 
@@ -98,7 +98,7 @@ module Harness {
             }
         }
 
-        export function is(result: bool, msg?: string) {
+        export function is(result: boolean, msg?: string) {
             if (!result) {
                 throwAssertError(new Error(msg || "Expected true, got false."));
             }
@@ -179,7 +179,7 @@ module Harness {
             }
         }
 
-        export function arrayContainsOnce(arr: any[], filter: (item: any) => bool) {
+        export function arrayContainsOnce(arr: any[], filter: (item: any) => boolean) {
             var foundCount = 0;
 
             for (var i = 0; i < arr.length; i++) {
@@ -233,7 +233,7 @@ module Harness {
         fail: (test: ITestMetadata) => void;
         error: (test: ITestMetadata, error: Error) => void;
         comment: (comment: string) => void;
-        verify: (test: ITestMetadata, passed: bool, actual: any, expected: any, message: string) => void;
+        verify: (test: ITestMetadata, passed: boolean, actual: any, expected: any, message: string) => void;
     }
 
     export class Logger implements ILogger {
@@ -247,7 +247,7 @@ module Harness {
         public fail(test: ITestMetadata) { }
         public error(test: ITestMetadata, error: Error) { }
         public comment(comment: string) { }
-        public verify(test: ITestMetadata, passed: bool, actual: any, expected: any, message: string) { }
+        public verify(test: ITestMetadata, passed: boolean, actual: any, expected: any, message: string) { }
     }
 
     // Logger-related functions
@@ -718,7 +718,7 @@ module Harness {
             private fileCollection = {};
 
             /** create file gets the whole path to create, so this works as expected with the --out parameter */
-            public createFile(s: string, useUTF8?: bool): ITextWriter {
+            public createFile(s: string, useUTF8?: boolean): ITextWriter {
 
                 if (this.fileCollection[s]) {
                     return <ITextWriter>this.fileCollection[s];
@@ -802,7 +802,7 @@ module Harness {
                 return [arg];
             }
 
-            public compilesOk(testCode): bool {
+            public compilesOk(testCode): boolean {
                 var errors = null;
                 compileString(testCode, '0.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -939,13 +939,13 @@ module Harness {
             public any: Type;
             public number: Type;
             public string: Type;
-            public bool: Type;
+            public boolean: Type;
 
             constructor() {
                 this.any = this.get('var x : any', 'x');
                 this.number = this.get('var x : number', 'x');
                 this.string = this.get('var x : string', 'x');
-                this.bool = this.get('var x : bool', 'x');
+                this.boolean = this.get('var x : boolean', 'x');
             }
 
             public get (code: string, target: any) {
@@ -1147,7 +1147,7 @@ module Harness {
             postCompile: () => void;
         }
 
-        export function addUnit(code: string, unitName?: string, isDeclareFile?: bool, references?: TypeScript.IFileReference[]): TypeScript.Script {
+        export function addUnit(code: string, unitName?: string, isDeclareFile?: boolean, references?: TypeScript.IFileReference[]): TypeScript.Script {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
@@ -1586,11 +1586,11 @@ module Harness {
         //////////////////////////////////////////////////////////////////////
         // ILogger implementation
         //
-        public information(): bool { return false; }
-        public debug(): bool { return true; }
-        public warning(): bool { return true; }
-        public error(): bool { return true; }
-        public fatal(): bool { return true; }
+        public information(): boolean { return false; }
+        public debug(): boolean { return true; }
+        public warning(): boolean { return true; }
+        public error(): boolean { return true; }
+        public fatal(): boolean { return true; }
 
         public log(s: string): void {
             // For debugging...
@@ -1617,7 +1617,7 @@ module Harness {
             return this.getScriptInfo(fileName).version;
         }
 
-        public getScriptIsOpen(fileName: string): bool {
+        public getScriptIsOpen(fileName: string): boolean {
             return this.getScriptInfo(fileName).isOpen;
         }
 
@@ -1841,7 +1841,7 @@ module Harness {
         var firstRun = true;
 
         export interface BaselineOptions {
-            LineEndingSensitive?: bool;
+            LineEndingSensitive?: boolean;
         }
 
         function localPath(fileName: string) {

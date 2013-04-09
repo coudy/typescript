@@ -951,7 +951,7 @@ module TypeScript {
         return ast;
     }
 
-    function isContainer(decl: PullDecl): bool {
+    function isContainer(decl: PullDecl): boolean {
         return decl.getKind() == PullElementKind.Container || decl.getKind() == PullElementKind.DynamicModule;
     }
 
@@ -966,7 +966,7 @@ module TypeScript {
         return PullElementFlags.None;
     }
 
-    function hasInitializationFlag(decl: PullDecl): bool {
+    function hasInitializationFlag(decl: PullDecl): boolean {
         if (decl.getKind() & PullElementKind.Container) {
             return (decl.getFlags() & PullElementFlags.InitializedModule) !== 0;
         }

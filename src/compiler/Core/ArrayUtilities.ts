@@ -2,11 +2,11 @@
 
 module TypeScript {
     export class ArrayUtilities {
-        public static isArray(value: any): bool {
+        public static isArray(value: any): boolean {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         }
 
-        public static sequenceEquals(array1: any[], array2: any[], equals: (v1, v2) => bool) {
+        public static sequenceEquals(array1: any[], array2: any[], equals: (v1, v2) => boolean) {
             if (array1 === array2) {
                 return true;
             }
@@ -28,7 +28,7 @@ module TypeScript {
             return true;
         }
 
-        public static contains(array: any[], value: any): bool {
+        public static contains(array: any[], value: any): boolean {
             for (var i = 0; i < array.length; i++) {
                 if (array[i] === value) {
                     return true;
@@ -89,7 +89,7 @@ module TypeScript {
             return array[array.length - 1];
         }
 
-        public static firstOrDefault(array: any[], func: (v: any) => bool): any {
+        public static firstOrDefault(array: any[], func: (v: any) => boolean): any {
             for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];
                 if (func(value)) {
@@ -132,7 +132,7 @@ module TypeScript {
             return result;
         }
 
-        public static where(values: any[], func: (v: any) => bool): any[] {
+        public static where(values: any[], func: (v: any) => boolean): any[] {
             var result = [];
 
             for (var i = 0; i < values.length; i++) {
@@ -144,7 +144,7 @@ module TypeScript {
             return result;
         }
 
-        public static any(array: any[], func: (v: any) => bool): bool {
+        public static any(array: any[], func: (v: any) => boolean): boolean {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (func(array[i])) {
                     return true;
@@ -154,7 +154,7 @@ module TypeScript {
             return false;
         }
 
-        public static all(array: any[], func: (v: any) => bool): bool {
+        public static all(array: any[], func: (v: any) => boolean): boolean {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (!func(array[i])) {
                     return false;

@@ -57,7 +57,7 @@ module TypeScript2 {
     export class ScopeSearchFilter {
 
         constructor (public select: (a: Symbol, b: Symbol) =>Symbol,
-                            public stop: (s: Symbol) =>bool) { }
+                            public stop: (s: Symbol) =>boolean) { }
 
         public result: Symbol = null;
 
@@ -65,7 +65,7 @@ module TypeScript2 {
             this.result = null;
         }
 
-        public update(b: Symbol): bool {
+        public update(b: Symbol): boolean {
             this.result = this.select(this.result, b);
             if (this.result) {
                 return this.stop(this.result);

@@ -83,7 +83,7 @@ module TypeScript {
         public isAlias() { return false; }
         public isContainer() { return false; }        
 
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool) { return this.name; }
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) { return this.name; }
 
         public getKind() { return this.declKind; }
         public setKind(declType: PullElementKind) { this.declKind = declType; }
@@ -150,11 +150,11 @@ module TypeScript {
             return link;
         }
 
-        public findOutgoingLinks(p: (psl: PullSymbolLink) => bool) {
+        public findOutgoingLinks(p: (psl: PullSymbolLink) => boolean) {
             return <PullSymbolLink[]>this.outgoingLinks.find(p);
         }
 
-        public findIncomingLinks(p: (psl: PullSymbolLink) => bool) {
+        public findIncomingLinks(p: (psl: PullSymbolLink) => boolean) {
             return <PullSymbolLink[]>this.incomingLinks.find(p);
         }
 
@@ -317,7 +317,7 @@ module TypeScript {
             this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);
         }
 
-        public hasFlag(flag: PullElementFlags): bool {
+        public hasFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
                 if ((declarations[i].getFlags() & flag) !== PullElementFlags.None) {
@@ -327,7 +327,7 @@ module TypeScript {
             return false;
         }
 
-        public allDeclsHaveFlag(flag: PullElementFlags): bool {
+        public allDeclsHaveFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
                 if (!((declarations[i].getFlags() & flag) !== PullElementFlags.None)) {
@@ -390,7 +390,7 @@ module TypeScript {
             }
         }
 
-        public toString(useConstraintInName?: bool) {
+        public toString(useConstraintInName?: boolean) {
             var str = this.getNameAndTypeName();
             return str;
         }
@@ -428,7 +428,7 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: bool) {
+        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
             for (var i = 1; i < path.length; i++) {
@@ -449,17 +449,17 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: bool, getPrettyTypeName?: bool) {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean) {
             var name = this.getScopedName(scopeSymbol, useConstraintInName);
             return MemberName.create(name);
         }
 
-        public getTypeName(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+        public getTypeName(scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean) {
             var memberName = this.getTypeNameEx(scopeSymbol, getPrettyTypeName);
             return memberName.toString();
         }
 
-        public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+        public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean) {
             var type = this.getType();
             if (type) {
                 var memberName: MemberName = getPrettyTypeName ? this.getTypeNameForFunctionSignature("", scopeSymbol, getPrettyTypeName) : null;
@@ -472,7 +472,7 @@ module TypeScript {
             return MemberName.create("");
         }
 
-        private getTypeNameForFunctionSignature(prefix: string, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+        private getTypeNameForFunctionSignature(prefix: string, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean) {
             var type = this.getType();
             if (type && !type.isNamedTypeSymbol() && this.declKind != PullElementKind.Property && this.declKind != PullElementKind.Variable && this.declKind != PullElementKind.Parameter) {
                 var signatures = type.getCallSignatures();
@@ -539,7 +539,7 @@ module TypeScript {
             return symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
         }
 
-        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
             // Primitive
             var kind = this.getKind();
             if (kind == PullElementKind.Primitive) {
@@ -834,7 +834,7 @@ module TypeScript {
             return allMemberNames;
         }
 
-        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool, candidateSignature?: PullSignatureSymbol) {
+        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean, candidateSignature?: PullSignatureSymbol) {
             var result: MemberName[] = [];
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
@@ -881,12 +881,12 @@ module TypeScript {
             return result;
         }
 
-        public toString(useConstraintInName?: bool) {
+        public toString(useConstraintInName?: boolean) {
             var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false).toString();
             return s;
         }
 
-        public getSignatureTypeNameEx(prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol) {
+        public getSignatureTypeNameEx(prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol) {
             var builder = new MemberNameArray();
             var typeParameters = this.getTypeParameters();
             var typeParameterString = PullSymbol.getTypeParameterString(typeParameters, scopeSymbol);
@@ -1164,7 +1164,7 @@ module TypeScript {
             return members;
         }
 
-        public isGeneric(): bool {
+        public isGeneric(): boolean {
             return (this.typeParameterLinks && this.typeParameterLinks.length != 0) ||
                     this.hasGenericSignature ||
                     (this.typeArguments && this.typeArguments.length);
@@ -1686,7 +1686,7 @@ module TypeScript {
             }
         }
 
-        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[] {
+        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
 
             var allMembers: PullSymbol[] = [];
             var i = 0;
@@ -1810,7 +1810,7 @@ module TypeScript {
             super.invalidate();
         }
 
-        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
+        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             var name = super.getScopedName(scopeSymbol, useConstraintInName);
 
             var typars = this.getTypeArguments();
@@ -1837,12 +1837,12 @@ module TypeScript {
             return false;
         }
 
-        public toString(useConstraintInName?: bool) {
+        public toString(useConstraintInName?: boolean) {
             var s = this.getScopedNameEx(null, useConstraintInName).toString();
             return s;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: bool, getPrettyTypeName?: bool) {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean) {
             if (!this.isNamedTypeSymbol()) {
                 return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
             }
@@ -1857,7 +1857,7 @@ module TypeScript {
             return members.length == 0 && constructSignatures.length == 0 && callSignatures.length > 1;
         }
 
-        public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
+        public getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
             var constructSignatures = this.getConstructSignatures();
@@ -1919,7 +1919,7 @@ module TypeScript {
             return MemberName.create("{}");
         }
 
-        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
             var isVisible = super.isExternallyVisible(inIsExternallyVisibleSymbols);
             if (isVisible) {
                 // Get type parameters
@@ -1984,7 +1984,7 @@ module TypeScript {
             return this.diagnostic;
         }
 
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             return this.delegateType.getName(scopeSymbol, useConstraintInName);
         }
 
@@ -2088,7 +2088,7 @@ module TypeScript {
             return null;
         }
         
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
                 var symbol = this.getAliasedSymbol(scopeSymbol);
                 if (symbol) {
@@ -2196,7 +2196,7 @@ module TypeScript {
             return null;
         }
 
-        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[] {
+        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
             if (this.typeAliasLink) {
                 return (<PullTypeSymbol>this.typeAliasLink.end).getAllMembers(searchDeclKind, includePrivate);
             }
@@ -2319,7 +2319,7 @@ module TypeScript {
 
         public isGeneric() { return true; }
 
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool) {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
 
             var name = super.getName(scopeSymbol);
 
@@ -2338,7 +2338,7 @@ module TypeScript {
             return name;
         }
 
-        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
             var constraint = this.getConstraint();
             if (constraint) {
                 return PullSymbol.getIsExternallyVisible(constraint, this, inIsExternallyVisibleSymbols);
@@ -2441,12 +2441,12 @@ module TypeScript {
             this.elementType = type;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: bool, getPrettyTypeName?: bool) {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean) {
             var elementMemberName = this.elementType ? this.elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName) : MemberName.create("any");
             return MemberName.create(elementMemberName, "", "[]");
         }
 
-        public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
+        public getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
             var elementMemberName = this.elementType ? this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : MemberName.create("any");
             return MemberName.create(elementMemberName, "", "[]");
         }
@@ -3029,7 +3029,7 @@ module TypeScript {
 
     // PULLTODO: Replace typeReplacementMap with use of context
     export function specializeSignature(signature: PullSignatureSymbol,
-        skipLocalTypeParameters: bool,
+        skipLocalTypeParameters: boolean,
         typeReplacementMap: any,
         typeArguments: PullTypeSymbol[],
         resolver: PullTypeResolver,

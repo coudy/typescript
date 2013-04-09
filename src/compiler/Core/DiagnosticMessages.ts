@@ -863,6 +863,11 @@ module TypeScript {
             message: "'this' may not be referenced in current location.",
             code: 2097
         },
+        Use_of_deprecated_bool_type: {
+            category: DiagnosticCategory.Warning,
+            message: "Use of deprecated type \"bool\", at this location and possibly elsewhere in the file. Use \"boolean\" instead.",
+            code: 2098
+        }
     };
 
     var seenCodes = [];

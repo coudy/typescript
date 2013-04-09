@@ -31,8 +31,8 @@ module TypeScript {
     export class EmitState {
         public column: number;
         public line: number;
-        public pretty: bool;
-        public inObjectLiteral: bool;
+        public pretty: boolean;
+        public inObjectLiteral: boolean;
         public container: EmitContainer;
 
         constructor () {
@@ -45,13 +45,13 @@ module TypeScript {
     }
 
     export class EmitOptions {
-        public minWhitespace: bool;
-        public propagateConstants: bool;
-        public emitComments: bool;
-        public emitFullSourceMapPath: bool;
+        public minWhitespace: boolean;
+        public propagateConstants: boolean;
+        public emitComments: boolean;
+        public emitFullSourceMapPath: boolean;
         public outputOption: string;
         public ioHost: EmitterIOHost = null;
-        public outputMany: bool = true;
+        public outputMany: boolean = true;
         public commonDirectoryPath = "";
 
         constructor(settings: CompilationSettings) {
@@ -62,7 +62,7 @@ module TypeScript {
             this.emitFullSourceMapPath = settings.emitFullSourceMapPath;
         }
 
-        public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: bool) => string) {
+        public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
             if (this.outputMany) {
                 var updatedFileName = fileName;
                 if (this.outputOption != "") {
@@ -168,7 +168,7 @@ module TypeScript {
             this.varListCountStack[this.varListCountStack.length - 1] = count;
         }
 
-        public setInObjectLiteral(val: bool): bool {
+        public setInObjectLiteral(val: boolean): boolean {
             var temp = this.emitState.inObjectLiteral;
             this.emitState.inObjectLiteral = val;
             return temp;
@@ -236,7 +236,7 @@ module TypeScript {
             }
         }
 
-        public emitParensAndCommentsInPlace(ast: AST, pre: bool) {
+        public emitParensAndCommentsInPlace(ast: AST, pre: boolean) {
             var comments = pre ? ast.preComments : ast.postComments;
 
             // comments should be printed before the LParen, but after the RParen
@@ -430,8 +430,8 @@ module TypeScript {
             this.recordSourceMappingEnd(classDecl);
         }
 
-        public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
-            bases: ASTList, hasSelfRef: bool, classDecl: TypeDeclaration) {
+        public emitInnerFunction(funcDecl: FuncDecl, printName: boolean, isMember: boolean,
+            bases: ASTList, hasSelfRef: boolean, classDecl: TypeDeclaration) {
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
             ///     Foo.prototype.bar = 
@@ -1072,7 +1072,7 @@ module TypeScript {
             }
         }
 
-        public declEnclosed(moduleDecl: ModuleDeclaration): bool {
+        public declEnclosed(moduleDecl: ModuleDeclaration): boolean {
             if (moduleDecl == null) {
                 return true;
             }
@@ -1084,7 +1084,7 @@ module TypeScript {
             return false;
         }
 
-        public emitJavascriptName(name: Identifier, addThis: bool) {
+        public emitJavascriptName(name: Identifier, addThis: boolean) {
             var sym = name.sym;
             this.emitParensAndCommentsInPlace(name, true);
             this.recordSourceMappingStart(name);
@@ -1172,7 +1172,7 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(name, false);
         }
 
-        public emitJavascriptStatements(stmts: AST, emitEmptyBod: bool) {
+        public emitJavascriptStatements(stmts: AST, emitEmptyBod: boolean) {
             if (stmts) {
                 if (stmts.nodeType != NodeType.Block) {
                     var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
@@ -1204,7 +1204,7 @@ module TypeScript {
             }
         }
 
-        public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
+        public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: boolean = false) {
             // just the statements without enclosing curly braces
             if (stmts.nodeType != NodeType.Block) {
                 if (stmts.nodeType == NodeType.List) {
@@ -1298,7 +1298,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
+        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean = false, emitPrologue? = false, requiresExtendsBlock?: boolean) {
             if (ast == null) {
                 return;
             }
@@ -1401,7 +1401,7 @@ module TypeScript {
         }
 
         // tokenId is the id the preceding token
-        public emitJavascript(ast: AST, tokenId: TokenID, startLine: bool) {
+        public emitJavascript(ast: AST, tokenId: TokenID, startLine: boolean) {
             if (ast == null) {
                 return;
             }
@@ -1427,7 +1427,7 @@ module TypeScript {
             }
         }
 
-        public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
+        public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: boolean) {
             if (!(<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted) {
                 var accessorSymbol = <FieldSymbol>funcDecl.accessorSymbol;
                 this.emitIndent();
@@ -1705,7 +1705,7 @@ module TypeScript {
             }
         }
 
-        public emitPrologue(reqInherits: bool) {
+        public emitPrologue(reqInherits: boolean) {
             if (!this.prologueEmitted) {
                 if (reqInherits) {
                     this.prologueEmitted = true;
@@ -1726,7 +1726,7 @@ module TypeScript {
             this.writeToOutput("_super.prototype");
         }
 
-        public emitSuperCall(callEx: CallExpression): bool {
+        public emitSuperCall(callEx: CallExpression): boolean {
             if (callEx.target.nodeType == NodeType.Dot) {
                 var dotNode = <BinaryExpression>callEx.target;
                 if (dotNode.operand1.nodeType == NodeType.Super) {
@@ -1753,12 +1753,12 @@ module TypeScript {
             }
         }
 
-        private static shouldCaptureThis(func: FuncDecl): bool {
+        private static shouldCaptureThis(func: FuncDecl): boolean {
             // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
             return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
         }
 
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
             try {
                 return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             } catch (ex) {

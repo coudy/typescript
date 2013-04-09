@@ -45,8 +45,8 @@ module FourSlash {
 
     interface MemberListData {
         result: {
-            maybeInaccurate: bool;
-            isMemberCompletion: bool;
+            maybeInaccurate: boolean;
+            isMemberCompletion: boolean;
             entries: {
                 name: string;
                 type: string;
@@ -157,7 +157,7 @@ module FourSlash {
             this.activeFile = fileToOpen;
         }
 
-        public verifyErrorExistsBetweenMarkers(startMarkerName: string, endMarkerName: string, negative: bool) {
+        public verifyErrorExistsBetweenMarkers(startMarkerName: string, endMarkerName: string, negative: boolean) {
             var startMarker = this.getMarkerByName(startMarkerName);
             var endMarker = this.getMarkerByName(endMarkerName);
             var predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
@@ -194,9 +194,9 @@ module FourSlash {
             return diagnostics;
         }
         
-        public verifyErrorExistsAfterMarker(markerName: string, negative: bool, after: bool) {
+        public verifyErrorExistsAfterMarker(markerName: string, negative: boolean, after: boolean) {
             var marker: Marker = this.getMarkerByName(markerName);
-            var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool;
+            var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => boolean;
 
             if (after) {
                 predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
@@ -217,7 +217,7 @@ module FourSlash {
             }
         }
 
-        private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker?: Marker) {
+        private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => boolean, startMarker: Marker, endMarker?: Marker) {
 
             var errors = this.getDiagnostics(startMarker.fileName);
             var exists = false;
@@ -236,7 +236,7 @@ module FourSlash {
             return exists;
         }
 
-        private printErrorLog(expectErrors: bool, errors: TypeScript.IDiagnostic[]) {
+        private printErrorLog(expectErrors: boolean, errors: TypeScript.IDiagnostic[]) {
             if (expectErrors) {
                 IO.printLine("Expected error not found.  Error list is:");
             } else {
@@ -263,7 +263,7 @@ module FourSlash {
             this.assertItemInCompletionList(members.entries, symbol, type, docComment, fullSymbolName, kind);
         }
 
-        public verifyMemberListCount(expectedCount: number, negative: bool) {
+        public verifyMemberListCount(expectedCount: number, negative: boolean) {
             var members = this.getMemberListAtCaret();
             var match = members.entries.length === expectedCount;
 
@@ -279,7 +279,7 @@ module FourSlash {
             }
         }
 
-        public verifyMemberListIsEmpty(negative: bool) {
+        public verifyMemberListIsEmpty(negative: boolean) {
             var members = this.getMemberListAtCaret();
             if ((!members || members.entries.length === 0) && negative) {
                 throw new Error("Member list is empty at Caret");
@@ -297,7 +297,7 @@ module FourSlash {
             }
         }
 
-        public verifyCompletionListIsEmpty(negative: bool) {
+        public verifyCompletionListIsEmpty(negative: boolean) {
             var completions = this.getCompletionListAtCaret();
             if ((!completions || completions.entries.length === 0) && negative) {
                 throw new Error("Completion list is empty at Caret");
@@ -385,7 +385,7 @@ module FourSlash {
             }
         }
         
-        public verifyCurrentParameterIsVariable(isVariable: bool) {
+        public verifyCurrentParameterIsVariable(isVariable: boolean) {
             assert.equal(isVariable, this.getActiveParameter().isVariable);
         }
 
@@ -1283,7 +1283,7 @@ module FourSlash {
         throw new Error(errorMessage);
     }
 
-    function isValidSlashStarMarkerText(text: string): bool {
+    function isValidSlashStarMarkerText(text: string): boolean {
         return !!(text !== null && text.match(markerTextRegexp));
     }
 

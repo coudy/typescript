@@ -6,11 +6,11 @@ module TypeScript {
             return String.fromCharCode.apply(null, array);
         }
 
-        public static endsWith(string: string, value: string): bool {
+        public static endsWith(string: string, value: string): boolean {
             return string.substring(string.length - value.length, string.length) === value;
         }
 
-        public static startsWith(string: string, value: string): bool {
+        public static startsWith(string: string, value: string): boolean {
             return string.substr(0, value.length) === value;
         }
 
@@ -24,7 +24,7 @@ module TypeScript {
             return Array(count + 1).join(value);
         }
 
-        public static stringEquals(val1: string, val2: string): bool {
+        public static stringEquals(val1: string, val2: string): boolean {
             return val1 === val2;
         }
     }

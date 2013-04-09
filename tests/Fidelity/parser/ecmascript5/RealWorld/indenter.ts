@@ -30,7 +30,7 @@ module Formatting {
             public languageHostIndentation: string,
             public editorOptions: Services.EditorOptions,
             public firstToken: TokenSpan,
-            public smartIndent: bool) {
+            public smartIndent: boolean) {
 
             this.indentationBag = new IndentationBag(this.snapshot);
             this.scriptBlockBeginLineNumber = -1;
@@ -44,7 +44,7 @@ module Formatting {
 
         }
 
-        public GetIndentationEdits(token: TokenSpan, nextToken: TokenSpan, node: ParseNode, sameLineIndent: bool): List_TextEditInfo {
+        public GetIndentationEdits(token: TokenSpan, nextToken: TokenSpan, node: ParseNode, sameLineIndent: boolean): List_TextEditInfo {
             if (this.logger.information()) {
                 this.logger.log("GetIndentationEdits(" +
                     "t1=[" + token.Span.startPosition() + "," + token.Span.endPosition()+ "], " +
@@ -64,7 +64,7 @@ module Formatting {
             return result;
         }
 
-        public GetIndentationEditsWorker(token: TokenSpan, nextToken: TokenSpan, node: ParseNode, sameLineIndent: bool): List_TextEditInfo {
+        public GetIndentationEditsWorker(token: TokenSpan, nextToken: TokenSpan, node: ParseNode, sameLineIndent: boolean): List_TextEditInfo {
             var result = new List_TextEditInfo();
             var indentationInfo: IndentationInfo = null;
 
@@ -183,7 +183,7 @@ module Formatting {
             return GetIndentSizeFromText(indentText, editorOptions, /*includeNonIndentChars:*/ false);
         }
 
-        static GetIndentSizeFromText(text: string, editorOptions: Services.EditorOptions, includeNonIndentChars: bool): number {
+        static GetIndentSizeFromText(text: string, editorOptions: Services.EditorOptions, includeNonIndentChars: boolean): number {
             var indentSize = 0;
 
             for (var i = 0; i < text.length; i++) {
@@ -305,7 +305,7 @@ module Formatting {
             return indentationInfo;
         }
 
-        private CanIndentComment(token: TokenSpan, node: ParseNode): bool {
+        private CanIndentComment(token: TokenSpan, node: ParseNode): boolean {
             switch (node.AuthorNode.Details.Kind) {
                 case AuthorParseNodeKind.apnkProg:
                 case AuthorParseNodeKind.apnkBlock:
@@ -393,7 +393,7 @@ module Formatting {
             tree.Root.SetIndentationOverride(scriptBlockIndentation);
         }
 
-        private GetIndentEdit(indentInfo: IndentationInfo, tokenStartPosition: number, sameLineIndent: bool): TextEditInfo {
+        private GetIndentEdit(indentInfo: IndentationInfo, tokenStartPosition: number, sameLineIndent: boolean): TextEditInfo {
             var indentText = this.ApplyIndentationLevel(indentInfo.Prefix, indentInfo.Level);
 
             if (sameLineIndent) {
@@ -450,7 +450,7 @@ module Formatting {
             return this.GetIndentString(existingIndentation, totalIndentSize, tabSize, convertTabsToSpaces);
         }
 
-        private GetIndentString(prefix: string, totalIndentSize: number, tabSize: number, convertTabsToSpaces: bool): string {
+        private GetIndentString(prefix: string, totalIndentSize: number, tabSize: number, convertTabsToSpaces: boolean): string {
             var tabString = convertTabsToSpaces ? StringUtils.create(' ', tabSize) : "\t";
 
             var text = "";
@@ -683,7 +683,7 @@ module Formatting {
             }
         }
 
-        private RegisterIndentation(indent: TextEditInfo, sameLineIndent: bool): void
+        private RegisterIndentation(indent: TextEditInfo, sameLineIndent: boolean): void
         {
             var indentationInfo: IndentationEditInfo = null;
 
@@ -732,7 +732,7 @@ module Formatting {
             }
         }
 
-        private IsMultiLineString(token: TokenSpan): bool {
+        private IsMultiLineString(token: TokenSpan): boolean {
             return token.tokenID === TypeScript.TokenID.StringLiteral &&
                 this.snapshot.GetLineNumberFromPosition(token.Span.endPosition()) > this.snapshot.GetLineNumberFromPosition(token.Span.startPosition());
         }

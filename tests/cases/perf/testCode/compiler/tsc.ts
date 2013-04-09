@@ -35,7 +35,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
 
     public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
         resolver: TypeScript.ICodeResolver,
-        traceDependencies: bool): TypeScript.CompilationEnvironment {
+        traceDependencies: boolean): TypeScript.CompilationEnvironment {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
@@ -88,7 +88,7 @@ class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
-    public hasResolveErrors: bool = false;
+    public hasResolveErrors: boolean = false;
     public compilerVersion = "0.8.2.0";
     public printedVersion = false;
 
@@ -160,7 +160,7 @@ class BatchCompiler {
             compiler.emitCommentsToOutput();
         }
 
-        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: bool) => {
+        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: boolean) => {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
@@ -207,7 +207,7 @@ class BatchCompiler {
         }
 
         var emitterIOHost = {
-            createFile: (fileName: string, useUTF8?: bool) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
+            createFile: (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
             directoryExists: this.ioHost.directoryExists,
             fileExists: this.ioHost.fileExists,
             resolvePath: this.ioHost.resolvePath

@@ -31,11 +31,11 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
 
     originalDefinition(): ITypeSymbol;
 
-    // isSubTypeOf(type: ITypeSymbol): bool;
-    // isSuperTypeOf(type: ITypeSymbol): bool;
-    // isIdenticalTo(type: ITypeSymbol): bool;
-    // isAssignableTo(type: ITypeSymbol): bool;
-    // isAssignableFrom(type: ITypeSymbol): bool;
+    // isSubTypeOf(type: ITypeSymbol): boolean;
+    // isSuperTypeOf(type: ITypeSymbol): boolean;
+    // isIdenticalTo(type: ITypeSymbol): boolean;
+    // isAssignableTo(type: ITypeSymbol): boolean;
+    // isAssignableFrom(type: ITypeSymbol): boolean;
 }
 
 interface IAnyTypeSymbol extends ITypeSymbol {
@@ -64,10 +64,10 @@ interface IUndefinedTypeSymbol extends IPrimitiveTypeSymbol {
 
 interface IObjectTypeSymbol extends ITypeSymbol {
     /// An object type containing call signatures is said to be a function type.
-    isFunctionType(): bool;
+    isFunctionType(): boolean;
 
     /// A type containing construct signatures is said to be a constructor type.
-    isConstructorType(): bool;
+    isConstructorType(): boolean;
 }
 
 interface IClassTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGenericSymbol {

@@ -365,11 +365,11 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
 
     it("Check the return type of overload with object literals", function() {
         var code  = "function foo(bar:{a:number;}):string;";
-            code += "function foo(bar:{a:bool;}):number;";
+            code += "function foo(bar:{a:boolean;}):number;";
             code += "function foo(bar:{a:any;}):any{ return bar };";
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 125, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
+            assert.compilerWarning(result, 1, 128, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
@@ -406,12 +406,12 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     //assert.bug("17994: Shouldn't issue error about incompatible types in array literal due to contextual typing");    
     it("Check the return type of overload with object literals - 5", function() {
         var code  = "function foo(bar:{a:number;}):string;";
-            code += "function foo(bar:{a:bool;}):number;";
+            code += "function foo(bar:{a:boolean;}):number;";
             code += "function foo(bar:{a:any;}):any{ return bar };";
             code += "var x = foo({});";
         Harness.Compiler.compileString(code, 'overload', function (result) {
             assert.equal(result.errors.length, 2);
-            //assert.compilerWarning(result, 1, 125, "Supplied parameters do not match any signature of call target:\n\tCould not apply type '{ a: bool; }' to argument 1, which is of type '{}'");
+            //assert.compilerWarning(result, 1, 125, "Supplied parameters do not match any signature of call target:\n\tCould not apply type '{ a: boolean; }' to argument 1, which is of type '{}'");
         }
     });    
 
@@ -426,18 +426,18 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
 
     it("Check the return type of overload with array literals", function() {
         var code  = "function foo(bar:{a:number;}[]):string;";
-            code += "function foo(bar:{a:bool;}[]):number;";
+            code += "function foo(bar:{a:boolean;}[]):number;";
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo();";
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 131, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
+        Harness.Compiler.compileString(code, 'overload', function(result) {  
+            assert.compilerWarning(result, 1, 134, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
 
     it("Check the return type of overload with array literals - 2", function() {
         var code  = "function foo(bar:{a:number;}[]):string;";
-            code += "function foo(bar:{a:bool;}[]):number;";
+            code += "function foo(bar:{a:boolean;}[]):number;";
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo([{a:1}]);";
         var returnType = typeFactory.get(code, "x");
@@ -446,7 +446,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
 
     it("Check the return type of overload with array literals - 3", function() {
         var code  = "function foo(bar:{a:number;}[]):string;";
-            code += "function foo(bar:{a:bool;}[]):number;";
+            code += "function foo(bar:{a:boolean;}[]):number;";
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo([{a:true}]);";
         var returnType = typeFactory.get(code, "x");
@@ -457,7 +457,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     
     it("Check the return type of overload with array literals - 4", function() {
         var code  = "function foo(bar:{a:number;}[]):string;";
-            code += "function foo(bar:{a:bool;}[]):number;";
+            code += "function foo(bar:{a:boolean;}[]):number;";
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo([{a:'bar'}]);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
@@ -471,7 +471,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     //BUG -> Should give ambiguous error
     it("Check the return type of overload with array literals - 5", function() {
         var code  = "function foo(bar:{a:number;}[]):string;";
-            code += "function foo(bar:{a:bool;}[]):number;";
+            code += "function foo(bar:{a:boolean;}[]):number;";
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo([{}]);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     

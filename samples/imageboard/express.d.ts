@@ -21,8 +21,8 @@ declare module "express" {
         set(name: string, val: any): any;
         enable(name: string): ExpressServer;
         disable(name: string): ExpressServer;
-        enabled(name: string): bool;
-        disabled(name: string): bool;
+        enabled(name: string): boolean;
+        disabled(name: string): boolean;
         configure(env: string, callback: () => void): ExpressServer;
         configure(env: string, env2: string, callback: () => void ): ExpressServer;
         configure(callback: () => void): ExpressServer;
@@ -68,21 +68,21 @@ declare module "express" {
         accepts(types: string): any;
         accepts(types: string[]): any;
         accepted: any;
-        is(type: string): bool;
+        is(type: string): boolean;
         ip: string;
         ips: string[];
         path: string;
         host: string;
-        fresh: bool;
-        stale: bool;
-        xhr: bool;
+        fresh: boolean;
+        stale: boolean;
+        xhr: boolean;
         protocol: string;
-        secure: bool;
+        secure: boolean;
         subdomains: string[];
         acceptedLanguages: string[];
         acceptedCharsets: string[];
-        acceptsCharset(charset: string): bool;
-        acceptsLanguage(lang: string): bool;
+        acceptsCharset(charset: string): boolean;
+        acceptsLanguage(lang: string): boolean;
     }
     
     export class ExpressServerResponse extends http.ServerResponse {

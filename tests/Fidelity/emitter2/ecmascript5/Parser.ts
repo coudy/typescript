@@ -3,7 +3,7 @@
 interface IParserRewindPoint extends IRewindPoint {
     previousToken: ISyntaxToken;
     currentTokenFullStart: number;
-    isInStrictMode: bool;
+    isInStrictMode: boolean;
     diagnosticsCount: number;
     skippedTokensCount: number;
 }
@@ -277,7 +277,7 @@ class Parser extends SlidingWindow {
     // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
     // that some tokens that would be considered identifiers may be considered keywords.  When 
     // rewinding, we need to store and restore this as the mode may have changed.
-    private isInStrictMode: bool = false;
+    private isInStrictMode: boolean = false;
 
     // Tokens we've decided to skip because they couldn't fit into the current production.  Any
     // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
@@ -305,7 +305,7 @@ class Parser extends SlidingWindow {
         this.options = options || new ParseOptions();
     }
 
-    private isIncremental(): bool {
+    private isIncremental(): boolean {
         return this.oldTree !== null;
     }
 
@@ -394,7 +394,7 @@ class Parser extends SlidingWindow {
         this.moveToNextItem();
     }
 
-    private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
+    private canEatAutomaticSemicolon(allowWithoutNewLine: boolean): boolean {
         var token = this.currentToken();
 
         // An automatic semicolon is always allowed if we're at the end of the file.
@@ -419,7 +419,7 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): bool {
+    private canEatExplicitOrAutomaticSemicolon(allowWithoutNewline: boolean): boolean {
         var token = this.currentToken();
 
         if (token.tokenKind === SyntaxKind.SemicolonToken) {
@@ -429,7 +429,7 @@ class Parser extends SlidingWindow {
         return this.canEatAutomaticSemicolon(allowWithoutNewline);
     }
 
-    private eatExplicitOrAutomaticSemicolon(allowWithoutNewline: bool): ISyntaxToken {
+    private eatExplicitOrAutomaticSemicolon(allowWithoutNewline: boolean): ISyntaxToken {
         var token = this.currentToken();
 
         // If we see a semicolon, then we can definitely eat it.
@@ -535,11 +535,11 @@ class Parser extends SlidingWindow {
         return this.createMissingToken(SyntaxKind.IdentifierNameToken, SyntaxKind.None, token);
     }
 
-    private isIdentifier(token: ISyntaxToken): bool {
+    private isIdentifier(token: ISyntaxToken): boolean {
         return token.tokenKind === SyntaxKind.IdentifierNameToken && !this.isKeyword(token.keywordKind());
     }
 
-    private isKeyword(kind: SyntaxKind): bool {
+    private isKeyword(kind: SyntaxKind): boolean {
         if (SyntaxFacts.isStandardKeyword(kind) ||
             SyntaxFacts.isFutureReservedKeyword(kind)) {
             return true;
@@ -670,7 +670,7 @@ class Parser extends SlidingWindow {
         throw Errors.invalidOperation();
     }
 
-    private static isDirectivePrologueElement(node: SyntaxNode): bool {
+    private static isDirectivePrologueElement(node: SyntaxNode): boolean {
         if (node.kind() === SyntaxKind.ExpressionStatement) {
             var expressionStatement = <ExpressionStatementSyntax>node;
             var expression = expressionStatement.expression();
@@ -739,7 +739,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return this.isImportDeclaration() ||
                this.isModuleDeclaration() ||
                this.isInterfaceDeclaration() ||
@@ -772,7 +772,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isImportDeclaration(): bool {
+    private isImportDeclaration(): boolean {
         // REVIEW: because 'import' is not a javascript keyword, we need to make sure that this is 
         // an actual import declaration.  As such, i check for "import id =" as that shouldn't 
         // match any other legal javascript construct.  However, we need to verify that this is
@@ -803,7 +803,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isExternalModuleReference(): bool {
+    private isExternalModuleReference(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ModuleKeyword &&
                this.peekTokenN(1).tokenKind === SyntaxKind.OpenParenToken;
     }
@@ -830,7 +830,7 @@ class Parser extends SlidingWindow {
         return new IdentifierNameSyntax(identifierName);
     }
 
-    private isName(): bool {
+    private isName(): boolean {
         return this.isIdentifier(this.currentToken());
     }
 
@@ -854,7 +854,7 @@ class Parser extends SlidingWindow {
         return current;
     }
 
-    private isEnumDeclaration(): bool {
+    private isEnumDeclaration(): boolean {
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
             this.peekTokenN(1).keywordKind() === SyntaxKind.EnumKeyword) {
             return true;
@@ -884,7 +884,7 @@ class Parser extends SlidingWindow {
             openBraceToken, variableDeclarators, closeBraceToken);
     }
 
-    private isClassDeclaration(): bool {
+    private isClassDeclaration(): boolean {
         var token0 = this.currentToken();
 
         var token1 = this.peekTokenN(1);
@@ -934,11 +934,11 @@ class Parser extends SlidingWindow {
             implementsClause, openBraceToken, classElements, closeBraceToken);
     }
 
-    private isConstructorDeclaration(): bool {
+    private isConstructorDeclaration(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ConstructorKeyword;
     }
 
-    private isMemberAccessorDeclaration(): bool {
+    private isMemberAccessorDeclaration(): boolean {
         var rewindPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -1013,7 +1013,7 @@ class Parser extends SlidingWindow {
             publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
     }
 
-    private isMemberVariableDeclaration(): bool {
+    private isMemberVariableDeclaration(): boolean {
         var rewindPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -1049,7 +1049,7 @@ class Parser extends SlidingWindow {
         }
     }
     
-    private isClassElement(): bool {
+    private isClassElement(): boolean {
         // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
         // checks for a subset of the conditions of the previous two.
         return this.isConstructorDeclaration() ||
@@ -1077,7 +1077,7 @@ class Parser extends SlidingWindow {
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
     }
 
-    private isMemberFunctionDeclaration(): bool {
+    private isMemberFunctionDeclaration(): boolean {
         var rewindPoint = this.getRewindPoint();
         try {
             if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
@@ -1156,7 +1156,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isFunctionDeclaration(): bool {
+    private isFunctionDeclaration(): boolean {
         var token0 = this.currentToken();
         if (token0.keywordKind() === SyntaxKind.FunctionKeyword) {
             return true;
@@ -1194,7 +1194,7 @@ class Parser extends SlidingWindow {
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
     }
 
-    private isModuleDeclaration(): bool {
+    private isModuleDeclaration(): boolean {
         var token0 = this.currentToken();
         var token1 = this.peekTokenN(1);
 
@@ -1266,7 +1266,7 @@ class Parser extends SlidingWindow {
             openBraceToken, moduleElements, closeBraceToken);
     }
 
-    private isInterfaceDeclaration(): bool {
+    private isInterfaceDeclaration(): boolean {
         // export interface
         if (this.currentToken().keywordKind() === SyntaxKind.ExportKeyword &&
             this.peekTokenN(1).keywordKind() === SyntaxKind.InterfaceKeyword) {
@@ -1307,7 +1307,7 @@ class Parser extends SlidingWindow {
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return this.isCallSignature() ||
                this.isConstructSignature() ||
                this.isIndexSignature() ||
@@ -1379,19 +1379,19 @@ class Parser extends SlidingWindow {
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
     }
 
-    private isCallSignature(): bool {
+    private isCallSignature(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
     }
 
-    private isConstructSignature(): bool {
+    private isConstructSignature(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.NewKeyword;
     }
 
-    private isIndexSignature(): bool {
+    private isIndexSignature(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
     }
 
-    private isFunctionSignature(): bool {
+    private isFunctionSignature(): boolean {
         if (this.isIdentifier(this.currentToken())) {
             // id(
             if (this.peekTokenN(1).tokenKind === SyntaxKind.OpenParenToken) {
@@ -1408,13 +1408,13 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isPropertySignature(): bool {
+    private isPropertySignature(): boolean {
         // Note: identifiers also start function signatures.  So it's important that we call this
         // after we calll isFunctionSignature.
         return this.isIdentifier(this.currentToken());
     }
 
-    private isExtendsClause(): bool {
+    private isExtendsClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword;
     }
 
@@ -1427,7 +1427,7 @@ class Parser extends SlidingWindow {
         return new ExtendsClauseSyntax(extendsKeyword, typeNames);
     }
 
-    private isImplementsClause(): bool {
+    private isImplementsClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword;
     }
 
@@ -1440,7 +1440,7 @@ class Parser extends SlidingWindow {
         return new ImplementsClauseSyntax(implementsKeyword, typeNames);
     }
 
-    private isStatement(allowFunctionDeclaration: bool): bool {
+    private isStatement(allowFunctionDeclaration: boolean): boolean {
         // ERROR RECOVERY
         switch (this.currentToken().keywordKind()) {
             case SyntaxKind.PublicKeyword:
@@ -1477,7 +1477,7 @@ class Parser extends SlidingWindow {
                this.isDebuggerStatement();
     }
 
-    private parseStatement(allowFunctionDeclaration: bool): StatementSyntax {
+    private parseStatement(allowFunctionDeclaration: boolean): StatementSyntax {
         if (this.isVariableStatement()) {
             return this.parseVariableStatement();
         }
@@ -1535,7 +1535,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isDebuggerStatement(): bool {
+    private isDebuggerStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.DebuggerKeyword;
     }
 
@@ -1548,7 +1548,7 @@ class Parser extends SlidingWindow {
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
     }
 
-    private isDoStatement(): bool {
+    private isDoStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.DoKeyword;
     }
 
@@ -1571,7 +1571,7 @@ class Parser extends SlidingWindow {
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
     }
 
-    private isLabeledStatement(): bool {
+    private isLabeledStatement(): boolean {
         return this.isIdentifier(this.currentToken()) && this.peekTokenN(1).tokenKind === SyntaxKind.ColonToken;
     }
 
@@ -1585,7 +1585,7 @@ class Parser extends SlidingWindow {
         return new LabeledStatement(identifier, colonToken, statement);
     }
 
-    private isTryStatement(): bool {
+    private isTryStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.TryKeyword;
     }
 
@@ -1611,7 +1611,7 @@ class Parser extends SlidingWindow {
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
     }
 
-    private isCatchClause(): bool {
+    private isCatchClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.CatchKeyword;
     }
 
@@ -1627,7 +1627,7 @@ class Parser extends SlidingWindow {
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
     }
 
-    private isFinallyClause(): bool {
+    private isFinallyClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.FinallyKeyword;
     }
 
@@ -1640,7 +1640,7 @@ class Parser extends SlidingWindow {
         return new FinallyClauseSyntax(finallyKeyword, block);
     }
 
-    private isWithStatement(): bool {
+    private isWithStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.WithKeyword;
     }
 
@@ -1656,7 +1656,7 @@ class Parser extends SlidingWindow {
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
-    private isWhileStatement(): bool {
+    private isWhileStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.WhileKeyword;
     }
 
@@ -1672,7 +1672,7 @@ class Parser extends SlidingWindow {
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
     }
 
-    private isEmptyStatement(): bool {
+    private isEmptyStatement(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.SemicolonToken;
     }
 
@@ -1683,7 +1683,7 @@ class Parser extends SlidingWindow {
         return new EmptyStatementSyntax(semicolonToken);
     }
 
-    private isForOrForInStatement(): bool {
+    private isForOrForInStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ForKeyword;
     }
 
@@ -1804,7 +1804,7 @@ class Parser extends SlidingWindow {
             firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
     }
 
-    private isBreakStatement(): bool {
+    private isBreakStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.BreakKeyword;
     }
 
@@ -1826,7 +1826,7 @@ class Parser extends SlidingWindow {
         return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
     }
 
-    private isContinueStatement(): bool {
+    private isContinueStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ContinueKeyword;
     }
 
@@ -1848,7 +1848,7 @@ class Parser extends SlidingWindow {
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
     }
 
-    private isSwitchStatement(): bool {
+    private isSwitchStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.SwitchKeyword;
     }
 
@@ -1872,15 +1872,15 @@ class Parser extends SlidingWindow {
             closeParenToken, openBraceToken, switchClauses, closeBraceToken);
     }
 
-    private isCaseSwitchClause(): bool {
+    private isCaseSwitchClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.CaseKeyword;
     }
 
-    private isDefaultSwitchClause(): bool {
+    private isDefaultSwitchClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.DefaultKeyword;
     }
 
-    private isSwitchClause(): bool {
+    private isSwitchClause(): boolean {
         return this.isCaseSwitchClause() || this.isDefaultSwitchClause();
     }
 
@@ -1918,7 +1918,7 @@ class Parser extends SlidingWindow {
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
     }
 
-    private isThrowStatement(): bool {
+    private isThrowStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ThrowKeyword;
     }
 
@@ -1944,7 +1944,7 @@ class Parser extends SlidingWindow {
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
     }
 
-    private isReturnStatement(): bool {
+    private isReturnStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ReturnKeyword;
     }
 
@@ -1963,7 +1963,7 @@ class Parser extends SlidingWindow {
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
     }
 
-    private isExpressionStatement(): bool {
+    private isExpressionStatement(): boolean {
         // As per the gramar, neither { nor 'function' can start an expression statement.
         var currentToken = this.currentToken();
         var kind = currentToken.tokenKind;
@@ -1979,7 +1979,7 @@ class Parser extends SlidingWindow {
         return this.isExpression();
     }
 
-    private isAssignmentOrOmittedExpression(): bool {
+    private isAssignmentOrOmittedExpression(): boolean {
         if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
             return true;
         }
@@ -1997,7 +1997,7 @@ class Parser extends SlidingWindow {
         return this.parseAssignmentExpression(/*allowIn:*/ true);
     }
     
-    private isExpression(): bool {
+    private isExpression(): boolean {
         var currentToken = this.currentToken();
         var kind = currentToken.tokenKind;
 
@@ -2084,7 +2084,7 @@ class Parser extends SlidingWindow {
         return new ExpressionStatementSyntax(expression, semicolon);
     }
 
-    private isIfStatement(): bool {
+    private isIfStatement(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.IfKeyword;
     }
 
@@ -2105,7 +2105,7 @@ class Parser extends SlidingWindow {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
     }
 
-    private isElseClause(): bool {
+    private isElseClause(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.ElseKeyword;
     }
 
@@ -2118,7 +2118,7 @@ class Parser extends SlidingWindow {
         return new ElseClauseSyntax(elseKeyword, statement);
     }
 
-    private isVariableStatement(): bool {
+    private isVariableStatement(): boolean {
         var token0 = this.currentToken();
         if (token0.keywordKind() === SyntaxKind.VarKeyword) {
             return true;
@@ -2146,7 +2146,7 @@ class Parser extends SlidingWindow {
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
     }
 
-    private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
+    private parseVariableDeclaration(allowIn: boolean): VariableDeclarationSyntax {
         Debug.assert(this.currentToken().keywordKind() === SyntaxKind.VarKeyword);
         var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
@@ -2158,11 +2158,11 @@ class Parser extends SlidingWindow {
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
     }
 
-    private isVariableDeclarator(): bool {
+    private isVariableDeclarator(): boolean {
         return this.isIdentifier(this.currentToken());
     }
 
-    private parseVariableDeclarator(allowIn: bool): VariableDeclaratorSyntax {
+    private parseVariableDeclarator(allowIn: boolean): VariableDeclaratorSyntax {
         var identifier = this.eatIdentifierToken();
         var equalsValueClause: EqualsValueClauseSyntax = null;
         var typeAnnotation: TypeAnnotationSyntax = null;
@@ -2178,11 +2178,11 @@ class Parser extends SlidingWindow {
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
     }
 
-    private isEqualsValueClause(): bool {
+    private isEqualsValueClause(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.EqualsToken;
     }
 
-    private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
+    private parseEqualsValuesClause(allowIn: boolean): EqualsValueClauseSyntax {
         Debug.assert(this.isEqualsValueClause());
 
         var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
@@ -2191,7 +2191,7 @@ class Parser extends SlidingWindow {
         return new EqualsValueClauseSyntax(equalsToken, value);
     }
 
-    private parseExpression(allowIn: bool): ExpressionSyntax {
+    private parseExpression(allowIn: boolean): ExpressionSyntax {
         return this.parseSubExpression(0, allowIn);
     }
 
@@ -2199,7 +2199,7 @@ class Parser extends SlidingWindow {
     // i.e. if you have "var a = 1, b = 2" then when we parse '1' we want to parse with higher 
     // precedence than 'comma'.  Otherwise we'll get: "var a = (1, (b = 2))", instead of
     // "var a = (1), b = (2)");
-    private parseAssignmentExpression(allowIn: bool): ExpressionSyntax {
+    private parseAssignmentExpression(allowIn: boolean): ExpressionSyntax {
         return this.parseSubExpression(ParserExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
     }
 
@@ -2218,7 +2218,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private parseSubExpression(precedence: ParserExpressionPrecedence, allowIn: bool): ExpressionSyntax {
+    private parseSubExpression(precedence: ParserExpressionPrecedence, allowIn: boolean): ExpressionSyntax {
         // Because unary expression have the highest precedence, we can always parse one, regardless 
         // of what precedence was passed in.
         var leftOperand: ExpressionSyntax = this.parseUnaryExpression();
@@ -2227,7 +2227,7 @@ class Parser extends SlidingWindow {
         return leftOperand;
     }
 
-    private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: ExpressionSyntax): ExpressionSyntax {
+    private parseBinaryOrConditionalExpressions(precedence: number, allowIn: boolean, leftOperand: ExpressionSyntax): ExpressionSyntax {
         while (true) {
             // We either have a binary operator here, or we're finished.
             var currentTokenKind = this.currentToken().tokenKind;
@@ -2291,7 +2291,7 @@ class Parser extends SlidingWindow {
         return leftOperand;
     }
 
-    private isRightAssociative(expressionKind: SyntaxKind): bool {
+    private isRightAssociative(expressionKind: SyntaxKind): boolean {
         switch (expressionKind) {
             case SyntaxKind.AssignmentExpression:
             case SyntaxKind.AddAssignmentExpression:
@@ -2311,7 +2311,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private parseTerm(allowInvocation: bool, insideObjectCreation: bool): UnaryExpressionSyntax {
+    private parseTerm(allowInvocation: boolean, insideObjectCreation: boolean): UnaryExpressionSyntax {
         // NOTE: allowInvocation and insideObjectCreation are always the negation of the other.
         // We could remove one of them and just use the other.  However, i think this is much
         // easier to read and understand in this form.
@@ -2324,7 +2324,7 @@ class Parser extends SlidingWindow {
         return this.parsePostFixExpression(term, allowInvocation);
     }
 
-    private parsePostFixExpression(expression: UnaryExpressionSyntax, allowInvocation: bool): UnaryExpressionSyntax {
+    private parsePostFixExpression(expression: UnaryExpressionSyntax, allowInvocation: boolean): UnaryExpressionSyntax {
         Debug.assert(expression !== null);
 
         while (true) {
@@ -2365,7 +2365,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isArgumentList(): bool {
+    private isArgumentList(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
     }
 
@@ -2389,7 +2389,7 @@ class Parser extends SlidingWindow {
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
     }
 
-    private parseTermWorker(insideObjectCreation: bool): UnaryExpressionSyntax {
+    private parseTermWorker(insideObjectCreation: boolean): UnaryExpressionSyntax {
         var currentToken = this.currentToken();
 
         if (insideObjectCreation) {
@@ -2751,7 +2751,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
+    private parseParenthesizedArrowFunctionExpression(requireArrow: boolean): ParenthesizedArrowFunctionExpressionSyntax {
         Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
         var callSignature = this.parseCallSignature();
@@ -2777,7 +2777,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isSimpleArrowFunctionExpression(): bool {
+    private isSimpleArrowFunctionExpression(): boolean {
         // ERROR RECOVERY TWEAK:
         if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
             return true;
@@ -2798,11 +2798,11 @@ class Parser extends SlidingWindow {
             identifier, equalsGreaterThanToken, body);
     }
 
-    private isBlock(): bool {
+    private isBlock(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenBraceToken;
     }
 
-    private isDefinitelyArrowFunctionExpression(): bool {
+    private isDefinitelyArrowFunctionExpression(): boolean {
         Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
         
         var token1 = this.peekTokenN(1);
@@ -2877,7 +2877,7 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isPossiblyArrowFunctionExpression(): bool {
+    private isPossiblyArrowFunctionExpression(): boolean {
         Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
         
         var token1 = this.peekTokenN(1);
@@ -2952,13 +2952,13 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isPropertyAssignment(inErrorRecovery: bool): bool {
+    private isPropertyAssignment(inErrorRecovery: boolean): boolean {
         return this.isGetAccessorPropertyAssignment() ||
                this.isSetAccessorPropertyAssignment() ||
                this.isSimplePropertyAssignment(inErrorRecovery);
     }
 
-    private isGetAccessorPropertyAssignment(): bool {
+    private isGetAccessorPropertyAssignment(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.GetKeyword &&
                this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
     }
@@ -2975,7 +2975,7 @@ class Parser extends SlidingWindow {
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
     }
 
-    private isSetAccessorPropertyAssignment(): bool {
+    private isSetAccessorPropertyAssignment(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.SetKeyword &&
                this.isPropertyName(this.peekTokenN(1), /*inErrorRecovery:*/ false);
     }
@@ -2993,7 +2993,7 @@ class Parser extends SlidingWindow {
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
     }
 
-    private isSimplePropertyAssignment(inErrorRecovery: bool): bool {
+    private isSimplePropertyAssignment(inErrorRecovery: boolean): boolean {
         return this.isPropertyName(this.currentToken(), inErrorRecovery);
     }
 
@@ -3007,7 +3007,7 @@ class Parser extends SlidingWindow {
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
     }
 
-    private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
+    private isPropertyName(token: ISyntaxToken, inErrorRecovery: boolean): boolean {
         // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
         // allowed here, even reserved words like keywords.
         switch (token.tokenKind) {
@@ -3092,7 +3092,7 @@ class Parser extends SlidingWindow {
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
     }
 
-    private isTypeAnnotation(): bool {
+    private isTypeAnnotation(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.ColonToken;
     }
 
@@ -3111,13 +3111,13 @@ class Parser extends SlidingWindow {
         return new TypeAnnotationSyntax(colonToken, type);
     }
 
-    private isType(allowFunctionType: bool, allowConstructorType: bool): bool {
+    private isType(allowFunctionType: boolean, allowConstructorType: boolean): boolean {
         return this.isPredefinedType() ||
                this.isTypeLiteral(allowFunctionType, allowConstructorType) ||
                this.isName();
     }
 
-    private parseType(requireCompleteArraySuffix: bool): TypeSyntax {
+    private parseType(requireCompleteArraySuffix: boolean): TypeSyntax {
         var type = this.parseNonArrayType();
 
         while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
@@ -3183,7 +3183,7 @@ class Parser extends SlidingWindow {
         return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
     }
 
-    private isTypeLiteral(allowFunctionType: bool, allowConstructorType: bool): bool {
+    private isTypeLiteral(allowFunctionType: boolean, allowConstructorType: boolean): boolean {
         if (this.isObjectType()) {
             return true;
         }
@@ -3199,15 +3199,15 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isObjectType(): bool {
+    private isObjectType(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenBraceToken;
     }
 
-    private isFunctionType(): bool {
+    private isFunctionType(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
     }
 
-    private isConstructorType(): bool {
+    private isConstructorType(): boolean {
         return this.currentToken().keywordKind() === SyntaxKind.NewKeyword;
     }
 
@@ -3217,7 +3217,7 @@ class Parser extends SlidingWindow {
         return new PredefinedTypeSyntax(keyword);
     }
 
-    private isPredefinedType(): bool {
+    private isPredefinedType(): boolean {
         switch (this.currentToken().keywordKind()) {
             case SyntaxKind.AnyKeyword:
             case SyntaxKind.NumberKeyword:
@@ -3230,7 +3230,7 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isParameter(): bool {
+    private isParameter(): boolean {
         var token = this.currentToken();
         if (token.tokenKind === SyntaxKind.DotDotDotToken) {
             return true;
@@ -3289,7 +3289,7 @@ class Parser extends SlidingWindow {
     }
 
     // Returns true if we should abort parsing the list.
-    private abortParsingListOrMoveToNextToken(currentListType: ParserListParsingState, itemCount: number): bool {
+    private abortParsingListOrMoveToNextToken(currentListType: ParserListParsingState, itemCount: number): boolean {
         // Ok.  It wasn't a terminator and it wasn't the start of an item in the list. 
         // Definitely report an error for this token.
         this.reportUnexpectedTokenDiagnostic(currentListType);
@@ -3320,7 +3320,7 @@ class Parser extends SlidingWindow {
     }
 
     private tryParseExpectedListItem(currentListType: ParserListParsingState,
-                                     inErrorRecovery: bool,
+                                     inErrorRecovery: boolean,
                                      items: any[],
                                      processItems: (parser: Parser, items: any[]) => void): any[] {
         if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
@@ -3338,7 +3338,7 @@ class Parser extends SlidingWindow {
         return items;
     }
 
-    private listIsTerminated(currentListType: ParserListParsingState, itemCount: number): bool {
+    private listIsTerminated(currentListType: ParserListParsingState, itemCount: number): boolean {
         return this.isExpectedListTerminator(currentListType, itemCount) ||
                this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
     }
@@ -3474,7 +3474,7 @@ class Parser extends SlidingWindow {
         return SeparatedSyntaxList.create(items);
     }
 
-    private allowsTrailingSeparator(currentListType: ParserListParsingState): bool {
+    private allowsTrailingSeparator(currentListType: ParserListParsingState): boolean {
         switch (currentListType) {
             case ParserListParsingState.EnumDeclaration_VariableDeclarators:
             case ParserListParsingState.ObjectType_TypeMembers:
@@ -3501,7 +3501,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private requiresAtLeastOneItem(currentListType: ParserListParsingState): bool {
+    private requiresAtLeastOneItem(currentListType: ParserListParsingState): boolean {
         switch (currentListType) {
             case ParserListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
             case ParserListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
@@ -3527,7 +3527,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private allowsAutomaticSemicolonInsertion(currentListType: ParserListParsingState): bool {
+    private allowsAutomaticSemicolonInsertion(currentListType: ParserListParsingState): boolean {
         switch (currentListType) {
             case ParserListParsingState.ObjectType_TypeMembers:
                 return true;
@@ -3579,7 +3579,7 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private existingDiagnosticAtPosition(position: number): bool {
+    private existingDiagnosticAtPosition(position: number): boolean {
         return this.diagnostics.length > 0 &&
             this.diagnostics[this.diagnostics.length - 1].position() === position;
     }
@@ -3602,7 +3602,7 @@ class Parser extends SlidingWindow {
         this.diagnostics.push(diagnostic);
     }
 
-    private isExpectedListTerminator(currentListType: ParserListParsingState, itemCount: number): bool {
+    private isExpectedListTerminator(currentListType: ParserListParsingState, itemCount: number): boolean {
         switch (currentListType) {
             case ParserListParsingState.SourceUnit_ModuleElements:
                 return this.isExpectedSourceUnit_ModuleElementsTerminator();
@@ -3654,31 +3654,31 @@ class Parser extends SlidingWindow {
         }
     }
 
-    private isExpectedSourceUnit_ModuleElementsTerminator(): bool {
+    private isExpectedSourceUnit_ModuleElementsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
     }
 
-    private isExpectedEnumDeclaration_VariableDeclaratorsTerminator(): bool {
+    private isExpectedEnumDeclaration_VariableDeclaratorsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedModuleDeclaration_ModuleElementsTerminator(): bool {
+    private isExpectedModuleDeclaration_ModuleElementsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedObjectType_TypeMembersTerminator(): bool {
+    private isExpectedObjectType_TypeMembersTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator(): bool {
+    private isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedLiteralExpression_AssignmentExpressionsTerminator(): bool {
+    private isExpectedLiteralExpression_AssignmentExpressionsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBracketToken;
     }
 
-    private isExpectedParameterList_ParametersTerminator(): bool {
+    private isExpectedParameterList_ParametersTerminator(): boolean {
         var token = this.currentToken();
         if (token.tokenKind === SyntaxKind.CloseParenToken) {
             return true;
@@ -3699,7 +3699,7 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator(): bool {
+    private isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator(): boolean {
         // This is the case when we're parsing variable declarations in a for/for-in statement.
         if (this.currentToken().tokenKind === SyntaxKind.SemicolonToken ||
             this.currentToken().tokenKind === SyntaxKind.CloseParenToken) {
@@ -3713,7 +3713,7 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount: number): bool {
+    private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount: number): boolean {
         //// This is the case when we're parsing variable declarations in a variable statement.
 
         // If we just parsed a comma, then we can't terminate this list.  i.e.:
@@ -3735,7 +3735,7 @@ class Parser extends SlidingWindow {
         return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
     }
 
-    private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {
+    private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): boolean {
         if (this.currentToken().keywordKind() === SyntaxKind.ExtendsKeyword ||
             this.currentToken().keywordKind() === SyntaxKind.ImplementsKeyword) {
             return true;
@@ -3749,28 +3749,28 @@ class Parser extends SlidingWindow {
         return false;
     }
 
-    private isExpectedArgumentList_AssignmentExpressionsTerminator(): bool {
+    private isExpectedArgumentList_AssignmentExpressionsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseParenToken;
     }
 
-    private isExpectedClassDeclaration_ClassElementsTerminator(): bool {
+    private isExpectedClassDeclaration_ClassElementsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedSwitchStatement_SwitchClausesTerminator(): bool {
+    private isExpectedSwitchStatement_SwitchClausesTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedSwitchClause_StatementsTerminator(): bool {
+    private isExpectedSwitchClause_StatementsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken ||
                this.isSwitchClause();
     }
 
-    private isExpectedBlock_StatementsTerminator(): bool {
+    private isExpectedBlock_StatementsTerminator(): boolean {
         return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
     }
 
-    private isExpectedListItem(currentListType: ParserListParsingState, inErrorRecovery: bool): any {
+    private isExpectedListItem(currentListType: ParserListParsingState, inErrorRecovery: boolean): any {
         switch (currentListType) {
             case ParserListParsingState.SourceUnit_ModuleElements:
                 return this.isModuleElement();

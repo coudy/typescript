@@ -61,7 +61,7 @@ module Harness {
     export interface ITestMetadata {
         id: string;
         desc: string;
-        pass: bool;
+        pass: boolean;
         perfResults: {
             mean: number;
             min: number;
@@ -73,7 +73,7 @@ module Harness {
     export interface IScenarioMetadata {
         id: string;
         desc: string;
-        pass: bool;
+        pass: boolean;
         bugs: string[];
     }
 
@@ -99,7 +99,7 @@ module Harness {
             }
         }
 
-        export function is(result: bool, msg?: string) {
+        export function is(result: boolean, msg?: string) {
             if (!result) {
                 throwAssertError(new Error(msg || "Expected true, got false."));
             }
@@ -180,7 +180,7 @@ module Harness {
             }
         }
 
-        export function arrayContainsOnce(arr: any[], filter: (item: any) => bool) {
+        export function arrayContainsOnce(arr: any[], filter: (item: any) => boolean) {
             var foundCount = 0;
 
             for (var i = 0; i < arr.length; i++) {
@@ -234,7 +234,7 @@ module Harness {
         fail: (test: ITestMetadata) => void;
         error: (test: ITestMetadata, error: Error) => void;
         comment: (comment: string) => void;
-        verify: (test: ITestMetadata, passed: bool, actual: any, expected: any, message: string) => void;
+        verify: (test: ITestMetadata, passed: boolean, actual: any, expected: any, message: string) => void;
     }
 
     export class Logger implements ILogger {
@@ -248,7 +248,7 @@ module Harness {
         public fail(test: ITestMetadata) { }
         public error(test: ITestMetadata, error: Error) { }
         public comment(comment: string) { }
-        public verify(test: ITestMetadata, passed: bool, actual: any, expected: any, message: string) { }
+        public verify(test: ITestMetadata, passed: boolean, actual: any, expected: any, message: string) { }
     }
 
     // Logger-related functions
@@ -718,7 +718,7 @@ module Harness {
             private fileCollection = {};
 
             /** create file gets the whole path to create, so this works as expected with the --out parameter */
-            public createFile(s: string, useUTF8?: bool): ITextWriter {
+            public createFile(s: string, useUTF8?: boolean): ITextWriter {
 
                 if (this.fileCollection[s]) {
                     return <ITextWriter>this.fileCollection[s];
@@ -811,7 +811,7 @@ module Harness {
                 return [arg];
             }
 
-            public compilesOk(testCode): bool {
+            public compilesOk(testCode): boolean {
                 var errors = null;
                 compileString(testCode, 'test.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -946,13 +946,13 @@ module Harness {
             public any: Type;
             public number: Type;
             public string: Type;
-            public bool: Type;
+            public boolean: Type;
 
             constructor() {
                 this.any = this.get('var x : any', 'x');
                 this.number = this.get('var x : number', 'x');
                 this.string = this.get('var x : string', 'x');
-                this.bool = this.get('var x : bool', 'x');
+                this.boolean = this.get('var x : boolean', 'x');
             }
 
             public get (code: string, target: any) {
@@ -1104,7 +1104,7 @@ module Harness {
           * @param compilationContext a set of functions to be run before and after compiling this code for doing things like adding dependencies first
           * @param references the set of referenced files used by the given code
           */
-        export function generateDeclFile(code: string, verifyNoDeclFile: bool, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]): string {
+        export function generateDeclFile(code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]): string {
             reset();
 
             compiler.settings.generateDeclarationFiles = true;
@@ -1253,7 +1253,7 @@ module Harness {
             postCompile: () => void;
         }
 
-        export function addUnit(code: string, unitName?: string, isResident?: bool, isDeclareFile?: bool, references?: TypeScript.IFileReference[]) {
+        export function addUnit(code: string, unitName?: string, isResident?: boolean, isDeclareFile?: boolean, references?: TypeScript.IFileReference[]) {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
@@ -1275,7 +1275,7 @@ module Harness {
             return script;
         }
 
-        export function updateUnit(code: string, unitName: string, setRecovery?: bool) {
+        export function updateUnit(code: string, unitName: string, setRecovery?: boolean) {
             if (Harness.usePull) {
                 compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), unitName, setRecovery);
             } else {
@@ -1337,7 +1337,7 @@ module Harness {
             compiler.emitToOutfile(outfile);
         }
 
-        export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: bool) {
+        export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: boolean) {
             compiler.emit(ioHost, usePullEmitter);
         }
 
@@ -1547,11 +1547,11 @@ module Harness {
         public version: number;
         public editRanges: { length: number; editRange: TypeScript.ScriptEditRange; }[] = [];
 
-        constructor(public name: string, public content: string, public isResident: bool, public maxScriptVersions: number) {
+        constructor(public name: string, public content: string, public isResident: boolean, public maxScriptVersions: number) {
             this.version = 1;
         }
 
-        public updateContent(content: string, isResident: bool) {
+        public updateContent(content: string, isResident: boolean) {
             this.editRanges = [];
             this.content = content;
             this.isResident = isResident;
@@ -1650,11 +1650,11 @@ module Harness {
         //////////////////////////////////////////////////////////////////////
         // ILogger implementation
         //
-        public information(): bool { return false; }
-        public debug(): bool { return true; }
-        public warning(): bool { return true; }
-        public error(): bool { return true; }
-        public fatal(): bool { return true; }
+        public information(): boolean { return false; }
+        public debug(): boolean { return true; }
+        public warning(): boolean { return true; }
+        public error(): boolean { return true; }
+        public fatal(): boolean { return true; }
 
         public log(s: string): void {
             // For debugging...
@@ -1685,7 +1685,7 @@ module Harness {
             return this.scripts[scriptIndex].name;
         }
 
-        public getScriptIsResident(scriptIndex: number): bool {
+        public getScriptIsResident(scriptIndex: number): boolean {
             return this.scripts[scriptIndex].isResident;
         }
 
@@ -1925,7 +1925,7 @@ module Harness {
         htmlLeader += '\r\n' + ("</style>");
 
         export interface BaselineOptions {
-            LineEndingSensitive?: bool;
+            LineEndingSensitive?: boolean;
         }
 
         function localPath(filename: string) {

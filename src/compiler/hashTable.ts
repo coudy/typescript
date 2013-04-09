@@ -34,11 +34,11 @@ module TypeScript {
 
     export interface IHashTable {
         getAllKeys(): string[];
-        add(key: string, data): bool;
-        addOrUpdate(key: string, data): bool;
+        add(key: string, data): boolean;
+        addOrUpdate(key: string, data): boolean;
         map(fn: (k: string, value: any, context: any) => void , context: any): void;
-        every(fn: (k: string, value: any, context: any) => void , context: any): bool;
-        some(fn: (k: string, value: any, context: any) => void , context: any): bool;
+        every(fn: (k: string, value: any, context: any) => void , context: any): boolean;
+        some(fn: (k: string, value: any, context: any) => void , context: any): boolean;
         count(): number;
         lookup(key: string): any;
     }
@@ -59,7 +59,7 @@ module TypeScript {
             return result;
         }
 
-        public add(key: string, data): bool {
+        public add(key: string, data): boolean {
             if (this.table[key] !== undefined) {
                 return false;
             }
@@ -69,7 +69,7 @@ module TypeScript {
             return true;
         }
 
-        public addOrUpdate(key: string, data): bool {
+        public addOrUpdate(key: string, data): boolean {
             if (this.table[key] !== undefined) {
                 this.table[key] = data;
                 return false;
@@ -142,7 +142,7 @@ module TypeScript {
             return this.primaryTable.getAllKeys().concat(this.secondaryTable.getAllKeys());
         }
 
-        public add(key: string, data): bool {
+        public add(key: string, data): boolean {
             if (this.insertPrimary) {
                 return this.primaryTable.add(key, data);
             }
@@ -151,7 +151,7 @@ module TypeScript {
             }
         }
 
-        public addOrUpdate(key: string, data): bool {
+        public addOrUpdate(key: string, data): boolean {
             if (this.insertPrimary) {
                 return this.primaryTable.addOrUpdate(key, data);
             }
@@ -165,11 +165,11 @@ module TypeScript {
             this.secondaryTable.map(fn, context);
         }
 
-        public every(fn: (k: string, v, c) => bool, context) {
+        public every(fn: (k: string, v, c) => boolean, context) {
             return this.primaryTable.every(fn, context) && this.secondaryTable.every(fn, context);
         }
 
-        public some(fn: (k: string, v, c) => bool, context) {
+        public some(fn: (k: string, v, c) => boolean, context) {
             return this.primaryTable.some(fn, context) || this.secondaryTable.some(fn, context);
         }
 
@@ -213,13 +213,13 @@ module TypeScript {
         public table: HashEntry[] = [];
 
         constructor (public size: number, public hashFn: (key) =>number,
-                    public equalsFn: (key1, key2) =>bool) {
+                    public equalsFn: (key1, key2) =>boolean) {
             for (var i: number = 0; i < this.size; i++) {
                 this.table[i] = null;
             }
         }
 
-        public add(key, data): bool {
+        public add(key, data): boolean {
             var current: HashEntry;
             var entry: HashEntry = new HashEntry(key, data);
             var val: number = this.hashFn(key);

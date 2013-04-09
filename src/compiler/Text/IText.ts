@@ -16,7 +16,7 @@ module TypeScript {
         /// </summary>
         copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void;
 
-        substr(start: number, length: number, intern: bool): string;
+        substr(start: number, length: number, intern: boolean): string;
 
         /// <summary>
         /// Gets the a new IText that corresponds to the contents of this IText for the given span.

@@ -34,11 +34,11 @@ module TypeScript2 {
 
     export interface IHashTable {
         getAllKeys(): string[];
-        add(key: string, data): bool;
-        addOrUpdate(key: string, data): bool;
+        add(key: string, data): boolean;
+        addOrUpdate(key: string, data): boolean;
         map(fn: (k: string, v, c) => void , context): void;
-        every(fn: (k: string, v, c) => bool, context): bool;
-        some(fn: (k: string, v, c) => bool, context): bool;
+        every(fn: (k: string, v, c) => boolean, context): boolean;
+        some(fn: (k: string, v, c) => boolean, context): boolean;
         count(): number;
         lookup(key: string): any;
     }
@@ -57,7 +57,7 @@ module TypeScript2 {
             return result;
         }
 
-        public add(key: string, data): bool {
+        public add(key: string, data): boolean {
             if (this.table[key] != undefined) {
                 return false;
             }
@@ -66,7 +66,7 @@ module TypeScript2 {
             return true;
         }
 
-        public addOrUpdate(key: string, data): bool {
+        public addOrUpdate(key: string, data): boolean {
             if (this.table[key] != undefined) {
                 this.table[key] = data;
                 return false;
@@ -85,7 +85,7 @@ module TypeScript2 {
             }
         }
 
-        public every(fn: (k: string, v, c) => bool, context) {
+        public every(fn: (k: string, v, c) => boolean, context) {
             for (var k in this.table) {
                 var data = this.table[k];
                 if (data != undefined) {
@@ -97,7 +97,7 @@ module TypeScript2 {
             return true;
         }
 
-        public some(fn: (k: string, v, c) => bool, context) {
+        public some(fn: (k: string, v, c) => boolean, context) {
             for (var k in this.table) {
                 var data = this.table[k];
                 if (data != undefined) {
@@ -136,7 +136,7 @@ module TypeScript2 {
             return this.primaryTable.getAllKeys().concat(this.secondaryTable.getAllKeys());
         }
 
-        public add(key: string, data): bool {
+        public add(key: string, data): boolean {
             if (this.insertPrimary) {
                 return this.primaryTable.add(key, data);
             }
@@ -145,7 +145,7 @@ module TypeScript2 {
             }
         }
 
-        public addOrUpdate(key: string, data): bool {
+        public addOrUpdate(key: string, data): boolean {
             if (this.insertPrimary) {
                 return this.primaryTable.addOrUpdate(key, data);
             }
@@ -159,11 +159,11 @@ module TypeScript2 {
             this.secondaryTable.map(fn, context);
         }
 
-        public every(fn: (k: string, v, c) => bool, context) {
+        public every(fn: (k: string, v, c) => boolean, context) {
             return this.primaryTable.every(fn, context) && this.secondaryTable.every(fn, context);
         }
 
-        public some(fn: (k: string, v, c) => bool, context) {
+        public some(fn: (k: string, v, c) => boolean, context) {
             return this.primaryTable.some(fn, context) || this.secondaryTable.some(fn, context);
         }
 
@@ -207,13 +207,13 @@ module TypeScript2 {
         public table = new HashEntry[];
 
         constructor (public size: number, public hashFn: (key) =>number,
-                    public equalsFn: (key1, key2) =>bool) {
+                    public equalsFn: (key1, key2) =>boolean) {
             for (var i: number = 0; i < this.size; i++) {
                 this.table[i] = null;
             }
         }
 
-        public add(key, data): bool {
+        public add(key, data): boolean {
             var current: HashEntry;
             var entry: HashEntry = new HashEntry(key, data);
             var val: number = this.hashFn(key);
@@ -274,7 +274,7 @@ module TypeScript2 {
         private keys = [];
         private values = [];
 
-        public lookup(key, findValue?: bool) {
+        public lookup(key, findValue?: boolean) {
             var searchArray = this.keys;
             if (findValue) {
                 searchArray = this.values;
@@ -291,7 +291,7 @@ module TypeScript2 {
             return null;
         }
 
-        public add(key, data): bool {
+        public add(key, data): boolean {
             var lookupData = this.lookup(key);
             if (lookupData) {
                 return false;

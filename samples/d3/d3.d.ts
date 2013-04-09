@@ -111,7 +111,7 @@ interface ID3EnterSelection {
     append: (name: string) => ID3Selection;
     insert: (name: string, before: string) => ID3Selection;
     select: (selector: string) => ID3Selection;
-    empty: () => bool;
+    empty: () => boolean;
     node: () => Node;
 }
 
@@ -194,7 +194,7 @@ interface ID3LinearScale {
         (): ID3Interpolate;
         (factory: ID3Interpolate): ID3LinearScale;
     };
-    clamp(clamp: bool): ID3LinearScale;
+    clamp(clamp: boolean): ID3LinearScale;
     nice(): ID3LinearScale;
     ticks(count: number): any[];
     tickFormat(count: number): (n: number) => string;
@@ -214,7 +214,7 @@ interface ID3TimeScale {
         (): ID3Interpolate;
         (factory: ID3InterpolateFactory): ID3TimeScale;
     };
-    clamp(clamp: bool): ID3TimeScale;
+    clamp(clamp: boolean): ID3TimeScale;
     ticks: {
         (count: number): any[];
         (range: ID3Range, count: number): any[];

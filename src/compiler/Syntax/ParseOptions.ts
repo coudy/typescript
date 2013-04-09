@@ -2,9 +2,9 @@
 
 module TypeScript {
     export class ParseOptions {
-        private _allowAutomaticSemicolonInsertion: bool;
+        private _allowAutomaticSemicolonInsertion: boolean;
 
-        constructor(allowAutomaticSemicolonInsertion: bool = true) {
+        constructor(allowAutomaticSemicolonInsertion: boolean = true) {
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
 
@@ -12,7 +12,7 @@ module TypeScript {
             return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion };
         }
 
-        public allowAutomaticSemicolonInsertion(): bool {
+        public allowAutomaticSemicolonInsertion(): boolean {
             return this._allowAutomaticSemicolonInsertion;
         }
     }

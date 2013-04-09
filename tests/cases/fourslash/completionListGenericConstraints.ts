@@ -5,9 +5,9 @@
 ////    toString(): string;
 ////    toLocaleString(): string;
 ////    valueOf(): Object;
-////    hasOwnProperty(v: string): bool;
-////    isPrototypeOf(v: Object): bool;
-////    propertyIsEnumerable(v: string): bool;
+////    hasOwnProperty(v: string): boolean;
+////    isPrototypeOf(v: Object): boolean;
+////    propertyIsEnumerable(v: string): boolean;
 ////    [s: string]: any;
 ////}
 ////
@@ -43,7 +43,7 @@ verify.memberListContains("toString");
 ////}
 ////
 ////interface IBar2  extends IBar1 {
-////    bar21: bool;
+////    bar21: boolean;
 ////    bar22: IBar2;
 ////}
 ////

@@ -51,7 +51,7 @@ module TypeScript {
         // flag implicit 'any'
         public implicitAny = false;
 
-        public setOption(opt: string, val: bool): bool {
+        public setOption(opt: string, val: boolean): boolean {
             var optExists = this[opt];
             if (optExists !== undefined) {
                 this[opt] = val;
@@ -125,7 +125,7 @@ module TypeScript {
         settings: CompilationSettings;
         referencedFiles: IFileReference[];
         importedFiles: IFileReference[];
-        isLibFile: bool;
+        isLibFile: boolean;
     }
 
     function getFileReferenceFromReferencePath(comment: string): IFileReference {
@@ -161,7 +161,7 @@ module TypeScript {
         }
     }
 
-    export function getImplicitImport(comment: string): bool {
+    export function getImplicitImport(comment: string): boolean {
         var implicitImportRegEx = /^(\/\/\/\s*<implicit-import\s*)*\/>/gim;
         var match = implicitImportRegEx.exec(comment);
 
@@ -225,7 +225,7 @@ module TypeScript {
         var settings: CompilationSettings = options;
         var referencedFiles: IFileReference[] = [];
         var importedFiles: IFileReference[] = [];
-        var isLibFile: bool = false;
+        var isLibFile: boolean = false;
 
         // only search out dynamic mods
         // if you find a dynamic mod, ignore every other mod inside, until you balance rcurlies

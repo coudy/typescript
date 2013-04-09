@@ -8,10 +8,10 @@ module TypeScript {
         private text: ISimpleText;
         private _languageVersion: LanguageVersion;
 
-        private static isKeywordStartCharacter: bool[] = [];
-        private static isIdentifierStartCharacter: bool[] = [];
-        public static isIdentifierPartCharacter: bool[] = [];
-        private static isNumericLiteralStart: bool[] = [];
+        private static isKeywordStartCharacter: boolean[] = [];
+        private static isIdentifierStartCharacter: boolean[] = [];
+        public static isIdentifierPartCharacter: boolean[] = [];
+        private static isNumericLiteralStart: boolean[] = [];
 
         private static initializeStaticData() {
             if (Scanner.isKeywordStartCharacter.length === 0) {
@@ -84,7 +84,7 @@ module TypeScript {
 
         // Scans a token starting at the current position.  Any errors encountered will be added to 
         // 'diagnostics'.
-        public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): ISyntaxToken {
+        public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: boolean): ISyntaxToken {
             var diagnosticsLength = diagnostics.length;
             var fullStart = this.slidingWindow.absoluteIndex();
             var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
@@ -143,13 +143,13 @@ module TypeScript {
         private static triviaWindow = ArrayUtilities.createArray(2048, 0);
 
         // Scans a subsection of 'text' as trivia.
-        public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
+        public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: boolean): ISyntaxTriviaList {
             // Debug.assert(length > 0);
             var scanner = new Scanner(/*fileName:*/ null, text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, Scanner.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         }
 
-        private scanTrivia(isTrailing: bool): ISyntaxTriviaList {
+        private scanTrivia(isTrailing: boolean): ISyntaxTriviaList {
             // Keep this exactly in sync with scanTriviaInfo
             var trivia: ISyntaxTrivia[] = [];
 
@@ -225,7 +225,7 @@ module TypeScript {
             }
         }
 
-        private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: bool): number {
+        private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: boolean): number {
             // Keep this exactly in sync with scanTrivia
             var width = 0;
             var hasCommentOrNewLine = 0;
@@ -300,7 +300,7 @@ module TypeScript {
             }
         }
 
-        private isNewLineCharacter(ch: number): bool {
+        private isNewLineCharacter(ch: number): boolean {
             switch (ch) {
                 case CharacterCodes.carriageReturn:
                 case CharacterCodes.lineFeed:
@@ -450,7 +450,7 @@ module TypeScript {
             }
         }
 
-        private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): SyntaxKind {
+        private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: boolean): SyntaxKind {
             if (this.slidingWindow.isAtEndOfSource()) {
                 return SyntaxKind.EndOfFileToken;
             }
@@ -559,7 +559,7 @@ module TypeScript {
             return this.scanDefaultCharacter(character, diagnostics);
         }
 
-        private isIdentifierStart(interpretedChar: number): bool {
+        private isIdentifierStart(interpretedChar: number): boolean {
             if (Scanner.isIdentifierStartCharacter[interpretedChar]) {
                 return true;
             }
@@ -567,7 +567,7 @@ module TypeScript {
             return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this._languageVersion);
         }
 
-        private isIdentifierPart(interpretedChar: number): bool {
+        private isIdentifierPart(interpretedChar: number): boolean {
             if (Scanner.isIdentifierPartCharacter[interpretedChar]) {
                 return true;
             }
@@ -681,7 +681,7 @@ module TypeScript {
             return SyntaxKind.NumericLiteral;
         }
 
-        private isHexNumericLiteral(): bool {
+        private isHexNumericLiteral(): boolean {
             if (this.currentCharCode() === CharacterCodes._0) {
                 var ch = this.slidingWindow.peekItemN(1);
 
@@ -842,7 +842,7 @@ module TypeScript {
             }
         }
 
-        private isDotPrefixedNumericLiteral(): bool {
+        private isDotPrefixedNumericLiteral(): boolean {
             if (this.currentCharCode() === CharacterCodes.dot) {
                 var ch = this.slidingWindow.peekItemN(1);
                 return CharacterInfo.isDecimalDigit(ch);
@@ -869,7 +869,7 @@ module TypeScript {
             }
         }
 
-        private scanSlashToken(allowRegularExpression: bool): SyntaxKind {
+        private scanSlashToken(allowRegularExpression: boolean): SyntaxKind {
             // NOTE: By default, we do not try scanning a / as a regexp here.  We instead consider it a
             // div or div-assign.  Later on, if the parser runs into a situation where it would like a 
             // term, and it sees one of these then it may restart us asking specifically if we could 
@@ -1090,11 +1090,11 @@ module TypeScript {
             return SyntaxKind.StringLiteral;
         }
 
-        private isUnicodeOrHexEscape(character: number): bool {
+        private isUnicodeOrHexEscape(character: number): boolean {
             return this.isUnicodeEscape(character) || this.isHexEscape(character);
         }
 
-        private isUnicodeEscape(character: number): bool {
+        private isUnicodeEscape(character: number): boolean {
             if (character === CharacterCodes.backslash) {
                 var ch2 = this.slidingWindow.peekItemN(1);
                 if (ch2 === CharacterCodes.u) {
@@ -1105,7 +1105,7 @@ module TypeScript {
             return false;
         }
 
-        private isHexEscape(character: number): bool {
+        private isHexEscape(character: number): boolean {
             if (character === CharacterCodes.backslash) {
                 var ch2 = this.slidingWindow.peekItemN(1);
                 if (ch2 === CharacterCodes.x) {
@@ -1207,7 +1207,7 @@ module TypeScript {
             return intChar;
         }
 
-        public substring(start: number, end: number, intern: bool): string {
+        public substring(start: number, end: number, intern: boolean): string {
             var length = end - start;
             var offset = start - this.slidingWindow.windowAbsoluteStartIndex;
 

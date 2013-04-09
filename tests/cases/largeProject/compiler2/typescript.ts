@@ -128,13 +128,13 @@ module TypeScript2 {
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
-        createFile(path: string, useUTF8?: bool): ITextWriter;
+        createFile(path: string, useUTF8?: boolean): ITextWriter;
 
         // function to check if file exists on the disk
-        fileExists(path: string): bool;
+        fileExists(path: string): boolean;
 
         // Function to check if the directory exists on the disk
-        directoryExists(path: string): bool;
+        directoryExists(path: string): boolean;
 
         // Resolves the path
         resolvePath(path: string): string;
@@ -209,11 +209,11 @@ module TypeScript2 {
             this.parser.errorCallback = fn;
         }
 
-        public updateUnit(prog: string, filename: string, setRecovery: bool) {
+        public updateUnit(prog: string, filename: string, setRecovery: boolean) {
             return this.updateSourceUnit(new StringSourceText(prog), filename, setRecovery);
         }
 
-        public updateSourceUnit(sourceText: ISourceText, filename: string, setRecovery: bool): bool {
+        public updateSourceUnit(sourceText: ISourceText, filename: string, setRecovery: boolean): boolean {
             return this.timeFunction("updateSourceUnit(" + filename + ")", () => {
                 var updateResult = this.partialUpdateUnit(sourceText, filename, setRecovery);
                 return this.applyUpdateResult(updateResult);
@@ -222,7 +222,7 @@ module TypeScript2 {
 
         // Apply changes to compiler state.
         // Return "false" if the change is empty and nothing was updated.
-        public applyUpdateResult(updateResult: UpdateUnitResult): bool {
+        public applyUpdateResult(updateResult: UpdateUnitResult): boolean {
             switch (updateResult.kind) {
                 case UpdateUnitKind.NoEdits:
                     return false;
@@ -244,7 +244,7 @@ module TypeScript2 {
             }
         }
 
-        public partialUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: bool): UpdateUnitResult {
+        public partialUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: boolean): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + filename + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
                     if (this.units[i].filename == filename) {
@@ -288,7 +288,7 @@ module TypeScript2 {
 
         private typeCollectionTime = 0;
 
-        public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
+        public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:boolean, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
                 var script: Script = this.parser.parse(sourceText, filename, this.units.length, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;
@@ -414,7 +414,7 @@ module TypeScript2 {
 
         // Return "true" if the incremental typecheck was successful
         // Return "false" if incremental typecheck failed, requiring a full typecheck
-        public attemptIncrementalTypeCheck(updateResult: TypeScript2.UpdateUnitResult): bool {
+        public attemptIncrementalTypeCheck(updateResult: TypeScript2.UpdateUnitResult): boolean {
             return this.timeFunction("attemptIncrementalTypeCheck()", () => {
                 // updateResult.kind == editsInsideFunction
                 // updateResult.scope1 == old function
@@ -531,7 +531,7 @@ module TypeScript2 {
             }
         }
 
-        static mapToDTSFileName(fileName: string, wholeFileNameReplaced: bool) {
+        static mapToDTSFileName(fileName: string, wholeFileNameReplaced: boolean) {
             return getDeclareFilePath(fileName);
         }
 
@@ -548,7 +548,7 @@ module TypeScript2 {
             return true;
         }
 
-        public emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
+        public emitDeclarationsUnit(script: Script, reuseEmitter?: boolean, declarationEmitter?: DeclarationEmitter) {
             if (!this.canEmitDeclarations(script)) {
                 return null;
             }
@@ -601,7 +601,7 @@ module TypeScript2 {
             }
         }
 
-        static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: bool) {
+        static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: boolean) {
             if (wholeFileNameReplaced) {
                 // The complete output is redirected in this file so do not change extension
                 return fileName;
@@ -613,11 +613,11 @@ module TypeScript2 {
             }
         }
 
-        static mapToJSFileName(fileName: string, wholeFileNameReplaced: bool) {
+        static mapToJSFileName(fileName: string, wholeFileNameReplaced: boolean) {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter) {
+        public emitUnit(script: Script, reuseEmitter?: boolean, emitter?: Emitter) {
             if (!script.emitRequired(this.emitSettings)) {
                 return null;
             }
@@ -683,11 +683,11 @@ module TypeScript2 {
             }
         }
 
-        private outputScriptToUTF8(script: Script): bool {
+        private outputScriptToUTF8(script: Script): boolean {
             return script.containsUnicodeChar || (this.emitSettings.emitComments && script.containsUnicodeCharInComment);
         }
 
-        private outputScriptsToUTF8(scripts: Script[]): bool {
+        private outputScriptsToUTF8(scripts: Script[]): boolean {
             for (var i = 0, len = scripts.length; i < len; i++) {
                 var script = scripts[i];
                 if (this.outputScriptToUTF8(script)) {
@@ -697,7 +697,7 @@ module TypeScript2 {
             return false;
         }
 
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
             try {
                 // Creating files can cause exceptions, report them.   
                 return this.emitSettings.ioHost.createFile(fileName, useUTF8);
@@ -783,7 +783,7 @@ module TypeScript2 {
         }
         
         // returns 'true' if diffs were detected
-        public pullUpdateScript(oldScript: Script, newScript: Script): bool {
+        public pullUpdateScript(oldScript: Script, newScript: Script): boolean {
             return this.timeFunction("pullUpdateScript: ", () => {
 
                 var declDiffer = new PullDeclDiffer();
@@ -1044,7 +1044,7 @@ module TypeScript2 {
             });
         }
 
-        public pullUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: bool): bool {
+        public pullUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: boolean): boolean {
             return this.timeFunction("pullUpdateUnit(" + filename + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
                     if (this.units[i].filename == filename) {
@@ -1171,7 +1171,7 @@ module TypeScript2 {
                     // Special case for "true" and "false"
                     // REVIEW: This may no longer be necessary?
                     if (name == "true" || name == "false") {
-                        result.push(new ScopeEntry(name, "bool", this.compiler.typeChecker.booleanType.symbol));
+                        result.push(new ScopeEntry(name, "boolean", this.compiler.typeChecker.booleanType.symbol));
                     }
                 }
             }

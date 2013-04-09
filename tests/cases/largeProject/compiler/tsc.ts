@@ -18,11 +18,11 @@
 ///<reference path='optionsParser.ts'/>
 
 class DiagnosticsLogger implements TypeScript.ILogger {
-    public information(): bool { return false; }
-    public debug(): bool { return false; }
-    public warning(): bool { return false; }
-    public error(): bool { return false; }
-    public fatal(): bool { return false; }
+    public information(): boolean { return false; }
+    public debug(): boolean { return false; }
+    public warning(): boolean { return false; }
+    public error(): boolean { return false; }
+    public fatal(): boolean { return false; }
     public log(s: string): void {
         WScript.Echo(s);
     }
@@ -46,7 +46,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
 
     public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
                                          resolver: TypeScript.ICodeResolver,
-                                         traceDependencies: bool): TypeScript.CompilationEnvironment {
+                                         traceDependencies: boolean): TypeScript.CompilationEnvironment {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
@@ -82,7 +82,7 @@ class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
-    public hasResolveErrors: bool = false;
+    public hasResolveErrors: boolean = false;
     public compilerVersion = "0.9.0.0";
     public printedVersion = false;
 
@@ -117,7 +117,7 @@ class BatchCompiler {
     
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    public compile(): bool {
+    public compile(): boolean {
         var compiler: TypeScript.TypeScriptCompiler;
 
         compiler = new TypeScript.TypeScriptCompiler(this.ioHost.stderr, this.compilationSettings.gatherDiagnostics ? <any>(new DiagnosticsLogger()) : new TypeScript.NullLogger(), this.compilationSettings);
@@ -141,7 +141,7 @@ class BatchCompiler {
             compiler.emitCommentsToOutput();
         }
 
-        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: bool) => {
+        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: boolean) => {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
@@ -175,7 +175,7 @@ class BatchCompiler {
         }
 
         var emitterIOHost = {
-            createFile: (fileName: string, useUTF8?: bool) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
+            createFile: (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
             directoryExists: this.ioHost.directoryExists,
             fileExists: this.ioHost.fileExists,
             resolvePath: this.ioHost.resolvePath

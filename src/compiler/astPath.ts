@@ -95,7 +95,7 @@ module TypeScript {
             return this.asts[index];
         }
 
-        public isNameOfClass(): bool {
+        public isNameOfClass(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -104,7 +104,7 @@ module TypeScript {
                 ((<TypeScript.InterfaceDeclaration>this.parent()).name === this.ast());
         }
 
-        public isNameOfInterface(): bool {
+        public isNameOfInterface(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -113,7 +113,7 @@ module TypeScript {
                 ((<TypeScript.InterfaceDeclaration>this.parent()).name === this.ast());
         }
 
-        public isNameOfArgument(): bool {
+        public isNameOfArgument(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -122,7 +122,7 @@ module TypeScript {
                 ((<TypeScript.Parameter>this.parent()).id === this.ast());
         }
 
-        public isNameOfVariable(): bool {
+        public isNameOfVariable(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -131,7 +131,7 @@ module TypeScript {
                 ((<TypeScript.VariableDeclarator>this.parent()).id === this.ast());
         }
 
-        public isNameOfModule(): bool {
+        public isNameOfModule(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -140,7 +140,7 @@ module TypeScript {
                 ((<TypeScript.ModuleDeclaration>this.parent()).name === this.ast());
         }
 
-        public isNameOfFunction(): bool {
+        public isNameOfFunction(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -149,34 +149,34 @@ module TypeScript {
                 ((<TypeScript.FunctionDeclaration>this.parent()).name === this.ast());
         }
 
-        public isBodyOfFunction(): bool {
+        public isBodyOfFunction(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
                  (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).block === this.asts[this.top - 0];
         }
 
-        public isArgumentListOfFunction(): bool {
+        public isArgumentListOfFunction(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
 
-        public isArgumentListOfCall(): bool {
+        public isArgumentListOfCall(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.InvocationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
 
-        public isArgumentListOfNew(): bool {
+        public isArgumentListOfNew(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectCreationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
 
-        public isInClassImplementsList(): bool {
+        public isInClassImplementsList(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -184,7 +184,7 @@ module TypeScript {
                 (this.isMemberOfList((<TypeScript.ClassDeclaration>this.parent()).implementsList, this.ast()));
         }
 
-        public isInInterfaceExtendsList(): bool {
+        public isInInterfaceExtendsList(): boolean {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
@@ -202,12 +202,12 @@ module TypeScript {
             return false;
         }
         
-        public isCallExpression(): bool {
+        public isCallExpression(): boolean {
             return this.count() >= 1 &&
             (this.asts[this.top - 0].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[this.top - 0].nodeType === TypeScript.NodeType.ObjectCreationExpression);
         }
 
-        public isCallExpressionTarget(): bool {
+        public isCallExpressionTarget(): boolean {
             if (this.count() < 2) {
                 return false;
             }
@@ -236,7 +236,7 @@ module TypeScript {
         }
 
 
-        public isDeclaration(): bool {
+        public isDeclaration(): boolean {
             if (this.ast() !== null) {
                 switch (this.ast().nodeType) {
                     case TypeScript.NodeType.ClassDeclaration:
@@ -251,7 +251,7 @@ module TypeScript {
             return false;
         }
 
-        private isMemberOfList(list: ASTList, item: AST): bool {
+        private isMemberOfList(list: ASTList, item: AST): boolean {
             if (list && list.members) {
                 for (var i = 0, n = list.members.length; i < n; i++) {
                     if (list.members[i] === item) {
@@ -264,7 +264,7 @@ module TypeScript {
         }
     }
 
-    export function isValidAstNode(ast: TypeScript.IASTSpan): bool {
+    export function isValidAstNode(ast: TypeScript.IASTSpan): boolean {
         if (ast === null)
             return false;
 

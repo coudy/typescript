@@ -1,7 +1,7 @@
 /// <reference path="fourslash.ts" />
 
 ////interface IExec {
-////    exec: (filename: string, cmdLine: string) => bool;
+////    exec: (filename: string, cmdLine: string) => boolean;
 ////}
 ////class /*1*/NodeExec/*2*/ implements IExec { }
 

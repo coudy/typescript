@@ -21,7 +21,7 @@ module TypeScript.Formatting {
         private indentationPosition: number;
         private options: FormattingOptions;
 
-        constructor(indentationPosition: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: bool, options: FormattingOptions) {
+        constructor(indentationPosition: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
             super(new TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken);
 
             this.indentationPosition = indentationPosition;

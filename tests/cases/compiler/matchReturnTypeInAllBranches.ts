@@ -2,10 +2,10 @@
 class IceCreamMonster {
     private iceCreamFlavor: string;
     private iceCreamRemaining: number;
-    private wantsSprinkles: bool;
+    private wantsSprinkles: boolean;
     private soundsWhenEating: string;
     public name: string;
-    constructor(iceCreamFlavor: string, wantsSprinkles: bool, soundsWhenEating: string, name: string) {
+    constructor(iceCreamFlavor: string, wantsSprinkles: boolean, soundsWhenEating: string, name: string) {
         this.iceCreamFlavor = iceCreamFlavor;
         this.iceCreamRemaining = 100;
         this.wantsSprinkles = wantsSprinkles;
@@ -16,9 +16,9 @@ class IceCreamMonster {
 * Tells the IceCreamMonster to eat their ice cre    am!    
 *
 * @param {number} amount The amount of ice cream to e    at.
-* @return {bool} True if ice cream remains, false if there is no more ice cream le    ft.
+* @return {boolean} True if ice cream remains, false if there is no more ice cream le    ft.
 */
-    public eatIceCream(amount: number): bool {
+    public eatIceCream(amount: number): boolean {
         this.iceCreamRemaining -= amount;
         if (this.iceCreamRemaining <= 0)
         {

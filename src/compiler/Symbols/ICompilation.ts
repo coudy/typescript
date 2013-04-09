@@ -17,7 +17,7 @@ interface ICompilation {
 
     replaceSyntaxTree(oldSyntaxTree: SyntaxTree, newSyntaxTree: SyntaxTree): void;
 
-    containsSyntaxTree(syntaxTree: SyntaxTree): bool;
+    containsSyntaxTree(syntaxTree: SyntaxTree): boolean;
 
     globalModule(): IModuleSymbol;
 

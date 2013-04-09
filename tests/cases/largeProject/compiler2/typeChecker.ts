@@ -55,7 +55,7 @@ module TypeScript2 {
 
     export interface ApplicableSignature {
         signature: Signature;
-        hadProvisionalErrors: bool;
+        hadProvisionalErrors: boolean;
     }
 
     export enum TypeCheckCollectionMode {
@@ -103,7 +103,7 @@ module TypeScript2 {
         public undefinedType: Type2;
 
         // Use this flag to turn resident checking on and off
-        public residentTypeCheck: bool = true;
+        public residentTypeCheck: boolean = true;
 
         public mod: ModuleType = null;
         public gloMod: TypeSymbol = null;
@@ -126,7 +126,7 @@ module TypeScript2 {
             this.globalScope = new SymbolScopeBuilder(dualGlobalScopedMembers, dualGlobalScopedAmbientMembers, dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes, this.importedGlobals, null);
 
             this.voidType = this.enterPrimitive(Primitive.Void, "void");
-            this.booleanType = this.enterPrimitive(Primitive.Boolean, "bool");
+            this.booleanType = this.enterPrimitive(Primitive.Boolean, "boolean");
             this.doubleType = this.enterPrimitive(Primitive.Double, "number");
             this.importedGlobals.ambientEnclosedTypes.addPublicMember("number", this.doubleType.symbol);
 
@@ -210,13 +210,13 @@ module TypeScript2 {
         public targetAccessorType: Type2 = null;
 
         constructor (public contextualType: Type2,
-            public provisional: bool, public contextID: number) { }
+            public provisional: boolean, public contextID: number) { }
     }
 
     export class ContextualTypingContextStack {
         private contextStack: ContextualTypeContext[] = [];
         static contextID = TypeCheckStatus.Finished + 1;
-        public pushContextualType(type: Type2, provisional: bool) { this.contextStack.push(new ContextualTypeContext(type, provisional, ContextualTypingContextStack.contextID++)); this.checker.errorReporter.pushToErrorSink = provisional; }
+        public pushContextualType(type: Type2, provisional: boolean) { this.contextStack.push(new ContextualTypeContext(type, provisional, ContextualTypingContextStack.contextID++)); this.checker.errorReporter.pushToErrorSink = provisional; }
         public hadProvisionalErrors = false; // somewhere in the chain a provisional typecheck error was thrown
         public popContextualType() {
             var tc = this.contextStack.pop();
@@ -315,7 +315,7 @@ module TypeScript2 {
         }
 
         // Contextual typing
-        public setContextualType(type: Type2, provisional: bool) {
+        public setContextualType(type: Type2, provisional: boolean) {
             this.typingContextStack.pushContextualType(type, provisional);
             this.currentContextualTypeContext = this.typingContextStack.getContextualType();
         }
@@ -335,7 +335,7 @@ module TypeScript2 {
             }
         }
 
-        public typeCheckWithContextualType(contextType: Type2, provisional: bool, condition: bool, ast: AST2) {
+        public typeCheckWithContextualType(contextType: Type2, provisional: boolean, condition: boolean, ast: AST2) {
             if (condition) {
                 this.setContextualType(contextType, this.typingContextStack.isProvisional() || provisional);
             }
@@ -442,7 +442,7 @@ module TypeScript2 {
 
         // Create a signature for a function definition
         //  (E.g., has a function body - function declarations, property declarations, lambdas)
-        public createFunctionSignature(funcDecl: FuncDecl, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: bool): Signature {
+        public createFunctionSignature(funcDecl: FuncDecl, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: boolean): Signature {
 
             var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container == this.gloMod;
             var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
@@ -675,7 +675,7 @@ module TypeScript2 {
 
         // Creates a new symbol for an accessor property
         // Note that funcDecl.type.symbol and fgSym may not be the same (E.g., in the case of type collection)
-        public createAccessorSymbol(funcDecl: FuncDecl, fgSym: Symbol, enclosingClass: Type2, addToMembers: bool, isClassProperty: bool, scope: SymbolScope, container: Symbol) {
+        public createAccessorSymbol(funcDecl: FuncDecl, fgSym: Symbol, enclosingClass: Type2, addToMembers: boolean, isClassProperty: boolean, scope: SymbolScope, container: Symbol) {
             var accessorSym: FieldSymbol = null
             var sig = funcDecl.signature;
             var nameText = funcDecl.name.text;
@@ -1025,7 +1025,7 @@ module TypeScript2 {
             return fieldSymbol;
         }
 
-        public resolveTypeLink(scope: SymbolScope, typeLink: TypeLink, supplyVar: bool): void {
+        public resolveTypeLink(scope: SymbolScope, typeLink: TypeLink, supplyVar: boolean): void {
             var arrayCount = 0;
             if (typeLink.type == null) {
                 var ast: AST2 = typeLink.ast;
@@ -1174,7 +1174,7 @@ module TypeScript2 {
             return extendsType;
         }
 
-        public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList2): { sig: Signature; ambiguous: bool; } {
+        public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList2): { sig: Signature; ambiguous: boolean; } {
 
             if (signatures.length == 1) {
                 return { sig: signatures[0].signature, ambiguous: false };
@@ -1387,7 +1387,7 @@ module TypeScript2 {
             return applicableSigs;
         }
 
-        public canContextuallyTypeFunction(candidateType: Type2, funcDecl: FuncDecl, beStringent: bool): bool {
+        public canContextuallyTypeFunction(candidateType: Type2, funcDecl: FuncDecl, beStringent: boolean): boolean {
 
             // in these cases, we do not attempt to apply a contextual type
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
@@ -1444,7 +1444,7 @@ module TypeScript2 {
             return true;
         }
 
-        public canContextuallyTypeObjectLiteral(targetType: Type2, objectLit: UnaryExpression2): bool {
+        public canContextuallyTypeObjectLiteral(targetType: Type2, objectLit: UnaryExpression2): boolean {
 
             if (targetType == this.typeFlow.objectInterfaceType) {
                 return true;
@@ -1515,7 +1515,7 @@ module TypeScript2 {
             return t == this.undefinedType || t == this.nullType;
         }
 
-        public findBestCommonType(initialType: Type2, targetType: Type2, collection: ITypeCollection, acceptVoid:bool, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(initialType: Type2, targetType: Type2, collection: ITypeCollection, acceptVoid:boolean, comparisonInfo?: TypeComparisonInfo) {
             var i = 0;
             var len = collection.getLength();
             var nlastChecked = 0;
@@ -1768,7 +1768,7 @@ module TypeScript2 {
         public signatureGroupIsAssignableToTarget(sg1: SignatureGroup, sg2: SignatureGroup, comparisonInfo?: TypeComparisonInfo) { return this.signatureGroupIsRelatableToTarget(sg1, sg2, true, this.assignableCache, comparisonInfo); }
         public signatureIsAssignableToTarget(s1: Signature, s2: Signature, comparisonInfo?: TypeComparisonInfo) { return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, comparisonInfo); }
 
-        public sourceIsRelatableToTarget(source: Type2, target: Type2, assignableTo: bool, comparisonCache: any, comparisonInfo: TypeComparisonInfo) {
+        public sourceIsRelatableToTarget(source: Type2, target: Type2, assignableTo: boolean, comparisonCache: any, comparisonInfo: TypeComparisonInfo) {
 
             // REVIEW: Does this check even matter?
             //if (this.typesAreIdentical(source, target)) {
@@ -2029,7 +2029,7 @@ module TypeScript2 {
         }
 
         // REVIEW: TypeChanges: Return an error context object so the user can get better diagnostic info
-        public signatureGroupIsRelatableToTarget(sourceSG: SignatureGroup, targetSG: SignatureGroup, assignableTo: bool, comparisonCache: any, comparisonInfo?: TypeComparisonInfo) {
+        public signatureGroupIsRelatableToTarget(sourceSG: SignatureGroup, targetSG: SignatureGroup, assignableTo: boolean, comparisonCache: any, comparisonInfo?: TypeComparisonInfo) {
             if (sourceSG == targetSG) {
                 return true;
             }
@@ -2063,7 +2063,7 @@ module TypeScript2 {
             return true;
         }
 
-        public signatureIsRelatableToTarget(sourceSig: Signature, targetSig: Signature, assignableTo: bool, comparisonCache: any, comparisonInfo?: TypeComparisonInfo) {
+        public signatureIsRelatableToTarget(sourceSig: Signature, targetSig: Signature, assignableTo: boolean, comparisonCache: any, comparisonInfo?: TypeComparisonInfo) {
 
             if (!sourceSig.parameters || !targetSig.parameters) {
                 return false;

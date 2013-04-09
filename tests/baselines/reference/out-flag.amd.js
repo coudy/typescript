@@ -29,6 +29,14 @@ var MyClass = (function () {
 //@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
 ////[bin/comments_MultiModule_MultiFile_1.js.map]
 {"version":3,"file":"comments_MultiModule_MultiFile_1.js","sources":["comments_MultiModule_MultiFile_1.ts"],"names":[],"mappings":""}
+////[bin/deprecatedBool_0.js]
+//@ sourceMappingURL=deprecatedBool_0.js.map
+////[bin/deprecatedBool_0.js.map]
+{"version":3,"file":"deprecatedBool_0.js","sources":["deprecatedBool_0.ts"],"names":[],"mappings":""}
+////[bin/deprecatedBool_1.js]
+//@ sourceMappingURL=deprecatedBool_1.js.map
+////[bin/deprecatedBool_1.js.map]
+{"version":3,"file":"deprecatedBool_1.js","sources":["deprecatedBool_1.ts"],"names":[],"mappings":""}
 ////[bin/duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js]
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map
 ////[bin/duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map]

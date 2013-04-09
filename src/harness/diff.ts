@@ -70,14 +70,14 @@ module Diff {
             return this.content + this.delimiterContent;
         }
 
-        public equals(otherChunk: Chunk): bool {
+        public equals(otherChunk: Chunk): boolean {
             if (otherChunk === null) throw new Error("otherChunk is null");
 
             if (this.hashCode != otherChunk.hashCode) return false;
             return this.content === otherChunk.content;
         }
 
-        static isDelimiter(c: string, delimiters: string[]): bool {
+        static isDelimiter(c: string, delimiters: string[]): boolean {
             return delimiters.indexOf(c) >= 0;
         }
 
@@ -199,7 +199,7 @@ module Diff {
             return set;
         }
 
-        static CategoryMatches(left: UnicodeCategory, right: UnicodeCategory): bool {
+        static CategoryMatches(left: UnicodeCategory, right: UnicodeCategory): boolean {
             // Spacing never matches. This causes each space to be broken up
             if (left === UnicodeCategory.SpaceSeparator || right === UnicodeCategory.SpaceSeparator) return false;
 
@@ -255,7 +255,7 @@ module Diff {
         private segmentSet: Segment[];
         private currentContent: string;
         private currentType: SegmentType;
-        private segmentExists: bool;
+        private segmentExists: boolean;
 
         constructor() {
             this.segmentSet = [];
@@ -318,14 +318,14 @@ module Diff {
         private segmentSet: Segment[];
 
         // Strings and Regions mode fields
-        private regionsGenerated: bool;
+        private regionsGenerated: boolean;
         public mergedHtml: string;
         public mergedOutput: string;
         public oldOutput: string;
         public newOutput: string;
         public regions: Region[];
 
-        constructor(oldContent: string, newContent: string, private includeUnchangedRegions: bool = true) {
+        constructor(oldContent: string, newContent: string, private includeUnchangedRegions: boolean = true) {
             this.regionsGenerated = false;
             this.segmentSet = [];
 
@@ -513,7 +513,7 @@ module Diff {
         /// </summary>
         /// <param name="difference">The diff result of the comparison</param>
         /// <returns>True if they are similar enough to map, False otherwise</returns>
-        static AreSimilarEnough(difference: InnerDiff): bool {
+        static AreSimilarEnough(difference: InnerDiff): boolean {
             var identicalChars = 0;
             var differentChars = 0;
 
@@ -815,7 +815,7 @@ module Diff {
             this.reportContent = HtmlBaselineReport.htmlLeader;
         }
 
-        public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string, includeUnchangedRegions: bool): void {
+        public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string, includeUnchangedRegions: boolean): void {
             var diff = new Diff.StringDiff(expected, actual, includeUnchangedRegions);
 
             var header = "";

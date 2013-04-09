@@ -21,7 +21,7 @@ var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 
 class Program {
-    runAllTests(verify: bool): void {
+    runAllTests(verify: boolean): void {
         Environment.standardOut.WriteLine("");
 
         if (generate) {
@@ -289,7 +289,7 @@ class Program {
         });
     }
 
-    private checkResult(fileName: string, result: any, verify: bool, generateBaseline: bool, justText: bool): void {
+    private checkResult(fileName: string, result: any, verify: boolean, generateBaseline: boolean, justText: boolean): void {
         var actualResult: string;
 
         var expectedFile = fileName + ".expected";
@@ -336,9 +336,9 @@ class Program {
     
     runEmitter(fileName: string,
         languageVersion: TypeScript.LanguageVersion,
-               verify: bool,
-               generateBaseline: bool,
-               justText: bool): void {
+               verify: boolean,
+               generateBaseline: boolean,
+               justText: boolean): void {
         if (true) {
             // return;
         }
@@ -369,8 +369,8 @@ class Program {
 
     runPrettyPrinter(fileName: string,
         languageVersion: TypeScript.LanguageVersion,
-        verify: bool,
-        generateBaseline: bool): void {
+        verify: boolean,
+        generateBaseline: boolean): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
@@ -396,8 +396,8 @@ class Program {
 
     runParser(fileName: string,
               languageVersion: TypeScript.LanguageVersion,
-              verify: bool,
-              generateBaseline: bool,
+              verify: boolean,
+              generateBaseline: boolean,
               allowErrors = true): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
@@ -461,7 +461,7 @@ class Program {
     }
 
     runFindToken(fileName: string,
-        languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+        languageVersion: TypeScript.LanguageVersion, verify: boolean, generateBaseline: boolean): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
@@ -526,7 +526,7 @@ class Program {
     }
 
     runTrivia(fileName: string,
-        languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+        languageVersion: TypeScript.LanguageVersion, verify: boolean, generateBaseline: boolean): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts")) {
             return;
         }
@@ -552,7 +552,7 @@ class Program {
         this.checkResult(fileName, tokens, verify, generateBaseline, false);
     }
 
-    runScanner(fileName: string, languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+    runScanner(fileName: string, languageVersion: TypeScript.LanguageVersion, verify: boolean, generateBaseline: boolean): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts")) {
             return;
         }
@@ -632,7 +632,7 @@ class Program {
 
                 if (isNegative) {
                     var nameOnly = fileName.substr(fileName.lastIndexOf("\\") + 1);
-                    var canParseSuccessfully = <bool>negative262ExpectedResults[nameOnly];
+                    var canParseSuccessfully = <boolean>negative262ExpectedResults[nameOnly];
 
                     if (canParseSuccessfully) {
                         // We expected to parse this successfully.  Report an error if we didn't.

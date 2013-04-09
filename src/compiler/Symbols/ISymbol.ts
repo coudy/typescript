@@ -35,7 +35,7 @@ interface ISymbol {
 
     // True if this symbol is a definition.  False if it not (i.e. it is a constructed generic
     // symbol).
-    isDefinition(): bool;
+    isDefinition(): boolean;
 
     /// <summary>
     /// Gets the the original definition of the symbol. If this symbol is derived from another symbol,
@@ -46,10 +46,10 @@ interface ISymbol {
     // True if this symbol was automatically generated based on the absense of the normal construct
     // that would usually cause it to be created.  For example, a class with no 'constructor' 
     // node will still have a symbol for the constructor synthesized.  
-    isImplicitlyDeclared(): bool;
+    isImplicitlyDeclared(): boolean;
 
     // Returns true if this symbol can be referenced by its name in code.
-    canBeReferencedByName(): bool;
+    canBeReferencedByName(): boolean;
 
     accessibility(): Accessibility;
 
@@ -57,14 +57,14 @@ interface ISymbol {
 
     toSymbolDisplayParts(format: SymbolDisplay.Format): SymbolDisplay.Part[];
 
-    isStatic(): bool;
+    isStatic(): boolean;
 
-    isType(): bool;
-    isSignature(): bool;
-    isMember(): bool;
-    isPrimitiveType(): bool;
-    isObjectType(): bool;
-    isArrayType(): bool;
+    isType(): boolean;
+    isSignature(): boolean;
+    isMember(): boolean;
+    isPrimitiveType(): boolean;
+    isObjectType(): boolean;
+    isArrayType(): boolean;
 }
 
 /// Represents any symbol that has type parameters.
@@ -97,12 +97,12 @@ interface IParameterSymbol extends ISymbol {
     /// <summary>
     /// Returns true if the parameter was declared as a parameter array. 
     /// </summary>
-    isRest(): bool;
+    isRest(): boolean;
 
     /// <summary>
     /// Returns true if the parameter is optional.
     /// </summary>
-    isOptional(): bool;
+    isOptional(): boolean;
 
     /// <summary>
     /// Gets the type of the parameter.
@@ -119,7 +119,7 @@ interface IParameterSymbol extends ISymbol {
     /// when no value is provided as an argument to a call. The default value
     /// can be obtained with the DefaultValue property.
     /// </summary>
-    hasValue(): bool;
+    hasValue(): boolean;
 
     /// <summary>
     /// Returns the default value of the parameter. 
@@ -139,7 +139,7 @@ interface IModuleOrTypeSymbol extends ISymbol {
 }
 
 interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
-    isGlobalModule(): bool;
+    isGlobalModule(): boolean;
 
     memberCount(): number;
     memberAt(index: number): IMemberSymbol;

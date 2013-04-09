@@ -145,7 +145,7 @@ module TypeScript {
             }
         }
 
-        public symbolIsRedeclaration(sym: PullSymbol): bool {
+        public symbolIsRedeclaration(sym: PullSymbol): boolean {
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) ||
                     ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
@@ -1488,7 +1488,7 @@ module TypeScript {
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
 
-            var isSignature: bool = (declFlags & PullElementFlags.Signature) != 0;
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) != 0;
 
             var parent = this.getParent(true);
             var parentHadSymbol = false;
@@ -1829,7 +1829,7 @@ module TypeScript {
 
             var methodName = methodDeclaration.getName();
 
-            var isSignature: bool = (declFlags & PullElementFlags.Signature) != 0;
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) != 0;
 
             var parent = this.getParent(true);
             var parentHadSymbol = false;
@@ -2036,7 +2036,7 @@ module TypeScript {
 
             var constructorName = constructorDeclaration.getName();
 
-            var isSignature: bool = (declFlags & PullElementFlags.Signature) != 0;
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) != 0;
 
             var parent = <PullClassTypeSymbol>this.getParent(true);
 
@@ -2359,7 +2359,7 @@ module TypeScript {
 
             var funcName = getAccessorDeclaration.getName();
 
-            var isSignature: bool = (declFlags & PullElementFlags.Signature) != 0;
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) != 0;
             var isStatic = false;
             var linkKind = SymbolLinkKind.PublicMember;
 
@@ -2550,7 +2550,7 @@ module TypeScript {
 
             var funcName = setAccessorDeclaration.getName();
 
-            var isSignature: bool = (declFlags & PullElementFlags.Signature) != 0;
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) != 0;
             var isStatic = false;
             var linkKind = SymbolLinkKind.PublicMember;
 

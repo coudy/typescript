@@ -4,14 +4,14 @@ module TypeScript {
     export class SyntaxNode implements ISyntaxNodeOrToken {
         private _data: number;
 
-        constructor(parsedInStrictMode: bool) {
+        constructor(parsedInStrictMode: boolean) {
             this._data = parsedInStrictMode ? SyntaxConstants.NodeParsedInStrictModeMask : 0;
         }
 
-        public isNode(): bool { return true; }
-        public isToken(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
+        public isNode(): boolean { return true; }
+        public isToken(): boolean { return false; }
+        public isList(): boolean { return false; }
+        public isSeparatedList(): boolean { return false; }
 
         public kind(): SyntaxKind {
             throw Errors.abstract();
@@ -150,19 +150,19 @@ module TypeScript {
             return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
         }
 
-        public hasLeadingTrivia(): bool {
+        public hasLeadingTrivia(): boolean {
             return this.lastToken().hasLeadingTrivia();
         }
 
-        public hasTrailingTrivia(): bool {
+        public hasTrailingTrivia(): boolean {
             return this.lastToken().hasTrailingTrivia();
         }
 
-        public isTypeScriptSpecific(): bool {
+        public isTypeScriptSpecific(): boolean {
             return false;
         }
 
-        public isIncrementallyUnusable(): bool {
+        public isIncrementallyUnusable(): boolean {
             return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
         }
 
@@ -170,7 +170,7 @@ module TypeScript {
         // mode cannot be reused if the parser is non-strict mode (and vice versa).  This is because 
         // the parser parses things differently in strict mode and thus the tokens may be interpretted
         // differently if the mode is changed. 
-        public parsedInStrictMode(): bool {
+        public parsedInStrictMode(): boolean {
             return (this.data() & SyntaxConstants.NodeParsedInStrictModeMask) !== 0;
         }
 
@@ -300,27 +300,27 @@ module TypeScript {
             return previousToken;
         }
 
-        public isModuleElement(): bool {
+        public isModuleElement(): boolean {
             return false;
         }
 
-        public isClassElement(): bool {
+        public isClassElement(): boolean {
             return false;
         }
 
-        public isTypeMember(): bool {
+        public isTypeMember(): boolean {
             return false
         }
 
-        public isStatement(): bool {
+        public isStatement(): boolean {
             return false;
         }
 
-        public isSwitchClause(): bool {
+        public isSwitchClause(): boolean {
             return false;
         }
 
-        public structuralEquals(node: SyntaxNode): bool {
+        public structuralEquals(node: SyntaxNode): boolean {
             if (this === node) { return true; }
             if (node === null) { return false; }
             if (this.kind() !== node.kind()) { return false; }

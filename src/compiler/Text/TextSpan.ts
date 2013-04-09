@@ -34,7 +34,7 @@ module TypeScript {
             return this._start + this._length;
         }
 
-        public isEmpty(): bool {
+        public isEmpty(): boolean {
             return this._length === 0;
         }
 
@@ -48,7 +48,7 @@ module TypeScript {
         /// <c>true</c> if the position is greater than or equal to Start and strictly less 
         /// than End, otherwise <c>false</c>.
         /// </returns>
-        public containsPosition(position: number): bool {
+        public containsPosition(position: number): boolean {
             return position >= this._start && position < this.end();
         }
 
@@ -61,7 +61,7 @@ module TypeScript {
         /// <returns>
         /// <c>true</c> if the specified span falls completely within this span, otherwise <c>false</c>.
         /// </returns>
-        public containsTextSpan(span: TextSpan): bool {
+        public containsTextSpan(span: TextSpan): boolean {
             return span._start >= this._start && span.end() <= this.end();
         }
 
@@ -76,7 +76,7 @@ module TypeScript {
         /// <returns>
         /// <c>true</c> if the spans overlap, otherwise <c>false</c>.
         /// </returns>
-        public overlapsWith(span: TextSpan): bool {
+        public overlapsWith(span: TextSpan): boolean {
             var overlapStart = MathPrototype.max(this._start, span._start);
             var overlapEnd = MathPrototype.min(this.end(), span.end());
 
@@ -114,11 +114,11 @@ module TypeScript {
         /// <returns>
         /// <c>true</c> if the spans intersect, otherwise <c>false</c>.
         /// </returns>
-        public intersectsWithTextSpan(span: TextSpan): bool {
+        public intersectsWithTextSpan(span: TextSpan): boolean {
             return span._start <= this.end() && span.end() >= this._start;
         }
 
-        public intersectsWith(start: number, length: number): bool {
+        public intersectsWith(start: number, length: number): boolean {
             var end = start + length;
             return start <= this.end() && end >= this._start;
         }
@@ -134,7 +134,7 @@ module TypeScript {
         /// <returns>
         /// <c>true</c> if the position intersects, otherwise <c>false</c>.
         /// </returns>
-        public intersectsWithPosition(position: number): bool {
+        public intersectsWithPosition(position: number): boolean {
             return position <= this.end() && position >= this._start;
         }
 

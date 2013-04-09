@@ -22,9 +22,9 @@ describe('Literal expressions have the correct types', function() {
         isNumber('02343');
     });
 
-    // bool
-    describe('bool literals are of the "bool" type', function() {
-        var isBool= function(x) { isOfType(x, 'bool'); };
+    // boolean
+    describe('boolean literals are of the "boolean" type', function() {
+        var isBool= function(x) { isOfType(x, 'boolean'); };
         
         isBool('true');
         isBool('false');

@@ -52,7 +52,7 @@ module TypeScript {
         // flag implicit 'any'
         public implicitAny = false;
 
-        public setOption(opt: string, val: bool): bool {
+        public setOption(opt: string, val: boolean): boolean {
             var optExists = this[opt];
             if (optExists !== undefined) {
                 this[opt] = val;
@@ -97,6 +97,7 @@ module TypeScript {
         public controlFlowUseDef = false;
         public errorOnWith = true;
         public canCallDefinitionSignature = false;
+        public disallowBool = false;
 
         public useDefaultLib = true;
 
@@ -130,11 +131,11 @@ module TypeScript {
         settings: CompilationSettings;
         referencedFiles: IFileReference[];
         importedFiles: IFileReference[];
-        isLibFile: bool;
+        isLibFile: boolean;
     }
 
     export interface ITripleSlashDirectiveProperties {
-        noDefaultLib: bool;
+        noDefaultLib: boolean;
     }
 
     function getFileReferenceFromReferencePath(comment: string): IFileReference {
@@ -177,7 +178,7 @@ module TypeScript {
         }
     }
 
-    export function getImplicitImport(comment: string): bool {
+    export function getImplicitImport(comment: string): boolean {
         var implicitImportRegEx = /^(\/\/\/\s*<implicit-import\s*)*\/>/gim;
         var match = implicitImportRegEx.exec(comment);
 

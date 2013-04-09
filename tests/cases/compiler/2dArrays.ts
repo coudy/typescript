@@ -2,7 +2,7 @@ class Cell {
 }
 
 class Ship {
-    isSunk: bool;
+    isSunk: boolean;
 }
 
 class Board {

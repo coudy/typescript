@@ -11,7 +11,7 @@ module TypeScript {
         public provisionallyTypedSymbols: PullSymbol[] = [];
 
         constructor (public contextualType: PullTypeSymbol,
-                     public provisional: bool) { }
+                     public provisional: boolean) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -29,7 +29,7 @@ module TypeScript {
 
         public resolveAggressively = false;
         
-        public pushContextualType(type: PullTypeSymbol, provisional: bool) {
+        public pushContextualType(type: PullTypeSymbol, provisional: boolean) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional));
         }
         

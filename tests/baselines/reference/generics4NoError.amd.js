@@ -12,7 +12,7 @@ interface X {
     f(): string;
 }
 interface Y {
-    f(): bool;
+    f(): boolean;
 }
 declare var a: C<X>;
 declare var b: C<Y>;

@@ -11,7 +11,7 @@ module TypeScript {
             return { lineStarts: this._lineStarts, length: this.length };
         }
 
-        public equals(other: LineMap): bool {
+        public equals(other: LineMap): boolean {
             return this.length === other.length &&
                    ArrayUtilities.sequenceEquals(this.lineStarts(), other.lineStarts(), (v1, v2) => v1 === v2);
         }

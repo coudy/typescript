@@ -158,7 +158,7 @@ module TypeScript.Formatting {
             return this.rules;
         }
 
-        public AddRule(rule: Rule, specificTokens: bool, constructionState: RulesBucketConstructionState[], rulesBucketIndex: number): void {
+        public AddRule(rule: Rule, specificTokens: boolean, constructionState: RulesBucketConstructionState[], rulesBucketIndex: number): void {
             var position: RulesPosition;
 
             if (rule.Operation.Action == RuleAction.Ignore) {

@@ -26,7 +26,7 @@ module Services {
             private fileName: string,
             private host: ILanguageServiceHost,
             public version: number,
-            public isOpen: bool) {
+            public isOpen: boolean) {
             this._sourceText = null;
         }
         
@@ -58,8 +58,8 @@ module Services {
                     fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName)));
             }
         }
-        
-        public contains(fileName: string): bool {
+
+        public contains(fileName: string): boolean {
             return this.map.lookup(fileName) !== null;
         }
 
@@ -71,7 +71,7 @@ module Services {
             return this.map.lookup(fileName).version;
         }
 
-        public isOpen(fileName: string): bool {
+        public isOpen(fileName: string): boolean {
             return this.map.lookup(fileName).isOpen;
         }
 
@@ -197,7 +197,7 @@ module Services {
         // Re-create a fresh compiler instance if needed. 
         // Return "true" if a fresh compiler instance was created. 
         //
-        private fullRefresh(): bool {
+        private fullRefresh(): boolean {
             // Initial state: no compiler yet
             if (this.compiler == null) {
                 this.logger.log("Creating new compiler instance because there is no currently active instance");
@@ -234,7 +234,7 @@ module Services {
         private partialRefresh(): void {
             this.logger.log("Updating files...");
 
-            var fileAdded: bool = false;
+            var fileAdded: boolean = false;
 
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
@@ -362,7 +362,7 @@ module Services {
             return classSymbol.getType().getConstructSignatures()[0];
         }
 
-        public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool): string {
+        public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: boolean): string {
             if (!symbol) {
                 return "";
             }

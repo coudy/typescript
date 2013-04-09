@@ -40,7 +40,7 @@ module TypeScript {
         private declFile: DeclFileWriter = null;
         private indenter = new Indenter();
         private declarationContainerStack: AST[] = [];
-        private isDottedModuleName: bool[] = [];
+        private isDottedModuleName: boolean[] = [];
         private dottedModuleEmit: string;
         private ignoreCallbackAst: AST = null;
         private singleDeclFile: DeclFileWriter = null;
@@ -87,7 +87,7 @@ module TypeScript {
             this.declFile.Write(this.getIndentString());
         }
 
-        private canEmitSignature(declFlags: DeclFlags, canEmitGlobalAmbientDecl?: bool = true, useDeclarationContainerTop?: bool = true) {
+        private canEmitSignature(declFlags: DeclFlags, canEmitGlobalAmbientDecl?: boolean = true, useDeclarationContainerTop?: boolean = true) {
             var container: AST;
             if (useDeclarationContainerTop) {
                 container = this.getAstDeclarationContainer();
@@ -106,7 +106,7 @@ module TypeScript {
             return true;
         }
 
-        private canEmitPrePostAstSignature(declFlags: DeclFlags, astWithPrePostCallback: AST, preCallback: bool) {
+        private canEmitPrePostAstSignature(declFlags: DeclFlags, astWithPrePostCallback: AST, preCallback: boolean) {
             if (this.ignoreCallbackAst) {
                 CompilerDiagnostics.assert(this.ignoreCallbackAst != astWithPrePostCallback, "Ignore Callback AST mismatch");
                 this.ignoreCallbackAst = null;
@@ -181,7 +181,7 @@ module TypeScript {
             this.declarationContainerStack.pop();
         }
 
-        private emitTypeNamesMember(memberName: MemberName, emitIndent? : bool = false) {
+        private emitTypeNamesMember(memberName: MemberName, emitIndent? : boolean = false) {
             if (memberName.prefix == "{ ") {
                 if (emitIndent) {
                     this.emitIndent();
@@ -278,8 +278,8 @@ module TypeScript {
             }
         }
 
-        private emitDeclarationComments(ast: AST, endLine?: bool);
-        private emitDeclarationComments(symbol: Symbol, endLine?: bool);
+        private emitDeclarationComments(ast: AST, endLine?: boolean);
+        private emitDeclarationComments(symbol: Symbol, endLine?: boolean);
         private emitDeclarationComments(astOrSymbol, endLine = true) {
             if (!this.emitOptions.emitComments) {
                 return;
@@ -303,7 +303,7 @@ module TypeScript {
             }
         }
 
-        public VarDeclCallback(pre: bool, varDecl: VarDecl): bool {
+        public VarDeclCallback(pre: boolean, varDecl: VarDecl): boolean {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.varFlags), false)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType == NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
@@ -353,7 +353,7 @@ module TypeScript {
             return false;
         }
 
-        public BlockCallback(pre: bool, block: Block): bool {
+        public BlockCallback(pre: boolean, block: Block): boolean {
             if (!block.isStatementBlock) {
                 if (pre) {
                     this.varListCount = block.statements.members.length;
@@ -378,7 +378,7 @@ module TypeScript {
             }
         }
 
-        public FuncDeclCallback(pre: bool, funcDecl: FuncDecl): bool {
+        public FuncDeclCallback(pre: boolean, funcDecl: FuncDecl): boolean {
             if (!pre) {
                 return false;
             }
@@ -550,7 +550,7 @@ module TypeScript {
             }
         }
 
-        public ClassDeclarationCallback(pre: bool, classDecl: ClassDeclaration): bool {
+        public ClassDeclarationCallback(pre: boolean, classDecl: ClassDeclaration): boolean {
             if (!this.canEmitPrePostAstSignature(ToDeclFlags(classDecl.varFlags), classDecl, pre)) {
                 return false;
             }
@@ -580,7 +580,7 @@ module TypeScript {
             return true;
         }
 
-        public InterfaceDeclarationCallback(pre: bool, interfaceDecl: InterfaceDeclaration): bool {
+        public InterfaceDeclarationCallback(pre: boolean, interfaceDecl: InterfaceDeclaration): boolean {
             if (!this.canEmitPrePostAstSignature(ToDeclFlags(interfaceDecl.varFlags), interfaceDecl, pre)) {
                 return false;
             }
@@ -606,7 +606,7 @@ module TypeScript {
             return true;
         }
 
-        public ImportDeclarationCallback(pre: bool, importDecl: ImportDeclaration): bool {
+        public ImportDeclarationCallback(pre: boolean, importDecl: ImportDeclaration): boolean {
             if (pre) {
                 if ((<Script>this.declarationContainerStack[0]).isExternallyVisibleSymbol(importDecl.id.sym)) {
                     this.emitDeclarationComments(importDecl);
@@ -654,7 +654,7 @@ module TypeScript {
             return false;
         }
 
-        public ModuleDeclarationCallback(pre: bool, moduleDecl: ModuleDeclaration): bool {
+        public ModuleDeclarationCallback(pre: boolean, moduleDecl: ModuleDeclaration): boolean {
             if (hasFlag(moduleDecl.modFlags, ModuleFlags.IsWholeFile)) {
                 // This is dynamic modules and we are going to outputing single file, 
                 // we need to change the declFile because dynamic modules are always emitted to their corresponding .d.ts
@@ -743,7 +743,7 @@ module TypeScript {
             return true;
         }
 
-        public ScriptCallback(pre: bool, script: Script): bool {
+        public ScriptCallback(pre: boolean, script: Script): boolean {
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
@@ -765,7 +765,7 @@ module TypeScript {
             return true;
         }
 
-        public DefaultCallback(pre: bool, ast: AST): bool {
+        public DefaultCallback(pre: boolean, ast: AST): boolean {
             return !hasFlag(ast.flags, ASTFlags.IsStatement);
         }
     }

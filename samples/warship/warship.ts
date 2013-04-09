@@ -3,7 +3,7 @@
 
 class Cell {
     shipIndex: number;
-    hasHit: bool;
+    hasHit: boolean;
     element: HTMLElement;
 
     constructor (public row: number, public column: number) {
@@ -33,7 +33,7 @@ class Ship {
         this.element = $("<div class='ship'></div>")[0];
     }
 
-    updatePosition(row: number, column: number, vertical: bool) {
+    updatePosition(row: number, column: number, vertical: boolean) {
         this.row = row;
         this.column = column;
         this.isVertical = vertical;
@@ -90,9 +90,9 @@ class Board {
     onEvent: Function;           // Callback function when an action on the board occurs
     shipSizes = [5, 4, 3, 3, 2];
 
-    private positioningEnabled: bool;    // Set to true when the player can position the ships
+    private positioningEnabled: boolean;    // Set to true when the player can position the ships
 
-    constructor (public element: HTMLElement, playerBoard: bool = true) {
+    constructor (public element: HTMLElement, playerBoard: boolean = true) {
         this.positioningEnabled = playerBoard;
         this.cells = [];
         this.ships = [];
@@ -155,7 +155,7 @@ class Board {
         }
     }
 
-    set dragAndDropEnabled(val: bool) {
+    set dragAndDropEnabled(val: boolean) {
         var cells = $(this.element).children(".cell");
         var ships = $(this.element).children(".ship");
 

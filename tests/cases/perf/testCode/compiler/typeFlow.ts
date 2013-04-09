@@ -27,7 +27,7 @@ module TypeScript {
     }
 
     export class BBUseDefInfo {
-        public defsBySymbol = new bool[];
+        public defsBySymbol = new boolean[];
         public gen: BitVector;
         public kill: BitVector;
         public top: BitVector;
@@ -221,7 +221,7 @@ module TypeScript {
             }
         }
 
-        public set(bitIndex: number, value: bool) {
+        public set(bitIndex: number, value: boolean) {
             if (bitIndex < BitVector.packBits) {
                 if (value) {
                     this.firstBits |= (1 << bitIndex);
@@ -537,7 +537,7 @@ module TypeScript {
             this.unreachable[this.unreachable.length] = ast;
         }
 
-        public unconditionalBranch(target: AST, isContinue: bool) {
+        public unconditionalBranch(target: AST, isContinue: boolean) {
             var targetBB = null;
             for (var i = 0, len = this.statementStack.length; i < len; i++) {
                 var targetInfo = this.statementStack[i];
@@ -709,7 +709,7 @@ module TypeScript {
             return this.castWithCoercion(ast, type, true, false);
         }
 
-        public castWithCoercion(ast: AST, type: Type, applyCoercion: bool, typeAssertion: bool): AST {
+        public castWithCoercion(ast: AST, type: Type, applyCoercion: boolean, typeAssertion: boolean): AST {
             var comparisonInfo = new TypeComparisonInfo();
             if (this.checker.sourceIsAssignableToTarget(ast.type, type, comparisonInfo) || (typeAssertion && this.checker.sourceIsAssignableToTarget(type, ast.type, comparisonInfo))) {
                 if (applyCoercion) {
@@ -997,12 +997,12 @@ module TypeScript {
 
             // Check if variable satisfies type privacy
             if (varDecl.sym && varDecl.sym.container) {
-                this.checkTypePrivacy(varDecl.sym.getType(), varDecl.sym, (typeName: string, isModuleName: bool) => this.varPrivacyErrorReporter(varDecl, typeName, isModuleName));
+                this.checkTypePrivacy(varDecl.sym.getType(), varDecl.sym, (typeName: string, isModuleName: boolean) => this.varPrivacyErrorReporter(varDecl, typeName, isModuleName));
             }
             return <VarDecl>varDecl;
         }
 
-        private varPrivacyErrorReporter(varDecl: BoundDecl, typeName: string, isModuleName: bool) {
+        private varPrivacyErrorReporter(varDecl: BoundDecl, typeName: string, isModuleName: boolean) {
             var typestring = "";
             if (isModuleName) {
                 var quotestring = "";
@@ -1272,7 +1272,7 @@ module TypeScript {
             return unex;
         }
 
-        public astIsWriteable(ast: AST): bool {
+        public astIsWriteable(ast: AST): boolean {
             return hasFlag(ast.flags, ASTFlags.Writeable);
         }
 
@@ -1292,7 +1292,7 @@ module TypeScript {
             return unex;
         }
 
-        public typeCheckBitwiseOperator(ast: AST, assignment: bool): AST {
+        public typeCheckBitwiseOperator(ast: AST, assignment: boolean): AST {
             var binex = <BinaryExpression>ast;
             var resultType: Type = null;
             binex.operand1 = this.typeCheck(binex.operand1);
@@ -1338,7 +1338,7 @@ module TypeScript {
             return binex;
         }
 
-        public typeCheckArithmeticOperator(ast: AST, assignment: bool): AST {
+        public typeCheckArithmeticOperator(ast: AST, assignment: boolean): AST {
             var binex = <BinaryExpression>ast;
             binex.operand1 = this.typeCheck(binex.operand1);
             binex.operand2 = this.typeCheck(binex.operand2);
@@ -1654,7 +1654,7 @@ module TypeScript {
             return binex;
         }
 
-        public typeCheckShift(binex: BinaryExpression, assignment: bool): BinaryExpression {
+        public typeCheckShift(binex: BinaryExpression, assignment: boolean): BinaryExpression {
             binex.operand1 = this.cast(this.typeCheck(binex.operand1), this.doubleType);
             binex.operand2 = this.cast(this.typeCheck(binex.operand2), this.doubleType);
             if (assignment && (!(this.astIsWriteable(binex.operand1)))) {
@@ -1702,7 +1702,7 @@ module TypeScript {
 
         // REVIEW: We use isModContainer instead of container.getType().isModuleType because container.type may be null at this
         // juncture
-        public addLocalsFromScope(scope: SymbolScope, container: Symbol, vars: ASTList, table: IHashTable, isModContainer: bool) {
+        public addLocalsFromScope(scope: SymbolScope, container: Symbol, vars: ASTList, table: IHashTable, isModContainer: boolean) {
             var len = vars.members.length;
             var hasArgsDef = false;
             for (var i = 0; i < len; i++) {
@@ -1775,7 +1775,7 @@ module TypeScript {
         }
 
         // REVIEW: isClass param may now be redundant
-        public addConstructorLocalArgs(container: Symbol, args: ASTList, table: IHashTable, isClass: bool): void {
+        public addConstructorLocalArgs(container: Symbol, args: ASTList, table: IHashTable, isClass: boolean): void {
             if (args) {
                 var len = args.members.length;
                 for (var i = 0; i < len; i++) {
@@ -1806,7 +1806,7 @@ module TypeScript {
             }
         }
 
-        public checkInitSelf(funcDecl: FuncDecl): bool {
+        public checkInitSelf(funcDecl: FuncDecl): boolean {
             if (!funcDecl.isMethod()) {
                 var freeVars = funcDecl.freeVariables;
                 for (var k = 0, len = freeVars.length; k < len; k++) {
@@ -1916,7 +1916,7 @@ module TypeScript {
             return foundSuper;
         }
 
-        private baseListPrivacyErrorReporter(bases: ASTList, i: number, declSymbol: Symbol, extendsList: bool, typeName: string, isModuleName: bool) {
+        private baseListPrivacyErrorReporter(bases: ASTList, i: number, declSymbol: Symbol, extendsList: boolean, typeName: string, isModuleName: boolean) {
             var baseSymbol = bases.members[i].type.symbol;
             var declTypeString = (declSymbol.declAST.nodeType == NodeType.InterfaceDeclaration) ? "interface" : "class";
             var baseListTypeString = extendsList ? "extends" : "implements";
@@ -1936,7 +1936,7 @@ module TypeScript {
         }
 
         // Check if declSymbol can satisfy baselist privacy
-        private typeCheckBaseListPrivacy(bases: ASTList, declSymbol: Symbol, extendsList: bool) {
+        private typeCheckBaseListPrivacy(bases: ASTList, declSymbol: Symbol, extendsList: boolean) {
             if (bases) {
                 var basesLen = bases.members.length;
                 for (var i = 0; i < basesLen; i++) {
@@ -1946,13 +1946,13 @@ module TypeScript {
                         continue;
                     }
 
-                    this.checkSymbolPrivacy(bases.members[i].type.symbol, declSymbol, (typeName: string, isModuleName: bool) => this.baseListPrivacyErrorReporter(bases, i, declSymbol, extendsList, typeName, isModuleName));
+                    this.checkSymbolPrivacy(bases.members[i].type.symbol, declSymbol, (typeName: string, isModuleName: boolean) => this.baseListPrivacyErrorReporter(bases, i, declSymbol, extendsList, typeName, isModuleName));
                 }
             }
         }
 
         // Checks if the privacy is satisfied by typeSymbol that is used in the declaration inside container
-        private checkSymbolPrivacy(typeSymbol: TypeSymbol, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName: bool) => void ) {
+        private checkSymbolPrivacy(typeSymbol: TypeSymbol, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName: boolean) => void ) {
             var externalModuleSymbol: TypeSymbol = null;
             var declSymbolPath: Symbol[] = null;
 
@@ -2025,7 +2025,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by type that is used in the declaration inside container
-        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
+        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : boolean) =>void ) {
             // Primitive types
             if (!(type && type.primitiveTypeClass == Primitive.None)) {
                 return;
@@ -2060,7 +2060,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by typeSymbol that is used in the declaration inside container
-        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
+        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : boolean) =>void ) {
             if (sgroup) {
                 var len = sgroup.signatures.length;
                 for (var i = 0; i < sgroup.signatures.length; i++) {
@@ -2083,7 +2083,7 @@ module TypeScript {
             }
         }
 
-        private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string, isModuleName: bool) {
+        private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string, isModuleName: boolean) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
@@ -2118,7 +2118,7 @@ module TypeScript {
             }
         }
 
-        private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string, isModuleName: bool) {
+        private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string, isModuleName: boolean) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
@@ -2152,7 +2152,7 @@ module TypeScript {
             }
         }
 
-        private functionReturnTypePrivacyErrorReporter(funcDecl: FuncDecl, signature: Signature, typeName: string, isModuleName: bool) {
+        private functionReturnTypePrivacyErrorReporter(funcDecl: FuncDecl, signature: Signature, typeName: string, isModuleName: boolean) {
             var reportOnFuncDecl = false;
 
             // Error coming from return annotation
@@ -2438,7 +2438,7 @@ module TypeScript {
 
                     symbol.container = container;
                     // Verify the parameter for the privacy
-                    this.checkTypePrivacy(symbol.getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, symbol, typeName, isModuleName));
+                    this.checkTypePrivacy(symbol.getType(), container, (typeName: string, isModuleName: boolean) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, symbol, typeName, isModuleName));
                     paramTable.publicMembers.add(symbol.name, symbol);
                 }
                 this.scope = tmpParamScope;
@@ -2451,7 +2451,7 @@ module TypeScript {
                 for (var p = 0; p < paramLen; p++) {
                     signature.parameters[p].parameter.typeLink.type = funcDecl.arguments.members[p].type;
                     // Verify the parameter for the privacy
-                    this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));
+                    this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: boolean) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));
                     if ((<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym) {
                         (<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym.setType(funcDecl.arguments.members[p].type);
                     }
@@ -2625,7 +2625,7 @@ module TypeScript {
                 }
 
                 // Type check for return type Privacy
-                this.checkTypePrivacy(signature.returnType.type, container, (typeName: string, isModuleName: bool) => this.functionReturnTypePrivacyErrorReporter(funcDecl, signature, typeName, isModuleName));
+                this.checkTypePrivacy(signature.returnType.type, container, (typeName: string, isModuleName: boolean) => this.functionReturnTypePrivacyErrorReporter(funcDecl, signature, typeName, isModuleName));
             }
 
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
@@ -2764,7 +2764,7 @@ module TypeScript {
             }
         }
 
-        public assertUniqueNamesInBaseTypes(names: IHashTable, type: Type, classDecl: InterfaceDeclaration, checkUnique: bool): void {
+        public assertUniqueNamesInBaseTypes(names: IHashTable, type: Type, classDecl: InterfaceDeclaration, checkUnique: boolean): void {
             if (type) {
                 if (type.members) {
                     type.members.publicMembers.map((key, s, c) => {

@@ -29,7 +29,7 @@ module TypeScript.Formatting {
             return new IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
         }
 
-        public releaseNode(node: IndentationNodeContext, recursive: bool = false): void {
+        public releaseNode(node: IndentationNodeContext, recursive: boolean = false): void {
             this.nodes.push(node);
 
             if (recursive) {

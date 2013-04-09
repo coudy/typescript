@@ -1,10 +1,10 @@
 interface IEnvironment {
-    readFile(path: string, useUTF8?: bool): string;
-    writeFile(path: string, contents: string, useUTF8?: bool): void;
+    readFile(path: string, useUTF8?: boolean): string;
+    writeFile(path: string, contents: string, useUTF8?: boolean): void;
     deleteFile(path: string): void;
-    fileExists(path: string): bool;
-    directoryExists(path: string): bool;
-    listFiles(path: string, re?: RegExp, options?: { recursive?: bool; }): string[];
+    fileExists(path: string): boolean;
+    directoryExists(path: string): boolean;
+    listFiles(path: string, re?: RegExp, options?: { recursive?: boolean; }): string[];
 
     arguments: string[];
     standardOut: ITextWriter;

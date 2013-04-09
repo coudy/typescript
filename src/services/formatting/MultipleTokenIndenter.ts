@@ -20,7 +20,7 @@ module TypeScript.Formatting {
         private _edits: TextEditInfo[] = [];
         public options: FormattingOptions;
 
-        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: bool, options: FormattingOptions) {
+        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
             super(textSpan, sourceUnit, snapshot, indentFirstToken);
 
             this.options = options;
@@ -146,7 +146,7 @@ module TypeScript.Formatting {
             this.recordEdit(fullStart, text.length, indentationString);
         }
 
-        private recordIndentationEditsForMultiLineComment(trivia: ISyntaxTrivia, fullStart: number, indentationString: string, leadingWhiteSpace: string, firstLineAlreadyIndented: bool): void {
+        private recordIndentationEditsForMultiLineComment(trivia: ISyntaxTrivia, fullStart: number, indentationString: string, leadingWhiteSpace: string, firstLineAlreadyIndented: boolean): void {
             // If the multiline comment spans multiple lines, we need to add the right indent amount to
             // each successive line segment as well.
             var position = fullStart;

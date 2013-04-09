@@ -85,5 +85,5 @@ interface ISemanticModel {
     /// <param name="symbol">The symbol that we are checking to see if it accessible.</param>
     /// <returns>
     /// True if "symbol is accessible, false otherwise.</returns>
-    isAccessible(position: number, symbol: ISymbol): bool;
+    isAccessible(position: number, symbol: ISymbol): boolean;
 }

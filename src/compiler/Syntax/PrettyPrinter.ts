@@ -253,7 +253,7 @@ module TypeScript.PrettyPrinter {
             this.appendObjectType(node.body, /*appendNewLines:*/ true);
         }
 
-        private appendObjectType(node: ObjectTypeSyntax, appendNewLines: bool): void {
+        private appendObjectType(node: ObjectTypeSyntax, appendNewLines: boolean): void {
             this.appendToken(node.openBraceToken);
 
             if (appendNewLines) {

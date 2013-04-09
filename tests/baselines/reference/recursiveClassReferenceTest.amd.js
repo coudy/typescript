@@ -120,6 +120,14 @@ var Sample;
 //@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
 ////[comments_MultiModule_MultiFile_1.js.map]
 {"version":3,"file":"comments_MultiModule_MultiFile_1.js","sources":["comments_MultiModule_MultiFile_1.ts"],"names":[],"mappings":""}
+////[deprecatedBool_0.js]
+//@ sourceMappingURL=deprecatedBool_0.js.map
+////[deprecatedBool_0.js.map]
+{"version":3,"file":"deprecatedBool_0.js","sources":["deprecatedBool_0.ts"],"names":[],"mappings":""}
+////[deprecatedBool_1.js]
+//@ sourceMappingURL=deprecatedBool_1.js.map
+////[deprecatedBool_1.js.map]
+{"version":3,"file":"deprecatedBool_1.js","sources":["deprecatedBool_1.ts"],"names":[],"mappings":""}
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js]
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map]

@@ -29,19 +29,19 @@ module TypeScript.Syntax {
             return this._text;
         }
 
-        public isWhitespace(): bool {
+        public isWhitespace(): boolean {
             return this.kind() === SyntaxKind.WhitespaceTrivia;
         }
 
-        public isComment(): bool {
+        public isComment(): boolean {
             return this.kind() === SyntaxKind.SingleLineCommentTrivia || this.kind() === SyntaxKind.MultiLineCommentTrivia;
         }
 
-        public isNewLine(): bool {
+        public isNewLine(): boolean {
             return this.kind() === SyntaxKind.NewLineTrivia;
         }
 
-        public isSkippedText(): bool {
+        public isSkippedText(): boolean {
             return this.kind() === SyntaxKind.SkippedTextTrivia;
         }
 

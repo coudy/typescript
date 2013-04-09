@@ -5,6 +5,6 @@ interface I1<T> {
 
 }
  
-var v1: I1<bool>;
+var v1: I1<boolean>;
  
 var v2: I1<number> = v1;

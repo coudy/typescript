@@ -9,10 +9,10 @@ module Test {
         endState: IState;
     }
     interface IMode {
-        tokenize(line:string, state:IState, includeStates:bool):ILineTokens;
+        tokenize(line:string, state:IState, includeStates:boolean):ILineTokens;
     }
     export class Bug implements IMode {
-        public tokenize(line:string, tokens:IToken[], includeStates:bool):ILineTokens {
+        public tokenize(line:string, tokens:IToken[], includeStates:boolean):ILineTokens {
             return null;
         }
     }    

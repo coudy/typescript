@@ -32,9 +32,9 @@ declare module Windows {
                 size: number;
                 onmapchanged: any/* TODO */;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_any;
-                insert(key: string, value: any): bool;
+                insert(key: string, value: any): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -58,9 +58,9 @@ declare module Windows {
              queryParsed: Windows.Foundation.WwwFormUrlDecoder;
              rawUri: string;
              schemeName: string;
-             suspicious: bool;
+             suspicious: boolean;
              userName: string;
-             equals(pUri: Windows.Foundation.Uri): bool;
+             equals(pUri: Windows.Foundation.Uri): boolean;
              combineUri(relativeUri: string): Windows.Foundation.Uri;
         }
         export class WwwFormUrlDecoder implements Windows.Foundation.IWwwFormUrlDecoderRuntimeClass, Windows.Foundation.Collections.IIterable__IWwwFormUrlDecoderEntry, Windows.Foundation.Collections.IVectorView__IWwwFormUrlDecoderEntry {
@@ -69,7 +69,7 @@ declare module Windows {
             getFirstValueByName(name: string): string;
             first(): Windows.Foundation.Collections.IIterator__IWwwFormUrlDecoderEntry;
             getAt(index: number): Windows.Foundation.IWwwFormUrlDecoderEntry;
-            indexOf(value: Windows.Foundation.IWwwFormUrlDecoderEntry): { index: number; returnValue: bool; };
+            indexOf(value: Windows.Foundation.IWwwFormUrlDecoderEntry): { index: number; returnValue: boolean; };
             getMany(startIndex: number): { items: Windows.Foundation.IWwwFormUrlDecoderEntry[]; returnValue: number; };
             toString(): string;
             toLocaleString(): string;
@@ -88,16 +88,16 @@ declare module Windows {
             unshift(...items: IWwwFormUrlDecoderEntry[]): number;
             lastIndexOf(searchElement: IWwwFormUrlDecoderEntry): number;
             lastIndexOf(searchElement: IWwwFormUrlDecoderEntry, fromIndex: number): number;
-            every(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool): bool;
-            every(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): bool;
-            some(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool): bool;
-            some(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): bool;
+            every(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean): boolean;
+            every(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): boolean;
+            some(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean): boolean;
+            some(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): boolean;
             forEach(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => void): void;
             forEach(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => void, thisArg: any): void;
             map(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => any): any[];
             map(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => any, thisArg: any): any[];
-            filter(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool): IWwwFormUrlDecoderEntry[];
-            filter(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): IWwwFormUrlDecoderEntry[];
+            filter(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean): IWwwFormUrlDecoderEntry[];
+            filter(callbackfn: (value: IWwwFormUrlDecoderEntry, index: number, array: IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): IWwwFormUrlDecoderEntry[];
             reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IWwwFormUrlDecoderEntry[]) => any): any;
             reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IWwwFormUrlDecoderEntry[]) => any, initialValue: any): any;
             reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IWwwFormUrlDecoderEntry[]) => any): any;
@@ -119,11 +119,11 @@ declare module Windows {
             queryParsed: Windows.Foundation.WwwFormUrlDecoder;
             rawUri: string;
             schemeName: string;
-            suspicious: bool;
+            suspicious: boolean;
             userName: string;
             absoluteCanonicalUri: string;
             displayIri: string;
-            equals(pUri: Windows.Foundation.Uri): bool;
+            equals(pUri: Windows.Foundation.Uri): boolean;
             combineUri(relativeUri: string): Windows.Foundation.Uri;
             static new(baseUri: string, relativeUri: string): Uri;
             static unescapeComponent(toUnescape: string): string;
@@ -221,7 +221,7 @@ declare module Windows {
             duration: number;
         }
         export interface IPropertyValue {
-             isNumericScalar: bool;
+             isNumericScalar: boolean;
              type: Windows.Foundation.PropertyType;
              getUInt8(): number;
              getInt16(): number;
@@ -233,7 +233,7 @@ declare module Windows {
              getSingle(): number;
              getDouble(): number;
              getChar16(): string;
-             getBoolean(): bool;
+             getBoolean(): boolean;
              getString(): string;
              getGuid(): string;
              getDateTime(): Date;
@@ -251,7 +251,7 @@ declare module Windows {
              getSingleArray(): number[];
              getDoubleArray(): number[];
              getChar16Array(): string[];
-             getBooleanArray(): bool[];
+             getBooleanArray(): boolean[];
              getStringArray(): string[];
              getInspectableArray(): any[];
              getGuidArray(): string[];
@@ -273,7 +273,7 @@ declare module Windows {
              createSingle(value: number): any;
              createDouble(value: number): any;
              createChar16(value: string): any;
-             createBoolean(value: bool): any;
+             createBoolean(value: boolean): any;
              createString(value: string): any;
              createInspectable(value: any): any;
              createGuid(value: string): any;
@@ -292,7 +292,7 @@ declare module Windows {
              createSingleArray(value: number[]): any;
              createDoubleArray(value: number[]): any;
              createChar16Array(value: string[]): any;
-             createBooleanArray(value: bool[]): any;
+             createBooleanArray(value: boolean[]): any;
              createStringArray(value: string[]): any;
              createInspectableArray(value: any[]): any;
              createGuidArray(value: string[]): any;
@@ -314,7 +314,7 @@ declare module Windows {
             static createSingle(value: number): any;
             static createDouble(value: number): any;
             static createChar16(value: string): any;
-            static createBoolean(value: bool): any;
+            static createBoolean(value: boolean): any;
             static createString(value: string): any;
             static createInspectable(value: any): any;
             static createGuid(value: string): any;
@@ -333,7 +333,7 @@ declare module Windows {
             static createSingleArray(value: number[]): any;
             static createDoubleArray(value: number[]): any;
             static createChar16Array(value: string[]): any;
-            static createBooleanArray(value: bool[]): any;
+            static createBooleanArray(value: boolean[]): any;
             static createStringArray(value: string[]): any;
             static createInspectableArray(value: any[]): any;
             static createGuidArray(value: string[]): any;
@@ -541,7 +541,7 @@ declare module Windows {
                 taskId: string;
                 onprogress: any/* TODO */;
                 oncompleted: any/* TODO */;
-                unregister(cancelTask: bool): void;
+                unregister(cancelTask: boolean): void;
                 static allTasks: Windows.Foundation.Collections.IMapView__string_IBackgroundTaskRegistration;
             }
             export class BackgroundTaskDeferral implements Windows.ApplicationModel.Background.IBackgroundTaskDeferral {
@@ -572,7 +572,7 @@ declare module Windows {
                  taskId: string;
                  onprogress: any/* TODO */;
                  oncompleted: any/* TODO */;
-                 unregister(cancelTask: bool): void;
+                 unregister(cancelTask: boolean): void;
             }
             export interface IBackgroundTaskRegistrationStatics {
                  allTasks: Windows.Foundation.Collections.IMapView__string_IBackgroundTaskRegistration;
@@ -628,15 +628,15 @@ declare module Windows {
                 sessionDisconnected,
             }
             export interface ISystemTrigger extends Windows.ApplicationModel.Background.IBackgroundTrigger {
-                 oneShot: bool;
+                 oneShot: boolean;
                  triggerType: Windows.ApplicationModel.Background.SystemTriggerType;
             }
             export interface ISystemTriggerFactory {
-                 create(triggerType: Windows.ApplicationModel.Background.SystemTriggerType, oneShot: bool): Windows.ApplicationModel.Background.SystemTrigger;
+                 create(triggerType: Windows.ApplicationModel.Background.SystemTriggerType, oneShot: boolean): Windows.ApplicationModel.Background.SystemTrigger;
             }
             export class SystemTrigger implements Windows.ApplicationModel.Background.ISystemTrigger, Windows.ApplicationModel.Background.IBackgroundTrigger {
-                constructor (triggerType: Windows.ApplicationModel.Background.SystemTriggerType, oneShot: bool);
-                oneShot: bool;
+                constructor (triggerType: Windows.ApplicationModel.Background.SystemTriggerType, oneShot: boolean);
+                oneShot: boolean;
                 triggerType: Windows.ApplicationModel.Background.SystemTriggerType;
             }
             export interface ISystemCondition extends Windows.ApplicationModel.Background.IBackgroundCondition {
@@ -661,27 +661,27 @@ declare module Windows {
             }
             export interface ITimeTrigger extends Windows.ApplicationModel.Background.IBackgroundTrigger {
                  freshnessTime: number;
-                 oneShot: bool;
+                 oneShot: boolean;
             }
             export interface ITimeTriggerFactory {
-                 create(freshnessTime: number, oneShot: bool): Windows.ApplicationModel.Background.TimeTrigger;
+                 create(freshnessTime: number, oneShot: boolean): Windows.ApplicationModel.Background.TimeTrigger;
             }
             export class TimeTrigger implements Windows.ApplicationModel.Background.ITimeTrigger, Windows.ApplicationModel.Background.IBackgroundTrigger {
-                constructor (freshnessTime: number, oneShot: bool);
+                constructor (freshnessTime: number, oneShot: boolean);
                 freshnessTime: number;
-                oneShot: bool;
+                oneShot: boolean;
             }
             export interface IMaintenanceTrigger extends Windows.ApplicationModel.Background.IBackgroundTrigger {
                  freshnessTime: number;
-                 oneShot: bool;
+                 oneShot: boolean;
             }
             export interface IMaintenanceTriggerFactory {
-                 create(freshnessTime: number, oneShot: bool): Windows.ApplicationModel.Background.MaintenanceTrigger;
+                 create(freshnessTime: number, oneShot: boolean): Windows.ApplicationModel.Background.MaintenanceTrigger;
             }
             export class MaintenanceTrigger implements Windows.ApplicationModel.Background.IMaintenanceTrigger, Windows.ApplicationModel.Background.IBackgroundTrigger {
-                constructor(freshnessTime: number, oneShot: bool);
+                constructor(freshnessTime: number, oneShot: boolean);
                 freshnessTime: number;
-                oneShot: bool;
+                oneShot: boolean;
             }
             export interface INetworkOperatorHotspotAuthenticationTrigger extends Windows.ApplicationModel.Background.IBackgroundTrigger {
             }
@@ -884,7 +884,7 @@ declare module Windows {
                      selectionMode: Windows.ApplicationModel.Contacts.ContactSelectionMode;
                      addContact(id: string, contact: Windows.ApplicationModel.Contacts.Contact): Windows.ApplicationModel.Contacts.Provider.AddContactResult;
                      removeContact(id: string): void;
-                     containsContact(id: string): bool;
+                     containsContact(id: string): boolean;
                      oncontactremoved: any/* TODO */;
                 }
                 export class ContactPickerUI implements Windows.ApplicationModel.Contacts.Provider.IContactPickerUI {
@@ -892,7 +892,7 @@ declare module Windows {
                     selectionMode: Windows.ApplicationModel.Contacts.ContactSelectionMode;
                     addContact(id: string, contact: Windows.ApplicationModel.Contacts.Contact): Windows.ApplicationModel.Contacts.Provider.AddContactResult;
                     removeContact(id: string): void;
-                    containsContact(id: string): bool;
+                    containsContact(id: string): boolean;
                     oncontactremoved: any/* TODO */;
                 }
             }
@@ -943,7 +943,7 @@ declare module Windows {
                 title: string;
                 size: number;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 split(): { first: Windows.Foundation.Collections.IMapView__string_any; second: Windows.Foundation.Collections.IMapView__string_any; };
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
             }
@@ -956,9 +956,9 @@ declare module Windows {
                 title: string;
                 size: number;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_any;
-                insert(key: string, value: any): bool;
+                insert(key: string, value: any): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -1001,7 +1001,7 @@ declare module Windows {
                  properties: Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView;
                  requestedOperation: Windows.ApplicationModel.DataTransfer.DataPackageOperation;
                  reportOperationCompleted(value: Windows.ApplicationModel.DataTransfer.DataPackageOperation): void;
-                 contains(formatId: string): bool;
+                 contains(formatId: string): boolean;
                  getDataAsync(formatId: string): Windows.Foundation.IAsyncOperation__any;
                  getTextAsync(): Windows.Foundation.IAsyncOperation__string;
                  getTextAsync(formatId: string): Windows.Foundation.IAsyncOperation__string;
@@ -1027,14 +1027,14 @@ declare module Windows {
                  setRtf(value: string): void;
                  setBitmap(value: Windows.Storage.Streams.RandomAccessStreamReference): void;
                  setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem): void;
-                 setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem, readOnly: bool): void;
+                 setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem, readOnly: boolean): void;
             }
             export class DataPackageView implements Windows.ApplicationModel.DataTransfer.IDataPackageView {
                 availableFormats: Windows.Foundation.Collections.IVectorView__string;
                 properties: Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView;
                 requestedOperation: Windows.ApplicationModel.DataTransfer.DataPackageOperation;
                 reportOperationCompleted(value: Windows.ApplicationModel.DataTransfer.DataPackageOperation): void;
-                contains(formatId: string): bool;
+                contains(formatId: string): boolean;
                 getDataAsync(formatId: string): Windows.Foundation.IAsyncOperation__any;
                 getTextAsync(): Windows.Foundation.IAsyncOperation__string;
                 getTextAsync(formatId: string): Windows.Foundation.IAsyncOperation__string;
@@ -1060,7 +1060,7 @@ declare module Windows {
                 setRtf(value: string): void;
                 setBitmap(value: Windows.Storage.Streams.RandomAccessStreamReference): void;
                 setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem): void;
-                setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem, readOnly: bool): void;
+                setStorageItems(value: Windows.Foundation.Collections.IIterable__IStorageItem, readOnly: boolean): void;
             }
             export interface IHtmlFormatHelperStatics {
                  getStaticFragment(htmlFormat: string): string;
@@ -1145,10 +1145,10 @@ declare module Windows {
                 queryTextCompositionStart: number;
             }
             export interface ISearchPaneVisibilityChangedEventArgs {
-                 visible: bool;
+                 visible: boolean;
             }
             export class SearchPaneVisibilityChangedEventArgs implements Windows.ApplicationModel.Search.ISearchPaneVisibilityChangedEventArgs {
-                visible: bool;
+                visible: boolean;
             }
             export interface ISearchPaneQueryChangedEventArgs {
                  language: string;
@@ -1192,7 +1192,7 @@ declare module Windows {
                  complete(): void;
             }
             export interface ISearchPaneSuggestionsRequest {
-                 isCanceled: bool;
+                 isCanceled: boolean;
                  searchSuggestionCollection: Windows.ApplicationModel.Search.SearchSuggestionCollection;
                  getDeferral(): Windows.ApplicationModel.Search.SearchPaneSuggestionsRequestDeferral;
             }
@@ -1200,7 +1200,7 @@ declare module Windows {
                 complete(): void;
             }
             export class SearchPaneSuggestionsRequest implements Windows.ApplicationModel.Search.ISearchPaneSuggestionsRequest {
-                isCanceled: bool;
+                isCanceled: boolean;
                 searchSuggestionCollection: Windows.ApplicationModel.Search.SearchSuggestionCollection;
                 getDeferral(): Windows.ApplicationModel.Search.SearchPaneSuggestionsRequestDeferral;
             }
@@ -1215,13 +1215,13 @@ declare module Windows {
             }
             export interface ILocalContentSuggestionSettings {
                  aqsFilter: string;
-                 enabled: bool;
+                 enabled: boolean;
                  locations: Windows.Foundation.Collections.IVector__StorageFolder;
                  propertiesToMatch: Windows.Foundation.Collections.IVector__string;
             }
             export class LocalContentSuggestionSettings implements Windows.ApplicationModel.Search.ILocalContentSuggestionSettings {
                 aqsFilter: string;
-                enabled: bool;
+                enabled: boolean;
                 locations: Windows.Foundation.Collections.IVector__StorageFolder;
                 propertiesToMatch: Windows.Foundation.Collections.IVector__string;
             }
@@ -1233,9 +1233,9 @@ declare module Windows {
                 placeholderText: string;
                 queryText: string;
                 searchHistoryContext: string;
-                searchHistoryEnabled: bool;
-                showOnKeyboardInput: bool;
-                visible: bool;
+                searchHistoryEnabled: boolean;
+                showOnKeyboardInput: boolean;
+                visible: boolean;
                 onvisibilitychanged: any/* TODO */;
                 onquerychanged: any/* TODO */;
                 onsuggestionsrequested: any/* TODO */;
@@ -1244,7 +1244,7 @@ declare module Windows {
                 setLocalContentSuggestionSettings(settings: Windows.ApplicationModel.Search.LocalContentSuggestionSettings): void;
                 show(): void;
                 show(query: string): void;
-                trySetQueryText(query: string): bool;
+                trySetQueryText(query: string): boolean;
                 static getForCurrentView(): Windows.ApplicationModel.Search.SearchPane;
             }
             export interface ISearchPane {
@@ -1252,9 +1252,9 @@ declare module Windows {
                  placeholderText: string;
                  queryText: string;
                  searchHistoryContext: string;
-                 searchHistoryEnabled: bool;
-                 showOnKeyboardInput: bool;
-                 visible: bool;
+                 searchHistoryEnabled: boolean;
+                 showOnKeyboardInput: boolean;
+                 visible: boolean;
                  onvisibilitychanged: any/* TODO */;
                  onquerychanged: any/* TODO */;
                  onsuggestionsrequested: any/* TODO */;
@@ -1263,7 +1263,7 @@ declare module Windows {
                  setLocalContentSuggestionSettings(settings: Windows.ApplicationModel.Search.LocalContentSuggestionSettings): void;
                  show(): void;
                  show(query: string): void;
-                 trySetQueryText(query: string): bool;
+                 trySetQueryText(query: string): boolean;
             }
         }
     }
@@ -1491,8 +1491,8 @@ declare module Windows {
             }
             export class CoreApplicationView implements Windows.ApplicationModel.Core.ICoreApplicationView {
                 coreWindow: Windows.UI.Core.CoreWindow;
-                isHosted: bool;
-                isMain: bool;
+                isHosted: boolean;
+                isMain: boolean;
                 onactivated: any/* TODO */;
             }
             export interface IFrameworkView {
@@ -1529,8 +1529,8 @@ declare module Windows {
             }
             export interface ICoreApplicationView {
                  coreWindow: Windows.UI.Core.CoreWindow;
-                 isHosted: bool;
-                 isMain: bool;
+                 isHosted: boolean;
+                 isMain: boolean;
                  onactivated: any/* TODO */;
             }
         }
@@ -1588,23 +1588,23 @@ declare module Windows {
              dependencies: Windows.Foundation.Collections.IVectorView__Package;
              id: Windows.ApplicationModel.PackageId;
              installedLocation: Windows.Storage.StorageFolder;
-             isFramework: bool;
+             isFramework: boolean;
         }
         export class Package implements Windows.ApplicationModel.IPackage {
             dependencies: Windows.Foundation.Collections.IVectorView__Package;
             id: Windows.ApplicationModel.PackageId;
             installedLocation: Windows.Storage.StorageFolder;
-            isFramework: bool;
+            isFramework: boolean;
             static current: Windows.ApplicationModel.Package;
         }
         export interface IPackageStatics {
              current: Windows.ApplicationModel.Package;
         }
         export interface IDesignModeStatics {
-             designModeEnabled: bool;
+             designModeEnabled: boolean;
         }
         export class DesignMode {
-            static designModeEnabled: bool;
+            static designModeEnabled: boolean;
         }
     }
 }
@@ -1647,7 +1647,7 @@ declare module Windows {
                     getValue(resource: string, context: Windows.ApplicationModel.Resources.Core.ResourceContext): Windows.ApplicationModel.Resources.Core.ResourceCandidate;
                     getSubtree(reference: string): Windows.ApplicationModel.Resources.Core.ResourceMap;
                     lookup(key: string): Windows.ApplicationModel.Resources.Core.NamedResource;
-                    hasKey(key: string): bool;
+                    hasKey(key: string): boolean;
                     split(): { first: Windows.Foundation.Collections.IMapView__string_NamedResource; second: Windows.Foundation.Collections.IMapView__string_NamedResource; };
                     first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_NamedResource;
                 }
@@ -1662,7 +1662,7 @@ declare module Windows {
                 }
                 export interface IResourceManagerStatics {
                      current: Windows.ApplicationModel.Resources.Core.ResourceManager;
-                     isResourceReference(resourceReference: string): bool;
+                     isResourceReference(resourceReference: string): boolean;
                 }
                 export class ResourceManager implements Windows.ApplicationModel.Resources.Core.IResourceManager {
                     allResourceMaps: Windows.Foundation.Collections.IMapView__string_ResourceMap;
@@ -1671,18 +1671,18 @@ declare module Windows {
                     loadPriFiles(files: Windows.Foundation.Collections.IIterable__IStorageFile): void;
                     unloadPriFiles(files: Windows.Foundation.Collections.IIterable__IStorageFile): void;
                     static current: Windows.ApplicationModel.Resources.Core.ResourceManager;
-                    static isResourceReference(resourceReference: string): bool;
+                    static isResourceReference(resourceReference: string): boolean;
                 }
                 export interface IResourceQualifier {
-                     isDefault: bool;
-                     isMatch: bool;
+                     isDefault: boolean;
+                     isMatch: boolean;
                      qualifierName: string;
                      qualifierValue: string;
                      score: number;
                 }
                 export class ResourceQualifier implements Windows.ApplicationModel.Resources.Core.IResourceQualifier {
-                    isDefault: bool;
-                    isMatch: bool;
+                    isDefault: boolean;
+                    isMatch: boolean;
                     qualifierName: string;
                     qualifierValue: string;
                     score: number;
@@ -1699,18 +1699,18 @@ declare module Windows {
                      createMatchingContext(result: Windows.Foundation.Collections.IIterable__ResourceQualifier): Windows.ApplicationModel.Resources.Core.ResourceContext;
                 }
                 export interface IResourceCandidate {
-                     isDefault: bool;
-                     isMatch: bool;
-                     isMatchAsDefault: bool;
+                     isDefault: boolean;
+                     isMatch: boolean;
+                     isMatchAsDefault: boolean;
                      qualifiers: Windows.Foundation.Collections.IVectorView__ResourceQualifier;
                      valueAsString: string;
                      getValueAsFileAsync(): Windows.Foundation.IAsyncOperation__StorageFile;
                      getQualifierValue(qualifierName: string): string;
                 }
                 export class ResourceCandidate implements Windows.ApplicationModel.Resources.Core.IResourceCandidate {
-                    isDefault: bool;
-                    isMatch: bool;
-                    isMatchAsDefault: bool;
+                    isDefault: boolean;
+                    isMatch: boolean;
+                    isMatchAsDefault: boolean;
                     qualifiers: Windows.Foundation.Collections.IVectorView__ResourceQualifier;
                     valueAsString: string;
                     getValueAsFileAsync(): Windows.Foundation.IAsyncOperation__StorageFile;
@@ -1740,30 +1740,30 @@ declare module Windows {
                 }
                 export class ResourceMapIterator implements Windows.Foundation.Collections.IIterator__IKeyValuePair__string_NamedResource {
                     current: Windows.Foundation.Collections.IKeyValuePair__string_NamedResource;
-                    hasCurrent: bool;
-                    moveNext(): bool;
+                    hasCurrent: boolean;
+                    moveNext(): boolean;
                     getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_NamedResource[]; value: number; };
                 }
                 export class ResourceMapMapView implements Windows.Foundation.Collections.IMapView__string_ResourceMap, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_ResourceMap {
                     size: number;
                     lookup(key: string): Windows.ApplicationModel.Resources.Core.ResourceMap;
-                    hasKey(key: string): bool;
+                    hasKey(key: string): boolean;
                     split(): { first: Windows.Foundation.Collections.IMapView__string_ResourceMap; second: Windows.Foundation.Collections.IMapView__string_ResourceMap; };
                     first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_ResourceMap;
                 }
                 export class ResourceMapMapViewIterator implements Windows.Foundation.Collections.IIterator__IKeyValuePair__string_ResourceMap {
                     current: Windows.Foundation.Collections.IKeyValuePair__string_ResourceMap;
-                    hasCurrent: bool;
-                    moveNext(): bool;
+                    hasCurrent: boolean;
+                    moveNext(): boolean;
                     getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_ResourceMap[]; value: number; };
                 }
                 export class ResourceQualifierObservableMap implements Windows.Foundation.Collections.IObservableMap__string_string, Windows.Foundation.Collections.IMap__string_string, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_string {
                     size: number;
                     onmapchanged: any/* TODO */;
                     lookup(key: string): string;
-                    hasKey(key: string): bool;
+                    hasKey(key: string): boolean;
                     getView(): Windows.Foundation.Collections.IMapView__string_string;
-                    insert(key: string, value: string): bool;
+                    insert(key: string, value: string): boolean;
                     remove(key: string): void;
                     clear(): void;
                     first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_string;
@@ -1771,14 +1771,14 @@ declare module Windows {
                 export class ResourceQualifierMapView implements Windows.Foundation.Collections.IMapView__string_string, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_string {
                     size: number;
                     lookup(key: string): string;
-                    hasKey(key: string): bool;
+                    hasKey(key: string): boolean;
                     split(): { first: Windows.Foundation.Collections.IMapView__string_string; second: Windows.Foundation.Collections.IMapView__string_string; };
                     first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_string;
                 }
                 export class ResourceQualifierVectorView implements Windows.Foundation.Collections.IVectorView__ResourceQualifier, Windows.Foundation.Collections.IIterable__ResourceQualifier {
                     size: number;
                     getAt(index: number): Windows.ApplicationModel.Resources.Core.ResourceQualifier;
-                    indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceQualifier): { index: number; returnValue: bool; };
+                    indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceQualifier): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__ResourceQualifier;
                     toString(): string;
@@ -1798,16 +1798,16 @@ declare module Windows {
                     unshift(...items: ResourceQualifier[]): number;
                     lastIndexOf(searchElement: ResourceQualifier): number;
                     lastIndexOf(searchElement: ResourceQualifier, fromIndex: number): number;
-                    every(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool): bool;
-                    every(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool): bool;
-                    some(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean): boolean;
+                    every(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean): boolean;
+                    some(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => void): void;
                     forEach(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => void, thisArg: any): void;
                     map(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => any): any[];
                     map(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool): ResourceQualifier[];
-                    filter(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => bool, thisArg: any): ResourceQualifier[];
+                    filter(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean): ResourceQualifier[];
+                    filter(callbackfn: (value: ResourceQualifier, index: number, array: ResourceQualifier[]) => boolean, thisArg: any): ResourceQualifier[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceQualifier[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceQualifier[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceQualifier[]) => any): any;
@@ -1817,7 +1817,7 @@ declare module Windows {
                 export class ResourceCandidateVectorView implements Windows.Foundation.Collections.IVectorView__ResourceCandidate, Windows.Foundation.Collections.IIterable__ResourceCandidate {
                     size: number;
                     getAt(index: number): Windows.ApplicationModel.Resources.Core.ResourceCandidate;
-                    indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceCandidate): { index: number; returnValue: bool; };
+                    indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceCandidate): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__ResourceCandidate;
                     toString(): string;
@@ -1837,16 +1837,16 @@ declare module Windows {
                     unshift(...items: ResourceCandidate[]): number;
                     lastIndexOf(searchElement: ResourceCandidate): number;
                     lastIndexOf(searchElement: ResourceCandidate, fromIndex: number): number;
-                    every(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool): bool;
-                    every(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool): bool;
-                    some(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean): boolean;
+                    every(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean): boolean;
+                    some(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => void): void;
                     forEach(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => void, thisArg: any): void;
                     map(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => any): any[];
                     map(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool): ResourceCandidate[];
-                    filter(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => bool, thisArg: any): ResourceCandidate[];
+                    filter(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean): ResourceCandidate[];
+                    filter(callbackfn: (value: ResourceCandidate, index: number, array: ResourceCandidate[]) => boolean, thisArg: any): ResourceCandidate[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceCandidate[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceCandidate[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: ResourceCandidate[]) => any): any;
@@ -1856,7 +1856,7 @@ declare module Windows {
                 export class ResourceContextLanguagesVectorView implements Windows.Foundation.Collections.IVectorView__string, Windows.Foundation.Collections.IIterable__string {
                     size: number;
                     getAt(index: number): string;
-                    indexOf(value: string): { index: number; returnValue: bool; };
+                    indexOf(value: string): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: string[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__string;
                     toString(): string;
@@ -1876,16 +1876,16 @@ declare module Windows {
                     unshift(...items: string[]): number;
                     lastIndexOf(searchElement: string): number;
                     lastIndexOf(searchElement: string, fromIndex: number): number;
-                    every(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                    every(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                    some(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                    every(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                    some(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: string, index: number, array: string[]) => void): void;
                     forEach(callbackfn: (value: string, index: number, array: string[]) => void, thisArg: any): void;
                     map(callbackfn: (value: string, index: number, array: string[]) => any): any[];
                     map(callbackfn: (value: string, index: number, array: string[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: string, index: number, array: string[]) => bool): string[];
-                    filter(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): string[];
+                    filter(callbackfn: (value: string, index: number, array: string[]) => boolean): string[];
+                    filter(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): string[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
@@ -1954,16 +1954,16 @@ declare module Windows {
                  appId: string;
                  licenseInformation: Windows.ApplicationModel.Store.LicenseInformation;
                  linkUri: Windows.Foundation.Uri;
-                 requestAppPurchaseAsync(includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
-                 requestProductPurchaseAsync(productId: string, includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
+                 requestAppPurchaseAsync(includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
+                 requestProductPurchaseAsync(productId: string, includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
                  loadListingInformationAsync(): Windows.Foundation.IAsyncOperation__ListingInformation;
                  getAppReceiptAsync(): Windows.Foundation.IAsyncOperation__string;
                  getProductReceiptAsync(productId: string): Windows.Foundation.IAsyncOperation__string;
             }
             export class LicenseInformation implements Windows.ApplicationModel.Store.ILicenseInformation {
                 expirationDate: Date;
-                isActive: bool;
-                isTrial: bool;
+                isActive: boolean;
+                isTrial: boolean;
                 productLicenses: Windows.Foundation.Collections.IMapView__string_ProductLicense;
                 onlicensechanged: any/* TODO */;
             }
@@ -1979,8 +1979,8 @@ declare module Windows {
                  appId: string;
                  licenseInformation: Windows.ApplicationModel.Store.LicenseInformation;
                  linkUri: Windows.Foundation.Uri;
-                 requestAppPurchaseAsync(includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
-                 requestProductPurchaseAsync(productId: string, includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
+                 requestAppPurchaseAsync(includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
+                 requestProductPurchaseAsync(productId: string, includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
                  loadListingInformationAsync(): Windows.Foundation.IAsyncOperation__ListingInformation;
                  getAppReceiptAsync(): Windows.Foundation.IAsyncOperation__string;
                  getProductReceiptAsync(productId: string): Windows.Foundation.IAsyncOperation__string;
@@ -1988,19 +1988,19 @@ declare module Windows {
             }
             export interface ILicenseInformation {
                  expirationDate: Date;
-                 isActive: bool;
-                 isTrial: bool;
+                 isActive: boolean;
+                 isTrial: boolean;
                  productLicenses: Windows.Foundation.Collections.IMapView__string_ProductLicense;
                  onlicensechanged: any/* TODO */;
             }
             export class ProductLicense implements Windows.ApplicationModel.Store.IProductLicense {
                 expirationDate: Date;
-                isActive: bool;
+                isActive: boolean;
                 productId: string;
             }
             export interface IProductLicense {
                  expirationDate: Date;
-                 isActive: bool;
+                 isActive: boolean;
                  productId: string;
             }
             export interface IListingInformation {
@@ -2025,8 +2025,8 @@ declare module Windows {
                 static appId: string;
                 static licenseInformation: Windows.ApplicationModel.Store.LicenseInformation;
                 static linkUri: Windows.Foundation.Uri;
-                static requestAppPurchaseAsync(includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
-                static requestProductPurchaseAsync(productId: string, includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
+                static requestAppPurchaseAsync(includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
+                static requestProductPurchaseAsync(productId: string, includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
                 static loadListingInformationAsync(): Windows.Foundation.IAsyncOperation__ListingInformation;
                 static getAppReceiptAsync(): Windows.Foundation.IAsyncOperation__string;
                 static getProductReceiptAsync(productId: string): Windows.Foundation.IAsyncOperation__string;
@@ -2035,8 +2035,8 @@ declare module Windows {
                 static appId: string;
                 static licenseInformation: Windows.ApplicationModel.Store.LicenseInformation;
                 static linkUri: Windows.Foundation.Uri;
-                static requestAppPurchaseAsync(includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
-                static requestProductPurchaseAsync(productId: string, includeReceipt: bool): Windows.Foundation.IAsyncOperation__string;
+                static requestAppPurchaseAsync(includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
+                static requestProductPurchaseAsync(productId: string, includeReceipt: boolean): Windows.Foundation.IAsyncOperation__string;
                 static loadListingInformationAsync(): Windows.Foundation.IAsyncOperation__ListingInformation;
                 static getAppReceiptAsync(): Windows.Foundation.IAsyncOperation__string;
                 static getProductReceiptAsync(productId: string): Windows.Foundation.IAsyncOperation__string;
@@ -2080,7 +2080,7 @@ declare module Windows {
                  stringify(): string;
                  getString(): string;
                  getNumber(): number;
-                 getBoolean(): bool;
+                 getBoolean(): boolean;
                  getArray(): Windows.Data.Json.JsonArray;
                  getObject(): Windows.Data.Json.JsonObject;
             }
@@ -2091,16 +2091,16 @@ declare module Windows {
                 getArrayAt(index: number): Windows.Data.Json.JsonArray;
                 getStringAt(index: number): string;
                 getNumberAt(index: number): number;
-                getBooleanAt(index: number): bool;
+                getBooleanAt(index: number): boolean;
                 stringify(): string;
                 getString(): string;
                 getNumber(): number;
-                getBoolean(): bool;
+                getBoolean(): boolean;
                 getArray(): Windows.Data.Json.JsonArray;
                 getObject(): Windows.Data.Json.JsonObject;
                 getAt(index: number): Windows.Data.Json.IJsonValue;
                 getView(): Windows.Foundation.Collections.IVectorView__IJsonValue;
-                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: boolean; };
                 setAt(index: number, value: Windows.Data.Json.IJsonValue): void;
                 insertAt(index: number, value: Windows.Data.Json.IJsonValue): void;
                 removeAt(index: number): void;
@@ -2111,7 +2111,7 @@ declare module Windows {
                 replaceAll(items: Windows.Data.Json.IJsonValue[]): void;
                 first(): Windows.Foundation.Collections.IIterator__IJsonValue;
                 static parse(input: string): Windows.Data.Json.JsonArray;
-                static tryParse(input: string): { result: Windows.Data.Json.JsonArray; succeeded: bool; };
+                static tryParse(input: string): { result: Windows.Data.Json.JsonArray; succeeded: boolean; };
                 toString(): string;
                 toLocaleString(): string;
                 concat(...items: IJsonValue[][]): IJsonValue[];
@@ -2129,16 +2129,16 @@ declare module Windows {
                 unshift(...items: IJsonValue[]): number;
                 lastIndexOf(searchElement: IJsonValue): number;
                 lastIndexOf(searchElement: IJsonValue, fromIndex: number): number;
-                every(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool): bool;
-                every(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool): bool;
-                some(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean): boolean;
+                every(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean): boolean;
+                some(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => void): void;
                 forEach(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => void, thisArg: any): void;
                 map(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => any): any[];
                 map(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool): IJsonValue[];
-                filter(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => bool, thisArg: any): IJsonValue[];
+                filter(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean): IJsonValue[];
+                filter(callbackfn: (value: IJsonValue, index: number, array: IJsonValue[]) => boolean, thisArg: any): IJsonValue[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IJsonValue[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IJsonValue[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IJsonValue[]) => any): any;
@@ -2154,27 +2154,27 @@ declare module Windows {
                 getNamedArray(name: string): Windows.Data.Json.JsonArray;
                 getNamedString(name: string): string;
                 getNamedNumber(name: string): number;
-                getNamedBoolean(name: string): bool;
+                getNamedBoolean(name: string): boolean;
                 stringify(): string;
                 getString(): string;
                 getNumber(): number;
-                getBoolean(): bool;
+                getBoolean(): boolean;
                 getArray(): Windows.Data.Json.JsonArray;
                 getObject(): Windows.Data.Json.JsonObject;
                 lookup(key: string): Windows.Data.Json.IJsonValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_IJsonValue;
-                insert(key: string, value: Windows.Data.Json.IJsonValue): bool;
+                insert(key: string, value: Windows.Data.Json.IJsonValue): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_IJsonValue;
                 static parse(input: string): Windows.Data.Json.JsonObject;
-                static tryParse(input: string): { result: Windows.Data.Json.JsonObject; succeeded: bool; };
+                static tryParse(input: string): { result: Windows.Data.Json.JsonObject; succeeded: boolean; };
             }
             export interface IJsonValueStatics {
                  parse(input: string): Windows.Data.Json.JsonValue;
-                 tryParse(input: string): { result: Windows.Data.Json.JsonValue; succeeded: bool; };
-                 createBooleanValue(input: bool): Windows.Data.Json.JsonValue;
+                 tryParse(input: string): { result: Windows.Data.Json.JsonValue; succeeded: boolean; };
+                 createBooleanValue(input: boolean): Windows.Data.Json.JsonValue;
                  createNumberValue(input: number): Windows.Data.Json.JsonValue;
                  createStringValue(input: string): Windows.Data.Json.JsonValue;
             }
@@ -2183,12 +2183,12 @@ declare module Windows {
                 stringify(): string;
                 getString(): string;
                 getNumber(): number;
-                getBoolean(): bool;
+                getBoolean(): boolean;
                 getArray(): Windows.Data.Json.JsonArray;
                 getObject(): Windows.Data.Json.JsonObject;
                 static parse(input: string): Windows.Data.Json.JsonValue;
-                static tryParse(input: string): { result: Windows.Data.Json.JsonValue; succeeded: bool; };
-                static createBooleanValue(input: bool): Windows.Data.Json.JsonValue;
+                static tryParse(input: string): { result: Windows.Data.Json.JsonValue; succeeded: boolean; };
+                static createBooleanValue(input: boolean): Windows.Data.Json.JsonValue;
                 static createNumberValue(input: number): Windows.Data.Json.JsonValue;
                 static createStringValue(input: string): Windows.Data.Json.JsonValue;
             }
@@ -2199,22 +2199,22 @@ declare module Windows {
                  getNamedArray(name: string): Windows.Data.Json.JsonArray;
                  getNamedString(name: string): string;
                  getNamedNumber(name: string): number;
-                 getNamedBoolean(name: string): bool;
+                 getNamedBoolean(name: string): boolean;
             }
             export interface IJsonObjectStatics {
                  parse(input: string): Windows.Data.Json.JsonObject;
-                 tryParse(input: string): { result: Windows.Data.Json.JsonObject; succeeded: bool; };
+                 tryParse(input: string): { result: Windows.Data.Json.JsonObject; succeeded: boolean; };
             }
             export interface IJsonArray extends Windows.Data.Json.IJsonValue {
                  getObjectAt(index: number): Windows.Data.Json.JsonObject;
                  getArrayAt(index: number): Windows.Data.Json.JsonArray;
                  getStringAt(index: number): string;
                  getNumberAt(index: number): number;
-                 getBooleanAt(index: number): bool;
+                 getBooleanAt(index: number): boolean;
             }
             export interface IJsonArrayStatics {
                  parse(input: string): Windows.Data.Json.JsonArray;
-                 tryParse(input: string): { result: Windows.Data.Json.JsonArray; succeeded: bool; };
+                 tryParse(input: string): { result: Windows.Data.Json.JsonArray; succeeded: boolean; };
             }
             export interface IJsonErrorStatics {
                  getStatus(hresult: number): Windows.Data.Json.JsonErrorStatus;
@@ -2255,7 +2255,7 @@ declare module Windows {
                     size: number;
                     item(index: number): Windows.Data.Xml.Dom.IXmlNode;
                     getAt(index: number): Windows.Data.Xml.Dom.IXmlNode;
-                    indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: bool; };
+                    indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: Windows.Data.Xml.Dom.IXmlNode[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__IXmlNode;
                     toString(): string;
@@ -2275,16 +2275,16 @@ declare module Windows {
                     unshift(...items: IXmlNode[]): number;
                     lastIndexOf(searchElement: IXmlNode): number;
                     lastIndexOf(searchElement: IXmlNode, fromIndex: number): number;
-                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): bool;
-                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): bool;
-                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): boolean;
+                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): boolean;
+                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => void): void;
                     forEach(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => void, thisArg: any): void;
                     map(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => any): any[];
                     map(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): IXmlNode[];
-                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): IXmlNode[];
+                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): IXmlNode[];
+                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): IXmlNode[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any): any;
@@ -2301,7 +2301,7 @@ declare module Windows {
                     removeNamedItemNS(namespaceUri: any, name: string): Windows.Data.Xml.Dom.IXmlNode;
                     setNamedItemNS(node: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     getAt(index: number): Windows.Data.Xml.Dom.IXmlNode;
-                    indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: bool; };
+                    indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: Windows.Data.Xml.Dom.IXmlNode[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__IXmlNode;
                     toString(): string;
@@ -2321,16 +2321,16 @@ declare module Windows {
                     unshift(...items: IXmlNode[]): number;
                     lastIndexOf(searchElement: IXmlNode): number;
                     lastIndexOf(searchElement: IXmlNode, fromIndex: number): number;
-                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): bool;
-                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): bool;
-                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): boolean;
+                    every(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): boolean;
+                    some(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => void): void;
                     forEach(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => void, thisArg: any): void;
                     map(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => any): any[];
                     map(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool): IXmlNode[];
-                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => bool, thisArg: any): IXmlNode[];
+                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean): IXmlNode[];
+                    filter(callbackfn: (value: IXmlNode, index: number, array: IXmlNode[]) => boolean, thisArg: any): IXmlNode[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: IXmlNode[]) => any): any;
@@ -2369,13 +2369,13 @@ declare module Windows {
                     createAttributeNS(namespaceUri: any, qualifiedName: string): Windows.Data.Xml.Dom.XmlAttribute;
                     createElementNS(namespaceUri: any, qualifiedName: string): Windows.Data.Xml.Dom.XmlElement;
                     getElementById(elementId: string): Windows.Data.Xml.Dom.XmlElement;
-                    importNode(node: Windows.Data.Xml.Dom.IXmlNode, deep: bool): Windows.Data.Xml.Dom.IXmlNode;
-                    hasChildNodes(): bool;
+                    importNode(node: Windows.Data.Xml.Dom.IXmlNode, deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2409,16 +2409,16 @@ declare module Windows {
                      parentNode: Windows.Data.Xml.Dom.IXmlNode;
                      prefix: any;
                      previousSibling: Windows.Data.Xml.Dom.IXmlNode;
-                     hasChildNodes(): bool;
+                     hasChildNodes(): boolean;
                      insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                      replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                      removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                      appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                     cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                     cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                      normalize(): void;
                 }
                 export interface IXmlDomImplementation {
-                     hasFeature(feature: string, version: any): bool;
+                     hasFeature(feature: string, version: any): boolean;
                 }
                 export interface IXmlDocumentType extends Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
                      entities: Windows.Data.Xml.Dom.XmlNamedNodeMap;
@@ -2427,7 +2427,7 @@ declare module Windows {
                 }
                 export interface IXmlAttribute extends Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
                      name: string;
-                     specified: bool;
+                     specified: boolean;
                      value: string;
                 }
                 export interface IXmlDocumentFragment extends Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
@@ -2449,7 +2449,7 @@ declare module Windows {
                 }
                 export class XmlAttribute implements Windows.Data.Xml.Dom.IXmlAttribute, Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
                     name: string;
-                    specified: bool;
+                    specified: boolean;
                     value: string;
                     attributes: Windows.Data.Xml.Dom.XmlNamedNodeMap;
                     childNodes: Windows.Data.Xml.Dom.XmlNodeList;
@@ -2466,12 +2466,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2527,7 +2527,7 @@ declare module Windows {
                      createAttributeNS(namespaceUri: any, qualifiedName: string): Windows.Data.Xml.Dom.XmlAttribute;
                      createElementNS(namespaceUri: any, qualifiedName: string): Windows.Data.Xml.Dom.XmlElement;
                      getElementById(elementId: string): Windows.Data.Xml.Dom.XmlElement;
-                     importNode(node: Windows.Data.Xml.Dom.IXmlNode, deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                     importNode(node: Windows.Data.Xml.Dom.IXmlNode, deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                 }
                 export class XmlDocumentType implements Windows.Data.Xml.Dom.IXmlDocumentType, Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
                     entities: Windows.Data.Xml.Dom.XmlNamedNodeMap;
@@ -2548,12 +2548,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2562,7 +2562,7 @@ declare module Windows {
                     getXml(): string;
                 }
                 export class XmlDomImplementation implements Windows.Data.Xml.Dom.IXmlDomImplementation {
-                    hasFeature(feature: string, version: any): bool;
+                    hasFeature(feature: string, version: any): boolean;
                 }
                 export class XmlElement implements Windows.Data.Xml.Dom.IXmlElement, Windows.Data.Xml.Dom.IXmlNode, Windows.Data.Xml.Dom.IXmlNodeSelector, Windows.Data.Xml.Dom.IXmlNodeSerializer {
                     tagName: string;
@@ -2593,12 +2593,12 @@ declare module Windows {
                     removeAttributeNS(namespaceUri: any, localName: string): void;
                     setAttributeNodeNS(newAttribute: Windows.Data.Xml.Dom.XmlAttribute): Windows.Data.Xml.Dom.XmlAttribute;
                     getAttributeNodeNS(namespaceUri: any, localName: string): Windows.Data.Xml.Dom.XmlAttribute;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2622,12 +2622,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2659,12 +2659,12 @@ declare module Windows {
                     insertData(offset: number, data: string): void;
                     deleteData(offset: number, count: number): void;
                     replaceData(offset: number, count: number, data: string): void;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2695,12 +2695,12 @@ declare module Windows {
                     insertData(offset: number, data: string): void;
                     deleteData(offset: number, count: number): void;
                     replaceData(offset: number, count: number, data: string): void;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2726,12 +2726,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2755,12 +2755,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2792,12 +2792,12 @@ declare module Windows {
                     insertData(offset: number, data: string): void;
                     deleteData(offset: number, count: number): void;
                     replaceData(offset: number, count: number, data: string): void;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2820,11 +2820,11 @@ declare module Windows {
                      item(index: number): Windows.Data.Xml.Dom.IXmlNode;
                 }
                 export interface IXmlLoadSettings {
-                     elementContentWhiteSpace: bool;
+                     elementContentWhiteSpace: boolean;
                      maxElementDepth: number;
-                     prohibitDtd: bool;
-                     resolveExternals: bool;
-                     validateOnParse: bool;
+                     prohibitDtd: boolean;
+                     resolveExternals: boolean;
+                     validateOnParse: boolean;
                 }
                 export interface IXmlDocumentIO {
                      loadXml(xml: string): void;
@@ -2832,11 +2832,11 @@ declare module Windows {
                      saveToFileAsync(file: Windows.Storage.IStorageFile): Windows.Foundation.IAsyncAction;
                 }
                 export class XmlLoadSettings implements Windows.Data.Xml.Dom.IXmlLoadSettings {
-                    elementContentWhiteSpace: bool;
+                    elementContentWhiteSpace: boolean;
                     maxElementDepth: number;
-                    prohibitDtd: bool;
-                    resolveExternals: bool;
-                    validateOnParse: bool;
+                    prohibitDtd: boolean;
+                    resolveExternals: boolean;
+                    validateOnParse: boolean;
                 }
                 export interface IXmlDocumentStatics {
                      loadFromUriAsync(uri: Windows.Foundation.Uri): Windows.Foundation.IAsyncOperation__XmlDocument;
@@ -2862,12 +2862,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -2894,12 +2894,12 @@ declare module Windows {
                     prefix: any;
                     previousSibling: Windows.Data.Xml.Dom.IXmlNode;
                     innerText: string;
-                    hasChildNodes(): bool;
+                    hasChildNodes(): boolean;
                     insertBefore(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     replaceChild(newChild: Windows.Data.Xml.Dom.IXmlNode, referenceChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     removeChild(childNode: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
                     appendChild(newChild: Windows.Data.Xml.Dom.IXmlNode): Windows.Data.Xml.Dom.IXmlNode;
-                    cloneNode(deep: bool): Windows.Data.Xml.Dom.IXmlNode;
+                    cloneNode(deep: boolean): Windows.Data.Xml.Dom.IXmlNode;
                     normalize(): void;
                     selectSingleNode(xpath: string): Windows.Data.Xml.Dom.IXmlNode;
                     selectNodes(xpath: string): Windows.Data.Xml.Dom.XmlNodeList;
@@ -3231,8 +3231,8 @@ declare module Windows {
                 aborted,
             }
             export class DeviceThumbnail implements Windows.Storage.Streams.IRandomAccessStreamWithContentType, Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream, Windows.Storage.Streams.IContentTypeProvider {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 contentType: string;
@@ -3256,13 +3256,13 @@ declare module Windows {
                 right,
             }
             export interface IEnclosureLocation {
-                 inDock: bool;
-                 inLid: bool;
+                 inDock: boolean;
+                 inLid: boolean;
                  panel: Windows.Devices.Enumeration.Panel;
             }
             export class EnclosureLocation implements Windows.Devices.Enumeration.IEnclosureLocation {
-                inDock: bool;
-                inLid: bool;
+                inDock: boolean;
+                inLid: boolean;
                 panel: Windows.Devices.Enumeration.Panel;
             }
             export interface IDeviceInformationUpdate {
@@ -3276,7 +3276,7 @@ declare module Windows {
             export class DeviceInformationCollection implements Windows.Foundation.Collections.IVectorView__DeviceInformation, Windows.Foundation.Collections.IIterable__DeviceInformation {
                 size: number;
                 getAt(index: number): Windows.Devices.Enumeration.DeviceInformation;
-                indexOf(value: Windows.Devices.Enumeration.DeviceInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Enumeration.DeviceInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Enumeration.DeviceInformation[]; returnValue: number; };
                 first(): Windows.Foundation.Collections.IIterator__DeviceInformation;
                 toString(): string;
@@ -3296,16 +3296,16 @@ declare module Windows {
                 unshift(...items: DeviceInformation[]): number;
                 lastIndexOf(searchElement: DeviceInformation): number;
                 lastIndexOf(searchElement: DeviceInformation, fromIndex: number): number;
-                every(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool): bool;
-                every(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool): bool;
-                some(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean): boolean;
+                every(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean): boolean;
+                some(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => void): void;
                 forEach(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => any): any[];
                 map(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool): DeviceInformation[];
-                filter(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => bool, thisArg: any): DeviceInformation[];
+                filter(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean): DeviceInformation[];
+                filter(callbackfn: (value: DeviceInformation, index: number, array: DeviceInformation[]) => boolean, thisArg: any): DeviceInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: DeviceInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: DeviceInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: DeviceInformation[]) => any): any;
@@ -3335,8 +3335,8 @@ declare module Windows {
             export class DeviceInformation implements Windows.Devices.Enumeration.IDeviceInformation {
                 enclosureLocation: Windows.Devices.Enumeration.EnclosureLocation;
                 id: string;
-                isDefault: bool;
-                isEnabled: bool;
+                isDefault: boolean;
+                isEnabled: boolean;
                 name: string;
                 properties: Windows.Foundation.Collections.IMapView__string_any;
                 update(updateInfo: Windows.Devices.Enumeration.DeviceInformationUpdate): void;
@@ -3368,8 +3368,8 @@ declare module Windows {
             export interface IDeviceInformation {
                  enclosureLocation: Windows.Devices.Enumeration.EnclosureLocation;
                  id: string;
-                 isDefault: bool;
-                 isEnabled: bool;
+                 isDefault: boolean;
+                 isEnabled: boolean;
                  name: string;
                  properties: Windows.Foundation.Collections.IMapView__string_any;
                  update(updateInfo: Windows.Devices.Enumeration.DeviceInformationUpdate): void;
@@ -3403,7 +3403,7 @@ declare module Windows {
                 export class PnpObjectCollection implements Windows.Foundation.Collections.IVectorView__PnpObject, Windows.Foundation.Collections.IIterable__PnpObject {
                     size: number;
                     getAt(index: number): Windows.Devices.Enumeration.Pnp.PnpObject;
-                    indexOf(value: Windows.Devices.Enumeration.Pnp.PnpObject): { index: number; returnValue: bool; };
+                    indexOf(value: Windows.Devices.Enumeration.Pnp.PnpObject): { index: number; returnValue: boolean; };
                     getMany(startIndex: number): { items: Windows.Devices.Enumeration.Pnp.PnpObject[]; returnValue: number; };
                     first(): Windows.Foundation.Collections.IIterator__PnpObject;
                     toString(): string;
@@ -3423,16 +3423,16 @@ declare module Windows {
                     unshift(...items: PnpObject[]): number;
                     lastIndexOf(searchElement: PnpObject): number;
                     lastIndexOf(searchElement: PnpObject, fromIndex: number): number;
-                    every(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool): bool;
-                    every(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool, thisArg: any): bool;
-                    some(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool): bool;
-                    some(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool, thisArg: any): bool;
+                    every(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean): boolean;
+                    every(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean, thisArg: any): boolean;
+                    some(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean): boolean;
+                    some(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean, thisArg: any): boolean;
                     forEach(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => void): void;
                     forEach(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => void, thisArg: any): void;
                     map(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => any): any[];
                     map(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => any, thisArg: any): any[];
-                    filter(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool): PnpObject[];
-                    filter(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => bool, thisArg: any): PnpObject[];
+                    filter(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean): PnpObject[];
+                    filter(callbackfn: (value: PnpObject, index: number, array: PnpObject[]) => boolean, thisArg: any): PnpObject[];
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: PnpObject[]) => any): any;
                     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: PnpObject[]) => any, initialValue: any): any;
                     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: PnpObject[]) => any): any;
@@ -3620,7 +3620,7 @@ declare module Windows {
                  getPointerDevices(): Windows.Foundation.Collections.IVectorView__PointerDevice;
             }
             export class PointerDevice implements Windows.Devices.Input.IPointerDevice {
-                isIntegrated: bool;
+                isIntegrated: boolean;
                 maxContacts: number;
                 physicalDeviceRect: Windows.Foundation.Rect;
                 pointerDeviceType: Windows.Devices.Input.PointerDeviceType;
@@ -3630,7 +3630,7 @@ declare module Windows {
                 static getPointerDevices(): Windows.Foundation.Collections.IVectorView__PointerDevice;
             }
             export interface IPointerDevice {
-                 isIntegrated: bool;
+                 isIntegrated: boolean;
                  maxContacts: number;
                  physicalDeviceRect: Windows.Foundation.Rect;
                  pointerDeviceType: Windows.Devices.Input.PointerDeviceType;
@@ -4141,10 +4141,10 @@ declare module Windows {
             displayName: string;
             nativeName: string;
             
-            static isSupported(geographicRegionCode: string): bool;
+            static isSupported(geographicRegionCode: string): boolean;
         }
         export interface IGeographicRegionStatics {
-             isSupported(geographicRegionCode: string): bool;
+             isSupported(geographicRegionCode: string): boolean;
         }
         export interface ILanguage {
              displayName: string;
@@ -4162,11 +4162,11 @@ declare module Windows {
             nativeName: string;
             script: string;
             static currentInputMethodLanguageTag: string;
-            static isWellFormed(languageTag: string): bool;
+            static isWellFormed(languageTag: string): boolean;
         }
         export interface ILanguageStatics {
              currentInputMethodLanguageTag: string;
-             isWellFormed(languageTag: string): bool;
+             isWellFormed(languageTag: string): boolean;
         }
         export interface ICalendar {
              day: number;
@@ -4181,7 +4181,7 @@ declare module Windows {
              firstSecondInThisMinute: number;
              firstYearInThisEra: number;
              hour: number;
-             isDaylightSavingTime: bool;
+             isDaylightSavingTime: boolean;
              languages: Windows.Foundation.Collections.IVectorView__string;
              lastDayInThisMonth: number;
              lastEra: number;
@@ -4274,7 +4274,7 @@ declare module Windows {
             firstSecondInThisMinute: number;
             firstYearInThisEra: number;
             hour: number;
-            isDaylightSavingTime: bool;
+            isDaylightSavingTime: boolean;
             languages: Windows.Foundation.Collections.IVectorView__string;
             lastDayInThisMonth: number;
             lastEra: number;
@@ -4493,8 +4493,8 @@ declare module Windows {
                  fractionDigits: number;
                  geographicRegion: string;
                  integerDigits: number;
-                 isDecimalPointAlwaysDisplayed: bool;
-                 isGrouped: bool;
+                 isDecimalPointAlwaysDisplayed: boolean;
+                 isGrouped: boolean;
                  languages: Windows.Foundation.Collections.IVectorView__string;
                  numeralSystem: string;
                  resolvedGeographicRegion: string;
@@ -4509,8 +4509,8 @@ declare module Windows {
                 fractionDigits: number;
                 geographicRegion: string;
                 integerDigits: number;
-                isDecimalPointAlwaysDisplayed: bool;
-                isGrouped: bool;
+                isDecimalPointAlwaysDisplayed: boolean;
+                isGrouped: boolean;
                 languages: Windows.Foundation.Collections.IVectorView__string;
                 numeralSystem: string;
                 resolvedGeographicRegion: string;
@@ -4533,8 +4533,8 @@ declare module Windows {
                 fractionDigits: number;
                 geographicRegion: string;
                 integerDigits: number;
-                isDecimalPointAlwaysDisplayed: bool;
-                isGrouped: bool;
+                isDecimalPointAlwaysDisplayed: boolean;
+                isGrouped: boolean;
                 languages: Windows.Foundation.Collections.IVectorView__string;
                 numeralSystem: string;
                 resolvedGeographicRegion: string;
@@ -4557,8 +4557,8 @@ declare module Windows {
                 fractionDigits: number;
                 geographicRegion: string;
                 integerDigits: number;
-                isDecimalPointAlwaysDisplayed: bool;
-                isGrouped: bool;
+                isDecimalPointAlwaysDisplayed: boolean;
+                isGrouped: boolean;
                 languages: Windows.Foundation.Collections.IVectorView__string;
                 numeralSystem: string;
                 resolvedGeographicRegion: string;
@@ -4583,8 +4583,8 @@ declare module Windows {
                 fractionDigits: number;
                 geographicRegion: string;
                 integerDigits: number;
-                isDecimalPointAlwaysDisplayed: bool;
-                isGrouped: bool;
+                isDecimalPointAlwaysDisplayed: boolean;
+                isGrouped: boolean;
                 languages: Windows.Foundation.Collections.IVectorView__string;
                 numeralSystem: string;
                 resolvedGeographicRegion: string;
@@ -4621,7 +4621,7 @@ declare module Windows {
                 size: number;
                 lookup(text: string): string;
                 getAt(index: number): Windows.Globalization.Collation.CharacterGrouping;
-                indexOf(value: Windows.Globalization.Collation.CharacterGrouping): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Globalization.Collation.CharacterGrouping): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Globalization.Collation.CharacterGrouping[]; returnValue: number; };
                 first(): Windows.Foundation.Collections.IIterator__CharacterGrouping;
                 toString(): string;
@@ -4641,16 +4641,16 @@ declare module Windows {
                 unshift(...items: CharacterGrouping[]): number;
                 lastIndexOf(searchElement: CharacterGrouping): number;
                 lastIndexOf(searchElement: CharacterGrouping, fromIndex: number): number;
-                every(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool): bool;
-                every(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool): bool;
-                some(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean): boolean;
+                every(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean): boolean;
+                some(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => void): void;
                 forEach(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => void, thisArg: any): void;
                 map(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => any): any[];
                 map(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool): CharacterGrouping[];
-                filter(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => bool, thisArg: any): CharacterGrouping[];
+                filter(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean): CharacterGrouping[];
+                filter(callbackfn: (value: CharacterGrouping, index: number, array: CharacterGrouping[]) => boolean, thisArg: any): CharacterGrouping[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: CharacterGrouping[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: CharacterGrouping[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: CharacterGrouping[]) => any): any;
@@ -4685,7 +4685,7 @@ declare module Windows {
                  logicalDpi: number;
                  nativeOrientation: Windows.Graphics.Display.DisplayOrientations;
                  resolutionScale: Windows.Graphics.Display.ResolutionScale;
-                 stereoEnabled: bool;
+                 stereoEnabled: boolean;
                  onorientationchanged: any/* TODO */;
                  onlogicaldpichanged: any/* TODO */;
                  onstereoenabledchanged: any/* TODO */;
@@ -4699,7 +4699,7 @@ declare module Windows {
                 static logicalDpi: number;
                 static nativeOrientation: Windows.Graphics.Display.DisplayOrientations;
                 static resolutionScale: Windows.Graphics.Display.ResolutionScale;
-                static stereoEnabled: bool;
+                static stereoEnabled: boolean;
                 static onorientationchanged: any/* TODO */;
                 static onlogicaldpichanged: any/* TODO */;
                 static onstereoenabledchanged: any/* TODO */;
@@ -4811,9 +4811,9 @@ declare module Windows {
             export class BitmapPropertySet implements Windows.Foundation.Collections.IMap__string_BitmapTypedValue, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_BitmapTypedValue {
                 size: number;
                 lookup(key: string): Windows.Graphics.Imaging.BitmapTypedValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_BitmapTypedValue;
-                insert(key: string, value: Windows.Graphics.Imaging.BitmapTypedValue): bool;
+                insert(key: string, value: Windows.Graphics.Imaging.BitmapTypedValue): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_BitmapTypedValue;
@@ -4838,8 +4838,8 @@ declare module Windows {
                 detachPixelData(): Uint8Array;
             }
             export class ImageStream implements Windows.Storage.Streams.IRandomAccessStreamWithContentType, Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream, Windows.Storage.Streams.IContentTypeProvider {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 contentType: string;
@@ -4961,7 +4961,7 @@ declare module Windows {
                 encoderInformation: Windows.Graphics.Imaging.BitmapCodecInformation;
                 generatedThumbnailHeight: number;
                 generatedThumbnailWidth: number;
-                isThumbnailGenerated: bool;
+                isThumbnailGenerated: boolean;
                 setPixelData(pixelFormat: Windows.Graphics.Imaging.BitmapPixelFormat, alphaMode: Windows.Graphics.Imaging.BitmapAlphaMode, width: number, height: number, dpiX: number, dpiY: number, pixels: number[]): void;
                 setPixelData(pixelFormat: Windows.Graphics.Imaging.BitmapPixelFormat, alphaMode: Windows.Graphics.Imaging.BitmapAlphaMode, width: number, height: number, dpiX: number, dpiY: number, pixels: Uint8Array): void;
                 goToNextFrameAsync(): Windows.Foundation.IAsyncAction;
@@ -4986,7 +4986,7 @@ declare module Windows {
                  encoderInformation: Windows.Graphics.Imaging.BitmapCodecInformation;
                  generatedThumbnailHeight: number;
                  generatedThumbnailWidth: number;
-                 isThumbnailGenerated: bool;
+                 isThumbnailGenerated: boolean;
                  setPixelData(pixelFormat: Windows.Graphics.Imaging.BitmapPixelFormat, alphaMode: Windows.Graphics.Imaging.BitmapAlphaMode, width: number, height: number, dpiX: number, dpiY: number, pixels: number[]): void;
                  setPixelData(pixelFormat: Windows.Graphics.Imaging.BitmapPixelFormat, alphaMode: Windows.Graphics.Imaging.BitmapAlphaMode, width: number, height: number, dpiX: number, dpiY: number, pixels: Uint8Array): void;
                  goToNextFrameAsync(): Windows.Foundation.IAsyncAction;
@@ -5017,7 +5017,7 @@ declare module Windows {
                      optionType: Windows.Graphics.Printing.OptionDetails.PrintOptionType;
                      state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                      value: any;
-                     trySetValue(value: any): bool;
+                     trySetValue(value: any): boolean;
                 }
                 export interface IPrintNumberOptionDetails extends Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails {
                      maxValue: number;
@@ -5037,7 +5037,7 @@ declare module Windows {
                     value: any;
                     maxValue: number;
                     minValue: number;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintMediaSizeOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5046,7 +5046,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintMediaTypeOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5055,7 +5055,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintOrientationOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5064,7 +5064,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintQualityOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5073,7 +5073,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintColorModeOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5082,7 +5082,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintDuplexOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5091,7 +5091,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintCollationOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5100,7 +5100,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintStapleOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5109,7 +5109,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintHolePunchOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5118,7 +5118,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export class PrintBindingOptionDetails implements Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails, Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails {
                     errorText: string;
@@ -5127,7 +5127,7 @@ declare module Windows {
                     state: Windows.Graphics.Printing.OptionDetails.PrintOptionStates;
                     value: any;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export interface IPrintCustomOptionDetails extends Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails {
                      displayName: string;
@@ -5143,7 +5143,7 @@ declare module Windows {
                     value: any;
                     displayName: string;
                     maxCharacters: number;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                 }
                 export interface IPrintCustomItemDetails {
                      itemDisplayName: string;
@@ -5164,7 +5164,7 @@ declare module Windows {
                     value: any;
                     displayName: string;
                     items: Windows.Foundation.Collections.IVectorView__any;
-                    trySetValue(value: any): bool;
+                    trySetValue(value: any): boolean;
                     addItem(itemId: string, displayName: string): void;
                 }
                 export interface IPrintTaskOptionChangedEventArgs {
@@ -5795,27 +5795,27 @@ declare module Windows {
                 veryLarge5M,
             }
             export interface ICameraCaptureUIPhotoCaptureSettings {
-                 allowCropping: bool;
+                 allowCropping: boolean;
                  croppedAspectRatio: Windows.Foundation.Size;
                  croppedSizeInPixels: Windows.Foundation.Size;
                  format: Windows.Media.Capture.CameraCaptureUIPhotoFormat;
                  maxResolution: Windows.Media.Capture.CameraCaptureUIMaxPhotoResolution;
             }
             export class CameraCaptureUIPhotoCaptureSettings implements Windows.Media.Capture.ICameraCaptureUIPhotoCaptureSettings {
-                allowCropping: bool;
+                allowCropping: boolean;
                 croppedAspectRatio: Windows.Foundation.Size;
                 croppedSizeInPixels: Windows.Foundation.Size;
                 format: Windows.Media.Capture.CameraCaptureUIPhotoFormat;
                 maxResolution: Windows.Media.Capture.CameraCaptureUIMaxPhotoResolution;
             }
             export interface ICameraCaptureUIVideoCaptureSettings {
-                 allowTrimming: bool;
+                 allowTrimming: boolean;
                  format: Windows.Media.Capture.CameraCaptureUIVideoFormat;
                  maxDurationInSeconds: number;
                  maxResolution: Windows.Media.Capture.CameraCaptureUIMaxVideoResolution;
             }
             export class CameraCaptureUIVideoCaptureSettings implements Windows.Media.Capture.ICameraCaptureUIVideoCaptureSettings {
-                allowTrimming: bool;
+                allowTrimming: boolean;
                 format: Windows.Media.Capture.CameraCaptureUIVideoFormat;
                 maxDurationInSeconds: number;
                 maxResolution: Windows.Media.Capture.CameraCaptureUIMaxVideoResolution;
@@ -5900,8 +5900,8 @@ declare module Windows {
                 getEncoderProperty(mediaStreamType: Windows.Media.Capture.MediaStreamType, propertyId: string): any;
                 onfailed: any/* TODO */;
                 onrecordlimitationexceeded: any/* TODO */;
-                setPreviewMirroring(value: bool): void;
-                getPreviewMirroring(): bool;
+                setPreviewMirroring(value: boolean): void;
+                getPreviewMirroring(): boolean;
                 setPreviewRotation(value: Windows.Media.Capture.VideoRotation): void;
                 getPreviewRotation(): Windows.Media.Capture.VideoRotation;
                 setRecordRotation(value: Windows.Media.Capture.VideoRotation): void;
@@ -5945,8 +5945,8 @@ declare module Windows {
                  getEncoderProperty(mediaStreamType: Windows.Media.Capture.MediaStreamType, propertyId: string): any;
                  onfailed: any/* TODO */;
                  onrecordlimitationexceeded: any/* TODO */;
-                 setPreviewMirroring(value: bool): void;
-                 getPreviewMirroring(): bool;
+                 setPreviewMirroring(value: boolean): void;
+                 getPreviewMirroring(): boolean;
                  setPreviewRotation(value: Windows.Media.Capture.VideoRotation): void;
                  getPreviewRotation(): Windows.Media.Capture.VideoRotation;
                  setRecordRotation(value: Windows.Media.Capture.VideoRotation): void;
@@ -6020,8 +6020,8 @@ declare module Windows {
                 (sender: Windows.Media.Devices.CallControl): void;
             }
             export class CallControl implements Windows.Media.Devices.ICallControl {
-                hasRinger: bool;
-                indicateNewIncomingCall(enableRinger: bool, callerId: string): number;
+                hasRinger: boolean;
+                indicateNewIncomingCall(enableRinger: boolean, callerId: string): number;
                 indicateNewOutgoingCall(): number;
                 indicateActiveCall(callToken: number): void;
                 endCall(callToken: number): void;
@@ -6044,8 +6044,8 @@ declare module Windows {
                 (sender: Windows.Media.Devices.CallControl, e: Windows.Media.Devices.KeypadPressedEventArgs): void;
             }
             export interface ICallControl {
-                 hasRinger: bool;
-                 indicateNewIncomingCall(enableRinger: bool, callerId: string): number;
+                 hasRinger: boolean;
+                 indicateNewIncomingCall(enableRinger: boolean, callerId: string): number;
                  indicateNewOutgoingCall(): number;
                  indicateActiveCall(callToken: number): void;
                  endCall(callToken: number): void;
@@ -6095,7 +6095,7 @@ declare module Windows {
                 static ondefaultaudiorenderdevicechanged: any/* TODO */;
             }
             export class AudioDeviceController implements Windows.Media.Devices.IAudioDeviceController, Windows.Media.Devices.IMediaDeviceController {
-                muted: bool;
+                muted: boolean;
                 volumePercent: number;
                 getAvailableMediaStreamProperties(mediaStreamType: Windows.Media.Capture.MediaStreamType): Windows.Foundation.Collections.IVectorView__IMediaEncodingProperties;
                 getMediaStreamProperties(mediaStreamType: Windows.Media.Capture.MediaStreamType): Windows.Media.MediaProperties.IMediaEncodingProperties;
@@ -6113,8 +6113,8 @@ declare module Windows {
                 tilt: Windows.Media.Devices.MediaDeviceControl;
                 whiteBalance: Windows.Media.Devices.MediaDeviceControl;
                 zoom: Windows.Media.Devices.MediaDeviceControl;
-                trySetPowerlineFrequency(value: Windows.Media.Capture.PowerlineFrequency): bool;
-                tryGetPowerlineFrequency(): { value: Windows.Media.Capture.PowerlineFrequency; succeeded: bool; };
+                trySetPowerlineFrequency(value: Windows.Media.Capture.PowerlineFrequency): boolean;
+                tryGetPowerlineFrequency(): { value: Windows.Media.Capture.PowerlineFrequency; succeeded: boolean; };
                 getAvailableMediaStreamProperties(mediaStreamType: Windows.Media.Capture.MediaStreamType): Windows.Foundation.Collections.IVectorView__IMediaEncodingProperties;
                 getMediaStreamProperties(mediaStreamType: Windows.Media.Capture.MediaStreamType): Windows.Media.MediaProperties.IMediaEncodingProperties;
                 setMediaStreamPropertiesAsync(mediaStreamType: Windows.Media.Capture.MediaStreamType, mediaEncodingProperties: Windows.Media.MediaProperties.IMediaEncodingProperties): Windows.Foundation.IAsyncAction;
@@ -6127,7 +6127,7 @@ declare module Windows {
                  setMediaStreamPropertiesAsync(mediaStreamType: Windows.Media.Capture.MediaStreamType, mediaEncodingProperties: Windows.Media.MediaProperties.IMediaEncodingProperties): Windows.Foundation.IAsyncAction;
             }
             export interface IAudioDeviceController extends Windows.Media.Devices.IMediaDeviceController {
-                 muted: bool;
+                 muted: boolean;
                  volumePercent: number;
             }
             export interface IVideoDeviceController extends Windows.Media.Devices.IMediaDeviceController {
@@ -6142,38 +6142,38 @@ declare module Windows {
                  tilt: Windows.Media.Devices.MediaDeviceControl;
                  whiteBalance: Windows.Media.Devices.MediaDeviceControl;
                  zoom: Windows.Media.Devices.MediaDeviceControl;
-                 trySetPowerlineFrequency(value: Windows.Media.Capture.PowerlineFrequency): bool;
-                 tryGetPowerlineFrequency(): { value: Windows.Media.Capture.PowerlineFrequency; succeeded: bool; };
+                 trySetPowerlineFrequency(value: Windows.Media.Capture.PowerlineFrequency): boolean;
+                 tryGetPowerlineFrequency(): { value: Windows.Media.Capture.PowerlineFrequency; succeeded: boolean; };
             }
             export class MediaDeviceControl implements Windows.Media.Devices.IMediaDeviceControl {
                 capabilities: Windows.Media.Devices.MediaDeviceControlCapabilities;
-                tryGetValue(): { value: number; succeeded: bool; };
-                trySetValue(value: number): bool;
-                tryGetAuto(): { value: bool; succeeded: bool; };
-                trySetAuto(value: bool): bool;
+                tryGetValue(): { value: number; succeeded: boolean; };
+                trySetValue(value: number): boolean;
+                tryGetAuto(): { value: boolean; succeeded: boolean; };
+                trySetAuto(value: boolean): boolean;
             }
             export interface IMediaDeviceControl {
                  capabilities: Windows.Media.Devices.MediaDeviceControlCapabilities;
-                 tryGetValue(): { value: number; succeeded: bool; };
-                 trySetValue(value: number): bool;
-                 tryGetAuto(): { value: bool; succeeded: bool; };
-                 trySetAuto(value: bool): bool;
+                 tryGetValue(): { value: number; succeeded: boolean; };
+                 trySetValue(value: number): boolean;
+                 tryGetAuto(): { value: boolean; succeeded: boolean; };
+                 trySetAuto(value: boolean): boolean;
             }
             export class MediaDeviceControlCapabilities implements Windows.Media.Devices.IMediaDeviceControlCapabilities {
-                autoModeSupported: bool;
+                autoModeSupported: boolean;
                 default_: number;
                 max: number;
                 min: number;
                 step: number;
-                supported: bool;
+                supported: boolean;
             }
             export interface IMediaDeviceControlCapabilities {
-                 autoModeSupported: bool;
+                 autoModeSupported: boolean;
                  default_: number;
                  max: number;
                  min: number;
                  step: number;
-                 supported: bool;
+                 supported: boolean;
             }
             export interface IAdvancedVideoCaptureDeviceController {
                  setDeviceProperty(propertyId: string, propertyValue: any): void;
@@ -6192,7 +6192,7 @@ declare module Windows {
         export interface IMediaControl {
              albumArt: Windows.Foundation.Uri;
              artistName: string;
-             isPlaying: bool;
+             isPlaying: boolean;
              soundLevel: Windows.Media.SoundLevel;
              trackName: string;
              onsoundlevelchanged: any/* TODO */;
@@ -6211,7 +6211,7 @@ declare module Windows {
         export class MediaControl {
             static albumArt: Windows.Foundation.Uri;
             static artistName: string;
-            static isPlaying: bool;
+            static isPlaying: boolean;
             static soundLevel: Windows.Media.SoundLevel;
             static trackName: string;
             static onsoundlevelchanged: any/* TODO */;
@@ -6390,10 +6390,10 @@ declare module Windows {
                 time: number;
             }
             export interface IMuteChangeRequestedEventArgs {
-                 mute: bool;
+                 mute: boolean;
             }
             export class MuteChangeRequestedEventArgs implements Windows.Media.PlayTo.IMuteChangeRequestedEventArgs {
-                mute: bool;
+                mute: boolean;
             }
             export interface IVolumeChangeRequestedEventArgs {
                  volume: number;
@@ -6404,9 +6404,9 @@ declare module Windows {
             export interface IPlayToReceiver {
                  friendlyName: string;
                  properties: Windows.Foundation.Collections.IPropertySet;
-                 supportsAudio: bool;
-                 supportsImage: bool;
-                 supportsVideo: bool;
+                 supportsAudio: boolean;
+                 supportsImage: boolean;
+                 supportsVideo: boolean;
                  onplayrequested: any/* TODO */;
                  onpauserequested: any/* TODO */;
                  onsourcechangerequested: any/* TODO */;
@@ -6416,7 +6416,7 @@ declare module Windows {
                  onvolumechangerequested: any/* TODO */;
                  ontimeupdaterequested: any/* TODO */;
                  onstoprequested: any/* TODO */;
-                 notifyVolumeChange(volume: number, mute: bool): void;
+                 notifyVolumeChange(volume: number, mute: boolean): void;
                  notifyRateChange(rate: number): void;
                  notifyLoadedMetadata(): void;
                  notifyTimeUpdate(currentTime: number): void;
@@ -6434,9 +6434,9 @@ declare module Windows {
             export class PlayToReceiver implements Windows.Media.PlayTo.IPlayToReceiver {
                 friendlyName: string;
                 properties: Windows.Foundation.Collections.IPropertySet;
-                supportsAudio: bool;
-                supportsImage: bool;
-                supportsVideo: bool;
+                supportsAudio: boolean;
+                supportsImage: boolean;
+                supportsVideo: boolean;
                 onplayrequested: any/* TODO */;
                 onpauserequested: any/* TODO */;
                 onsourcechangerequested: any/* TODO */;
@@ -6446,7 +6446,7 @@ declare module Windows {
                 onvolumechangerequested: any/* TODO */;
                 ontimeupdaterequested: any/* TODO */;
                 onstoprequested: any/* TODO */;
-                notifyVolumeChange(volume: number, mute: bool): void;
+                notifyVolumeChange(volume: number, mute: boolean): void;
                 notifyRateChange(rate: number): void;
                 notifyLoadedMetadata(): void;
                 notifyTimeUpdate(currentTime: number): void;
@@ -6464,16 +6464,16 @@ declare module Windows {
             export interface IPlayToSourceSelectedEventArgs {
                  friendlyName: string;
                  icon: Windows.Storage.Streams.IRandomAccessStreamWithContentType;
-                 supportsAudio: bool;
-                 supportsImage: bool;
-                 supportsVideo: bool;
+                 supportsAudio: boolean;
+                 supportsImage: boolean;
+                 supportsVideo: boolean;
             }
             export class PlayToSourceSelectedEventArgs implements Windows.Media.PlayTo.IPlayToSourceSelectedEventArgs {
                 friendlyName: string;
                 icon: Windows.Storage.Streams.IRandomAccessStreamWithContentType;
-                supportsAudio: bool;
-                supportsImage: bool;
-                supportsVideo: bool;
+                supportsAudio: boolean;
+                supportsImage: boolean;
+                supportsVideo: boolean;
             }
             export interface IPlayToSourceDeferral {
                  complete(): void;
@@ -6500,12 +6500,12 @@ declare module Windows {
                 sourceRequest: Windows.Media.PlayTo.PlayToSourceRequest;
             }
             export interface IPlayToManager {
-                 defaultSourceSelection: bool;
+                 defaultSourceSelection: boolean;
                  onsourcerequested: any/* TODO */;
                  onsourceselected: any/* TODO */;
             }
             export class PlayToManager implements Windows.Media.PlayTo.IPlayToManager {
-                defaultSourceSelection: bool;
+                defaultSourceSelection: boolean;
                 onsourcerequested: any/* TODO */;
                 onsourceselected: any/* TODO */;
                 static getForCurrentView(): Windows.Media.PlayTo.PlayToManager;
@@ -6532,9 +6532,9 @@ declare module Windows {
             export class MediaPropertySet implements Windows.Foundation.Collections.IMap__string_any, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_any {
                 size: number;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_any;
-                insert(key: string, value: any): bool;
+                insert(key: string, value: any): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -6665,7 +6665,7 @@ declare module Windows {
                 information: Windows.Media.Protection.RevocationAndRenewalInformation;
             }
             export class MediaProtectionServiceCompletion implements Windows.Media.Protection.IMediaProtectionServiceCompletion {
-                complete(success: bool): void;
+                complete(success: boolean): void;
             }
             export class RevocationAndRenewalInformation implements Windows.Media.Protection.IRevocationAndRenewalInformation {
                 items: Windows.Foundation.Collections.IVector__RevocationAndRenewalItem;
@@ -6693,7 +6693,7 @@ declare module Windows {
                  oncomponentloadfailed: any/* TODO */;
             }
             export interface IMediaProtectionServiceCompletion {
-                 complete(success: bool): void;
+                 complete(success: boolean): void;
             }
             export interface IServiceRequestedEventArgs {
                  completion: Windows.Media.Protection.MediaProtectionServiceCompletion;
@@ -6760,37 +6760,37 @@ declare module Windows {
                 codecNotFound,
             }
             export interface IMediaTranscoder {
-                 alwaysReencode: bool;
-                 hardwareAccelerationEnabled: bool;
+                 alwaysReencode: boolean;
+                 hardwareAccelerationEnabled: boolean;
                  trimStartTime: number;
                  trimStopTime: number;
                  addAudioEffect(activatableClassId: string): void;
-                 addAudioEffect(activatableClassId: string, effectRequired: bool, configuration: Windows.Foundation.Collections.IPropertySet): void;
+                 addAudioEffect(activatableClassId: string, effectRequired: boolean, configuration: Windows.Foundation.Collections.IPropertySet): void;
                  addVideoEffect(activatableClassId: string): void;
-                 addVideoEffect(activatableClassId: string, effectRequired: bool, configuration: Windows.Foundation.Collections.IPropertySet): void;
+                 addVideoEffect(activatableClassId: string, effectRequired: boolean, configuration: Windows.Foundation.Collections.IPropertySet): void;
                  clearEffects(): void;
                  prepareFileTranscodeAsync(source: Windows.Storage.IStorageFile, destination: Windows.Storage.IStorageFile, profile: Windows.Media.MediaProperties.MediaEncodingProfile): Windows.Foundation.IAsyncOperation__PrepareTranscodeResult;
                  prepareStreamTranscodeAsync(source: Windows.Storage.Streams.IRandomAccessStream, destination: Windows.Storage.Streams.IRandomAccessStream, profile: Windows.Media.MediaProperties.MediaEncodingProfile): Windows.Foundation.IAsyncOperation__PrepareTranscodeResult;
             }
             export class PrepareTranscodeResult implements Windows.Media.Transcoding.IPrepareTranscodeResult {
-                canTranscode: bool;
+                canTranscode: boolean;
                 failureReason: Windows.Media.Transcoding.TranscodeFailureReason;
                 transcodeAsync(): Windows.Foundation.IAsyncActionWithProgress__number;
             }
             export interface IPrepareTranscodeResult {
-                 canTranscode: bool;
+                 canTranscode: boolean;
                  failureReason: Windows.Media.Transcoding.TranscodeFailureReason;
                  transcodeAsync(): Windows.Foundation.IAsyncActionWithProgress__number;
             }
             export class MediaTranscoder implements Windows.Media.Transcoding.IMediaTranscoder {
-                alwaysReencode: bool;
-                hardwareAccelerationEnabled: bool;
+                alwaysReencode: boolean;
+                hardwareAccelerationEnabled: boolean;
                 trimStartTime: number;
                 trimStopTime: number;
                 addAudioEffect(activatableClassId: string): void;
-                addAudioEffect(activatableClassId: string, effectRequired: bool, configuration: Windows.Foundation.Collections.IPropertySet): void;
+                addAudioEffect(activatableClassId: string, effectRequired: boolean, configuration: Windows.Foundation.Collections.IPropertySet): void;
                 addVideoEffect(activatableClassId: string): void;
-                addVideoEffect(activatableClassId: string, effectRequired: bool, configuration: Windows.Foundation.Collections.IPropertySet): void;
+                addVideoEffect(activatableClassId: string, effectRequired: boolean, configuration: Windows.Foundation.Collections.IPropertySet): void;
                 clearEffects(): void;
                 prepareFileTranscodeAsync(source: Windows.Storage.IStorageFile, destination: Windows.Storage.IStorageFile, profile: Windows.Media.MediaProperties.MediaEncodingProfile): Windows.Foundation.IAsyncOperation__PrepareTranscodeResult;
                 prepareStreamTranscodeAsync(source: Windows.Storage.Streams.IRandomAccessStream, destination: Windows.Storage.Streams.IRandomAccessStream, profile: Windows.Media.MediaProperties.MediaEncodingProfile): Windows.Foundation.IAsyncOperation__PrepareTranscodeResult;
@@ -6965,13 +6965,13 @@ declare module Windows {
                 networkAccountId: string;
             }
             export interface IMobileBroadbandAccountUpdatedEventArgs {
-                 hasDeviceInformationChanged: bool;
-                 hasNetworkChanged: bool;
+                 hasDeviceInformationChanged: boolean;
+                 hasNetworkChanged: boolean;
                  networkAccountId: string;
             }
             export class MobileBroadbandAccountUpdatedEventArgs implements Windows.Networking.NetworkOperators.IMobileBroadbandAccountUpdatedEventArgs {
-                hasDeviceInformationChanged: bool;
-                hasNetworkChanged: bool;
+                hasDeviceInformationChanged: boolean;
+                hasNetworkChanged: boolean;
                 networkAccountId: string;
             }
             export interface IMobileBroadbandAccountWatcher {
@@ -7001,7 +7001,7 @@ declare module Windows {
                 eventToken: string;
             }
             export interface IHotspotAuthenticationContextStatics {
-                 tryGetAuthenticationContext(evenToken: string): { context: Windows.Networking.NetworkOperators.HotspotAuthenticationContext; isValid: bool; };
+                 tryGetAuthenticationContext(evenToken: string): { context: Windows.Networking.NetworkOperators.HotspotAuthenticationContext; isValid: boolean; };
             }
             export class HotspotAuthenticationContext implements Windows.Networking.NetworkOperators.IHotspotAuthenticationContext {
                 authenticationUrl: Windows.Foundation.Uri;
@@ -7009,11 +7009,11 @@ declare module Windows {
                 redirectMessageUrl: Windows.Foundation.Uri;
                 redirectMessageXml: Windows.Data.Xml.Dom.XmlDocument;
                 wirelessNetworkId: number[];
-                issueCredentials(userName: string, password: string, extraParameters: string, markAsManualConnectOnFailure: bool): void;
-                abortAuthentication(markAsManual: bool): void;
+                issueCredentials(userName: string, password: string, extraParameters: string, markAsManualConnectOnFailure: boolean): void;
+                abortAuthentication(markAsManual: boolean): void;
                 skipAuthentication(): void;
                 triggerAttentionRequired(packageRelativeApplicationId: string, applicationParameters: string): void;
-                static tryGetAuthenticationContext(evenToken: string): { context: Windows.Networking.NetworkOperators.HotspotAuthenticationContext; isValid: bool; };
+                static tryGetAuthenticationContext(evenToken: string): { context: Windows.Networking.NetworkOperators.HotspotAuthenticationContext; isValid: boolean; };
             }
             export interface IHotspotAuthenticationContext {
                  authenticationUrl: Windows.Foundation.Uri;
@@ -7021,8 +7021,8 @@ declare module Windows {
                  redirectMessageUrl: Windows.Foundation.Uri;
                  redirectMessageXml: Windows.Data.Xml.Dom.XmlDocument;
                  wirelessNetworkId: number[];
-                 issueCredentials(userName: string, password: string, extraParameters: string, markAsManualConnectOnFailure: bool): void;
-                 abortAuthentication(markAsManual: bool): void;
+                 issueCredentials(userName: string, password: string, extraParameters: string, markAsManualConnectOnFailure: boolean): void;
+                 abortAuthentication(markAsManual: boolean): void;
                  skipAuthentication(): void;
                  triggerAttentionRequired(packageRelativeApplicationId: string, applicationParameters: string): void;
             }
@@ -7031,11 +7031,11 @@ declare module Windows {
                 wwan,
             }
             export interface IProvisionFromXmlDocumentResults {
-                 allElementsProvisioned: bool;
+                 allElementsProvisioned: boolean;
                  provisionResultsXml: string;
             }
             export class ProvisionFromXmlDocumentResults implements Windows.Networking.NetworkOperators.IProvisionFromXmlDocumentResults {
-                allElementsProvisioned: bool;
+                allElementsProvisioned: boolean;
                 provisionResultsXml: string;
             }
             export interface ProfileUsage {
@@ -7133,8 +7133,8 @@ declare module Windows {
                 bytesReceived: number;
                 totalBytesToReceive: number;
                 status: Windows.Networking.BackgroundTransfer.BackgroundTransferStatus;
-                hasResponseChanged: bool;
-                hasRestarted: bool;
+                hasResponseChanged: boolean;
+                hasRestarted: boolean;
             }
             export interface BackgroundUploadProgress {
                 bytesReceived: number;
@@ -7142,8 +7142,8 @@ declare module Windows {
                 totalBytesToReceive: number;
                 totalBytesToSend: number;
                 status: Windows.Networking.BackgroundTransfer.BackgroundTransferStatus;
-                hasResponseChanged: bool;
-                hasRestarted: bool;
+                hasResponseChanged: boolean;
+                hasRestarted: boolean;
             }
             export interface IBackgroundTransferBase {
                  costPolicy: Windows.Networking.BackgroundTransfer.BackgroundTransferCostPolicy;
@@ -7214,7 +7214,7 @@ declare module Windows {
             export class ResponseInformation implements Windows.Networking.BackgroundTransfer.IResponseInformation {
                 actualUri: Windows.Foundation.Uri;
                 headers: Windows.Foundation.Collections.IMapView__string_string;
-                isResumable: bool;
+                isResumable: boolean;
                 statusCode: number;
             }
             export interface IDownloadOperation extends Windows.Networking.BackgroundTransfer.IBackgroundTransferOperation {
@@ -7242,7 +7242,7 @@ declare module Windows {
             export interface IResponseInformation {
                  actualUri: Windows.Foundation.Uri;
                  headers: Windows.Foundation.Collections.IMapView__string_string;
-                 isResumable: bool;
+                 isResumable: boolean;
                  statusCode: number;
             }
             export interface IBackgroundTransferErrorStaticMethods {
@@ -7394,9 +7394,9 @@ declare module Windows {
                 triggered,
             }
             export interface IPeerFinderStatics {
-                 allowBluetooth: bool;
-                 allowInfrastructure: bool;
-                 allowWiFiDirect: bool;
+                 allowBluetooth: boolean;
+                 allowInfrastructure: boolean;
+                 allowWiFiDirect: boolean;
                  alternateIdentities: Windows.Foundation.Collections.IMap__string_string;
                  displayName: string;
                  supportedDiscoveryTypes: Windows.Networking.Proximity.PeerDiscoveryTypes;
@@ -7409,9 +7409,9 @@ declare module Windows {
                  connectAsync(peerInformation: Windows.Networking.Proximity.PeerInformation): Windows.Foundation.IAsyncOperation__StreamSocket;
             }
             export class PeerFinder {
-                static allowBluetooth: bool;
-                static allowInfrastructure: bool;
-                static allowWiFiDirect: bool;
+                static allowBluetooth: boolean;
+                static allowInfrastructure: boolean;
+                static allowWiFiDirect: boolean;
                 static alternateIdentities: Windows.Foundation.Collections.IMap__string_string;
                 static displayName: string;
                 static supportedDiscoveryTypes: Windows.Networking.Proximity.PeerDiscoveryTypes;
@@ -7482,9 +7482,9 @@ declare module Windows {
                  controlChannelTrigger: Windows.Networking.Sockets.ControlChannelTrigger;
             }
             export interface IControlChannelTriggerResetEventDetails {
-                 hardwareSlotReset: bool;
+                 hardwareSlotReset: boolean;
                  resetReason: Windows.Networking.Sockets.ControlChannelTriggerResetReason;
-                 softwareSlotReset: bool;
+                 softwareSlotReset: boolean;
             }
             export enum SocketMessageType {
                 binary,
@@ -7543,8 +7543,8 @@ declare module Windows {
                 inboundBitsPerSecond: number;
                 outboundBitsPerSecondInstability: number;
                 inboundBitsPerSecondInstability: number;
-                outboundBandwidthPeaked: bool;
-                inboundBandwidthPeaked: bool;
+                outboundBandwidthPeaked: boolean;
+                inboundBandwidthPeaked: boolean;
             }
             export interface IDatagramSocketMessageReceivedEventArgs {
                  localAddress: Windows.Networking.HostName;
@@ -7636,8 +7636,8 @@ declare module Windows {
                  sessionKey: Windows.Storage.Streams.IBuffer;
             }
             export interface IStreamSocketControl {
-                 keepAlive: bool;
-                 noDelay: bool;
+                 keepAlive: boolean;
+                 noDelay: boolean;
                  outboundBufferSizeInBytes: number;
                  outboundUnicastHopLimit: number;
                  qualityOfService: Windows.Networking.Sockets.SocketQualityOfService;
@@ -7654,8 +7654,8 @@ declare module Windows {
                  upgradeToSslAsync(protectionLevel: Windows.Networking.Sockets.SocketProtectionLevel, validationHostName: Windows.Networking.HostName): Windows.Foundation.IAsyncAction;
             }
             export class StreamSocketControl implements Windows.Networking.Sockets.IStreamSocketControl {
-                keepAlive: bool;
-                noDelay: bool;
+                keepAlive: boolean;
+                noDelay: boolean;
                 outboundBufferSizeInBytes: number;
                 outboundUnicastHopLimit: number;
                 qualityOfService: Windows.Networking.Sockets.SocketQualityOfService;
@@ -7781,7 +7781,7 @@ declare module Windows {
                 getDataStream(): Windows.Storage.Streams.IInputStream;
             }
             export interface IStreamWebSocketControl extends Windows.Networking.Sockets.IWebSocketControl {
-                 noDelay: bool;
+                 noDelay: boolean;
             }
             export interface IStreamWebSocket extends Windows.Networking.Sockets.IWebSocket, Windows.Foundation.IClosable {
                  control: Windows.Networking.Sockets.StreamWebSocketControl;
@@ -7789,7 +7789,7 @@ declare module Windows {
                  inputStream: Windows.Storage.Streams.IInputStream;
             }
             export class StreamWebSocketControl implements Windows.Networking.Sockets.IStreamWebSocketControl, Windows.Networking.Sockets.IWebSocketControl {
-                noDelay: bool;
+                noDelay: boolean;
                 outboundBufferSizeInBytes: number;
                 proxyCredential: Windows.Security.Credentials.PasswordCredential;
                 serverCredential: Windows.Security.Credentials.PasswordCredential;
@@ -7851,7 +7851,7 @@ declare module Windows {
              iPInformation: Windows.Networking.Connectivity.IPInformation;
              rawName: string;
              type: Windows.Networking.HostNameType;
-             isEqual(hostName: Windows.Networking.HostName): bool;
+             isEqual(hostName: Windows.Networking.HostName): boolean;
         }
         export class HostName implements Windows.Networking.IHostName {
             constructor (hostName: string);
@@ -7860,7 +7860,7 @@ declare module Windows {
             iPInformation: Windows.Networking.Connectivity.IPInformation;
             rawName: string;
             type: Windows.Networking.HostNameType;
-            isEqual(hostName: Windows.Networking.HostName): bool;
+            isEqual(hostName: Windows.Networking.HostName): boolean;
             static compare(value1: string, value2: string): number;
         }
         export interface IHostNameFactory {
@@ -7958,10 +7958,10 @@ declare module Windows {
                 megabytesUsed: number;
             }
             export interface IConnectionCost {
-                 approachingDataLimit: bool;
+                 approachingDataLimit: boolean;
                  networkCostType: Windows.Networking.Connectivity.NetworkCostType;
-                 overDataLimit: bool;
-                 roaming: bool;
+                 overDataLimit: boolean;
+                 roaming: boolean;
             }
             export interface INetworkSecuritySettings {
                  networkAuthenticationType: Windows.Networking.Connectivity.NetworkAuthenticationType;
@@ -7979,10 +7979,10 @@ declare module Windows {
                  getLocalUsage(StartTime: Date, EndTime: Date, States: Windows.Networking.Connectivity.RoamingStates): Windows.Networking.Connectivity.DataUsage;
             }
             export class ConnectionCost implements Windows.Networking.Connectivity.IConnectionCost {
-                approachingDataLimit: bool;
+                approachingDataLimit: boolean;
                 networkCostType: Windows.Networking.Connectivity.NetworkCostType;
-                overDataLimit: bool;
-                roaming: bool;
+                overDataLimit: boolean;
+                roaming: boolean;
             }
             export class DataPlanStatus implements Windows.Networking.Connectivity.IDataPlanStatus {
                 dataLimitInMegabytes: number;
@@ -8050,7 +8050,7 @@ declare module Windows {
                 portId: Windows.Networking.Connectivity.LanIdentifierData;
             }
             export class ProxyConfiguration implements Windows.Networking.Connectivity.IProxyConfiguration {
-                canConnectDirectly: bool;
+                canConnectDirectly: boolean;
                 proxyUris: Windows.Foundation.Collections.IVectorView__Uri;
             }
             export interface INetworkItem {
@@ -8074,7 +8074,7 @@ declare module Windows {
                  prefixLength: number;
             }
             export interface IProxyConfiguration {
-                 canConnectDirectly: bool;
+                 canConnectDirectly: boolean;
                  proxyUris: Windows.Foundation.Collections.IVectorView__Uri;
             }
             export class NetworkInformation {
@@ -8117,7 +8117,7 @@ declare module Windows {
             }
             export class PushNotificationReceivedEventArgs implements Windows.Networking.PushNotifications.IPushNotificationReceivedEventArgs {
                 badgeNotification: Windows.UI.Notifications.BadgeNotification;
-                cancel: bool;
+                cancel: boolean;
                 notificationType: Windows.Networking.PushNotifications.PushNotificationType;
                 rawNotification: Windows.Networking.PushNotifications.RawNotification;
                 tileNotification: Windows.UI.Notifications.TileNotification;
@@ -8125,7 +8125,7 @@ declare module Windows {
             }
             export interface IPushNotificationReceivedEventArgs {
                  badgeNotification: Windows.UI.Notifications.BadgeNotification;
-                 cancel: bool;
+                 cancel: boolean;
                  notificationType: Windows.Networking.PushNotifications.PushNotificationType;
                  rawNotification: Windows.Networking.PushNotifications.RawNotification;
                  tileNotification: Windows.UI.Notifications.TileNotification;
@@ -8176,8 +8176,8 @@ declare module Windows {
                 export interface IUserIdentity {
                      firstName: string;
                      id: string;
-                     isBetaAccount: bool;
-                     isConfirmedPC: bool;
+                     isBetaAccount: boolean;
+                     isConfirmedPC: boolean;
                      lastName: string;
                      safeCustomerId: string;
                      signInName: string;
@@ -8191,7 +8191,7 @@ declare module Windows {
                 export interface IOnlineIdAuthenticator {
                      applicationId: string;
                      authenticatedSafeCustomerId: string;
-                     canSignOut: bool;
+                     canSignOut: boolean;
                      authenticateUserAsync(request: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicketRequest): Windows.Security.Authentication.OnlineId.UserAuthenticationOperation;
                      authenticateUserAsync(requests: Windows.Foundation.Collections.IIterable__OnlineIdServiceTicketRequest, credentialPromptType: Windows.Security.Authentication.OnlineId.CredentialPromptType): Windows.Security.Authentication.OnlineId.UserAuthenticationOperation;
                      signOutUserAsync(): Windows.Security.Authentication.OnlineId.SignOutUserOperation;
@@ -8235,8 +8235,8 @@ declare module Windows {
                 export class UserIdentity implements Windows.Security.Authentication.OnlineId.IUserIdentity {
                     firstName: string;
                     id: string;
-                    isBetaAccount: bool;
-                    isConfirmedPC: bool;
+                    isBetaAccount: boolean;
+                    isConfirmedPC: boolean;
                     lastName: string;
                     safeCustomerId: string;
                     signInName: string;
@@ -8245,7 +8245,7 @@ declare module Windows {
                 export class OnlineIdAuthenticator implements Windows.Security.Authentication.OnlineId.IOnlineIdAuthenticator {
                     applicationId: string;
                     authenticatedSafeCustomerId: string;
-                    canSignOut: bool;
+                    canSignOut: boolean;
                     authenticateUserAsync(request: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicketRequest): Windows.Security.Authentication.OnlineId.UserAuthenticationOperation;
                     authenticateUserAsync(requests: Windows.Foundation.Collections.IIterable__OnlineIdServiceTicketRequest, credentialPromptType: Windows.Security.Authentication.OnlineId.CredentialPromptType): Windows.Security.Authentication.OnlineId.UserAuthenticationOperation;
                     signOutUserAsync(): Windows.Security.Authentication.OnlineId.SignOutUserOperation;
@@ -8313,9 +8313,9 @@ declare module Windows {
                     hidden,
                 }
                 export interface ICredentialPickerOptions {
-                     alwaysDisplayDialog: bool;
+                     alwaysDisplayDialog: boolean;
                      authenticationProtocol: Windows.Security.Credentials.UI.AuthenticationProtocol;
-                     callerSavesCredential: bool;
+                     callerSavesCredential: boolean;
                      caption: string;
                      credentialSaveOption: Windows.Security.Credentials.UI.CredentialSaveOption;
                      customAuthenticationProtocol: string;
@@ -8325,9 +8325,9 @@ declare module Windows {
                      targetName: string;
                 }
                 export class CredentialPickerOptions implements Windows.Security.Credentials.UI.ICredentialPickerOptions {
-                    alwaysDisplayDialog: bool;
+                    alwaysDisplayDialog: boolean;
                     authenticationProtocol: Windows.Security.Credentials.UI.AuthenticationProtocol;
-                    callerSavesCredential: bool;
+                    callerSavesCredential: boolean;
                     caption: string;
                     credentialSaveOption: Windows.Security.Credentials.UI.CredentialSaveOption;
                     customAuthenticationProtocol: string;
@@ -8346,7 +8346,7 @@ declare module Windows {
                     credentialDomainName: string;
                     credentialPassword: string;
                     credentialSaveOption: Windows.Security.Credentials.UI.CredentialSaveOption;
-                    credentialSaved: bool;
+                    credentialSaved: boolean;
                     credentialUserName: string;
                     errorCode: number;
                 }
@@ -8360,7 +8360,7 @@ declare module Windows {
                      credentialDomainName: string;
                      credentialPassword: string;
                      credentialSaveOption: Windows.Security.Credentials.UI.CredentialSaveOption;
-                     credentialSaved: bool;
+                     credentialSaved: boolean;
                      credentialUserName: string;
                      errorCode: number;
                 }
@@ -8410,9 +8410,9 @@ declare module Windows {
                 size: number;
                 onmapchanged: any/* TODO */;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_any;
-                insert(key: string, value: any): bool;
+                insert(key: string, value: any): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -8611,7 +8611,7 @@ declare module Windows {
                      encryptAndAuthenticate(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, nonce: Windows.Storage.Streams.IBuffer, authenticatedData: Windows.Storage.Streams.IBuffer): Windows.Security.Cryptography.Core.EncryptedAndAuthenticatedData;
                      decryptAndAuthenticate(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, nonce: Windows.Storage.Streams.IBuffer, authenticationTag: Windows.Storage.Streams.IBuffer, authenticatedData: Windows.Storage.Streams.IBuffer): Windows.Storage.Streams.IBuffer;
                      sign(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer): Windows.Storage.Streams.IBuffer;
-                     verifySignature(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, signature: Windows.Storage.Streams.IBuffer): bool;
+                     verifySignature(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, signature: Windows.Storage.Streams.IBuffer): boolean;
                      deriveKeyMaterial(key: Windows.Security.Cryptography.Core.CryptographicKey, parameters: Windows.Security.Cryptography.Core.KeyDerivationParameters, desiredKeySize: number): Windows.Storage.Streams.IBuffer;
                 }
                 export class CryptographicEngine {
@@ -8620,7 +8620,7 @@ declare module Windows {
                     static encryptAndAuthenticate(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, nonce: Windows.Storage.Streams.IBuffer, authenticatedData: Windows.Storage.Streams.IBuffer): Windows.Security.Cryptography.Core.EncryptedAndAuthenticatedData;
                     static decryptAndAuthenticate(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, nonce: Windows.Storage.Streams.IBuffer, authenticationTag: Windows.Storage.Streams.IBuffer, authenticatedData: Windows.Storage.Streams.IBuffer): Windows.Storage.Streams.IBuffer;
                     static sign(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer): Windows.Storage.Streams.IBuffer;
-                    static verifySignature(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, signature: Windows.Storage.Streams.IBuffer): bool;
+                    static verifySignature(key: Windows.Security.Cryptography.Core.CryptographicKey, data: Windows.Storage.Streams.IBuffer, signature: Windows.Storage.Streams.IBuffer): boolean;
                     static deriveKeyMaterial(key: Windows.Security.Cryptography.Core.CryptographicKey, parameters: Windows.Security.Cryptography.Core.KeyDerivationParameters, desiredKeySize: number): Windows.Storage.Streams.IBuffer;
                 }
                 export interface IHashAlgorithmProviderStatics {
@@ -8855,7 +8855,7 @@ declare module Windows {
                 utf16BE,
             }
             export interface ICryptographicBufferStatics {
-                 compare(object1: Windows.Storage.Streams.IBuffer, object2: Windows.Storage.Streams.IBuffer): bool;
+                 compare(object1: Windows.Storage.Streams.IBuffer, object2: Windows.Storage.Streams.IBuffer): boolean;
                  generateRandom(length: number): Windows.Storage.Streams.IBuffer;
                  generateRandomNumber(): number;
                  createFromByteArray(value: number[]): Windows.Storage.Streams.IBuffer;
@@ -8868,7 +8868,7 @@ declare module Windows {
                  convertBinaryToString(encoding: Windows.Security.Cryptography.BinaryStringEncoding, buffer: Windows.Storage.Streams.IBuffer): string;
             }
             export class CryptographicBuffer {
-                static compare(object1: Windows.Storage.Streams.IBuffer, object2: Windows.Storage.Streams.IBuffer): bool;
+                static compare(object1: Windows.Storage.Streams.IBuffer, object2: Windows.Storage.Streams.IBuffer): boolean;
                 static generateRandom(length: number): Windows.Storage.Streams.IBuffer;
                 static generateRandomNumber(): number;
                 static createFromByteArray(value: number[]): Windows.Storage.Streams.IBuffer;
@@ -8981,19 +8981,19 @@ declare module Windows {
                  systemSku: string;
             }
             export interface IEasClientSecurityPolicy {
-                 disallowConvenienceLogon: bool;
+                 disallowConvenienceLogon: boolean;
                  maxInactivityTimeLock: number;
                  maxPasswordFailedAttempts: number;
                  minPasswordComplexCharacters: number;
                  minPasswordLength: number;
                  passwordExpiration: number;
                  passwordHistory: number;
-                 requireEncryption: bool;
+                 requireEncryption: boolean;
                  checkCompliance(): Windows.Security.ExchangeActiveSyncProvisioning.EasComplianceResults;
                  applyAsync(): Windows.Foundation.IAsyncOperation__EasComplianceResults;
             }
             export class EasComplianceResults implements Windows.Security.ExchangeActiveSyncProvisioning.IEasComplianceResults {
-                compliant: bool;
+                compliant: boolean;
                 disallowConvenienceLogonResult: Windows.Security.ExchangeActiveSyncProvisioning.EasDisallowConvenienceLogonResult;
                 maxInactivityTimeLockResult: Windows.Security.ExchangeActiveSyncProvisioning.EasMaxInactivityTimeLockResult;
                 maxPasswordFailedAttemptsResult: Windows.Security.ExchangeActiveSyncProvisioning.EasMaxPasswordFailedAttemptsResult;
@@ -9004,7 +9004,7 @@ declare module Windows {
                 requireEncryptionResult: Windows.Security.ExchangeActiveSyncProvisioning.EasRequireEncryptionResult;
             }
             export interface IEasComplianceResults {
-                 compliant: bool;
+                 compliant: boolean;
                  disallowConvenienceLogonResult: Windows.Security.ExchangeActiveSyncProvisioning.EasDisallowConvenienceLogonResult;
                  maxInactivityTimeLockResult: Windows.Security.ExchangeActiveSyncProvisioning.EasMaxInactivityTimeLockResult;
                  maxPasswordFailedAttemptsResult: Windows.Security.ExchangeActiveSyncProvisioning.EasMaxPasswordFailedAttemptsResult;
@@ -9015,14 +9015,14 @@ declare module Windows {
                  requireEncryptionResult: Windows.Security.ExchangeActiveSyncProvisioning.EasRequireEncryptionResult;
             }
             export class EasClientSecurityPolicy implements Windows.Security.ExchangeActiveSyncProvisioning.IEasClientSecurityPolicy {
-                disallowConvenienceLogon: bool;
+                disallowConvenienceLogon: boolean;
                 maxInactivityTimeLock: number;
                 maxPasswordFailedAttempts: number;
                 minPasswordComplexCharacters: number;
                 minPasswordLength: number;
                 passwordExpiration: number;
                 passwordHistory: number;
-                requireEncryption: bool;
+                requireEncryption: boolean;
                 checkCompliance(): Windows.Security.ExchangeActiveSyncProvisioning.EasComplianceResults;
                 applyAsync(): Windows.Foundation.IAsyncOperation__EasComplianceResults;
             }
@@ -9076,7 +9076,7 @@ declare module Windows {
                  readBytes(value: number[]): void;
                  readBytes(value: Uint8Array): void;
                  readBuffer(length: number): Windows.Storage.Streams.IBuffer;
-                 readBoolean(): bool;
+                 readBoolean(): boolean;
                  readGuid(): string;
                  readInt16(): number;
                  readInt32(): number;
@@ -9106,7 +9106,7 @@ declare module Windows {
                 readBytes(value: number[]): void;
                 readBytes(value: Uint8Array): void;
                 readBuffer(length: number): Windows.Storage.Streams.IBuffer;
-                readBoolean(): bool;
+                readBoolean(): boolean;
                 readGuid(): string;
                 readInt16(): number;
                 readInt32(): number;
@@ -9156,7 +9156,7 @@ declare module Windows {
                  writeBytes(value: Uint8Array): void;
                  writeBuffer(buffer: Windows.Storage.Streams.IBuffer): void;
                  writeBuffer(buffer: Windows.Storage.Streams.IBuffer, start: number, count: number): void;
-                 writeBoolean(value: bool): void;
+                 writeBoolean(value: boolean): void;
                  writeGuid(value: string): void;
                  writeInt16(value: number): void;
                  writeInt32(value: number): void;
@@ -9189,7 +9189,7 @@ declare module Windows {
                 writeBytes(value: Uint8Array): void;
                 writeBuffer(buffer: Windows.Storage.Streams.IBuffer): void;
                 writeBuffer(buffer: Windows.Storage.Streams.IBuffer, start: number, count: number): void;
-                writeBoolean(value: bool): void;
+                writeBoolean(value: boolean): void;
                 writeGuid(value: string): void;
                 writeInt16(value: number): void;
                 writeInt32(value: number): void;
@@ -9258,8 +9258,8 @@ declare module Windows {
                 static createFromStream(stream: Windows.Storage.Streams.IRandomAccessStream): Windows.Storage.Streams.RandomAccessStreamReference;
             }
             export class FileRandomAccessStream implements Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 getInputStreamAt(position: number): Windows.Storage.Streams.IInputStream;
@@ -9284,8 +9284,8 @@ declare module Windows {
                 close(): void;
             }
             export class RandomAccessStreamOverStream implements Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 getInputStreamAt(position: number): Windows.Storage.Streams.IInputStream;
@@ -9310,8 +9310,8 @@ declare module Windows {
                 close(): void;
             }
             export class InMemoryRandomAccessStream implements Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 getInputStreamAt(position: number): Windows.Storage.Streams.IInputStream;
@@ -9332,8 +9332,8 @@ declare module Windows {
                  flushAsync(): Windows.Foundation.IAsyncOperation__bool;
             }
             export interface IRandomAccessStream extends Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream {
-                 canRead: bool;
-                 canWrite: bool;
+                 canRead: boolean;
+                 canWrite: boolean;
                  position: number;
                  size: number;
                  getInputStreamAt(position: number): Windows.Storage.Streams.IInputStream;
@@ -9373,8 +9373,8 @@ declare module Windows {
                      title: string;
                      addFile(id: string, file: Windows.Storage.IStorageFile): Windows.Storage.Pickers.Provider.AddFileResult;
                      removeFile(id: string): void;
-                     containsFile(id: string): bool;
-                     canAddFile(file: Windows.Storage.IStorageFile): bool;
+                     containsFile(id: string): boolean;
+                     canAddFile(file: Windows.Storage.IStorageFile): boolean;
                      onfileremoved: any/* TODO */;
                      onclosing: any/* TODO */;
                 }
@@ -9385,18 +9385,18 @@ declare module Windows {
                     title: string;
                     addFile(id: string, file: Windows.Storage.IStorageFile): Windows.Storage.Pickers.Provider.AddFileResult;
                     removeFile(id: string): void;
-                    containsFile(id: string): bool;
-                    canAddFile(file: Windows.Storage.IStorageFile): bool;
+                    containsFile(id: string): boolean;
+                    canAddFile(file: Windows.Storage.IStorageFile): boolean;
                     onfileremoved: any/* TODO */;
                     onclosing: any/* TODO */;
                 }
                 export class PickerClosingEventArgs implements Windows.Storage.Pickers.Provider.IPickerClosingEventArgs {
                     closingOperation: Windows.Storage.Pickers.Provider.PickerClosingOperation;
-                    isCanceled: bool;
+                    isCanceled: boolean;
                 }
                 export interface IPickerClosingEventArgs {
                      closingOperation: Windows.Storage.Pickers.Provider.PickerClosingOperation;
-                     isCanceled: bool;
+                     isCanceled: boolean;
                 }
                 export class PickerClosingOperation implements Windows.Storage.Pickers.Provider.IPickerClosingOperation {
                     deadline: Date;
@@ -9562,18 +9562,18 @@ declare module Windows {
             export interface IThumbnailProperties {
                  originalHeight: number;
                  originalWidth: number;
-                 returnedSmallerCachedSize: bool;
+                 returnedSmallerCachedSize: boolean;
                  type: Windows.Storage.FileProperties.ThumbnailType;
             }
             export class StorageItemThumbnail implements Windows.Storage.Streams.IRandomAccessStreamWithContentType, Windows.Storage.Streams.IRandomAccessStream, Windows.Foundation.IClosable, Windows.Storage.Streams.IInputStream, Windows.Storage.Streams.IOutputStream, Windows.Storage.Streams.IContentTypeProvider, Windows.Storage.FileProperties.IThumbnailProperties {
-                canRead: bool;
-                canWrite: bool;
+                canRead: boolean;
+                canWrite: boolean;
                 position: number;
                 size: number;
                 contentType: string;
                 originalHeight: number;
                 originalWidth: number;
-                returnedSmallerCachedSize: bool;
+                returnedSmallerCachedSize: boolean;
                 type: Windows.Storage.FileProperties.ThumbnailType;
                 getInputStreamAt(position: number): Windows.Storage.Streams.IInputStream;
                 getOutputStreamAt(position: number): Windows.Storage.Streams.IOutputStream;
@@ -9811,7 +9811,7 @@ declare module Windows {
             deleteAsync(): Windows.Foundation.IAsyncAction;
             deleteAsync(option: Windows.Storage.StorageDeleteOption): Windows.Foundation.IAsyncAction;
             getBasicPropertiesAsync(): Windows.Foundation.IAsyncOperation__BasicProperties;
-            isOfType(type: Windows.Storage.StorageItemTypes): bool;
+            isOfType(type: Windows.Storage.StorageItemTypes): boolean;
             getIndexedStateAsync(): Windows.Foundation.IAsyncOperation__IndexedState;
             createFileQuery(): Windows.Storage.Search.StorageFileQueryResult;
             createFileQuery(query: Windows.Storage.Search.CommonFileQuery): Windows.Storage.Search.StorageFileQueryResult;
@@ -9826,9 +9826,9 @@ declare module Windows {
             getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery, startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
             getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
             getItemsAsync(startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__IStorageItem;
-            areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): bool;
-            isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): bool;
-            isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): bool;
+            areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): boolean;
+            isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): boolean;
+            isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): boolean;
             getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
             getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode, requestedSize: number): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
             getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode, requestedSize: number, options: Windows.Storage.FileProperties.ThumbnailOptions): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
@@ -9881,7 +9881,7 @@ declare module Windows {
             deleteAsync(): Windows.Foundation.IAsyncAction;
             deleteAsync(option: Windows.Storage.StorageDeleteOption): Windows.Foundation.IAsyncAction;
             getBasicPropertiesAsync(): Windows.Foundation.IAsyncOperation__BasicProperties;
-            isOfType(type: Windows.Storage.StorageItemTypes): bool;
+            isOfType(type: Windows.Storage.StorageItemTypes): boolean;
             openReadAsync(): Windows.Foundation.IAsyncOperation__IRandomAccessStreamWithContentType;
             openSequentialReadAsync(): Windows.Foundation.IAsyncOperation__IInputStream;
             getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
@@ -9967,7 +9967,7 @@ declare module Windows {
              deleteAsync(): Windows.Foundation.IAsyncAction;
              deleteAsync(option: Windows.Storage.StorageDeleteOption): Windows.Foundation.IAsyncAction;
              getBasicPropertiesAsync(): Windows.Foundation.IAsyncOperation__BasicProperties;
-             isOfType(type: Windows.Storage.StorageItemTypes): bool;
+             isOfType(type: Windows.Storage.StorageItemTypes): boolean;
         }
         export interface IStorageFolder extends Windows.Storage.IStorageItem {
              createFileAsync(desiredName: string): Windows.Foundation.IAsyncOperation__StorageFile;
@@ -10167,9 +10167,9 @@ declare module Windows {
             size: number;
             onmapchanged: any/* TODO */;
             lookup(key: string): any;
-            hasKey(key: string): bool;
+            hasKey(key: string): boolean;
             getView(): Windows.Foundation.Collections.IMapView__string_any;
-            insert(key: string, value: any): bool;
+            insert(key: string, value: any): boolean;
             remove(key: string): void;
             clear(): void;
             first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -10178,9 +10178,9 @@ declare module Windows {
             size: number;
             onmapchanged: any/* TODO */;
             lookup(key: string): any;
-            hasKey(key: string): bool;
+            hasKey(key: string): boolean;
             getView(): Windows.Foundation.Collections.IMapView__string_any;
-            insert(key: string, value: any): bool;
+            insert(key: string, value: any): boolean;
             remove(key: string): void;
             clear(): void;
             first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_any;
@@ -10192,7 +10192,7 @@ declare module Windows {
         export module Search {
             export interface SortEntry {
                 propertyName: string;
-                ascendingOrder: bool;
+                ascendingOrder: boolean;
             }
             export enum DateStackOption {
                 none,
@@ -10311,9 +10311,9 @@ declare module Windows {
                  getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery, startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
                  getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
                  getItemsAsync(startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__IStorageItem;
-                 areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): bool;
-                 isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): bool;
-                 isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): bool;
+                 areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): boolean;
+                 isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): boolean;
+                 isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): boolean;
             }
             export class StorageFileQueryResult implements Windows.Storage.Search.IStorageFileQueryResult, Windows.Storage.Search.IStorageQueryResultBase {
                 folder: Windows.Storage.StorageFolder;
@@ -10352,7 +10352,7 @@ declare module Windows {
                 size: number;
                 getAt(index: number): Windows.Storage.Search.SortEntry;
                 getView(): Windows.Foundation.Collections.IVectorView__SortEntry;
-                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: boolean; };
                 setAt(index: number, value: Windows.Storage.Search.SortEntry): void;
                 insertAt(index: number, value: Windows.Storage.Search.SortEntry): void;
                 removeAt(index: number): void;
@@ -10379,16 +10379,16 @@ declare module Windows {
                 unshift(...items: SortEntry[]): number;
                 lastIndexOf(searchElement: SortEntry): number;
                 lastIndexOf(searchElement: SortEntry, fromIndex: number): number;
-                every(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool): bool;
-                every(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool): bool;
-                some(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean): boolean;
+                every(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean): boolean;
+                some(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => void): void;
                 forEach(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => any): any[];
                 map(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool): SortEntry[];
-                filter(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => bool, thisArg: any): SortEntry[];
+                filter(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean): SortEntry[];
+                filter(callbackfn: (value: SortEntry, index: number, array: SortEntry[]) => boolean, thisArg: any): SortEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: SortEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: SortEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: SortEntry[]) => any): any;
@@ -10411,7 +10411,7 @@ declare module Windows {
             export class AccessListEntryView implements Windows.Foundation.Collections.IVectorView__AccessListEntry, Windows.Foundation.Collections.IIterable__AccessListEntry {
                 size: number;
                 getAt(index: number): Windows.Storage.AccessCache.AccessListEntry;
-                indexOf(value: Windows.Storage.AccessCache.AccessListEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.AccessCache.AccessListEntry): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.AccessCache.AccessListEntry[]; returnValue: number; };
                 first(): Windows.Foundation.Collections.IIterator__AccessListEntry;
                 toString(): string;
@@ -10431,16 +10431,16 @@ declare module Windows {
                 unshift(...items: AccessListEntry[]): number;
                 lastIndexOf(searchElement: AccessListEntry): number;
                 lastIndexOf(searchElement: AccessListEntry, fromIndex: number): number;
-                every(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool): bool;
-                every(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool): bool;
-                some(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean): boolean;
+                every(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean): boolean;
+                some(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => void): void;
                 forEach(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => any): any[];
                 map(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool): AccessListEntry[];
-                filter(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => bool, thisArg: any): AccessListEntry[];
+                filter(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean): AccessListEntry[];
+                filter(callbackfn: (value: AccessListEntry, index: number, array: AccessListEntry[]) => boolean, thisArg: any): AccessListEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: AccessListEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: AccessListEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: AccessListEntry[]) => any): any;
@@ -10468,9 +10468,9 @@ declare module Windows {
                  getFileAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFile;
                  getFolderAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFolder;
                  remove(token: string): void;
-                 containsItem(token: string): bool;
+                 containsItem(token: string): boolean;
                  clear(): void;
-                 checkAccess(file: Windows.Storage.IStorageItem): bool;
+                 checkAccess(file: Windows.Storage.IStorageItem): boolean;
             }
             export interface IStorageItemMostRecentlyUsedList extends Windows.Storage.AccessCache.IStorageItemAccessList {
                  onitemremoved: any/* TODO */;
@@ -10490,9 +10490,9 @@ declare module Windows {
                 getFileAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFile;
                 getFolderAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFolder;
                 remove(token: string): void;
-                containsItem(token: string): bool;
+                containsItem(token: string): boolean;
                 clear(): void;
-                checkAccess(file: Windows.Storage.IStorageItem): bool;
+                checkAccess(file: Windows.Storage.IStorageItem): boolean;
             }
             export class ItemRemovedEventArgs implements Windows.Storage.AccessCache.IItemRemovedEventArgs {
                 removedEntry: Windows.Storage.AccessCache.AccessListEntry;
@@ -10515,9 +10515,9 @@ declare module Windows {
                 getFileAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFile;
                 getFolderAsync(token: string, options: Windows.Storage.AccessCache.AccessCacheOptions): Windows.Foundation.IAsyncOperation__StorageFolder;
                 remove(token: string): void;
-                containsItem(token: string): bool;
+                containsItem(token: string): boolean;
                 clear(): void;
-                checkAccess(file: Windows.Storage.IStorageItem): bool;
+                checkAccess(file: Windows.Storage.IStorageItem): boolean;
             }
             export class StorageApplicationPermissions {
                 static futureAccessList: Windows.Storage.AccessCache.StorageItemAccessList;
@@ -10543,13 +10543,13 @@ declare module Windows {
                  createWithMode(queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode): Windows.Storage.BulkAccess.FileInformationFactory;
                  createWithModeAndSize(queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number): Windows.Storage.BulkAccess.FileInformationFactory;
                  createWithModeAndSizeAndOptions(queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions): Windows.Storage.BulkAccess.FileInformationFactory;
-                 createWithModeAndSizeAndOptionsAndFlags(queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions, delayLoad: bool): Windows.Storage.BulkAccess.FileInformationFactory;
+                 createWithModeAndSizeAndOptionsAndFlags(queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions, delayLoad: boolean): Windows.Storage.BulkAccess.FileInformationFactory;
             }
             export class FileInformationFactory implements Windows.Storage.BulkAccess.IFileInformationFactory {
                 constructor (queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode);
                 constructor (queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number);
                 constructor (queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions);
-                constructor (queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions, delayLoad: bool);
+                constructor (queryResult: Windows.Storage.Search.IStorageQueryResultBase, mode: Windows.Storage.FileProperties.ThumbnailMode, requestedThumbnailSize: number, thumbnailOptions: Windows.Storage.FileProperties.ThumbnailOptions, delayLoad: boolean);
                 getItemsAsync(startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__IStorageItemInformation;
                 getItemsAsync(): Windows.Foundation.IAsyncOperation__IVectorView__IStorageItemInformation;
                 getFilesAsync(startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__FileInformation;
@@ -10605,7 +10605,7 @@ declare module Windows {
                 deleteAsync(): Windows.Foundation.IAsyncAction;
                 deleteAsync(option: Windows.Storage.StorageDeleteOption): Windows.Foundation.IAsyncAction;
                 getBasicPropertiesAsync(): Windows.Foundation.IAsyncOperation__BasicProperties;
-                isOfType(type: Windows.Storage.StorageItemTypes): bool;
+                isOfType(type: Windows.Storage.StorageItemTypes): boolean;
                 openReadAsync(): Windows.Foundation.IAsyncOperation__IRandomAccessStreamWithContentType;
                 openSequentialReadAsync(): Windows.Foundation.IAsyncOperation__IInputStream;
                 getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
@@ -10644,7 +10644,7 @@ declare module Windows {
                 deleteAsync(): Windows.Foundation.IAsyncAction;
                 deleteAsync(option: Windows.Storage.StorageDeleteOption): Windows.Foundation.IAsyncAction;
                 getBasicPropertiesAsync(): Windows.Foundation.IAsyncOperation__BasicProperties;
-                isOfType(type: Windows.Storage.StorageItemTypes): bool;
+                isOfType(type: Windows.Storage.StorageItemTypes): boolean;
                 getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
                 getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode, requestedSize: number): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
                 getThumbnailAsync(mode: Windows.Storage.FileProperties.ThumbnailMode, requestedSize: number, options: Windows.Storage.FileProperties.ThumbnailOptions): Windows.Foundation.IAsyncOperation__StorageItemThumbnail;
@@ -10662,9 +10662,9 @@ declare module Windows {
                 getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery, startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
                 getFoldersAsync(query: Windows.Storage.Search.CommonFolderQuery): Windows.Foundation.IAsyncOperation__IVectorView__StorageFolder;
                 getItemsAsync(startIndex: number, maxItemsToRetrieve: number): Windows.Foundation.IAsyncOperation__IVectorView__IStorageItem;
-                areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): bool;
-                isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): bool;
-                isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): bool;
+                areQueryOptionsSupported(queryOptions: Windows.Storage.Search.QueryOptions): boolean;
+                isCommonFolderQuerySupported(query: Windows.Storage.Search.CommonFolderQuery): boolean;
+                isCommonFileQuerySupported(query: Windows.Storage.Search.CommonFileQuery): boolean;
             }
         }
     }
@@ -10689,7 +10689,7 @@ declare module Windows {
             export class FilePickerSelectedFilesArray implements Windows.Foundation.Collections.IVectorView__StorageFile, Windows.Foundation.Collections.IIterable__StorageFile {
                 size: number;
                 getAt(index: number): Windows.Storage.StorageFile;
-                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.StorageFile[]; returnValue: number; };
                 first(): Windows.Foundation.Collections.IIterator__StorageFile;
                 toString(): string;
@@ -10709,16 +10709,16 @@ declare module Windows {
                 unshift(...items: StorageFile[]): number;
                 lastIndexOf(searchElement: StorageFile): number;
                 lastIndexOf(searchElement: StorageFile, fromIndex: number): number;
-                every(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool): bool;
-                every(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool): bool;
-                some(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean): boolean;
+                every(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean): boolean;
+                some(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => void): void;
                 forEach(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => void, thisArg: any): void;
                 map(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => any): any[];
                 map(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool): StorageFile[];
-                filter(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => bool, thisArg: any): StorageFile[];
+                filter(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean): StorageFile[];
+                filter(callbackfn: (value: StorageFile, index: number, array: StorageFile[]) => boolean, thisArg: any): StorageFile[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: StorageFile[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: StorageFile[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: StorageFile[]) => any): any;
@@ -10728,9 +10728,9 @@ declare module Windows {
             export class FilePickerFileTypesOrderedMap implements Windows.Foundation.Collections.IMap__string_IVector__string, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_IVector__string {
                 size: number;
                 lookup(key: string): Windows.Foundation.Collections.IVector__string;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_IVector__string;
-                insert(key: string, value: Windows.Foundation.Collections.IVector__string): bool;
+                insert(key: string, value: Windows.Foundation.Collections.IVector__string): boolean;
                 remove(key: string): void;
                 clear(): void;
                 first(): Windows.Foundation.Collections.IIterator__IKeyValuePair__string_IVector__string;
@@ -10739,7 +10739,7 @@ declare module Windows {
                 size: number;
                 getAt(index: number): string;
                 getView(): Windows.Foundation.Collections.IVectorView__string;
-                indexOf(value: string): { index: number; returnValue: bool; };
+                indexOf(value: string): { index: number; returnValue: boolean; };
                 setAt(index: number, value: string): void;
                 insertAt(index: number, value: string): void;
                 removeAt(index: number): void;
@@ -10766,16 +10766,16 @@ declare module Windows {
                 unshift(...items: string[]): number;
                 lastIndexOf(searchElement: string): number;
                 lastIndexOf(searchElement: string, fromIndex: number): number;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void): void;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void, thisArg: any): void;
                 map(callbackfn: (value: string, index: number, array: string[]) => any): any[];
                 map(callbackfn: (value: string, index: number, array: string[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool): string[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): string[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
@@ -10965,7 +10965,7 @@ declare module Windows {
         export module Threading {
             export module Core {
                 export interface SignalHandler {
-                    (signalNotifier: Windows.System.Threading.Core.SignalNotifier, timedOut: bool): void;
+                    (signalNotifier: Windows.System.Threading.Core.SignalNotifier, timedOut: boolean): void;
                 }
                 export class SignalNotifier implements Windows.System.Threading.Core.ISignalNotifier {
                     enable(): void;
@@ -11020,8 +11020,8 @@ declare module Windows {
                 failure,
             }
             export interface IUserInformationStatics {
-                 accountPictureChangeEnabled: bool;
-                 nameAccessAllowed: bool;
+                 accountPictureChangeEnabled: boolean;
+                 nameAccessAllowed: boolean;
                  getAccountPicture(kind: Windows.System.UserProfile.AccountPictureKind): Windows.Storage.IStorageFile;
                  setAccountPictureAsync(image: Windows.Storage.IStorageFile): Windows.Foundation.IAsyncOperation__SetAccountPictureResult;
                  setAccountPicturesAsync(smallImage: Windows.Storage.IStorageFile, largeImage: Windows.Storage.IStorageFile, video: Windows.Storage.IStorageFile): Windows.Foundation.IAsyncOperation__SetAccountPictureResult;
@@ -11036,8 +11036,8 @@ declare module Windows {
                  getDomainNameAsync(): Windows.Foundation.IAsyncOperation__string;
             }
             export class UserInformation {
-                static accountPictureChangeEnabled: bool;
-                static nameAccessAllowed: bool;
+                static accountPictureChangeEnabled: boolean;
+                static nameAccessAllowed: boolean;
                 static getAccountPicture(kind: Windows.System.UserProfile.AccountPictureKind): Windows.Storage.IStorageFile;
                 static setAccountPictureAsync(image: Windows.Storage.IStorageFile): Windows.Foundation.IAsyncOperation__SetAccountPictureResult;
                 static setAccountPicturesAsync(smallImage: Windows.Storage.IStorageFile, largeImage: Windows.Storage.IStorageFile, video: Windows.Storage.IStorageFile): Windows.Foundation.IAsyncOperation__SetAccountPictureResult;
@@ -11096,20 +11096,20 @@ declare module Windows {
         }
         export interface ILauncherOptions {
              contentType: string;
-             displayApplicationPicker: bool;
+             displayApplicationPicker: boolean;
              fallbackUri: Windows.Foundation.Uri;
              preferredApplicationDisplayName: string;
              preferredApplicationPackageFamilyName: string;
-             treatAsUntrusted: bool;
+             treatAsUntrusted: boolean;
              uI: Windows.System.LauncherUIOptions;
         }
         export class LauncherOptions implements Windows.System.ILauncherOptions {
             contentType: string;
-            displayApplicationPicker: bool;
+            displayApplicationPicker: boolean;
             fallbackUri: Windows.Foundation.Uri;
             preferredApplicationDisplayName: string;
             preferredApplicationPackageFamilyName: string;
-            treatAsUntrusted: bool;
+            treatAsUntrusted: boolean;
             uI: Windows.System.LauncherUIOptions;
         }
         export interface ILauncherStatics {
@@ -11291,10 +11291,10 @@ declare module Windows {
     export module System {
         export module RemoteDesktop {
             export interface IInteractiveSessionStatics {
-                 isRemote: bool;
+                 isRemote: boolean;
             }
             export class InteractiveSession {
-                static isRemote: bool;
+                static isRemote: boolean;
             }
         }
     }
@@ -11355,18 +11355,18 @@ declare module Windows {
             }
             export interface IApplicationViewStatics {
                  value: Windows.UI.ViewManagement.ApplicationViewState;
-                 tryUnsnap(): bool;
+                 tryUnsnap(): boolean;
             }
             export class ApplicationView {
                 static value: Windows.UI.ViewManagement.ApplicationViewState;
-                static tryUnsnap(): bool;
+                static tryUnsnap(): boolean;
             }
             export interface IInputPaneVisibilityEventArgs {
-                 ensuredFocusedElementInView: bool;
+                 ensuredFocusedElementInView: boolean;
                  occludedRect: Windows.Foundation.Rect;
             }
             export class InputPaneVisibilityEventArgs implements Windows.UI.ViewManagement.IInputPaneVisibilityEventArgs {
-                ensuredFocusedElementInView: bool;
+                ensuredFocusedElementInView: boolean;
                 occludedRect: Windows.Foundation.Rect;
             }
             export interface IInputPane {
@@ -11403,19 +11403,19 @@ declare module Windows {
                 windowText,
             }
             export interface IAccessibilitySettings {
-                 highContrast: bool;
+                 highContrast: boolean;
                  highContrastScheme: string;
                  onhighcontrastchanged: any/* TODO */;
             }
             export class AccessibilitySettings implements Windows.UI.ViewManagement.IAccessibilitySettings {
-                highContrast: bool;
+                highContrast: boolean;
                 highContrastScheme: string;
                 onhighcontrastchanged: any/* TODO */;
             }
             export interface IUISettings {
-                 animationsEnabled: bool;
+                 animationsEnabled: boolean;
                  caretBlinkRate: number;
-                 caretBrowsingEnabled: bool;
+                 caretBrowsingEnabled: boolean;
                  caretWidth: number;
                  cursorSize: Windows.Foundation.Size;
                  doubleClickTime: number;
@@ -11428,9 +11428,9 @@ declare module Windows {
                  uIElementColor(desiredElement: Windows.UI.ViewManagement.UIElementType): Windows.UI.Color;
             }
             export class UISettings implements Windows.UI.ViewManagement.IUISettings {
-                animationsEnabled: bool;
+                animationsEnabled: boolean;
                 caretBlinkRate: number;
-                caretBrowsingEnabled: bool;
+                caretBrowsingEnabled: boolean;
                 caretWidth: number;
                 cursorSize: Windows.Foundation.Size;
                 doubleClickTime: number;
@@ -11584,9 +11584,9 @@ declare module Windows {
                  pageTranslation: Windows.Foundation.Point;
             }
             export interface IGestureRecognizer {
-                 autoProcessInertia: bool;
-                 crossSlideExact: bool;
-                 crossSlideHorizontally: bool;
+                 autoProcessInertia: boolean;
+                 crossSlideExact: boolean;
+                 crossSlideHorizontally: boolean;
                  crossSlideThresholds: Windows.UI.Input.CrossSlideThresholds;
                  gestureSettings: Windows.UI.Input.GestureSettings;
                  inertiaExpansion: number;
@@ -11595,18 +11595,18 @@ declare module Windows {
                  inertiaRotationDeceleration: number;
                  inertiaTranslationDeceleration: number;
                  inertiaTranslationDisplacement: number;
-                 isActive: bool;
-                 isInertial: bool;
-                 manipulationExact: bool;
+                 isActive: boolean;
+                 isInertial: boolean;
+                 manipulationExact: boolean;
                  mouseWheelParameters: Windows.UI.Input.MouseWheelParameters;
                  pivotCenter: Windows.Foundation.Point;
                  pivotRadius: number;
-                 showGestureFeedback: bool;
-                 canBeDoubleTap(value: Windows.UI.Input.PointerPoint): bool;
+                 showGestureFeedback: boolean;
+                 canBeDoubleTap(value: Windows.UI.Input.PointerPoint): boolean;
                  processDownEvent(value: Windows.UI.Input.PointerPoint): void;
                  processMoveEvents(value: Windows.Foundation.Collections.IVector__PointerPoint): void;
                  processUpEvent(value: Windows.UI.Input.PointerPoint): void;
-                 processMouseWheelEvent(value: Windows.UI.Input.PointerPoint, isShiftKeyDown: bool, isControlKeyDown: bool): void;
+                 processMouseWheelEvent(value: Windows.UI.Input.PointerPoint, isShiftKeyDown: boolean, isControlKeyDown: boolean): void;
                  processInertia(): void;
                  completeGesture(): void;
                  ontapped: any/* TODO */;
@@ -11626,9 +11626,9 @@ declare module Windows {
                 pageTranslation: Windows.Foundation.Point;
             }
             export class GestureRecognizer implements Windows.UI.Input.IGestureRecognizer {
-                autoProcessInertia: bool;
-                crossSlideExact: bool;
-                crossSlideHorizontally: bool;
+                autoProcessInertia: boolean;
+                crossSlideExact: boolean;
+                crossSlideHorizontally: boolean;
                 crossSlideThresholds: Windows.UI.Input.CrossSlideThresholds;
                 gestureSettings: Windows.UI.Input.GestureSettings;
                 inertiaExpansion: number;
@@ -11637,18 +11637,18 @@ declare module Windows {
                 inertiaRotationDeceleration: number;
                 inertiaTranslationDeceleration: number;
                 inertiaTranslationDisplacement: number;
-                isActive: bool;
-                isInertial: bool;
-                manipulationExact: bool;
+                isActive: boolean;
+                isInertial: boolean;
+                manipulationExact: boolean;
                 mouseWheelParameters: Windows.UI.Input.MouseWheelParameters;
                 pivotCenter: Windows.Foundation.Point;
                 pivotRadius: number;
-                showGestureFeedback: bool;
-                canBeDoubleTap(value: Windows.UI.Input.PointerPoint): bool;
+                showGestureFeedback: boolean;
+                canBeDoubleTap(value: Windows.UI.Input.PointerPoint): boolean;
                 processDownEvent(value: Windows.UI.Input.PointerPoint): void;
                 processMoveEvents(value: Windows.Foundation.Collections.IVector__PointerPoint): void;
                 processUpEvent(value: Windows.UI.Input.PointerPoint): void;
-                processMouseWheelEvent(value: Windows.UI.Input.PointerPoint, isShiftKeyDown: bool, isControlKeyDown: bool): void;
+                processMouseWheelEvent(value: Windows.UI.Input.PointerPoint, isShiftKeyDown: boolean, isControlKeyDown: boolean): void;
                 processInertia(): void;
                 completeGesture(): void;
                 ontapped: any/* TODO */;
@@ -11718,7 +11718,7 @@ declare module Windows {
             }
             export class PointerPoint implements Windows.UI.Input.IPointerPoint {
                 frameId: number;
-                isInContact: bool;
+                isInContact: boolean;
                 pointerDevice: Windows.Devices.Input.PointerDevice;
                 pointerId: number;
                 position: Windows.Foundation.Point;
@@ -11732,12 +11732,12 @@ declare module Windows {
             }
             export interface IPointerPointTransform {
                  inverse: Windows.UI.Input.IPointerPointTransform;
-                 tryTransform(inPoint: Windows.Foundation.Point): { outPoint: Windows.Foundation.Point; returnValue: bool; };
+                 tryTransform(inPoint: Windows.Foundation.Point): { outPoint: Windows.Foundation.Point; returnValue: boolean; };
                  transformBounds(rect: Windows.Foundation.Rect): Windows.Foundation.Rect;
             }
             export interface IPointerPoint {
                  frameId: number;
-                 isInContact: bool;
+                 isInContact: boolean;
                  pointerDevice: Windows.Devices.Input.PointerDevice;
                  pointerId: number;
                  position: Windows.Foundation.Point;
@@ -11748,27 +11748,27 @@ declare module Windows {
             export class PointerPointProperties implements Windows.UI.Input.IPointerPointProperties {
                 contactRect: Windows.Foundation.Rect;
                 contactRectRaw: Windows.Foundation.Rect;
-                isBarrelButtonPressed: bool;
-                isCanceled: bool;
-                isEraser: bool;
-                isHorizontalMouseWheel: bool;
-                isInRange: bool;
-                isInverted: bool;
-                isLeftButtonPressed: bool;
-                isMiddleButtonPressed: bool;
-                isPrimary: bool;
-                isRightButtonPressed: bool;
-                isXButton1Pressed: bool;
-                isXButton2Pressed: bool;
+                isBarrelButtonPressed: boolean;
+                isCanceled: boolean;
+                isEraser: boolean;
+                isHorizontalMouseWheel: boolean;
+                isInRange: boolean;
+                isInverted: boolean;
+                isLeftButtonPressed: boolean;
+                isMiddleButtonPressed: boolean;
+                isPrimary: boolean;
+                isRightButtonPressed: boolean;
+                isXButton1Pressed: boolean;
+                isXButton2Pressed: boolean;
                 mouseWheelDelta: number;
                 orientation: number;
                 pointerUpdateKind: Windows.UI.Input.PointerUpdateKind;
                 pressure: number;
-                touchConfidence: bool;
+                touchConfidence: boolean;
                 twist: number;
                 xTilt: number;
                 yTilt: number;
-                hasUsage(usagePage: number, usageId: number): bool;
+                hasUsage(usagePage: number, usageId: number): boolean;
                 getUsageValue(usagePage: number, usageId: number): number;
             }
             export enum PointerUpdateKind {
@@ -11787,39 +11787,39 @@ declare module Windows {
             export interface IPointerPointProperties {
                  contactRect: Windows.Foundation.Rect;
                  contactRectRaw: Windows.Foundation.Rect;
-                 isBarrelButtonPressed: bool;
-                 isCanceled: bool;
-                 isEraser: bool;
-                 isHorizontalMouseWheel: bool;
-                 isInRange: bool;
-                 isInverted: bool;
-                 isLeftButtonPressed: bool;
-                 isMiddleButtonPressed: bool;
-                 isPrimary: bool;
-                 isRightButtonPressed: bool;
-                 isXButton1Pressed: bool;
-                 isXButton2Pressed: bool;
+                 isBarrelButtonPressed: boolean;
+                 isCanceled: boolean;
+                 isEraser: boolean;
+                 isHorizontalMouseWheel: boolean;
+                 isInRange: boolean;
+                 isInverted: boolean;
+                 isLeftButtonPressed: boolean;
+                 isMiddleButtonPressed: boolean;
+                 isPrimary: boolean;
+                 isRightButtonPressed: boolean;
+                 isXButton1Pressed: boolean;
+                 isXButton2Pressed: boolean;
                  mouseWheelDelta: number;
                  orientation: number;
                  pointerUpdateKind: Windows.UI.Input.PointerUpdateKind;
                  pressure: number;
-                 touchConfidence: bool;
+                 touchConfidence: boolean;
                  twist: number;
                  xTilt: number;
                  yTilt: number;
-                 hasUsage(usagePage: number, usageId: number): bool;
+                 hasUsage(usagePage: number, usageId: number): boolean;
                  getUsageValue(usagePage: number, usageId: number): number;
             }
             export interface IPointerVisualizationSettings {
-                 isBarrelButtonFeedbackEnabled: bool;
-                 isContactFeedbackEnabled: bool;
+                 isBarrelButtonFeedbackEnabled: boolean;
+                 isContactFeedbackEnabled: boolean;
             }
             export interface IPointerVisualizationSettingsStatics {
                  getForCurrentView(): Windows.UI.Input.PointerVisualizationSettings;
             }
             export class PointerVisualizationSettings implements Windows.UI.Input.IPointerVisualizationSettings {
-                isBarrelButtonFeedbackEnabled: bool;
-                isContactFeedbackEnabled: bool;
+                isBarrelButtonFeedbackEnabled: boolean;
+                isContactFeedbackEnabled: boolean;
                 static getForCurrentView(): Windows.UI.Input.PointerVisualizationSettings;
             }
         }
@@ -11924,7 +11924,7 @@ declare module Windows {
                  displayName: string;
                  foregroundText: Windows.UI.StartScreen.ForegroundText;
                  lockScreenBadgeLogo: Windows.Foundation.Uri;
-                 lockScreenDisplayBadgeAndTileText: bool;
+                 lockScreenDisplayBadgeAndTileText: boolean;
                  logo: Windows.Foundation.Uri;
                  shortName: string;
                  smallLogo: Windows.Foundation.Uri;
@@ -11956,7 +11956,7 @@ declare module Windows {
                 displayName: string;
                 foregroundText: Windows.UI.StartScreen.ForegroundText;
                 lockScreenBadgeLogo: Windows.Foundation.Uri;
-                lockScreenDisplayBadgeAndTileText: bool;
+                lockScreenDisplayBadgeAndTileText: boolean;
                 logo: Windows.Foundation.Uri;
                 shortName: string;
                 smallLogo: Windows.Foundation.Uri;
@@ -11973,13 +11973,13 @@ declare module Windows {
                 requestDeleteForSelectionAsync(selection: Windows.Foundation.Rect, preferredPlacement: Windows.UI.Popups.Placement): Windows.Foundation.IAsyncOperation__bool;
                 updateAsync(): Windows.Foundation.IAsyncOperation__bool;
                 
-                static exists(tileId: string): bool;
+                static exists(tileId: string): boolean;
                 static findAllAsync(): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
                 static findAllAsync(applicationId: string): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
                 static findAllForPackageAsync(): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
             }
             export interface ISecondaryTileStatics {
-                 exists(tileId: string): bool;
+                 exists(tileId: string): boolean;
                  findAllAsync(): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
                  findAllAsync(applicationId: string): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
                  findAllForPackageAsync(): Windows.Foundation.IAsyncOperation__IVectorView__SecondaryTile;
@@ -12315,10 +12315,10 @@ declare module Windows {
                  defaultTabStop: number;
                  selection: Windows.UI.Text.ITextSelection;
                  undoLimit: number;
-                 canCopy(): bool;
-                 canPaste(): bool;
-                 canRedo(): bool;
-                 canUndo(): bool;
+                 canCopy(): boolean;
+                 canPaste(): boolean;
+                 canRedo(): boolean;
+                 canUndo(): boolean;
                  applyDisplayUpdates(): number;
                  batchDisplayUpdates(): number;
                  beginUndoGroup(): void;
@@ -12348,13 +12348,13 @@ declare module Windows {
                  startPosition: number;
                  storyLength: number;
                  text: string;
-                 canPaste(format: number): bool;
+                 canPaste(format: number): boolean;
                  changeCase(value: Windows.UI.Text.LetterCase): void;
-                 collapse(value: bool): void;
+                 collapse(value: boolean): void;
                  copy(): void;
                  cut(): void;
                  delete_(unit: Windows.UI.Text.TextRangeUnit, count: number): number;
-                 endOf(unit: Windows.UI.Text.TextRangeUnit, extend: bool): number;
+                 endOf(unit: Windows.UI.Text.TextRangeUnit, extend: boolean): number;
                  expand(unit: Windows.UI.Text.TextRangeUnit): number;
                  findText(value: string, scanLength: number, options: Windows.UI.Text.FindOptions): number;
                  getCharacterUtf32(offset: number): number;
@@ -12364,32 +12364,32 @@ declare module Windows {
                  getRect(options: Windows.UI.Text.PointOptions): { rect: Windows.Foundation.Rect; hit: number; };
                  getText(options: Windows.UI.Text.TextGetOptions): string;
                  getTextViaStream(options: Windows.UI.Text.TextGetOptions, value: Windows.Storage.Streams.IRandomAccessStream): void;
-                 inRange(range: Windows.UI.Text.ITextRange): bool;
+                 inRange(range: Windows.UI.Text.ITextRange): boolean;
                  insertImage(width: number, height: number, ascent: number, verticalAlign: Windows.UI.Text.VerticalCharacterAlignment, alternateText: string, value: Windows.Storage.Streams.IRandomAccessStream): void;
-                 inStory(range: Windows.UI.Text.ITextRange): bool;
-                 isEqual(range: Windows.UI.Text.ITextRange): bool;
+                 inStory(range: Windows.UI.Text.ITextRange): boolean;
+                 isEqual(range: Windows.UI.Text.ITextRange): boolean;
                  move(unit: Windows.UI.Text.TextRangeUnit, count: number): number;
                  moveEnd(unit: Windows.UI.Text.TextRangeUnit, count: number): number;
                  moveStart(unit: Windows.UI.Text.TextRangeUnit, count: number): number;
                  paste(format: number): void;
                  scrollIntoView(value: Windows.UI.Text.PointOptions): void;
                  matchSelection(): void;
-                 setIndex(unit: Windows.UI.Text.TextRangeUnit, index: number, extend: bool): void;
-                 setPoint(point: Windows.Foundation.Point, options: Windows.UI.Text.PointOptions, extend: bool): void;
+                 setIndex(unit: Windows.UI.Text.TextRangeUnit, index: number, extend: boolean): void;
+                 setPoint(point: Windows.Foundation.Point, options: Windows.UI.Text.PointOptions, extend: boolean): void;
                  setRange(startPosition: number, endPosition: number): void;
                  setText(options: Windows.UI.Text.TextSetOptions, value: string): void;
                  setTextViaStream(options: Windows.UI.Text.TextSetOptions, value: Windows.Storage.Streams.IRandomAccessStream): void;
-                 startOf(unit: Windows.UI.Text.TextRangeUnit, extend: bool): number;
+                 startOf(unit: Windows.UI.Text.TextRangeUnit, extend: boolean): number;
             }
             export interface ITextSelection extends Windows.UI.Text.ITextRange {
                  options: Windows.UI.Text.SelectionOptions;
                  type: Windows.UI.Text.SelectionType;
-                 endKey(unit: Windows.UI.Text.TextRangeUnit, extend: bool): number;
-                 homeKey(unit: Windows.UI.Text.TextRangeUnit, extend: bool): number;
-                 moveDown(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: bool): number;
-                 moveLeft(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: bool): number;
-                 moveRight(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: bool): number;
-                 moveUp(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: bool): number;
+                 endKey(unit: Windows.UI.Text.TextRangeUnit, extend: boolean): number;
+                 homeKey(unit: Windows.UI.Text.TextRangeUnit, extend: boolean): number;
+                 moveDown(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: boolean): number;
+                 moveLeft(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: boolean): number;
+                 moveRight(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: boolean): number;
+                 moveUp(unit: Windows.UI.Text.TextRangeUnit, count: number, extend: boolean): number;
                  typeText(value: string): void;
             }
             export interface ITextCharacterFormat {
@@ -12419,7 +12419,7 @@ declare module Windows {
                  weight: number;
                  setClone(value: Windows.UI.Text.ITextCharacterFormat): void;
                  getClone(): Windows.UI.Text.ITextCharacterFormat;
-                 isEqual(format: Windows.UI.Text.ITextCharacterFormat): bool;
+                 isEqual(format: Windows.UI.Text.ITextCharacterFormat): boolean;
             }
             export interface ITextParagraphFormat {
                  alignment: Windows.UI.Text.ParagraphAlignment;
@@ -12449,7 +12449,7 @@ declare module Windows {
                  deleteTab(position: number): void;
                  getClone(): Windows.UI.Text.ITextParagraphFormat;
                  getTab(index: number): { position: number; align: Windows.UI.Text.TabAlignment; leader: Windows.UI.Text.TabLeader; };
-                 isEqual(format: Windows.UI.Text.ITextParagraphFormat): bool;
+                 isEqual(format: Windows.UI.Text.ITextParagraphFormat): boolean;
                  setClone(format: Windows.UI.Text.ITextParagraphFormat): void;
                  setIndents(start: number, left: number, right: number): void;
                  setLineSpacing(rule: Windows.UI.Text.LineSpacingRule, spacing: number): void;
@@ -12711,17 +12711,17 @@ declare module Windows {
             export interface CorePhysicalKeyStatus {
                 repeatCount: number;
                 scanCode: number;
-                isExtendedKey: bool;
-                isMenuKeyDown: bool;
-                wasKeyDown: bool;
-                isKeyReleased: bool;
+                isExtendedKey: boolean;
+                isMenuKeyDown: boolean;
+                wasKeyDown: boolean;
+                isKeyReleased: boolean;
             }
             export interface CoreProximityEvaluation {
                 score: number;
                 adjustedPoint: Windows.Foundation.Point;
             }
             export interface ICoreWindowEventArgs {
-                 handled: bool;
+                 handled: boolean;
             }
             export interface IAutomationProviderRequestedEventArgs extends Windows.UI.Core.ICoreWindowEventArgs {
                  automationProvider: any;
@@ -12731,7 +12731,7 @@ declare module Windows {
                  keyStatus: Windows.UI.Core.CorePhysicalKeyStatus;
             }
             export interface IInputEnabledEventArgs extends Windows.UI.Core.ICoreWindowEventArgs {
-                 inputEnabled: bool;
+                 inputEnabled: boolean;
             }
             export interface IKeyEventArgs extends Windows.UI.Core.ICoreWindowEventArgs {
                  keyStatus: Windows.UI.Core.CorePhysicalKeyStatus;
@@ -12756,7 +12756,7 @@ declare module Windows {
                  size: Windows.Foundation.Size;
             }
             export interface IVisibilityChangedEventArgs extends Windows.UI.Core.ICoreWindowEventArgs {
-                 visible: bool;
+                 visible: boolean;
             }
             export interface ICoreWindow {
                  automationHostProvider: any;
@@ -12764,10 +12764,10 @@ declare module Windows {
                  customProperties: Windows.Foundation.Collections.IPropertySet;
                  dispatcher: Windows.UI.Core.CoreDispatcher;
                  flowDirection: Windows.UI.Core.CoreWindowFlowDirection;
-                 isInputEnabled: bool;
+                 isInputEnabled: boolean;
                  pointerCursor: Windows.UI.Core.CoreCursor;
                  pointerPosition: Windows.Foundation.Point;
-                 visible: bool;
+                 visible: boolean;
                  activate(): void;
                  close(): void;
                  getAsyncKeyState(virtualKey: Windows.System.VirtualKey): Windows.UI.Core.CoreVirtualKeyStates;
@@ -12793,7 +12793,7 @@ declare module Windows {
                  onvisibilitychanged: any/* TODO */;
             }
             export class CoreDispatcher implements Windows.UI.Core.ICoreDispatcher, Windows.UI.Core.ICoreAcceleratorKeys {
-                hasThreadAccess: bool;
+                hasThreadAccess: boolean;
                 processEvents(options: Windows.UI.Core.CoreProcessEventsOption): void;
                 runAsync(priority: Windows.UI.Core.CoreDispatcherPriority, agileCallback: Windows.UI.Core.DispatchedHandler): Windows.Foundation.IAsyncAction;
                 runIdleAsync(agileCallback: Windows.UI.Core.IdleDispatchedHandler): Windows.Foundation.IAsyncAction;
@@ -12810,10 +12810,10 @@ declare module Windows {
                 customProperties: Windows.Foundation.Collections.IPropertySet;
                 dispatcher: Windows.UI.Core.CoreDispatcher;
                 flowDirection: Windows.UI.Core.CoreWindowFlowDirection;
-                isInputEnabled: bool;
+                isInputEnabled: boolean;
                 pointerCursor: Windows.UI.Core.CoreCursor;
                 pointerPosition: Windows.Foundation.Point;
-                visible: bool;
+                visible: boolean;
                 activate(): void;
                 close(): void;
                 getAsyncKeyState(virtualKey: Windows.System.VirtualKey): Windows.UI.Core.CoreVirtualKeyStates;
@@ -12841,50 +12841,50 @@ declare module Windows {
             }
             export class WindowActivatedEventArgs implements Windows.UI.Core.IWindowActivatedEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 windowActivationState: Windows.UI.Core.CoreWindowActivationState;
-                handled: bool;
+                handled: boolean;
             }
             export class AutomationProviderRequestedEventArgs implements Windows.UI.Core.IAutomationProviderRequestedEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 automationProvider: any;
-                handled: bool;
+                handled: boolean;
             }
             export class CharacterReceivedEventArgs implements Windows.UI.Core.ICharacterReceivedEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 keyCode: number;
                 keyStatus: Windows.UI.Core.CorePhysicalKeyStatus;
-                handled: bool;
+                handled: boolean;
             }
             export class CoreWindowEventArgs implements Windows.UI.Core.ICoreWindowEventArgs {
-                handled: bool;
+                handled: boolean;
             }
             export class InputEnabledEventArgs implements Windows.UI.Core.IInputEnabledEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
-                inputEnabled: bool;
-                handled: bool;
+                inputEnabled: boolean;
+                handled: boolean;
             }
             export class KeyEventArgs implements Windows.UI.Core.IKeyEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 keyStatus: Windows.UI.Core.CorePhysicalKeyStatus;
                 virtualKey: Windows.System.VirtualKey;
-                handled: bool;
+                handled: boolean;
             }
             export class PointerEventArgs implements Windows.UI.Core.IPointerEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 currentPoint: Windows.UI.Input.PointerPoint;
                 keyModifiers: Windows.System.VirtualKeyModifiers;
-                handled: bool;
+                handled: boolean;
                 getIntermediatePoints(): Windows.Foundation.Collections.IVector__PointerPoint;
             }
             export class TouchHitTestingEventArgs implements Windows.UI.Core.ITouchHitTestingEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 boundingBox: Windows.Foundation.Rect;
                 point: Windows.Foundation.Point;
                 proximityEvaluation: Windows.UI.Core.CoreProximityEvaluation;
-                handled: bool;
+                handled: boolean;
                 evaluateProximity(controlBoundingBox: Windows.Foundation.Rect): Windows.UI.Core.CoreProximityEvaluation;
                 evaluateProximity(controlVertices: Windows.Foundation.Point[]): Windows.UI.Core.CoreProximityEvaluation;
             }
             export class WindowSizeChangedEventArgs implements Windows.UI.Core.IWindowSizeChangedEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
                 size: Windows.Foundation.Size;
-                handled: bool;
+                handled: boolean;
             }
             export class VisibilityChangedEventArgs implements Windows.UI.Core.IVisibilityChangedEventArgs, Windows.UI.Core.ICoreWindowEventArgs {
-                visible: bool;
-                handled: bool;
+                visible: boolean;
+                handled: boolean;
             }
             export interface ICoreWindowStatic {
                  getForCurrentThread(): Windows.UI.Core.CoreWindow;
@@ -12896,7 +12896,7 @@ declare module Windows {
                 (e: Windows.UI.Core.IdleDispatchedHandlerArgs): void;
             }
             export class IdleDispatchedHandlerArgs implements Windows.UI.Core.IIdleDispatchedHandlerArgs {
-                isDispatcherIdle: bool;
+                isDispatcherIdle: boolean;
             }
             export interface IAcceleratorKeyEventArgs extends Windows.UI.Core.ICoreWindowEventArgs {
                  eventType: Windows.UI.Core.CoreAcceleratorKeyEventType;
@@ -12910,16 +12910,16 @@ declare module Windows {
                 eventType: Windows.UI.Core.CoreAcceleratorKeyEventType;
                 keyStatus: Windows.UI.Core.CorePhysicalKeyStatus;
                 virtualKey: Windows.System.VirtualKey;
-                handled: bool;
+                handled: boolean;
             }
             export interface ICoreDispatcher extends Windows.UI.Core.ICoreAcceleratorKeys {
-                 hasThreadAccess: bool;
+                 hasThreadAccess: boolean;
                  processEvents(options: Windows.UI.Core.CoreProcessEventsOption): void;
                  runAsync(priority: Windows.UI.Core.CoreDispatcherPriority, agileCallback: Windows.UI.Core.DispatchedHandler): Windows.Foundation.IAsyncAction;
                  runIdleAsync(agileCallback: Windows.UI.Core.IdleDispatchedHandler): Windows.Foundation.IAsyncAction;
             }
             export interface IIdleDispatchedHandlerArgs {
-                 isDispatcherIdle: bool;
+                 isDispatcherIdle: boolean;
             }
             export class CoreAcceleratorKeys implements Windows.UI.Core.ICoreAcceleratorKeys {
                 onacceleratorkeyactivated: any/* TODO */;
@@ -13030,15 +13030,15 @@ declare module Windows {
                 }
                 export interface IInkDrawingAttributes {
                      color: Windows.UI.Color;
-                     fitToCurve: bool;
-                     ignorePressure: bool;
+                     fitToCurve: boolean;
+                     ignorePressure: boolean;
                      penTip: Windows.UI.Input.Inking.PenTipShape;
                      size: Windows.Foundation.Size;
                 }
                 export class InkDrawingAttributes implements Windows.UI.Input.Inking.IInkDrawingAttributes {
                     color: Windows.UI.Color;
-                    fitToCurve: bool;
-                    ignorePressure: bool;
+                    fitToCurve: boolean;
+                    ignorePressure: boolean;
                     penTip: Windows.UI.Input.Inking.PenTipShape;
                     size: Windows.Foundation.Size;
                 }
@@ -13063,16 +13063,16 @@ declare module Windows {
                 export interface IInkStroke {
                      boundingRect: Windows.Foundation.Rect;
                      drawingAttributes: Windows.UI.Input.Inking.InkDrawingAttributes;
-                     recognized: bool;
-                     selected: bool;
+                     recognized: boolean;
+                     selected: boolean;
                      getRenderingSegments(): Windows.Foundation.Collections.IVectorView__InkStrokeRenderingSegment;
                      clone(): Windows.UI.Input.Inking.InkStroke;
                 }
                 export class InkStroke implements Windows.UI.Input.Inking.IInkStroke {
                     boundingRect: Windows.Foundation.Rect;
                     drawingAttributes: Windows.UI.Input.Inking.InkDrawingAttributes;
-                    recognized: bool;
-                    selected: bool;
+                    recognized: boolean;
+                    selected: boolean;
                     getRenderingSegments(): Windows.Foundation.Collections.IVectorView__InkStrokeRenderingSegment;
                     clone(): Windows.UI.Input.Inking.InkStroke;
                 }
@@ -13109,7 +13109,7 @@ declare module Windows {
                      selectWithLine(from: Windows.Foundation.Point, to: Windows.Foundation.Point): Windows.Foundation.Rect;
                      copySelectedToClipboard(): void;
                      pasteFromClipboard(position: Windows.Foundation.Point): Windows.Foundation.Rect;
-                     canPasteFromClipboard(): bool;
+                     canPasteFromClipboard(): boolean;
                      loadAsync(inputStream: Windows.Storage.Streams.IInputStream): Windows.Foundation.IAsyncActionWithProgress__number;
                      saveAsync(outputStream: Windows.Storage.Streams.IOutputStream): Windows.Foundation.IAsyncOperationWithProgress__number_number;
                      updateRecognitionResults(recognitionResults: Windows.Foundation.Collections.IVectorView__InkRecognitionResult): void;
@@ -13125,7 +13125,7 @@ declare module Windows {
                     selectWithLine(from: Windows.Foundation.Point, to: Windows.Foundation.Point): Windows.Foundation.Rect;
                     copySelectedToClipboard(): void;
                     pasteFromClipboard(position: Windows.Foundation.Point): Windows.Foundation.Rect;
-                    canPasteFromClipboard(): bool;
+                    canPasteFromClipboard(): boolean;
                     loadAsync(inputStream: Windows.Storage.Streams.IInputStream): Windows.Foundation.IAsyncActionWithProgress__number;
                     saveAsync(outputStream: Windows.Storage.Streams.IOutputStream): Windows.Foundation.IAsyncOperationWithProgress__number_number;
                     updateRecognitionResults(recognitionResults: Windows.Foundation.Collections.IVectorView__InkRecognitionResult): void;
@@ -13171,7 +13171,7 @@ declare module Windows {
                     selectWithLine(from: Windows.Foundation.Point, to: Windows.Foundation.Point): Windows.Foundation.Rect;
                     copySelectedToClipboard(): void;
                     pasteFromClipboard(position: Windows.Foundation.Point): Windows.Foundation.Rect;
-                    canPasteFromClipboard(): bool;
+                    canPasteFromClipboard(): boolean;
                     loadAsync(inputStream: Windows.Storage.Streams.IInputStream): Windows.Foundation.IAsyncActionWithProgress__number;
                     saveAsync(outputStream: Windows.Storage.Streams.IOutputStream): Windows.Foundation.IAsyncOperationWithProgress__number_number;
                     updateRecognitionResults(recognitionResults: Windows.Foundation.Collections.IVectorView__InkRecognitionResult): void;
@@ -13321,13 +13321,13 @@ declare module Windows {
                 suspendingOperation: Windows.ApplicationModel.SuspendingOperation;
             }
             export interface IWebUIBackgroundTaskInstance {
-                 succeeded: bool;
+                 succeeded: boolean;
             }
             export interface IWebUIBackgroundTaskInstanceStatics {
                  current: Windows.UI.WebUI.IWebUIBackgroundTaskInstance;
             }
             export class WebUIBackgroundTaskInstanceRuntimeClass implements Windows.UI.WebUI.IWebUIBackgroundTaskInstance, Windows.ApplicationModel.Background.IBackgroundTaskInstance {
-                succeeded: bool;
+                succeeded: boolean;
                 instanceId: string;
                 progress: number;
                 suspendedCount: number;
@@ -13772,7 +13772,7 @@ declare module Windows {
                 setting: Windows.UI.Notifications.NotificationSetting;
                 update(notification: Windows.UI.Notifications.TileNotification): void;
                 clear(): void;
-                enableNotificationQueue(enable: bool): void;
+                enableNotificationQueue(enable: boolean): void;
                 addToSchedule(scheduledTile: Windows.UI.Notifications.ScheduledTileNotification): void;
                 removeFromSchedule(scheduledTile: Windows.UI.Notifications.ScheduledTileNotification): void;
                 getScheduledTileNotifications(): Windows.Foundation.Collections.IVectorView__ScheduledTileNotification;
@@ -13786,7 +13786,7 @@ declare module Windows {
                  setting: Windows.UI.Notifications.NotificationSetting;
                  update(notification: Windows.UI.Notifications.TileNotification): void;
                  clear(): void;
-                 enableNotificationQueue(enable: bool): void;
+                 enableNotificationQueue(enable: boolean): void;
                  addToSchedule(scheduledTile: Windows.UI.Notifications.ScheduledTileNotification): void;
                  removeFromSchedule(scheduledTile: Windows.UI.Notifications.ScheduledTileNotification): void;
                  getScheduledTileNotifications(): Windows.Foundation.Collections.IVectorView__ScheduledTileNotification;
@@ -14352,7 +14352,7 @@ declare module Windows {
                  createSyndicationFeed(title: string, subtitle: string, uri: Windows.Foundation.Uri): Windows.Web.Syndication.SyndicationFeed;
             }
             export interface ISyndicationClient {
-                 bypassCacheOnRetrieve: bool;
+                 bypassCacheOnRetrieve: boolean;
                  maxResponseBufferSize: number;
                  proxyCredential: Windows.Security.Credentials.PasswordCredential;
                  serverCredential: Windows.Security.Credentials.PasswordCredential;
@@ -14363,7 +14363,7 @@ declare module Windows {
             export class SyndicationClient implements Windows.Web.Syndication.ISyndicationClient {
                 constructor ();
                 constructor (serverCredential: Windows.Security.Credentials.PasswordCredential); 
-                bypassCacheOnRetrieve: bool;
+                bypassCacheOnRetrieve: boolean;
                 maxResponseBufferSize: number;
                 proxyCredential: Windows.Security.Credentials.PasswordCredential;
                 serverCredential: Windows.Security.Credentials.PasswordCredential;
@@ -14452,7 +14452,7 @@ declare module Windows {
             export class AtomPubClient implements Windows.Web.AtomPub.IAtomPubClient, Windows.Web.Syndication.ISyndicationClient {
                 constructor ();
                 constructor (serverCredential: Windows.Security.Credentials.PasswordCredential);
-                bypassCacheOnRetrieve: bool;
+                bypassCacheOnRetrieve: boolean;
                 maxResponseBufferSize: number;
                 proxyCredential: Windows.Security.Credentials.PasswordCredential;
                 serverCredential: Windows.Security.Credentials.PasswordCredential;
@@ -14486,20 +14486,20 @@ declare module Windows {
             export interface IMap__string_any {
                 size: number;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_any;
-                insert(key: string, value: any): bool;
+                insert(key: string, value: any): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
             export interface ICollection__IKeyValuePair__string_any extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_any {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Foundation.Collections.IKeyValuePair__string_any): void;
                  clear(): void;
-                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_any): bool;
+                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_any): boolean;
                  copyTo(array: Windows.Foundation.Collections.IKeyValuePair__string_any[], arrayIndex: number): void;
-                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_any): bool;
+                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_any): boolean;
             }
             export interface IKeyValuePair__string_any {
                 key: string;
@@ -14511,12 +14511,12 @@ declare module Windows {
             export interface IMapView__string_any {
                 size: number;
                 lookup(key: string): any;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterator__IKeyValuePair__string_any {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_any;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_any[]; value: number; };
             }
             export interface IIterable__IWwwFormUrlDecoderEntry {
@@ -14525,7 +14525,7 @@ declare module Windows {
             export interface IVectorView__IWwwFormUrlDecoderEntry {
                 size: number;
                 getAt(index: number): Windows.Foundation.IWwwFormUrlDecoderEntry;
-                indexOf(value: Windows.Foundation.IWwwFormUrlDecoderEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Foundation.IWwwFormUrlDecoderEntry): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Foundation.IWwwFormUrlDecoderEntry[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14544,16 +14544,16 @@ declare module Windows {
                 unshift(...items: Windows.Foundation.IWwwFormUrlDecoderEntry[]): number;
                 lastIndexOf(searchElement: Windows.Foundation.IWwwFormUrlDecoderEntry): number;
                 lastIndexOf(searchElement: Windows.Foundation.IWwwFormUrlDecoderEntry, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool): bool;
-                every(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool): bool;
-                some(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => void): void;
                 forEach(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => any): any[];
                 map(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool): Windows.Foundation.IWwwFormUrlDecoderEntry[];
-                filter(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => bool, thisArg: any): Windows.Foundation.IWwwFormUrlDecoderEntry[];
+                filter(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean): Windows.Foundation.IWwwFormUrlDecoderEntry[];
+                filter(callbackfn: (value: Windows.Foundation.IWwwFormUrlDecoderEntry, index: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => boolean, thisArg: any): Windows.Foundation.IWwwFormUrlDecoderEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.IWwwFormUrlDecoderEntry[]) => any): any;
@@ -14565,19 +14565,19 @@ declare module Windows {
             }
             export interface IIterator__IWwwFormUrlDecoderEntry {
                  current: Windows.Foundation.IWwwFormUrlDecoderEntry;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.IWwwFormUrlDecoderEntry[]; value: number; };
             }
             export interface IMapView__string_IBackgroundTaskRegistration {
                 size: number;
                 lookup(key: string): Windows.ApplicationModel.Background.IBackgroundTaskRegistration;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IVectorView__ContactField {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Contacts.ContactField;
-                indexOf(value: Windows.ApplicationModel.Contacts.ContactField): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Contacts.ContactField): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Contacts.ContactField[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14596,16 +14596,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Contacts.ContactField[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactField): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactField, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool): Windows.ApplicationModel.Contacts.ContactField[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => bool, thisArg: any): Windows.ApplicationModel.Contacts.ContactField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean): Windows.ApplicationModel.Contacts.ContactField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactField, index: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => boolean, thisArg: any): Windows.ApplicationModel.Contacts.ContactField[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactField[]) => any): any;
@@ -14615,7 +14615,7 @@ declare module Windows {
             export interface IVectorView__ContactInstantMessageField {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Contacts.ContactInstantMessageField;
-                indexOf(value: Windows.ApplicationModel.Contacts.ContactInstantMessageField): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Contacts.ContactInstantMessageField): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14634,16 +14634,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactInstantMessageField): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactInstantMessageField, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool): Windows.ApplicationModel.Contacts.ContactInstantMessageField[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => bool, thisArg: any): Windows.ApplicationModel.Contacts.ContactInstantMessageField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean): Windows.ApplicationModel.Contacts.ContactInstantMessageField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInstantMessageField, index: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => boolean, thisArg: any): Windows.ApplicationModel.Contacts.ContactInstantMessageField[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInstantMessageField[]) => any): any;
@@ -14653,7 +14653,7 @@ declare module Windows {
             export interface IVectorView__ContactLocationField {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Contacts.ContactLocationField;
-                indexOf(value: Windows.ApplicationModel.Contacts.ContactLocationField): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Contacts.ContactLocationField): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Contacts.ContactLocationField[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14672,16 +14672,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Contacts.ContactLocationField[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactLocationField): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactLocationField, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool): Windows.ApplicationModel.Contacts.ContactLocationField[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => bool, thisArg: any): Windows.ApplicationModel.Contacts.ContactLocationField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean): Windows.ApplicationModel.Contacts.ContactLocationField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactLocationField, index: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => boolean, thisArg: any): Windows.ApplicationModel.Contacts.ContactLocationField[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactLocationField[]) => any): any;
@@ -14691,7 +14691,7 @@ declare module Windows {
             export interface IVector__string {
                 size: number;
                 getAt(index: number): string;
-                indexOf(value: string): { index: number; returnValue: bool; };
+                indexOf(value: string): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: string[]; returnValue: number; };
                 setAt(index: number, value: string): void;
                 insertAt(index: number, value: string): void;
@@ -14716,16 +14716,16 @@ declare module Windows {
                 unshift(...items: string[]): number;
                 lastIndexOf(searchElement: string): number;
                 lastIndexOf(searchElement: string, fromIndex: number): number;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void): void;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void, thisArg: any): void;
                 map(callbackfn: (value: string, index: number, array: string[]) => any): any[];
                 map(callbackfn: (value: string, index: number, array: string[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool): string[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): string[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
@@ -14735,7 +14735,7 @@ declare module Windows {
             export interface IVectorView__ContactInformation {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Contacts.ContactInformation;
-                indexOf(value: Windows.ApplicationModel.Contacts.ContactInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Contacts.ContactInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Contacts.ContactInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14754,16 +14754,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Contacts.ContactInformation[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactInformation): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.ContactInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool): Windows.ApplicationModel.Contacts.ContactInformation[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => bool, thisArg: any): Windows.ApplicationModel.Contacts.ContactInformation[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean): Windows.ApplicationModel.Contacts.ContactInformation[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.ContactInformation, index: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => boolean, thisArg: any): Windows.ApplicationModel.Contacts.ContactInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.ContactInformation[]) => any): any;
@@ -14773,7 +14773,7 @@ declare module Windows {
             export interface IVector__IContactField {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Contacts.IContactField;
-                indexOf(value: Windows.ApplicationModel.Contacts.IContactField): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Contacts.IContactField): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Contacts.IContactField[]; returnValue: number; };
                 setAt(index: number, value: Windows.ApplicationModel.Contacts.IContactField): void;
                 insertAt(index: number, value: Windows.ApplicationModel.Contacts.IContactField): void;
@@ -14798,16 +14798,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Contacts.IContactField[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.IContactField): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Contacts.IContactField, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool): Windows.ApplicationModel.Contacts.IContactField[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => bool, thisArg: any): Windows.ApplicationModel.Contacts.IContactField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean): Windows.ApplicationModel.Contacts.IContactField[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Contacts.IContactField, index: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => boolean, thisArg: any): Windows.ApplicationModel.Contacts.IContactField[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Contacts.IContactField[]) => any): any;
@@ -14817,7 +14817,7 @@ declare module Windows {
             export interface IVectorView__string {
                 size: number;
                 getAt(index: number): string;
-                indexOf(value: string): { index: number; returnValue: bool; };
+                indexOf(value: string): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: string[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14836,16 +14836,16 @@ declare module Windows {
                 unshift(...items: string[]): number;
                 lastIndexOf(searchElement: string): number;
                 lastIndexOf(searchElement: string, fromIndex: number): number;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                every(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool): bool;
-                some(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                every(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean): boolean;
+                some(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void): void;
                 forEach(callbackfn: (value: string, index: number, array: string[]) => void, thisArg: any): void;
                 map(callbackfn: (value: string, index: number, array: string[]) => any): any[];
                 map(callbackfn: (value: string, index: number, array: string[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool): string[];
-                filter(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg: any): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean): string[];
+                filter(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg: any): string[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any): any;
@@ -14858,12 +14858,12 @@ declare module Windows {
             export interface IMapView__string_RandomAccessStreamReference {
                 size: number;
                 lookup(key: string): Windows.Storage.Streams.RandomAccessStreamReference;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IVectorView__IStorageItem {
                 size: number;
                 getAt(index: number): Windows.Storage.IStorageItem;
-                indexOf(value: Windows.Storage.IStorageItem): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.IStorageItem): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.IStorageItem[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14882,16 +14882,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.IStorageItem[]): number;
                 lastIndexOf(searchElement: Windows.Storage.IStorageItem): number;
                 lastIndexOf(searchElement: Windows.Storage.IStorageItem, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool): Windows.Storage.IStorageItem[];
-                filter(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => bool, thisArg: any): Windows.Storage.IStorageItem[];
+                filter(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean): Windows.Storage.IStorageItem[];
+                filter(callbackfn: (value: Windows.Storage.IStorageItem, index: number, array: Windows.Storage.IStorageItem[]) => boolean, thisArg: any): Windows.Storage.IStorageItem[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.IStorageItem[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.IStorageItem[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.IStorageItem[]) => any): any;
@@ -14901,9 +14901,9 @@ declare module Windows {
             export interface IMap__string_RandomAccessStreamReference {
                 size: number;
                 lookup(key: string): Windows.Storage.Streams.RandomAccessStreamReference;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_RandomAccessStreamReference;
-                insert(key: string, value: Windows.Storage.Streams.RandomAccessStreamReference): bool;
+                insert(key: string, value: Windows.Storage.Streams.RandomAccessStreamReference): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
@@ -14916,7 +14916,7 @@ declare module Windows {
             export interface IVector__StorageFolder {
                 size: number;
                 getAt(index: number): Windows.Storage.StorageFolder;
-                indexOf(value: Windows.Storage.StorageFolder): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.StorageFolder): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.StorageFolder[]; returnValue: number; };
                 setAt(index: number, value: Windows.Storage.StorageFolder): void;
                 insertAt(index: number, value: Windows.Storage.StorageFolder): void;
@@ -14941,16 +14941,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.StorageFolder[]): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFolder): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFolder, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): Windows.Storage.StorageFolder[];
-                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): Windows.Storage.StorageFolder[];
+                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): Windows.Storage.StorageFolder[];
+                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): Windows.Storage.StorageFolder[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any): any;
@@ -14960,7 +14960,7 @@ declare module Windows {
             export interface IVectorView__CoreApplicationView {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Core.CoreApplicationView;
-                indexOf(value: Windows.ApplicationModel.Core.CoreApplicationView): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Core.CoreApplicationView): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Core.CoreApplicationView[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -14979,16 +14979,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Core.CoreApplicationView[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Core.CoreApplicationView): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Core.CoreApplicationView, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool): Windows.ApplicationModel.Core.CoreApplicationView[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => bool, thisArg: any): Windows.ApplicationModel.Core.CoreApplicationView[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean): Windows.ApplicationModel.Core.CoreApplicationView[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Core.CoreApplicationView, index: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => boolean, thisArg: any): Windows.ApplicationModel.Core.CoreApplicationView[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Core.CoreApplicationView[]) => any): any;
@@ -14998,7 +14998,7 @@ declare module Windows {
             export interface IVectorView__Package {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Package;
-                indexOf(value: Windows.ApplicationModel.Package): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Package): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Package[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15017,16 +15017,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Package[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Package): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Package, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool): Windows.ApplicationModel.Package[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => bool, thisArg: any): Windows.ApplicationModel.Package[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean): Windows.ApplicationModel.Package[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Package, index: number, array: Windows.ApplicationModel.Package[]) => boolean, thisArg: any): Windows.ApplicationModel.Package[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Package[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Package[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Package[]) => any): any;
@@ -15036,7 +15036,7 @@ declare module Windows {
             export interface IMapView__string_ResourceMap {
                 size: number;
                 lookup(key: string): Windows.ApplicationModel.Resources.Core.ResourceMap;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterable__IStorageFile {
                 first(): Windows.Foundation.Collections.IIterator__IStorageFile;
@@ -15044,7 +15044,7 @@ declare module Windows {
             export interface IMapView__string_NamedResource {
                 size: number;
                 lookup(key: string): Windows.ApplicationModel.Resources.Core.NamedResource;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IReadOnlyCollection__IKeyValuePair__string_NamedResource extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_NamedResource {
                  count: number;
@@ -15058,8 +15058,8 @@ declare module Windows {
             }
             export interface IIterator__IKeyValuePair__string_NamedResource {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_NamedResource;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_NamedResource[]; value: number; };
             }
             export interface IObservableMap__string_string extends Windows.Foundation.Collections.IMap__string_string, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_string {
@@ -15071,7 +15071,7 @@ declare module Windows {
             export interface IVectorView__ResourceQualifier {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Resources.Core.ResourceQualifier;
-                indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceQualifier): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceQualifier): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15090,16 +15090,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Core.ResourceQualifier): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Core.ResourceQualifier, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool): Windows.ApplicationModel.Resources.Core.ResourceQualifier[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => bool, thisArg: any): Windows.ApplicationModel.Resources.Core.ResourceQualifier[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean): Windows.ApplicationModel.Resources.Core.ResourceQualifier[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => boolean, thisArg: any): Windows.ApplicationModel.Resources.Core.ResourceQualifier[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]) => any): any;
@@ -15109,7 +15109,7 @@ declare module Windows {
             export interface IVectorView__ResourceCandidate {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Resources.Core.ResourceCandidate;
-                indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceCandidate): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Resources.Core.ResourceCandidate): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15128,16 +15128,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Core.ResourceCandidate): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Core.ResourceCandidate, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool): Windows.ApplicationModel.Resources.Core.ResourceCandidate[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => bool, thisArg: any): Windows.ApplicationModel.Resources.Core.ResourceCandidate[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean): Windows.ApplicationModel.Resources.Core.ResourceCandidate[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Core.ResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => boolean, thisArg: any): Windows.ApplicationModel.Resources.Core.ResourceCandidate[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]) => any): any;
@@ -15156,27 +15156,27 @@ declare module Windows {
             }
             export interface IIterator__IKeyValuePair__string_ResourceMap {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_ResourceMap;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_ResourceMap[]; value: number; };
             }
             export interface IMap__string_string {
                 size: number;
                 lookup(key: string): string;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_string;
-                insert(key: string, value: string): bool;
+                insert(key: string, value: string): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
             export interface ICollection__IKeyValuePair__string_string extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_string {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Foundation.Collections.IKeyValuePair__string_string): void;
                  clear(): void;
-                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_string): bool;
+                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_string): boolean;
                  copyTo(array: Windows.Foundation.Collections.IKeyValuePair__string_string[], arrayIndex: number): void;
-                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_string): bool;
+                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_string): boolean;
             }
             export interface IKeyValuePair__string_string {
                 key: string;
@@ -15188,12 +15188,12 @@ declare module Windows {
             export interface IMapView__string_string {
                 size: number;
                 lookup(key: string): string;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterator__IKeyValuePair__string_string {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_string;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_string[]; value: number; };
             }
             export interface IReadOnlyCollection__IKeyValuePair__string_string extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_string {
@@ -15204,8 +15204,8 @@ declare module Windows {
             }
             export interface IIterator__ResourceQualifier {
                  current: Windows.ApplicationModel.Resources.Core.ResourceQualifier;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.ApplicationModel.Resources.Core.ResourceQualifier[]; value: number; };
             }
             export interface IReadOnlyCollection__ResourceCandidate extends Windows.Foundation.Collections.IIterable__ResourceCandidate {
@@ -15216,8 +15216,8 @@ declare module Windows {
             }
             export interface IIterator__ResourceCandidate {
                  current: Windows.ApplicationModel.Resources.Core.ResourceCandidate;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.ApplicationModel.Resources.Core.ResourceCandidate[]; value: number; };
             }
             export interface IReadOnlyCollection__string extends Windows.Foundation.Collections.IIterable__string {
@@ -15225,14 +15225,14 @@ declare module Windows {
             }
             export interface IIterator__string {
                  current: string;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: string[]; value: number; };
             }
             export interface IVectorView__IndexedResourceCandidate {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate;
-                indexOf(value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15251,16 +15251,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool): Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => bool, thisArg: any): Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean): Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => boolean, thisArg: any): Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate[]) => any): any;
@@ -15270,7 +15270,7 @@ declare module Windows {
             export interface IVectorView__IndexedResourceQualifier {
                 size: number;
                 getAt(index: number): Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier;
-                indexOf(value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier): { index: number; returnValue: bool; };
+                indexOf(value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15289,16 +15289,16 @@ declare module Windows {
                 unshift(...items: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier): number;
                 lastIndexOf(searchElement: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, fromIndex: number): number;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool): bool;
-                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool): bool;
-                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => void): void;
                 forEach(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => any): any[];
                 map(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool): Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[];
-                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => bool, thisArg: any): Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean): Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[];
+                filter(callbackfn: (value: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier, index: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => boolean, thisArg: any): Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier[]) => any): any;
@@ -15308,17 +15308,17 @@ declare module Windows {
             export interface IMapView__string_ProductLicense {
                 size: number;
                 lookup(key: string): Windows.ApplicationModel.Store.ProductLicense;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IMapView__string_ProductListing {
                 size: number;
                 lookup(key: string): Windows.ApplicationModel.Store.ProductListing;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IVector__IJsonValue {
                 size: number;
                 getAt(index: number): Windows.Data.Json.IJsonValue;
-                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Data.Json.IJsonValue[]; returnValue: number; };
                 setAt(index: number, value: Windows.Data.Json.IJsonValue): void;
                 insertAt(index: number, value: Windows.Data.Json.IJsonValue): void;
@@ -15343,16 +15343,16 @@ declare module Windows {
                 unshift(...items: Windows.Data.Json.IJsonValue[]): number;
                 lastIndexOf(searchElement: Windows.Data.Json.IJsonValue): number;
                 lastIndexOf(searchElement: Windows.Data.Json.IJsonValue, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): bool;
-                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): bool;
-                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => void): void;
                 forEach(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => any): any[];
                 map(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): Windows.Data.Json.IJsonValue[];
-                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): Windows.Data.Json.IJsonValue[];
+                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): Windows.Data.Json.IJsonValue[];
+                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): Windows.Data.Json.IJsonValue[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any): any;
@@ -15361,12 +15361,12 @@ declare module Windows {
             }
             export interface ICollection__IJsonValue extends Windows.Foundation.Collections.IIterable__IJsonValue {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Data.Json.IJsonValue): void;
                  clear(): void;
-                 contains(item: Windows.Data.Json.IJsonValue): bool;
+                 contains(item: Windows.Data.Json.IJsonValue): boolean;
                  copyTo(array: Windows.Data.Json.IJsonValue[], arrayIndex: number): void;
-                 remove(item: Windows.Data.Json.IJsonValue): bool;
+                 remove(item: Windows.Data.Json.IJsonValue): boolean;
             }
             export interface IIterable__IJsonValue {
                 first(): Windows.Foundation.Collections.IIterator__IJsonValue;
@@ -15374,7 +15374,7 @@ declare module Windows {
             export interface IVectorView__IJsonValue {
                 size: number;
                 getAt(index: number): Windows.Data.Json.IJsonValue;
-                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Data.Json.IJsonValue): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Data.Json.IJsonValue[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15393,16 +15393,16 @@ declare module Windows {
                 unshift(...items: Windows.Data.Json.IJsonValue[]): number;
                 lastIndexOf(searchElement: Windows.Data.Json.IJsonValue): number;
                 lastIndexOf(searchElement: Windows.Data.Json.IJsonValue, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): bool;
-                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): bool;
-                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => void): void;
                 forEach(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => any): any[];
                 map(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool): Windows.Data.Json.IJsonValue[];
-                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => bool, thisArg: any): Windows.Data.Json.IJsonValue[];
+                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean): Windows.Data.Json.IJsonValue[];
+                filter(callbackfn: (value: Windows.Data.Json.IJsonValue, index: number, array: Windows.Data.Json.IJsonValue[]) => boolean, thisArg: any): Windows.Data.Json.IJsonValue[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Json.IJsonValue[]) => any): any;
@@ -15411,27 +15411,27 @@ declare module Windows {
             }
             export interface IIterator__IJsonValue {
                  current: Windows.Data.Json.IJsonValue;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Data.Json.IJsonValue[]; value: number; };
             }
             export interface IMap__string_IJsonValue {
                 size: number;
                 lookup(key: string): Windows.Data.Json.IJsonValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_IJsonValue;
-                insert(key: string, value: Windows.Data.Json.IJsonValue): bool;
+                insert(key: string, value: Windows.Data.Json.IJsonValue): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
             export interface ICollection__IKeyValuePair__string_IJsonValue extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_IJsonValue {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue): void;
                  clear(): void;
-                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue): bool;
+                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue): boolean;
                  copyTo(array: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue[], arrayIndex: number): void;
-                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue): bool;
+                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue): boolean;
             }
             export interface IKeyValuePair__string_IJsonValue {
                 key: string;
@@ -15443,18 +15443,18 @@ declare module Windows {
             export interface IMapView__string_IJsonValue {
                 size: number;
                 lookup(key: string): Windows.Data.Json.IJsonValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterator__IKeyValuePair__string_IJsonValue {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_IJsonValue[]; value: number; };
             }
             export interface IVectorView__IXmlNode {
                 size: number;
                 getAt(index: number): Windows.Data.Xml.Dom.IXmlNode;
-                indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Data.Xml.Dom.IXmlNode): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Data.Xml.Dom.IXmlNode[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15473,16 +15473,16 @@ declare module Windows {
                 unshift(...items: Windows.Data.Xml.Dom.IXmlNode[]): number;
                 lastIndexOf(searchElement: Windows.Data.Xml.Dom.IXmlNode): number;
                 lastIndexOf(searchElement: Windows.Data.Xml.Dom.IXmlNode, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool): bool;
-                every(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool): bool;
-                some(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => void): void;
                 forEach(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => any): any[];
                 map(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool): Windows.Data.Xml.Dom.IXmlNode[];
-                filter(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => bool, thisArg: any): Windows.Data.Xml.Dom.IXmlNode[];
+                filter(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean): Windows.Data.Xml.Dom.IXmlNode[];
+                filter(callbackfn: (value: Windows.Data.Xml.Dom.IXmlNode, index: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => boolean, thisArg: any): Windows.Data.Xml.Dom.IXmlNode[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Data.Xml.Dom.IXmlNode[]) => any): any;
@@ -15497,14 +15497,14 @@ declare module Windows {
             }
             export interface IIterator__IXmlNode {
                  current: Windows.Data.Xml.Dom.IXmlNode;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Data.Xml.Dom.IXmlNode[]; value: number; };
             }
             export interface IVectorView__ISmsBinaryMessage {
                 size: number;
                 getAt(index: number): Windows.Devices.Sms.ISmsBinaryMessage;
-                indexOf(value: Windows.Devices.Sms.ISmsBinaryMessage): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Sms.ISmsBinaryMessage): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Sms.ISmsBinaryMessage[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15523,16 +15523,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Sms.ISmsBinaryMessage[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Sms.ISmsBinaryMessage): number;
                 lastIndexOf(searchElement: Windows.Devices.Sms.ISmsBinaryMessage, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool): Windows.Devices.Sms.ISmsBinaryMessage[];
-                filter(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => bool, thisArg: any): Windows.Devices.Sms.ISmsBinaryMessage[];
+                filter(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean): Windows.Devices.Sms.ISmsBinaryMessage[];
+                filter(callbackfn: (value: Windows.Devices.Sms.ISmsBinaryMessage, index: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => boolean, thisArg: any): Windows.Devices.Sms.ISmsBinaryMessage[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsBinaryMessage[]) => any): any;
@@ -15542,7 +15542,7 @@ declare module Windows {
             export interface IVectorView__ISmsMessage {
                 size: number;
                 getAt(index: number): Windows.Devices.Sms.ISmsMessage;
-                indexOf(value: Windows.Devices.Sms.ISmsMessage): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Sms.ISmsMessage): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Sms.ISmsMessage[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15561,16 +15561,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Sms.ISmsMessage[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Sms.ISmsMessage): number;
                 lastIndexOf(searchElement: Windows.Devices.Sms.ISmsMessage, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool): Windows.Devices.Sms.ISmsMessage[];
-                filter(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => bool, thisArg: any): Windows.Devices.Sms.ISmsMessage[];
+                filter(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean): Windows.Devices.Sms.ISmsMessage[];
+                filter(callbackfn: (value: Windows.Devices.Sms.ISmsMessage, index: number, array: Windows.Devices.Sms.ISmsMessage[]) => boolean, thisArg: any): Windows.Devices.Sms.ISmsMessage[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsMessage[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsMessage[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Sms.ISmsMessage[]) => any): any;
@@ -15580,7 +15580,7 @@ declare module Windows {
             export interface IVectorView__DeviceInformation {
                 size: number;
                 getAt(index: number): Windows.Devices.Enumeration.DeviceInformation;
-                indexOf(value: Windows.Devices.Enumeration.DeviceInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Enumeration.DeviceInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Enumeration.DeviceInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15599,16 +15599,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Enumeration.DeviceInformation[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Enumeration.DeviceInformation): number;
                 lastIndexOf(searchElement: Windows.Devices.Enumeration.DeviceInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool): Windows.Devices.Enumeration.DeviceInformation[];
-                filter(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => bool, thisArg: any): Windows.Devices.Enumeration.DeviceInformation[];
+                filter(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean): Windows.Devices.Enumeration.DeviceInformation[];
+                filter(callbackfn: (value: Windows.Devices.Enumeration.DeviceInformation, index: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => boolean, thisArg: any): Windows.Devices.Enumeration.DeviceInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.DeviceInformation[]) => any): any;
@@ -15623,14 +15623,14 @@ declare module Windows {
             }
             export interface IIterator__DeviceInformation {
                  current: Windows.Devices.Enumeration.DeviceInformation;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Devices.Enumeration.DeviceInformation[]; value: number; };
             }
             export interface IVectorView__PnpObject {
                 size: number;
                 getAt(index: number): Windows.Devices.Enumeration.Pnp.PnpObject;
-                indexOf(value: Windows.Devices.Enumeration.Pnp.PnpObject): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Enumeration.Pnp.PnpObject): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Enumeration.Pnp.PnpObject[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15649,16 +15649,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Enumeration.Pnp.PnpObject[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Enumeration.Pnp.PnpObject): number;
                 lastIndexOf(searchElement: Windows.Devices.Enumeration.Pnp.PnpObject, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool): Windows.Devices.Enumeration.Pnp.PnpObject[];
-                filter(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => bool, thisArg: any): Windows.Devices.Enumeration.Pnp.PnpObject[];
+                filter(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean): Windows.Devices.Enumeration.Pnp.PnpObject[];
+                filter(callbackfn: (value: Windows.Devices.Enumeration.Pnp.PnpObject, index: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => boolean, thisArg: any): Windows.Devices.Enumeration.Pnp.PnpObject[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Enumeration.Pnp.PnpObject[]) => any): any;
@@ -15673,14 +15673,14 @@ declare module Windows {
             }
             export interface IIterator__PnpObject {
                  current: Windows.Devices.Enumeration.Pnp.PnpObject;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Devices.Enumeration.Pnp.PnpObject[]; value: number; };
             }
             export interface IVectorView__PointerDevice {
                 size: number;
                 getAt(index: number): Windows.Devices.Input.PointerDevice;
-                indexOf(value: Windows.Devices.Input.PointerDevice): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Input.PointerDevice): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Input.PointerDevice[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15699,16 +15699,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Input.PointerDevice[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Input.PointerDevice): number;
                 lastIndexOf(searchElement: Windows.Devices.Input.PointerDevice, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool): Windows.Devices.Input.PointerDevice[];
-                filter(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => bool, thisArg: any): Windows.Devices.Input.PointerDevice[];
+                filter(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean): Windows.Devices.Input.PointerDevice[];
+                filter(callbackfn: (value: Windows.Devices.Input.PointerDevice, index: number, array: Windows.Devices.Input.PointerDevice[]) => boolean, thisArg: any): Windows.Devices.Input.PointerDevice[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDevice[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDevice[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDevice[]) => any): any;
@@ -15718,7 +15718,7 @@ declare module Windows {
             export interface IVectorView__PointerDeviceUsage {
                 size: number;
                 getAt(index: number): Windows.Devices.Input.PointerDeviceUsage;
-                indexOf(value: Windows.Devices.Input.PointerDeviceUsage): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Devices.Input.PointerDeviceUsage): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Devices.Input.PointerDeviceUsage[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15737,16 +15737,16 @@ declare module Windows {
                 unshift(...items: Windows.Devices.Input.PointerDeviceUsage[]): number;
                 lastIndexOf(searchElement: Windows.Devices.Input.PointerDeviceUsage): number;
                 lastIndexOf(searchElement: Windows.Devices.Input.PointerDeviceUsage, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool): bool;
-                every(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool): bool;
-                some(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => void): void;
                 forEach(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => any): any[];
                 map(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool): Windows.Devices.Input.PointerDeviceUsage[];
-                filter(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => bool, thisArg: any): Windows.Devices.Input.PointerDeviceUsage[];
+                filter(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean): Windows.Devices.Input.PointerDeviceUsage[];
+                filter(callbackfn: (value: Windows.Devices.Input.PointerDeviceUsage, index: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => boolean, thisArg: any): Windows.Devices.Input.PointerDeviceUsage[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Devices.Input.PointerDeviceUsage[]) => any): any;
@@ -15756,7 +15756,7 @@ declare module Windows {
             export interface IVectorView__CharacterGrouping {
                 size: number;
                 getAt(index: number): Windows.Globalization.Collation.CharacterGrouping;
-                indexOf(value: Windows.Globalization.Collation.CharacterGrouping): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Globalization.Collation.CharacterGrouping): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Globalization.Collation.CharacterGrouping[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15775,16 +15775,16 @@ declare module Windows {
                 unshift(...items: Windows.Globalization.Collation.CharacterGrouping[]): number;
                 lastIndexOf(searchElement: Windows.Globalization.Collation.CharacterGrouping): number;
                 lastIndexOf(searchElement: Windows.Globalization.Collation.CharacterGrouping, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool): bool;
-                every(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool): bool;
-                some(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => void): void;
                 forEach(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => any): any[];
                 map(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool): Windows.Globalization.Collation.CharacterGrouping[];
-                filter(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => bool, thisArg: any): Windows.Globalization.Collation.CharacterGrouping[];
+                filter(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean): Windows.Globalization.Collation.CharacterGrouping[];
+                filter(callbackfn: (value: Windows.Globalization.Collation.CharacterGrouping, index: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => boolean, thisArg: any): Windows.Globalization.Collation.CharacterGrouping[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Globalization.Collation.CharacterGrouping[]) => any): any;
@@ -15799,27 +15799,27 @@ declare module Windows {
             }
             export interface IIterator__CharacterGrouping {
                  current: Windows.Globalization.Collation.CharacterGrouping;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Globalization.Collation.CharacterGrouping[]; value: number; };
             }
             export interface IMap__string_BitmapTypedValue {
                 size: number;
                 lookup(key: string): Windows.Graphics.Imaging.BitmapTypedValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_BitmapTypedValue;
-                insert(key: string, value: Windows.Graphics.Imaging.BitmapTypedValue): bool;
+                insert(key: string, value: Windows.Graphics.Imaging.BitmapTypedValue): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
             export interface ICollection__IKeyValuePair__string_BitmapTypedValue extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_BitmapTypedValue {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue): void;
                  clear(): void;
-                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue): bool;
+                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue): boolean;
                  copyTo(array: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue[], arrayIndex: number): void;
-                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue): bool;
+                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue): boolean;
             }
             export interface IKeyValuePair__string_BitmapTypedValue {
                 key: string;
@@ -15831,18 +15831,18 @@ declare module Windows {
             export interface IMapView__string_BitmapTypedValue {
                 size: number;
                 lookup(key: string): Windows.Graphics.Imaging.BitmapTypedValue;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterator__IKeyValuePair__string_BitmapTypedValue {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_BitmapTypedValue[]; value: number; };
             }
             export interface IVectorView__BitmapCodecInformation {
                 size: number;
                 getAt(index: number): Windows.Graphics.Imaging.BitmapCodecInformation;
-                indexOf(value: Windows.Graphics.Imaging.BitmapCodecInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Graphics.Imaging.BitmapCodecInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Graphics.Imaging.BitmapCodecInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15861,16 +15861,16 @@ declare module Windows {
                 unshift(...items: Windows.Graphics.Imaging.BitmapCodecInformation[]): number;
                 lastIndexOf(searchElement: Windows.Graphics.Imaging.BitmapCodecInformation): number;
                 lastIndexOf(searchElement: Windows.Graphics.Imaging.BitmapCodecInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool): Windows.Graphics.Imaging.BitmapCodecInformation[];
-                filter(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => bool, thisArg: any): Windows.Graphics.Imaging.BitmapCodecInformation[];
+                filter(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean): Windows.Graphics.Imaging.BitmapCodecInformation[];
+                filter(callbackfn: (value: Windows.Graphics.Imaging.BitmapCodecInformation, index: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => boolean, thisArg: any): Windows.Graphics.Imaging.BitmapCodecInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Graphics.Imaging.BitmapCodecInformation[]) => any): any;
@@ -15880,7 +15880,7 @@ declare module Windows {
             export interface IVectorView__any {
                 size: number;
                 getAt(index: number): any;
-                indexOf(value: any): { index: number; returnValue: bool; };
+                indexOf(value: any): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: any[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15899,16 +15899,16 @@ declare module Windows {
                 unshift(...items: any[]): number;
                 lastIndexOf(searchElement: any): number;
                 lastIndexOf(searchElement: any, fromIndex: number): number;
-                every(callbackfn: (value: any, index: number, array: any[]) => bool): bool;
-                every(callbackfn: (value: any, index: number, array: any[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: any, index: number, array: any[]) => bool): bool;
-                some(callbackfn: (value: any, index: number, array: any[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: any, index: number, array: any[]) => boolean): boolean;
+                every(callbackfn: (value: any, index: number, array: any[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: any, index: number, array: any[]) => boolean): boolean;
+                some(callbackfn: (value: any, index: number, array: any[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: any, index: number, array: any[]) => void): void;
                 forEach(callbackfn: (value: any, index: number, array: any[]) => void, thisArg: any): void;
                 map(callbackfn: (value: any, index: number, array: any[]) => any): any[];
                 map(callbackfn: (value: any, index: number, array: any[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: any, index: number, array: any[]) => bool): any[];
-                filter(callbackfn: (value: any, index: number, array: any[]) => bool, thisArg: any): any[];
+                filter(callbackfn: (value: any, index: number, array: any[]) => boolean): any[];
+                filter(callbackfn: (value: any, index: number, array: any[]) => boolean, thisArg: any): any[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any;
@@ -15918,7 +15918,7 @@ declare module Windows {
             export interface IMapView__string_IPrintOptionDetails {
                 size: number;
                 lookup(key: string): Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterable__Uri {
                 first(): Windows.Foundation.Collections.IIterator__Uri;
@@ -15932,7 +15932,7 @@ declare module Windows {
             export interface IVectorView__IMediaEncodingProperties {
                 size: number;
                 getAt(index: number): Windows.Media.MediaProperties.IMediaEncodingProperties;
-                indexOf(value: Windows.Media.MediaProperties.IMediaEncodingProperties): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Media.MediaProperties.IMediaEncodingProperties): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Media.MediaProperties.IMediaEncodingProperties[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -15951,16 +15951,16 @@ declare module Windows {
                 unshift(...items: Windows.Media.MediaProperties.IMediaEncodingProperties[]): number;
                 lastIndexOf(searchElement: Windows.Media.MediaProperties.IMediaEncodingProperties): number;
                 lastIndexOf(searchElement: Windows.Media.MediaProperties.IMediaEncodingProperties, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool): bool;
-                every(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool): bool;
-                some(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => void): void;
                 forEach(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => any): any[];
                 map(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool): Windows.Media.MediaProperties.IMediaEncodingProperties[];
-                filter(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => bool, thisArg: any): Windows.Media.MediaProperties.IMediaEncodingProperties[];
+                filter(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean): Windows.Media.MediaProperties.IMediaEncodingProperties[];
+                filter(callbackfn: (value: Windows.Media.MediaProperties.IMediaEncodingProperties, index: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => boolean, thisArg: any): Windows.Media.MediaProperties.IMediaEncodingProperties[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.MediaProperties.IMediaEncodingProperties[]) => any): any;
@@ -15970,7 +15970,7 @@ declare module Windows {
             export interface IVector__StorageFile {
                 size: number;
                 getAt(index: number): Windows.Storage.StorageFile;
-                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.StorageFile[]; returnValue: number; };
                 setAt(index: number, value: Windows.Storage.StorageFile): void;
                 insertAt(index: number, value: Windows.Storage.StorageFile): void;
@@ -15995,16 +15995,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.StorageFile[]): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFile): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFile, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): Windows.Storage.StorageFile[];
-                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): Windows.Storage.StorageFile[];
+                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): Windows.Storage.StorageFile[];
+                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): Windows.Storage.StorageFile[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any): any;
@@ -16014,7 +16014,7 @@ declare module Windows {
             export interface IVector__RevocationAndRenewalItem {
                 size: number;
                 getAt(index: number): Windows.Media.Protection.RevocationAndRenewalItem;
-                indexOf(value: Windows.Media.Protection.RevocationAndRenewalItem): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Media.Protection.RevocationAndRenewalItem): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Media.Protection.RevocationAndRenewalItem[]; returnValue: number; };
                 setAt(index: number, value: Windows.Media.Protection.RevocationAndRenewalItem): void;
                 insertAt(index: number, value: Windows.Media.Protection.RevocationAndRenewalItem): void;
@@ -16039,16 +16039,16 @@ declare module Windows {
                 unshift(...items: Windows.Media.Protection.RevocationAndRenewalItem[]): number;
                 lastIndexOf(searchElement: Windows.Media.Protection.RevocationAndRenewalItem): number;
                 lastIndexOf(searchElement: Windows.Media.Protection.RevocationAndRenewalItem, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool): bool;
-                every(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool): bool;
-                some(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => void): void;
                 forEach(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => any): any[];
                 map(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool): Windows.Media.Protection.RevocationAndRenewalItem[];
-                filter(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => bool, thisArg: any): Windows.Media.Protection.RevocationAndRenewalItem[];
+                filter(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean): Windows.Media.Protection.RevocationAndRenewalItem[];
+                filter(callbackfn: (value: Windows.Media.Protection.RevocationAndRenewalItem, index: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => boolean, thisArg: any): Windows.Media.Protection.RevocationAndRenewalItem[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Media.Protection.RevocationAndRenewalItem[]) => any): any;
@@ -16061,7 +16061,7 @@ declare module Windows {
             export interface IVectorView__DownloadOperation {
                 size: number;
                 getAt(index: number): Windows.Networking.BackgroundTransfer.DownloadOperation;
-                indexOf(value: Windows.Networking.BackgroundTransfer.DownloadOperation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.BackgroundTransfer.DownloadOperation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.BackgroundTransfer.DownloadOperation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16080,16 +16080,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.BackgroundTransfer.DownloadOperation[]): number;
                 lastIndexOf(searchElement: Windows.Networking.BackgroundTransfer.DownloadOperation): number;
                 lastIndexOf(searchElement: Windows.Networking.BackgroundTransfer.DownloadOperation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool): Windows.Networking.BackgroundTransfer.DownloadOperation[];
-                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => bool, thisArg: any): Windows.Networking.BackgroundTransfer.DownloadOperation[];
+                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean): Windows.Networking.BackgroundTransfer.DownloadOperation[];
+                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.DownloadOperation, index: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => boolean, thisArg: any): Windows.Networking.BackgroundTransfer.DownloadOperation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.DownloadOperation[]) => any): any;
@@ -16099,7 +16099,7 @@ declare module Windows {
             export interface IVectorView__UploadOperation {
                 size: number;
                 getAt(index: number): Windows.Networking.BackgroundTransfer.UploadOperation;
-                indexOf(value: Windows.Networking.BackgroundTransfer.UploadOperation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.BackgroundTransfer.UploadOperation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.BackgroundTransfer.UploadOperation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16118,16 +16118,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.BackgroundTransfer.UploadOperation[]): number;
                 lastIndexOf(searchElement: Windows.Networking.BackgroundTransfer.UploadOperation): number;
                 lastIndexOf(searchElement: Windows.Networking.BackgroundTransfer.UploadOperation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool): Windows.Networking.BackgroundTransfer.UploadOperation[];
-                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => bool, thisArg: any): Windows.Networking.BackgroundTransfer.UploadOperation[];
+                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean): Windows.Networking.BackgroundTransfer.UploadOperation[];
+                filter(callbackfn: (value: Windows.Networking.BackgroundTransfer.UploadOperation, index: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => boolean, thisArg: any): Windows.Networking.BackgroundTransfer.UploadOperation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.BackgroundTransfer.UploadOperation[]) => any): any;
@@ -16137,7 +16137,7 @@ declare module Windows {
             export interface IVectorView__PeerInformation {
                 size: number;
                 getAt(index: number): Windows.Networking.Proximity.PeerInformation;
-                indexOf(value: Windows.Networking.Proximity.PeerInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.Proximity.PeerInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.Proximity.PeerInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16156,16 +16156,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.Proximity.PeerInformation[]): number;
                 lastIndexOf(searchElement: Windows.Networking.Proximity.PeerInformation): number;
                 lastIndexOf(searchElement: Windows.Networking.Proximity.PeerInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool): Windows.Networking.Proximity.PeerInformation[];
-                filter(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => bool, thisArg: any): Windows.Networking.Proximity.PeerInformation[];
+                filter(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean): Windows.Networking.Proximity.PeerInformation[];
+                filter(callbackfn: (value: Windows.Networking.Proximity.PeerInformation, index: number, array: Windows.Networking.Proximity.PeerInformation[]) => boolean, thisArg: any): Windows.Networking.Proximity.PeerInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Proximity.PeerInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Proximity.PeerInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Proximity.PeerInformation[]) => any): any;
@@ -16175,7 +16175,7 @@ declare module Windows {
             export interface IVectorView__EndpointPair {
                 size: number;
                 getAt(index: number): Windows.Networking.EndpointPair;
-                indexOf(value: Windows.Networking.EndpointPair): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.EndpointPair): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.EndpointPair[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16194,16 +16194,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.EndpointPair[]): number;
                 lastIndexOf(searchElement: Windows.Networking.EndpointPair): number;
                 lastIndexOf(searchElement: Windows.Networking.EndpointPair, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool): Windows.Networking.EndpointPair[];
-                filter(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => bool, thisArg: any): Windows.Networking.EndpointPair[];
+                filter(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean): Windows.Networking.EndpointPair[];
+                filter(callbackfn: (value: Windows.Networking.EndpointPair, index: number, array: Windows.Networking.EndpointPair[]) => boolean, thisArg: any): Windows.Networking.EndpointPair[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.EndpointPair[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.EndpointPair[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.EndpointPair[]) => any): any;
@@ -16213,7 +16213,7 @@ declare module Windows {
             export interface IVectorView__number {
                 size: number;
                 getAt(index: number): number;
-                indexOf(value: number): { index: number; returnValue: bool; };
+                indexOf(value: number): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: number[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16232,16 +16232,16 @@ declare module Windows {
                 unshift(...items: number[]): number;
                 lastIndexOf(searchElement: number): number;
                 lastIndexOf(searchElement: number, fromIndex: number): number;
-                every(callbackfn: (value: number, index: number, array: number[]) => bool): bool;
-                every(callbackfn: (value: number, index: number, array: number[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: number, index: number, array: number[]) => bool): bool;
-                some(callbackfn: (value: number, index: number, array: number[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: number, index: number, array: number[]) => boolean): boolean;
+                every(callbackfn: (value: number, index: number, array: number[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: number, index: number, array: number[]) => boolean): boolean;
+                some(callbackfn: (value: number, index: number, array: number[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: number, index: number, array: number[]) => void): void;
                 forEach(callbackfn: (value: number, index: number, array: number[]) => void, thisArg: any): void;
                 map(callbackfn: (value: number, index: number, array: number[]) => any): any[];
                 map(callbackfn: (value: number, index: number, array: number[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: number, index: number, array: number[]) => bool): number[];
-                filter(callbackfn: (value: number, index: number, array: number[]) => bool, thisArg: any): number[];
+                filter(callbackfn: (value: number, index: number, array: number[]) => boolean): number[];
+                filter(callbackfn: (value: number, index: number, array: number[]) => boolean, thisArg: any): number[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: number[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: number[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: number[]) => any): any;
@@ -16251,7 +16251,7 @@ declare module Windows {
             export interface IVectorView__ConnectionProfile {
                 size: number;
                 getAt(index: number): Windows.Networking.Connectivity.ConnectionProfile;
-                indexOf(value: Windows.Networking.Connectivity.ConnectionProfile): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.Connectivity.ConnectionProfile): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.Connectivity.ConnectionProfile[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16270,16 +16270,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.Connectivity.ConnectionProfile[]): number;
                 lastIndexOf(searchElement: Windows.Networking.Connectivity.ConnectionProfile): number;
                 lastIndexOf(searchElement: Windows.Networking.Connectivity.ConnectionProfile, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool): Windows.Networking.Connectivity.ConnectionProfile[];
-                filter(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => bool, thisArg: any): Windows.Networking.Connectivity.ConnectionProfile[];
+                filter(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean): Windows.Networking.Connectivity.ConnectionProfile[];
+                filter(callbackfn: (value: Windows.Networking.Connectivity.ConnectionProfile, index: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => boolean, thisArg: any): Windows.Networking.Connectivity.ConnectionProfile[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.ConnectionProfile[]) => any): any;
@@ -16289,7 +16289,7 @@ declare module Windows {
             export interface IVectorView__LanIdentifier {
                 size: number;
                 getAt(index: number): Windows.Networking.Connectivity.LanIdentifier;
-                indexOf(value: Windows.Networking.Connectivity.LanIdentifier): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.Connectivity.LanIdentifier): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.Connectivity.LanIdentifier[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16308,16 +16308,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.Connectivity.LanIdentifier[]): number;
                 lastIndexOf(searchElement: Windows.Networking.Connectivity.LanIdentifier): number;
                 lastIndexOf(searchElement: Windows.Networking.Connectivity.LanIdentifier, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool): Windows.Networking.Connectivity.LanIdentifier[];
-                filter(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => bool, thisArg: any): Windows.Networking.Connectivity.LanIdentifier[];
+                filter(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean): Windows.Networking.Connectivity.LanIdentifier[];
+                filter(callbackfn: (value: Windows.Networking.Connectivity.LanIdentifier, index: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => boolean, thisArg: any): Windows.Networking.Connectivity.LanIdentifier[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.Connectivity.LanIdentifier[]) => any): any;
@@ -16327,7 +16327,7 @@ declare module Windows {
             export interface IVectorView__HostName {
                 size: number;
                 getAt(index: number): Windows.Networking.HostName;
-                indexOf(value: Windows.Networking.HostName): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Networking.HostName): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Networking.HostName[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16346,16 +16346,16 @@ declare module Windows {
                 unshift(...items: Windows.Networking.HostName[]): number;
                 lastIndexOf(searchElement: Windows.Networking.HostName): number;
                 lastIndexOf(searchElement: Windows.Networking.HostName, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool): bool;
-                every(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool): bool;
-                some(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => void): void;
                 forEach(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => any): any[];
                 map(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool): Windows.Networking.HostName[];
-                filter(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => bool, thisArg: any): Windows.Networking.HostName[];
+                filter(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean): Windows.Networking.HostName[];
+                filter(callbackfn: (value: Windows.Networking.HostName, index: number, array: Windows.Networking.HostName[]) => boolean, thisArg: any): Windows.Networking.HostName[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.HostName[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.HostName[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Networking.HostName[]) => any): any;
@@ -16368,7 +16368,7 @@ declare module Windows {
             export interface IVectorView__Uri {
                 size: number;
                 getAt(index: number): Windows.Foundation.Uri;
-                indexOf(value: Windows.Foundation.Uri): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Foundation.Uri): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Foundation.Uri[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16387,16 +16387,16 @@ declare module Windows {
                 unshift(...items: Windows.Foundation.Uri[]): number;
                 lastIndexOf(searchElement: Windows.Foundation.Uri): number;
                 lastIndexOf(searchElement: Windows.Foundation.Uri, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool): bool;
-                every(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool): bool;
-                some(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => void): void;
                 forEach(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => any): any[];
                 map(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool): Windows.Foundation.Uri[];
-                filter(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => bool, thisArg: any): Windows.Foundation.Uri[];
+                filter(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean): Windows.Foundation.Uri[];
+                filter(callbackfn: (value: Windows.Foundation.Uri, index: number, array: Windows.Foundation.Uri[]) => boolean, thisArg: any): Windows.Foundation.Uri[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.Uri[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.Uri[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Foundation.Uri[]) => any): any;
@@ -16406,7 +16406,7 @@ declare module Windows {
             export interface IVectorView__OnlineIdServiceTicket {
                 size: number;
                 getAt(index: number): Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket;
-                indexOf(value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16425,16 +16425,16 @@ declare module Windows {
                 unshift(...items: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]): number;
                 lastIndexOf(searchElement: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket): number;
                 lastIndexOf(searchElement: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool): bool;
-                every(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool): bool;
-                some(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => void): void;
                 forEach(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => any): any[];
                 map(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool): Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[];
-                filter(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => bool, thisArg: any): Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[];
+                filter(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean): Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[];
+                filter(callbackfn: (value: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket, index: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => boolean, thisArg: any): Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicket[]) => any): any;
@@ -16447,7 +16447,7 @@ declare module Windows {
             export interface IVectorView__PasswordCredential {
                 size: number;
                 getAt(index: number): Windows.Security.Credentials.PasswordCredential;
-                indexOf(value: Windows.Security.Credentials.PasswordCredential): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Security.Credentials.PasswordCredential): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Security.Credentials.PasswordCredential[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16466,16 +16466,16 @@ declare module Windows {
                 unshift(...items: Windows.Security.Credentials.PasswordCredential[]): number;
                 lastIndexOf(searchElement: Windows.Security.Credentials.PasswordCredential): number;
                 lastIndexOf(searchElement: Windows.Security.Credentials.PasswordCredential, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool): bool;
-                every(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool): bool;
-                some(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => void): void;
                 forEach(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => any): any[];
                 map(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool): Windows.Security.Credentials.PasswordCredential[];
-                filter(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => bool, thisArg: any): Windows.Security.Credentials.PasswordCredential[];
+                filter(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean): Windows.Security.Credentials.PasswordCredential[];
+                filter(callbackfn: (value: Windows.Security.Credentials.PasswordCredential, index: number, array: Windows.Security.Credentials.PasswordCredential[]) => boolean, thisArg: any): Windows.Security.Credentials.PasswordCredential[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Credentials.PasswordCredential[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Credentials.PasswordCredential[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Security.Credentials.PasswordCredential[]) => any): any;
@@ -16485,7 +16485,7 @@ declare module Windows {
             export interface IVectorView__StorageFile {
                 size: number;
                 getAt(index: number): Windows.Storage.StorageFile;
-                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.StorageFile): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.StorageFile[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16504,16 +16504,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.StorageFile[]): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFile): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFile, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool): Windows.Storage.StorageFile[];
-                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => bool, thisArg: any): Windows.Storage.StorageFile[];
+                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean): Windows.Storage.StorageFile[];
+                filter(callbackfn: (value: Windows.Storage.StorageFile, index: number, array: Windows.Storage.StorageFile[]) => boolean, thisArg: any): Windows.Storage.StorageFile[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFile[]) => any): any;
@@ -16523,7 +16523,7 @@ declare module Windows {
             export interface IVectorView__StorageFolder {
                 size: number;
                 getAt(index: number): Windows.Storage.StorageFolder;
-                indexOf(value: Windows.Storage.StorageFolder): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.StorageFolder): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.StorageFolder[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16542,16 +16542,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.StorageFolder[]): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFolder): number;
                 lastIndexOf(searchElement: Windows.Storage.StorageFolder, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool): Windows.Storage.StorageFolder[];
-                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => bool, thisArg: any): Windows.Storage.StorageFolder[];
+                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean): Windows.Storage.StorageFolder[];
+                filter(callbackfn: (value: Windows.Storage.StorageFolder, index: number, array: Windows.Storage.StorageFolder[]) => boolean, thisArg: any): Windows.Storage.StorageFolder[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.StorageFolder[]) => any): any;
@@ -16561,12 +16561,12 @@ declare module Windows {
             export interface IMapView__string_ApplicationDataContainer {
                 size: number;
                 lookup(key: string): Windows.Storage.ApplicationDataContainer;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IVector__SortEntry {
                 size: number;
                 getAt(index: number): Windows.Storage.Search.SortEntry;
-                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.Search.SortEntry[]; returnValue: number; };
                 setAt(index: number, value: Windows.Storage.Search.SortEntry): void;
                 insertAt(index: number, value: Windows.Storage.Search.SortEntry): void;
@@ -16591,16 +16591,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.Search.SortEntry[]): number;
                 lastIndexOf(searchElement: Windows.Storage.Search.SortEntry): number;
                 lastIndexOf(searchElement: Windows.Storage.Search.SortEntry, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): Windows.Storage.Search.SortEntry[];
-                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): Windows.Storage.Search.SortEntry[];
+                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): Windows.Storage.Search.SortEntry[];
+                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): Windows.Storage.Search.SortEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any): any;
@@ -16609,12 +16609,12 @@ declare module Windows {
             }
             export interface ICollection__SortEntry extends Windows.Foundation.Collections.IIterable__SortEntry {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Storage.Search.SortEntry): void;
                  clear(): void;
-                 contains(item: Windows.Storage.Search.SortEntry): bool;
+                 contains(item: Windows.Storage.Search.SortEntry): boolean;
                  copyTo(array: Windows.Storage.Search.SortEntry[], arrayIndex: number): void;
-                 remove(item: Windows.Storage.Search.SortEntry): bool;
+                 remove(item: Windows.Storage.Search.SortEntry): boolean;
             }
             export interface IIterable__SortEntry {
                 first(): Windows.Foundation.Collections.IIterator__SortEntry;
@@ -16622,7 +16622,7 @@ declare module Windows {
             export interface IVectorView__SortEntry {
                 size: number;
                 getAt(index: number): Windows.Storage.Search.SortEntry;
-                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.Search.SortEntry): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.Search.SortEntry[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16641,16 +16641,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.Search.SortEntry[]): number;
                 lastIndexOf(searchElement: Windows.Storage.Search.SortEntry): number;
                 lastIndexOf(searchElement: Windows.Storage.Search.SortEntry, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool): Windows.Storage.Search.SortEntry[];
-                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => bool, thisArg: any): Windows.Storage.Search.SortEntry[];
+                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean): Windows.Storage.Search.SortEntry[];
+                filter(callbackfn: (value: Windows.Storage.Search.SortEntry, index: number, array: Windows.Storage.Search.SortEntry[]) => boolean, thisArg: any): Windows.Storage.Search.SortEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.Search.SortEntry[]) => any): any;
@@ -16659,14 +16659,14 @@ declare module Windows {
             }
             export interface IIterator__SortEntry {
                  current: Windows.Storage.Search.SortEntry;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Storage.Search.SortEntry[]; value: number; };
             }
             export interface IVectorView__AccessListEntry {
                 size: number;
                 getAt(index: number): Windows.Storage.AccessCache.AccessListEntry;
-                indexOf(value: Windows.Storage.AccessCache.AccessListEntry): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.AccessCache.AccessListEntry): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.AccessCache.AccessListEntry[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16685,16 +16685,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.AccessCache.AccessListEntry[]): number;
                 lastIndexOf(searchElement: Windows.Storage.AccessCache.AccessListEntry): number;
                 lastIndexOf(searchElement: Windows.Storage.AccessCache.AccessListEntry, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool): Windows.Storage.AccessCache.AccessListEntry[];
-                filter(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => bool, thisArg: any): Windows.Storage.AccessCache.AccessListEntry[];
+                filter(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean): Windows.Storage.AccessCache.AccessListEntry[];
+                filter(callbackfn: (value: Windows.Storage.AccessCache.AccessListEntry, index: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => boolean, thisArg: any): Windows.Storage.AccessCache.AccessListEntry[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.AccessCache.AccessListEntry[]) => any): any;
@@ -16709,14 +16709,14 @@ declare module Windows {
             }
             export interface IIterator__AccessListEntry {
                  current: Windows.Storage.AccessCache.AccessListEntry;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Storage.AccessCache.AccessListEntry[]; value: number; };
             }
             export interface IVectorView__IStorageItemInformation {
                 size: number;
                 getAt(index: number): Windows.Storage.BulkAccess.IStorageItemInformation;
-                indexOf(value: Windows.Storage.BulkAccess.IStorageItemInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.BulkAccess.IStorageItemInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.BulkAccess.IStorageItemInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16735,16 +16735,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.BulkAccess.IStorageItemInformation[]): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.IStorageItemInformation): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.IStorageItemInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool): Windows.Storage.BulkAccess.IStorageItemInformation[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => bool, thisArg: any): Windows.Storage.BulkAccess.IStorageItemInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean): Windows.Storage.BulkAccess.IStorageItemInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.IStorageItemInformation, index: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => boolean, thisArg: any): Windows.Storage.BulkAccess.IStorageItemInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.IStorageItemInformation[]) => any): any;
@@ -16754,7 +16754,7 @@ declare module Windows {
             export interface IVectorView__FileInformation {
                 size: number;
                 getAt(index: number): Windows.Storage.BulkAccess.FileInformation;
-                indexOf(value: Windows.Storage.BulkAccess.FileInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.BulkAccess.FileInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.BulkAccess.FileInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16773,16 +16773,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.BulkAccess.FileInformation[]): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.FileInformation): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.FileInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool): Windows.Storage.BulkAccess.FileInformation[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => bool, thisArg: any): Windows.Storage.BulkAccess.FileInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean): Windows.Storage.BulkAccess.FileInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.FileInformation, index: number, array: Windows.Storage.BulkAccess.FileInformation[]) => boolean, thisArg: any): Windows.Storage.BulkAccess.FileInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FileInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FileInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FileInformation[]) => any): any;
@@ -16792,7 +16792,7 @@ declare module Windows {
             export interface IVectorView__FolderInformation {
                 size: number;
                 getAt(index: number): Windows.Storage.BulkAccess.FolderInformation;
-                indexOf(value: Windows.Storage.BulkAccess.FolderInformation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Storage.BulkAccess.FolderInformation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Storage.BulkAccess.FolderInformation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -16811,16 +16811,16 @@ declare module Windows {
                 unshift(...items: Windows.Storage.BulkAccess.FolderInformation[]): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.FolderInformation): number;
                 lastIndexOf(searchElement: Windows.Storage.BulkAccess.FolderInformation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool): bool;
-                every(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool): bool;
-                some(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => void): void;
                 forEach(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => any): any[];
                 map(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool): Windows.Storage.BulkAccess.FolderInformation[];
-                filter(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => bool, thisArg: any): Windows.Storage.BulkAccess.FolderInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean): Windows.Storage.BulkAccess.FolderInformation[];
+                filter(callbackfn: (value: Windows.Storage.BulkAccess.FolderInformation, index: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => boolean, thisArg: any): Windows.Storage.BulkAccess.FolderInformation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Storage.BulkAccess.FolderInformation[]) => any): any;
@@ -16835,27 +16835,27 @@ declare module Windows {
             }
             export interface IIterator__StorageFile {
                  current: Windows.Storage.StorageFile;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Storage.StorageFile[]; value: number; };
             }
             export interface IMap__string_IVector__string {
                 size: number;
                 lookup(key: string): Windows.Foundation.Collections.IVector__string;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
                 getView(): Windows.Foundation.Collections.IMapView__string_IVector__string;
-                insert(key: string, value: Windows.Foundation.Collections.IVector__string): bool;
+                insert(key: string, value: Windows.Foundation.Collections.IVector__string): boolean;
                 remove(key: string): void;
                 clear(): void;
             }
             export interface ICollection__IKeyValuePair__string_IVector__string extends Windows.Foundation.Collections.IIterable__IKeyValuePair__string_IVector__string {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string): void;
                  clear(): void;
-                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string): bool;
+                 contains(item: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string): boolean;
                  copyTo(array: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string[], arrayIndex: number): void;
-                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string): bool;
+                 remove(item: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string): boolean;
             }
             export interface IKeyValuePair__string_IVector__string {
                 key: string;
@@ -16867,27 +16867,27 @@ declare module Windows {
             export interface IMapView__string_IVector__string {
                 size: number;
                 lookup(key: string): Windows.Foundation.Collections.IVector__string;
-                hasKey(key: string): bool;
+                hasKey(key: string): boolean;
             }
             export interface IIterator__IKeyValuePair__string_IVector__string {
                  current: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string;
-                 hasCurrent: bool;
-                 moveNext(): bool;
+                 hasCurrent: boolean;
+                 moveNext(): boolean;
                  getMany(): { items: Windows.Foundation.Collections.IKeyValuePair__string_IVector__string[]; value: number; };
             }
             export interface ICollection__string extends Windows.Foundation.Collections.IIterable__string {
                  count: number;
-                 isReadOnly: bool;
+                 isReadOnly: boolean;
                  add(item: string): void;
                  clear(): void;
-                 contains(item: string): bool;
+                 contains(item: string): boolean;
                  copyTo(array: string[], arrayIndex: number): void;
-                 remove(item: string): bool;
+                 remove(item: string): boolean;
             }
             export interface IVector__SettingsCommand {
                 size: number;
                 getAt(index: number): Windows.UI.ApplicationSettings.SettingsCommand;
-                indexOf(value: Windows.UI.ApplicationSettings.SettingsCommand): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.ApplicationSettings.SettingsCommand): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.ApplicationSettings.SettingsCommand[]; returnValue: number; };
                 setAt(index: number, value: Windows.UI.ApplicationSettings.SettingsCommand): void;
                 insertAt(index: number, value: Windows.UI.ApplicationSettings.SettingsCommand): void;
@@ -16912,16 +16912,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.ApplicationSettings.SettingsCommand[]): number;
                 lastIndexOf(searchElement: Windows.UI.ApplicationSettings.SettingsCommand): number;
                 lastIndexOf(searchElement: Windows.UI.ApplicationSettings.SettingsCommand, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool): Windows.UI.ApplicationSettings.SettingsCommand[];
-                filter(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => bool, thisArg: any): Windows.UI.ApplicationSettings.SettingsCommand[];
+                filter(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean): Windows.UI.ApplicationSettings.SettingsCommand[];
+                filter(callbackfn: (value: Windows.UI.ApplicationSettings.SettingsCommand, index: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => boolean, thisArg: any): Windows.UI.ApplicationSettings.SettingsCommand[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.ApplicationSettings.SettingsCommand[]) => any): any;
@@ -16931,7 +16931,7 @@ declare module Windows {
             export interface IVector__PointerPoint {
                 size: number;
                 getAt(index: number): Windows.UI.Input.PointerPoint;
-                indexOf(value: Windows.UI.Input.PointerPoint): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Input.PointerPoint): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Input.PointerPoint[]; returnValue: number; };
                 setAt(index: number, value: Windows.UI.Input.PointerPoint): void;
                 insertAt(index: number, value: Windows.UI.Input.PointerPoint): void;
@@ -16956,16 +16956,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Input.PointerPoint[]): number;
                 lastIndexOf(searchElement: Windows.UI.Input.PointerPoint): number;
                 lastIndexOf(searchElement: Windows.UI.Input.PointerPoint, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool): Windows.UI.Input.PointerPoint[];
-                filter(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => bool, thisArg: any): Windows.UI.Input.PointerPoint[];
+                filter(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean): Windows.UI.Input.PointerPoint[];
+                filter(callbackfn: (value: Windows.UI.Input.PointerPoint, index: number, array: Windows.UI.Input.PointerPoint[]) => boolean, thisArg: any): Windows.UI.Input.PointerPoint[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.PointerPoint[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.PointerPoint[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.PointerPoint[]) => any): any;
@@ -16975,7 +16975,7 @@ declare module Windows {
             export interface IVector__IUICommand {
                 size: number;
                 getAt(index: number): Windows.UI.Popups.IUICommand;
-                indexOf(value: Windows.UI.Popups.IUICommand): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Popups.IUICommand): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Popups.IUICommand[]; returnValue: number; };
                 setAt(index: number, value: Windows.UI.Popups.IUICommand): void;
                 insertAt(index: number, value: Windows.UI.Popups.IUICommand): void;
@@ -17000,16 +17000,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Popups.IUICommand[]): number;
                 lastIndexOf(searchElement: Windows.UI.Popups.IUICommand): number;
                 lastIndexOf(searchElement: Windows.UI.Popups.IUICommand, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool): Windows.UI.Popups.IUICommand[];
-                filter(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => bool, thisArg: any): Windows.UI.Popups.IUICommand[];
+                filter(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean): Windows.UI.Popups.IUICommand[];
+                filter(callbackfn: (value: Windows.UI.Popups.IUICommand, index: number, array: Windows.UI.Popups.IUICommand[]) => boolean, thisArg: any): Windows.UI.Popups.IUICommand[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Popups.IUICommand[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Popups.IUICommand[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Popups.IUICommand[]) => any): any;
@@ -17019,7 +17019,7 @@ declare module Windows {
             export interface IVectorView__SecondaryTile {
                 size: number;
                 getAt(index: number): Windows.UI.StartScreen.SecondaryTile;
-                indexOf(value: Windows.UI.StartScreen.SecondaryTile): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.StartScreen.SecondaryTile): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.StartScreen.SecondaryTile[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17038,16 +17038,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.StartScreen.SecondaryTile[]): number;
                 lastIndexOf(searchElement: Windows.UI.StartScreen.SecondaryTile): number;
                 lastIndexOf(searchElement: Windows.UI.StartScreen.SecondaryTile, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool): Windows.UI.StartScreen.SecondaryTile[];
-                filter(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => bool, thisArg: any): Windows.UI.StartScreen.SecondaryTile[];
+                filter(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean): Windows.UI.StartScreen.SecondaryTile[];
+                filter(callbackfn: (value: Windows.UI.StartScreen.SecondaryTile, index: number, array: Windows.UI.StartScreen.SecondaryTile[]) => boolean, thisArg: any): Windows.UI.StartScreen.SecondaryTile[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.StartScreen.SecondaryTile[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.StartScreen.SecondaryTile[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.StartScreen.SecondaryTile[]) => any): any;
@@ -17057,7 +17057,7 @@ declare module Windows {
             export interface IVectorView__IPropertyAnimation {
                 size: number;
                 getAt(index: number): Windows.UI.Core.AnimationMetrics.IPropertyAnimation;
-                indexOf(value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17076,16 +17076,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]): number;
                 lastIndexOf(searchElement: Windows.UI.Core.AnimationMetrics.IPropertyAnimation): number;
                 lastIndexOf(searchElement: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool): Windows.UI.Core.AnimationMetrics.IPropertyAnimation[];
-                filter(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => bool, thisArg: any): Windows.UI.Core.AnimationMetrics.IPropertyAnimation[];
+                filter(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean): Windows.UI.Core.AnimationMetrics.IPropertyAnimation[];
+                filter(callbackfn: (value: Windows.UI.Core.AnimationMetrics.IPropertyAnimation, index: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => boolean, thisArg: any): Windows.UI.Core.AnimationMetrics.IPropertyAnimation[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Core.AnimationMetrics.IPropertyAnimation[]) => any): any;
@@ -17095,7 +17095,7 @@ declare module Windows {
             export interface IVectorView__InkStrokeRenderingSegment {
                 size: number;
                 getAt(index: number): Windows.UI.Input.Inking.InkStrokeRenderingSegment;
-                indexOf(value: Windows.UI.Input.Inking.InkStrokeRenderingSegment): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Input.Inking.InkStrokeRenderingSegment): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17114,16 +17114,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkStrokeRenderingSegment): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkStrokeRenderingSegment, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool): Windows.UI.Input.Inking.InkStrokeRenderingSegment[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => bool, thisArg: any): Windows.UI.Input.Inking.InkStrokeRenderingSegment[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean): Windows.UI.Input.Inking.InkStrokeRenderingSegment[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStrokeRenderingSegment, index: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => boolean, thisArg: any): Windows.UI.Input.Inking.InkStrokeRenderingSegment[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStrokeRenderingSegment[]) => any): any;
@@ -17136,7 +17136,7 @@ declare module Windows {
             export interface IVectorView__InkStroke {
                 size: number;
                 getAt(index: number): Windows.UI.Input.Inking.InkStroke;
-                indexOf(value: Windows.UI.Input.Inking.InkStroke): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Input.Inking.InkStroke): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Input.Inking.InkStroke[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17155,16 +17155,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Input.Inking.InkStroke[]): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkStroke): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkStroke, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool): Windows.UI.Input.Inking.InkStroke[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => bool, thisArg: any): Windows.UI.Input.Inking.InkStroke[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean): Windows.UI.Input.Inking.InkStroke[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkStroke, index: number, array: Windows.UI.Input.Inking.InkStroke[]) => boolean, thisArg: any): Windows.UI.Input.Inking.InkStroke[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStroke[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStroke[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkStroke[]) => any): any;
@@ -17174,7 +17174,7 @@ declare module Windows {
             export interface IVectorView__InkRecognitionResult {
                 size: number;
                 getAt(index: number): Windows.UI.Input.Inking.InkRecognitionResult;
-                indexOf(value: Windows.UI.Input.Inking.InkRecognitionResult): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Input.Inking.InkRecognitionResult): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Input.Inking.InkRecognitionResult[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17193,16 +17193,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Input.Inking.InkRecognitionResult[]): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkRecognitionResult): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkRecognitionResult, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool): Windows.UI.Input.Inking.InkRecognitionResult[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => bool, thisArg: any): Windows.UI.Input.Inking.InkRecognitionResult[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean): Windows.UI.Input.Inking.InkRecognitionResult[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognitionResult, index: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => boolean, thisArg: any): Windows.UI.Input.Inking.InkRecognitionResult[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognitionResult[]) => any): any;
@@ -17212,7 +17212,7 @@ declare module Windows {
             export interface IVectorView__InkRecognizer {
                 size: number;
                 getAt(index: number): Windows.UI.Input.Inking.InkRecognizer;
-                indexOf(value: Windows.UI.Input.Inking.InkRecognizer): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Input.Inking.InkRecognizer): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Input.Inking.InkRecognizer[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17231,16 +17231,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Input.Inking.InkRecognizer[]): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkRecognizer): number;
                 lastIndexOf(searchElement: Windows.UI.Input.Inking.InkRecognizer, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool): Windows.UI.Input.Inking.InkRecognizer[];
-                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => bool, thisArg: any): Windows.UI.Input.Inking.InkRecognizer[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean): Windows.UI.Input.Inking.InkRecognizer[];
+                filter(callbackfn: (value: Windows.UI.Input.Inking.InkRecognizer, index: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => boolean, thisArg: any): Windows.UI.Input.Inking.InkRecognizer[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Input.Inking.InkRecognizer[]) => any): any;
@@ -17250,7 +17250,7 @@ declare module Windows {
             export interface IVectorView__ScheduledTileNotification {
                 size: number;
                 getAt(index: number): Windows.UI.Notifications.ScheduledTileNotification;
-                indexOf(value: Windows.UI.Notifications.ScheduledTileNotification): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Notifications.ScheduledTileNotification): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Notifications.ScheduledTileNotification[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17269,16 +17269,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Notifications.ScheduledTileNotification[]): number;
                 lastIndexOf(searchElement: Windows.UI.Notifications.ScheduledTileNotification): number;
                 lastIndexOf(searchElement: Windows.UI.Notifications.ScheduledTileNotification, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool): Windows.UI.Notifications.ScheduledTileNotification[];
-                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => bool, thisArg: any): Windows.UI.Notifications.ScheduledTileNotification[];
+                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean): Windows.UI.Notifications.ScheduledTileNotification[];
+                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledTileNotification, index: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => boolean, thisArg: any): Windows.UI.Notifications.ScheduledTileNotification[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledTileNotification[]) => any): any;
@@ -17288,7 +17288,7 @@ declare module Windows {
             export interface IVectorView__ScheduledToastNotification {
                 size: number;
                 getAt(index: number): Windows.UI.Notifications.ScheduledToastNotification;
-                indexOf(value: Windows.UI.Notifications.ScheduledToastNotification): { index: number; returnValue: bool; };
+                indexOf(value: Windows.UI.Notifications.ScheduledToastNotification): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.UI.Notifications.ScheduledToastNotification[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17307,16 +17307,16 @@ declare module Windows {
                 unshift(...items: Windows.UI.Notifications.ScheduledToastNotification[]): number;
                 lastIndexOf(searchElement: Windows.UI.Notifications.ScheduledToastNotification): number;
                 lastIndexOf(searchElement: Windows.UI.Notifications.ScheduledToastNotification, fromIndex: number): number;
-                every(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool): bool;
-                every(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool): bool;
-                some(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => void): void;
                 forEach(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => any): any[];
                 map(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool): Windows.UI.Notifications.ScheduledToastNotification[];
-                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => bool, thisArg: any): Windows.UI.Notifications.ScheduledToastNotification[];
+                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean): Windows.UI.Notifications.ScheduledToastNotification[];
+                filter(callbackfn: (value: Windows.UI.Notifications.ScheduledToastNotification, index: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => boolean, thisArg: any): Windows.UI.Notifications.ScheduledToastNotification[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.UI.Notifications.ScheduledToastNotification[]) => any): any;
@@ -17326,7 +17326,7 @@ declare module Windows {
             export interface IVector__SyndicationAttribute {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationAttribute;
-                indexOf(value: Windows.Web.Syndication.SyndicationAttribute): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationAttribute): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationAttribute[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.SyndicationAttribute): void;
                 insertAt(index: number, value: Windows.Web.Syndication.SyndicationAttribute): void;
@@ -17351,16 +17351,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationAttribute[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationAttribute): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationAttribute, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool): Windows.Web.Syndication.SyndicationAttribute[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationAttribute[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean): Windows.Web.Syndication.SyndicationAttribute[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationAttribute, index: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationAttribute[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationAttribute[]) => any): any;
@@ -17370,7 +17370,7 @@ declare module Windows {
             export interface IVector__ISyndicationNode {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.ISyndicationNode;
-                indexOf(value: Windows.Web.Syndication.ISyndicationNode): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.ISyndicationNode): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.ISyndicationNode[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.ISyndicationNode): void;
                 insertAt(index: number, value: Windows.Web.Syndication.ISyndicationNode): void;
@@ -17395,16 +17395,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.ISyndicationNode[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.ISyndicationNode): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.ISyndicationNode, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool): Windows.Web.Syndication.ISyndicationNode[];
-                filter(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => bool, thisArg: any): Windows.Web.Syndication.ISyndicationNode[];
+                filter(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean): Windows.Web.Syndication.ISyndicationNode[];
+                filter(callbackfn: (value: Windows.Web.Syndication.ISyndicationNode, index: number, array: Windows.Web.Syndication.ISyndicationNode[]) => boolean, thisArg: any): Windows.Web.Syndication.ISyndicationNode[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.ISyndicationNode[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.ISyndicationNode[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.ISyndicationNode[]) => any): any;
@@ -17414,7 +17414,7 @@ declare module Windows {
             export interface IVector__SyndicationPerson {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationPerson;
-                indexOf(value: Windows.Web.Syndication.SyndicationPerson): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationPerson): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationPerson[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.SyndicationPerson): void;
                 insertAt(index: number, value: Windows.Web.Syndication.SyndicationPerson): void;
@@ -17439,16 +17439,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationPerson[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationPerson): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationPerson, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool): Windows.Web.Syndication.SyndicationPerson[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationPerson[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean): Windows.Web.Syndication.SyndicationPerson[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationPerson, index: number, array: Windows.Web.Syndication.SyndicationPerson[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationPerson[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationPerson[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationPerson[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationPerson[]) => any): any;
@@ -17458,7 +17458,7 @@ declare module Windows {
             export interface IVector__SyndicationCategory {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationCategory;
-                indexOf(value: Windows.Web.Syndication.SyndicationCategory): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationCategory): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationCategory[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.SyndicationCategory): void;
                 insertAt(index: number, value: Windows.Web.Syndication.SyndicationCategory): void;
@@ -17483,16 +17483,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationCategory[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationCategory): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationCategory, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): Windows.Web.Syndication.SyndicationCategory[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationCategory[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): Windows.Web.Syndication.SyndicationCategory[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationCategory[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any;
@@ -17502,7 +17502,7 @@ declare module Windows {
             export interface IVector__SyndicationLink {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationLink;
-                indexOf(value: Windows.Web.Syndication.SyndicationLink): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationLink): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationLink[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.SyndicationLink): void;
                 insertAt(index: number, value: Windows.Web.Syndication.SyndicationLink): void;
@@ -17527,16 +17527,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationLink[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationLink): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationLink, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool): Windows.Web.Syndication.SyndicationLink[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationLink[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean): Windows.Web.Syndication.SyndicationLink[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationLink, index: number, array: Windows.Web.Syndication.SyndicationLink[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationLink[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationLink[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationLink[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationLink[]) => any): any;
@@ -17546,7 +17546,7 @@ declare module Windows {
             export interface IVector__SyndicationItem {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationItem;
-                indexOf(value: Windows.Web.Syndication.SyndicationItem): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationItem): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationItem[]; returnValue: number; };
                 setAt(index: number, value: Windows.Web.Syndication.SyndicationItem): void;
                 insertAt(index: number, value: Windows.Web.Syndication.SyndicationItem): void;
@@ -17571,16 +17571,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationItem[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationItem): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationItem, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool): Windows.Web.Syndication.SyndicationItem[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationItem[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean): Windows.Web.Syndication.SyndicationItem[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationItem, index: number, array: Windows.Web.Syndication.SyndicationItem[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationItem[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationItem[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationItem[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationItem[]) => any): any;
@@ -17590,7 +17590,7 @@ declare module Windows {
             export interface IVectorView__SyndicationCategory {
                 size: number;
                 getAt(index: number): Windows.Web.Syndication.SyndicationCategory;
-                indexOf(value: Windows.Web.Syndication.SyndicationCategory): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.Syndication.SyndicationCategory): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.Syndication.SyndicationCategory[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17609,16 +17609,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.Syndication.SyndicationCategory[]): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationCategory): number;
                 lastIndexOf(searchElement: Windows.Web.Syndication.SyndicationCategory, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool): Windows.Web.Syndication.SyndicationCategory[];
-                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => bool, thisArg: any): Windows.Web.Syndication.SyndicationCategory[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean): Windows.Web.Syndication.SyndicationCategory[];
+                filter(callbackfn: (value: Windows.Web.Syndication.SyndicationCategory, index: number, array: Windows.Web.Syndication.SyndicationCategory[]) => boolean, thisArg: any): Windows.Web.Syndication.SyndicationCategory[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.Syndication.SyndicationCategory[]) => any): any;
@@ -17628,7 +17628,7 @@ declare module Windows {
             export interface IVectorView__ResourceCollection {
                 size: number;
                 getAt(index: number): Windows.Web.AtomPub.ResourceCollection;
-                indexOf(value: Windows.Web.AtomPub.ResourceCollection): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.AtomPub.ResourceCollection): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.AtomPub.ResourceCollection[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17647,16 +17647,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.AtomPub.ResourceCollection[]): number;
                 lastIndexOf(searchElement: Windows.Web.AtomPub.ResourceCollection): number;
                 lastIndexOf(searchElement: Windows.Web.AtomPub.ResourceCollection, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool): Windows.Web.AtomPub.ResourceCollection[];
-                filter(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => bool, thisArg: any): Windows.Web.AtomPub.ResourceCollection[];
+                filter(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean): Windows.Web.AtomPub.ResourceCollection[];
+                filter(callbackfn: (value: Windows.Web.AtomPub.ResourceCollection, index: number, array: Windows.Web.AtomPub.ResourceCollection[]) => boolean, thisArg: any): Windows.Web.AtomPub.ResourceCollection[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.ResourceCollection[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.ResourceCollection[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.ResourceCollection[]) => any): any;
@@ -17666,7 +17666,7 @@ declare module Windows {
             export interface IVectorView__Workspace {
                 size: number;
                 getAt(index: number): Windows.Web.AtomPub.Workspace;
-                indexOf(value: Windows.Web.AtomPub.Workspace): { index: number; returnValue: bool; };
+                indexOf(value: Windows.Web.AtomPub.Workspace): { index: number; returnValue: boolean; };
                 getMany(startIndex: number): { items: Windows.Web.AtomPub.Workspace[]; returnValue: number; };
                 toString(): string;
                 toLocaleString(): string;
@@ -17685,16 +17685,16 @@ declare module Windows {
                 unshift(...items: Windows.Web.AtomPub.Workspace[]): number;
                 lastIndexOf(searchElement: Windows.Web.AtomPub.Workspace): number;
                 lastIndexOf(searchElement: Windows.Web.AtomPub.Workspace, fromIndex: number): number;
-                every(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool): bool;
-                every(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool, thisArg: any): bool;
-                some(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool): bool;
-                some(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool, thisArg: any): bool;
+                every(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean): boolean;
+                every(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean, thisArg: any): boolean;
+                some(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean): boolean;
+                some(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean, thisArg: any): boolean;
                 forEach(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => void): void;
                 forEach(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => void, thisArg: any): void;
                 map(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => any): any[];
                 map(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => any, thisArg: any): any[];
-                filter(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool): Windows.Web.AtomPub.Workspace[];
-                filter(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => bool, thisArg: any): Windows.Web.AtomPub.Workspace[];
+                filter(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean): Windows.Web.AtomPub.Workspace[];
+                filter(callbackfn: (value: Windows.Web.AtomPub.Workspace, index: number, array: Windows.Web.AtomPub.Workspace[]) => boolean, thisArg: any): Windows.Web.AtomPub.Workspace[];
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.Workspace[]) => any): any;
                 reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.Workspace[]) => any, initialValue: any): any;
                 reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: Windows.Web.AtomPub.Workspace[]) => any): any;
@@ -18710,48 +18710,48 @@ declare module Windows {
         export module Collections {
             export interface IIterator__IStorageItem {
                 current: Windows.Storage.IStorageItem;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__IStorageFile {
                 current: Windows.Storage.IStorageFile;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__Uri {
                 current: Windows.Foundation.Uri;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__Package {
                 current: Windows.ApplicationModel.Package;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__PackageUserInformation {
                 current: Windows.Management.Deployment.PackageUserInformation;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__BackgroundTransferContentPart {
                 current: Windows.Networking.BackgroundTransfer.BackgroundTransferContentPart;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__EndpointPair {
                 current: Windows.Networking.EndpointPair;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__OnlineIdServiceTicketRequest {
                 current: Windows.Security.Authentication.OnlineId.OnlineIdServiceTicketRequest;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
             export interface IIterator__Point {
                 current: Windows.Foundation.Point;
-                hasCurrent: bool;
-                moveNext(): bool;
+                hasCurrent: boolean;
+                moveNext(): boolean;
             }
         }
     }

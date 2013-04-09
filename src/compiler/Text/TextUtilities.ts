@@ -79,7 +79,7 @@ module TypeScript.TextUtilities {
         return getLengthOfLineBreakSlow(text, index, c);
     }
 
-    export function isAnyLineBreakCharacter(c: number): bool {
+    export function isAnyLineBreakCharacter(c: number): boolean {
         return c === CharacterCodes.lineFeed ||
                c === CharacterCodes.carriageReturn ||
                c === CharacterCodes.nextLine ||

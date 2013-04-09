@@ -159,7 +159,7 @@ module TypeScript {
             }
         }
 
-        private isEquivalent(oldAST: AST, newAST: AST): bool {
+        private isEquivalent(oldAST: AST, newAST: AST): boolean {
             Debug.assert(oldAST !== null);
             Debug.assert(newAST !== null);
             Debug.assert(oldAST !== newAST);
@@ -198,30 +198,30 @@ module TypeScript {
             }
         }
 
-        private importDeclarationIsEquivalent(decl1: ImportDeclaration, decl2: ImportDeclaration): bool {
+        private importDeclarationIsEquivalent(decl1: ImportDeclaration, decl2: ImportDeclaration): boolean {
             return structuralEqualsNotIncludingPosition(decl1.alias, decl2.alias);
         }
 
-        private typeDeclarationIsEquivalent(decl1: TypeDeclaration, decl2: TypeDeclaration): bool {
+        private typeDeclarationIsEquivalent(decl1: TypeDeclaration, decl2: TypeDeclaration): boolean {
             return decl1.getVarFlags() === decl2.getVarFlags() &&
                    structuralEqualsNotIncludingPosition(decl1.typeParameters, decl2.typeParameters) &&
                    structuralEqualsNotIncludingPosition(decl1.extendsList, decl2.extendsList) &&
                    structuralEqualsNotIncludingPosition(decl1.implementsList, decl2.implementsList);
         }
 
-        private classDeclarationIsEquivalent(decl1: ClassDeclaration, decl2: ClassDeclaration): bool {
+        private classDeclarationIsEquivalent(decl1: ClassDeclaration, decl2: ClassDeclaration): boolean {
             return this.typeDeclarationIsEquivalent(decl1, decl2);
         }
 
-        private interfaceDeclarationIsEquivalent(decl1: InterfaceDeclaration, decl2: InterfaceDeclaration): bool {
+        private interfaceDeclarationIsEquivalent(decl1: InterfaceDeclaration, decl2: InterfaceDeclaration): boolean {
             return this.typeDeclarationIsEquivalent(decl1, decl2);
         }
 
-        private typeParameterIsEquivalent(decl1: TypeParameter, decl2: TypeParameter): bool {
+        private typeParameterIsEquivalent(decl1: TypeParameter, decl2: TypeParameter): boolean {
             return structuralEqualsNotIncludingPosition(decl1.constraint, decl2.constraint);
         }
 
-        private boundDeclarationIsEquivalent(decl1: BoundDecl, decl2: BoundDecl): bool {
+        private boundDeclarationIsEquivalent(decl1: BoundDecl, decl2: BoundDecl): boolean {
             if (decl1.getVarFlags() === decl2.getVarFlags() &&
                 structuralEqualsNotIncludingPosition(decl1.typeExpr, decl2.typeExpr)) {
 
@@ -240,16 +240,16 @@ module TypeScript {
             return false;
         }
 
-        private argumentDeclarationIsEquivalent(decl1: Parameter, decl2: Parameter): bool {
+        private argumentDeclarationIsEquivalent(decl1: Parameter, decl2: Parameter): boolean {
             return this.boundDeclarationIsEquivalent(decl1, decl2) &&
                    decl1.isOptional === decl2.isOptional;
         }
 
-        private variableDeclarationIsEquivalent(decl1: VariableDeclarator, decl2: VariableDeclarator): bool {
+        private variableDeclarationIsEquivalent(decl1: VariableDeclarator, decl2: VariableDeclarator): boolean {
             return this.boundDeclarationIsEquivalent(decl1, decl2);
         }
 
-        private functionDeclarationIsEquivalent(decl1: FunctionDeclaration, decl2: FunctionDeclaration): bool {
+        private functionDeclarationIsEquivalent(decl1: FunctionDeclaration, decl2: FunctionDeclaration): boolean {
             if (decl1.hint === decl2.hint &&
                 decl1.getFunctionFlags() === decl2.getFunctionFlags() &&
                 decl1.variableArgList === decl2.variableArgList &&
@@ -273,14 +273,14 @@ module TypeScript {
             return false;
         }
 
-        private scriptIsEquivalent(decl1: Script, decl2: Script): bool {
+        private scriptIsEquivalent(decl1: Script, decl2: Script): boolean {
             // TODO: should we check Script.referencedFiles here?  I don't think we need to.  
             // After all, if that changes, then the LS will just tear us down and start over again,
             // so we won't be comparing decls anyways.
             return true;
         }
 
-        private moduleDeclarationIsEquivalent(decl1: ModuleDeclaration, decl2: ModuleDeclaration): bool {
+        private moduleDeclarationIsEquivalent(decl1: ModuleDeclaration, decl2: ModuleDeclaration): boolean {
             // TODO: Remove withoutFlag code once ShouldEmitModuleDecl is removed.
             return withoutFlag(decl1.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl) === withoutFlag(decl2.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl) &&
                    decl2.prettyName === decl2.prettyName &&

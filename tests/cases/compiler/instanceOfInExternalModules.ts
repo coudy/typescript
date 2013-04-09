@@ -8,7 +8,7 @@ declare module "FS"
  
 import Bar = module("FS");
  
-function IsFoo(value: any): bool
+function IsFoo(value: any): boolean
 
 {
 

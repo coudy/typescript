@@ -9,7 +9,7 @@ module Services {
     export interface ICompilerDiagnostics {
         //logNewCompilerUnit(scriptId: string, unitIndex: number): void;
         //logUpdatedCompilerUnit(scriptId: string, unitIndex: number, editRange: TypeScript.TextChangeRange): void;
-        isLoggingEdits(): bool;
+        isLoggingEdits(): boolean;
     }
 
     export class CompilerDiagnostics implements ICompilerDiagnostics {
@@ -39,7 +39,7 @@ module Services {
         //                                           "\\\\=====//" + '\r\n');
         //}
 
-        public isLoggingEdits(): bool {
+        public isLoggingEdits(): boolean {
             return (this.host.getDiagnosticsObject() !== null);
         }
 
@@ -89,7 +89,7 @@ module Services {
 
         }
 
-        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): Services.CompletionInfo {
+        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean): Services.CompletionInfo {
 
             var args = "fileName: " + this.stringify(fileName) + " pos: " + this.stringify(pos) + " isMemberCompletion: " + this.stringify(isMemberCompletion);
             var result = this.internal.getCompletionsAtPosition(fileName, pos, isMemberCompletion);

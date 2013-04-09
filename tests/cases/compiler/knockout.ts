@@ -3,7 +3,7 @@
      (): T;
      (value: T): any;
      N: number;
-     g: bool;
+     g: boolean;
      r: T;
    }
    export function observable<T>(value: T): Observable<T>;

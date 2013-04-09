@@ -42,7 +42,7 @@ module Services {
         return dst;
     }
 
-    export function compareDataObjects(dst: any, src: any): bool {
+    export function compareDataObjects(dst: any, src: any): boolean {
         for (var e in dst) {
             if (typeof dst[e] == "object") {
                 if (!compareDataObjects(dst[e], src[e]))

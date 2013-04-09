@@ -7,7 +7,7 @@ module TypeScript {
 
     export class PullTypeCheckContext {
         public enclosingDeclStack: PullDecl[] = [];
-        public enclosingDeclReturnStack: bool[] = [];
+        public enclosingDeclReturnStack: boolean[] = [];
         public semanticInfo: SemanticInfo = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }
@@ -191,7 +191,7 @@ module TypeScript {
                     return this.typeCheckIndex(ast, typeCheckContext);
 
                 case NodeType.LogicalNotExpression:
-                    return this.semanticInfoChain.boolTypeSymbol;
+                    return this.semanticInfoChain.booleanTypeSymbol;
 
                 case NodeType.LogicalOrExpression:
                 case NodeType.LogicalAndExpression:
@@ -285,7 +285,7 @@ module TypeScript {
                     return this.semanticInfoChain.nullTypeSymbol;
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
-                    return this.semanticInfoChain.boolTypeSymbol;
+                    return this.semanticInfoChain.booleanTypeSymbol;
                 case NodeType.VoidExpression:
                     return this.semanticInfoChain.voidTypeSymbol;
 
@@ -553,7 +553,7 @@ module TypeScript {
             return null;
         }
 
-        public typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: bool): PullTypeSymbol {
+        public typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
 
             // PULLTODOERROR: "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
             // PULLTODOERROR: "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
@@ -1252,7 +1252,7 @@ module TypeScript {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
             }        
 
-            return this.semanticInfoChain.boolTypeSymbol;
+            return this.semanticInfoChain.booleanTypeSymbol;
         }
 
         public typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -1272,7 +1272,7 @@ module TypeScript {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'instanceOf' expression must be of type Any or a subtype of the 'Function' interface type", typeCheckContext.getEnclosingDecl());
             }
 
-            return this.semanticInfoChain.boolTypeSymbol;
+            return this.semanticInfoChain.booleanTypeSymbol;
         }
 
         private typeCheckParenthesizedExpression(ast: ParenthesizedExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -1427,7 +1427,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckExpressionStatement(ast: ExpressionStatement, typeCheckContext: PullTypeCheckContext, inTypedAssignment: bool): PullTypeSymbol {
+        private typeCheckExpressionStatement(ast: ExpressionStatement, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
             return this.typeCheckAST(ast.expression, typeCheckContext, inTypedAssignment);
         }
 
@@ -1521,7 +1521,7 @@ module TypeScript {
             }
         }
 
-        private checkBaseListTypePrivacy(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: bool, typeCheckContext: PullTypeCheckContext) {
+        private checkBaseListTypePrivacy(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: boolean, typeCheckContext: PullTypeCheckContext) {
             var basesList: PullTypeSymbol[];
             if (extendsList) {
                 basesList = declSymbol.getExtendedTypes();
@@ -1535,7 +1535,7 @@ module TypeScript {
             }
         }
 
-        private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: bool, index: number, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+        private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: boolean, index: number, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
             var baseList = extendsList ? declAST.extendsList : declAST.implementsList;
             var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -1621,7 +1621,7 @@ module TypeScript {
             this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
-        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inTypedAssignment: bool, typeCheckContext: PullTypeCheckContext) {
+        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inTypedAssignment: boolean, typeCheckContext: PullTypeCheckContext) {
             if (inTypedAssignment || (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
                 return;
             }

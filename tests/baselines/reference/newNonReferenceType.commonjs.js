@@ -1,2 +1,2 @@
 var a = new any();
-var b = new bool();
+var b = new boolean();

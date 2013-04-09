@@ -4,7 +4,7 @@ interface I {
     g(n:number):any; 
     g(n:number,m:number):string;
     h(n:number):I;  
-    h(b:bool):number;
-    i(b:bool):number;
-    i(b:bool):any;
+    h(b:boolean):number;
+    i(b:boolean):number;
+    i(b:boolean):any;
 }

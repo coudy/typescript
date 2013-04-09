@@ -170,7 +170,7 @@ module TypeScript2 {
             getSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
         }
 
-        private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier2 {
+        private createRef(text: string, hasEscapeSequence: boolean, minChar: number): Identifier2 {
             var id = new Identifier2(text, hasEscapeSequence);
             id.minChar = minChar;
             return id;
@@ -783,7 +783,7 @@ module TypeScript2 {
         }
 
         // REVIEW: Consider renaming to parseTypeName.
-        private parseNamedType(errorRecoverySet: ErrorRecoverySet, minChar: number, term: AST2, tail: bool): AST2 {
+        private parseNamedType(errorRecoverySet: ErrorRecoverySet, minChar: number, term: AST2, tail: boolean): AST2 {
             this.currentToken = this.scanner.scan();
             if (this.currentToken.tokenId == TokenID.Dot) {
                 var curpos = this.scanner.pos;
@@ -833,7 +833,7 @@ module TypeScript2 {
         }
 
         // REVIEW: Reconsider renaming this to parseType to match the grammar.
-        private parseTypeReference(errorRecoverySet: ErrorRecoverySet, allowVoid: bool): AST2 {
+        private parseTypeReference(errorRecoverySet: ErrorRecoverySet, allowVoid: boolean): AST2 {
             var minChar = this.scanner.startPos;
             var isConstructorMember = false;
 
@@ -953,12 +953,12 @@ module TypeScript2 {
 
         private parseFunctionStatements(errorRecoverySet: ErrorRecoverySet,
                                         name: Identifier2,
-                                        isConstructor: bool,
-                                        isMethod: bool,
+                                        isConstructor: boolean,
+                                        isMethod: boolean,
                                         args: ASTList2,
                                         allowedElements: AllowedElements,
                                         minChar: number,
-                                        requiresSignature: bool,
+                                        requiresSignature: boolean,
                                         parentModifiers: Modifiers) {
 
             this.pushDeclLists();
@@ -1060,9 +1060,9 @@ module TypeScript2 {
             return funcDecl;
         }
 
-        private transformAnonymousArgsIntoFormals(formals: ASTList2, argList: AST2) : bool {
+        private transformAnonymousArgsIntoFormals(formals: ASTList2, argList: AST2) : boolean {
 
-            var translateBinExOperand = (operand: AST2) : bool => {
+            var translateBinExOperand = (operand: AST2) : boolean => {
                 if (operand.nodeType == NodeType.Comma) {
                     return this.transformAnonymousArgsIntoFormals(formals, operand);
                 }
@@ -1114,14 +1114,14 @@ module TypeScript2 {
 
         private parseFormalParameterList(errorRecoverySet: ErrorRecoverySet,
                                             formals: ASTList2,
-                                            isClassConstr: bool,
-                                            isSig: bool,
-                                            isIndexer: bool,
-                                            isGetter: bool,
-                                            isSetter: bool,
-                                            isLambda: bool,
+                                            isClassConstr: boolean,
+                                            isSig: boolean,
+                                            isIndexer: boolean,
+                                            isGetter: boolean,
+                                            isSetter: boolean,
+                                            isLambda: boolean,
                                             preProcessedLambdaArgs: AST2,
-                                            expectClosingRParen: bool): bool 
+                                            expectClosingRParen: boolean): boolean 
         {
 
             formals.minChar = this.scanner.startPos; // '(' or '['
@@ -1325,16 +1325,16 @@ module TypeScript2 {
         }
 
         private parseFncDecl(errorRecoverySet: ErrorRecoverySet,
-                             isDecl: bool,
-                             requiresSignature: bool,
-                             isMethod: bool,
+                             isDecl: boolean,
+                             requiresSignature: boolean,
+                             isMethod: boolean,
                              methodName: Identifier2,
-                             indexer: bool,
-                             isStatic: bool,
-                             markedAsAmbient: bool,
+                             indexer: boolean,
+                             isStatic: boolean,
+                             markedAsAmbient: boolean,
                              modifiers: Modifiers,
                              lambdaArgContext: ILambdaArgumentContext,
-                             expectClosingRParen: bool): AST2 {
+                             expectClosingRParen: boolean): AST2 {
 
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -1519,7 +1519,7 @@ module TypeScript2 {
         private parseBaseList(extendsList: ASTList2,
                               implementsList: ASTList2,
                               errorRecoverySet: ErrorRecoverySet,
-                              isClass: bool): void {
+                              isClass: boolean): void {
             var keyword = true;
             var currentList = extendsList;
             for (; ;) {
@@ -1899,7 +1899,7 @@ module TypeScript2 {
             return constructorFuncDecl;
         }
 
-        private parseClassMemberVariableDeclaration(text: Identifier2, minChar: number, isDeclaredInConstructor: bool, errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers) {
+        private parseClassMemberVariableDeclaration(text: Identifier2, minChar: number, isDeclaredInConstructor: boolean, errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers) {
 
             var varDecl = new VarDecl(text, this.nestingLevel);
             varDecl.minChar = minChar;
@@ -2154,8 +2154,8 @@ module TypeScript2 {
         private parsePropertyDeclaration(
             errorRecoverySet: ErrorRecoverySet,
             modifiers: Modifiers,
-            requireSignature: bool,
-            isStatic: bool): AST2 {
+            requireSignature: boolean,
+            isStatic: boolean): AST2 {
 
             var text: Identifier2 = null;
             var minChar = this.scanner.startPos;
@@ -2385,8 +2385,8 @@ module TypeScript2 {
         private parseVariableDeclaration(
             errorRecoverySet: ErrorRecoverySet,
             modifiers: Modifiers,
-            allowIn: bool,
-            isStatic: bool): AST2 {
+            allowIn: boolean,
+            isStatic: boolean): AST2 {
 
             var isConst = hasFlag(modifiers, Modifiers.Readonly);
             var minChar = this.scanner.startPos;
@@ -2702,7 +2702,7 @@ module TypeScript2 {
             return arrayLiteral;
         }
 
-        private parseTerm(errorRecoverySet: ErrorRecoverySet, allowCall: bool, typeContext: TypeContext, inCast: bool): AST2 {
+        private parseTerm(errorRecoverySet: ErrorRecoverySet, allowCall: boolean, typeContext: TypeContext, inCast: boolean): AST2 {
             var ast: AST2 = null;
             var sawId = false;
             var inNew = false;
@@ -2980,7 +2980,7 @@ module TypeScript2 {
 
         }
 
-        private parseLambdaExpr(errorRecoverySet: ErrorRecoverySet, lambdaArgs: AST2, skipNextRParen: bool, expectClosingRParen: bool): AST2 {
+        private parseLambdaExpr(errorRecoverySet: ErrorRecoverySet, lambdaArgs: AST2, skipNextRParen: boolean, expectClosingRParen: boolean): AST2 {
             // REVIEW: Parse the remainder of a lambda expression. The opening paren has been read already, if it existed. 
             //         skipNextRParen sets a flag on the resulting lambda node to tell the calling parseTerm that the LParen it scanned has been matched as part of parsing the formal parameter list
             //         expectClosingRParen indicates that a closing RParen is expected, in the cases with optional parameter or more than one parameter.
@@ -2994,11 +2994,11 @@ module TypeScript2 {
             return ast;
         }
 
-        private parseExpr(errorRecoverySet: ErrorRecoverySet, minPrecedence: number, allowIn: bool,
-            typeContext: TypeContext, possiblyInLambda: bool = false): AST2 {
+        private parseExpr(errorRecoverySet: ErrorRecoverySet, minPrecedence: number, allowIn: boolean,
+            typeContext: TypeContext, possiblyInLambda: boolean = false): AST2 {
             var ast: AST2 = null;
             var tokenInfo = lookupToken(this.currentToken.tokenId);
-            var canAssign: bool = true;
+            var canAssign: boolean = true;
             var idHint: string = null;
             var minChar = this.scanner.startPos;
             var preComments = this.parseComments();
@@ -3175,7 +3175,7 @@ module TypeScript2 {
             return ast;
         }
 
-        private parsePostfixOperators(errorRecoverySet: ErrorRecoverySet, ast: AST2, allowCall: bool, inNew: bool,
+        private parsePostfixOperators(errorRecoverySet: ErrorRecoverySet, ast: AST2, allowCall: boolean, inNew: boolean,
             typeContext: TypeContext, lhsMinChar: number, lhsLimChar: number): AST2 {
             var count = 0;
 
@@ -4225,8 +4225,8 @@ module TypeScript2 {
 
         private parseStatementList(errorRecoverySet: ErrorRecoverySet,
                                    statements: ASTList2,
-                                   sourceElms: bool,
-                                   noLeadingCase: bool,
+                                   sourceElms: boolean,
+                                   noLeadingCase: boolean,
                                    allowedElements: AllowedElements,
                                    parentModifiers: Modifiers): void {
             var directivePrologue = sourceElms;

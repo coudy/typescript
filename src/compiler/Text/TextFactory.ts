@@ -126,7 +126,7 @@ module TypeScript.TextFactory {
             return new SubText(this, span);
         }
 
-        public substr(start: number, length: number, intern: bool): string {
+        public substr(start: number, length: number, intern: boolean): string {
             throw Errors.abstract();
         }
 
@@ -340,7 +340,7 @@ module TypeScript.TextFactory {
             return this.source.charCodeAt(position);
         }
 
-        public substr(start: number, length: number, intern: bool) {
+        public substr(start: number, length: number, intern: boolean) {
             return this.source.substr(start, length);
         }
 
@@ -423,7 +423,7 @@ module TypeScript.SimpleText {
             this.text.copyTo(span.start(), destination, destinationIndex, span.length());
         }
 
-        public substr(start: number, length: number, intern: bool): string {
+        public substr(start: number, length: number, intern: boolean): string {
             var span = this.getCompositeSpan(start, length);
             return this.text.substr(span.start(), span.length(), intern);
         }
@@ -458,7 +458,7 @@ module TypeScript.SimpleText {
 
         private static charArray: number[] = ArrayUtilities.createArray(1024, 0);
 
-        public substr(start: number, length: number, intern: bool): string {
+        public substr(start: number, length: number, intern: boolean): string {
             if (intern) {
                 // use a shared array instance of the length of this substring isn't too large.
                 var array = length <= SimpleStringText.charArray.length
@@ -503,7 +503,7 @@ module TypeScript.SimpleText {
             StringUtilities.copyTo(text, 0, destination, destinationIndex, count);
         }
 
-        public substr(start: number, length: number, intern: bool): string {
+        public substr(start: number, length: number, intern: boolean): string {
             return this.scriptSnapshot.getText(start, start + length);
         }
 

@@ -35,10 +35,10 @@ module Services {
         //
         getOverride(container: TypeScript.TypeSymbol, memberSym: TypeScript.Symbol): TypeScript.Symbol;
 
-        isClass(sym: TypeScript.Symbol): bool;
-        isInterface(sym: TypeScript.Symbol): bool;
-        isMethod(sym: TypeScript.Symbol): bool;
-        isField(sym: TypeScript.Symbol): bool;
+        isClass(sym: TypeScript.Symbol): boolean;
+        isInterface(sym: TypeScript.Symbol): boolean;
+        isMethod(sym: TypeScript.Symbol): boolean;
+        isField(sym: TypeScript.Symbol): boolean;
     }
 
     export interface ISymbolTreeHost {
@@ -190,35 +190,35 @@ module Services {
             });
         }
 
-        private isDefinition(sym: TypeScript.Symbol): bool {
+        private isDefinition(sym: TypeScript.Symbol): boolean {
             return this.isClass(sym) || this.isInterface(sym);
         }
 
-        public isClass(sym: TypeScript.Symbol): bool {
+        public isClass(sym: TypeScript.Symbol): boolean {
             return sym != null &&
                 sym.kind() == TypeScript.SymbolKind.Type &&
                 (<TypeScript.TypeSymbol>sym).isClass();
         }
 
-        public isInterface(sym: TypeScript.Symbol): bool {
+        public isInterface(sym: TypeScript.Symbol): boolean {
             return sym != null &&
                 sym.kind() == TypeScript.SymbolKind.Type &&
                 sym.declAST != null &&
                 sym.declAST.nodeType === TypeScript.NodeType.InterfaceDeclaration;
         }
 
-        public isMethod(sym: TypeScript.Symbol): bool {
+        public isMethod(sym: TypeScript.Symbol): boolean {
             return sym != null &&
                 sym.kind() === TypeScript.SymbolKind.Type &&
                 (<TypeScript.TypeSymbol>sym).isMethod;
         }
 
-        public isField(sym: TypeScript.Symbol): bool {
+        public isField(sym: TypeScript.Symbol): boolean {
             return sym != null &&
                 sym.kind() === TypeScript.SymbolKind.Field;
         }
 
-        public isStatic(sym: TypeScript.Symbol): bool {
+        public isStatic(sym: TypeScript.Symbol): boolean {
             return sym != null && sym.isStatic();
         }
     }

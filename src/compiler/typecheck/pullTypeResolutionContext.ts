@@ -45,7 +45,7 @@ module TypeScript {
             return info;
         }
 
-        public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: bool) {
+        public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: boolean) {
             var info = this.getInferenceInfo(param);
 
             if (candidate) {
@@ -75,7 +75,7 @@ module TypeScript {
             return inferenceCandidates;
         }
 
-        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: bool; } {
+        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: boolean; } {
             var info: CandidateInferenceInfo = null;
 
             var collection: IPullTypeCollection;
@@ -124,7 +124,7 @@ module TypeScript {
         public provisionalDiagnostic: PullDiagnostic[] = [];
 
         constructor(public contextualType: PullTypeSymbol,
-                     public provisional: bool,
+                     public provisional: boolean,
                      public substitutions: any) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
@@ -161,7 +161,7 @@ module TypeScript {
 
         constructor (public emitting = false) {}
 
-        public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
+        public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }
 
@@ -272,7 +272,7 @@ module TypeScript {
             this.genericASTResolutionStack[this.genericASTResolutionStack.length] = ast;
         }
 
-        private isResolvingTypeArguments(ast: AST): bool {
+        private isResolvingTypeArguments(ast: AST): boolean {
 
             for (var i = 0; i < this.genericASTResolutionStack.length; i++) {
                 if (this.genericASTResolutionStack[i].getID() == ast.getID()) {

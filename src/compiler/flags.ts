@@ -17,7 +17,7 @@
 
 module TypeScript {
 
-    export function hasFlag(val: number, flag: number): bool {
+    export function hasFlag(val: number, flag: number): boolean {
         return (val & flag) !== 0;
     }
 

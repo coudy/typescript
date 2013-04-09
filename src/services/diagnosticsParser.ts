@@ -41,7 +41,7 @@ module DiagnosticsParser {
             var file: string = IO.readFile(this.diagnosticsFile);
             var lines: string[] = file.split('\r\n');
 
-            var updateMode: bool;
+            var updateMode: boolean;
             var scriptId: string;
 
             var editBlock: string;
@@ -109,7 +109,7 @@ module DiagnosticsParser {
                     if (updateMode) {
 
                         var range: number = editRange.limChar - editRange.minChar;
-                        var deleting: bool = (range !== 0);
+                        var deleting: boolean = (range !== 0);
 
                         if (deleting) {
 

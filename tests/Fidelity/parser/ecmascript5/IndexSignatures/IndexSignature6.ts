@@ -1,3 +1,3 @@
 interface I {
-  [a:bool]
+  [a:boolean]
 }

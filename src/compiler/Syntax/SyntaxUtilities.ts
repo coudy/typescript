@@ -2,7 +2,7 @@
 
 module TypeScript {
     export class SyntaxUtilities {
-        public static isAngleBracket(positionedElement: PositionedElement): bool {
+        public static isAngleBracket(positionedElement: PositionedElement): boolean {
             var element = positionedElement.element();
             var parent = positionedElement.parentElement();
             if (parent !== null && (element.kind() === SyntaxKind.LessThanToken || element.kind() === SyntaxKind.GreaterThanToken)) {

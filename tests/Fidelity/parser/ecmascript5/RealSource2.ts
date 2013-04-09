@@ -22,7 +22,7 @@ module TypeScript {
         RParen = 1 << 6, // RParen
         Dot = 1 << 7, // Dot
         Colon = 1 << 8, // Colon
-        PrimType = 1 << 9, // number, string, bool
+        PrimType = 1 << 9, // number, string, boolean
         AddOp = 1 << 10, // Add, Sub
         LCurly = 1 << 11, // LCurly
         PreOp = 1 << 12, // Tilde, Bang, Inc, Dec

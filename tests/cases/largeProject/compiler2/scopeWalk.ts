@@ -50,7 +50,7 @@ module TypeScript2 {
                     public script: Script,
                     public text: ISourceText,
                     public pos: number,
-                    public isMemberCompletion: bool) {
+                    public isMemberCompletion: boolean) {
         }
 
         public getScope(): SymbolScope {
@@ -221,7 +221,7 @@ module TypeScript2 {
     // The "scopeStartAST" of the returned scope is always valid.
     // Return "null" if the enclosing scope can't be found.
     //
-    export function findEnclosingScopeAt(logger: ILogger2, script: Script, text: ISourceText, pos: number, isMemberCompletion: bool): EnclosingScopeContext {
+    export function findEnclosingScopeAt(logger: ILogger2, script: Script, text: ISourceText, pos: number, isMemberCompletion: boolean): EnclosingScopeContext {
         var context = new EnclosingScopeContext(logger, script, text, pos, isMemberCompletion);
 
         TypeScript2.getAstWalkerFactory().walk(script, preFindEnclosingScope, null, null, context);

@@ -164,7 +164,7 @@ module TypeScript {
 
         // Search for a child decl with the given name.  'isType' is used to specify whether or 
         // not child types or child values are returned.
-        public searchChildDecls(declName: string, isType: bool): PullDecl[]{
+        public searchChildDecls(declName: string, isType: boolean): PullDecl[]{
              // find the decl with the optional type
              // if necessary, cache the decl
              // may be wise to return a chain of decls, or take a parent decl as a parameter

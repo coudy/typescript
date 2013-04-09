@@ -22,10 +22,10 @@ module TypeScript.Formatting {
         private _parent: IndentationNodeContext = null;
         private _textSpan: TextSpan;
         private _snapshot: ITextSnapshot;
-        private _lastTriviaWasNewLine: bool;
+        private _lastTriviaWasNewLine: boolean;
         private _indentationNodeContextPool: IndentationNodeContextPool;
 
-        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: bool) {
+        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean) {
             super();
 
             // Create a pool object to manage context nodes while walking the tree

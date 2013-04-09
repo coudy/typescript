@@ -87,7 +87,7 @@ module SymbolDisplay {
         location: ILocation,
         semanticModel: ISemanticModel,
         format: Format,
-        minimal: bool): Part[] {
+        minimal: boolean): Part[] {
         if (minimal) {
             if (location == null) {
                 // TODO(cyrusn): Localize
@@ -110,17 +110,17 @@ module SymbolDisplay {
         private semanticModel: ISemanticModel;
         private format: Format;
         private builder: Part[];
-        private isFirstSymbolVisited: bool;
-        private minimal: bool;
+        private isFirstSymbolVisited: boolean;
+        private minimal: boolean;
 
         private notFirstVisitor: Visitor;
 
         constructor(format: Format,
                     location: ILocation,
                     semanticModel: ISemanticModel,
-                    minimal: bool,
+                    minimal: boolean,
                     builder: Part[],
-                    isFirstSymbolVisited: bool = true) {
+                    isFirstSymbolVisited: boolean = true) {
             this.location = location;
             this.semanticModel = semanticModel;
 
@@ -268,7 +268,7 @@ module SymbolDisplay {
             }
         }
 
-        private shouldVisitModule(moduleSymbol: IModuleSymbol): bool {
+        private shouldVisitModule(moduleSymbol: IModuleSymbol): boolean {
             if (this.format.typeQualificationStyle() !== TypeQualificationStyle.NameAndContainingModules) {
                 return false;
             }
@@ -385,7 +385,7 @@ module SymbolDisplay {
             this.addNameAndTypeArguments(symbol, typeArguments);
         }
 
-        private nameBoundSuccessfullyToSameSymbol(symbol: ISymbol, arity: number): bool {
+        private nameBoundSuccessfullyToSameSymbol(symbol: ISymbol, arity: number): boolean {
             var normalSymbols = this.semanticModel.lookupSymbols(
                 this.location.textSpan().start(),
                 /*container:*/ null,
@@ -441,7 +441,7 @@ module SymbolDisplay {
             }
         }
 
-        private canAddConstant(type: ITypeSymbol, value: any): bool {
+        private canAddConstant(type: ITypeSymbol, value: any): boolean {
             if (type.typeKind() === TypeKind.Enum) {
                 return true;
             }

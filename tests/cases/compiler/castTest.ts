@@ -4,7 +4,7 @@ var z = <number> x;
 var y = x + z;
 
 var a = <any>0;
-var b = <bool>true;
+var b = <boolean>true;
 var s = <string>"";
 
 var ar = <any[]>null;

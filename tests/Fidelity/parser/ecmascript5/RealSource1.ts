@@ -26,7 +26,7 @@ module TypeScript {
             }
         }
 
-        export function assert(condition: bool, s: string) {
+        export function assert(condition: boolean, s: string) {
             if (debug) {
                 if (!condition) {
                     Alert(s);
@@ -37,30 +37,30 @@ module TypeScript {
     }
 
     export interface ILogger {
-        information(): bool;
-        debug(): bool;
-        warning(): bool;
-        error(): bool;
-        fatal(): bool;
+        information(): boolean;
+        debug(): boolean;
+        warning(): boolean;
+        error(): boolean;
+        fatal(): boolean;
         log(s: string): void;
     }
 
     export class NullLogger implements ILogger {
-        public information(): bool { return false; }
-        public debug(): bool { return false; }
-        public warning(): bool { return false; }
-        public error(): bool { return false; }
-        public fatal(): bool { return false; }
+        public information(): boolean { return false; }
+        public debug(): boolean { return false; }
+        public warning(): boolean { return false; }
+        public error(): boolean { return false; }
+        public fatal(): boolean { return false; }
         public log(s: string): void {
         }
     }
 
     export class LoggerAdapter implements ILogger {
-        private _information: bool;
-        private _debug: bool;
-        private _warning: bool;
-        private _error: bool;
-        private _fatal: bool;
+        private _information: boolean;
+        private _debug: boolean;
+        private _warning: boolean;
+        private _error: boolean;
+        private _fatal: boolean;
 
         constructor (public logger: ILogger) { 
             this._information = this.logger.information();
@@ -71,11 +71,11 @@ module TypeScript {
         }
 
 
-        public information(): bool { return this._information; }
-        public debug(): bool { return this._debug; }
-        public warning(): bool { return this._warning; }
-        public error(): bool { return this._error; }
-        public fatal(): bool { return this._fatal; }
+        public information(): boolean { return this._information; }
+        public debug(): boolean { return this._debug; }
+        public warning(): boolean { return this._warning; }
+        public error(): boolean { return this._error; }
+        public fatal(): boolean { return this._fatal; }
         public log(s: string): void {
             this.logger.log(s);
         }
@@ -84,11 +84,11 @@ module TypeScript {
     export class BufferedLogger implements ILogger {
         public logContents = [];
 
-        public information(): bool { return false; }
-        public debug(): bool { return false; }
-        public warning(): bool { return false; }
-        public error(): bool { return false; }
-        public fatal(): bool { return false; }
+        public information(): boolean { return false; }
+        public debug(): boolean { return false; }
+        public warning(): boolean { return false; }
+        public error(): boolean { return false; }
+        public fatal(): boolean { return false; }
         public log(s: string): void {
             this.logContents.push(s);
         }

@@ -414,9 +414,9 @@ module TypeScript2 {
         // 1. Test for existing decl - if it exists, use its symbol
         // 2. If no other decl exists, create a new symbol and use that one
 
-        var isConstructor: bool = (declFlags & PullDeclFlags.Constructor) != 0;
-        var isIndex: bool = (declFlags & PullDeclFlags.Index) != 0;
-        var isSignature: bool = (declFlags & PullDeclFlags.Signature) != 0;
+        var isConstructor: boolean = (declFlags & PullDeclFlags.Constructor) != 0;
+        var isIndex: boolean = (declFlags & PullDeclFlags.Index) != 0;
+        var isSignature: boolean = (declFlags & PullDeclFlags.Signature) != 0;
 
         var parent = context.getParent();
         var parentHadSymbol = false;

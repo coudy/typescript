@@ -137,7 +137,7 @@ module TypeScript.Collections {
             // this.dumpStats();
         }
 
-        private static textCharArrayEquals(text: string, array: number[], start: number, length: number): bool {
+        private static textCharArrayEquals(text: string, array: number[], start: number, length: number): boolean {
             if (text.length !== length) {
                 return false;
             }

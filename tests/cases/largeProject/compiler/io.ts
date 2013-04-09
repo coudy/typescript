@@ -28,11 +28,11 @@ interface IFileWatcher {
 interface IIO {
     readFile(path: string): string;
     writeFile(path: string, contents: string): void;
-    createFile(path: string, useUTF8?: bool): ITextWriter;
+    createFile(path: string, useUTF8?: boolean): ITextWriter;
     deleteFile(path: string): void;
-    dir(path: string, re?: RegExp, options?: { recursive?: bool; }): string[];
-    fileExists(path: string): bool;
-    directoryExists(path: string): bool;
+    dir(path: string, re?: RegExp, options?: { recursive?: boolean; }): string[];
+    fileExists(path: string): boolean;
+    directoryExists(path: string): boolean;
     createDirectory(path: string): void;
     resolvePath(path: string): string;
     dirName(path: string): string;
@@ -63,7 +63,7 @@ module IOUtils {
     }
 
     // Creates a file including its directory structure if not already present
-    export function createFileAndFolderStructure(ioHost: IIO, fileName: string, useUTF8?: bool) {
+    export function createFileAndFolderStructure(ioHost: IIO, fileName: string, useUTF8?: boolean) {
         var path = ioHost.resolvePath(fileName);
         var dirName = ioHost.dirName(path);
         createDirectoryStructure(ioHost, dirName);
@@ -142,7 +142,7 @@ var IO = (function() {
                 file.Close();
             },
 
-            fileExists: function(path: string): bool {
+            fileExists: function(path: string): boolean {
                 return fso.FileExists(path);
             },
 
@@ -218,7 +218,7 @@ var IO = (function() {
             },
 
             directoryExists: function(path) {
-                return <bool>fso.FolderExists(path);
+                return <boolean>fso.FolderExists(path);
             },
 
             createDirectory: function(path) {
@@ -232,7 +232,7 @@ var IO = (function() {
             },
 
             dir: function(path, spec?, options?) {
-                options = options || <{ recursive?: bool; }>{};
+                options = options || <{ recursive?: boolean; }>{};
                 function filesInFolder(folder, root): string[]{
                     var paths = [];
                     var fc: Enumerator;
@@ -348,7 +348,7 @@ var IO = (function() {
                     IOUtils.throwIOError("Couldn't delete file '" + path + "'.", e);
                 }
             },
-            fileExists: function(path): bool {
+            fileExists: function(path): boolean {
                 return _fs.existsSync(path);
             },
             createFile: function(path, useUTF8?) {
@@ -378,7 +378,7 @@ var IO = (function() {
                 };
             },
             dir: function dir(path, spec?, options?) {
-                options = options || <{ recursive?: bool; }>{};
+                options = options || <{ recursive?: boolean; }>{};
 
                 function filesInFolder(folder: string): string[]{
                     var paths = [];
@@ -408,7 +408,7 @@ var IO = (function() {
                 }
             },
 
-            directoryExists: function(path: string): bool {
+            directoryExists: function(path: string): boolean {
                 return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
             },
             resolvePath: function(path: string): string {

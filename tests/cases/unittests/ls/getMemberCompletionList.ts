@@ -68,7 +68,7 @@ describe('getMemberCompletionList', function ()
 
     function verifyNamesAndTypes(namesAndTypes: TypeScript.ScopeEntry[], spec: any)
     {
-        var found: bool;
+        var found: boolean;
         var names = namesAndTypes;
 
         for (name in spec)

@@ -1,6 +1,6 @@
 interface IHeapObjectProperty {}
 interface IDirectChildrenMap { 
-        hasOwnProperty(objectId: number) : bool; 
+        hasOwnProperty(objectId: number) : boolean; 
         [objectId: number] : IHeapObjectProperty[]; 
 }    
 var directChildrenMap = <IDirectChildrenMap>{}; 

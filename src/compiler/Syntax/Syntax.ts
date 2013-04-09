@@ -23,7 +23,7 @@ module TypeScript.Syntax {
         return positionedToken;
     }
 
-    export function isInModuleOrTypeContext(positionedToken: PositionedToken): bool {
+    export function isInModuleOrTypeContext(positionedToken: PositionedToken): boolean {
         if (positionedToken !== null) {
             var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
             var parent = positionedNodeOrToken.containingNode();
@@ -47,7 +47,7 @@ module TypeScript.Syntax {
         return false;
     }
 
-    export function isInTypeOnlyContext(positionedToken: PositionedToken): bool {
+    export function isInTypeOnlyContext(positionedToken: PositionedToken): boolean {
         var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
         var positionedParent = positionedNodeOrToken.containingNode();
 
@@ -87,7 +87,7 @@ module TypeScript.Syntax {
         throw Errors.invalidOperation();
     }
 
-    export function nodeStructuralEquals(node1: SyntaxNode, node2: SyntaxNode): bool {
+    export function nodeStructuralEquals(node1: SyntaxNode, node2: SyntaxNode): boolean {
         if (node1 === null) {
             return node2 === null;
         }
@@ -95,7 +95,7 @@ module TypeScript.Syntax {
         return node1.structuralEquals(node2);
     }
 
-    export function nodeOrTokenStructuralEquals(node1: ISyntaxNodeOrToken, node2: ISyntaxNodeOrToken): bool {
+    export function nodeOrTokenStructuralEquals(node1: ISyntaxNodeOrToken, node2: ISyntaxNodeOrToken): boolean {
         if (node1 === node2) {
             return true;
         }
@@ -111,7 +111,7 @@ module TypeScript.Syntax {
         return node2.isNode() ? nodeStructuralEquals(<SyntaxNode>node1, <SyntaxNode>node2) : false;
     }
 
-    export function tokenStructuralEquals(token1: ISyntaxToken, token2: ISyntaxToken): bool {
+    export function tokenStructuralEquals(token1: ISyntaxToken, token2: ISyntaxToken): boolean {
         if (token1 === token2) {
             return true;
         }
@@ -128,7 +128,7 @@ module TypeScript.Syntax {
                Syntax.triviaListStructuralEquals(token1.trailingTrivia(), token2.trailingTrivia());
     }
 
-    export function triviaListStructuralEquals(triviaList1: ISyntaxTriviaList, triviaList2: ISyntaxTriviaList): bool {
+    export function triviaListStructuralEquals(triviaList1: ISyntaxTriviaList, triviaList2: ISyntaxTriviaList): boolean {
         if (triviaList1.count() !== triviaList2.count()) {
             return false;
         }
@@ -142,13 +142,13 @@ module TypeScript.Syntax {
         return true;
     }
 
-    export function triviaStructuralEquals(trivia1: ISyntaxTrivia, trivia2: ISyntaxTrivia): bool {
+    export function triviaStructuralEquals(trivia1: ISyntaxTrivia, trivia2: ISyntaxTrivia): boolean {
         return trivia1.kind() === trivia2.kind() &&
                trivia1.fullWidth() === trivia2.fullWidth() &&
                trivia1.fullText() === trivia2.fullText();
     }
 
-    export function listStructuralEquals(list1: ISyntaxList, list2: ISyntaxList): bool {
+    export function listStructuralEquals(list1: ISyntaxList, list2: ISyntaxList): boolean {
         if (list1.childCount() !== list2.childCount()) {
             return false;
         }
@@ -162,7 +162,7 @@ module TypeScript.Syntax {
         return true;
     }
 
-    export function separatedListStructuralEquals(list1: ISeparatedSyntaxList, list2: ISeparatedSyntaxList): bool {
+    export function separatedListStructuralEquals(list1: ISeparatedSyntaxList, list2: ISeparatedSyntaxList): boolean {
         if (list1.childCount() !== list2.childCount()) {
             return false;
         }
@@ -227,22 +227,22 @@ module TypeScript.Syntax {
         return Syntax.token(SyntaxKind.StringLiteral, { text: text });
     }
 
-    export function isSuperInvocationExpression(node: IExpressionSyntax): bool {
+    export function isSuperInvocationExpression(node: IExpressionSyntax): boolean {
         return node.kind() === SyntaxKind.InvocationExpression &&
             (<InvocationExpressionSyntax>node).expression.kind() === SyntaxKind.SuperKeyword;
     }
 
-    export function isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
+    export function isSuperInvocationExpressionStatement(node: SyntaxNode): boolean {
         return node.kind() === SyntaxKind.ExpressionStatement &&
             isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression);
     }
 
-    export function isSuperMemberAccessExpression(node: IExpressionSyntax): bool {
+    export function isSuperMemberAccessExpression(node: IExpressionSyntax): boolean {
         return node.kind() === SyntaxKind.MemberAccessExpression &&
             (<MemberAccessExpressionSyntax>node).expression.kind() === SyntaxKind.SuperKeyword;
     }
 
-    export function isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
+    export function isSuperMemberAccessInvocationExpression(node: SyntaxNode): boolean {
         return node.kind() === SyntaxKind.InvocationExpression &&
             isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression);
     }
@@ -251,7 +251,7 @@ module TypeScript.Syntax {
         return Syntax.normalModeFactory.binaryExpression(SyntaxKind.AssignmentExpression, left, token, right);
     }
 
-    export function nodeHasSkippedOrMissingTokens(node: SyntaxNode): bool {
+    export function nodeHasSkippedOrMissingTokens(node: SyntaxNode): boolean {
         for (var i = 0; i < node.childCount(); i++) {
             var child = node.childAt(i);
             if (child != null && child.isToken()) {

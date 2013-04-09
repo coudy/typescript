@@ -7,11 +7,11 @@
         constructor(pattern: string);
         constructor(pattern: string, flags: string);
         exec(string: string): string[];
-        test(string: string): bool;
+        test(string: string): boolean;
         source: string;
-        global: bool;
-        ignoreCase: bool;
-        multiline: bool;
-        lastIndex: bool;
+        global: boolean;
+        ignoreCase: boolean;
+        multiline: boolean;
+        lastIndex: boolean;
     }
 }

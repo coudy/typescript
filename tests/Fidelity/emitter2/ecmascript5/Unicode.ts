@@ -73,7 +73,7 @@ class Unicode {
 		65296, 65305, 65343, 65343
     ];
 
-    private static lookupInUnicodeMap(code: number, map: number[]): bool {
+    private static lookupInUnicodeMap(code: number, map: number[]): boolean {
         // Bail out quickly if it couldn't possibly be in the map.
         if (code < map[0]) {
             return false;

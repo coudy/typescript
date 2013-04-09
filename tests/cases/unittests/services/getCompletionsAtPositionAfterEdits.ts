@@ -16,7 +16,7 @@ describe('getCompletionsAtPositionAfterEdits', function () {
     //
     // line and column are 1-based
     //
-    function getCompletionList(fileName: string, position: number, isMemberCompletion: bool): Services.CompletionInfo {
+    function getCompletionList(fileName: string, position: number, isMemberCompletion: boolean): Services.CompletionInfo {
         return ls.languageService.getCompletionsAtPosition(fileName, position, isMemberCompletion);
     }
 

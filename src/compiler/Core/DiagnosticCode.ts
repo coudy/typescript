@@ -85,6 +85,7 @@ module TypeScript {
         Accessor_may_not_take_type_parameters,
         Rest_parameter_cannot_be_optional,
         Rest_parameter_cannot_have_initializer,
+        Use_of_deprecated_bool_type,
 
 
 

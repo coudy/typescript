@@ -4,7 +4,7 @@ var C = (function () {
     return C;
 })();
 new C[]();
-var ba = new bool[]();
+var ba = new boolean[]();
 var sa = new string[]();
 function f(s) {
     return 0;

@@ -11,17 +11,17 @@ module TypeScript {
         value(): any;
         valueText(): string;
 
-        hasLeadingTrivia(): bool;
-        hasLeadingComment(): bool;
-        hasLeadingNewLine(): bool;
-        hasLeadingSkippedText(): bool;
+        hasLeadingTrivia(): boolean;
+        hasLeadingComment(): boolean;
+        hasLeadingNewLine(): boolean;
+        hasLeadingSkippedText(): boolean;
 
-        hasTrailingTrivia(): bool;
-        hasTrailingComment(): bool;
-        hasTrailingNewLine(): bool;
-        hasTrailingSkippedText(): bool;
+        hasTrailingTrivia(): boolean;
+        hasTrailingComment(): boolean;
+        hasTrailingNewLine(): boolean;
+        hasTrailingSkippedText(): boolean;
 
-        hasSkippedText(): bool;
+        hasSkippedText(): boolean;
 
         leadingTrivia(): ISyntaxTriviaList;
         trailingTrivia(): ISyntaxTriviaList;

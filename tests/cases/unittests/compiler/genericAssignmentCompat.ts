@@ -5,7 +5,7 @@ describe("Generic assignment compatibility - 2", function () {
     var any = typeFactory.any;
     var number = typeFactory.number;
     var string = typeFactory.string;
-    var bool = typeFactory.bool;
+    var boolean = typeFactory.boolean;
 
     var nullType = typeFactory.get('var obj = null', 'obj');
     var undefinedType = typeFactory.get('var obj = undefined', 'obj');
@@ -16,7 +16,7 @@ describe("Generic assignment compatibility - 2", function () {
     var someClass = typeFactory.get('class Foo<T> {public p;};', 'Foo');
     var someInstance = typeFactory.get('class Foo2<T> {public p;}; var f = new Foo2<number>();', 'f');
 
-    var AnythingBasic = [any, number, string, bool, anyArray, someFunction, someObject, someClass, someInstance];
+    var AnythingBasic = [any, number, string, boolean, anyArray, someFunction, someObject, someClass, someInstance];
     function AnythingBasicBut(these: any[]) {
         return AnythingBasic.filter(x => !these.some(y => x === y));
     }
@@ -55,14 +55,14 @@ describe("Generic assignment compatibility - 2", function () {
         } );
     } );
 
-    describe("bool type", function () {
-        var these = [any, bool];
-        it("is assignment compatible with any and bool", function () {
-            bool.assertAssignmentCompatibleWith(these);
+    describe("boolean type", function () {
+        var these = [any, boolean];
+        it("is assignment compatible with any and boolean", function () {
+            boolean.assertAssignmentCompatibleWith(these);
         } );
 
         it("is not assignment compatible with anything else", function () {
-            bool.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+            boolean.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
         } );
     } );
 
@@ -79,7 +79,7 @@ describe("Generic assignment compatibility - 2", function () {
 
 
     describe("array type", function () {
-        var boolArray = typeFactory.get('var arr_bool : bool[]', 'arr_bool');
+        var boolArray = typeFactory.get('var arr_bool : boolean[]', 'arr_bool');
         var numberArray = typeFactory.get('var arr_number : number[]', 'arr_number');
         var stringArray = typeFactory.get('var arr_string : string[]', 'arr_string');
         var funcArray = typeFactory.get('var f : <T>() => void = null; var arr_func = [f];', 'arr_func');
@@ -103,9 +103,9 @@ describe("Generic assignment compatibility - 2", function () {
             } );
         } );
 
-        describe("bool[]", function () {
+        describe("boolean[]", function () {
             var these = [any, boolArray, anyArray];
-            it("is assignment compatible with any, any arrays, and bool arrays", function () {
+            it("is assignment compatible with any, any arrays, and boolean arrays", function () {
                 boolArray.assertAssignmentCompatibleWith(these);
             } );
 
@@ -156,7 +156,7 @@ describe("Generic assignment compatibility - 2", function () {
 
         var singleBoolObj1 = typeFactory.get('var obj = {one: true}', 'obj');
         var singleBoolObj2 = typeFactory.get('var obj = {two: true}', 'obj');
-        var singleBoolSig = typeFactory.get('var aa:{one:bool;};', 'aa');
+        var singleBoolSig = typeFactory.get('var aa:{one:boolean;};', 'aa');
 
         var singleAnyArrayObj1 = typeFactory.get('var obj = {one: <any[]>[1]}', 'obj');
         var singleAnyArrayObj2 = typeFactory.get('var obj = {two: <any[]>[1]}', 'obj');
@@ -172,7 +172,7 @@ describe("Generic assignment compatibility - 2", function () {
 
         var singleBoolArrayObj1 = typeFactory.get('var obj = {one: [true]}', 'obj');
         var singleBoolArrayObj2 = typeFactory.get('var obj = {two: [true]}', 'obj');
-        var singleBoolArraySig = typeFactory.get('var aa:{one:bool[];};', 'aa');
+        var singleBoolArraySig = typeFactory.get('var aa:{one:boolean[];};', 'aa');
 
         var callObjString = typeFactory.get('var obj = function f<string>(a: string) { return a; };', 'obj'); // TODO: see 654513
         var callSigString = typeFactory.get('var obj: { <string>(a: string): string; }', 'obj');

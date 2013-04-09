@@ -37,7 +37,7 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
-            readFile: function (path, useUTF8: bool = false) {
+            readFile: function (path, useUTF8: boolean = false) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -67,13 +67,13 @@ var Environment = (function () {
                 }
             },
 
-            writeFile: function (path, contents, useUTF8: bool = false) {
+            writeFile: function (path, contents, useUTF8: boolean = false) {
                 var file = this.createFile(path, useUTF8);
                 file.Write(contents);
                 file.Close();
             },
 
-            fileExists: function (path: string): bool {
+            fileExists: function (path: string): boolean {
                 return fso.FileExists(path);
             },
 
@@ -84,11 +84,11 @@ var Environment = (function () {
             },
 
             directoryExists: function (path) {
-                return <bool>fso.FolderExists(path);
+                return <boolean>fso.FolderExists(path);
             },
 
             listFiles: function (path, spec?, options?) {
-                options = options || <{ recursive?: bool; }>{};
+                options = options || <{ recursive?: boolean; }>{};
                 function filesInFolder(folder, root): string[] {
                     var paths = [];
                     var fc: Enumerator;
@@ -118,7 +118,7 @@ var Environment = (function () {
                 return filesInFolder(folder, path);
             },
 
-            createFile: function (path, useUTF8: bool = false) {
+            createFile: function (path, useUTF8: boolean = false) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
@@ -154,7 +154,7 @@ var Environment = (function () {
                 return (<any>process).cwd();
             },
 
-            readFile: function (file: string, useUTF8?: bool) {
+            readFile: function (file: string, useUTF8?: boolean) {
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
@@ -188,7 +188,7 @@ var Environment = (function () {
                 return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
             },
 
-            writeFile: function (path: string, contents: string, useUTF?: bool) {
+            writeFile: function (path: string, contents: string, useUTF?: boolean) {
                 if (useUTF) {
                     _fs.writeFileSync(path, contents, "utf8");
                 }
@@ -197,7 +197,7 @@ var Environment = (function () {
                 }
             },
             
-            fileExists: function(path): bool {
+            fileExists: function(path): boolean {
                 return _fs.existsSync(path);
             },
 
@@ -208,12 +208,12 @@ var Environment = (function () {
                 }
             },
             
-            directoryExists: function(path: string): bool {
+            directoryExists: function(path: string): boolean {
                 return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
             },
 
             listFiles: function dir(path, spec?, options?) {
-                options = options || <{ recursive?: bool; }>{};
+                options = options || <{ recursive?: boolean; }>{};
 
                 function filesInFolder(folder: string): string[]{
                     var paths = [];

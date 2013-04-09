@@ -21,7 +21,7 @@ module TypeScript.Formatting {
         private previousTokenParent: IndentationNodeContext = null;
 
         // TODO: implement it with skipped tokens in Fidelity
-        private scriptHasErrors: bool = false;
+        private scriptHasErrors: boolean = false;
 
         private rulesProvider: RulesProvider;
         private formattingRequestKind: FormattingRequestKind;
@@ -29,7 +29,7 @@ module TypeScript.Formatting {
 
         constructor(textSpan: TextSpan,
             sourceUnit: SourceUnitSyntax,
-            indentFirstToken: bool,
+            indentFirstToken: boolean,
             options: FormattingOptions,
             snapshot: ITextSnapshot,
             rulesProvider: RulesProvider,
@@ -47,7 +47,7 @@ module TypeScript.Formatting {
         public static getEdits(textSpan: TextSpan,
             sourceUnit: SourceUnitSyntax,
             options: FormattingOptions,
-            indentFirstToken: bool,
+            indentFirstToken: boolean,
             snapshot: ITextSnapshot,
             rulesProvider: RulesProvider,
             formattingRequestKind: FormattingRequestKind): TextEditInfo[] {

@@ -14,7 +14,7 @@ describe('getCompletionsAtPositionObjectLiterals', function () {
     //
     // line and column are 1-based
     //
-    function getCompletionList(fileName: string, line: number, column: number, isMemberCompletion: bool): Services.CompletionInfo {
+    function getCompletionList(fileName: string, line: number, column: number, isMemberCompletion: boolean): Services.CompletionInfo {
         var position = typescriptls.lineColToPosition(fileName, line, column);
         return ls.languageService.getCompletionsAtPosition(fileName, position, isMemberCompletion);
     }

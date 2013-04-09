@@ -15,8 +15,8 @@ interface IIndexSignatureSymbol extends IParameterizedSymbol {
 }
 
 interface IPropertySignature extends ISignatureSymbol {
-    isOptional(): bool;
+    isOptional(): boolean;
 
     /// True if this property's type is an anonymous type that is a function type.
-    isFunctionSignature(): bool;
+    isFunctionSignature(): boolean;
 }

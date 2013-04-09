@@ -17,12 +17,12 @@ module TypeScript {
 
         private _parentStack: SyntaxNode[] = [];
 
-        constructor(private trackParents: bool, private trackPreviousToken: bool) {
+        constructor(private trackParents: boolean, private trackPreviousToken: boolean) {
             super();
             this._parentStack.push(null);
         }
 
-        public static create(node: SyntaxNode, trackParents: bool, trackPreviousToken: bool): SyntaxInformationMap {
+        public static create(node: SyntaxNode, trackParents: boolean, trackPreviousToken: boolean): SyntaxInformationMap {
             var map = new SyntaxInformationMap(trackParents, trackPreviousToken);
             map.visitNode(node);
             return map;
@@ -98,13 +98,13 @@ module TypeScript {
             return current;
         }
 
-        public isFirstTokenInLine(token: ISyntaxToken): bool {
+        public isFirstTokenInLine(token: ISyntaxToken): boolean {
             var information = this.tokenInformation(token);
             return this.isFirstTokenInLineWorker(information);
 
         }
 
-        private isFirstTokenInLineWorker(information: ITokenInformation): bool {
+        private isFirstTokenInLineWorker(information: ITokenInformation): boolean {
             return information.previousToken === null || information.previousToken.hasTrailingNewLine();
         }
     }

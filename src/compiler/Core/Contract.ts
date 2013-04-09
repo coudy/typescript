@@ -2,13 +2,13 @@
 
 module TypeScript {
     export class Contract {
-        public static requires(expression: bool): void {
+        public static requires(expression: boolean): void {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         }
 
-        public static throwIfFalse(expression: bool): void {
+        public static throwIfFalse(expression: boolean): void {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }

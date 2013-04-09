@@ -1,6 +1,6 @@
 interface Foo{
     extend<T>(target: T, ...objs: any[]): T;
-    extend<T>(deep: bool, target: T, ...objs: any[]): T;
+    extend<T>(deep: boolean, target: T, ...objs: any[]): T;
 }
 declare var $: Foo;
 var s = $.extend({

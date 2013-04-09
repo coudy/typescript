@@ -8,13 +8,13 @@ declare var App: any;
 var TestFileDir = ".\\TempTestFiles";
 
 export class TestCase {
-    constructor (public name: string, public test: ()=>bool, public errorMessageRegEx?: string) {
+    constructor (public name: string, public test: ()=>boolean, public errorMessageRegEx?: string) {
     }
 }
 export class TestRunner { 
     private tests: TestCase[] = [];
 
-    static arrayCompare(arg1: any[], arg2: any[]): bool {
+    static arrayCompare(arg1: any[], arg2: any[]): boolean {
         return (arg1.every(function (val, index) { return val === arg2[index] }));
     }
 
@@ -27,7 +27,7 @@ export class TestRunner {
         for (var test in this.tests) {
             var exception = false;
             var testcase = <TestCase>this.tests[test]
-            var testResult: bool = false;
+            var testResult: boolean = false;
             try {
                 console.log("Executing test: " + testcase.name);
                 testResult = testcase.test();

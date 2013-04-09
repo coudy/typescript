@@ -1,8 +1,8 @@
 interface PropertyDescriptor {
-    configurable?: bool;
-    enumerable?: bool;
+    configurable?: boolean;
+    enumerable?: boolean;
     value?: any;
-    writable?: bool;
+    writable?: boolean;
     get?(): any;
     set?(v: any): void;
 }

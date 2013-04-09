@@ -59,7 +59,7 @@ describe('getInScopeNamesAndTypesFromPosition', function ()
 
     function verifyNamesAndTypes(namesAndTypes: TypeScript.ScopeEntry[], spec: any)
     {
-        var found: bool;
+        var found: boolean;
         var names = namesAndTypes;
 
         for (name in spec)
@@ -97,7 +97,7 @@ describe('getInScopeNamesAndTypesFromPosition', function ()
 
     function verifyNotListed(namesAndTypes: TypeScript.ScopeEntry[], spec: any)
     {
-        var found: bool;
+        var found: boolean;
         var names = namesAndTypes;
 
         for (var item in spec)

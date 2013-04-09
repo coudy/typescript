@@ -11,9 +11,9 @@ module TypeScript {
         // Text for this trivia list.
         fullText(): string;
 
-        hasComment(): bool;
-        hasNewLine(): bool;
-        hasSkippedText(): bool;
+        hasComment(): boolean;
+        hasNewLine(): boolean;
+        hasSkippedText(): boolean;
 
         last(): ISyntaxTrivia;
         toArray(): ISyntaxTrivia[];

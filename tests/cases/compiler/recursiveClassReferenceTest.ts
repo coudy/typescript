@@ -25,7 +25,7 @@ declare module Sample.Thing {
 	}
 
 	export interface IAction {
-		run(Thing:ICodeThing):bool;
+		run(Thing:ICodeThing):boolean;
 		getId():string;
 	}	
 }
@@ -35,7 +35,7 @@ module Sample.Actions.Thing.Find {
 		
 		public getId() { return "yo"; }
 		
-		public run(Thing:Sample.Thing.ICodeThing):bool {
+		public run(Thing:Sample.Thing.ICodeThing):boolean {
 
 			return true;
 		}
@@ -78,7 +78,7 @@ module Sample.Thing.Languages.PlainText {
 			return this;
 		}
 
-		public equals(other:IState):bool {
+		public equals(other:IState):boolean {
 			return this === other;
 		}
 		

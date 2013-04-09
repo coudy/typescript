@@ -28,7 +28,7 @@ var z = (x:number) => x*x;
 
 var w = () => 3;
 
-function ternaryTest(isWhile:bool) {
+function ternaryTest(isWhile:boolean) {
 
                 var f = isWhile ? function (n) { return n > 0; } : function (n) { return n === 0; };
 

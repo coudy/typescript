@@ -39,7 +39,7 @@ module TypeScript {
             return new TextSpan(this.span().start(), this.newLength());
         }
 
-        public isUnchanged(): bool {
+        public isUnchanged(): boolean {
             return this.span().isEmpty() && this.newLength() === 0;
         }
 

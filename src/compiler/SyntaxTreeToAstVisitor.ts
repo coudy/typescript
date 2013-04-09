@@ -60,10 +60,10 @@ module TypeScript {
 
         private position = 0;
 
-        private requiresExtendsBlock: bool = false;
+        private requiresExtendsBlock: boolean = false;
         private previousTokenTrailingComments: Comment[] = null;
 
-        private isParsingDeclareFile: bool;
+        private isParsingDeclareFile: boolean;
         private isParsingAmbientModule = false;
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
@@ -192,7 +192,7 @@ module TypeScript {
             Debug.assert(span.limChar !== -1);
         }
 
-        private identifierFromToken(token: ISyntaxToken, isOptional: bool, useValueText: bool): Identifier {
+        private identifierFromToken(token: ISyntaxToken, isOptional: boolean, useValueText: boolean): Identifier {
             this.assertElementAtPosition(token);
 
             var result: Identifier = null;
@@ -291,7 +291,7 @@ module TypeScript {
             return id;
         }
 
-        private convertComment(trivia: ISyntaxTrivia, commentStartPosition: number, hasTrailingNewLine: bool): Comment {
+        private convertComment(trivia: ISyntaxTrivia, commentStartPosition: number, hasTrailingNewLine: boolean): Comment {
             var comment = new Comment(trivia.fullText(), trivia.kind() === SyntaxKind.MultiLineCommentTrivia, hasTrailingNewLine);
 
             comment.minChar = commentStartPosition;
@@ -363,7 +363,7 @@ module TypeScript {
             return this.convertTokenTrailingComments(node.lastToken(), nodeStart + node.leadingTriviaWidth() + node.width());
         }
 
-        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): boolean {
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (list.childAt(i).kind() === kind) {
                     return true;
@@ -425,7 +425,7 @@ module TypeScript {
             return result;
         }
 
-        private hasTopLevelImportOrExport(node: SourceUnitSyntax): bool {
+        private hasTopLevelImportOrExport(node: SourceUnitSyntax): boolean {
             // TODO: implement this.
 
             var firstToken: ISyntaxToken;
@@ -473,7 +473,7 @@ module TypeScript {
             return false;
         }
 
-        private hasUseStrictDirective(list: ISyntaxList): bool {
+        private hasUseStrictDirective(list: ISyntaxList): boolean {
             // Check if all the items are directive prologue elements.
             for (var i = 0; i < list.childCount(); i++) {
                 var item = list.childAt(i);
@@ -801,7 +801,7 @@ module TypeScript {
             return result;
         }
 
-        private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): bool {
+        private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): boolean {
             for (var i = 0, n = parameters.nonSeparatorCount(); i < n; i++) {
                 if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken) {
                     return true;

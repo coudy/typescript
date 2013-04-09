@@ -3,7 +3,7 @@
 module TypeScript {
     export class SyntaxTree {
         private _sourceUnit: SourceUnitSyntax;
-        private _isDeclaration: bool;
+        private _isDeclaration: boolean;
         private _parserDiagnostics: SyntaxDiagnostic[];
         private _allDiagnostics: SyntaxDiagnostic[] = null;
         private _fileName: string;
@@ -12,7 +12,7 @@ module TypeScript {
         private _parseOptions: ParseOptions;
 
         constructor(sourceUnit: SourceUnitSyntax,
-                    isDeclaration: bool,
+                    isDeclaration: boolean,
                     diagnostics: SyntaxDiagnostic[],
                     fileName: string,
                     lineMap: LineMap,
@@ -48,7 +48,7 @@ module TypeScript {
             return this._sourceUnit;
         }
 
-        public isDeclaration(): bool {
+        public isDeclaration(): boolean {
             return this._isDeclaration;
         }
 
@@ -88,19 +88,19 @@ module TypeScript {
             return this._parseOptions;
         }
 
-        public structuralEquals(tree: SyntaxTree): bool {
+        public structuralEquals(tree: SyntaxTree): boolean {
             return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
                 this.sourceUnit().structuralEquals(tree.sourceUnit());
         }
     }
 
     class GrammarCheckerWalker extends PositionTrackingWalker {
-        private inAmbientDeclaration: bool = false;
+        private inAmbientDeclaration: boolean = false;
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private fileName: string,
                     private diagnostics: IDiagnostic[],
-                    private isDeclaration: bool) {
+                    private isDeclaration: boolean) {
             super();
         }
 
@@ -123,7 +123,7 @@ module TypeScript {
             return null;
         }
 
-        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): boolean {
             return this.getToken(list, kind) !== null;
         }
 
@@ -148,7 +148,7 @@ module TypeScript {
             super.visitCatchClause(node);
         }
 
-        private checkParameterListOrder(node: ParameterListSyntax): bool {
+        private checkParameterListOrder(node: ParameterListSyntax): boolean {
             var parameterFullStart = this.childFullStart(node, node.parameters);
 
             var seenOptionalParameter = false;
@@ -208,7 +208,7 @@ module TypeScript {
             return false;
         }
 
-        private checkParameterListAcessibilityModifiers(node: ParameterListSyntax): bool {
+        private checkParameterListAcessibilityModifiers(node: ParameterListSyntax): boolean {
             // Only constructor parameters can have public/private modifiers.  Also, the constructor
             // needs to have a body, and it can't be in an ambient context.
             if (this.currentConstructor !== null &&
@@ -250,7 +250,7 @@ module TypeScript {
             super.visitParameterList(node);
         }
 
-        private checkIndexSignatureParameter(node: IndexSignatureSyntax): bool {
+        private checkIndexSignatureParameter(node: IndexSignatureSyntax): boolean {
             var parameterFullStart = this.childFullStart(node, node.parameter);
             var parameter = node.parameter;
 
@@ -311,7 +311,7 @@ module TypeScript {
             super.visitIndexSignature(node);
         }
 
-        private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): bool {
+        private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): boolean {
             var heritageClauseFullStart = this.childFullStart(node, node.heritageClauses);
 
             var seenExtendsClause = false;
@@ -359,7 +359,7 @@ module TypeScript {
             return false;
         }
 
-        private checkForDisallowedDeclareModifier(modifiers: ISyntaxList): bool {
+        private checkForDisallowedDeclareModifier(modifiers: ISyntaxList): boolean {
             if (this.inAmbientDeclaration) {
                 // If we're already in an ambient declaration, then 'declare' is not allowed.
                 var declareToken = this.getToken(modifiers, SyntaxKind.DeclareKeyword);
@@ -376,7 +376,7 @@ module TypeScript {
 
         private checkForRequiredDeclareModifier(moduleElement: IModuleElementSyntax,
                                                 typeKeyword: ISyntaxElement,
-                                                modifiers: ISyntaxList): bool {
+                                                modifiers: ISyntaxList): boolean {
             if (!this.inAmbientDeclaration && this.isDeclaration) {
                 // We're at the top level in a declaration file, a 'declare' modifiers is required
                 // on most module elements.
@@ -388,7 +388,7 @@ module TypeScript {
             }
         }
 
-        private checkFunctionOverloads(node: ISyntaxElement, moduleElements: ISyntaxList): bool {
+        private checkFunctionOverloads(node: ISyntaxElement, moduleElements: ISyntaxList): boolean {
             if (!this.inAmbientDeclaration && !this.isDeclaration) {
                 var moduleElementFullStart = this.childFullStart(node, moduleElements);
 
@@ -440,7 +440,7 @@ module TypeScript {
             return false;
         }
 
-        private checkClassOverloads(node: ClassDeclarationSyntax): bool {
+        private checkClassOverloads(node: ClassDeclarationSyntax): boolean {
             if (!this.inAmbientDeclaration && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
 
@@ -524,7 +524,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): bool {
+        private checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): boolean {
             var heritageClauseFullStart = this.childFullStart(node, node.heritageClauses);
 
             var seenExtendsClause = false;
@@ -555,7 +555,7 @@ module TypeScript {
             return false;
         }
 
-        private checkInterfaceModifiers(modifiers: ISyntaxList): bool {
+        private checkInterfaceModifiers(modifiers: ISyntaxList): boolean {
             var modifierFullStart = this.position();
 
             for (var i = 0, n = modifiers.childCount(); i < n; i++) {
@@ -584,7 +584,7 @@ module TypeScript {
             super.visitInterfaceDeclaration(node);
         }
 
-        private checkClassElementModifiers(list: ISyntaxList): bool {
+        private checkClassElementModifiers(list: ISyntaxList): boolean {
             var modifierFullStart = this.position();
 
             var seenAccessibilityModifier = false;
@@ -649,7 +649,7 @@ module TypeScript {
             super.visitMemberFunctionDeclaration(node);
         }
 
-        private checkGetMemberAccessorParameter(node: GetMemberAccessorDeclarationSyntax): bool {
+        private checkGetMemberAccessorParameter(node: GetMemberAccessorDeclarationSyntax): boolean {
             var getKeywordFullStart = this.childFullStart(node, node.getKeyword);
             if (node.parameterList.parameters.childCount() !== 0) {
                 this.pushDiagnostic1(getKeywordFullStart, node.getKeyword,
@@ -670,7 +670,7 @@ module TypeScript {
             super.visitGetMemberAccessorDeclaration(node);
         }
 
-        private checkSetMemberAccessorParameter(node: SetMemberAccessorDeclarationSyntax): bool {
+        private checkSetMemberAccessorParameter(node: SetMemberAccessorDeclarationSyntax): boolean {
             var setKeywordFullStart = this.childFullStart(node, node.setKeyword);
             if (node.parameterList.parameters.childCount() !== 1) {
                 this.pushDiagnostic1(setKeywordFullStart, node.setKeyword,
@@ -719,7 +719,7 @@ module TypeScript {
             super.visitSetMemberAccessorDeclaration(node);
         }
 
-        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): bool {
+        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): boolean {
             var enumElementFullStart = this.childFullStart(node, node.enumElements);
             var seenExplicitMember = false;
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
@@ -769,7 +769,7 @@ module TypeScript {
             super.visitInvocationExpression(node);
         }
 
-        private checkModuleElementModifiers(modifiers: ISyntaxList): bool {
+        private checkModuleElementModifiers(modifiers: ISyntaxList): boolean {
             var modifierFullStart = this.position();
             var seenExportModifier = false;
             var seenDeclareModifier = false;
@@ -856,7 +856,7 @@ module TypeScript {
             super.visitBlock(node);
         }
 
-        private checkForStatementInAmbientContxt(node: IStatementSyntax): bool {
+        private checkForStatementInAmbientContxt(node: IStatementSyntax): boolean {
             if (this.inAmbientDeclaration || this.isDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
                     DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);

@@ -1,6 +1,6 @@
 
 function foo(bar:{a:number;}[]):string;
-function foo(bar:{a:bool;}[]):number;
+function foo(bar:{a:boolean;}[]):number;
 function foo(bar:{a:any;}[]):any{ return bar };
 
 var x1 = foo([{a:true}]); // works
@@ -11,7 +11,7 @@ var x1111 = foo([{a:null}]); // error - ambiguous
 
 
 function foo2(bar:{a:number;}):string;
-function foo2(bar:{a:bool;}):number;
+function foo2(bar:{a:boolean;}):number;
 function foo2(bar:{a:any;}):any{ return bar };
 
 var x2 = foo2({a:0}); // works

@@ -87,7 +87,7 @@ module TypeScriptAllInOne {
 
             //
             var any = 0;
-            var bool = 0;
+            var boolean = 0;
             var declare = 0;
             var constructor = 0;
             var get = 0;
@@ -105,7 +105,7 @@ module TypeScriptAllInOne {
             var string = 0;
             var yield = 0;
 
-            var sum3 = any + bool + declare + constructor + get + implements + interface + let + module + number + package + private + protected + public + set + static + string + yield;
+            var sum3 = any + boolean + declare + constructor + get + implements + interface + let + module + number + package + private + protected + public + set + static + string + yield;
 
             return 0;
         }
@@ -210,7 +210,7 @@ module TypeScriptAllInOne {
     }
 
     interface IF {
-        Foo <!-- ): bool;
+        Foo <!-- ): boolean;
     }
 
     class CLASS implements IF {
@@ -220,7 +220,7 @@ module TypeScriptAllInOne {
         public Member() {
             return 0;
         }
-        public Foo(): bool {
+        public Foo(): boolean {
             var myEvent = () => { return 1; };
             if (myEvent() == 1)
                 return true;

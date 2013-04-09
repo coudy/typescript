@@ -203,7 +203,7 @@
 /////** This is multiOverload F1 2*/
 ////function multiOverload(b: string): string;
 /////** This is multiOverload F1 3*/
-////function multiOverload(c: bool): string;
+////function multiOverload(c: boolean): string;
 /////** This is multiOverload Implementation */
 ////function multiOverload(d): string {
 ////    return "Hello";
@@ -216,7 +216,7 @@
 /////** This is ambient F1 2*/
 ////declare function ambientF1(b: string): string;
 /////** This is ambient F1 3*/
-////declare function ambientF1(c: bool): bool;
+////declare function ambientF1(c: boolean): boolean;
 /////*65*/
 ////ambient/*74*/F1(10);
 ////ambient/*75*/F1("hello");
@@ -630,14 +630,14 @@ verify.quickInfoIs("(a: number): string (+ 2 overload(s))", "This is multiOverlo
 goTo.marker('72');
 verify.quickInfoIs("(b: string): string (+ 2 overload(s))", "This is multiOverload F1 2", "multiOverload", "function");
 goTo.marker('73');
-verify.quickInfoIs("(c: bool): string (+ 2 overload(s))", "This is multiOverload F1 3", "multiOverload", "function");
+verify.quickInfoIs("(c: boolean): string (+ 2 overload(s))", "This is multiOverload F1 3", "multiOverload", "function");
 
 goTo.marker('74');
 verify.quickInfoIs("(a: number): string (+ 2 overload(s))", "This is ambient F1 1", "ambientF1", "function");
 goTo.marker('75');
 verify.quickInfoIs("(b: string): string (+ 2 overload(s))", "This is ambient F1 2", "ambientF1", "function");
 goTo.marker('76');
-verify.quickInfoIs("(c: bool): bool (+ 2 overload(s))", "This is ambient F1 3", "ambientF1", "function");
+verify.quickInfoIs("(c: boolean): boolean (+ 2 overload(s))", "This is ambient F1 3", "ambientF1", "function");
 
 goTo.marker('77');
 verify.quickInfoIs("i3", "", "aa", "parameter");

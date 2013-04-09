@@ -1,11 +1,11 @@
 interface I {
     w: {
         z: I;
-        (): bool;
+        (): boolean;
         [s: string]: { x: any; y: any; };
         [n: number]: { x: any; y: any; };
     };
-    x: bool;
-    y: (s: string) => bool;
+    x: boolean;
+    y: (s: string) => boolean;
     z: I; 
 }

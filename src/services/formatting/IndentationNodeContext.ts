@@ -23,7 +23,7 @@ module TypeScript.Formatting {
         private _indentationLevel: number;
         private _childIndentationLevelDelta: number;
         private _depth: number;
-        private _hasSkippedOrMissingTokenChild: bool;
+        private _hasSkippedOrMissingTokenChild: boolean;
 
         constructor(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationLevel: number, childIndentationLevelDelta: number) {
             this.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
@@ -69,7 +69,7 @@ module TypeScript.Formatting {
             return this._node.kind();
         }
 
-        public hasSkippedOrMissingTokenChild(): bool {
+        public hasSkippedOrMissingTokenChild(): boolean {
             if (this._hasSkippedOrMissingTokenChild === null) {
                 this._hasSkippedOrMissingTokenChild = Syntax.nodeHasSkippedOrMissingTokens(this._node);
             }

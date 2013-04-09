@@ -20,7 +20,7 @@ interface IVariableSymbol extends IMemberSymbol {
     /// </summary>
     type(): ITypeSymbol;
 
-    hasValue(): bool;
+    hasValue(): boolean;
 
     /// <summary>
     /// Gets the constant value of this field

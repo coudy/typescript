@@ -191,11 +191,11 @@ module TypeScript {
             return this.getMemberTypeName("", true, false, null);
         }
 
-        public getScopedTypeName(scope: SymbolScope, getPrettyTypeName?: bool) {
+        public getScopedTypeName(scope: SymbolScope, getPrettyTypeName?: boolean) {
             return this.getMemberTypeName("", true, false, scope, getPrettyTypeName);
         }
 
-        public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: bool) {
+        public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: boolean) {
             return this.getMemberTypeNameEx("", true, false, scope, getPrettyTypeName);
         }
 
@@ -215,13 +215,13 @@ module TypeScript {
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeName(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope, getPrettyTypeName?: bool): string {
+        public getMemberTypeName(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope, getPrettyTypeName?: boolean): string {
             var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, scope, getPrettyTypeName);
             return memberName.toString();
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeNameEx(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope, getPrettyTypeName?: bool): MemberName {
+        public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope, getPrettyTypeName?: boolean): MemberName {
             if (this.elementType) {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
             }
@@ -356,7 +356,7 @@ module TypeScript {
                 this.elementType;
         }
 
-        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker, membersOnly: bool): Type {
+        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker, membersOnly: boolean): Type {
             if (pattern === this) {
                 return replacement;
             }
@@ -417,7 +417,7 @@ module TypeScript {
             return result;
         }
 
-        public hasBase(baseType: Type): bool {
+        public hasBase(baseType: Type): boolean {
             if (baseType === this) {
                 return true;
             }
@@ -433,7 +433,7 @@ module TypeScript {
             return false;
         }
 
-        public mergeOrdered(b: Type, checker: TypeChecker, acceptVoid: bool, comparisonInfo?: TypeComparisonInfo): Type {
+        public mergeOrdered(b: Type, checker: TypeChecker, acceptVoid: boolean, comparisonInfo?: TypeComparisonInfo): Type {
             if ((this === checker.anyType) || (b === checker.anyType)) {
                 return checker.anyType;
             }
@@ -572,7 +572,7 @@ module TypeScript {
         public ast: AST = null;
     }
 
-    export function getTypeLink(ast: AST, checker: TypeChecker, autoVar: bool): TypeLink {
+    export function getTypeLink(ast: AST, checker: TypeChecker, autoVar: boolean): TypeLink {
         var result = new TypeLink();
 
         result.ast = ast;

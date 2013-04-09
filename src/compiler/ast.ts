@@ -30,15 +30,15 @@ module TypeScript {
 
     export var astID = 0;
 
-    export function structuralEqualsNotIncludingPosition(ast1: AST, ast2: AST): bool {
+    export function structuralEqualsNotIncludingPosition(ast1: AST, ast2: AST): boolean {
         return structuralEquals(ast1, ast2, false);
     }
 
-    export function structuralEqualsIncludingPosition(ast1: AST, ast2: AST): bool {
+    export function structuralEqualsIncludingPosition(ast1: AST, ast2: AST): boolean {
         return structuralEquals(ast1, ast2, true);
     }
 
-    function structuralEquals(ast1: AST, ast2: AST, includingPosition: bool): bool {
+    function structuralEquals(ast1: AST, ast2: AST, includingPosition: boolean): boolean {
         if (ast1 === ast2) {
             return true;
         }
@@ -48,7 +48,7 @@ module TypeScript {
                ast1.structuralEquals(ast2, includingPosition);
     }
 
-    function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition): bool {
+    function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition): boolean {
         return ArrayUtilities.sequenceEquals(array1, array2,
             includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
     }
@@ -123,7 +123,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             throw new Error("please implement in derived class");
         }
 
@@ -181,7 +181,7 @@ module TypeScript {
             return this.docComments;
         }
 
-        public structuralEquals(ast: AST, includingPosition: bool): bool {
+        public structuralEquals(ast: AST, includingPosition: boolean): boolean {
             if (includingPosition) {
                 if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
                     return false;
@@ -221,7 +221,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascriptList(this, null, startLine, false, false);
             emitter.recordSourceMappingEnd(this);
@@ -239,7 +239,7 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: ASTList, includingPosition: bool): bool {
+        public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    astArrayStructuralEquals(this.members, ast.members, includingPosition);
         }
@@ -296,11 +296,11 @@ module TypeScript {
             return typeFlow.typeCheckName(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptName(this, true);
         }
 
-        public structuralEquals(ast: Identifier, includingPosition: bool): bool {
+        public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text &&
                    this.actualText === ast.actualText &&
@@ -317,7 +317,7 @@ module TypeScript {
             return true;
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             // Emit nothing for a missing ID
         }
     }
@@ -327,7 +327,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             switch (this.nodeType) {
                 case NodeType.NullLiteral:
@@ -351,7 +351,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
@@ -361,7 +361,7 @@ module TypeScript {
             super(NodeType.ThisExpression);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
@@ -374,7 +374,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
@@ -384,7 +384,7 @@ module TypeScript {
             super(NodeType.SuperExpression);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitSuperReference();
@@ -392,7 +392,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
@@ -402,7 +402,7 @@ module TypeScript {
             super(NodeType.ParenthesizedExpression);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.writeToOutput("(");
             emitter.recordSourceMappingStart(this);
@@ -412,7 +412,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expression, ast.expression, includingPosition);
         }
@@ -500,7 +500,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             switch (this.nodeType) {
@@ -575,7 +575,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: UnaryExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: UnaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.castTerm, ast.castTerm, includingPosition) &&
                    structuralEquals(this.operand, ast.operand, includingPosition);
@@ -601,7 +601,7 @@ module TypeScript {
             }
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
@@ -616,7 +616,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: CallExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: CallExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.target, ast.target, includingPosition) &&
                    structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
@@ -752,7 +752,7 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
@@ -817,7 +817,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: BinaryExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: BinaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.operand1, ast.operand1, includingPosition) &&
                    structuralEquals(this.operand2, ast.operand2, includingPosition);
@@ -835,7 +835,7 @@ module TypeScript {
             return typeFlow.typeCheckQMark(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascript(this.operand1, false);
@@ -847,7 +847,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ConditionalExpression, includingPosition: bool): bool {
+        public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.operand1, ast.operand1, includingPosition) &&
                    structuralEquals(this.operand2, ast.operand2, includingPosition) &&
@@ -869,7 +869,7 @@ module TypeScript {
             return "num: " + this.printLabel();
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
@@ -881,7 +881,7 @@ module TypeScript {
             return this.text;
         }
 
-        public structuralEquals(ast: NumberLiteral, includingPosition: bool): bool {
+        public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.value === ast.value &&
                    this.text === ast.text;
@@ -898,7 +898,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
@@ -906,7 +906,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: RegexLiteral, includingPosition: bool): bool {
+        public structuralEquals(ast: RegexLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text;
         }
@@ -917,7 +917,7 @@ module TypeScript {
             super(NodeType.StringLiteral);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitStringLiteral(this.text);
@@ -938,7 +938,7 @@ module TypeScript {
             return this.text;
         }
 
-        public structuralEquals(ast: StringLiteral, includingPosition: bool): bool {
+        public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text;
         }
@@ -954,7 +954,7 @@ module TypeScript {
 
         public isDeclaration() { return true; }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             // REVIEW: Only modules may be aliased for now, though there's no real
             // restriction on what the type symbol may be
             if (emitter.importStatementShouldBeEmitted(this)) {
@@ -1005,7 +1005,7 @@ module TypeScript {
             }
         }
 
-        public structuralEquals(ast: ImportDeclaration, includingPosition: bool): bool {
+        public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.id, ast.id, includingPosition) &&
                    structuralEquals(this.alias, ast.alias, includingPosition);
@@ -1017,7 +1017,7 @@ module TypeScript {
             super(NodeType.ExportAssignment);
         }
 
-        public structuralEquals(ast: ExportAssignment, includingPosition: bool): bool {
+        public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.id, ast.id, includingPosition);
         }
@@ -1054,7 +1054,7 @@ module TypeScript {
             return this.treeViewLabel();
         }
 
-        public structuralEquals(ast: BoundDecl, includingPosition: bool): bool {
+        public structuralEquals(ast: BoundDecl, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._varFlags === ast._varFlags &&
                    structuralEquals(this.init, ast.init, includingPosition) &&
@@ -1072,7 +1072,7 @@ module TypeScript {
 
         public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptVariableDeclarator(this);
         }
 
@@ -1096,7 +1096,7 @@ module TypeScript {
 
         public parameterPropertySym: FieldSymbol = null;
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.id.actualText);
@@ -1104,7 +1104,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: Parameter, includingPosition: bool): bool {
+        public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.isOptional === ast.isOptional;
         }
@@ -1127,7 +1127,7 @@ module TypeScript {
 
         constructor(public name: Identifier,
                     public block: Block,
-                    public isConstructor: bool,
+                    public isConstructor: boolean,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
                     nodeType: number) {
@@ -1144,7 +1144,7 @@ module TypeScript {
             this._functionFlags = flags;
         }
 
-        public structuralEquals(ast: FunctionDeclaration, includingPosition: bool): bool {
+        public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._functionFlags === ast._functionFlags &&
                    this.hint === ast.hint &&
@@ -1178,7 +1178,7 @@ module TypeScript {
             return typeFlow.typeCheckFunction(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptFunction(this);
         }
 
@@ -1225,9 +1225,9 @@ module TypeScript {
         // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
-        public cachedEmitRequired: bool;
+        public cachedEmitRequired: boolean;
 
-        private setCachedEmitRequired(value: bool) {
+        private setCachedEmitRequired(value: boolean) {
             this.cachedEmitRequired = value;
             return this.cachedEmitRequired;
         }
@@ -1290,7 +1290,7 @@ module TypeScript {
             return this.setCachedEmitRequired(false);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             if (this.emitRequired(emitter.emitOptions)) {
                 emitter.emitJavascriptList(this.moduleElements, null, true, false, false, true, this.requiresExtendsBlock);
             }
@@ -1306,7 +1306,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public structuralEquals(ast: NamedDeclaration, includingPosition: bool): bool {
+        public structuralEquals(ast: NamedDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.members, ast.members, includingPosition);
@@ -1337,7 +1337,7 @@ module TypeScript {
             this._moduleFlags = flags;
         }
 
-        public structuralEquals(ast: ModuleDeclaration, includePosition: bool): bool {
+        public structuralEquals(ast: ModuleDeclaration, includePosition: boolean): boolean {
             if (super.structuralEquals(ast, includePosition)) {
                 // TODO: We don't need the 'withoutFlag' calls here once we get rid of 
                 // ShouldEmitModuleDecl.
@@ -1359,7 +1359,7 @@ module TypeScript {
             return typeFlow.typeCheckModule(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             if (!hasFlag(this.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl)) {
                 emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
@@ -1389,7 +1389,7 @@ module TypeScript {
             this._varFlags = flags;
         }
 
-        public structuralEquals(ast: TypeDeclaration, includingPosition: bool): bool {
+        public structuralEquals(ast: TypeDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._varFlags === ast._varFlags &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
@@ -1414,7 +1414,7 @@ module TypeScript {
             return typeFlow.typeCheckClass(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptClass(this);
         }
     }
@@ -1432,7 +1432,7 @@ module TypeScript {
             return typeFlow.typeCheckInterface(this);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
         }
     }
 
@@ -1456,7 +1456,7 @@ module TypeScript {
             super(NodeType.ExpressionStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             this.expression.emit(emitter, startLine);
@@ -1465,7 +1465,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ExpressionStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: ExpressionStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expression, ast.expression, includingPosition);
         }
@@ -1476,7 +1476,7 @@ module TypeScript {
             super(NodeType.LabeledStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
@@ -1502,7 +1502,7 @@ module TypeScript {
             beforeBB.addSuccessor(bb);
         }
 
-        public structuralEquals(ast: LabeledStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                    structuralEquals(this.statement, ast.statement, includingPosition);
@@ -1514,11 +1514,11 @@ module TypeScript {
             super(NodeType.VariableDeclaration);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptVariableDeclaration(this, startLine);
         }
 
-        public structuralEquals(ast: VariableDeclaration, includingPosition: bool): bool {
+        public structuralEquals(ast: VariableDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.declarators, ast.declarators, includingPosition);
         }
@@ -1529,7 +1529,7 @@ module TypeScript {
             super(NodeType.VariableStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1547,7 +1547,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: VariableStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.declaration, ast.declaration, includingPosition);
         }
@@ -1559,7 +1559,7 @@ module TypeScript {
             super(NodeType.Block);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeLineToOutput(" {");
@@ -1601,7 +1601,7 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: Block, includingPosition: bool): bool {
+        public structuralEquals(ast: Block, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.statements, ast.statements, includingPosition);
         }
@@ -1621,7 +1621,7 @@ module TypeScript {
             context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.ContinueStatement));
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType === NodeType.BreakStatement) {
@@ -1638,7 +1638,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: Jump, includingPosition: bool): bool {
+        public structuralEquals(ast: Jump, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.target === ast.target;
         }
@@ -1649,7 +1649,7 @@ module TypeScript {
             super(NodeType.WhileStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1694,7 +1694,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: WhileStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
@@ -1708,7 +1708,7 @@ module TypeScript {
             super(NodeType.DoStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1756,7 +1756,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: DoStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition);
@@ -1772,7 +1772,7 @@ module TypeScript {
             super(NodeType.IfStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1847,7 +1847,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: IfStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition) &&
                    structuralEquals(this.thenBod, ast.thenBod, includingPosition) &&
@@ -1860,7 +1860,7 @@ module TypeScript {
             super(NodeType.ReturnStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1886,7 +1886,7 @@ module TypeScript {
             return typeFlow.typeCheckReturn(this);
         }
 
-        public structuralEquals(ast: ReturnStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.returnExpression, ast.returnExpression, includingPosition);
         }
@@ -1899,7 +1899,7 @@ module TypeScript {
 
         public statement: ASTSpan = new ASTSpan();
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -1949,7 +1949,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: ForInStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.lval, ast.lval, includingPosition) &&
                    structuralEquals(this.obj, ast.obj, includingPosition) &&
@@ -1965,7 +1965,7 @@ module TypeScript {
             super(NodeType.ForStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -2052,7 +2052,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: ForStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.init, ast.init, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition) &&
@@ -2068,7 +2068,7 @@ module TypeScript {
             super(NodeType.WithStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("with (");
@@ -2086,7 +2086,7 @@ module TypeScript {
             return typeFlow.typeCheckWith(this);
         }
 
-        public structuralEquals(ast: WithStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expr, ast.expr, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
@@ -2102,7 +2102,7 @@ module TypeScript {
             super(NodeType.SwitchStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
@@ -2165,7 +2165,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: SwitchStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.caseList, ast.caseList, includingPosition) &&
                    structuralEquals(this.val, ast.val, includingPosition);
@@ -2181,7 +2181,7 @@ module TypeScript {
             super(NodeType.CaseClause);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.expr) {
@@ -2240,7 +2240,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: CaseClause, includingPosition: bool): bool {
+        public structuralEquals(ast: CaseClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expr, ast.expr, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
@@ -2252,7 +2252,7 @@ module TypeScript {
             super(NodeType.TypeParameter);
         }
 
-        public structuralEquals(ast: TypeParameter, includingPosition: bool): bool {
+        public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.constraint, ast.constraint, includingPosition);
@@ -2264,11 +2264,11 @@ module TypeScript {
             super(NodeType.GenericType);
         }
 
-        public emit(emitter: Emitter, startLine: bool): void {
+        public emit(emitter: Emitter, startLine: boolean): void {
             emitter.emitJavascript(this.name, false);
         }
 
-        public structuralEquals(ast: GenericType, includingPosition: bool): bool {
+        public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.typeArguments, ast.typeArguments, includingPosition);
@@ -2280,7 +2280,7 @@ module TypeScript {
             super(NodeType.TypeRef);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             throw new Error("should not emit a type ref");
         }
 
@@ -2307,7 +2307,7 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: TypeReference, includingPosition: bool): bool {
+        public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.term, ast.term, includingPosition) &&
                    this.arrayCount === ast.arrayCount;
@@ -2319,7 +2319,7 @@ module TypeScript {
             super(NodeType.TryStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("try ");
@@ -2335,7 +2335,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: TryStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: TryStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.tryBody, ast.tryBody, includingPosition) &&
                    structuralEquals(this.catchClause, ast.catchClause, includingPosition) &&
@@ -2351,7 +2351,7 @@ module TypeScript {
         public statement: ASTSpan = new ASTSpan();
         public containedScope: SymbolScope = null;
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(" ");
@@ -2417,7 +2417,7 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.param, ast.param, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
@@ -2429,7 +2429,7 @@ module TypeScript {
             super(NodeType.DebuggerStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("debugger");
@@ -2444,12 +2444,12 @@ module TypeScript {
             super(NodeType.OmittedExpression);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
@@ -2459,7 +2459,7 @@ module TypeScript {
             super(NodeType.EmptyStatement);
         }
 
-        public emit(emitter: Emitter, startLine: bool) {
+        public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeLineToOutput(";");
@@ -2467,7 +2467,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
@@ -2479,12 +2479,12 @@ module TypeScript {
         private docCommentText: string = null;
 
         constructor(public content: string,
-                    public isBlockComment: bool,
+                    public isBlockComment: boolean,
                     public endsLine) {
             super(NodeType.Comment);
         }
 
-        public structuralEquals(ast: Comment, includingPosition: bool): bool {
+        public structuralEquals(ast: Comment, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.minLine === ast.minLine &&
                    this.content === ast.content &&
@@ -2556,7 +2556,7 @@ module TypeScript {
             return index === length;
         }
 
-        static cleanDocCommentLine(line: string, jsDocStyleComment: bool, jsDocLineSpaceToRemove?: number) {
+        static cleanDocCommentLine(line: string, jsDocStyleComment: boolean, jsDocLineSpaceToRemove?: number) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
             if (nonSpaceIndex != -1) {
                 var jsDocSpacesRemoved = nonSpaceIndex;

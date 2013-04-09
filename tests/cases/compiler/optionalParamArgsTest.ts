@@ -117,7 +117,7 @@ i1o1.C1M4();
 F4();
 L4();
 
-function fnOpt1(id: number, children: number[] = [], expectedPath: number[] = [], isRoot?: bool): void {}
-function fnOpt2(id: number, children?: number[], expectedPath?: number[], isRoot?: bool): void {}
+function fnOpt1(id: number, children: number[] = [], expectedPath: number[] = [], isRoot?: boolean): void {}
+function fnOpt2(id: number, children?: number[], expectedPath?: number[], isRoot?: boolean): void {}
 fnOpt1(1, [2, 3], [1], true);
 fnOpt2(1, [2, 3], [1], true);

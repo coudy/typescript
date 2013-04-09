@@ -90,11 +90,11 @@ module TypeScript2 {
             return link;
         }
 
-        public findOutgoingLinks(p: (psl: PullSymbolLink) => bool) {
+        public findOutgoingLinks(p: (psl: PullSymbolLink) => boolean) {
             return <PullSymbolLink[]>this.outgoingLinks.find(p);
         }
 
-        public findIncomingLinks(p: (psl: PullSymbolLink) => bool) {
+        public findIncomingLinks(p: (psl: PullSymbolLink) => boolean) {
             return <PullSymbolLink[]>this.incomingLinks.find(p);
         }
 

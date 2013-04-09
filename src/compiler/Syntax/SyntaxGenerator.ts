@@ -12,21 +12,21 @@ interface ITypeDefinition {
     name: string;
     baseType: string;
     interfaces?: string[];
-    isAbstract?: bool;
+    isAbstract?: boolean;
     children: IMemberDefinition[];
-    isTypeScriptSpecific: bool;
+    isTypeScriptSpecific: boolean;
 }
 
 interface IMemberDefinition {
     name: string;
     type?: string;
-    isToken?: bool;
-    isList?: bool;
-    isSeparatedList?: bool;
-    requiresAtLeastOneItem?: bool;
-    isOptional?: bool;
+    isToken?: boolean;
+    isList?: boolean;
+    isSeparatedList?: boolean;
+    requiresAtLeastOneItem?: boolean;
+    isOptional?: boolean;
     tokenKinds?: string[];
-    isTypeScriptSpecific: bool;
+    isTypeScriptSpecific: boolean;
     elementType?: string;
 }
 
@@ -989,7 +989,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'semicolonToken', isToken: true }]
     }];
 
-//function endsWith(string: string, value: string): bool {
+//function endsWith(string: string, value: string): boolean {
 //    return string.substring(string.length - value.length, string.length) === value;
 //}
 
@@ -1266,7 +1266,7 @@ function generateConstructor(definition: ITypeDefinition): string {
         result += ",\r\n                ";
     }
 
-    result += "parsedInStrictMode: bool) {\r\n";
+    result += "parsedInStrictMode: boolean) {\r\n";
     
     result += "        super(";
 
@@ -1360,7 +1360,7 @@ function generateFactory1Method(definition: ITypeDefinition): string {
     return result;
 }
 
-function isKeywordOrPunctuation(kind: string): bool {
+function isKeywordOrPunctuation(kind: string): boolean {
     if (TypeScript.StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
@@ -1374,7 +1374,7 @@ function isKeywordOrPunctuation(kind: string): bool {
     return false;
 }
 
-function isDefaultConstructable(definition: ITypeDefinition): bool {
+function isDefaultConstructable(definition: ITypeDefinition): boolean {
     if (definition === null || definition.isAbstract) {
         return false;
     }
@@ -1390,7 +1390,7 @@ function isDefaultConstructable(definition: ITypeDefinition): bool {
     return true;
 }
 
-function isMandatory(child: IMemberDefinition): bool {
+function isMandatory(child: IMemberDefinition): boolean {
     // If it's optional then it's not mandatory.
     if (isOptional(child)) {
         return false;
@@ -1490,7 +1490,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
 
     //if (definition.isAbstract) {
     //    result += "\r\n";
-    //    result += "    private is" + getNameWithoutSuffix(definition) + "(): bool {\r\n";
+    //    result += "    private is" + getNameWithoutSuffix(definition) + "(): boolean {\r\n";
     //    result += "        return true;\r\n";
     //    result += "    }\r\n";
     //}
@@ -1518,7 +1518,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
             }
 
             result += "\r\n";
-            result += "    private is" + type + "(): bool {\r\n";
+            result += "    private is" + type + "(): boolean {\r\n";
             result += "        return true;\r\n";
             result += "    }\r\n";
         }
@@ -1722,7 +1722,7 @@ function memberDefinitionType(child: IMemberDefinition): ITypeDefinition {
     return TypeScript.ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
 }
 
-function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): bool {
+function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): boolean {
     var current = def1;
     while (current !== null) {
         var base = baseType(current);
@@ -1928,7 +1928,7 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
 }
 
 function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string {
-    var result = "\r\n    public isTypeScriptSpecific(): bool {\r\n";
+    var result = "\r\n    public isTypeScriptSpecific(): boolean {\r\n";
 
     if (definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
@@ -1966,7 +1966,7 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
     return result;
 }
 
-function couldBeRegularExpressionToken(child: IMemberDefinition): bool {
+function couldBeRegularExpressionToken(child: IMemberDefinition): boolean {
     var kinds = tokenKinds(child);
     return TypeScript.ArrayUtilities.contains(kinds, "SlashToken") ||
            TypeScript.ArrayUtilities.contains(kinds, "SlashEqualsToken") ||
@@ -1978,7 +1978,7 @@ function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
         return "";
     }
 
-    var result = "\r\n    private structuralEquals(node: SyntaxNode): bool {\r\n";
+    var result = "\r\n    private structuralEquals(node: SyntaxNode): boolean {\r\n";
     result += "        if (this === node) { return true; }\r\n";
     result += "        if (node === null) { return false; }\r\n";
     result += "        if (this.kind() !== node.kind()) { return false; }\r\n";
@@ -2203,7 +2203,7 @@ function generateRewriter(): string {
     return result;
 }
 
-function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): string {
+function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolean): string {
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
 
@@ -2318,10 +2318,10 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result += "        }\r\n\r\n";
 
     result +=
-"        public isNode(): bool { return false; }\r\n" +
-"        public isToken(): bool { return true; }\r\n" +
-"        public isList(): bool { return false; }\r\n" +
-"        public isSeparatedList(): bool { return false; }\r\n\r\n";
+"        public isNode(): boolean { return false; }\r\n" +
+"        public isToken(): boolean { return true; }\r\n" +
+"        public isList(): boolean { return false; }\r\n" +
+"        public isSeparatedList(): boolean { return false; }\r\n\r\n";
 
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n\r\n";
 
@@ -2405,31 +2405,31 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
                   "        }\r\n\r\n";
     }
 
-    result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
-    result += "        public hasLeadingComment(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingNewLine(): bool { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasLeadingSkippedText(): bool { return false; }\r\n";
+    result += "        public hasLeadingTrivia(): boolean { return " + (leading ? "true" : "false") + "; }\r\n";
+    result += "        public hasLeadingComment(): boolean { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingNewLine(): boolean { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasLeadingSkippedText(): boolean { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
         ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
-    result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
-    result += "        public hasTrailingComment(): bool { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingNewLine(): bool { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
-    result += "        public hasTrailingSkippedText(): bool { return false; }\r\n";
+    result += "        public hasTrailingTrivia(): boolean { return " + (trailing ? "true" : "false") + "; }\r\n";
+    result += "        public hasTrailingComment(): boolean { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingNewLine(): boolean { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
+    result += "        public hasTrailingSkippedText(): boolean { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
         ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
-    result += "        public hasSkippedText(): bool { return false; }\r\n";
+    result += "        public hasSkippedText(): boolean { return false; }\r\n";
 
     result +=
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +
 "        public firstToken(): ISyntaxToken { return this; }\r\n" +
 "        public lastToken(): ISyntaxToken { return this; }\r\n" +
-"        public isTypeScriptSpecific(): bool { return false; }\r\n" +
-"        public isIncrementallyUnusable(): bool { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
+"        public isTypeScriptSpecific(): boolean { return false; }\r\n" +
+"        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
 "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
@@ -2546,11 +2546,11 @@ function generateTokens(): string {
 "        return value >>> SyntaxConstants.TriviaFullWidthShift;\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function hasTriviaComment(value: number): bool {\r\n" +
+"    function hasTriviaComment(value: number): boolean {\r\n" +
 "        return (value & SyntaxConstants.TriviaCommentMask) !== 0;\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function hasTriviaNewLine(value: number): bool {\r\n" +
+"    function hasTriviaNewLine(value: number): boolean {\r\n" +
 "        return (value & SyntaxConstants.TriviaNewLineMask) !== 0;\r\n" +
 "    }\r\n";
 

@@ -83,7 +83,7 @@ module TypeScript {
     export var LexKeywordTable = undefined;
     // TODO: use new Token[128];
     var autoToken: Token[] = new Array(LexCodeASCIIChars);
-    var lexIdStartTable: bool[] = new Array(LexCodeASCIIChars);
+    var lexIdStartTable: boolean[] = new Array(LexCodeASCIIChars);
 
     // Unicode range maps
     // REVIEW: These range maps have been extracted from the Unicode specifications, they might be missing values, and/or include 
@@ -157,7 +157,7 @@ module TypeScript {
 		65296, 65305,65343, 65343
 	];
 
-    export function LexLookUpUnicodeMap(code: number, map: number[]) : bool {
+    export function LexLookUpUnicodeMap(code: number, map: number[]) : boolean {
         // Perform binary search in one of the unicode range maps
         var lo: number = 0;
         var hi: number = map.length;
@@ -178,7 +178,7 @@ module TypeScript {
         return false;
     }
 
-    export function LexIsUnicodeDigit(code: number): bool {
+    export function LexIsUnicodeDigit(code: number): boolean {
         if (codeGenTarget == CodeGenTarget.ES3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdCont);
         } else {
@@ -186,7 +186,7 @@ module TypeScript {
         }
     }
 
-    export function LexIsUnicodeIdStart(code: number): bool {
+    export function LexIsUnicodeIdStart(code: number): boolean {
         if (codeGenTarget == CodeGenTarget.ES3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdStart);
         } else {
@@ -232,14 +232,14 @@ module TypeScript {
         else return indentAmt;
     }
 
-    export function LexIsIdentifierStartChar(code): bool {
+    export function LexIsIdentifierStartChar(code): boolean {
         return (((code >= 97) && (code <= 122)) ||
                 ((code >= 65) && (code <= 90)) ||
                 (code == LexCodeDollar) ||
                 (code == LexCodeUnderscore));
     }
 
-    export function LexIsDigit(code): bool {
+    export function LexIsDigit(code): boolean {
         return ((code >= 48) && (code <= 57));
     }
 
@@ -401,7 +401,7 @@ module TypeScript {
         leftCurlyCount: number;
         rightCurlyCount: number;
         lastTokenLimChar(): number;
-        lastTokenHadNewline(): bool;
+        lastTokenHadNewline(): boolean;
         lexState: number;
         getComments(): CommentToken[];
         getCommentsForLine(line: number): CommentToken[];
@@ -409,8 +409,8 @@ module TypeScript {
         lineMap: number[];
         setSourceText(newSrc: ISourceText, textMode: number): void;
         setErrorHandler(reportError: (message: string) => void): void;
-        seenUnicodeChar: bool;
-        seenUnicodeCharInComment: bool;
+        seenUnicodeChar: boolean;
+        seenUnicodeCharInComment: boolean;
         getLookAheadToken(): Token;
     }
 
@@ -428,8 +428,8 @@ module TypeScript {
         public tokens = new SavedToken[];
         public startPos: number;
         public pos: number;
-        public seenUnicodeChar: bool = false;
-        seenUnicodeCharInComment: bool = false;
+        public seenUnicodeChar: boolean = false;
+        seenUnicodeCharInComment: boolean = false;
 
         public close() {
             this.currentToken = 0;
@@ -513,7 +513,7 @@ module TypeScript {
             }
         }
 
-        public lastTokenHadNewline(): bool {
+        public lastTokenHadNewline(): boolean {
             return this.prevLine != this.startLine;
         }
 
@@ -577,15 +577,15 @@ module TypeScript {
         public ch = LexEOF;
         public lexState = LexState.Start;
         public mode = LexMode.File;
-        public scanComments: bool = true;
+        public scanComments: boolean = true;
         public interveningWhitespace = false; // Was there a whitespace token between the last token and the current one?
         private interveningWhitespacePos = 0; //  If yes, this contains the start position of the whitespace
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
         public commentStack: CommentToken[] = new CommentToken[];
         public saveScan: SavedTokens = null;
-        public seenUnicodeChar: bool = false;
-        seenUnicodeCharInComment: bool = false;
+        public seenUnicodeChar: boolean = false;
+        seenUnicodeCharInComment: boolean = false;
 
         private reportError: (message: string) =>void;
 
@@ -636,7 +636,7 @@ module TypeScript {
             this.setSourceText(new StringSourceText(newSrc), textMode);
         }
 
-        public setScanComments(value: bool) {
+        public setScanComments(value: boolean) {
             this.scanComments = value;
         }
 
@@ -857,7 +857,7 @@ module TypeScript {
             }
         }
 
-        public finishMultilineComment(): bool {
+        public finishMultilineComment(): boolean {
             var ch2: number;
             this.lexState = LexState.InMultilineComment;
             while (this.pos < this.len) {
@@ -1115,7 +1115,7 @@ module TypeScript {
             return this.prevTok;
         }
 
-        private isValidUnicodeIdentifierChar(): bool {
+        private isValidUnicodeIdentifierChar(): boolean {
             var valid = LexIsUnicodeIdStart(this.ch) || LexIsUnicodeDigit(this.ch);
             this.seenUnicodeChar = this.seenUnicodeChar || valid;
             return valid;
@@ -1642,15 +1642,15 @@ module TypeScript {
     }
 
     // Reseverved words only apply to Identifiers, not IdentifierNames
-    export function convertTokToIDName(tok: Token): bool {
+    export function convertTokToIDName(tok: Token): boolean {
         return convertTokToIDBase(tok, true, false);
     }
 
-    export function convertTokToID(tok: Token, strictMode: bool): bool {
+    export function convertTokToID(tok: Token, strictMode: boolean): boolean {
         return convertTokToIDBase(tok, false, strictMode);
     }
 
-    function convertTokToIDBase(tok: Token, identifierName: bool, strictMode: bool): bool {
+    function convertTokToIDBase(tok: Token, identifierName: boolean, strictMode: boolean): boolean {
         if (tok.tokenId <= TokenID.LimKeyword) {
             var tokInfo = lookupToken(tok.tokenId);
             if (tokInfo != undefined) {

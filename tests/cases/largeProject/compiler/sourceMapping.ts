@@ -43,7 +43,7 @@ module TypeScript {
         public tsFileName: string;
 
         constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter,
-            public errorReporter: ErrorReporter, emitFullPathOfSourceMap: bool) {
+            public errorReporter: ErrorReporter, emitFullPathOfSourceMap: boolean) {
             this.currentMappings.push(this.sourceMappings);
 
             jsFileName = switchToForwardSlashes(jsFileName);

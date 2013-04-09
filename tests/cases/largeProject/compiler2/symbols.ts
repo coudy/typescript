@@ -56,7 +56,7 @@ module TypeScript2 {
         public isInferenceSymbol() { return false; }
         public isWith() { return false; }
         public writeable() { return false; }
-        public isType(): bool { return false; }
+        public isType(): boolean { return false; }
         public getType(): Type2 { return null; }
         public flags: SymbolFlags = SymbolFlags.None;
         public refs: Identifier2[];
@@ -372,7 +372,7 @@ module TypeScript2 {
         public isMethod = false;
         public aliasLink:ImportDeclaration = null;
         public kind() { return SymbolKind.Type; }
-        public isType(): bool { return true; }
+        public isType(): boolean { return true; }
         public getType() { return this.type; }
         public prettyName: string;
         public onlyReferencedAsTypeRef = optimizeModuleCodeGen;
@@ -487,7 +487,7 @@ module TypeScript2 {
         public name: string;
         public location: number;
 
-        constructor (name: string, location: number, unitIndex: number, public canWrite: bool,
+        constructor (name: string, location: number, unitIndex: number, public canWrite: boolean,
                       public field: ValueLocation) {
 
             super(name, location, name.length, unitIndex);

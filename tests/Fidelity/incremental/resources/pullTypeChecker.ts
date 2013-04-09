@@ -7,7 +7,7 @@ module TypeScript {
 
     export class PullTypeCheckContext {
         public enclosingDeclStack: PullDecl[] = [];
-        public enclosingDeclReturnStack: bool[] = [];
+        public enclosingDeclReturnStack: boolean[] = [];
         public semanticInfo: SemanticInfo = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }

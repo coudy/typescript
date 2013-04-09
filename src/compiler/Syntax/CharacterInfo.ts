@@ -2,11 +2,11 @@
 
 module TypeScript {
     export class CharacterInfo {
-        public static isDecimalDigit(c: number): bool {
+        public static isDecimalDigit(c: number): boolean {
             return c >= CharacterCodes._0 && c <= CharacterCodes._9;
         }
 
-        public static isHexDigit(c: number): bool {
+        public static isHexDigit(c: number): boolean {
             return CharacterInfo.isDecimalDigit(c) ||
                    (c >= CharacterCodes.A && c <= CharacterCodes.F) ||
                    (c >= CharacterCodes.a && c <= CharacterCodes.f);
@@ -21,7 +21,7 @@ module TypeScript {
                     : c - CharacterCodes.a + 10;
         }
 
-        public static isWhitespace(ch: number): bool {
+        public static isWhitespace(ch: number): boolean {
             switch (ch) {
                 // Unicode 3.0 space characters.
                 case CharacterCodes.space:
@@ -51,7 +51,7 @@ module TypeScript {
             return false;
         }
 
-        public static isLineTerminator(ch: number): bool {
+        public static isLineTerminator(ch: number): boolean {
             switch (ch) {
                 case CharacterCodes.carriageReturn:
                 case CharacterCodes.lineFeed:

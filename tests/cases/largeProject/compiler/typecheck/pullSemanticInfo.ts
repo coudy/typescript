@@ -100,7 +100,7 @@ module TypeScript {
             
             // add primitive types
             this.anyTypeSymbol = this.addPrimitive("any", globalDecl);
-            this.boolTypeSymbol = this.addPrimitive("bool", globalDecl);
+            this.boolTypeSymbol = this.addPrimitive("boolean", globalDecl);
             this.numberTypeSymbol = this.addPrimitive("number", globalDecl);
             this.stringTypeSymbol = this.addPrimitive("string", globalDecl);
             this.nullTypeSymbol = this.addPrimitive("null", globalDecl);

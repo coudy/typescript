@@ -4,7 +4,7 @@ class C {
 }
 
 new C[];
-var ba=new bool[];
+var ba=new boolean[];
 var sa=new string[];
 function f(s:string):number { return 0;
 }

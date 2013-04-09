@@ -47,13 +47,13 @@ declare function parseFloat(string: string): number;
   * Returns a Boolean value that indicates whether a value is the reserved value NaN (not a number). 
   * @param number A numeric value.
   */
-declare function isNaN(number: number): bool;
+declare function isNaN(number: number): boolean;
 
 /** 
   * Determines whether a supplied number is finite.
   * @param number Any numeric value.
   */
-declare function isFinite(number: number): bool;
+declare function isFinite(number: number): boolean;
 
 /**
   * Gets the unencoded version of an encoded Uniform Resource Identifier (URI).
@@ -80,10 +80,10 @@ declare function encodeURI(uri: string): string;
 declare function encodeURIComponent(uriComponent: string): string;
 
 interface PropertyDescriptor {
-    configurable?: bool;
-    enumerable?: bool;
+    configurable?: boolean;
+    enumerable?: boolean;
     value?: any;
-    writable?: bool;
+    writable?: boolean;
     get?(): any;
     set?(v: any): void;
 }
@@ -106,19 +106,19 @@ interface Object {
       * Determines whether an object has a property with the specified name. 
       * @param v A property name.
       */
-    hasOwnProperty(v: string): bool;
+    hasOwnProperty(v: string): boolean;
 
     /**
       * Determines whether an object exists in another object's prototype chain. 
       * @param v Another object whose prototype chain is to be checked.
       */
-    isPrototypeOf(v: Object): bool;
+    isPrototypeOf(v: Object): boolean;
 
     /** 
       * Determines whether a specified property is enumerable.
       * @param v A property name.
       */
-    propertyIsEnumerable(v: string): bool;
+    propertyIsEnumerable(v: string): boolean;
 
     [s: string]: any;
 }
@@ -199,19 +199,19 @@ declare var Object: {
       * Returns true if existing property attributes cannot be modified in an object and new properties cannot be added to the object.
       * @param o Object to test. 
       */
-    isSealed(o: any): bool;
+    isSealed(o: any): boolean;
 
     /**
       * Returns true if existing property attributes and values cannot be modified in an object, and new properties cannot be added to the object.
       * @param o Object to test.  
       */
-    isFrozen(o: any): bool;
+    isFrozen(o: any): boolean;
 
     /**
       * Returns a value that indicates whether new properties can be added to an object.
       * @param o Object to test. 
       */
-    isExtensible(o: any): bool;
+    isExtensible(o: any): boolean;
 
     /**
       * Returns the names of the enumerable properties and methods of an object.
@@ -429,7 +429,7 @@ interface Boolean {
 }
 declare var Boolean: {
     new (value?: any): Boolean;
-    (value?: any): bool;
+    (value?: any): boolean;
     prototype: Boolean;
 }
 
@@ -780,11 +780,11 @@ interface RegExpExecArray {
 
     indexOf(searchElement: string, fromIndex?: number): number;
     lastIndexOf(searchElement: string, fromIndex?: number): number;
-    every(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg?: any): bool;
-    some(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg?: any): bool;
+    every(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg?: any): boolean;
+    some(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg?: any): boolean;
     forEach(callbackfn: (value: string, index: number, array: string[]) => void , thisArg?: any): void;
     map(callbackfn: (value: string, index: number, array: string[]) => any, thisArg?: any): any[];
-    filter(callbackfn: (value: string, index: number, array: string[]) => bool, thisArg?: any): string[];
+    filter(callbackfn: (value: string, index: number, array: string[]) => boolean, thisArg?: any): string[];
     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue?: any): any;
     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: string[]) => any, initialValue?: any): any;
 }
@@ -800,15 +800,15 @@ interface RegExp {
       * Returns a Boolean value that indicates whether or not a pattern exists in a searched string.
       * @param string String on which to perform the search.
       */
-    test(string: string): bool;
+    test(string: string): boolean;
     /** Returns a copy of the text of the regular expression pattern. Read-only. The rgExp argument is a Regular expression object. It can be a variable name or a literal. */
     source: string;
     /** Returns a Boolean value indicating the state of the global flag (g) used with a regular expression. Default is false. Read-only. */
-    global: bool;
+    global: boolean;
     /** Returns a Boolean value indicating the state of the ignoreCase flag (i) used with a regular expression. Default is false. Read-only. */
-    ignoreCase: bool;
+    ignoreCase: boolean;
     /** Returns a Boolean value indicating the state of the multiline flag (m) used with a regular expression. Default is false. Read-only. */
-    multiline: bool;
+    multiline: boolean;
 
     lastIndex: number;
 
@@ -957,11 +957,11 @@ interface Array {
 
     indexOf(searchElement: _element, fromIndex?: number): number;
     lastIndexOf(searchElement: _element, fromIndex?: number): number;
-    every(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): bool;
-    some(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): bool;
+    every(callbackfn: (value: _element, index: number, array: _element[]) => boolean, thisArg?: any): boolean;
+    some(callbackfn: (value: _element, index: number, array: _element[]) => boolean, thisArg?: any): boolean;
     forEach(callbackfn: (value: _element, index: number, array: _element[]) => void , thisArg?: any): void;
     map(callbackfn: (value: _element, index: number, array: _element[]) => any, thisArg?: any): any[];
-    filter(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): _element[];
+    filter(callbackfn: (value: _element, index: number, array: _element[]) => boolean, thisArg?: any): _element[];
     reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: _element[]) => any, initialValue?: any): any;
     reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: _element[]) => any, initialValue?: any): any;
 
@@ -970,7 +970,7 @@ interface Array {
 declare var Array: {
     new (...items: any[]): any[];
     (...items: any[]): any[];
-    isArray(arg: any): bool;
+    isArray(arg: any): boolean;
     prototype: Array;
 }
 
@@ -1147,21 +1147,21 @@ declare var Float64Array: {
 interface DataView extends ArrayBufferView {
     getInt8(byteOffset: number): number;
     getUint8(byteOffset: number): number;
-    getInt16(byteOffset: number, littleEndian?: bool): number;
-    getUint16(byteOffset: number, littleEndian?: bool): number;
-    getInt32(byteOffset: number, littleEndian?: bool): number;
-    getUint32(byteOffset: number, littleEndian?: bool): number;
-    getFloat32(byteOffset: number, littleEndian?: bool): number;
-    getFloat64(byteOffset: number, littleEndian?: bool): number;
+    getInt16(byteOffset: number, littleEndian?: boolean): number;
+    getUint16(byteOffset: number, littleEndian?: boolean): number;
+    getInt32(byteOffset: number, littleEndian?: boolean): number;
+    getUint32(byteOffset: number, littleEndian?: boolean): number;
+    getFloat32(byteOffset: number, littleEndian?: boolean): number;
+    getFloat64(byteOffset: number, littleEndian?: boolean): number;
 
     setInt8(byteOffset: number, value: number): void;
     setUint8(byteOffset: number, value: number): void;
-    setInt16(byteOffset: number, value: number, littleEndian?: bool): void;
-    setUint16(byteOffset: number, value: number, littleEndian?: bool): void;
-    setInt32(byteOffset: number, value: number, littleEndian?: bool): void;
-    setUint32(byteOffset: number, value: number, littleEndian?: bool): void;
-    setFloat32(byteOffset: number, value: number, littleEndian?: bool): void;
-    setFloat64(byteOffset: number, value: number, littleEndian?: bool): void;
+    setInt16(byteOffset: number, value: number, littleEndian?: boolean): void;
+    setUint16(byteOffset: number, value: number, littleEndian?: boolean): void;
+    setInt32(byteOffset: number, value: number, littleEndian?: boolean): void;
+    setUint32(byteOffset: number, value: number, littleEndian?: boolean): void;
+    setFloat32(byteOffset: number, value: number, littleEndian?: boolean): void;
+    setFloat64(byteOffset: number, value: number, littleEndian?: boolean): void;
 }
 declare var DataView: {
     prototype: DataView;
@@ -1211,7 +1211,7 @@ interface TreeWalker {
     filter: NodeFilterCallback;
     root: Node;
     currentNode: Node;
-    expandEntityReferences: bool;
+    expandEntityReferences: boolean;
     previousSibling(): Node;
     lastChild(): Node;
     nextSibling(): Node;
@@ -1279,7 +1279,7 @@ interface DOML2DeprecatedAlignmentStyle_HTMLParagraphElement {
 interface CompositionEvent extends UIEvent {
     data: string;
     locale: string;
-    initCompositionEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, dataArg: string, locale: string): void;
+    initCompositionEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, dataArg: string, locale: string): void;
 }
 declare var CompositionEvent: {
     prototype: CompositionEvent;
@@ -1350,18 +1350,18 @@ interface MSStyleCSSProperties extends MSCSSProperties {
     posLeft: number;
     pixelTop: number;
     pixelBottom: number;
-    textDecorationNone: bool;
+    textDecorationNone: boolean;
     pixelLeft: number;
     posTop: number;
     posBottom: number;
-    textDecorationOverline: bool;
+    textDecorationOverline: boolean;
     posWidth: number;
-    textDecorationLineThrough: bool;
+    textDecorationLineThrough: boolean;
     pixelHeight: number;
-    textDecorationBlink: bool;
+    textDecorationBlink: boolean;
     posRight: number;
     pixelRight: number;
-    textDecorationUnderline: bool;
+    textDecorationUnderline: boolean;
 }
 declare var MSStyleCSSProperties: {
     prototype: MSStyleCSSProperties;
@@ -1371,10 +1371,10 @@ declare var MSStyleCSSProperties: {
 interface MSCSSStyleSheetExtensions {
     owningElement: Element;
     imports: StyleSheetList;
-    isAlternate: bool;
+    isAlternate: boolean;
     rules: MSCSSRuleList;
-    isPrefAlternate: bool;
-    readOnly: bool;
+    isPrefAlternate: boolean;
+    readOnly: boolean;
     cssText: string;
     href: string;
     id: string;
@@ -1464,7 +1464,7 @@ interface PositionErrorCallback {
 interface DOMImplementation extends DOMHTMLImplementation {
     createDocumentType(qualifiedName: string, publicId: string, systemId: string): DocumentType;
     createDocument(namespaceURI: string, qualifiedName: string, doctype: DocumentType): Document;
-    hasFeature(feature: string, version?: string): bool;
+    hasFeature(feature: string, version?: string): boolean;
 }
 declare var DOMImplementation: {
     prototype: DOMImplementation;
@@ -1531,7 +1531,7 @@ interface MSHTMLDocumentExtensions {
     oncellchange: (ev: MSEventObj) => any;
     URLUnencoded: string;
     updateSettings(): void;
-    execCommandShowHelp(commandId: string): bool;
+    execCommandShowHelp(commandId: string): boolean;
     releaseCapture(): void;
     focus(): void;
 }
@@ -1666,12 +1666,12 @@ interface Element extends Node, NodeSelector, ElementTraversal, MSElementExtensi
     scrollHeight: number;
     getAttribute(name?: string): string;
     getElementsByTagNameNS(namespaceURI: string, localName: string): NodeList;
-    hasAttributeNS(namespaceURI: string, localName: string): bool;
+    hasAttributeNS(namespaceURI: string, localName: string): boolean;
     getBoundingClientRect(): ClientRect;
     getAttributeNS(namespaceURI: string, localName: string): string;
     getAttributeNodeNS(namespaceURI: string, localName: string): Attr;
     setAttributeNodeNS(newAttr: Attr): Attr;
-    hasAttribute(name: string): bool;
+    hasAttribute(name: string): boolean;
     removeAttribute(name?: string): void;
     setAttributeNS(namespaceURI: string, qualifiedName: string, value: string): void;
     getAttributeNode(name: string): Attr;
@@ -1769,17 +1769,17 @@ interface Node extends EventTarget {
     prefix: string;
     removeChild(oldChild: Node): Node;
     appendChild(newChild: Node): Node;
-    isSupported(feature: string, version: string): bool;
-    isEqualNode(arg: Node): bool;
+    isSupported(feature: string, version: string): boolean;
+    isEqualNode(arg: Node): boolean;
     lookupPrefix(namespaceURI: string): string;
-    isDefaultNamespace(namespaceURI: string): bool;
+    isDefaultNamespace(namespaceURI: string): boolean;
     compareDocumentPosition(other: Node): number;
     normalize(): void;
-    isSameNode(other: Node): bool;
-    hasAttributes(): bool;
+    isSameNode(other: Node): boolean;
+    hasAttributes(): boolean;
     lookupNamespaceURI(prefix: string): string;
-    cloneNode(deep?: bool): Node;
-    hasChildNodes(): bool;
+    cloneNode(deep?: boolean): Node;
+    hasChildNodes(): boolean;
     replaceChild(newChild: Node, oldChild: Node): Node;
     insertBefore(newChild: Node, refChild?: Node): Node;
     ENTITY_REFERENCE_NODE: number;
@@ -1830,7 +1830,7 @@ interface MSHTMLLegendElementExtensions {
 interface MSCSSStyleDeclarationExtensions {
     getAttribute(attributeName: string, flags?: number): any;
     setAttribute(attributeName: string, AttributeValue: any, flags?: number): void;
-    removeAttribute(attributeName: string, flags?: number): bool;
+    removeAttribute(attributeName: string, flags?: number): boolean;
 }
 
 interface SVGPathSegCurvetoQuadraticSmoothRel extends SVGPathSeg {
@@ -1862,7 +1862,7 @@ interface MSHTMLObjectElementExtensions {
 }
 
 interface DOML2DeprecatedListSpaceReduction {
-    compact: bool;
+    compact: boolean;
 }
 
 interface CSS3Properties {
@@ -1912,21 +1912,21 @@ interface MouseEvent extends UIEvent, MSMouseEventExtensions {
     offsetY: number;
     x: number;
     y: number;
-    altKey: bool;
-    metaKey: bool;
-    ctrlKey: bool;
+    altKey: boolean;
+    metaKey: boolean;
+    ctrlKey: boolean;
     offsetX: number;
     screenX: number;
     clientY: number;
-    shiftKey: bool;
+    shiftKey: boolean;
     screenY: number;
     relatedTarget: EventTarget;
     button: number;
     pageY: number;
     buttons: number;
     clientX: number;
-    initMouseEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: bool, altKeyArg: bool, shiftKeyArg: bool, metaKeyArg: bool, buttonArg: number, relatedTargetArg: EventTarget): void;
-    getModifierState(keyArg: string): bool;
+    initMouseEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget): void;
+    getModifierState(keyArg: string): boolean;
 }
 declare var MouseEvent: {
     prototype: MouseEvent;
@@ -2000,7 +2000,7 @@ declare var TextMetrics: {
 }
 
 interface DOML2DeprecatedWordWrapSuppression_HTMLBodyElement {
-    noWrap: bool;
+    noWrap: boolean;
 }
 
 interface HTMLOListElement extends HTMLElement, DOML2DeprecatedListNumberingAndBulletStyle, DOML2DeprecatedListSpaceReduction, MSHTMLOListElementExtensions {
@@ -2041,7 +2041,7 @@ declare var CDATASection: {
 
 interface StyleMedia {
     type: string;
-    matchMedium(mediaquery: string): bool;
+    matchMedium(mediaquery: string): boolean;
 }
 declare var StyleMedia: {
     prototype: StyleMedia;
@@ -2061,31 +2061,31 @@ interface TextRange {
     queryCommandValue(cmdID: string): any;
     getBookmark(): string;
     move(Unit: string, Count?: number): number;
-    queryCommandIndeterm(cmdID: string): bool;
-    scrollIntoView(fStart?: bool): void;
-    findText(string: string, count?: number, flags?: number): bool;
-    execCommand(cmdID: string, showUI?: bool, value?: any): bool;
+    queryCommandIndeterm(cmdID: string): boolean;
+    scrollIntoView(fStart?: boolean): void;
+    findText(string: string, count?: number, flags?: number): boolean;
+    execCommand(cmdID: string, showUI?: boolean, value?: any): boolean;
     getBoundingClientRect(): ClientRect;
-    moveToBookmark(Bookmark: string): bool;
-    isEqual(range: TextRange): bool;
+    moveToBookmark(Bookmark: string): boolean;
+    isEqual(range: TextRange): boolean;
     duplicate(): TextRange;
-    collapse(Start?: bool): void;
+    collapse(Start?: boolean): void;
     queryCommandText(cmdID: string): string;
     select(): void;
     pasteHTML(html: string): void;
-    inRange(range: TextRange): bool;
+    inRange(range: TextRange): boolean;
     moveEnd(Unit: string, Count?: number): number;
     getClientRects(): ClientRectList;
     moveStart(Unit: string, Count?: number): number;
     parentElement(): Element;
-    queryCommandState(cmdID: string): bool;
+    queryCommandState(cmdID: string): boolean;
     compareEndPoints(how: string, sourceRange: TextRange): number;
-    execCommandShowHelp(cmdID: string): bool;
+    execCommandShowHelp(cmdID: string): boolean;
     moveToElementText(element: Element): void;
-    expand(Unit: string): bool;
-    queryCommandSupported(cmdID: string): bool;
+    expand(Unit: string): boolean;
+    queryCommandSupported(cmdID: string): boolean;
     setEndPoint(how: string, SourceRange: TextRange): void;
-    queryCommandEnabled(cmdID: string): bool;
+    queryCommandEnabled(cmdID: string): boolean;
 }
 declare var TextRange: {
     prototype: TextRange;
@@ -2100,7 +2100,7 @@ interface HTMLSelectElement extends HTMLElement, MSHTMLCollectionExtensions, MSD
     size: number;
     length: number;
     selectedIndex: number;
-    multiple: bool;
+    multiple: boolean;
     type: string;
     remove(index?: number): void;
     add(element: HTMLElement, before?: any): void;
@@ -2138,7 +2138,7 @@ interface SVGTests {
     requiredFeatures: SVGStringList;
     requiredExtensions: SVGStringList;
     systemLanguage: SVGStringList;
-    hasExtension(extension: string): bool;
+    hasExtension(extension: string): boolean;
 }
 
 interface MSSelection {
@@ -2169,7 +2169,7 @@ declare var HTMLMetaElement: {
 }
 
 interface Selection {
-    isCollapsed: bool;
+    isCollapsed: boolean;
     anchorNode: Node;
     focusNode: Node;
     anchorOffset: number;
@@ -2233,7 +2233,7 @@ interface NodeIterator {
     whatToShow: number;
     filter: NodeFilterCallback;
     root: Node;
-    expandEntityReferences: bool;
+    expandEntityReferences: boolean;
     nextNode(): Node;
     detach(): void;
     previousNode(): Node;
@@ -2289,7 +2289,7 @@ interface MSHTMLAppletElementExtensions extends DOML2DeprecatedBorderStyle_HTMLO
     data: string;
     contentDocument: Document;
     altHtml: string;
-    declare: bool;
+    declare: boolean;
     type: string;
     BaseHref: string;
 }
@@ -2330,15 +2330,15 @@ interface ControlRangeCollection {
     queryCommandValue(cmdID: string): any;
     remove(index: number): void;
     add(item: Element): void;
-    queryCommandIndeterm(cmdID: string): bool;
+    queryCommandIndeterm(cmdID: string): boolean;
     scrollIntoView(varargStart?: any): void;
     item(index: number): Element;
     [index: number]: Element;
-    execCommand(cmdID: string, showUI?: bool, value?: any): bool;
+    execCommand(cmdID: string, showUI?: boolean, value?: any): boolean;
     addElement(item: Element): void;
-    queryCommandState(cmdID: string): bool;
-    queryCommandSupported(cmdID: string): bool;
-    queryCommandEnabled(cmdID: string): bool;
+    queryCommandState(cmdID: string): boolean;
+    queryCommandSupported(cmdID: string): boolean;
+    queryCommandEnabled(cmdID: string): boolean;
     queryCommandText(cmdID: string): string;
     select(): void;
 }
@@ -2395,12 +2395,12 @@ declare var HTMLTableCaptionElement: {
 
 interface HTMLOptionElement extends HTMLElement, MSDataBindingExtensions {
     index: number;
-    defaultSelected: bool;
+    defaultSelected: boolean;
     value: string;
     text: string;
     form: HTMLFormElement;
     label: string;
-    selected: bool;
+    selected: boolean;
 }
 declare var HTMLOptionElement: {
     prototype: HTMLOptionElement;
@@ -2426,7 +2426,7 @@ declare var HTMLMenuElement: {
 
 interface MouseWheelEvent extends MouseEvent {
     wheelDelta: number;
-    initMouseWheelEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, wheelDeltaArg: number): void;
+    initMouseWheelEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, wheelDeltaArg: number): void;
 }
 declare var MouseWheelEvent: {
     prototype: MouseWheelEvent;
@@ -2557,9 +2557,9 @@ interface Window extends ViewCSS, MSEventAttachmentTarget, MSWindowExtensions, W
     print(): void;
     prompt(message?: string, defaul?: string): string;
     toString(): string;
-    open(url?: string, target?: string, features?: string, replace?: bool): Window;
+    open(url?: string, target?: string, features?: string, replace?: boolean): Window;
     close(): void;
-    confirm(message?: string): bool;
+    confirm(message?: string): boolean;
     postMessage(message: any, targetOrigin: string, ports?: any): void;
     showModalDialog(url?: string, argument?: any, options?: any): any;
     blur(): void;
@@ -2589,7 +2589,7 @@ declare var MSSiteModeEvent: {
 }
 
 interface MSCSSStyleRuleExtensions {
-    readOnly: bool;
+    readOnly: boolean;
 }
 
 interface StyleSheetPageList {
@@ -2663,8 +2663,8 @@ interface HTMLImageElement extends HTMLElement, DOML2DeprecatedMarginStyle, DOML
     name: string;
     height: number;
     longDesc: string;
-    isMap: bool;
-    complete: bool;
+    isMap: boolean;
+    complete: boolean;
 }
 declare var HTMLImageElement: {
     prototype: HTMLImageElement;
@@ -2683,7 +2683,7 @@ interface HTMLAreaElement extends HTMLElement, MSHTMLAreaElementExtensions {
     hash: string;
     target: string;
     href: string;
-    noHref: bool;
+    noHref: boolean;
     shape: string;
     toString(): string;
 }
@@ -2693,9 +2693,9 @@ declare var HTMLAreaElement: {
 }
 
 interface EventTarget {
-    removeEventListener(type: string, listener: EventListener, useCapture?: bool): void;
-    addEventListener(type: string, listener: EventListener, useCapture?: bool): void;
-    dispatchEvent(evt: Event): bool;
+    removeEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+    addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+    dispatchEvent(evt: Event): boolean;
 }
 
 interface SVGAngle {
@@ -2755,16 +2755,16 @@ declare var CanvasGradient: {
 
 interface KeyboardEvent extends UIEvent, KeyboardEventExtensions {
     location: number;
-    shiftKey: bool;
+    shiftKey: boolean;
     locale: string;
     key: string;
-    altKey: bool;
-    metaKey: bool;
+    altKey: boolean;
+    metaKey: boolean;
     char: string;
-    ctrlKey: bool;
-    repeat: bool;
-    getModifierState(keyArg: string): bool;
-    initKeyboardEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, keyArg: string, locationArg: number, modifiersListArg: string, repeat: bool, locale: string): void;
+    ctrlKey: boolean;
+    repeat: boolean;
+    getModifierState(keyArg: string): boolean;
+    initKeyboardEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string): void;
     DOM_KEY_LOCATION_RIGHT: number;
     DOM_KEY_LOCATION_STANDARD: number;
     DOM_KEY_LOCATION_LEFT: number;
@@ -2788,7 +2788,7 @@ interface Document extends Node, DocumentStyle, DocumentRange, HTMLDocument, Nod
     xmlVersion: string;
     implementation: DOMImplementation;
     xmlEncoding: string;
-    xmlStandalone: bool;
+    xmlStandalone: boolean;
     documentElement: HTMLElement;
     inputEncoding: string;
     createElement(tagName: string): HTMLElement;
@@ -2801,7 +2801,7 @@ interface Document extends Node, DocumentStyle, DocumentRange, HTMLDocument, Nod
     createElementNS(namespaceURI: string, qualifiedName: string): Element;
     createAttribute(name: string): Attr;
     createTextNode(data: string): Text;
-    importNode(importedNode: Node, deep: bool): Node;
+    importNode(importedNode: Node, deep: boolean): Node;
     createCDATASection(data: string): CDATASection;
     createAttributeNS(namespaceURI: string, qualifiedName: string): Attr;
     getElementById(elementId: string): HTMLElement;
@@ -2815,7 +2815,7 @@ interface MessageEvent extends Event {
     source: Window;
     origin: string;
     data: any;
-    initMessageEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, dataArg: any, originArg: string, lastEventIdArg: string, sourceArg: Window): void;
+    initMessageEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, dataArg: any, originArg: string, lastEventIdArg: string, sourceArg: Window): void;
 }
 declare var MessageEvent: {
     prototype: MessageEvent;
@@ -2834,7 +2834,7 @@ declare var SVGElement: {
 }
 
 interface HTMLScriptElement extends HTMLElement {
-    defer: bool;
+    defer: boolean;
     text: string;
     src: string;
     htmlFor: string;
@@ -2908,9 +2908,9 @@ interface CanvasRenderingContext2D {
     restore(): void;
     setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
     save(): void;
-    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: bool): void;
+    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void;
     measureText(text: string): TextMetrics;
-    isPointInPath(x: number, y: number): bool;
+    isPointInPath(x: number, y: number): boolean;
     quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
     putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void;
     rotate(angle: number): void;
@@ -2966,12 +2966,12 @@ interface MSHTMLElementRangeExtensions {
 
 interface SVGPathSegArcAbs extends SVGPathSeg {
     y: number;
-    sweepFlag: bool;
+    sweepFlag: boolean;
     r2: number;
     x: number;
     angle: number;
     r1: number;
-    largeArcFlag: bool;
+    largeArcFlag: boolean;
 }
 declare var SVGPathSegArcAbs: {
     prototype: SVGPathSegArcAbs;
@@ -2980,7 +2980,7 @@ declare var SVGPathSegArcAbs: {
 
 interface MSScreenExtensions {
     deviceXDPI: number;
-    fontSmoothingEnabled: bool;
+    fontSmoothingEnabled: boolean;
     bufferDepth: number;
     logicalXDPI: number;
     systemXDPI: number;
@@ -3038,7 +3038,7 @@ interface HTMLFrameElement extends HTMLElement, GetSVGDocument, MSHTMLFrameEleme
     marginWidth: string;
     contentDocument: Document;
     longDesc: string;
-    noResize: bool;
+    noResize: boolean;
 }
 declare var HTMLFrameElement: {
     prototype: HTMLFrameElement;
@@ -3103,7 +3103,7 @@ interface XMLHttpRequest extends EventTarget, MSXMLHttpRequestExtensions {
     responseText: string;
     responseXML: Document;
     statusText: string;
-    open(method: string, url: string, async?: bool, user?: string, password?: string): void;
+    open(method: string, url: string, async?: boolean, user?: string, password?: string): void;
     send(data?: any): void;
     abort(): void;
     getAllResponseHeaders(): string;
@@ -3259,8 +3259,8 @@ interface SVGLangSpace {
 interface DataTransfer {
     effectAllowed: string;
     dropEffect: string;
-    clearData(format?: string): bool;
-    setData(format: string, data: string): bool;
+    clearData(format?: string): boolean;
+    setData(format: string, data: string): boolean;
     getData(format: string): string;
 }
 declare var DataTransfer: {
@@ -3270,7 +3270,7 @@ declare var DataTransfer: {
 
 interface FocusEvent extends UIEvent {
     relatedTarget: EventTarget;
-    initFocusEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, relatedTargetArg: EventTarget): void;
+    initFocusEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, relatedTargetArg: EventTarget): void;
 }
 declare var FocusEvent: {
     prototype: FocusEvent;
@@ -3279,7 +3279,7 @@ declare var FocusEvent: {
 
 interface Range {
     startOffset: number;
-    collapsed: bool;
+    collapsed: boolean;
     endOffset: number;
     startContainer: Node;
     endContainer: Node;
@@ -3293,7 +3293,7 @@ interface Range {
     toString(): string;
     compareBoundaryPoints(how: number, sourceRange: Range): number;
     insertNode(newNode: Node): void;
-    collapse(toStart: bool): void;
+    collapse(toStart: boolean): void;
     selectNodeContents(refNode: Node): void;
     cloneContents(): DocumentFragment;
     setEnd(refNode: Node, offset: number): void;
@@ -3334,7 +3334,7 @@ declare var SVGPoint: {
 
 interface MSPluginsCollection {
     length: number;
-    refresh(reload?: bool): void;
+    refresh(reload?: boolean): void;
 }
 declare var MSPluginsCollection: {
     prototype: MSPluginsCollection;
@@ -3372,7 +3372,7 @@ interface SVGSVGElement extends SVGElement, SVGZoomAndPan, SVGLangSpace, SVGLoca
     getIntersectionList(rect: SVGRect, referenceElement: SVGElement): NodeList;
     unpauseAnimations(): void;
     createSVGRect(): SVGRect;
-    checkIntersection(element: SVGElement, rect: SVGRect): bool;
+    checkIntersection(element: SVGElement, rect: SVGRect): boolean;
     unsuspendRedrawAll(): void;
     pauseAnimations(): void;
     suspendRedraw(maxWaitMilliseconds: number): number;
@@ -3383,7 +3383,7 @@ interface SVGSVGElement extends SVGElement, SVGZoomAndPan, SVGLangSpace, SVGLoca
     unsuspendRedraw(suspendHandleID: number): void;
     forceRedraw(): void;
     getCurrentTime(): number;
-    checkEnclosure(element: SVGElement, rect: SVGRect): bool;
+    checkEnclosure(element: SVGElement, rect: SVGRect): boolean;
     createSVGMatrix(): SVGMatrix;
     createSVGPoint(): SVGPoint;
     createSVGNumber(): SVGNumber;
@@ -3488,7 +3488,7 @@ interface ViewCSS {
 }
 
 interface MSAttrExtensions {
-    expando: bool;
+    expando: boolean;
 }
 
 interface MSStorageExtensions {
@@ -3528,12 +3528,12 @@ interface MSHTMLCollectionExtensions {
 }
 
 interface DOML2DeprecatedWordWrapSuppression_HTMLDivElement {
-    noWrap: bool;
+    noWrap: boolean;
 }
 
 interface DocumentTraversal {
-    createNodeIterator(root: Node, whatToShow: number, filter: NodeFilterCallback, entityReferenceExpansion: bool): NodeIterator;
-    createTreeWalker(root: Node, whatToShow: number, filter: NodeFilterCallback, entityReferenceExpansion: bool): TreeWalker;
+    createNodeIterator(root: Node, whatToShow: number, filter: NodeFilterCallback, entityReferenceExpansion: boolean): NodeIterator;
+    createTreeWalker(root: Node, whatToShow: number, filter: NodeFilterCallback, entityReferenceExpansion: boolean): TreeWalker;
 }
 
 interface Storage extends MSStorageExtensions {
@@ -3576,7 +3576,7 @@ declare var HTMLIFrameElement: {
 interface MSNavigatorAbilities {
     userLanguage: string;
     plugins: MSPluginsCollection;
-    cookieEnabled: bool;
+    cookieEnabled: boolean;
     appCodeName: string;
     cpuClass: string;
     appMinorVersion: string;
@@ -3585,8 +3585,8 @@ interface MSNavigatorAbilities {
     mimeTypes: MSMimeTypesCollection;
     product: string;
     systemLanguage: string;
-    javaEnabled(): bool;
-    taintEnabled(): bool;
+    javaEnabled(): boolean;
+    taintEnabled(): boolean;
 }
 
 interface TextRangeCollection {
@@ -3634,8 +3634,8 @@ declare var DocumentType: {
 }
 
 interface MSHTMLInputElementExtensions extends DOML2DeprecatedMarginStyle_HTMLInputElement, DOML2DeprecatedBorderStyle_HTMLInputElement {
-    status: bool;
-    complete: bool;
+    status: boolean;
+    complete: boolean;
     createTextRange(): TextRange;
 }
 
@@ -3661,7 +3661,7 @@ interface MutationEvent extends Event {
     attrName: string;
     prevValue: string;
     relatedNode: Node;
-    initMutationEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, relatedNodeArg: Node, prevValueArg: string, newValueArg: string, attrNameArg: string, attrChangeArg: number): void;
+    initMutationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, relatedNodeArg: Node, prevValueArg: string, newValueArg: string, attrNameArg: string, attrChangeArg: number): void;
     MODIFICATION: number;
     REMOVAL: number;
     ADDITION: number;
@@ -3676,7 +3676,7 @@ declare var MutationEvent: {
 
 interface DragEvent extends MouseEvent {
     dataTransfer: DataTransfer;
-    initDragEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: bool, altKeyArg: bool, shiftKeyArg: bool, metaKeyArg: bool, buttonArg: number, relatedTargetArg: EventTarget, dataTransferArg: DataTransfer): void;
+    initDragEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, dataTransferArg: DataTransfer): void;
 }
 declare var DragEvent: {
     prototype: DragEvent;
@@ -3703,7 +3703,7 @@ interface DOML2DeprecatedListNumberingAndBulletStyle {
 
 interface HTMLInputElement extends HTMLElement, DOML2DeprecatedAlignmentStyle_HTMLInputElement, MSImageResourceExtensions_HTMLInputElement, MSHTMLInputElementExtensions, MSDataBindingExtensions {
     width: string;
-    defaultChecked: bool;
+    defaultChecked: boolean;
     alt: string;
     accept: string;
     value: string;
@@ -3713,10 +3713,10 @@ interface HTMLInputElement extends HTMLElement, DOML2DeprecatedAlignmentStyle_HT
     form: HTMLFormElement;
     selectionStart: number;
     height: string;
-    indeterminate: bool;
-    readOnly: bool;
+    indeterminate: boolean;
+    readOnly: boolean;
     size: number;
-    checked: bool;
+    checked: boolean;
     maxLength: number;
     selectionEnd: number;
     type: string;
@@ -3767,8 +3767,8 @@ declare var SVGImageElement: {
 }
 
 interface MSElementExtensions {
-    msMatchesSelector(selectors: string): bool;
-    fireEvent(eventName: string, eventObj?: any): bool;
+    msMatchesSelector(selectors: string): boolean;
+    fireEvent(eventName: string, eventObj?: any): boolean;
 }
 
 interface HTMLParamElement extends HTMLElement {
@@ -3859,7 +3859,7 @@ interface DOMHTMLImplementation {
 }
 
 interface NavigatorOnLine {
-    onLine: bool;
+    onLine: boolean;
 }
 
 interface SVGElementEventHandlers {
@@ -3888,12 +3888,12 @@ declare var SVGMetadataElement: {
 
 interface SVGPathSegArcRel extends SVGPathSeg {
     y: number;
-    sweepFlag: bool;
+    sweepFlag: boolean;
     r2: number;
     x: number;
     angle: number;
     r1: number;
-    largeArcFlag: bool;
+    largeArcFlag: boolean;
 }
 declare var SVGPathSegArcRel: {
     prototype: SVGPathSegArcRel;
@@ -4040,12 +4040,12 @@ interface MSEventObj {
     data: string;
     srcFilter: Object;
     boundElements: HTMLCollection;
-    cancelBubble: bool;
-    altLeft: bool;
+    cancelBubble: boolean;
+    altLeft: boolean;
     behaviorCookie: number;
     bookmarks: BookmarkCollection;
     type: string;
-    repeat: bool;
+    repeat: boolean;
     srcElement: Element;
     source: Window;
     fromElement: Element;
@@ -4053,21 +4053,21 @@ interface MSEventObj {
     x: number;
     behaviorPart: number;
     qualifier: string;
-    altKey: bool;
-    ctrlKey: bool;
+    altKey: boolean;
+    ctrlKey: boolean;
     clientY: number;
-    shiftKey: bool;
-    shiftLeft: bool;
-    contentOverflow: bool;
+    shiftKey: boolean;
+    shiftLeft: boolean;
+    contentOverflow: boolean;
     screenY: number;
-    ctrlLeft: bool;
+    ctrlLeft: boolean;
     button: number;
     srcUrn: string;
     clientX: number;
     actionURL: string;
     getAttribute(strAttributeName: string, lFlags?: number): any;
     setAttribute(strAttributeName: string, AttributeValue: any, lFlags?: number): void;
-    removeAttribute(strAttributeName: string, lFlags?: number): bool;
+    removeAttribute(strAttributeName: string, lFlags?: number): boolean;
 }
 declare var MSEventObj: {
     prototype: MSEventObj;
@@ -4134,7 +4134,7 @@ interface Location {
     port: string;
     pathname: string;
     host: string;
-    reload(flag?: bool): void;
+    reload(flag?: boolean): void;
     replace(url: string): void;
     assign(url: string): void;
     toString(): string;
@@ -4155,11 +4155,11 @@ declare var HTMLStyleElement: {
 
 interface MSHTMLOptGroupElementExtensions {
     index: number;
-    defaultSelected: bool;
+    defaultSelected: boolean;
     text: string;
     value: string;
     form: HTMLFormElement;
-    selected: bool;
+    selected: boolean;
 }
 
 interface MSBorderColorHighlightStyle {
@@ -4203,7 +4203,7 @@ declare var SVGTransform: {
 
 interface MSCSSFilter {
     Percent: number;
-    Enabled: bool;
+    Enabled: boolean;
     Duration: number;
     Play(Duration: number): void;
     Apply(): void;
@@ -4217,7 +4217,7 @@ declare var MSCSSFilter: {
 interface UIEvent extends Event {
     detail: number;
     view: AbstractView;
-    initUIEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number): void;
+    initUIEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number): void;
 }
 declare var UIEvent: {
     prototype: UIEvent;
@@ -4284,7 +4284,7 @@ interface WheelEvent extends MouseEvent {
     deltaX: number;
     deltaMode: number;
     deltaY: number;
-    initWheelEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, deltaXArg: number, deltaYArg: number, deltaZArg: number, deltaMode: number): void;
+    initWheelEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, deltaXArg: number, deltaYArg: number, deltaZArg: number, deltaMode: number): void;
     DOM_DELTA_PIXEL: number;
     DOM_DELTA_LINE: number;
     DOM_DELTA_PAGE: number;
@@ -4302,7 +4302,7 @@ interface DOML2DeprecatedAlignmentStyle_HTMLDivElement {
 }
 
 interface MSEventAttachmentTarget {
-    attachEvent(event: string, listener: EventListener): bool;
+    attachEvent(event: string, listener: EventListener): boolean;
     detachEvent(event: string, listener: EventListener): void;
 }
 
@@ -4329,14 +4329,14 @@ interface SVGPathElement extends SVGElement, SVGStylable, SVGAnimatedPathData, S
     createSVGPathSegCurvetoCubicSmoothAbs(x: number, y: number, x2: number, y2: number): SVGPathSegCurvetoCubicSmoothAbs;
     createSVGPathSegMovetoAbs(x: number, y: number): SVGPathSegMovetoAbs;
     createSVGPathSegLinetoVerticalRel(y: number): SVGPathSegLinetoVerticalRel;
-    createSVGPathSegArcRel(x: number, y: number, r1: number, r2: number, angle: number, largeArcFlag: bool, sweepFlag: bool): SVGPathSegArcRel;
+    createSVGPathSegArcRel(x: number, y: number, r1: number, r2: number, angle: number, largeArcFlag: boolean, sweepFlag: boolean): SVGPathSegArcRel;
     createSVGPathSegCurvetoQuadraticSmoothAbs(x: number, y: number): SVGPathSegCurvetoQuadraticSmoothAbs;
     createSVGPathSegLinetoHorizontalRel(x: number): SVGPathSegLinetoHorizontalRel;
     getTotalLength(): number;
     createSVGPathSegCurvetoCubicSmoothRel(x: number, y: number, x2: number, y2: number): SVGPathSegCurvetoCubicSmoothRel;
     createSVGPathSegLinetoHorizontalAbs(x: number): SVGPathSegLinetoHorizontalAbs;
     createSVGPathSegLinetoVerticalAbs(y: number): SVGPathSegLinetoVerticalAbs;
-    createSVGPathSegArcAbs(x: number, y: number, r1: number, r2: number, angle: number, largeArcFlag: bool, sweepFlag: bool): SVGPathSegArcAbs;
+    createSVGPathSegArcAbs(x: number, y: number, r1: number, r2: number, angle: number, largeArcFlag: boolean, sweepFlag: boolean): SVGPathSegArcAbs;
 }
 declare var SVGPathElement: {
     prototype: SVGPathElement;
@@ -4354,7 +4354,7 @@ declare var MSCompatibleInfo: {
 
 interface MSHTMLDocumentEventExtensions {
     createEventObject(eventObj?: any): MSEventObj;
-    fireEvent(eventName: string, eventObj?: any): bool;
+    fireEvent(eventName: string, eventObj?: any): boolean;
 }
 
 interface Text extends CharacterData, MSNodeExtensions {
@@ -4511,7 +4511,7 @@ declare var HTMLBaseFontElement: {
 
 interface CustomEvent extends Event {
     detail: Object;
-    initCustomEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, detailArg: Object): void;
+    initCustomEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, detailArg: Object): void;
 }
 declare var CustomEvent: {
     prototype: CustomEvent;
@@ -4545,7 +4545,7 @@ interface HTMLTextAreaElement extends HTMLElement, MSDataBindingExtensions, MSHT
     selectionStart: number;
     rows: number;
     cols: number;
-    readOnly: bool;
+    readOnly: boolean;
     wrap: string;
     selectionEnd: number;
     type: string;
@@ -4588,7 +4588,7 @@ interface MSWindowModeless {
 interface HTMLMarqueeElement extends HTMLElement, DOML2DeprecatedMarginStyle_HTMLMarqueeElement, MSDataBindingExtensions, MSHTMLMarqueeElementExtensions, DOML2DeprecatedBackgroundColorStyle {
     width: string;
     onbounce: (ev: Event) => any;
-    trueSpeed: bool;
+    trueSpeed: boolean;
     scrollAmount: number;
     scrollDelay: number;
     behavior: string;
@@ -4618,7 +4618,7 @@ declare var SVGRect: {
 
 interface MSNodeExtensions {
     swapNode(otherNode: Node): Node;
-    removeNode(deep?: bool): Node;
+    removeNode(deep?: boolean): Node;
     replaceNode(replacement: Node): Node;
 }
 
@@ -4734,7 +4734,7 @@ declare var HTMLModElement: {
 }
 
 interface DOML2DeprecatedWordWrapSuppression {
-    noWrap: bool;
+    noWrap: boolean;
 }
 
 interface BeforeUnloadEvent extends Event {
@@ -4747,7 +4747,7 @@ declare var BeforeUnloadEvent: {
 
 interface MSPopupWindow {
     document: HTMLDocument;
-    isOpen: bool;
+    isOpen: boolean;
     show(x: number, y: number, w: number, h: number, element?: any): void;
     hide(): void;
 }
@@ -4795,15 +4795,15 @@ declare var SVGUseElement: {
 
 interface Event extends MSEventExtensions {
     timeStamp: number;
-    defaultPrevented: bool;
-    isTrusted: bool;
+    defaultPrevented: boolean;
+    isTrusted: boolean;
     currentTarget: EventTarget;
     target: EventTarget;
     eventPhase: number;
     type: string;
-    cancelable: bool;
-    bubbles: bool;
-    initEvent(eventTypeArg: string, canBubbleArg: bool, cancelableArg: bool): void;
+    cancelable: boolean;
+    bubbles: boolean;
+    initEvent(eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean): void;
     stopPropagation(): void;
     stopImmediatePropagation(): void;
     preventDefault(): void;
@@ -4851,12 +4851,12 @@ interface MSHTMLElementExtensions {
     uniqueID: string;
     onhelp: (ev: Event) => any;
     onbeforeactivate: (ev: UIEvent) => any;
-    isMultiLine: bool;
+    isMultiLine: boolean;
     uniqueNumber: number;
     tagUrn: string;
     onfocusout: (ev: FocusEvent) => any;
     ondataavailable: (ev: MSEventObj) => any;
-    hideFocus: bool;
+    hideFocus: boolean;
     onbeforeupdate: (ev: MSEventObj) => any;
     onfilterchange: (ev: MSEventObj) => any;
     onfocusin: (ev: FocusEvent) => any;
@@ -4867,15 +4867,15 @@ interface MSHTMLElementExtensions {
     outerText: string;
     onresizestart: (ev: MSEventObj) => any;
     onactivate: (ev: UIEvent) => any;
-    isTextEdit: bool;
-    isDisabled: bool;
+    isTextEdit: boolean;
+    isDisabled: boolean;
     readyState: string;
     all: HTMLCollection;
     onmouseenter: (ev: MouseEvent) => any;
     onmovestart: (ev: MSEventObj) => any;
     onselectstart: (ev: Event) => any;
     onpaste: (ev: DragEvent) => any;
-    canHaveHTML: bool;
+    canHaveHTML: boolean;
     innerText: string;
     onerrorupdate: (ev: MSEventObj) => any;
     ondeactivate: (ev: UIEvent) => any;
@@ -4889,18 +4889,18 @@ interface MSHTMLElementExtensions {
     parentElement: HTMLElement;
     onrowenter: (ev: MSEventObj) => any;
     onbeforeeditfocus: (ev: MSEventObj) => any;
-    canHaveChildren: bool;
+    canHaveChildren: boolean;
     sourceIndex: number;
     oncellchange: (ev: MSEventObj) => any;
-    dragDrop(): bool;
+    dragDrop(): boolean;
     releaseCapture(): void;
     addFilter(filter: Object): void;
-    setCapture(containerCapture?: bool): void;
-    removeBehavior(cookie: number): bool;
-    contains(child: HTMLElement): bool;
+    setCapture(containerCapture?: boolean): void;
+    removeBehavior(cookie: number): boolean;
+    contains(child: HTMLElement): boolean;
     applyElement(apply: Element, where?: string): Element;
     replaceAdjacentText(where: string, newText: string): string;
-    mergeAttributes(source: HTMLElement, preserveIdentity?: bool): void;
+    mergeAttributes(source: HTMLElement, preserveIdentity?: boolean): void;
     insertAdjacentElement(position: string, insertedElement: Element): Element;
     insertAdjacentText(where: string, text: string): void;
     getAdjacentText(where: string): string;
@@ -5003,18 +5003,18 @@ interface HTMLDocument extends MSEventAttachmentTarget, MSHTMLDocumentSelection,
     onvolumechange: (ev: Event) => any;
     oninput: (ev: Event) => any;
     queryCommandValue(commandId: string): string;
-    queryCommandIndeterm(commandId: string): bool;
-    execCommand(commandId: string, showUI?: bool, value?: any): bool;
+    queryCommandIndeterm(commandId: string): boolean;
+    execCommand(commandId: string, showUI?: boolean, value?: any): boolean;
     getElementsByName(elementName: string): NodeList;
     writeln(...content: string[]): void;
-    open(url?: string, name?: string, features?: string, replace?: bool): any;
-    queryCommandState(commandId: string): bool;
+    open(url?: string, name?: string, features?: string, replace?: boolean): any;
+    queryCommandState(commandId: string): boolean;
     close(): void;
-    hasFocus(): bool;
+    hasFocus(): boolean;
     getElementsByClassName(classNames: string): NodeList;
-    queryCommandSupported(commandId: string): bool;
+    queryCommandSupported(commandId: string): boolean;
     getSelection(): Selection;
-    queryCommandEnabled(commandId: string): bool;
+    queryCommandEnabled(commandId: string): boolean;
     write(...content: string[]): void;
     queryCommandText(commandId: string): string;
 }
@@ -5222,7 +5222,7 @@ interface MSWindowExtensions {
     clipboardData: DataTransfer;
     defaultStatus: string;
     clientInformation: Navigator;
-    closed: bool;
+    closed: boolean;
     onhelp: (ev: Event) => any;
     external: BrowserPublic;
     event: MSEventObj;
@@ -5277,7 +5277,7 @@ interface TextEvent extends UIEvent {
     inputMethod: number;
     data: string;
     locale: string;
-    initTextEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, dataArg: string, inputMethod: number, locale: string): void;
+    initTextEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, dataArg: string, inputMethod: number, locale: string): void;
     DOM_INPUT_METHOD_KEYBOARD: number;
     DOM_INPUT_METHOD_DROP: number;
     DOM_INPUT_METHOD_IME: number;
@@ -5396,7 +5396,7 @@ declare var HTMLSpanElement: {
 }
 
 interface HTMLHRElementDOML2Deprecated {
-    noShade: bool;
+    noShade: boolean;
 }
 
 interface HTMLHeadElement extends HTMLElement {
@@ -5455,7 +5455,7 @@ declare var SVGZoomAndPan: {
 }
 
 interface MSEventExtensions {
-    cancelBubble: bool;
+    cancelBubble: boolean;
     srcElement: Element;
 }
 
@@ -5464,22 +5464,22 @@ interface HTMLMediaElement extends HTMLElement {
     played: TimeRanges;
     currentSrc: string;
     readyState: string;
-    autobuffer: bool;
-    loop: bool;
-    ended: bool;
+    autobuffer: boolean;
+    loop: boolean;
+    ended: boolean;
     buffered: TimeRanges;
     error: MediaError;
     seekable: TimeRanges;
-    autoplay: bool;
-    controls: bool;
+    autoplay: boolean;
+    controls: boolean;
     volume: number;
     src: string;
     playbackRate: number;
     duration: number;
-    muted: bool;
+    muted: boolean;
     defaultPlaybackRate: number;
-    paused: bool;
-    seeking: bool;
+    paused: boolean;
+    seeking: boolean;
     currentTime: number;
     preload: string;
     networkState: number;
@@ -5533,7 +5533,7 @@ declare var MSMimeTypesCollection: {
 }
 
 interface StyleSheet {
-    disabled: bool;
+    disabled: boolean;
     ownerNode: Node;
     parentStyleSheet: StyleSheet;
     href: string;
@@ -5607,7 +5607,7 @@ interface StyleSheetPage {
 }
 
 interface DOML2DeprecatedWordWrapSuppression_HTMLDDElement {
-    noWrap: bool;
+    noWrap: boolean;
 }
 
 interface MSHTMLTableRowElementExtensions {
@@ -5687,7 +5687,7 @@ interface MSHTMLOListElementExtensions {
 }
 
 interface DOML2DeprecatedWordWrapSuppression_HTMLDTElement {
-    noWrap: bool;
+    noWrap: boolean;
 }
 
 interface ScreenView extends AbstractView {
@@ -5802,7 +5802,7 @@ interface HTMLElement extends Element, MSHTMLElementRangeExtensions, ElementCSSI
     onstalled: (ev: Event) => any;
     onmousemove: (ev: MouseEvent) => any;
     style: MSStyleCSSProperties;
-    isContentEditable: bool;
+    isContentEditable: boolean;
     onratechange: (ev: Event) => any;
     onloadstart: (ev: Event) => any;
     ondragenter: (ev: DragEvent) => any;
@@ -5824,7 +5824,7 @@ interface HTMLElement extends Element, MSHTMLElementRangeExtensions, ElementCSSI
     onkeypress: (ev: KeyboardEvent) => any;
     offsetParent: Element;
     onloadeddata: (ev: Event) => any;
-    disabled: bool;
+    disabled: boolean;
     onsuspend: (ev: Event) => any;
     accessKey: string;
     onfocus: (ev: FocusEvent) => any;
@@ -5841,7 +5841,7 @@ interface HTMLElement extends Element, MSHTMLElementRangeExtensions, ElementCSSI
     oninput: (ev: Event) => any;
     click(): void;
     getElementsByClassName(classNames: string): NodeList;
-    scrollIntoView(top?: bool): void;
+    scrollIntoView(top?: boolean): void;
     focus(): void;
     blur(): void;
     insertAdjacentHTML(where: string, html: string): void;
@@ -5884,7 +5884,7 @@ interface DOML2DeprecatedTextFlowControl_HTMLBlockElement {
 }
 
 interface PositionOptions {
-    enableHighAccuracy?: bool;
+    enableHighAccuracy?: boolean;
     timeout?: number;
     maximumAge?: number;
 }
@@ -5901,7 +5901,7 @@ interface HTMLObjectElement extends HTMLElement, MSHTMLObjectElementExtensions, 
     height: string;
     contentDocument: Document;
     codeBase: string;
-    declare: bool;
+    declare: boolean;
     type: string;
     code: string;
 }
@@ -5924,7 +5924,7 @@ interface StorageEvent extends Event {
     url: string;
     storageArea: Storage;
     key: string;
-    initStorageEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, keyArg: string, oldValueArg: any, newValueArg: any, urlArg: string, storageAreaArg: Storage): void;
+    initStorageEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, keyArg: string, oldValueArg: any, newValueArg: any, urlArg: string, storageAreaArg: Storage): void;
 }
 declare var StorageEvent: {
     prototype: StorageEvent;
@@ -6062,8 +6062,8 @@ interface MSHTMLIsIndexElementExtensions {
 }
 
 interface SVGAnimatedBoolean {
-    animVal: bool;
-    baseVal: bool;
+    animVal: boolean;
+    baseVal: boolean;
 }
 declare var SVGAnimatedBoolean: {
     prototype: SVGAnimatedBoolean;
@@ -6080,7 +6080,7 @@ declare var SVGSwitchElement: {
 interface MSHTMLIFrameElementExtensions extends DOML2DeprecatedMarginStyle_MSHTMLIFrameElementExtensions, DOML2DeprecatedBorderStyle_MSHTMLIFrameElementExtensions {
     onload: (ev: Event) => any;
     frameSpacing: any;
-    noResize: bool;
+    noResize: boolean;
 }
 
 interface SVGPreserveAspectRatio {
@@ -6121,7 +6121,7 @@ declare var SVGPreserveAspectRatio: {
 }
 
 interface Attr extends Node, MSAttrExtensions {
-    specified: bool;
+    specified: boolean;
     ownerElement: Element;
     value: string;
     name: string;
@@ -6263,7 +6263,7 @@ declare var SVGMaskElement: {
 }
 
 declare var Audio: { new (src?: string): HTMLAudioElement; };
-declare var Option: { new (text?: string, value?: string, defaultSelected?: bool, selected?: bool): HTMLOptionElement; };
+declare var Option: { new (text?: string, value?: string, defaultSelected?: boolean, selected?: boolean): HTMLOptionElement; };
 declare var Image: { new (width?: number, height?: number): HTMLImageElement; };
 
 declare var ondragend: (ev: DragEvent) => any;
@@ -6344,15 +6344,15 @@ declare function focus(): void;
 declare function print(): void;
 declare function prompt(message?: string, defaul?: string): string;
 declare function toString(): string;
-declare function open(url?: string, target?: string, features?: string, replace?: bool): Window;
+declare function open(url?: string, target?: string, features?: string, replace?: boolean): Window;
 declare function close(): void;
-declare function confirm(message?: string): bool;
+declare function confirm(message?: string): boolean;
 declare function postMessage(message: any, targetOrigin: string, ports?: any): void;
 declare function showModalDialog(url?: string, argument?: any, options?: any): any;
 declare function blur(): void;
 declare function getSelection(): Selection;
 declare function getComputedStyle(elt: Element, pseudoElt?: string): CSSStyleDeclaration;
-declare function attachEvent(event: string, listener: EventListener): bool;
+declare function attachEvent(event: string, listener: EventListener): boolean;
 declare function detachEvent(event: string, listener: EventListener): void;
 declare var status: string;
 declare var onmouseleave: (ev: MouseEvent) => any;
@@ -6363,7 +6363,7 @@ declare var onmouseenter: (ev: MouseEvent) => any;
 declare var clipboardData: DataTransfer;
 declare var defaultStatus: string;
 declare var clientInformation: Navigator;
-declare var closed: bool;
+declare var closed: boolean;
 declare var onhelp: (ev: Event) => any;
 declare var external: BrowserPublic;
 declare var event: MSEventObj;
@@ -6397,9 +6397,9 @@ declare function scrollBy(x?: number, y?: number): void;
 declare function scrollTo(x?: number, y?: number): void;
 declare var styleMedia: StyleMedia;
 declare var document: Document;
-declare function removeEventListener(type: string, listener: EventListener, useCapture?: bool): void;
-declare function addEventListener(type: string, listener: EventListener, useCapture?: bool): void;
-declare function dispatchEvent(evt: Event): bool;
+declare function removeEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+declare function addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+declare function dispatchEvent(evt: Event): boolean;
 declare var localStorage: Storage;
 declare var sessionStorage: Storage;
 declare function clearTimeout(handle: number): void;
@@ -6434,7 +6434,7 @@ interface MSGestureEvent extends UIEvent {
     scale: number;
     gestureObject: any;
     clientX: number;
-    initGestureEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, offsetXArg: number, offsetYArg: number, translationXArg: number, translationYArg: number, scaleArg: number, expansionArg: number, rotationArg: number, velocityXArg: number, velocityYArg: number, velocityExpansionArg: number, velocityAngularArg: number, hwTimestampArg: number): void;
+    initGestureEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, offsetXArg: number, offsetYArg: number, translationXArg: number, translationYArg: number, scaleArg: number, expansionArg: number, rotationArg: number, velocityXArg: number, velocityYArg: number, velocityExpansionArg: number, velocityAngularArg: number, hwTimestampArg: number): void;
     MSGESTURE_FLAG_BEGIN: number;
     MSGESTURE_FLAG_END: number;
     MSGESTURE_FLAG_CANCEL: number;
@@ -6460,10 +6460,10 @@ interface HTMLInputElement {
     files: FileList;
     max: string;
     formTarget: string;
-    willValidate: bool;
+    willValidate: boolean;
     step: string;
-    autofocus: bool;
-    required: bool;
+    autofocus: boolean;
+    required: boolean;
     formEnctype: string;
     valueAsNumber: number;
     placeholder: string;
@@ -6475,8 +6475,8 @@ interface HTMLInputElement {
     pattern: string;
     validity: ValidityState;
     formNoValidate: string;
-    multiple: bool;
-    checkValidity(): bool;
+    multiple: boolean;
+    checkValidity(): boolean;
     stepDown(n?: number): void;
     stepUp(n?: number): void;
     setCustomValidity(error: string): void;
@@ -6487,7 +6487,7 @@ interface ErrorEvent extends Event {
     filename: string;
     lineno: number;
     message: string;
-    initErrorEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, messageArg: string, filenameArg: string, linenoArg: number): void;
+    initErrorEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, messageArg: string, filenameArg: string, linenoArg: number): void;
 }
 declare var ErrorEvent: {
     prototype: ErrorEvent;
@@ -6580,7 +6580,7 @@ interface TextTrackCue extends EventTarget {
     track: TextTrack;
     endTime: number;
     text: string;
-    pauseOnExit: bool;
+    pauseOnExit: boolean;
     id: string;
     startTime: number;
     onexit: (ev: Event) => any;
@@ -6592,7 +6592,7 @@ declare var TextTrackCue: {
 }
 
 interface MSHTMLDocumentViewExtensions {
-    msCSSOMElementFloatMetrics: bool;
+    msCSSOMElementFloatMetrics: boolean;
     msElementsFromPoint(x: number, y: number): NodeList;
     msElementsFromRect(left: number, top: number, width: number, height: number): NodeList;
 }
@@ -6630,9 +6630,9 @@ interface CSSFlexibleBoxProperties {
 
 interface DOMTokenList {
     length: number;
-    contains(token: string): bool;
+    contains(token: string): boolean;
     remove(token: string): void;
-    toggle(token: string): bool;
+    toggle(token: string): boolean;
     add(token: string): void;
     item(index: number): string;
     [index: number]: string;
@@ -6720,7 +6720,7 @@ interface Navigator extends MSFileSaver {
 interface TransitionEvent extends Event {
     propertyName: string;
     elapsedTime: number;
-    initTransitionEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, propertyNameArg: string, elapsedTimeArg: number): void;
+    initTransitionEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, propertyNameArg: string, elapsedTimeArg: number): void;
 }
 declare var TransitionEvent: {
     prototype: TransitionEvent;
@@ -6728,7 +6728,7 @@ declare var TransitionEvent: {
 }
 
 interface MediaQueryList {
-    matches: bool;
+    matches: boolean;
     media: string;
     addListener(listener: MediaQueryListListener): void;
     removeListener(listener: MediaQueryListListener): void;
@@ -6763,10 +6763,10 @@ interface CSSFontsProperties {
 }
 
 interface CloseEvent extends Event {
-    wasClean: bool;
+    wasClean: boolean;
     reason: string;
     code: number;
-    initCloseEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, wasCleanArg: bool, codeArg: number, reasonArg: string): void;
+    initCloseEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, wasCleanArg: boolean, codeArg: number, reasonArg: string): void;
 }
 declare var CloseEvent: {
     prototype: CloseEvent;
@@ -6804,9 +6804,9 @@ declare var WebSocket: {
 
 interface ProgressEvent extends Event {
     loaded: number;
-    lengthComputable: bool;
+    lengthComputable: boolean;
     total: number;
-    initProgressEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, lengthComputableArg: bool, loadedArg: number, totalArg: number): void;
+    initProgressEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, lengthComputableArg: boolean, loadedArg: number, totalArg: number): void;
 }
 declare var ProgressEvent: {
     prototype: ProgressEvent;
@@ -6839,7 +6839,7 @@ declare var IDBObjectStore: {
 }
 
 interface ObjectURLOptions {
-    oneTimeOnly?: bool;
+    oneTimeOnly?: boolean;
 }
 
 interface SVGFEGaussianBlurElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
@@ -6898,7 +6898,7 @@ declare var IDBVersionChangeEvent: {
 }
 
 interface IDBIndex {
-    unique: bool;
+    unique: boolean;
     name: string;
     keyPath: string;
     objectStore: IDBObjectStore;
@@ -7001,13 +7001,13 @@ declare var IDBCursorWithValue: {
 
 interface HTMLTextAreaElement {
     validationMessage: string;
-    autofocus: bool;
+    autofocus: boolean;
     validity: ValidityState;
-    required: bool;
+    required: boolean;
     maxLength: number;
-    willValidate: bool;
+    willValidate: boolean;
     placeholder: string;
-    checkValidity(): bool;
+    checkValidity(): boolean;
     setCustomValidity(error: string): void;
 }
 
@@ -7091,11 +7091,11 @@ declare var SVGFEMorphologyElement: {
 
 interface HTMLSelectElement {
     validationMessage: string;
-    autofocus: bool;
+    autofocus: boolean;
     validity: ValidityState;
-    required: bool;
-    willValidate: bool;
-    checkValidity(): bool;
+    required: boolean;
+    willValidate: boolean;
+    checkValidity(): boolean;
     setCustomValidity(error: string): void;
 }
 
@@ -7173,7 +7173,7 @@ interface MSCSSContentZoomProperties {
 interface AnimationEvent extends Event {
     animationName: string;
     elapsedTime: number;
-    initAnimationEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, animationNameArg: string, elapsedTimeArg: number): void;
+    initAnimationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, animationNameArg: string, elapsedTimeArg: number): void;
 }
 declare var AnimationEvent: {
     prototype: AnimationEvent;
@@ -7258,13 +7258,13 @@ declare var SVGFEFuncBElement: {
 
 interface IDBKeyRange {
     upper: any;
-    upperOpen: bool;
+    upperOpen: boolean;
     lower: any;
-    lowerOpen: bool;
-    bound(lower: any, upper: any, lowerOpen?: bool, upperOpen?: bool): IDBKeyRange;
+    lowerOpen: boolean;
+    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
     only(value: any): IDBKeyRange;
-    lowerBound(bound: any, open?: bool): IDBKeyRange;
-    upperBound(bound: any, open?: bool): IDBKeyRange;
+    lowerBound(bound: any, open?: boolean): IDBKeyRange;
+    upperBound(bound: any, open?: boolean): IDBKeyRange;
 }
 declare var IDBKeyRange: {
     prototype: IDBKeyRange;
@@ -7318,7 +7318,7 @@ interface MSWindowExtensions {
     onmsgesturechange: (ev: any) => any;
     onmsgesturestart: (ev: any) => any;
     onmspointerup: (ev: any) => any;
-    msIsStaticHTML(html: string): bool;
+    msIsStaticHTML(html: string): boolean;
 }
 declare var MSWindowExtensions: {
     prototype: MSWindowExtensions;
@@ -7330,7 +7330,7 @@ interface AudioTrack {
     language: string;
     id: string;
     label: string;
-    enabled: bool;
+    enabled: boolean;
 }
 declare var AudioTrack: {
     prototype: AudioTrack;
@@ -7486,21 +7486,21 @@ declare var SVGFEColorMatrixElement: {
 interface Console {
     info(): void;
     info(message: any, ...optionalParams: any[]): void;
-    profile(reportName?: string): bool;
+    profile(reportName?: string): boolean;
     assert(): void;
-    assert(test: bool): void;
-    assert(test: bool, message: any, ...optionalParams: any[]): void;
-    msIsIndependentlyComposed(element: Element): bool;
-    clear(): bool;
-    dir(): bool;
-    dir(value: any, ...optionalParams: any[]): bool;
+    assert(test: boolean): void;
+    assert(test: boolean, message: any, ...optionalParams: any[]): void;
+    msIsIndependentlyComposed(element: Element): boolean;
+    clear(): boolean;
+    dir(): boolean;
+    dir(value: any, ...optionalParams: any[]): boolean;
     warn(): void;
     warn(message: any, ...optionalParams: any[]): void;
     error(): void;
     error(message: any, ...optionalParams: any[]): void;
     log(): void;
     log(message: any, ...optionalParams: any[]): void;
-    profileEnd(): bool;
+    profileEnd(): boolean;
 }
 declare var Console: {
     prototype: Console;
@@ -7523,10 +7523,10 @@ declare var SVGFESpotLightElement: {
 }
 
 interface DocumentVisibility {
-    msHidden: bool;
+    msHidden: boolean;
     msVisibilityState: string;
     visibilityState: string;
-    hidden: bool;
+    hidden: boolean;
 }
 
 interface WindowBase64 {
@@ -7559,7 +7559,7 @@ declare var MSProtocolsCollection: {
 
 interface DOMStringList {
     length: number;
-    contains(str: string): bool;
+    contains(str: string): boolean;
     item(index: number): string;
     [index: number]: string;
 }
@@ -7596,14 +7596,14 @@ declare var IDBOpenDBRequest: {
 interface HTMLButtonElement {
     validationMessage: string;
     formTarget: string;
-    willValidate: bool;
+    willValidate: boolean;
     formAction: string;
-    autofocus: bool;
+    autofocus: boolean;
     validity: ValidityState;
     formNoValidate: string;
     formEnctype: string;
     formMethod: string;
-    checkValidity(): bool;
+    checkValidity(): boolean;
     setCustomValidity(error: string): void;
 }
 
@@ -7630,8 +7630,8 @@ declare var SVGFEOffsetElement: {
 
 interface HTMLFormElement {
     autocomplete: string;
-    noValidate: bool;
-    checkValidity(): bool;
+    noValidate: boolean;
+    checkValidity(): boolean;
 }
 
 interface MSUnsafeFunctionCallback {
@@ -7646,7 +7646,7 @@ interface MessageEvent extends Event {
 }
 
 interface HTMLScriptElement {
-    async: bool;
+    async: boolean;
 }
 
 interface HTMLMediaElement extends MSHTMLMediaElementExtensions {
@@ -7776,18 +7776,18 @@ declare var ApplicationCache: {
 }
 
 interface MSHTMLVideoElementExtensions {
-    msIsStereo3D: bool;
+    msIsStereo3D: boolean;
     msStereo3DPackingMode: string;
     onMSVideoOptimalLayoutChanged: (ev: any) => any;
     onMSVideoFrameStepCompleted: (ev: any) => any;
     msStereo3DRenderMode: string;
-    msIsLayoutOptimalForPlayback: bool;
-    msHorizontalMirror: bool;
+    msIsLayoutOptimalForPlayback: boolean;
+    msHorizontalMirror: boolean;
     onMSVideoFormatChanged: (ev: any) => any;
-    msZoom: bool;
-    msInsertVideoEffect(activatableClassId: string, effectRequired: bool, config?: any): void;
+    msZoom: boolean;
+    msInsertVideoEffect(activatableClassId: string, effectRequired: boolean, config?: any): void;
     msSetVideoRectangle(left: number, top: number, right: number, bottom: number): void;
-    msFrameStep(forward: bool): void;
+    msFrameStep(forward: boolean): void;
 }
 
 interface FrameRequestCallback {
@@ -7806,12 +7806,12 @@ interface CSS3DTransformsProperties {
 }
 
 interface XMLHttpRequest {
-    withCredentials: bool;
+    withCredentials: boolean;
 }
 
 interface PopStateEvent extends Event {
     state: any;
-    initPopStateEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, stateArg: any): void;
+    initPopStateEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, stateArg: any): void;
 }
 declare var PopStateEvent: {
     prototype: PopStateEvent;
@@ -7839,8 +7839,8 @@ interface CSSGridProperties {
 }
 
 interface MSFileSaver {
-    msSaveBlob(blob: any, defaultName?: string): bool;
-    msSaveOrOpenBlob(blob: any, defaultName?: string): bool;
+    msSaveBlob(blob: any, defaultName?: string): boolean;
+    msSaveOrOpenBlob(blob: any, defaultName?: string): boolean;
 }
 
 interface MSStream {
@@ -7859,8 +7859,8 @@ interface MediaError extends MSMediaErrorExtensions {
 interface HTMLFieldSetElement {
     validationMessage: string;
     validity: ValidityState;
-    willValidate: bool;
-    checkValidity(): bool;
+    willValidate: boolean;
+    checkValidity(): boolean;
     setCustomValidity(error: string): void;
 }
 
@@ -7879,9 +7879,9 @@ interface MSRangeExtensions {
 
 interface HTMLElement {
     oncuechange: (ev: Event) => any;
-    spellcheck: bool;
+    spellcheck: boolean;
     classList: DOMTokenList;
-    draggable: bool;
+    draggable: boolean;
 }
 
 interface DataTransfer {
@@ -7913,8 +7913,8 @@ interface Range extends MSRangeExtensions {
 interface HTMLObjectElement {
     validationMessage: string;
     validity: ValidityState;
-    willValidate: bool;
-    checkValidity(): bool;
+    willValidate: boolean;
+    checkValidity(): boolean;
     setCustomValidity(error: string): void;
 }
 
@@ -7923,7 +7923,7 @@ interface MSPointerEvent extends MouseEvent {
     rotation: number;
     pressure: number;
     pointerType: number;
-    isPrimary: bool;
+    isPrimary: boolean;
     tiltY: number;
     height: number;
     intermediatePoints: any;
@@ -7931,7 +7931,7 @@ interface MSPointerEvent extends MouseEvent {
     tiltX: number;
     hwTimestamp: number;
     pointerId: number;
-    initPointerEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: bool, altKeyArg: bool, shiftKeyArg: bool, metaKeyArg: bool, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: number, hwTimestampArg: number, isPrimary: bool): void;
+    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: number, hwTimestampArg: number, isPrimary: boolean): void;
     getCurrentPoint(element: Element): void;
     getIntermediatePoints(element: Element): void;
     MSPOINTER_TYPE_PEN: number;
@@ -7978,7 +7978,7 @@ interface MSCSSHighContrastProperties {
 interface MSManipulationEvent extends UIEvent {
     lastState: number;
     currentState: number;
-    initMSManipulationEvent(typeArg: string, canBubbleArg: bool, cancelableArg: bool, viewArg: AbstractView, detailArg: number, lastState: number, currentState: number): void;
+    initMSManipulationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: AbstractView, detailArg: number, lastState: number, currentState: number): void;
     MS_MANIPULATION_STATE_STOPPED: number;
     MS_MANIPULATION_STATE_ACTIVE: number;
     MS_MANIPULATION_STATE_INERTIA: number;
@@ -8000,8 +8000,8 @@ declare var FormData: {
 }
 
 interface MSHTMLImageElementExtensions {
-    msPlayToPrimary: bool;
-    msPlayToDisabled: bool;
+    msPlayToPrimary: boolean;
+    msPlayToDisabled: boolean;
     msPlayToSource: any;
 }
 declare var MSHTMLImageElementExtensions: {
@@ -8011,14 +8011,14 @@ declare var MSHTMLImageElementExtensions: {
 
 interface MSHTMLMediaElementExtensions {
     msAudioCategory: string;
-    msRealTime: bool;
-    msPlayToPrimary: bool;
-    msPlayToDisabled: bool;
+    msRealTime: boolean;
+    msPlayToPrimary: boolean;
+    msPlayToDisabled: boolean;
     msPlayToSource: any;
     msAudioDeviceType: string;
     msClearEffects(): void;
     msSetMediaProtectionManager(mediaProtectionManager?: any): void;
-    msInsertAudioEffect(activatableClassId: string, effectRequired: bool, config?: any): void;
+    msInsertAudioEffect(activatableClassId: string, effectRequired: boolean, config?: any): void;
 }
 
 interface SVGFEImageElement extends SVGElement, SVGLangSpace, SVGFilterPrimitiveStandardAttributes, SVGURIReference {
@@ -8070,15 +8070,15 @@ declare var SVGFECompositeElement: {
 }
 
 interface ValidityState {
-    customError: bool;
-    valueMissing: bool;
-    stepMismatch: bool;
-    rangeUnderflow: bool;
-    rangeOverflow: bool;
-    typeMismatch: bool;
-    patternMismatch: bool;
-    tooLong: bool;
-    valid: bool;
+    customError: boolean;
+    valueMissing: boolean;
+    stepMismatch: boolean;
+    rangeUnderflow: boolean;
+    rangeOverflow: boolean;
+    typeMismatch: boolean;
+    patternMismatch: boolean;
+    tooLong: boolean;
+    valid: boolean;
 }
 declare var ValidityState: {
     prototype: ValidityState;
@@ -8094,7 +8094,7 @@ interface HTMLTrackElement extends HTMLElement {
     srclang: string;
     track: TextTrack;
     label: string;
-    defaul: bool;
+    defaul: boolean;
 }
 declare var HTMLTrackElement: {
     prototype: HTMLTrackElement;
@@ -8209,8 +8209,8 @@ interface MSMediaErrorExtensions {
 interface MSNavigatorAbilities {
     msProtocols: MSProtocolsCollection;
     msMaxTouchPoints: number;
-    msPointerEnabled: bool;
-    msManipulationViewsEnabled: bool;
+    msPointerEnabled: boolean;
+    msManipulationViewsEnabled: boolean;
 }
 declare var MSNavigatorAbilities: {
     prototype: MSNavigatorAbilities;

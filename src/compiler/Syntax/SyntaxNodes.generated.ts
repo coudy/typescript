@@ -5,7 +5,7 @@ module TypeScript {
 
     constructor(public moduleElements: ISyntaxList,
                 public endOfFileToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -67,18 +67,18 @@ module TypeScript {
         return this.update(this.moduleElements, endOfFileToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
     }
 
     export class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
-    constructor(parsedInStrictMode: bool) {
+    constructor(parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
-    private isModuleReference(): bool {
+    private isModuleReference(): boolean {
         return true;
     }
 
@@ -90,7 +90,7 @@ module TypeScript {
         return <ModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -101,7 +101,7 @@ module TypeScript {
                 public openParenToken: ISyntaxToken,
                 public stringLiteral: ISyntaxToken,
                 public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -167,7 +167,7 @@ module TypeScript {
         return this.update(this.moduleKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -175,7 +175,7 @@ module TypeScript {
     export class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     constructor(public moduleName: INameSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -219,7 +219,7 @@ module TypeScript {
         return this.update(moduleName);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -231,7 +231,7 @@ module TypeScript {
                 public equalsToken: ISyntaxToken,
                 public moduleReference: ModuleReferenceSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -259,7 +259,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -308,7 +308,7 @@ module TypeScript {
         return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -319,7 +319,7 @@ module TypeScript {
                 public equalsToken: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -346,7 +346,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -389,7 +389,7 @@ module TypeScript {
         return this.update(this.exportKeyword, this.equalsToken, this.identifier, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -404,7 +404,7 @@ module TypeScript {
                 public openBraceToken: ISyntaxToken,
                 public classElements: ISyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -435,7 +435,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -517,7 +517,7 @@ module TypeScript {
         return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -530,7 +530,7 @@ module TypeScript {
                 public typeParameterList: TypeParameterListSyntax,
                 public heritageClauses: ISyntaxList,
                 public body: ObjectTypeSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -559,7 +559,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -626,7 +626,7 @@ module TypeScript {
         return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, body);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -635,7 +635,7 @@ module TypeScript {
 
     constructor(public extendsOrImplementsKeyword: ISyntaxToken,
                 public typeNames: ISeparatedSyntaxList,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -689,7 +689,7 @@ module TypeScript {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -703,7 +703,7 @@ module TypeScript {
                 public openBraceToken: ISyntaxToken,
                 public moduleElements: ISyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -733,7 +733,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -805,7 +805,7 @@ module TypeScript {
         return this.update(this.modifiers, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -818,7 +818,7 @@ module TypeScript {
                 public callSignature: CallSignatureSyntax,
                 public block: BlockSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -847,11 +847,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -914,7 +914,7 @@ module TypeScript {
         return this.update(this.modifiers, this.functionKeyword, this.identifier, this.callSignature, this.block, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.modifiers.isTypeScriptSpecific()) { return true; }
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         if (this.block !== null && this.block.isTypeScriptSpecific()) { return true; }
@@ -927,7 +927,7 @@ module TypeScript {
     constructor(public modifiers: ISyntaxList,
                 public variableDeclaration: VariableDeclarationSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -953,11 +953,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -1004,7 +1004,7 @@ module TypeScript {
         return this.update(this.modifiers, this.variableDeclaration, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.modifiers.isTypeScriptSpecific()) { return true; }
         if (this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         return false;
@@ -1015,7 +1015,7 @@ module TypeScript {
 
     constructor(public varKeyword: ISyntaxToken,
                 public variableDeclarators: ISeparatedSyntaxList,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1073,7 +1073,7 @@ module TypeScript {
         return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1084,7 +1084,7 @@ module TypeScript {
     constructor(public identifier: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
                 public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1148,7 +1148,7 @@ module TypeScript {
         return this.update(this.identifier, this.typeAnnotation, equalsValueClause);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.typeAnnotation !== null) { return true; }
         if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
@@ -1159,7 +1159,7 @@ module TypeScript {
 
     constructor(public equalsToken: ISyntaxToken,
                 public value: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1213,7 +1213,7 @@ module TypeScript {
         return this.update(this.equalsToken, value);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1225,7 +1225,7 @@ module TypeScript {
     constructor(kind: SyntaxKind,
                 public operatorToken: ISyntaxToken,
                 public operand: IUnaryExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
         this._kind = kind;
@@ -1247,11 +1247,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1289,7 +1289,7 @@ module TypeScript {
         return this.update(this._kind, this.operatorToken, operand);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1300,7 +1300,7 @@ module TypeScript {
     constructor(public openBracketToken: ISyntaxToken,
                 public expressions: ISeparatedSyntaxList,
                 public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1326,11 +1326,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1377,14 +1377,14 @@ module TypeScript {
         return this.update(this.openBracketToken, this.expressions, closeBracketToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
     }
 
     export class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
-    constructor(parsedInStrictMode: bool) {
+    constructor(parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
@@ -1404,7 +1404,7 @@ module TypeScript {
         throw Errors.invalidOperation();
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1420,7 +1420,7 @@ module TypeScript {
         return <OmittedExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -1430,7 +1430,7 @@ module TypeScript {
     constructor(public openParenToken: ISyntaxToken,
                 public expression: IExpressionSyntax,
                 public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1456,11 +1456,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1498,7 +1498,7 @@ module TypeScript {
         return this.update(this.openParenToken, this.expression, closeParenToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1507,15 +1507,15 @@ module TypeScript {
     export class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     constructor(public equalsGreaterThanToken: ISyntaxToken,
                 public body: ISyntaxNodeOrToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1527,7 +1527,7 @@ module TypeScript {
         return <ArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1537,7 +1537,7 @@ module TypeScript {
     constructor(public identifier: ISyntaxToken,
                 equalsGreaterThanToken: ISyntaxToken,
                 body: ISyntaxNodeOrToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
     }
@@ -1598,7 +1598,7 @@ module TypeScript {
         return this.update(this.identifier, this.equalsGreaterThanToken, body);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1608,7 +1608,7 @@ module TypeScript {
     constructor(public callSignature: CallSignatureSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
                 body: ISyntaxNodeOrToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
     }
@@ -1668,7 +1668,7 @@ module TypeScript {
         return this.update(this.callSignature, this.equalsGreaterThanToken, body);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1678,7 +1678,7 @@ module TypeScript {
     constructor(public left: INameSyntax,
                 public dotToken: ISyntaxToken,
                 public right: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1704,19 +1704,19 @@ module TypeScript {
         }
     }
 
-    private isName(): bool {
+    private isName(): boolean {
         return true;
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1755,7 +1755,7 @@ module TypeScript {
         return this.update(this.left, this.dotToken, right);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1765,7 +1765,7 @@ module TypeScript {
     constructor(public lessThanToken: ISyntaxToken,
                 public typeArguments: ISeparatedSyntaxList,
                 public greaterThanToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1834,7 +1834,7 @@ module TypeScript {
         return this.update(this.lessThanToken, this.typeArguments, greaterThanToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1846,7 +1846,7 @@ module TypeScript {
                 public parameterList: ParameterListSyntax,
                 public equalsGreaterThanToken: ISyntaxToken,
                 public type: ITypeSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1874,15 +1874,15 @@ module TypeScript {
         }
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -1937,7 +1937,7 @@ module TypeScript {
         return this.update(this.newKeyword, this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -1948,7 +1948,7 @@ module TypeScript {
                 public parameterList: ParameterListSyntax,
                 public equalsGreaterThanToken: ISyntaxToken,
                 public type: ITypeSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -1975,15 +1975,15 @@ module TypeScript {
         }
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2032,7 +2032,7 @@ module TypeScript {
         return this.update(this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -2042,7 +2042,7 @@ module TypeScript {
     constructor(public openBraceToken: ISyntaxToken,
                 public typeMembers: ISeparatedSyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2068,15 +2068,15 @@ module TypeScript {
         }
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2123,7 +2123,7 @@ module TypeScript {
         return this.update(this.openBraceToken, this.typeMembers, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -2133,7 +2133,7 @@ module TypeScript {
     constructor(public type: ITypeSyntax,
                 public openBracketToken: ISyntaxToken,
                 public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2159,15 +2159,15 @@ module TypeScript {
         }
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2205,7 +2205,7 @@ module TypeScript {
         return this.update(this.type, this.openBracketToken, closeBracketToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -2214,7 +2214,7 @@ module TypeScript {
 
     constructor(public name: INameSyntax,
                 public typeArgumentList: TypeArgumentListSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2239,15 +2239,15 @@ module TypeScript {
         }
     }
 
-    private isType(): bool {
+    private isType(): boolean {
         return true;
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2280,7 +2280,7 @@ module TypeScript {
         return this.update(this.name, typeArgumentList);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -2289,7 +2289,7 @@ module TypeScript {
 
     constructor(public colonToken: ISyntaxToken,
                 public type: ITypeSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2343,7 +2343,7 @@ module TypeScript {
         return this.update(this.colonToken, type);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -2353,7 +2353,7 @@ module TypeScript {
     constructor(public openBraceToken: ISyntaxToken,
                 public statements: ISyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2379,11 +2379,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -2430,7 +2430,7 @@ module TypeScript {
         return this.update(this.openBraceToken, this.statements, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2444,7 +2444,7 @@ module TypeScript {
                 public questionToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
                 public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2526,7 +2526,7 @@ module TypeScript {
         return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, equalsValueClause);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.dotDotDotToken !== null) { return true; }
         if (this.publicOrPrivateKeyword !== null) { return true; }
         if (this.questionToken !== null) { return true; }
@@ -2541,7 +2541,7 @@ module TypeScript {
     constructor(public expression: IExpressionSyntax,
                 public dotToken: ISyntaxToken,
                 public name: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2567,11 +2567,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2610,7 +2610,7 @@ module TypeScript {
         return this.update(this.expression, this.dotToken, name);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2622,7 +2622,7 @@ module TypeScript {
     constructor(kind: SyntaxKind,
                 public operand: IExpressionSyntax,
                 public operatorToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
         this._kind = kind;
@@ -2644,11 +2644,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2686,7 +2686,7 @@ module TypeScript {
         return this.update(this._kind, this.operand, operatorToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2698,7 +2698,7 @@ module TypeScript {
                 public openBracketToken: ISyntaxToken,
                 public argumentExpression: IExpressionSyntax,
                 public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2725,11 +2725,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2773,7 +2773,7 @@ module TypeScript {
         return this.update(this.expression, this.openBracketToken, this.argumentExpression, closeBracketToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2784,7 +2784,7 @@ module TypeScript {
 
     constructor(public expression: IExpressionSyntax,
                 public argumentList: ArgumentListSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2809,11 +2809,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -2846,7 +2846,7 @@ module TypeScript {
         return this.update(this.expression, argumentList);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2859,7 +2859,7 @@ module TypeScript {
                 public openParenToken: ISyntaxToken,
                 public arguments: ISeparatedSyntaxList,
                 public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -2934,7 +2934,7 @@ module TypeScript {
         return this.update(this.typeArgumentList, this.openParenToken, this.arguments, closeParenToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.typeArgumentList !== null && this.typeArgumentList.isTypeScriptSpecific()) { return true; }
         if (this.arguments.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2948,7 +2948,7 @@ module TypeScript {
                 public left: IExpressionSyntax,
                 public operatorToken: ISyntaxToken,
                 public right: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
         this._kind = kind;
@@ -2971,7 +2971,7 @@ module TypeScript {
         }
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -3014,7 +3014,7 @@ module TypeScript {
         return this.update(this._kind, this.left, this.operatorToken, right);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.left.isTypeScriptSpecific()) { return true; }
         if (this.right.isTypeScriptSpecific()) { return true; }
         return false;
@@ -3028,7 +3028,7 @@ module TypeScript {
                 public whenTrue: IExpressionSyntax,
                 public colonToken: ISyntaxToken,
                 public whenFalse: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3056,7 +3056,7 @@ module TypeScript {
         }
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -3106,7 +3106,7 @@ module TypeScript {
         return this.update(this.condition, this.questionToken, this.whenTrue, this.colonToken, whenFalse);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.whenTrue.isTypeScriptSpecific()) { return true; }
         if (this.whenFalse.isTypeScriptSpecific()) { return true; }
@@ -3118,7 +3118,7 @@ module TypeScript {
 
     constructor(public newKeyword: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3143,7 +3143,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return true;
     }
 
@@ -3176,7 +3176,7 @@ module TypeScript {
         return this.update(this.newKeyword, callSignature);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3186,7 +3186,7 @@ module TypeScript {
     constructor(public propertyName: ISyntaxToken,
                 public questionToken: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3212,7 +3212,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return true;
     }
 
@@ -3255,7 +3255,7 @@ module TypeScript {
         return this.update(this.propertyName, this.questionToken, callSignature);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3267,7 +3267,7 @@ module TypeScript {
                 public parameter: ParameterSyntax,
                 public closeBracketToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3294,7 +3294,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return true;
     }
 
@@ -3343,7 +3343,7 @@ module TypeScript {
         return this.update(this.openBracketToken, this.parameter, this.closeBracketToken, typeAnnotation);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3353,7 +3353,7 @@ module TypeScript {
     constructor(public propertyName: ISyntaxToken,
                 public questionToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3379,7 +3379,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return true;
     }
 
@@ -3421,7 +3421,7 @@ module TypeScript {
         return this.update(this.propertyName, this.questionToken, typeAnnotation);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3431,7 +3431,7 @@ module TypeScript {
     constructor(public typeParameterList: TypeParameterListSyntax,
                 public parameterList: ParameterListSyntax,
                 public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3457,7 +3457,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): bool {
+    private isTypeMember(): boolean {
         return true;
     }
 
@@ -3499,7 +3499,7 @@ module TypeScript {
         return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.typeParameterList !== null) { return true; }
         if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.typeAnnotation !== null) { return true; }
@@ -3512,7 +3512,7 @@ module TypeScript {
     constructor(public openParenToken: ISyntaxToken,
                 public parameters: ISeparatedSyntaxList,
                 public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3581,7 +3581,7 @@ module TypeScript {
         return this.update(this.openParenToken, this.parameters, closeParenToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3592,7 +3592,7 @@ module TypeScript {
     constructor(public lessThanToken: ISyntaxToken,
                 public typeParameters: ISeparatedSyntaxList,
                 public greaterThanToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3661,7 +3661,7 @@ module TypeScript {
         return this.update(this.lessThanToken, this.typeParameters, greaterThanToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3670,7 +3670,7 @@ module TypeScript {
 
     constructor(public identifier: ISyntaxToken,
                 public constraint: ConstraintSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3728,7 +3728,7 @@ module TypeScript {
         return this.update(this.identifier, constraint);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3737,7 +3737,7 @@ module TypeScript {
 
     constructor(public extendsKeyword: ISyntaxToken,
                 public type: ITypeSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3791,7 +3791,7 @@ module TypeScript {
         return this.update(this.extendsKeyword, type);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -3800,7 +3800,7 @@ module TypeScript {
 
     constructor(public elseKeyword: ISyntaxToken,
                 public statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3854,7 +3854,7 @@ module TypeScript {
         return this.update(this.elseKeyword, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3868,7 +3868,7 @@ module TypeScript {
                 public closeParenToken: ISyntaxToken,
                 public statement: IStatementSyntax,
                 public elseClause: ElseClauseSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -3897,11 +3897,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -3963,7 +3963,7 @@ module TypeScript {
         return this.update(this.ifKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement, elseClause);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.elseClause !== null && this.elseClause.isTypeScriptSpecific()) { return true; }
@@ -3975,7 +3975,7 @@ module TypeScript {
 
     constructor(public expression: IExpressionSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4000,11 +4000,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -4037,7 +4037,7 @@ module TypeScript {
         return this.update(this.expression, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4049,7 +4049,7 @@ module TypeScript {
                 public parameterList: ParameterListSyntax,
                 public block: BlockSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4076,7 +4076,7 @@ module TypeScript {
         }
     }
 
-    private isClassElement(): bool {
+    private isClassElement(): boolean {
         return true;
     }
 
@@ -4124,7 +4124,7 @@ module TypeScript {
         return this.update(this.constructorKeyword, this.parameterList, this.block, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4136,7 +4136,7 @@ module TypeScript {
                 public callSignature: CallSignatureSyntax,
                 public block: BlockSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4164,11 +4164,11 @@ module TypeScript {
         }
     }
 
-    private isMemberDeclaration(): bool {
+    private isMemberDeclaration(): boolean {
         return true;
     }
 
-    private isClassElement(): bool {
+    private isClassElement(): boolean {
         return true;
     }
 
@@ -4225,7 +4225,7 @@ module TypeScript {
         return this.update(this.modifiers, this.propertyName, this.callSignature, this.block, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4235,15 +4235,15 @@ module TypeScript {
                 public propertyName: ISyntaxToken,
                 public parameterList: ParameterListSyntax,
                 public block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
-    private isMemberDeclaration(): bool {
+    private isMemberDeclaration(): boolean {
         return true;
     }
 
-    private isClassElement(): bool {
+    private isClassElement(): boolean {
         return true;
     }
 
@@ -4255,7 +4255,7 @@ module TypeScript {
         return <MemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4268,7 +4268,7 @@ module TypeScript {
                 parameterList: ParameterListSyntax,
                 public typeAnnotation: TypeAnnotationSyntax,
                 block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
 
     }
@@ -4357,7 +4357,7 @@ module TypeScript {
         return this.update(this.modifiers, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4369,7 +4369,7 @@ module TypeScript {
                 propertyName: ISyntaxToken,
                 parameterList: ParameterListSyntax,
                 block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
 
     }
@@ -4452,7 +4452,7 @@ module TypeScript {
         return this.update(this.modifiers, this.setKeyword, this.propertyName, this.parameterList, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4462,7 +4462,7 @@ module TypeScript {
     constructor(public modifiers: ISyntaxList,
                 public variableDeclarator: VariableDeclaratorSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4488,11 +4488,11 @@ module TypeScript {
         }
     }
 
-    private isMemberDeclaration(): bool {
+    private isMemberDeclaration(): boolean {
         return true;
     }
 
-    private isClassElement(): bool {
+    private isClassElement(): boolean {
         return true;
     }
 
@@ -4539,7 +4539,7 @@ module TypeScript {
         return this.update(this.modifiers, this.variableDeclarator, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -4549,7 +4549,7 @@ module TypeScript {
     constructor(public throwKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4575,11 +4575,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -4617,7 +4617,7 @@ module TypeScript {
         return this.update(this.throwKeyword, this.expression, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4628,7 +4628,7 @@ module TypeScript {
     constructor(public returnKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4654,11 +4654,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -4701,7 +4701,7 @@ module TypeScript {
         return this.update(this.returnKeyword, this.expression, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression !== null && this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4712,7 +4712,7 @@ module TypeScript {
     constructor(public newKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
                 public argumentList: ArgumentListSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4738,11 +4738,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -4785,7 +4785,7 @@ module TypeScript {
         return this.update(this.newKeyword, this.expression, argumentList);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList !== null && this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -4801,7 +4801,7 @@ module TypeScript {
                 public openBraceToken: ISyntaxToken,
                 public switchClauses: ISyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -4831,11 +4831,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -4906,7 +4906,7 @@ module TypeScript {
         return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
@@ -4916,11 +4916,11 @@ module TypeScript {
     export class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
     constructor(public colonToken: ISyntaxToken,
                 public statements: ISyntaxList,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
-    private isSwitchClause(): bool {
+    private isSwitchClause(): boolean {
         return true;
     }
 
@@ -4932,7 +4932,7 @@ module TypeScript {
         return <SwitchClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -4943,7 +4943,7 @@ module TypeScript {
                 public expression: IExpressionSyntax,
                 colonToken: ISyntaxToken,
                 statements: ISyntaxList,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(colonToken, statements, parsedInStrictMode); 
 
     }
@@ -5019,7 +5019,7 @@ module TypeScript {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5031,7 +5031,7 @@ module TypeScript {
     constructor(public defaultKeyword: ISyntaxToken,
                 colonToken: ISyntaxToken,
                 statements: ISyntaxList,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(colonToken, statements, parsedInStrictMode); 
 
     }
@@ -5100,7 +5100,7 @@ module TypeScript {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -5111,7 +5111,7 @@ module TypeScript {
     constructor(public breakKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5137,11 +5137,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -5184,7 +5184,7 @@ module TypeScript {
         return this.update(this.breakKeyword, this.identifier, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -5194,7 +5194,7 @@ module TypeScript {
     constructor(public continueKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5220,11 +5220,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -5267,7 +5267,7 @@ module TypeScript {
         return this.update(this.continueKeyword, this.identifier, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -5276,15 +5276,15 @@ module TypeScript {
     constructor(public openParenToken: ISyntaxToken,
                 public closeParenToken: ISyntaxToken,
                 public statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -5296,7 +5296,7 @@ module TypeScript {
         return <IterationStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -5307,7 +5307,7 @@ module TypeScript {
                 public variableDeclaration: VariableDeclarationSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
     }
 
@@ -5319,7 +5319,7 @@ module TypeScript {
         return <BaseForStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -5336,7 +5336,7 @@ module TypeScript {
                 public incrementor: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
     }
@@ -5447,7 +5447,7 @@ module TypeScript {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.initializer !== null && this.initializer.isTypeScriptSpecific()) { return true; }
         if (this.condition !== null && this.condition.isTypeScriptSpecific()) { return true; }
@@ -5467,7 +5467,7 @@ module TypeScript {
                 public expression: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
     }
@@ -5567,7 +5567,7 @@ module TypeScript {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.left !== null && this.left.isTypeScriptSpecific()) { return true; }
         if (this.expression.isTypeScriptSpecific()) { return true; }
@@ -5583,7 +5583,7 @@ module TypeScript {
                 public condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
     }
@@ -5656,7 +5656,7 @@ module TypeScript {
         return this.update(this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5670,7 +5670,7 @@ module TypeScript {
                 public condition: IExpressionSyntax,
                 public closeParenToken: ISyntaxToken,
                 public statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5698,11 +5698,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -5751,7 +5751,7 @@ module TypeScript {
         return this.update(this.withKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5766,7 +5766,7 @@ module TypeScript {
                 public openBraceToken: ISyntaxToken,
                 public enumElements: ISeparatedSyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5795,7 +5795,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -5863,7 +5863,7 @@ module TypeScript {
         return this.update(this.modifiers, this.enumKeyword, this.identifier, this.openBraceToken, this.enumElements, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -5872,7 +5872,7 @@ module TypeScript {
 
     constructor(public propertyName: ISyntaxToken,
                 public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5930,7 +5930,7 @@ module TypeScript {
         return this.update(this.propertyName, equalsValueClause);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -5942,7 +5942,7 @@ module TypeScript {
                 public type: ITypeSyntax,
                 public greaterThanToken: ISyntaxToken,
                 public expression: IUnaryExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -5969,11 +5969,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -6017,7 +6017,7 @@ module TypeScript {
         return this.update(this.lessThanToken, this.type, this.greaterThanToken, expression);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return true;
     }
     }
@@ -6027,7 +6027,7 @@ module TypeScript {
     constructor(public openBraceToken: ISyntaxToken,
                 public propertyAssignments: ISeparatedSyntaxList,
                 public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6053,11 +6053,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -6104,7 +6104,7 @@ module TypeScript {
         return this.update(this.openBraceToken, this.propertyAssignments, closeBraceToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6112,7 +6112,7 @@ module TypeScript {
 
     export class PropertyAssignmentSyntax extends SyntaxNode {
     constructor(public propertyName: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
     }
 
@@ -6124,7 +6124,7 @@ module TypeScript {
         return <PropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -6134,7 +6134,7 @@ module TypeScript {
     constructor(propertyName: ISyntaxToken,
                 public colonToken: ISyntaxToken,
                 public expression: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(propertyName, parsedInStrictMode); 
 
     }
@@ -6195,7 +6195,7 @@ module TypeScript {
         return this.update(this.propertyName, this.colonToken, expression);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6206,7 +6206,7 @@ module TypeScript {
                 public openParenToken: ISyntaxToken,
                 public closeParenToken: ISyntaxToken,
                 public block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(propertyName, parsedInStrictMode); 
     }
 
@@ -6218,7 +6218,7 @@ module TypeScript {
         return <AccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -6231,7 +6231,7 @@ module TypeScript {
                 closeParenToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
                 block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
     }
@@ -6317,7 +6317,7 @@ module TypeScript {
         return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6332,7 +6332,7 @@ module TypeScript {
                 public parameter: ParameterSyntax,
                 closeParenToken: ISyntaxToken,
                 block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
     }
@@ -6411,7 +6411,7 @@ module TypeScript {
         return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameter, this.closeParenToken, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.parameter.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6424,7 +6424,7 @@ module TypeScript {
                 public identifier: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
                 public block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6451,11 +6451,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -6504,7 +6504,7 @@ module TypeScript {
         return this.update(this.functionKeyword, this.identifier, this.callSignature, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6514,7 +6514,7 @@ module TypeScript {
     export class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6538,11 +6538,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -6570,7 +6570,7 @@ module TypeScript {
         return this.update(semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }
@@ -6581,7 +6581,7 @@ module TypeScript {
                 public block: BlockSyntax,
                 public catchClause: CatchClauseSyntax,
                 public finallyClause: FinallyClauseSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6608,11 +6608,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -6660,7 +6660,7 @@ module TypeScript {
         return this.update(this.tryKeyword, this.block, this.catchClause, finallyClause);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.block.isTypeScriptSpecific()) { return true; }
         if (this.catchClause !== null && this.catchClause.isTypeScriptSpecific()) { return true; }
         if (this.finallyClause !== null && this.finallyClause.isTypeScriptSpecific()) { return true; }
@@ -6676,7 +6676,7 @@ module TypeScript {
                 public typeAnnotation: TypeAnnotationSyntax,
                 public closeParenToken: ISyntaxToken,
                 public block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6762,7 +6762,7 @@ module TypeScript {
         return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6773,7 +6773,7 @@ module TypeScript {
 
     constructor(public finallyKeyword: ISyntaxToken,
                 public block: BlockSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6827,7 +6827,7 @@ module TypeScript {
         return this.update(this.finallyKeyword, block);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6838,7 +6838,7 @@ module TypeScript {
     constructor(public identifier: ISyntaxToken,
                 public colonToken: ISyntaxToken,
                 public statement: IStatementSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -6864,11 +6864,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -6907,7 +6907,7 @@ module TypeScript {
         return this.update(this.identifier, this.colonToken, statement);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6922,7 +6922,7 @@ module TypeScript {
                 public condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
     }
@@ -7007,7 +7007,7 @@ module TypeScript {
         return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.condition.isTypeScriptSpecific()) { return true; }
         return false;
@@ -7018,7 +7018,7 @@ module TypeScript {
 
     constructor(public typeOfKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -7043,11 +7043,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -7080,7 +7080,7 @@ module TypeScript {
         return this.update(this.typeOfKeyword, expression);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7090,7 +7090,7 @@ module TypeScript {
 
     constructor(public deleteKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -7115,11 +7115,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -7152,7 +7152,7 @@ module TypeScript {
         return this.update(this.deleteKeyword, expression);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7162,7 +7162,7 @@ module TypeScript {
 
     constructor(public voidKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -7187,11 +7187,11 @@ module TypeScript {
         }
     }
 
-    private isUnaryExpression(): bool {
+    private isUnaryExpression(): boolean {
         return true;
     }
 
-    private isExpression(): bool {
+    private isExpression(): boolean {
         return true;
     }
 
@@ -7224,7 +7224,7 @@ module TypeScript {
         return this.update(this.voidKeyword, expression);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7234,7 +7234,7 @@ module TypeScript {
 
     constructor(public debuggerKeyword: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: bool) {
+                parsedInStrictMode: boolean) {
         super(parsedInStrictMode); 
 
     }
@@ -7259,11 +7259,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): bool {
+    private isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): bool {
+    private isModuleElement(): boolean {
         return true;
     }
 
@@ -7296,7 +7296,7 @@ module TypeScript {
         return this.update(this.debuggerKeyword, semicolonToken);
     }
 
-    public isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): boolean {
         return false;
     }
     }

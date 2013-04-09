@@ -5,7 +5,7 @@
 class HarnessHost implements TypeScript.IResolverHost {
     resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
         resolver: TypeScript.ICodeResolver,
-        traceDependencies: bool): TypeScript.CompilationEnvironment {
+        traceDependencies: boolean): TypeScript.CompilationEnvironment {
 
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
@@ -41,7 +41,7 @@ class HarnessBatch {
     public resolvedEnvironment: TypeScript.CompilationEnvironment;
     public errout: Harness.Compiler.WriterAggregator;
 
-    constructor(getDeclareFiles: bool, generateMapFiles: bool, outputOption: string, public compilationSettings: TypeScript.CompilationSettings) {
+    constructor(getDeclareFiles: boolean, generateMapFiles: boolean, outputOption: string, public compilationSettings: TypeScript.CompilationSettings) {
         this.host = IO;
         this.compilationSettings.generateDeclarationFiles = getDeclareFiles;
         this.compilationSettings.mapSourceFiles = generateMapFiles;
@@ -53,8 +53,8 @@ class HarnessBatch {
 
         this.harnessCompile = function (
             files: string[],
-            createEmitFiles: (path: string, useUTF8?: bool) => ITextWriter,
-            createDeclareFile: (path: string, useUTF8?: bool) => ITextWriter) {
+            createEmitFiles: (path: string, useUTF8?: boolean) => ITextWriter,
+            createDeclareFile: (path: string, useUTF8?: boolean) => ITextWriter) {
             TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } }
 
             files.unshift(Harness.userSpecifiedroot + 'typings\\lib.d.ts');
@@ -85,8 +85,8 @@ class HarnessBatch {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     private compile(
-    createEmitFile: (path: string, useUTF8?: bool) => ITextWriter,
-    createDeclareFile: (path: string, useUTF8?: bool) => ITextWriter) {
+    createEmitFile: (path: string, useUTF8?: boolean) => ITextWriter,
+    createDeclareFile: (path: string, useUTF8?: boolean) => ITextWriter) {
         var compiler: TypeScript.TypeScriptCompiler;
         var _self = this;
         this.errout.reset();
@@ -253,7 +253,7 @@ class ProjectRunner extends RunnerBase {
                     return writeGeneratedFile(generatedEmitFiles, fn);
                 }
 
-                var writeEmitFile = (fileName: string, useUTF8?: bool) => IOUtils.createFileAndFolderStructure(IO, fileName, useUTF8);
+                var writeEmitFile = (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(IO, fileName, useUTF8);
                 var verifyEmitFiles = false;
                 if (spec.verifyEmitFiles) {
                     verifyEmitFiles = true;

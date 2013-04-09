@@ -14,8 +14,8 @@ interface DraggableEvent {
 
 interface Draggable {
     // Options
-    disabled?: bool;
-    addClasses?: bool;
+    disabled?: boolean;
+    addClasses?: boolean;
     appendTo?: any;
     axis?: string;
     cancel?: string;
@@ -30,11 +30,11 @@ interface Draggable {
     helper?: any;
     iframeFix?: any;
     opacity?: number;
-    refreshPositions?: bool;
+    refreshPositions?: boolean;
     revert?: any;
     revertDuration?: number;
     scope?: string;
-    scroll?: bool;
+    scroll?: boolean;
     scrollSensitivity?: number;
     scrollSpeed?: number;
     snap?: any;
@@ -62,10 +62,10 @@ interface DroppableEvent {
 
 interface Droppable {
     // Options
-    disabled?: bool;
+    disabled?: boolean;
     accept?: any;
     activeClass?: string;
-    greedy?: bool;
+    greedy?: boolean;
     hoverClass?: string;
     scope?: string;
     tolerance?: string;

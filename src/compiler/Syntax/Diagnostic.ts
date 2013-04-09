@@ -33,7 +33,7 @@ module TypeScript {
             return getDiagnosticMessage(this._diagnosticCode, this._arguments);
         }
 
-        public static equals(diagnostic1: Diagnostic1, diagnostic2: Diagnostic1): bool {
+        public static equals(diagnostic1: Diagnostic1, diagnostic2: Diagnostic1): boolean {
             return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode &&
                    ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
         }

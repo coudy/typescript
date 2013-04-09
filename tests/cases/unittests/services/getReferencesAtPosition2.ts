@@ -89,12 +89,12 @@ function validateReferencesFile(filename: string, expectedMissingCount: number, 
 }
 
 interface ListDiffResult {
-    areIdentical: bool;
+    areIdentical: boolean;
     extraItems: any[];
     missingItems: any[];
 }
 
-function diffLists(expected: any[], actual: any[], equals: (expct: any, actl: any) => bool) : ListDiffResult {
+function diffLists(expected: any[], actual: any[], equals: (expct: any, actl: any) => boolean) : ListDiffResult {
     var result = { areIdentical: false, extraItems: actual.slice(0), missingItems: expected.slice(0) };
     
     var i, j;

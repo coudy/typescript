@@ -30,8 +30,8 @@ module TypeScript {
     export class EmitState {
         public column: number;
         public line: number;
-        public pretty: bool;
-        public inObjectLiteral: bool;
+        public pretty: boolean;
+        public inObjectLiteral: boolean;
         public container: EmitContainer;
 
         constructor() {
@@ -45,13 +45,13 @@ module TypeScript {
 
     export class EmitOptions {
         public ioHost: EmitterIOHost = null;
-        public outputMany: bool = true;
+        public outputMany: boolean = true;
         public commonDirectoryPath = "";
 
         constructor(public compilationSettings: CompilationSettings) {
         }
 
-        public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: bool) => string) {
+        public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
             if (this.outputMany) {
                 var updatedFileName = fileName;
                 if (this.compilationSettings.outputOption != "") {
@@ -156,7 +156,7 @@ module TypeScript {
             this.document = document;
         }
 
-        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): bool {
+        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): boolean {
             if (!importDeclAST.isDynamicImport) {
                 return true;
             }
@@ -211,7 +211,7 @@ module TypeScript {
             this.varListCountStack[this.varListCountStack.length - 1] = count;
         }
 
-        public setInObjectLiteral(val: bool): bool {
+        public setInObjectLiteral(val: boolean): boolean {
             var temp = this.emitState.inObjectLiteral;
             this.emitState.inObjectLiteral = val;
             return temp;
@@ -279,7 +279,7 @@ module TypeScript {
             }
         }
 
-        public emitComments(ast: AST, pre: bool) {
+        public emitComments(ast: AST, pre: boolean) {
             var comments = pre ? ast.preComments : ast.postComments;
 
             if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
@@ -456,8 +456,8 @@ module TypeScript {
             }
         }
 
-        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: bool, isMember: bool,
-                                 hasSelfRef: bool, classDecl: TypeDeclaration) {
+        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, isMember: boolean,
+                                 hasSelfRef: boolean, classDecl: TypeDeclaration) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
@@ -1026,7 +1026,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptVariableDeclaration(declaration: VariableDeclaration, startLine: bool) {
+        public emitJavascriptVariableDeclaration(declaration: VariableDeclaration, startLine: boolean) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
@@ -1196,7 +1196,7 @@ module TypeScript {
             return false;
         }
 
-        public emitJavascriptName(name: Identifier, addThis: bool) {
+        public emitJavascriptName(name: Identifier, addThis: boolean) {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
@@ -1298,7 +1298,7 @@ module TypeScript {
             this.emitComments(name, false);
         }
 
-        public emitJavascriptStatements(stmts: AST, emitEmptyBod: bool) {
+        public emitJavascriptStatements(stmts: AST, emitEmptyBod: boolean) {
             if (stmts) {
                 if (stmts.nodeType != NodeType.Block) {
                     var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
@@ -1442,7 +1442,7 @@ module TypeScript {
             }
         }
         
-        public emitJavascriptList(ast: AST, delimiter: string, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool, emitPrologue = false, requiresExtendsBlock?: bool) {
+        public emitJavascriptList(ast: AST, delimiter: string, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (ast === null) {
                 return;
             }
@@ -1517,7 +1517,7 @@ module TypeScript {
         }
 
         // tokenId is the id the preceding token
-        public emitJavascript(ast: AST, startLine: bool) {
+        public emitJavascript(ast: AST, startLine: boolean) {
             if (ast === null) {
                 return;
             }
@@ -1544,7 +1544,7 @@ module TypeScript {
             ast.emit(this, startLine);
         }
 
-        public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: bool) {
+        public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: boolean) {
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.document.fileName);
                 if (accessorSymbol.getGetter()) {
@@ -1800,7 +1800,7 @@ module TypeScript {
             }
         }
 
-        public emitPrologue(reqInherits: bool) {
+        public emitPrologue(reqInherits: boolean) {
             if (!this.extendsPrologueEmitted) {
                 if (reqInherits) {
                     this.extendsPrologueEmitted = true;
@@ -1824,7 +1824,7 @@ module TypeScript {
             this.writeToOutput("_super.prototype");
         }
 
-        public emitSuperCall(callEx: CallExpression): bool {
+        public emitSuperCall(callEx: CallExpression): boolean {
             if (callEx.target.nodeType === NodeType.MemberAccessExpression) {
                 var dotNode = <BinaryExpression>callEx.target;
                 if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
@@ -1866,7 +1866,7 @@ module TypeScript {
         }
 
         // Note: throws exception.  
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
             try {
                 return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             }

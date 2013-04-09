@@ -57,7 +57,7 @@ module TypeScript {
     // are reflected in the managed side as well.
     export interface IFileReference extends ILineAndCharacter {
         path: string;
-        isResident: bool;
+        isResident: boolean;
         position: number;
         length: number;
     }
@@ -82,11 +82,11 @@ module TypeScript {
     }
 
     export interface ICodeResolver {
-        resolveCode(referencePath: string, rootPath: string, performSearch:bool, state: IResolutionDispatcher): void;
+        resolveCode(referencePath: string, rootPath: string, performSearch:boolean, state: IResolutionDispatcher): void;
     }
 
     export interface IResolverHost {
-        resolveCompilationEnvironment(preEnvironment: CompilationEnvironment, resolver: ICodeResolver, traceDependencies: bool): CompilationEnvironment;
+        resolveCompilationEnvironment(preEnvironment: CompilationEnvironment, resolver: ICodeResolver, traceDependencies: boolean): CompilationEnvironment;
     }
 
     export class CodeResolver implements TypeScript.ICodeResolver {
@@ -94,7 +94,7 @@ module TypeScript {
 
         constructor (public environment: CompilationEnvironment) { }
 
-        public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): bool {
+        public resolveCode(referencePath: string, parentPath: string, performSearch: boolean, resolutionDispatcher: TypeScript.IResolutionDispatcher): boolean {
             
             var resolvedFile: IResolvedFile = { content: null, path: referencePath };
             
@@ -175,7 +175,7 @@ module TypeScript {
                     var preProcessedFileInfo = preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     var i = 0;
-                    var resolutionResult: bool;
+                    var resolutionResult: boolean;
 
                     sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
 

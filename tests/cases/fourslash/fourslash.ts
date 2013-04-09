@@ -251,7 +251,7 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyIndentationLevelAtCurrentPosition(numberOfTabs);
         }
 
-        public setVerifyDocComments(val: bool) {
+        public setVerifyDocComments(val: boolean) {
             FourSlash.currentTestState.setVerifyDocComments(val);
         }
 

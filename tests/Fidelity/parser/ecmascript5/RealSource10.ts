@@ -127,7 +127,7 @@ module TypeScript {
     export var tokenTable = new TokenInfo[];
     export var nodeTypeTable = new string[];
     export var nodeTypeToTokTable = new number[];
-    export var noRegexTable = new bool[];
+    export var noRegexTable = new boolean[];
 
     noRegexTable[TokenID.Identifier] = true;
     noRegexTable[TokenID.StringLiteral] = true;
@@ -196,7 +196,7 @@ module TypeScript {
     }
 
     setTokenInfo(TokenID.Any, Reservation.TypeScript, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "any", ErrorRecoverySet.PrimType);
-    setTokenInfo(TokenID.Bool, Reservation.TypeScript, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "bool", ErrorRecoverySet.PrimType);
+    setTokenInfo(TokenID.Bool, Reservation.TypeScript, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "boolean", ErrorRecoverySet.PrimType);
     setTokenInfo(TokenID.Break, Reservation.TypeScriptAndJS, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "break", ErrorRecoverySet.Stmt);
     setTokenInfo(TokenID.Case, Reservation.TypeScriptAndJS, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "case", ErrorRecoverySet.SCase);
     setTokenInfo(TokenID.Catch, Reservation.TypeScriptAndJS, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "catch", ErrorRecoverySet.Catch);
@@ -364,7 +364,7 @@ module TypeScript {
     }
 
     export class NumberLiteralToken extends Token {
-        constructor (public value: number, public hasEmptyFraction?: bool) {
+        constructor (public value: number, public hasEmptyFraction?: boolean) {
             super(TokenID.NumberLiteral);
         }
 
@@ -392,7 +392,7 @@ module TypeScript {
     }
 
     export class IdentifierToken extends Token {
-        constructor (public value: string, public hasEscapeSequence : bool) {
+        constructor (public value: string, public hasEscapeSequence : boolean) {
             super(TokenID.Identifier);
         }
         public getText(): string {
@@ -418,7 +418,7 @@ module TypeScript {
     }
 
     export class CommentToken extends Token {
-        constructor (tokenID: TokenID, public value: string, public isBlock: bool, public startPos: number, public line: number, public endsLine: bool) {
+        constructor (tokenID: TokenID, public value: string, public isBlock: boolean, public startPos: number, public line: number, public endsLine: boolean) {
             super(tokenID);
         }
 

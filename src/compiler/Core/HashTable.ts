@@ -18,7 +18,7 @@ module TypeScript.Collections {
 
         constructor(capacity: number,
                     private hash: (k: any) => number,
-                    private equals: (k1: any, k2: any) => bool) {
+                    private equals: (k1: any, k2: any) => boolean) {
             var size = Hash.getPrime(capacity);
             this.hash = hash;
             this.equals = equals;
@@ -35,7 +35,7 @@ module TypeScript.Collections {
             this.addOrSet(key, value, /*throwOnExistingEntry:*/ true);
         }
 
-        public containsKey(key: any): bool {
+        public containsKey(key: any): boolean {
             var hashCode = this.computeHashCode(key);
             var entry = this.findEntry(key, hashCode);
             return entry !== null;
@@ -59,7 +59,7 @@ module TypeScript.Collections {
             return hashCode;
         }
 
-        private addOrSet(key: any, value: any, throwOnExistingEntry: bool) {
+        private addOrSet(key: any, value: any, throwOnExistingEntry: boolean) {
             // Compute the hash for this key.  Also ensure that it's non negative.
             var hashCode = this.computeHashCode(key);
 
@@ -160,7 +160,7 @@ module TypeScript.Collections {
 
     export function createHashTable(capacity: number = DefaultHashTableCapacity,
         hash: (k: any) => number = null,
-        equals: (k1: any, k2: any) => bool = null): HashTable {
+        equals: (k1: any, k2: any) => boolean = null): HashTable {
         return new HashTable(capacity, hash, equals);
     }
 

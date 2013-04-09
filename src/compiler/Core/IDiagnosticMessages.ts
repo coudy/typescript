@@ -86,6 +86,7 @@ module TypeScript {
         Setter__0__already_declared: DiagnosticInfo;
         Accessor_may_not_take_type_parameters: DiagnosticInfo;
         _set__accessor_must_have_only_one_parameter: DiagnosticInfo;
+        Use_of_deprecated_bool_type: DiagnosticInfo;
 
 
 

@@ -1,7 +1,7 @@
 ///<reference path='References.ts' />
 
 class FormattingOptions {
-    constructor(public useTabs: bool,
+    constructor(public useTabs: boolean,
                 public spacesPerTab: number,
                 public indentSpaces: number,
                 public newLineCharacter: string) {

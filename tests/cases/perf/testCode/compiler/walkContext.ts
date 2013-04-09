@@ -17,10 +17,10 @@
 
 module Tools {
     export interface IWalkContext {
-        goChildren: bool;
-        goNextSibling: bool;
+        goChildren: boolean;
+        goNextSibling: boolean;
         // visit siblings in reverse execution order
-        reverseSiblings: bool;
+        reverseSiblings: boolean;
     }
 
     export class BaseWalkContext implements IWalkContext {

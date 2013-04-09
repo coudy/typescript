@@ -19,7 +19,7 @@ module TypeScript.Formatting {
     export module Shared {
         export interface ITokenAccess {
             GetTokens(): SyntaxKind[];
-            Contains(token: SyntaxKind): bool;
+            Contains(token: SyntaxKind): boolean;
         }
 
         export class TokenRangeAccess implements ITokenAccess {
@@ -38,7 +38,7 @@ module TypeScript.Formatting {
                 return this.tokens;
             }
 
-            public Contains(token: SyntaxKind): bool {
+            public Contains(token: SyntaxKind): boolean {
                 return this.tokens.indexOf(token) >= 0;
             }
 
@@ -60,7 +60,7 @@ module TypeScript.Formatting {
                 return this.tokens;
             }
 
-            public Contains(token: SyntaxKind): bool {
+            public Contains(token: SyntaxKind): boolean {
                 return this.tokens.indexOf(token) >= 0;
             }
         }
@@ -73,7 +73,7 @@ module TypeScript.Formatting {
                 return [this.token];
             }
 
-            public Contains(tokenValue: SyntaxKind): bool {
+            public Contains(tokenValue: SyntaxKind): boolean {
                 return tokenValue == this.token;
             }
 
@@ -91,7 +91,7 @@ module TypeScript.Formatting {
                 return result;
             }
 
-            public Contains(tokenValue: SyntaxKind): bool {
+            public Contains(tokenValue: SyntaxKind): boolean {
                 return true;
             }
 
@@ -124,7 +124,7 @@ module TypeScript.Formatting {
                 return this.tokenAccess.GetTokens();
             }
 
-            public Contains(token: SyntaxKind): bool {
+            public Contains(token: SyntaxKind): boolean {
                 return this.tokenAccess.Contains(token);
             }
 

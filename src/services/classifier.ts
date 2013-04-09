@@ -35,7 +35,7 @@ module Services {
         RegExpLiteral,
     }
 
-    var noRegexTable: bool[] = [];
+    var noRegexTable: boolean[] = [];
     noRegexTable[TypeScript.SyntaxKind.IdentifierName] = true;
     noRegexTable[TypeScript.SyntaxKind.StringLiteral] = true;
     noRegexTable[TypeScript.SyntaxKind.NumericLiteral] = true;
@@ -149,7 +149,7 @@ module Services {
             }
         }
 
-        private checkForContinuedToken(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
+        private checkForContinuedToken(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
             if (lexState === EndOfLineState.InMultiLineCommentTrivia) {
                 return this.handleMultilineComment(text, lexState, result);
             }
@@ -162,7 +162,7 @@ module Services {
             }
         }
 
-        private handleMultilineComment(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
+        private handleMultilineComment(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
             var index = text.indexOf("*/");
             if (index >= 0) {
                 var commentEnd = index + "*/".length;
@@ -178,7 +178,7 @@ module Services {
             }
         }
 
-        private handleMultilineString(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
+        private handleMultilineString(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
             var endChar = lexState === EndOfLineState.InDoubleQuoteStringLiteral
                 ? TypeScript.CharacterCodes.doubleQuote
                 : TypeScript.CharacterCodes.singleQuote;

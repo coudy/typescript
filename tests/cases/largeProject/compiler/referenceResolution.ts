@@ -44,7 +44,7 @@ module TypeScript {
         minChar: number;
         limChar: number;
         path: string;
-        isResident: bool;
+        isResident: boolean;
     }
 
     /// Limited API for file system manipulation
@@ -67,11 +67,11 @@ module TypeScript {
     }
 
     export interface ICodeResolver {
-        resolveCode(referencePath: string, rootPath: string, performSearch:bool, state: IResolutionDispatcher): void;
+        resolveCode(referencePath: string, rootPath: string, performSearch:boolean, state: IResolutionDispatcher): void;
     }
 
     export interface IResolverHost {
-        resolveCompilationEnvironment(preEnvironment: CompilationEnvironment, resolver: ICodeResolver, traceDependencies: bool): CompilationEnvironment;
+        resolveCompilationEnvironment(preEnvironment: CompilationEnvironment, resolver: ICodeResolver, traceDependencies: boolean): CompilationEnvironment;
     }
 
     export class CodeResolver implements TypeScript.ICodeResolver {
@@ -79,7 +79,7 @@ module TypeScript {
 
         constructor (public environment: CompilationEnvironment) { }
 
-        public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): void {
+        public resolveCode(referencePath: string, parentPath: string, performSearch: boolean, resolutionDispatcher: TypeScript.IResolutionDispatcher): void {
             
             var resolvedFile: IResolvedFile = { content: null, path: referencePath };
             
