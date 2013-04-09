@@ -749,9 +749,9 @@ module TypeScript {
 
             if (typeParameters) {
                 for (var i = 0; i < typeParameters.length; i++) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
-                    typeParameter.addDeclaration(typeParameters[i].getDeclarations()[0]);
-                    this.addTypeParameter(typeParameter);
+                    //typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    //typeParameter.addDeclaration(typeParameters[i].getDeclarations()[0]);
+                    this.addTypeParameter(typeParameters[i]);
                 }
             }
 
@@ -3084,6 +3084,7 @@ module TypeScript {
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
         var localTypeParameters: any = {};
+        var localSkipMap: any = {};
 
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
@@ -3091,11 +3092,19 @@ module TypeScript {
         if (skipLocalTypeParameters) {
             for (i = 0; i < typeParameters.length; i++) {
                 localTypeParameters[typeParameters[i].getName()] = true;
+                localSkipMap[typeParameters[i].getSymbolID().toString()] = typeParameters[i];
             }
         }
 
         context.pushTypeSpecializationCache(typeReplacementMap);
+
+        if (skipLocalTypeParameters) {
+            context.pushTypeSpecializationCache(localSkipMap);
+        }
         var newReturnType = (!localTypeParameters[returnType.getName()] /*&& typeArguments != null*/) ? specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast) : returnType;
+        if (skipLocalTypeParameters) {
+            context.popTypeSpecializationCache();
+        }
         context.popTypeSpecializationCache();
 
         newSignature.setReturnType(newReturnType);
@@ -3108,7 +3117,13 @@ module TypeScript {
             parameterType = parameters[k].getType();
 
             context.pushTypeSpecializationCache(typeReplacementMap);
+            if (skipLocalTypeParameters) {
+                context.pushTypeSpecializationCache(localSkipMap);
+            }
             newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
+            if (skipLocalTypeParameters) {
+                context.popTypeSpecializationCache();
+            }
             context.popTypeSpecializationCache();
 
             if (parameters[k].getIsOptional()) {

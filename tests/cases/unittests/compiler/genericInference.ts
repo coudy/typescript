@@ -96,20 +96,4 @@ describe("Generic assignment compatibility", function () {
             Harness.Assert.equal(t.type, 'string');
         });
     });
-
-    describe("Generic inference", function () {
-        it("with interface members", function () {
-            var code = "interface Comparable<T> {";
-            code += "    compareTo(other: T): number;";
-            code += "}";
-            code += "interface Comparer {";
-            code += "    <T extends Comparable<T>>(x: T, y: T): T;";
-            code += "}";
-            code += "var max2: Comparer = (x, y) => { return (x.compareTo(y) > 0) ? x : y };";
-            code += "var maxResult = max2(1, 2);";
-
-            var t = typeFactory.get(code, code.indexOf("maxResult"));
-            Harness.Assert.equal(t.type, 'number');
-        });
-    });
 });

@@ -1437,7 +1437,7 @@ module TypeScript {
                     }
                 }
 
-                if (typeRef.arrayCount > 1) {
+                if (this.cachedArrayInterfaceType && typeRef.arrayCount > 1) {
                     var arity = typeRef.arrayCount - 1;
                     var existingArraySymbol: PullTypeSymbol = null;
 
