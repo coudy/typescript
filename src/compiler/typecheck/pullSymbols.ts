@@ -2717,7 +2717,7 @@ module TypeScript {
 
         if (extendedTypesToSpecialize.length) {
             typeDecl = typeToSpecialize.getDeclarations()[0];
-            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
+            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
             unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -2732,7 +2732,7 @@ module TypeScript {
 
         if (implementedTypesToSpecialize.length) {
             typeDecl = typeToSpecialize.getDeclarations()[0];
-            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
+            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
             unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -2777,7 +2777,7 @@ module TypeScript {
             newSignature = new PullSignatureSymbol(signature.getKind());
 
             newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
+            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
             decl.setSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);
@@ -2831,7 +2831,7 @@ module TypeScript {
             newSignature = new PullSignatureSymbol(signature.getKind());
 
             newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
+            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
             decl.setSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);
@@ -2887,7 +2887,7 @@ module TypeScript {
             newSignature = new PullSignatureSymbol(signature.getKind());
 
             newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
+            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
             decl.setSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);

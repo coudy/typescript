@@ -330,7 +330,7 @@ module Services {
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
-            var ast = TypeScript.PullHelpers.getASTForDecl(decl, this.compiler.semanticInfoChain);
+            var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
             if (ast && (ast.nodeType != TypeScript.NodeType.ModuleDeclaration || decl.getKind() != TypeScript.PullElementKind.Variable)) {
                 return ast.getDocComments();
             }

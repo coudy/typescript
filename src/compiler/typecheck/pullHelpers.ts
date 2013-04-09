@@ -32,7 +32,7 @@ module TypeScript {
             }
             for (var i = 0; i < signatures.length; i++) {
                 var signatureDecl = signatures[i].getDeclarations()[0];
-                var signatureAST = semanticInfoChain.getASTForDecl(signatureDecl, signatureDecl.getScriptName());
+                var signatureAST = semanticInfoChain.getASTForDecl(signatureDecl);
                 if (signatureAST == funcDecl) {
                     result.signature = signatures[i];
                     result.allSignatures = signatures;
@@ -60,10 +60,6 @@ module TypeScript {
             return null;
         }
 
-        export function getASTForDecl(decl: PullDecl, semanticInfoChain: SemanticInfoChain) {
-            return semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
-        }
-        
         export function getGetterAndSetterFunction(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): { getter: FunctionDeclaration; setter: FunctionDeclaration; } {
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, semanticInfoChain, unitPath);
             var result: { getter: FunctionDeclaration; setter: FunctionDeclaration; } = {
@@ -73,12 +69,12 @@ module TypeScript {
             var getter = accessorSymbol.getGetter();
             if (getter) {
                 var getterDecl = getter.getDeclarations()[0];
-                result.getter = <FunctionDeclaration>PullHelpers.getASTForDecl(getterDecl, semanticInfoChain);
+                result.getter = <FunctionDeclaration>semanticInfoChain.getASTForDecl(getterDecl);
             }
             var setter = accessorSymbol.getSetter();
             if (setter) {
                 var setterDecl = setter.getDeclarations()[0];
-                result.setter = <FunctionDeclaration>PullHelpers.getASTForDecl(setterDecl, semanticInfoChain);
+                result.setter = <FunctionDeclaration>semanticInfoChain.getASTForDecl(setterDecl);
             }
 
             return result;

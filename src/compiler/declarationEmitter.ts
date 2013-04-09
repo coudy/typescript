@@ -410,7 +410,7 @@ module TypeScript {
                 Debug.assert(callSignatures && callSignatures.length > 1);
                 var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
                 var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = <FunctionDeclaration>PullHelpers.getASTForDecl(firstSignatureDecl, this.semanticInfoChain);
+                var firstFuncDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
                 if (firstFuncDecl != funcDecl) {
                     return false;
                 }

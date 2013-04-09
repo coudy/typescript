@@ -379,8 +379,8 @@ module TypeScript {
             return null;
         }
 
-        public getASTForDecl(decl: PullDecl, unitPath: string): AST {
-            var unit = <SemanticInfo>this.unitCache[unitPath];
+        public getASTForDecl(decl: PullDecl): AST {
+            var unit = <SemanticInfo>this.unitCache[decl.getScriptName()];
 
             if (unit) {
                 return unit.getASTForDecl(decl);

@@ -354,7 +354,7 @@ module TypeScript {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
-                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
                     if (ast && ast.nodeType == NodeType.VariableDeclarator) {
                         return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
@@ -397,7 +397,7 @@ module TypeScript {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
-                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
                     if (ast && ast.nodeType == NodeType.VariableDeclarator) {
                         return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
