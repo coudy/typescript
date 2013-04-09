@@ -763,7 +763,10 @@ module TypeScript {
             }
 
             if (symbol.isResolving()) {
-                symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+
+                if (!symbol.currentlyBeingSpecialized()) {
+                    symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                }
 
                 return symbol;
             }
@@ -2507,9 +2510,9 @@ module TypeScript {
             var typeArgs: PullTypeSymbol[] = [];
             var typeArg: PullTypeSymbol = null;
 
-            if (!genericTypeSymbol.isResolvingTypeArguments()) {
+            if (!context.isResolvingTypeArguments(genericTypeAST)) {
 
-                genericTypeSymbol.startResolvingTypeArguments();
+                context.startResolvingTypeArguments(genericTypeAST);
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
@@ -2518,7 +2521,7 @@ module TypeScript {
                     }
                 }
 
-                genericTypeSymbol.doneResolvingTypeArguments();
+                context.doneResolvingTypeArguments();
             }
 
             var typeParameters = genericTypeSymbol.getTypeParameters();

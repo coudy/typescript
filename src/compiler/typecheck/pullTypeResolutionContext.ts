@@ -149,6 +149,7 @@ module TypeScript {
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
         private typeSpecializationStack: any[] = [];
+        private genericASTResolutionStack: AST[] = [];
 
         public resolvingTypeReference = false;
 
@@ -265,6 +266,25 @@ module TypeScript {
             }
 
             return diagnostic;
+        }
+
+        private startResolvingTypeArguments(ast: AST) {
+            this.genericASTResolutionStack[this.genericASTResolutionStack.length] = ast;
+        }
+
+        private isResolvingTypeArguments(ast: AST): bool {
+
+            for (var i = 0; i < this.genericASTResolutionStack.length; i++) {
+                if (this.genericASTResolutionStack[i].getID() == ast.getID()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private doneResolvingTypeArguments() {
+            this.genericASTResolutionStack.length--;
         }
     }
 }

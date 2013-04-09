@@ -2956,6 +2956,7 @@ module TypeScript {
 
         for (i = 0; i < members.length; i++) {
             field = members[i];
+            field.setIsBeingSpecialized();
 
             decls = field.getDeclarations();
 
@@ -2976,7 +2977,7 @@ module TypeScript {
             fieldType = field.getType();
 
             if (!fieldType) {
-                fieldType = new PullTypeVariableSymbol("tyvar" + globalTyvarID);
+                fieldType = newType; //new PullTypeVariableSymbol("tyvar" + globalTyvarID);
             }
 
             replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.getSymbolID().toString()];
@@ -3009,7 +3010,7 @@ module TypeScript {
                     newField.setType(fieldType);
                 }
             }
-
+            field.setIsSpecialized();
             newType.addMember(newField, (field.hasFlag(PullElementFlags.Private)) ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember);
         }
 
