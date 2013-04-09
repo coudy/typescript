@@ -35,8 +35,6 @@ module TypeScript {
 
         private isSynthesized = false;
 
-        private resolvingTypeArguments = false;
-
         private isBound = false;
 
         private rebindingID = 0;
@@ -296,18 +294,6 @@ module TypeScript {
         }
         public isResolving() {
             return this.inResolution;
-        }
-
-        public startResolvingTypeArguments() {
-            this.resolvingTypeArguments = true;
-        }
-
-        public isResolvingTypeArguments() {
-            return this.resolvingTypeArguments;
-        }
-
-        public doneResolvingTypeArguments() {
-            this.resolvingTypeArguments = false;
         }
 
         public setUnresolved() {
