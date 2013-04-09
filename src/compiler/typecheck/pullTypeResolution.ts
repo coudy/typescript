@@ -5434,14 +5434,20 @@ module TypeScript {
             if (!parameterType.isArray() && parameterType.getDeclarations()[0].isEqual(expressionType.getDeclarations()[0]) && expressionType.isGeneric()) {
                 var typeParameters = parameterType.getTypeParameters();
                 var typeArguments = expressionType.getTypeArguments();
+                var hadRelation = false;
 
                 if (typeParameters.length == typeArguments.length) {
                     for (var i = 0; i < typeParameters.length; i++) {
-                        this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], shouldFix, argContext, enclosingDecl, context);
+                        if (typeArguments[i] != typeParameters[i]) {
+                            this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], shouldFix, argContext, enclosingDecl, context);
+                            hadRelation = true;
+                        }
                     }
                 }
 
-                return;
+                if (hadRelation) {
+                    return;
+                }
             }
 
             // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
