@@ -1,8 +1,10 @@
 class Base { 
-    constructor(x: any) {}
+    constructor(a: any) {}
 }
 
 class Foo extends Base {
+    public x: number = 0;
+
     constructor() {
         super(this);
     }

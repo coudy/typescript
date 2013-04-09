@@ -9,6 +9,7 @@ module TypeScript {
         public enclosingDeclStack: PullDecl[] = [];
         public enclosingDeclReturnStack: boolean[] = [];
         public semanticInfo: SemanticInfo = null;
+        public inSuperExpression = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }
 
@@ -22,12 +23,19 @@ module TypeScript {
             this.enclosingDeclReturnStack.length--;
         }
 
-        public getEnclosingDecl() {
-            if (this.enclosingDeclStack.length) {
-                return this.enclosingDeclStack[this.enclosingDeclStack.length - 1];
+        public getEnclosingDecl(kind: PullElementKind = PullElementKind.All) {
+            for (var i = this.enclosingDeclStack.length - 1; i >= 0; i--) {
+                var decl = this.enclosingDeclStack[i];
+                if (decl.getKind() & kind) {
+                    return decl;
+                }
             }
 
             return null;
+        }
+
+        public getEnclosingClassDecl(): PullDecl {
+            return this.getEnclosingDecl(PullElementKind.Class);
         }
 
         public getEnclosingDeclHasReturn() {
@@ -129,7 +137,7 @@ module TypeScript {
                     return this.typeCheckSuper(ast, typeCheckContext);
 
                 case NodeType.InvocationExpression:
-                    return this.typeCheckCall(ast, typeCheckContext);
+                    return this.typeCheckCallExpression(<CallExpression>ast, typeCheckContext);
 
                 case NodeType.ObjectCreationExpression:
                     return this.typeCheckNew(ast, typeCheckContext);
@@ -851,6 +859,49 @@ module TypeScript {
             return type;
         }
 
+        private superCallMustBeFirstStatementInConstructor(typeCheckContext: PullTypeCheckContext): boolean {
+            /*
+            The first statement in the body of a constructor must be a super call if both of the following are true:
+                •	The containing class is a derived class.
+                •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+            In such a required super call, it is a compile-time error for argument expressions to reference this.
+            */
+
+            var enclosingConstructor = typeCheckContext.getEnclosingDecl(PullElementKind.ConstructorMethod);
+            var enclosingClass = typeCheckContext.getEnclosingDecl(PullElementKind.Class);
+            if (enclosingConstructor && enclosingClass) {
+                var classSymbol = <PullClassTypeSymbol>enclosingClass.getSymbol();
+                if (classSymbol.getExtendedTypes().length > 0) {
+                    return true;
+                }
+
+                var classMembers = classSymbol.getMembers();
+                for (var i = 0, n1 = classMembers.length; i < n1; i++) {
+                    var member = classMembers[i];
+
+                    if (member.getKind() === PullElementKind.Property) {
+                        var declarations = member.getDeclarations();
+                        for (var j = 0, n2 = declarations.length; j < n2; j++) {
+                            var declaration = declarations[j];
+                            var ast = this.semanticInfoChain.getASTForDecl(declaration);
+                            if (ast.nodeType === NodeType.Parameter) {
+                                return true;
+                            }
+
+                            if (ast.nodeType === NodeType.VariableDeclarator) {
+                                var variableDeclarator = <VariableDeclarator>ast;
+                                if (variableDeclarator.init) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         // 'This' expressions 
         // validate:
         //
@@ -858,6 +909,13 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             if (enclosingDecl && enclosingDecl.getKind() === PullElementKind.Class) {
+                this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
+            }
+
+            if (typeCheckContext.inSuperExpression &&
+                this.superCallMustBeFirstStatementInConstructor(typeCheckContext)) {
+
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
             }
@@ -880,24 +938,30 @@ module TypeScript {
         // Call expressions 
         // validate:
         //
-        public typeCheckCall(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        public typeCheckCallExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // "use of new expression as a statement"
-            var callEx = <CallExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var resultType = this.resolver.resolveAST(callEx, false, enclosingDecl, this.context).getType();
+            var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(resultType, enclosingDecl);
 
-            if (callEx.target.nodeType != NodeType.Name && callEx.target.nodeType != NodeType.MemberAccessExpression) {
-                this.typeCheckAST(callEx.target, typeCheckContext);
+            if (callExpression.target.nodeType != NodeType.Name && callExpression.target.nodeType != NodeType.MemberAccessExpression) {
+                this.typeCheckAST(callExpression.target, typeCheckContext);
             }
 
-            var args = callEx.arguments;
+            var savedInSuperExpression = typeCheckContext.inSuperExpression;
+            if (callExpression.target.nodeType === NodeType.SuperExpression) {
+                typeCheckContext.inSuperExpression = true;
+            }
+
+            var args = callExpression.arguments;
 
             if (args) {
                 for (var i = 0; i < args.members.length; i++) {
                     this.typeCheckAST(args.members[i], typeCheckContext);
                 }
             }
+
+            typeCheckContext.inSuperExpression = savedInSuperExpression;
 
             return resultType;
         }
@@ -1496,7 +1560,6 @@ module TypeScript {
                 }
             }
         }
-
 
         private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
             for (var i = 0; i < signatures.length; i++) {

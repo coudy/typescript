@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Base = (function () {
-    function Base(x) {
+    function Base(a) {
     }
     return Base;
 })();

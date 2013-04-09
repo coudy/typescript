@@ -77,6 +77,11 @@ module TypeScript {
 
         Expression = 1 << 29,
 
+        All = Script | Global | Primitive | Container | Class | Interface | DynamicModule | Enum | Array | TypeAlias |
+            ObjectLiteral | Variable | Parameter | Property | TypeParameter | Function | ConstructorMethod | Method |
+            FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature | ObjectType |
+            FunctionType | ConstructorType | EnumMember | ErrorType | Expression,
+
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
 
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint

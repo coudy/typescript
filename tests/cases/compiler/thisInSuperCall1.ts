@@ -1,9 +1,9 @@
 class Base { 
-    constructor(x: any) {}
+    constructor(a: any) {}
 }
 
 class Foo extends Base {
-    constructor() {
+    constructor(public x: number) {
         super(this);
     }
 }

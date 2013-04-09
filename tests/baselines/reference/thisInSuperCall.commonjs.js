@@ -10,9 +10,8 @@ var Base = (function () {
 })();
 var Foo = (function (_super) {
     __extends(Foo, _super);
-    function Foo(x) {
-        _super.call(this, this.x);
-        this.x = x;
+    function Foo() {
+        _super.call(this, this);
     }
     return Foo;
 })(Base);
