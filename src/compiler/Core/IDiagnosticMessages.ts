@@ -171,5 +171,6 @@ module TypeScript {
         Could_not_find_dotted_name__0_: DiagnosticInfo;
         Could_not_find_symbol__0_: DiagnosticInfo;
         _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
+        _this__may_not_be_referenced_in_current_location: DiagnosticInfo;
     }
 }

@@ -33,9 +33,10 @@ module TypeScript {
         public getEnclosingDeclHasReturn() {
             return this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length - 1];
         }
+
         public setEnclosingDeclHasReturn() {
             return this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length - 1] = true;
-        }        
+        }
     }
 
     export class PullTypeChecker {
@@ -95,7 +96,7 @@ module TypeScript {
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
                 case NodeType.FunctionDeclaration:
-                    return this.typeCheckFunction(ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckFunction(<FunctionDeclaration>ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ClassDeclaration:
                     return this.typeCheckClass(ast, typeCheckContext);
@@ -122,7 +123,7 @@ module TypeScript {
                     return this.typeCheckArrayLiteral(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ThisExpression:
-                    return this.typeCheckThis(ast, typeCheckContext);
+                    return this.typeCheckThisExpression(<ThisExpression>ast, typeCheckContext);
 
                 case NodeType.SuperExpression:
                     return this.typeCheckSuper(ast, typeCheckContext);
@@ -264,7 +265,7 @@ module TypeScript {
                     return this.typeCheckNameExpression(ast, typeCheckContext);
 
                 case NodeType.MemberAccessExpression:
-                    return this.typeCheckDottedNameExpression(ast, typeCheckContext);
+                    return this.typeCheckMemberAccessExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.SwitchStatement:
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
@@ -427,23 +428,20 @@ module TypeScript {
         //  - getters return a value
         //  - setters return no value
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
-        public typeCheckFunction(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
-
-            var funcDeclAST = <FunctionDeclaration>ast;
-
+        public typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-                return this.typeCheckConstructor(ast, typeCheckContext, inTypedAssignment);
+                return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inTypedAssignment);
             }
             else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-                return this.typeCheckIndexer(ast, typeCheckContext, inTypedAssignment);
+                return this.typeCheckIndexer(funcDeclAST, typeCheckContext, inTypedAssignment);
             }
             else if (funcDeclAST.isAccessor()) {
-                return this.typeCheckAccessor(ast, typeCheckContext, inTypedAssignment);
+                return this.typeCheckAccessor(funcDeclAST, typeCheckContext, inTypedAssignment);
             }
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
@@ -543,7 +541,7 @@ module TypeScript {
             return null;
         }
 
-        public typeCheckConstructor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        public typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: bool): PullTypeSymbol {
 
             // PULLTODOERROR: "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
             // PULLTODOERROR: "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
@@ -551,16 +549,14 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
 
-            var funcDeclAST = <FunctionDeclaration>ast;
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
-
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
-
             typeCheckContext.popEnclosingDecl();
 
             var constructorSignature = functionDecl.getSignatureSymbol();
@@ -569,7 +565,7 @@ module TypeScript {
             var parameters = constructorSignature.getParameters();
 
             if (parameters.length) {
-                for (var i = 0; i < parameters.length; i++) {
+                for (var i = 0, n = parameters.length; i < n; i++) {
                     this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                 }
             }
@@ -846,9 +842,15 @@ module TypeScript {
         // 'This' expressions 
         // validate:
         //
-        public typeCheckThis(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        public typeCheckThisExpression(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            if (enclosingDecl && enclosingDecl.getKind() === PullElementKind.Class) {
+                this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
+            }
+
+            var type = this.resolver.resolveAST(thisExpressionAST, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }
@@ -1394,9 +1396,11 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckDottedNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        public typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
+
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveDottedNameExpression(memberAccessExpression, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }

@@ -858,6 +858,11 @@ module TypeScript {
             message: "'get' and 'set' accessor must have the same type.",
             code: 2096
         },
+        _this__may_not_be_referenced_in_current_location: {
+            category: DiagnosticCategory.Error,
+            message: "'this' may not be referenced in current location.",
+            code: 2097
+        },
     };
 
     var seenCodes = [];

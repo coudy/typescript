@@ -135,7 +135,7 @@ module TypeScript {
             TypeScript.getAstWalkerFactory().walk(ast, pre);
         }
 
-        private setSpan(span: ASTSpan, fullStart: number, element: ISyntaxElement): void {
+        private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
             var desiredMinChar = fullStart + element.leadingTriviaWidth();
             var desiredLimChar = desiredMinChar + element.width();
             Debug.assert(!isNaN(desiredMinChar));
@@ -1571,7 +1571,8 @@ module TypeScript {
                 var closeBracePosition = this.position;
                 this.movePast(node.closeBraceToken);
                 var closeBraceSpan = new ASTSpan();
-                this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
+                this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
+
                 result = new Block(statements);
                 result.closeBraceSpan = closeBraceSpan;
             }

@@ -1554,7 +1554,7 @@ module TypeScript {
     }
 
     export class Block extends Statement {
-        public closeBraceSpan: ASTSpan = null;
+        public closeBraceSpan: IASTSpan = null;
         constructor(public statements: ASTList) {
             super(NodeType.Block);
         }

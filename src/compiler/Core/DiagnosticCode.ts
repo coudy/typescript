@@ -170,5 +170,6 @@ module TypeScript {
         Could_not_find_dotted_name__0_,
         Could_not_find_symbol__0_,
         _get__and__set__accessor_must_have_the_same_type,
+        _this__may_not_be_referenced_in_current_location,
     }
 }
