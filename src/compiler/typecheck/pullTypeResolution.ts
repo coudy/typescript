@@ -4227,7 +4227,7 @@ module TypeScript {
 
             var comboId = (t2.getSymbolID() << 16) | t1.getSymbolID();
 
-            if (this.identicalCache[comboId]) {
+            if (this.identicalCache[comboId] != undefined) {
                 return true;
             }
 
@@ -4243,10 +4243,10 @@ module TypeScript {
                 this.identicalCache[comboId] = false;
                 var ret = this.typesAreIdentical(t1.getElementType(), t2.getElementType());
                 if (ret) {
-                    this.subtypeCache[comboId] = true;
+                    this.identicalCache[comboId] = true;
                 }
                 else {
-                    this.subtypeCache[comboId] = undefined;
+                    this.identicalCache[comboId] = undefined;
                 }
 
                 return ret;
