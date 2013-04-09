@@ -2731,8 +2731,11 @@ module TypeScript {
 
                 for (i = 0; i < funcDeclAST.arguments.members.length; i++) {
 
-                    if (i < contextParams.length) {
+                    if ((i < contextParams.length) && !contextParams[i].getIsVarArg()) {
                         contextParam = contextParams[i];
+                    }
+                    else if (contextParams.length && contextParams[contextParams.length - 1].getIsVarArg()) {
+                        contextParam = (<PullArrayTypeSymbol>contextParams[contextParams.length - 1].getType()).getElementType();
                     }
 
                     this.resolveFunctionExpressionParameter(<Parameter>funcDeclAST.arguments.members[i], contextParam, enclosingDecl, context);
@@ -3684,12 +3687,6 @@ module TypeScript {
 
             var diagnostic: PullDiagnostic;
 
-            // don't be fooled
-            //if (targetSymbol == this.semanticInfoChain.anyTypeSymbol) {
-            //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Cannot invoke 'new' on this expression", enclosingDecl);
-            //    return this.getNewErrorTypeSymbol(diagnostic);
-            //}
-
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
 
             var i = 0;
@@ -3871,8 +3868,11 @@ module TypeScript {
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
                         diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null), enclosingDecl);
                         return this.getNewErrorTypeSymbol(diagnostic);
+                    }
+                    else {
+                        returnType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
 
