@@ -459,16 +459,8 @@ module TypeScript {
             var parameters = functionSignature.getParameters();
 
             if (parameters.length) {
-                var lastWasOptional = false;
-
                 for (var i = 0; i < parameters.length; i++) {
                     this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
-                    if (parameters[i].getIsOptional()) {
-                        lastWasOptional = true;
-                    }
-                    else if (lastWasOptional) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
-                    }
                 }
             }
 
@@ -577,17 +569,8 @@ module TypeScript {
             var parameters = constructorSignature.getParameters();
 
             if (parameters.length) {
-                var lastWasOptional = false;
-
                 for (var i = 0; i < parameters.length; i++) {
                     this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
-                    if (parameters[i].getIsOptional()) {
-                        lastWasOptional = true;
-                    }
-                    else if (lastWasOptional) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
-                    }
-
                 }
             }
 

@@ -2098,6 +2098,7 @@ module TypeScript {
 
                 case NodeType.ThisExpression:
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
+
                 case NodeType.SuperExpression:
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
@@ -2788,7 +2789,7 @@ module TypeScript {
             if (previousResolutionSymbol) {
                 //CompilerDiagnostics.Alert("Call get hit");
                 return <PullTypeSymbol>previousResolutionSymbol;
-            }    
+            }
 
             var enclosingDeclKind = enclosingDecl.getKind();
             var diagnostic: PullDiagnostic = null;
