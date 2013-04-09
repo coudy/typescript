@@ -969,10 +969,10 @@ interface Array<T> {
 
 }
 declare var Array: {
-    new <T>(...items: T[]): T[];
-    new <T>(arrayLength: number): T[];    
+    new <T>(arrayLength: number): T[];   
+    new <T>(...items: T[]): T[]; 
+    <T>(arrayLength: number): T[];    
     <T>(...items: T[]): T[];
-    <T>(arrayLength: number): T[];
     isArray(arg: any): boolean;
     prototype: Array; // Note: Implicitly Array<any>
 }

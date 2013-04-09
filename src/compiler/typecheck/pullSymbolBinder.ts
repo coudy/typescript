@@ -15,6 +15,20 @@ module TypeScript {
 
         private staticClassMembers: PullSymbol[] = [];
 
+        private functionTypeParameterCache: any = {};
+
+        private findTypeParameterInCache(name: string) {
+            return <PullTypeParameterSymbol>this.functionTypeParameterCache[name];
+        }
+
+        private addTypeParameterToCache(typeParameter: PullTypeParameterSymbol) {
+            this.functionTypeParameterCache[typeParameter.getName()] = typeParameter;
+        }
+
+        private resetTypeParameterCache() {
+            this.functionTypeParameterCache = {};
+        }
+
         public semanticInfo: SemanticInfo;
 
         public reBindingAfterChange = false;
@@ -680,9 +694,13 @@ module TypeScript {
 
             var childDecls = classDecl.getChildDecls();
 
+            this.resetTypeParameterCache();
+
             for (i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
             }
+
+            this.resetTypeParameterCache();
 
             this.popParent();
 
@@ -876,9 +894,13 @@ module TypeScript {
 
             var childDecls = interfaceDecl.getChildDecls();
 
+            this.resetTypeParameterCache();
+
             for (i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
             }
+
+            this.resetTypeParameterCache();
 
             this.popParent();
 
@@ -1982,13 +2004,29 @@ module TypeScript {
             var typeParameters = methodDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
             var typeParameterDecls: PullDecl[] = null;
+            var typeParameterName: string;
+            var typeParameterAST: TypeParameter;
 
             for (i = 0; i < typeParameters.length; i++) {
+                typeParameterName = typeParameters[i].getName();
+                typeParameterAST = <TypeParameter>this.semanticInfo.getASTForDecl(typeParameters[i]);
 
-                typeParameter = signature.findTypeParameter(typeParameters[i].getName());
+                typeParameter = signature.findTypeParameter(typeParameterName);
+
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    if (!typeParameterAST.constraint) {
+                        typeParameter = this.findTypeParameterInCache(typeParameterName);
+                    }
+
+                    if (!typeParameter) {
+                        typeParameter = new PullTypeParameterSymbol(typeParameterName);
+
+                        if (!typeParameterAST.constraint) {
+                            this.addTypeParameterToCache(typeParameter);
+                        }
+                    }
 
                     signature.addTypeParameter(typeParameter);
                 }
