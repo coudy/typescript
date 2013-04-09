@@ -85,7 +85,7 @@ module TypeScript {
         SomeType = Script | Global | Primitive | Container | Class | Interface | DynamicModule |
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
 
-        SomeContainer = Container | DynamicModule,
+        SomeContainer = Container | DynamicModule | TypeAlias,
 
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
 

@@ -2110,6 +2110,7 @@ module TypeScript {
         }
 
         public isAlias() { return true; }
+        public isContainer() { return true; }
 
         public setAliasedType(type: PullTypeSymbol) {
             if (this.typeAliasLink) {

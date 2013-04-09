@@ -174,13 +174,39 @@ module TypeScript {
             var parentInstanceSymbol = this.getParent(true);
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
+            var isExported = moduleContainerDecl.getFlags() & PullElementFlags.Exported;
+
             var createdNewSymbol = false;
             var i = 0;
 
+            /*
+                                    if (parent) {
+                            if (isExported) {
+                                classSymbol = <PullClassTypeSymbol>parent.findMember(className);
+                            }
+                            else {
+                                classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
+
+                                if (classSymbol) {
+
+                                    var classSymbolParent = classSymbol.getDeclarations()[0].getParentDecl();
+
+                                    if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                        classSymbol = null;
+                                    }
+                                }
+                            }
+                        }
+            */
             if (parent) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeType);
+                if (isExported) {
+                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeType);
+                }
+                else {
+                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
+                }
             }
-            else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported) || moduleContainerDecl.getKind() == PullElementKind.DynamicModule) {
+            else if (!isExported || moduleContainerDecl.getKind() == PullElementKind.DynamicModule) {
                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
             }
 
@@ -312,6 +338,14 @@ module TypeScript {
 
                 if (!importSymbol) {
                     importSymbol = <PullTypeAliasSymbol>parent.findContainedMember(declName);
+
+                    if (importSymbol) {
+                        var importSymbolParent = importSymbol.getDeclarations()[0].getParentDecl();
+
+                        if ((importSymbolParent != importDeclaration.getParentDecl()) && (!this.reBindingAfterChange || (importSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                            importSymbol = null;
+                        }
+                    }
                 }
             }
             else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
@@ -513,6 +547,15 @@ module TypeScript {
                 }
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
+
+                    if (classSymbol) {
+
+                        var classSymbolParent = classSymbol.getDeclarations()[0].getParentDecl();
+
+                        if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                            classSymbol = null;
+                        }
+                    }
                 }
             }
             else {
@@ -1002,10 +1045,13 @@ module TypeScript {
 
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
-                    var parentDecl = this.getParentDecl();
 
-                    if (variableSymbol && (parentDecl != variableSymbol.getDeclarations()[0].getParentDecl())) {
-                        variableSymbol = null;
+                    if (variableSymbol) {
+                        var variableSymbolParent = variableSymbol.getDeclarations()[0].getParentDecl();
+
+                        if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                            variableSymbol = null;
+                        }
                     }
                 }
 
@@ -1460,10 +1506,13 @@ module TypeScript {
 
                 if (!functionSymbol) {
                     functionSymbol = parent.findContainedMember(funcName);
-                    var parentDecl = this.getParentDecl();
 
-                    if (functionSymbol && (parentDecl != functionSymbol.getDeclarations()[0].getParentDecl())) {
-                        functionSymbol = null;
+                    if (functionSymbol) {
+                        var funcSymbolParent = functionSymbol.getDeclarations()[0].getParentDecl();
+
+                        if ((this.getParentDecl() != funcSymbolParent) && (!this.reBindingAfterChange || (funcSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                            functionSymbol = null;
+                        }
                     }
                 }
             }

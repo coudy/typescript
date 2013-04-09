@@ -370,7 +370,7 @@ module TypeScript {
                 }
 
                 if (typeExprSymbol && typeExprSymbol.isContainer()) {
-                    var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
+                    var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", enclosingDecl);
@@ -378,6 +378,18 @@ module TypeScript {
                     }
                     else {
                         typeExprSymbol = instanceTypeSymbol.getType();
+                    }
+                }
+
+                if (initTypeSymbol && initTypeSymbol.isContainer()) {
+                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol();
+
+                    if (!instanceTypeSymbol) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, "Tried to set variable type to uninitialized module type'" + initTypeSymbol.toString() + "'", enclosingDecl);
+                        initTypeSymbol = null;
+                    }
+                    else {
+                        initTypeSymbol = instanceTypeSymbol.getType();
                     }
                 }
 

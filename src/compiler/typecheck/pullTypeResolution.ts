@@ -327,7 +327,7 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
 
-                if (pathDeclKind & PullElementKind.Container) {
+                if (pathDeclKind & (PullElementKind.Container | PullElementKind.DynamicModule)) {
 
                     // first check locally
                     childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
@@ -337,6 +337,17 @@ module TypeScript {
                     }
 
                     if (declSearchKind & PullElementKind.SomeValue) {
+
+                        childDecls = decl.searchChildDecls(symbolName, true);
+
+                        if (childDecls.length) {
+                            valDecl = childDecls[0];
+
+                            if (valDecl) {
+                                return valDecl.getSymbol();
+                            }
+                        }
+
                         valDecl = decl.getValueDecl();
 
                         if (valDecl) {
@@ -1497,7 +1508,7 @@ module TypeScript {
 
                     // PULLREVIEW: If the type annotation is a container type, use the module instance type
                     if (typeExprSymbol.isContainer()) {
-                        var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
+                        var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
 
                         if (!instanceSymbol) {
                             diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", decl);
