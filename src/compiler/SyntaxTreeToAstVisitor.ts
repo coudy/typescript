@@ -1211,10 +1211,6 @@ module TypeScript {
                 var expressions = this.visitSeparatedSyntaxList(node.expressions);
                 this.movePast(node.closeBracketToken);
 
-                if (node.expressions.childCount() > 0 && node.expressions.childAt(node.expressions.childCount() - 1).kind() === SyntaxKind.CommaToken) {
-                    expressions.append(new OmittedExpression());
-                }
-
                 result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
             }
 
