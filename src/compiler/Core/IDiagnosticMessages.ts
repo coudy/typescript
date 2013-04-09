@@ -173,5 +173,8 @@ module TypeScript {
         Could_not_find_symbol__0_: DiagnosticInfo;
         _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
         _this__may_not_be_referenced_in_current_location: DiagnosticInfo;
+
+        Class__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
+        Interface__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
     }
 }

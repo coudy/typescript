@@ -873,7 +873,16 @@ module TypeScript {
             message: "Static methods may not reference class type parameters",
             code: 2099
         },
-
+        Class__0__is_recursively_referenced_as_a_base_type_of_itself: {
+            category: DiagnosticCategory.Error,
+            message: "Class '{0}' is recursively referenced as a base type of itself",
+            code: 2100
+        },
+        Interface__0__is_recursively_referenced_as_a_base_type_of_itself: {
+            category: DiagnosticCategory.Error,
+            message: "Interface '{0}' is recursively referenced as a base type of itself",
+            code: 2101
+        },
     };
 
     var seenCodes = [];

@@ -877,11 +877,23 @@ module TypeScript {
             var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
             var parentType: PullTypeSymbol = null;
 
-            if (classDeclSymbol.isResolved()) {
+            if (classDeclSymbol.isResolved() || classDeclSymbol.isResolving()) {
                 return classDeclSymbol;
             }
 
+            classDeclSymbol.startResolving();
+
             var i = 0;
+            var classTypeParameters = classDeclSymbol.getTypeParameters();
+
+            for (i = 0; i < classTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
+            }
+
+            var classMembers = classDeclSymbol.getMembers();
+            for (i = 0; i < classMembers.length; i++) {
+                this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
+            }
 
             if (classDeclAST.extendsList) {
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
@@ -935,16 +947,7 @@ module TypeScript {
                 }
             }
 
-            classDeclSymbol.setResolved();
-
-            var classMembers = classDeclSymbol.getMembers();
             var constructorMethod = classDeclSymbol.getConstructorMethod();
-            var classTypeParameters = classDeclSymbol.getTypeParameters();
-
-            for (i = 0; i < classTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
-            }
-
             if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.getType();
 
@@ -995,9 +998,7 @@ module TypeScript {
                 }
             }
 
-            for (i = 0; i < classMembers.length; i++) {
-                this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
-            }
+            classDeclSymbol.setResolved();
 
             return classDeclSymbol;
         }
@@ -1007,11 +1008,23 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(interfaceDecl);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
-            if (interfaceDeclSymbol.isResolved()) {
+            if (interfaceDeclSymbol.isResolved() || interfaceDeclSymbol.isResolving()) {
                 return interfaceDeclSymbol;
             }
+            
+            interfaceDeclSymbol.startResolving();
 
             var i = 0;
+            
+            var interfaceTypeParameters = interfaceDeclSymbol.getTypeParameters();
+            for (i = 0; i < interfaceTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(interfaceTypeParameters[i], interfaceDecl, context);
+            }
+
+            var interfaceMembers = interfaceDeclSymbol.getMembers();
+            for (i = 0; i < interfaceMembers.length; i++) {
+                this.resolveDeclaredSymbol(interfaceMembers[i], interfaceDecl, context);
+            }
 
             if (interfaceDeclAST.extendsList) {
                 var parentType: PullTypeSymbol = null;
@@ -1045,19 +1058,6 @@ module TypeScript {
                 getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null), enclosingDecl, true);
             }
 
-            interfaceDeclSymbol.setResolved();
-
-            var interfaceMembers = interfaceDeclSymbol.getMembers();
-            var interfaceTypeParameters = interfaceDeclSymbol.getTypeParameters();
-
-            for (i = 0; i < interfaceMembers.length; i++) {
-                this.resolveDeclaredSymbol(interfaceMembers[i], interfaceDecl, context);
-            }
-
-            for (i = 0; i < interfaceTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(interfaceTypeParameters[i], interfaceDecl, context);
-            }
-
             var callSignatures = interfaceDeclSymbol.getCallSignatures();
             var constructSignatures = interfaceDeclSymbol.getConstructSignatures();
             var indexSignatures = interfaceDeclSymbol.getIndexSignatures();
@@ -1074,6 +1074,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(indexSignatures[i], interfaceDecl, context);
             }
 
+            interfaceDeclSymbol.setResolved();
             return interfaceDeclSymbol;
         }
 
@@ -2529,11 +2530,7 @@ module TypeScript {
                 return genericTypeSymbol;
             }
 
-            if (genericTypeSymbol.isResolving()) {
-                return genericTypeSymbol;
-            }
-
-            if (!genericTypeSymbol.isResolved()) {
+            if (!genericTypeSymbol.isResolving() && !genericTypeSymbol.isResolved()) {
                 //genericTypeSymbol.startResolving();
                 this.resolveDeclaredSymbol(genericTypeSymbol, enclosingDecl, context);
                 //genericTypeSymbol.setResolved();
@@ -2562,6 +2559,10 @@ module TypeScript {
                 context.doneResolvingTypeArguments();
             }
 
+            if (genericTypeSymbol.isResolving()) {
+                return genericTypeSymbol;
+            }
+
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
@@ -2579,7 +2580,6 @@ module TypeScript {
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
-
                 typeConstraint = typeParameters[iArg].getConstraint();
 
                 // test specialization type for assignment compatibility with the constraint
@@ -2593,6 +2593,9 @@ module TypeScript {
                         }
                     }
 
+                    if (typeArg.isResolving()) {
+                        return genericTypeSymbol;
+                    }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
                         context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(),
                         getDiagnosticMessage(DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]), enclosingDecl, true);

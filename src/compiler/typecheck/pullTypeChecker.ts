@@ -647,6 +647,51 @@ module TypeScript {
             return null;
         }
 
+        private typeCheckBase(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, baseDeclAST: AST, isExtendedType: boolean, typeCheckContext: PullTypeCheckContext) {
+            var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
+            var contextForBaseTypeResolution = new PullTypeResolutionContext();
+            var baseType = this.resolver.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+            var typeDeclIsClass = typeSymbol.isClass();
+
+            if (typeDeclIsClass && isExtendedType && baseType.getKind() != PullElementKind.Class) {
+                // Already reported error for this not being correct extended type no need to check further errors
+                return;
+            }
+
+            if ((baseType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
+                // Either interface extending non interface or class 
+                // or class implementing non interface or class
+                return;
+            }
+
+            // Privacy error:
+            this.checkTypePrivacy(typeSymbol, baseType, (errorTypeSymbol: PullTypeSymbol) =>
+            this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, typeCheckContext));
+
+            // Check if its a recursive extend/implement type
+            if (baseType.hasBase(typeSymbol)) {
+                // Report error
+                var message = getDiagnosticMessage(typeDeclIsClass ? DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself : DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself, [typeSymbol.getScopedName()]);
+                this.postError(typeDeclAst.name.minChar, typeDeclAst.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+            }
+        }
+
+        private typeCheckBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+            if (!typeDeclAst.extendsList && !typeDeclAst.implementsList) {
+                return;
+            }
+
+            var i = 0;
+            for (i = 0; i < typeDeclAst.extendsList.members.length; i++) {
+                this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, typeCheckContext);
+            }
+            if (typeSymbol.isClass()) {
+                for (i = 0; i < typeDeclAst.implementsList.members.length; i++) {
+                    this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
+                }
+            }
+        }
+
         // Classes
         // validate:
         //  - mutually recursive base classes
@@ -662,9 +707,6 @@ module TypeScript {
             var classAST = <ClassDeclaration>ast;
             // resolving the class also resolves its members...
             var classSymbol = <PullClassTypeSymbol>this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            this.checkBaseListTypePrivacy(classAST, classSymbol, true, typeCheckContext);
-            this.checkBaseListTypePrivacy(classAST, classSymbol, false, typeCheckContext);
-
             this.checkForResolutionError(classSymbol, typeCheckContext.getEnclosingDecl());
             
             var classDecl = typeCheckContext.semanticInfo.getDeclForAST(classAST);
@@ -677,6 +719,7 @@ module TypeScript {
             }
 
             typeCheckContext.popEnclosingDecl();
+            this.typeCheckBases(classAST, classSymbol, typeCheckContext);
 
             return classSymbol;
         }
@@ -693,8 +736,6 @@ module TypeScript {
             var interfaceAST = <InterfaceDeclaration>ast;
             // resolving the interface also resolves its members...
             var interfaceType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            this.checkBaseListTypePrivacy(interfaceAST, interfaceType, true, typeCheckContext);
-
             this.checkForResolutionError(interfaceType, typeCheckContext.getEnclosingDecl());
 
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
@@ -707,6 +748,7 @@ module TypeScript {
             }
 
             typeCheckContext.popEnclosingDecl();
+            this.typeCheckBases(<InterfaceDeclaration>ast, interfaceType, typeCheckContext);
 
             return interfaceType;
         }
@@ -1584,22 +1626,7 @@ module TypeScript {
             }
         }
 
-        private checkBaseListTypePrivacy(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: boolean, typeCheckContext: PullTypeCheckContext) {
-            var basesList: PullTypeSymbol[];
-            if (extendsList) {
-                basesList = declSymbol.getExtendedTypes();
-            } else {
-                basesList = declSymbol.getImplementedTypes();
-            }
-
-            for (var i = 0; i < basesList.length; i++) {
-                this.checkTypePrivacy(declSymbol, basesList[i], (typeSymbol: PullTypeSymbol) =>
-                    this.baseListPrivacyErrorReporter(declAST, declSymbol, extendsList, i, typeSymbol, typeCheckContext));
-            }
-        }
-
-        private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, extendsList: boolean, index: number, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
-            var baseList = extendsList ? declAST.extendsList : declAST.implementsList;
+        private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, baseAst: AST, isExtendedType: boolean, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
             var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var message: string;
@@ -1611,7 +1638,7 @@ module TypeScript {
                 }
                 if (declAST.nodeType == NodeType.ClassDeclaration) {
                     // Class
-                    if (extendsList) {
+                    if (isExtendedType) {
                         message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__extends_class_from_private_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
                         message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__implements_interface_from_private_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
@@ -1623,7 +1650,7 @@ module TypeScript {
             } else {
                 if (declAST.nodeType == NodeType.ClassDeclaration) {
                     // Class
-                    if (extendsList) {
+                    if (isExtendedType) {
                         message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__extends_private_class__1_, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
                         message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__implements_private_interface__1_, [declSymbol.getScopedName(), typeSymbolName]);
@@ -1634,7 +1661,7 @@ module TypeScript {
                 }
             }
 
-            this.context.postError(baseList.members[index].minChar, baseList.members[index].getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+            this.context.postError(baseAst.minChar, baseAst.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
         private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {

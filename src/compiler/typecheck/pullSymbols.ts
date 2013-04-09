@@ -1358,6 +1358,9 @@ module TypeScript {
                 var extendedTypes = this.getExtendedTypes();
 
                 for (i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
                     members = extendedTypes[i].getCallSignatures();
 
                     if (members.length) {
@@ -1381,6 +1384,9 @@ module TypeScript {
                 var extendedTypes = this.getExtendedTypes();
 
                 for (i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
                     members = extendedTypes[i].getConstructSignatures();
 
                     if (members.length) {
@@ -1404,6 +1410,9 @@ module TypeScript {
                 var extendedTypes = this.getExtendedTypes();
 
                 for (i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
                     members = extendedTypes[i].getIndexSignatures();
 
                     if (members.length) {
