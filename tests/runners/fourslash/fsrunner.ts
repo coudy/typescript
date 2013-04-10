@@ -35,3 +35,9 @@ class FourslashRunner extends RunnerBase {
     }
 }
 
+class GeneratedFourslashRunner extends FourslashRunner {
+    constructor(testType?: string) {
+        super(testType);
+        this.basePath += 'generated/';
+    }
+}

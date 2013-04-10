@@ -18,6 +18,9 @@ class RunnerFactory {
         } else if (/tests\/cases\/fourslash/.test(normalizedName)) {
             this.runners['fourslash'] = this.runners['fourslash'] || new FourslashRunner();
             this.runners['fourslash'].addTest(Harness.userSpecifiedroot + name);
+        } else if (/tests\/cases\/fourslash\/generated/.test(normalizedName)) {
+            this.runners['fourslash-generated'] = this.runners['fourslash-generated'] || new GeneratedFourslashRunner();
+            this.runners['fourslash-generated'].addTest(Harness.userSpecifiedroot + name);
         } else if (/tests\/cases\/prototyping\/fourslash/.test(normalizedName)) {
             this.runners['fourslash-prototyping'] = this.runners['fourslash-prototyping'] || new FourslashRunner('prototyping');
             this.runners['fourslash-prototyping'].addTest(Harness.userSpecifiedroot + name);

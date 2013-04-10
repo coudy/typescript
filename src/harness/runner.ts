@@ -230,6 +230,12 @@ opts.flag('fourslash', {
     }
 });
 
+opts.flag('fourslash-generated', {
+    set: function () {
+        runners.push(new GeneratedFourslashRunner());
+    }
+});
+
 // for running fourslash tests written against 0.8.3 in the fourslash_old directory
 opts.option('fourslash-all', {
     experimental: true,
