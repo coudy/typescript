@@ -1,5 +1,5 @@
 module m2 {
-    export import mExported = module("mExported");
+    import mExported = module("mExported");
     export var c1 = new mExported.me.class1;
     export function f1() {
         return new mExported.me.class1();

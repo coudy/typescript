@@ -1,1 +1,1 @@
-export var d: "m4".d;
+export declare var d: "m4".d;

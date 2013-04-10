@@ -1,12 +1,12 @@
 // bug 535531: duplicate identifier error reported for "import" declarations in separate files
 
-module A
+declare module A
 {
 
-    declare class MyRoot { }
+    class MyRoot { }
 
     export module B
     {
-        declare class MyClass{ }
+        class MyClass{ }
     }
 }

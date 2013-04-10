@@ -214,7 +214,7 @@ opts.flag('compiler', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        //runners.push(new ProjectRunner());
+        runners.push(new ProjectRunner());
     }
 });
 
@@ -315,7 +315,7 @@ if (runners.length === 0) {
         // compiler
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        //runners.push(new ProjectRunner());
+        runners.push(new ProjectRunner());
 
         // language services
         //runners.push(new UnitTestRunner('ls'));
