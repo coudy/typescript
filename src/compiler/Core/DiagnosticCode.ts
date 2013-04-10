@@ -59,6 +59,8 @@ module TypeScript {
         _set__accessor_parameter_cannot_have_initializer,
         _set__accessor_cannot_have_rest_parameter,
         _get__accessor_cannot_have_parameters,
+        Rest_parameter_cannot_be_optional,
+        Rest_parameter_cannot_have_initializer,
 
 
 
@@ -83,13 +85,6 @@ module TypeScript {
         Getter__0__already_declared,
         Setter__0__already_declared,
         Accessor_may_not_take_type_parameters,
-        Rest_parameter_cannot_be_optional,
-        Rest_parameter_cannot_have_initializer,
-        Use_of_deprecated_bool_type,
-
-
-
-        // Privacy error messages
         Exported_class__0__extends_private_class__1_,
         Exported_class__0__implements_private_interface__1_,
         Exported_interface__0__extends_private_interface__1_,
@@ -140,8 +135,6 @@ module TypeScript {
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_,
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_,
         Return_type_of_exported_function_is_using_inaccessible_module__0_,
-
-
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead,
         A_parameter_list_must_follow_a_generic_type_argument_list______expected,
         Multiple_constructor_implementations_are_not_allowed,
@@ -172,17 +165,15 @@ module TypeScript {
         Could_not_find_symbol__0_,
         _get__and__set__accessor_must_have_the_same_type,
         _this__may_not_be_referenced_in_current_location,
+        Use_of_deprecated_bool_type,
         Static_methods_may_not_reference_class_type_parameters,
-
-        // Class inheritance errors
         Class__0__is_recursively_referenced_as_a_base_type_of_itself,
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself,
-
-        // Super validation errors
         Super_property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class,
         _super__may_not_be_referenced_in_non_derived_classes,
         If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor,
         Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor,
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors,
+        _0_1__is_inaccessible,
     }
 }

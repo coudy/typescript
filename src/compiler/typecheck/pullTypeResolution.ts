@@ -2320,7 +2320,7 @@ module TypeScript {
             return nameSymbol;
         }
 
-        public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             if ((<Identifier>dottedNameAST.operand2).isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;

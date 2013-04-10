@@ -865,7 +865,7 @@ module TypeScript {
         },
         Use_of_deprecated_bool_type: {
             category: DiagnosticCategory.Warning,
-            message: "Use of deprecated type \"bool\", at this location and possibly elsewhere in the file. Use \"boolean\" instead.",
+            message: "Use of deprecated type 'bool'. Use 'boolean' instead.",
             code: 2098
         },
         Static_methods_may_not_reference_class_type_parameters: {
@@ -907,7 +907,12 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Super calls are not permitted outside constructors or in local functions inside constructors.",
             code: 2106
-        }
+        },
+        _0_1__is_inaccessible: {
+            category: DiagnosticCategory.Error,
+            message: "'{0}.{1}' is inaccessible.",
+            code: 2107
+        },
     };
 
     var seenCodes = [];

@@ -182,5 +182,6 @@ module TypeScript {
         If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor: DiagnosticInfo;
         Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor: DiagnosticInfo;
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: DiagnosticInfo;
+        _0_1__is_inaccessible: DiagnosticInfo;
     }
 }

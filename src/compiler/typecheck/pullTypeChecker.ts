@@ -280,7 +280,7 @@ module TypeScript {
                     return this.typeCheckCatchClause(ast, typeCheckContext);
 
                 case NodeType.ReturnStatement:
-                    return this.typeCheckReturnExpression(ast, typeCheckContext);
+                    return this.typeCheckReturnStatement(<ReturnStatement>ast, typeCheckContext);
 
                 case NodeType.Name:
                     return this.typeCheckNameExpression(ast, typeCheckContext);
@@ -1595,8 +1595,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var returnAST = <ReturnStatement>ast;
+        public typeCheckReturnStatement(returnAST: ReturnStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             typeCheckContext.setEnclosingDeclHasReturn();
             var returnExpr = returnAST.returnExpression;
             var returnType = this.typeCheckAST(returnExpr, typeCheckContext);
@@ -1662,11 +1661,24 @@ module TypeScript {
         }
 
         public typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
+            var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveDottedNameExpression(memberAccessExpression, enclosingDecl, this.context).getType();
+            var resolvedName = this.resolver.resolveDottedNameExpression(memberAccessExpression, enclosingDecl, this.context);
+            var type = resolvedName.getType();
             this.checkForResolutionError(type, enclosingDecl);
+
+            if (expressionType && resolvedName && expressionType.isClass() && resolvedName.hasFlag(PullElementFlags.Private)) {
+                // We're accessing a private member of a class.  We can only do that if we're 
+                // actually contained within that class.
+                var containingClass = typeCheckContext.getEnclosingClassDecl();
+                if (!containingClass || containingClass.getSymbol() !== expressionType) {
+                    var name = <Identifier>memberAccessExpression.operand2;
+                    this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, 
+                        getDiagnosticMessage(DiagnosticCode._0_1__is_inaccessible, [expressionType.toString(false), name.actualText]), enclosingDecl);
+                }
+            }
+
             return type;
         }
 

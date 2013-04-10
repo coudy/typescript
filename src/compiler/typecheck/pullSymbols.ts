@@ -2403,7 +2403,6 @@ module TypeScript {
         public isTypeVariable() { return true; }
     }
 
-
     export class PullAccessorSymbol extends PullSymbol {
 
         private getterSymbolLink: PullSymbolLink = null;

@@ -1265,7 +1265,8 @@ module TypeScript {
                 return null;
             }
 
-            var callResolutionResults = new PullAdditionalCallResolutionData();
+            var callResolutionResults = new PullAdditionalCallResolutionData();
+
             if (isNew) {
                 this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
