@@ -597,7 +597,7 @@ module FourSlash {
 
         // Enters lines of text at the current caret position
         public type(text: string) {
-            // TODO: We should actually do this.
+            // TODO: Maybe we should do this up here, too?
             // this.checkSyntacticErrors();
 
             var opts = new Services.FormatCodeOptions();
@@ -622,7 +622,7 @@ module FourSlash {
             this.fixCaretPosition();
 
             // TODO: We should actually do this.
-            // this.checkSyntacticErrors();
+            this.checkSyntacticErrors();
         }
 
         private checkSyntacticErrors() {
