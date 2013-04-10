@@ -46,7 +46,6 @@
 ////    }
 ////}
 
-
 goTo.marker("valueReference");
 verify.memberListContains("localVariable");
 verify.memberListContains("exportedVaribale");
@@ -77,3 +76,30 @@ verify.memberListContains("exportedModule");
 
 verify.memberListContains("exportedClass2");
 verify.memberListContains("exportedModule2");
+
+
+////var globalVar: string = "";
+////function globalFunction() { }
+////
+////class TestClass {
+////    property: number;
+////    method() { }
+////    staticMethod() { }
+////    testMethod(param: number) {
+////        var localVar = 0;
+////        function localFunction() {};
+////        /*insideMethod*/
+////    }
+////}
+
+goTo.marker("insideMethod");
+verify.not.memberListContains("property");
+verify.not.memberListContains("testMethod");
+verify.not.memberListContains("staticMethod");
+
+verify.memberListContains("globalVar");
+verify.memberListContains("globalFunction");
+
+verify.memberListContains("param");
+verify.memberListContains("localVar");
+verify.memberListContains("localFunction");

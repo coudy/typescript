@@ -399,11 +399,15 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
                 var declSymbol = <PullTypeSymbol>decl.getSymbol();
+                var declKind = decl.getKind();
 
                 // First add locals
-                this.addSymbolsFromDecls(decl.getChildDecls(), declSearchKind, symbols);
+                // Child decls of classes and interfaces are members, and should only be visible as members of 'this'
+                if (declKind !== PullElementKind.Class && declKind !== PullElementKind.Interface) { 
+                    this.addSymbolsFromDecls(decl.getChildDecls(), declSearchKind, symbols);
+                }
 
-                switch (decl.getKind()) {
+                switch (declKind) {
                     case PullElementKind.Container:
                     case PullElementKind.DynamicModule:
                         // Add members
@@ -427,6 +431,7 @@ module TypeScript {
                                 symbols.push(members[j]);
                             }
                         }
+
                         break;
 
                     case PullElementKind.Class:
@@ -438,6 +443,7 @@ module TypeScript {
                                 symbols.push(parameters[k]);
                             }
                         }
+
                         break;
 
                     case PullElementKind.Function:
@@ -461,6 +467,7 @@ module TypeScript {
                                 }
                             }
                         }
+
                         break;
                 }
             }
