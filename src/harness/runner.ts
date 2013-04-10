@@ -326,6 +326,7 @@ if (runners.length === 0) {
         // language services
         //runners.push(new UnitTestRunner('ls'));
         runners.push(new FourslashRunner());
+        runners.push(new GeneratedFourslashRunner());
 
         // services
         //runners.push(new UnitTestRunner('services'));
