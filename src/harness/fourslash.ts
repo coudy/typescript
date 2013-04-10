@@ -335,7 +335,7 @@ module FourSlash {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, false);
         }
 
-        public verifyQuickInfo(negative: bool, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
+        public verifyQuickInfo(negative: boolean, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
             var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
