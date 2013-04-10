@@ -877,23 +877,11 @@ module TypeScript {
             var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
             var parentType: PullTypeSymbol = null;
 
-            if (classDeclSymbol.isResolved() || classDeclSymbol.isResolving()) {
+            if (classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
             }
 
-            classDeclSymbol.startResolving();
-
             var i = 0;
-            var classTypeParameters = classDeclSymbol.getTypeParameters();
-
-            for (i = 0; i < classTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
-            }
-
-            var classMembers = classDeclSymbol.getMembers();
-            for (i = 0; i < classMembers.length; i++) {
-                this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
-            }
 
             if (classDeclAST.extendsList) {
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
@@ -947,6 +935,18 @@ module TypeScript {
                 }
             }
 
+            classDeclSymbol.setResolved();
+
+            var classMembers = classDeclSymbol.getMembers();
+            for (i = 0; i < classMembers.length; i++) {
+                this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
+            }
+
+            var classTypeParameters = classDeclSymbol.getTypeParameters();
+            for (i = 0; i < classTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
+            }
+
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.getType();
@@ -996,9 +996,7 @@ module TypeScript {
                 for (i = 0; i < constructorMembers.length; i++) {
                     this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
                 }
-            }
-
-            classDeclSymbol.setResolved();
+            }           
 
             return classDeclSymbol;
         }
