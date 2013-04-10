@@ -1106,8 +1106,8 @@ module TypeScript {
             if (lhsType.getKind() == PullElementKind.Enum) {
                 lhsType = this.semanticInfoChain.numberTypeSymbol;
             }
-            else if (lhsType == this.semanticInfoChain.nullTypeSymbol || lhsType == this.semanticInfoChain.nullTypeSymbol) {
-                if (rhsType != this.semanticInfoChain.nullTypeSymbol && rhsType != this.semanticInfoChain.nullTypeSymbol) {
+            else if (lhsType == this.semanticInfoChain.nullTypeSymbol || lhsType == this.semanticInfoChain.undefinedTypeSymbol) {
+                if (rhsType != this.semanticInfoChain.nullTypeSymbol && rhsType != this.semanticInfoChain.undefinedTypeSymbol) {
                     lhsType = rhsType;
                 }
                 else {
@@ -1118,8 +1118,8 @@ module TypeScript {
             if (rhsType.getKind() == PullElementKind.Enum) {
                 rhsType = this.semanticInfoChain.numberTypeSymbol;
             }
-            else if (rhsType == this.semanticInfoChain.nullTypeSymbol || rhsType == this.semanticInfoChain.nullTypeSymbol) {
-                if (lhsType != this.semanticInfoChain.nullTypeSymbol && lhsType != this.semanticInfoChain.nullTypeSymbol) {
+            else if (rhsType == this.semanticInfoChain.nullTypeSymbol || rhsType == this.semanticInfoChain.undefinedTypeSymbol) {
+                if (lhsType != this.semanticInfoChain.nullTypeSymbol && lhsType != this.semanticInfoChain.undefinedTypeSymbol) {
                     rhsType = lhsType;
                 }
                 else {
