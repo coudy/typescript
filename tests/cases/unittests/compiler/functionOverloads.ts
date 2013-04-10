@@ -74,7 +74,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += '   static test(name?:any){ }';
             code += '}';
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.arrayLengthIs(result.errors, 12);
+            assert.arrayLengthIs(result.errors, 15);
         });
     });
 

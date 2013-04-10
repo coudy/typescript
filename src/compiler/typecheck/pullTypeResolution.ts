@@ -2827,11 +2827,6 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
-        static setSelfReferenceOnDecl(pullDecl: PullDecl) {
-            pullDecl.setFlags(pullDecl.getFlags() | PullElementFlags.MustCaptureThis);
-            return true;
-        }
-
         // PULLTODO: Optimization: cache this for a given decl path
         public resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             if (!enclosingDecl) {
@@ -2859,71 +2854,24 @@ module TypeScript {
             }
 
             var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
-            var decl: PullDecl;
-            var classSymbol: PullClassTypeSymbol;
 
             // work back up the decl path, until you can find a class
-            // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
+            // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
+            // PULLTODO: Why is this 'obviously not completely correct'.  
             if (declPath.length) {
-                var isFatArrowFunction = declPath[declPath.length - 1].getKind() == PullElementKind.FunctionExpression && (declPath[declPath.length - 1].getFlags() & PullElementFlags.FatArrow);
-                var hasSetSelfReference = !isFatArrowFunction;
-                var firstFncDecl: PullDecl = null;
-                var i = 0;
-                var declKind: PullElementKind;
-                var declFlags: PullElementFlags;
-
-                if (!hasSetSelfReference) {
-                    for (i = declPath.length - 2; i >= 0; i--) {
-                        decl = declPath[i];
-                        declKind = decl.getKind();
-
-                        if (declKind == PullElementKind.Function || declKind == PullElementKind.Method ||
-                        declKind == PullElementKind.ConstructorMethod || declKind == PullElementKind.GetAccessor ||
-                        declKind == PullElementKind.SetAccessor) {
-                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
-                        }
-                        else if (declKind == PullElementKind.FunctionExpression) {
-                            if (!(decl.getFlags() & PullElementFlags.FatArrow)) {
-                                hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
-                            }
-                            else if (decl.getFlags() & PullElementFlags.MustCaptureThis) {
-                                firstFncDecl = null;
-                                break;
-                            }
-                            else if (!firstFncDecl) {
-                                firstFncDecl = decl;
-                            }
-                        }
-                        else {
-                            break;
-                        }
-                    }
-
-                    if (!hasSetSelfReference && firstFncDecl) {
-                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(firstFncDecl);
-                    }
-                }
-
-                var hadFatArrow = false;
-
-                for (i = declPath.length - 1; i >= 0; i--) {
-                    decl = declPath[i];
-                    declKind = decl.getKind();
-                    declFlags = decl.getFlags();
+                for (var i = declPath.length - 1; i >= 0; i--) {
+                    var decl = declPath[i];
+                    var declKind = decl.getKind();
+                    var declFlags = decl.getFlags();
 
                     if (declFlags & PullElementFlags.Static) {
                         this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
-                    if (declKind == PullElementKind.FunctionExpression) {
-                        if (!(declFlags & PullElementFlags.FatArrow) && !hadFatArrow) {
-                            this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
-                            return this.semanticInfoChain.anyTypeSymbol;
-                        }
-                        else {
-                            hadFatArrow = true;
-                        }
+                    if (declKind == PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
+                        this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
+                        return this.semanticInfoChain.anyTypeSymbol;
                     }
 
                     if (declKind == PullElementKind.Function) {
@@ -2932,24 +2880,14 @@ module TypeScript {
                     }
 
                     if (declKind == PullElementKind.Class) {
-                        classSymbol = <PullClassTypeSymbol>decl.getSymbol();
+                        var classSymbol = <PullClassTypeSymbol>decl.getSymbol();
 
-                        if (!hasSetSelfReference) {
-                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
-                        }
                         this.setSymbolForAST(ast, classSymbol, context);
                         return classSymbol;
                     }
-
-                    if (!hasSetSelfReference &&
-                    (declKind == PullElementKind.Container ||
-                    declKind == PullElementKind.DynamicModule ||
-                    declKind == PullElementKind.Script)) {
-                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
-                        break;
-                    }
                 }
             }
+
             this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
             return this.semanticInfoChain.anyTypeSymbol;
         }

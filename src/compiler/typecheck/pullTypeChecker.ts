@@ -788,6 +788,8 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
+            this.typeCheckAST(assignmentAST.operand1, typeCheckContext, false);
+
             var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
             var leftType = leftExpr.getType();
             this.checkForResolutionError(leftType, enclosingDecl);
@@ -944,6 +946,47 @@ module TypeScript {
             return false;
         }
 
+        private checkForThisCaptureInArrowFunction(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): void {
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var declPath: PullDecl[] = typeCheckContext.enclosingDeclStack;
+
+            // work back up the decl path, until you can find a class
+            // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
+            if (declPath.length) {
+                var inFatArrow = false;
+                for (var i = declPath.length - 1; i >= 0; i--) {
+                    var decl = declPath[i];
+                    var declKind = decl.getKind();
+                    var declFlags = decl.getFlags();
+
+                    if (declKind === PullElementKind.FunctionExpression &&
+                        hasFlag(declFlags, PullElementFlags.FatArrow)) {
+
+                        inFatArrow = true;
+                        continue;
+                    }
+
+                    if (inFatArrow) {
+                        if (declKind === PullElementKind.Function ||
+                            declKind === PullElementKind.Method ||
+                            declKind === PullElementKind.ConstructorMethod ||
+                            declKind === PullElementKind.GetAccessor ||
+                            declKind === PullElementKind.SetAccessor ||
+                            declKind === PullElementKind.FunctionExpression ||
+                            declKind === PullElementKind.Class ||
+                            declKind === PullElementKind.Container ||
+                            declKind === PullElementKind.DynamicModule ||
+                            declKind === PullElementKind.Script) {
+
+                            decl.setFlags(decl.getFlags() | PullElementFlags.MustCaptureThis);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         // 'This' expressions 
         // validate:
         //
@@ -961,6 +1004,8 @@ module TypeScript {
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
             }
+
+            this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
 
             var type = this.resolver.resolveAST(thisExpressionAST, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
@@ -986,9 +1031,7 @@ module TypeScript {
             var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(resultType, enclosingDecl);
 
-            if (callExpression.target.nodeType != NodeType.Name && callExpression.target.nodeType != NodeType.MemberAccessExpression) {
-                this.typeCheckAST(callExpression.target, typeCheckContext);
-            }
+            this.typeCheckAST(callExpression.target, typeCheckContext);
 
             var savedInSuperExpression = typeCheckContext.inSuperExpression;
             if (callExpression.target.nodeType === NodeType.SuperExpression) {

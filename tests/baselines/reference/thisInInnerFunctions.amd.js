@@ -3,7 +3,6 @@ var Foo = (function () {
         this.x = "hello";
     }
     Foo.prototype.bar = function () {
-        var _this = this;
         function inner() {
             var _this = this;
             this.y = "hi";
