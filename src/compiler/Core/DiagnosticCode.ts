@@ -177,5 +177,12 @@ module TypeScript {
         // Class inheritance errors
         Class__0__is_recursively_referenced_as_a_base_type_of_itself,
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself,
+
+        // Super validation errors
+        Super_property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class,
+        _super__may_not_be_referenced_in_non_derived_classes,
+        If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor,
+        Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor,
+        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors,
     }
 }

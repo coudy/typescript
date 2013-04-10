@@ -2117,6 +2117,12 @@ module TypeScript {
                 var parameters = node.parameterList.accept(this);
 
                 var block = node.block ? node.block.accept(this) : null;
+                if (node.block) {
+                    if (this.hasUseStrictDirective(node.block.statements)) {
+                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
+                    }
+                }
+
                 this.movePast(node.semicolonToken);
 
                 result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, NodeType.FunctionDeclaration);

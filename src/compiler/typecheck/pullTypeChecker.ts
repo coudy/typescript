@@ -9,7 +9,9 @@ module TypeScript {
         public enclosingDeclStack: PullDecl[] = [];
         public enclosingDeclReturnStack: boolean[] = [];
         public semanticInfo: SemanticInfo = null;
-        public inSuperExpression = false;
+        public inSuperConstructorCall = false;
+        public inSuperConstructorTarget = false;
+        public seenSuperConstructorCall = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }
 
@@ -27,6 +29,17 @@ module TypeScript {
             for (var i = this.enclosingDeclStack.length - 1; i >= 0; i--) {
                 var decl = this.enclosingDeclStack[i];
                 if (decl.getKind() & kind) {
+                    return decl;
+                }
+            }
+
+            return null;
+        }
+
+        public getEnclosingNonLambdaDecl() {
+            for (var i = this.enclosingDeclStack.length - 1; i >= 0; i--) {
+                var decl = this.enclosingDeclStack[i];
+                if (!(decl.getKind() == PullElementKind.FunctionExpression && (decl.getFlags() & PullElementFlags.FatArrow))) {
                     return decl;
                 }
             }
@@ -563,10 +576,6 @@ module TypeScript {
 
         public typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
 
-            // PULLTODOERROR: "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
-            // PULLTODOERROR: "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
-            // PULLTODOERROR: "Constructors for derived classes must contain a call to the class's 'super' constructor"            
-
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
@@ -574,6 +583,9 @@ module TypeScript {
             this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+
+            // Reset the flag
+            typeCheckContext.seenSuperConstructorCall = false;
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
@@ -593,6 +605,24 @@ module TypeScript {
             this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
 
             this.checkForResolutionError(constructorSignature.getReturnType(), enclosingDecl);
+
+            if (functionDecl.signatureSymbol && functionDecl.signatureSymbol.isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
+                // Constructors for derived classes must contain a call to the class's 'super' constructor
+                if (!typeCheckContext.seenSuperConstructorCall) {
+                    this.postError(funcDeclAST.minChar, 11 /* "constructor" */, typeCheckContext.scriptName,
+                        getDiagnosticMessage(DiagnosticCode.Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor, null), enclosingDecl);
+                }
+                // The first statement in the body of a constructor must be a super call if both of the following are true:
+                //  • The containing class is a derived class.
+                //  • The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                else if (this.superCallMustBeFirstStatementInConstructor(functionDecl, enclosingDecl)) {
+                    var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST)
+                    if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
+                        this.postError(funcDeclAST.minChar, 11 /* "constructor" */, typeCheckContext.scriptName,
+                            getDiagnosticMessage(DiagnosticCode.If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor, null), enclosingDecl);
+                    }
+                }
+            }
 
             return functionSymbol ? functionSymbol.getType() : null;
         }
@@ -903,20 +933,51 @@ module TypeScript {
             return type;
         }
 
-        private superCallMustBeFirstStatementInConstructor(typeCheckContext: PullTypeCheckContext): boolean {
+        private enclosingClassIsDerived(typeCheckContext: PullTypeCheckContext): boolean {
+            var enclosingClass = typeCheckContext.getEnclosingDecl(PullElementKind.Class);
+
+            if (enclosingClass) {
+                var classSymbol = <PullClassTypeSymbol>enclosingClass.getSymbol();
+                if (classSymbol.getExtendedTypes().length > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private isSuperCallNode(node: AST): boolean {
+            if (node && node.nodeType === NodeType.ExpressionStatement) {
+                var expressionStatement = <ExpressionStatement>node;
+                if (expressionStatement.expression && expressionStatement.expression.nodeType === NodeType.InvocationExpression) {
+                    var callExpression = <CallExpression>expressionStatement.expression;
+                    if (callExpression.target && callExpression.target.nodeType === NodeType.SuperExpression) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private getFirstStatementFromFunctionDeclAST(funcDeclAST: FunctionDeclaration): AST {
+            if (funcDeclAST.block && funcDeclAST.block.statements && funcDeclAST.block.statements.members) {
+                return hasFlag(funcDeclAST.block.getFlags(), ASTFlags.StrictMode) ? funcDeclAST.block.statements.members[1] : funcDeclAST.block.statements.members[0];
+            }
+
+            return null;
+        }
+
+        private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
             /*
             The first statement in the body of a constructor must be a super call if both of the following are true:
                 •	The containing class is a derived class.
                 •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
-
-            var enclosingConstructor = typeCheckContext.getEnclosingDecl(PullElementKind.ConstructorMethod);
-            var enclosingClass = typeCheckContext.getEnclosingDecl(PullElementKind.Class);
             if (enclosingConstructor && enclosingClass) {
                 var classSymbol = <PullClassTypeSymbol>enclosingClass.getSymbol();
-                if (classSymbol.getExtendedTypes().length > 0) {
-                    return true;
+                if (classSymbol.getExtendedTypes().length === 0) {
+                    return false;
                 }
 
                 var classMembers = classSymbol.getMembers();
@@ -998,8 +1059,8 @@ module TypeScript {
                     getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
             }
 
-            if (typeCheckContext.inSuperExpression &&
-                this.superCallMustBeFirstStatementInConstructor(typeCheckContext)) {
+            if (typeCheckContext.inSuperConstructorCall &&
+                this.superCallMustBeFirstStatementInConstructor(typeCheckContext.getEnclosingDecl(PullElementKind.ConstructorMethod), typeCheckContext.getEnclosingDecl(PullElementKind.Class))) {
 
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
@@ -1017,7 +1078,29 @@ module TypeScript {
         //
         public typeCheckSuper(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
+            var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();
+            var inSuperConstructorTarget = typeCheckContext.inSuperConstructorTarget;
+
             var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            // Super calls are not permitted outside constructors or in local functions inside constructors.
+            if (inSuperConstructorTarget && enclosingDecl.getKind() !== PullElementKind.ConstructorMethod) {
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors, null), enclosingDecl);
+            }
+            // A super property access is permitted only in a constructor, instance member function, or instance member accessor
+            else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
+                ((nonLambdaEnclosingDecl.getFlags() & PullElementFlags.Static) !== 0)) {
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Super_property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class, null), enclosingDecl);
+            }
+             // A super is permitted only in a derived class 
+            else if (!this.enclosingClassIsDerived(typeCheckContext)) {
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                getDiagnosticMessage(DiagnosticCode._super__may_not_be_referenced_in_non_derived_classes, null), enclosingDecl);
+            }
+
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }
@@ -1028,14 +1111,30 @@ module TypeScript {
         public typeCheckCallExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // "use of new expression as a statement"
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var inSuperConstructorCall = (callExpression.target.nodeType === NodeType.SuperExpression);
             var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(resultType, enclosingDecl);
 
-            this.typeCheckAST(callExpression.target, typeCheckContext);
+            // Type check the target
+            if (!resultType.isError()) {
+                var savedInSuperConstructorTarget = typeCheckContext.inSuperConstructorTarget;
+                if (inSuperConstructorCall) {
+                    typeCheckContext.inSuperConstructorTarget = true;
+                }
 
-            var savedInSuperExpression = typeCheckContext.inSuperExpression;
-            if (callExpression.target.nodeType === NodeType.SuperExpression) {
-                typeCheckContext.inSuperExpression = true;
+                this.typeCheckAST(callExpression.target, typeCheckContext);
+
+                typeCheckContext.inSuperConstructorTarget = savedInSuperConstructorTarget;
+            }
+
+            if (inSuperConstructorCall && enclosingDecl.getKind() === PullElementKind.ConstructorMethod) {
+                typeCheckContext.seenSuperConstructorCall = true;
+            }
+
+            // Type check the arguments
+            var savedInSuperConstructorCall = typeCheckContext.inSuperConstructorCall;
+            if (inSuperConstructorCall) {
+                typeCheckContext.inSuperConstructorCall = true;
             }
 
             var args = callExpression.arguments;
@@ -1046,7 +1145,7 @@ module TypeScript {
                 }
             }
 
-            typeCheckContext.inSuperExpression = savedInSuperExpression;
+            typeCheckContext.inSuperConstructorCall = savedInSuperConstructorCall;
 
             return resultType;
         }

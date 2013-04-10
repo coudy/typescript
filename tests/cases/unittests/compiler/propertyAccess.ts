@@ -29,28 +29,28 @@ describe('Property Access', function() {
     it("Type of expression is number", function() {
         var code = "var foo: number; foo.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 1);
         });
     });
 
     it("Type of expression is boolean", function() {
         var code = "var foo: boolean; foo.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 1);
         });
     });
 
     it("Type of expression is null", function() {
         var code = "null.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 1);
         });
     });
 
     it("Type of expression is undefined", function() {
         var code = "undefined.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 1);
         });
     });
 });
