@@ -2817,12 +2817,12 @@ module TypeScript {
             var diagnostic: PullDiagnostic = null;
 
             if (enclosingDeclKind == PullElementKind.Container) { // Dynamic modules are ok, though
-                diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), "'this' may not be referenced within module bodies");
+                diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null));
                 return this.getNewErrorTypeSymbol(diagnostic);
-
             }
             else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script))) {
-                diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), "Keyword 'this' cannot be referenced in initializers in a class body, or in super constructor calls");
+                diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), getDiagnosticMessage(DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context, null));
+
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 

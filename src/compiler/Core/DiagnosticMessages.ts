@@ -883,6 +883,7 @@ module TypeScript {
             message: "Interface '{0}' is recursively referenced as a base type of itself.",
             code: 2101
         },
+
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: {
             category: DiagnosticCategory.Error,
             message: "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
@@ -912,6 +913,15 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "'{0}.{1}' is inaccessible.",
             code: 2107
+        _this__cannot_be_referenced_within_module_bodies: {
+            category: DiagnosticCategory.Error,
+            message: "'this' cannot be referenced within module bodies.",
+            code: 2108
+        },
+        _this__must_only_be_used_inside_a_function_or_script_context: {
+            category: DiagnosticCategory.Error,
+            message: "'this' must only be used inside a function or script context",
+            code: 2109
         },
     };
 

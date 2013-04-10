@@ -177,11 +177,14 @@ module TypeScript {
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
 
+
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: DiagnosticInfo;
         _super__may_not_be_referenced_in_non_derived_classes: DiagnosticInfo;
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: DiagnosticInfo;
         Constructors_for_derived_classes_must_contain_a__super__call: DiagnosticInfo;
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: DiagnosticInfo;
         _0_1__is_inaccessible: DiagnosticInfo;
+        _this__cannot_be_referenced_within_module_bodies: DiagnosticInfo;
+        _this__must_only_be_used_inside_a_function_or_script_context: DiagnosticInfo;
     }
 }

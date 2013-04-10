@@ -167,6 +167,7 @@ module TypeScript {
         _this__may_not_be_referenced_in_current_location,
         Use_of_deprecated__bool__type__Use__boolean__instead,
         Static_methods_may_not_reference_class_type_parameters,
+
         Class__0__is_recursively_referenced_as_a_base_type_of_itself,
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself,
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class,
@@ -175,5 +176,10 @@ module TypeScript {
         Constructors_for_derived_classes_must_contain_a__super__call,
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors,
         _0_1__is_inaccessible,
+        _this__cannot_be_referenced_within_module_bodies,
+
+        _this__must_only_be_used_inside_a_function_or_script_context,
+
+
     }
 }
