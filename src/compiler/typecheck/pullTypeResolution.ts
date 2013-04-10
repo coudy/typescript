@@ -1683,11 +1683,20 @@ module TypeScript {
 
             else {
                 var returnExpressionSymbols: PullTypeSymbol[] = [];
+                var returnType: PullTypeSymbol;
+
                 var i = 0;
 
                 for (i = 0; i < returnStatements.length; i++) {
                     if (returnStatements[i].returnExpression) {
-                        returnExpressionSymbols[returnExpressionSymbols.length] = this.resolveStatementOrExpression(returnStatements[i].returnExpression, useContextualType, enclosingDecl, context).getType();
+                        returnType = this.resolveStatementOrExpression(returnStatements[i].returnExpression, useContextualType, enclosingDecl, context).getType();
+
+                        if (returnType.isError()) {
+                            signature.setReturnType(returnType);
+                            return;
+                        }
+
+                        returnExpressionSymbols[returnExpressionSymbols.length] = returnType;
                     }
                 }
 
@@ -1705,7 +1714,7 @@ module TypeScript {
                         }
                     }
 
-                    var returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, true, context, new TypeComparisonInfo());
+                    returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, true, context, new TypeComparisonInfo());
 
                     signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
 
@@ -5634,7 +5643,12 @@ module TypeScript {
             var prevSpecialize = context.specializingToAny;
 
             context.specializingToAny = true;
+
+            // get the "root" unspecialized type, since even generic types may already be partially specialize
+            //typeToSpecialize = <PullTypeSymbol>typeToSpecialize.getDeclarations()[0].getSymbol().getType();
+
             var type = specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+
             context.specializingToAny = prevSpecialize;
 
             return type;
@@ -5653,8 +5667,15 @@ module TypeScript {
                 typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
             }
 
+            
+            var prevSpecialize = context.specializingToAny;
+
+            context.specializingToAny = true;
             // no need to worry about returning 'null', since 'any' satisfies all constraints
-            return specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
+            var sig = specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
+            context.specializingToAny = prevSpecialize;
+
+            return sig;
         }
     }
 }

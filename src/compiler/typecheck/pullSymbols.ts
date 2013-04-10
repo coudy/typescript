@@ -2604,7 +2604,7 @@ module TypeScript {
 
         var searchForExistingSpecialization = typeArguments != null;
 
-        if (typeArguments == null) {
+        if (typeArguments == null || (context.specializingToAny && typeArguments.length)) {
             typeArguments = [];
         }
 
@@ -2630,9 +2630,16 @@ module TypeScript {
         // In this case, we have an array type that may have been specialized to a type variable
         if (typeToSpecialize.isArray()) {
 
-            var elementType = (<PullArrayTypeSymbol>typeToSpecialize).getElementType();
+            var newElementType: PullTypeSymbol = null;
 
-            var newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context, ast);
+            if (!context.specializingToAny) {
+                var elementType = (<PullArrayTypeSymbol>typeToSpecialize).getElementType();
+
+                newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context, ast);
+            }
+            else {
+                newElementType = resolver.semanticInfoChain.anyTypeSymbol;
+            }
 
             // we re-specialize so that we can re-use any cached array type symbols
             var newArrayType = specializeType(resolver.getCachedArrayType(), [newElementType], resolver, enclosingDecl, context);
@@ -2651,11 +2658,8 @@ module TypeScript {
 
         var newTypeDecl = typeToSpecialize.getDeclarations()[0];
 
-        var rootType: PullTypeSymbol = <PullTypeSymbol>newTypeDecl.getSymbol().getType();
+        var rootType: PullTypeSymbol = (typeToSpecialize.getKind() & (PullElementKind.Class | PullElementKind.Interface)) ? <PullTypeSymbol>newTypeDecl.getSymbol().getType() : typeToSpecialize;
 
-        if (!rootType) {
-            rootType = typeToSpecialize;
-        }
         
         if (searchForExistingSpecialization) {
             if (!typeArguments.length || context.specializingToAny) {
@@ -2674,7 +2678,7 @@ module TypeScript {
             if (!newType && !typeParameters.length && context.specializingToAny) {
                 newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
             }
-        }// ? (isArray ? typeArguments[0].getArrayType() : typeToSpecialize.getSpecialization(typeArguments)) : null;
+        }
 
         if (newType) {
             if (!newType.isResolved() && !newType.currentlyBeingSpecialized()) {
