@@ -94,9 +94,9 @@ module TypeScript {
         Exported_class__0__extends_private_class__1_: DiagnosticInfo;
         Exported_class__0__implements_private_interface__1_: DiagnosticInfo;
         Exported_interface__0__extends_private_interface__1_: DiagnosticInfo;
-        Exported_class__0__extends_class_from_private_module__1_: DiagnosticInfo;
-        Exported_class__0__implements_interface_from_private_module__1_: DiagnosticInfo;
-        Exported_interface__0__extends_interface_from_private_module__1_: DiagnosticInfo;
+        Exported_class__0__extends_class_from_inaccessible_module__1_: DiagnosticInfo;
+        Exported_class__0__implements_interface_from_inaccessible_module__1_: DiagnosticInfo;
+        Exported_interface__0__extends_interface_from_inaccessible_module__1_: DiagnosticInfo;
         Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
         Public_property__0__of__exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
         Property__0__of__exported_interface_has_or_is_using_private_type__1_: DiagnosticInfo;

@@ -1786,13 +1786,13 @@ module TypeScript {
                 if (declAST.nodeType == NodeType.ClassDeclaration) {
                     // Class
                     if (isExtendedType) {
-                        message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__extends_class_from_private_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
+                        message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__implements_interface_from_private_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
+                        message = getDiagnosticMessage(DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_, [declSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else {
                     // Interface
-                    message = getDiagnosticMessage(DiagnosticCode.Exported_interface__0__extends_interface_from_private_module__1_, [declSymbol.getName(), typeSymbolName]);
+                    message = getDiagnosticMessage(DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_, [declSymbol.getName(), typeSymbolName]);
                 }
             } else {
                 if (declAST.nodeType == NodeType.ClassDeclaration) {
