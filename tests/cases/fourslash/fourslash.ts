@@ -160,8 +160,12 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyErrorExistsAfterMarker(markerName, !this.negative, false);
         }
 
-        public quickInfoIs(typeName: string, docComment?: string, symbolName?: string, kind?: string) {
-            FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative, docComment, symbolName, kind);
+        public quickInfoIs(typeName?: string, docComment?: string, symbolName?: string, kind?: string) {
+            FourSlash.currentTestState.verifyQuickInfo(this.negative, typeName, docComment, symbolName, kind);
+        }
+
+        public quickInfoSymbolNameIs(symbolName) {
+            FourSlash.currentTestState.verifyQuickInfo(this.negative, undefined, undefined, symbolName, undefined);
         }
 
         public quickInfoExists() {

@@ -335,7 +335,7 @@ module FourSlash {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, false);
         }
 
-        public verifyQuickInfo(expectedTypeName: string, negative: number, docComment?: string, symbolName?: string, kind?: string) {
+        public verifyQuickInfo(negative: bool, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
             var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
@@ -644,7 +644,7 @@ module FourSlash {
                 throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
             }
 
-            if (!TypeScript.structuralEquals(refAST, this.compiler.getScript(this.activeFile.fileName))) {
+            if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
             }
         }
