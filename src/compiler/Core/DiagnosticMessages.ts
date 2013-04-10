@@ -311,7 +311,7 @@ module TypeScript {
 
         _set__accessor_must_have_only_one_parameter: {
             category: DiagnosticCategory.Error,
-            message: "'set' accessor must have only one parameter.",
+            message: "'set' accessor must have one and only one parameter.",
             code: 1049
         },
 

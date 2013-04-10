@@ -494,7 +494,7 @@ module TypeScript {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -533,16 +533,16 @@ module TypeScript {
             var returnType = functionSignature.getReturnType();
 
             this.checkForResolutionError(returnType, enclosingDecl);
+            
+            var funcNameAST = funcDeclAST.name;
 
-            // PULLREVIEW: Should we also raise an error if the setter returns a value?
             if (isGetter && !hasReturn) {
                 if (!(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType === NodeType.ThrowStatement)) {
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             }
-            else if (isSetter && hasReturn) {
-                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
-            }
+
+            // Setter with return value is checked in typeCheckReturnExpression
 
             if (getter && setter) {
                 var getterDecl = getter.getDeclarations()[0];
@@ -552,7 +552,7 @@ module TypeScript {
                 var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
 
                 if (getterIsPrivate != setterIsPrivate) {
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -1456,9 +1456,14 @@ module TypeScript {
         public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnAST = <ReturnStatement>ast;
             typeCheckContext.setEnclosingDeclHasReturn();
-            var returnType = this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+            var returnExpr = returnAST.returnExpression;
+            var returnType = this.typeCheckAST(returnExpr, typeCheckContext);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            if (enclosingDecl.getKind() == PullElementKind.SetAccessor && returnExpr) {
+                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
+            }
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
                 var signatureSymbol = enclosingDecl.getSignatureSymbol();
@@ -1499,7 +1504,7 @@ module TypeScript {
                         // ignore comparison info for now
                         var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()]);
 
-                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                        this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
                 }
             }
