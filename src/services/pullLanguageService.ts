@@ -906,6 +906,8 @@ module Services {
                         return ScriptElementKind.constructSignatureElement;
                     case TypeScript.PullElementKind.IndexSignature:
                         return ScriptElementKind.indexSignatureElement;
+                    case TypeScript.PullElementKind.TypeParameter:
+                        return ScriptElementKind.typeParameterElement;
                 }
             } else {
                 switch (kind) {
@@ -950,6 +952,8 @@ module Services {
                         return ScriptElementKind.indexSignatureElement;
                     case TypeScript.PullElementKind.EnumMember:
                         return ScriptElementKind.memberVariableElement;
+                    case TypeScript.PullElementKind.TypeParameter:
+                        return ScriptElementKind.typeParameterElement;
                 }
             }
 

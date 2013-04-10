@@ -780,7 +780,7 @@ module TypeScript {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
 
                     classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
-                    constructorTypeSymbol.addTypeParameter(typeParameter);
+                    constructorTypeSymbol.addTypeParameter(typeParameter, true);
                 }
                 else {
                     // clean the decls

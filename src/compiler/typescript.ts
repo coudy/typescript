@@ -1067,7 +1067,7 @@ module TypeScript {
                 var current = path.asts[i];
                 var decl = semanticInfo.getDeclForAST(current);
 
-                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
+                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
                     enclosingDecl = decl;
                 }
 

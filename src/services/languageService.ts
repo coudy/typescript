@@ -297,6 +297,8 @@ module Services {
 
         // function foo(*Y*: string)
         static parameterElement = "parameter";
+
+        static typeParameterElement = "type parameter"
     }
 
     export class ScriptElementKindModifier {
