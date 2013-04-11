@@ -999,7 +999,7 @@ module TypeScript {
             message: "Tried to set variable type to uninitialized module type '{0}'.",
             code: 2124
         },
-        Function_0_declared_a_non_void_return_type__but_has_no_return_expression: {
+        Function__0__declared_a_non_void_return_type__but_has_no_return_expression: {
             category: DiagnosticCategory.Error,
             message: "Function {0} declared a non-void return type, but has no return expression.",
             code: 2125
@@ -1028,6 +1028,21 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Invalid left-hand side of assignment expression.",
             code: 2130
+        },
+        Function_declared_a_non_void_return_type__but_has_no_return_expression: {
+            category: DiagnosticCategory.Error,
+            message: "Function declared a non-void return type, but has no return expression.",
+            code: 2131
+        },
+        Cannot_resolve_return_type_reference: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot resolve return type reference.",
+            code: 2132
+        },
+        Constructors_must_not_have_a_return_type_of__void_: {
+            category: DiagnosticCategory.Error,
+            message: "Constructors must not have a return type of 'void'.",
+            code: 2133
         },
     };
 

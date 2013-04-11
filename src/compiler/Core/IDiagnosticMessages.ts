@@ -198,11 +198,14 @@ module TypeScript {
         Setters_may_not_return_a_value: DiagnosticInfo;
         Tried_to_set_variable_type_to_uninitialized_module_type: DiagnosticInfo;
         Tried_to_set_variable_type_to_uninitialized_module_type__0__: DiagnosticInfo;
-        Function_0_declared_a_non_void_return_type__but_has_no_return_expression: DiagnosticInfo;
+        Function__0__declared_a_non_void_return_type__but_has_no_return_expression: DiagnosticInfo;
         Getters_must_return_a_value: DiagnosticInfo;
         Getter_and_setter_accessors_do_not_agree_in_visibility: DiagnosticInfo;
         Index_signatures_must_take_only_one_parameter: DiagnosticInfo;
         Index_signatures_must_not_have_optional_parameters: DiagnosticInfo;
         Invalid_left_hand_side_of_assignment_expression: DiagnosticInfo;
+        Function_declared_a_non_void_return_type__but_has_no_return_expression: DiagnosticInfo;
+        Cannot_resolve_return_type_reference: DiagnosticInfo;
+        Constructors_must_not_have_a_return_type_of__void_: DiagnosticInfo;
     }
 }

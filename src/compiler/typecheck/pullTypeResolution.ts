@@ -1529,7 +1529,7 @@ module TypeScript {
                             var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
 
                         if (!instanceSymbol) {
-                                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", decl);
+                                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [typeExprSymbol.toString()]), decl);
                                 typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                                 hadError = true;
                             }
@@ -1692,7 +1692,7 @@ module TypeScript {
                     var isVoidOrAny = this.isAnyOrEquivalent(contextualType) || contextualType == this.semanticInfoChain.voidTypeSymbol;
                     
                     if (!isVoidOrAny) {
-                        context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Function declared a non-void return type, but has no return expression", enclosingDecl, true);
+                        context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression, null), enclosingDecl, true);
                     }
                 }
                 else {
@@ -1785,7 +1785,7 @@ module TypeScript {
                         var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
                         var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
                         if (!returnTypeSymbol) {
-                            diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                            diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Cannot_resolve_return_type_reference, null), funcDecl);
                             signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
                             hadError = true;
                         } else {
@@ -1798,7 +1798,7 @@ module TypeScript {
                             signature.setReturnType(returnTypeSymbol);
 
                             if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
-                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Constructors may not have a return type of 'void'", funcDecl, true);
+                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Constructors_must_not_have_a_return_type_of__void_, null), funcDecl, true);
                             }
                         }
                     }
@@ -1835,7 +1835,7 @@ module TypeScript {
                     returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Cannot_resolve_return_type_reference, null), funcDecl);
                         signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
@@ -1852,7 +1852,7 @@ module TypeScript {
                         signature.setReturnType(returnTypeSymbol);
 
                         if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
-                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Constructors may not have a return type of 'void'", funcDecl, true);
+                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Constructors_must_not_have_a_return_type_of__void_, null), funcDecl, true);
                         }
                     }
                 }
@@ -1931,7 +1931,7 @@ module TypeScript {
                     var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Cannot_resolve_return_type_reference, null), funcDecl);
                         signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
