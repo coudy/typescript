@@ -1,3 +1,8 @@
+;
+
+//@ sourceMappingURL=0.js.map
+////[0.js.map]
+{"version":3,"file":"0.js","sources":["0.ts"],"names":[],"mappings":"AAAA;AAAC"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]

@@ -281,8 +281,7 @@ module TypeScript {
         }
 
         private moduleDeclarationIsEquivalent(decl1: ModuleDeclaration, decl2: ModuleDeclaration): boolean {
-            // TODO: Remove withoutFlag code once ShouldEmitModuleDecl is removed.
-            return withoutFlag(decl1.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl) === withoutFlag(decl2.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl) &&
+            return decl1.getModuleFlags() === decl2.getModuleFlags() &&
                    decl2.prettyName === decl2.prettyName &&
                    ArrayUtilities.sequenceEquals(decl1.amdDependencies, decl2.amdDependencies, StringUtilities.stringEquals);
         }

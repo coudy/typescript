@@ -1225,12 +1225,6 @@ module TypeScript {
         // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
-        public cachedEmitRequired: boolean;
-
-        private setCachedEmitRequired(value: boolean) {
-            this.cachedEmitRequired = value;
-            return this.cachedEmitRequired;
-        }
 
         constructor() {
             super(NodeType.Script);
@@ -1244,54 +1238,8 @@ module TypeScript {
             return "Script";
         }
 
-        public emitRequired(emitOptions: EmitOptions) {
-            if (this.cachedEmitRequired != undefined) {
-                return this.cachedEmitRequired;
-            }
-
-            if (!this.isDeclareFile && this.moduleElements) {
-                if (this.moduleElements.members.length === 0) {
-                    // allow empty files that are not declare files 
-                    return this.setCachedEmitRequired(true);
-                }
-
-                for (var i = 0, len = this.moduleElements.members.length; i < len; i++) {
-                    var stmt = this.moduleElements.members[i];
-                    if (stmt.nodeType === NodeType.ModuleDeclaration) {
-                        if (!hasFlag((<ModuleDeclaration>stmt).getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
-                            return this.setCachedEmitRequired(true);
-                        }
-                    }
-                    else if (stmt.nodeType === NodeType.ClassDeclaration) {
-                        if (!hasFlag((<ClassDeclaration>stmt).getVarFlags(), VariableFlags.Ambient)) {
-                            return this.setCachedEmitRequired(true);
-                        }
-                    }
-                    else if (stmt.nodeType === NodeType.VariableDeclarator) {
-                        if (!hasFlag((<VariableDeclarator>stmt).getVarFlags(), VariableFlags.Ambient)) {
-                            return this.setCachedEmitRequired(true);
-                        }
-                    }
-                    else if (stmt.nodeType === NodeType.FunctionDeclaration) {
-                        if (!(<FunctionDeclaration>stmt).isSignature()) {
-                            return this.setCachedEmitRequired(true);
-                        }
-                    }
-                    else if (stmt.nodeType != NodeType.InterfaceDeclaration && stmt.nodeType != NodeType.EmptyStatement) {
-                        return this.setCachedEmitRequired(true);
-                    }
-                }
-
-                if (emitOptions.compilationSettings.emitComments &&
-                    ((this.moduleElements.preComments && this.moduleElements.preComments.length > 0) || (this.moduleElements.postComments && this.moduleElements.postComments.length > 0))) {
-                    return this.setCachedEmitRequired(true);
-                }
-            }
-            return this.setCachedEmitRequired(false);
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
-            if (this.emitRequired(emitter.emitOptions)) {
+            if (!this.isDeclareFile) {
                 emitter.emitJavascriptList(this.moduleElements, null, true, false, false, true, this.requiresExtendsBlock);
             }
         }
@@ -1314,7 +1262,7 @@ module TypeScript {
     }
 
     export class ModuleDeclaration extends NamedDeclaration {
-        private _moduleFlags = ModuleFlags.ShouldEmitModuleDecl;
+        private _moduleFlags = ModuleFlags.None;
         public mod: ModuleType = null;
         public prettyName: string;
         public amdDependencies: string[] = [];
@@ -1339,10 +1287,7 @@ module TypeScript {
 
         public structuralEquals(ast: ModuleDeclaration, includePosition: boolean): boolean {
             if (super.structuralEquals(ast, includePosition)) {
-                // TODO: We don't need the 'withoutFlag' calls here once we get rid of 
-                // ShouldEmitModuleDecl.
-                return withoutFlag(this._moduleFlags, ModuleFlags.ShouldEmitModuleDecl) ===
-                       withoutFlag(ast._moduleFlags, ModuleFlags.ShouldEmitModuleDecl);
+                return this._moduleFlags === ast._moduleFlags;
             }
 
             return false;
@@ -1351,16 +1296,23 @@ module TypeScript {
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
-        public recordNonInterface() {
-            this.setModuleFlags(this.getModuleFlags() & ~ModuleFlags.ShouldEmitModuleDecl);
-        }
-
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckModule(this);
         }
 
+        private hasNonInterfaceMember(): boolean {
+            for (var i = 0, n = this.members.members.length; i < n; i++) {
+                var member = this.members.members[i];
+                if (member.nodeType !== NodeType.InterfaceDeclaration) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public emit(emitter: Emitter, startLine: boolean) {
-            if (!hasFlag(this.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl)) {
+            if (this.hasNonInterfaceMember()) {
                 emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
                 emitter.emitComments(this, false);

@@ -295,7 +295,7 @@ module TypeScript {
 
         }
         if (context.scopeChain.moduleDecl) {
-            context.scopeChain.moduleDecl.recordNonInterface();
+            //context.scopeChain.moduleDecl.recordNonInterface();
         }
         // REVIEW: If multiple disparate module decls for the same module don't agree
         // in export privileges, how should we handle it?
@@ -386,7 +386,7 @@ module TypeScript {
             instanceType.symbol = typeSymbol;
 
             if (context.scopeChain.moduleDecl) {
-                context.scopeChain.moduleDecl.recordNonInterface();
+                //context.scopeChain.moduleDecl.recordNonInterface();
                 typeSymbol.declModule = context.scopeChain.moduleDecl;
                 typeSymbol.flags |= SymbolFlags.ModuleMember;
             }
@@ -539,7 +539,7 @@ module TypeScript {
         var isOptional = hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName);
 
         if (context.scopeChain.moduleDecl) {
-            context.scopeChain.moduleDecl.recordNonInterface();
+            //context.scopeChain.moduleDecl.recordNonInterface();
         }
         if (isProperty ||
             isExported ||
@@ -608,7 +608,7 @@ module TypeScript {
 
         // REVIEW: This will have to change when we move to "export"
         if (context.scopeChain.moduleDecl) {
-            context.scopeChain.moduleDecl.recordNonInterface();
+            //context.scopeChain.moduleDecl.recordNonInterface();
         }
 
         var funcDecl = <FunctionDeclaration>ast;
@@ -842,7 +842,7 @@ module TypeScript {
         }
         else {
             if (/* ast.isStatementOrExpression() && */ context.scopeChain.moduleDecl) {
-                context.scopeChain.moduleDecl.recordNonInterface();
+                //context.scopeChain.moduleDecl.recordNonInterface();
             }
         }
         walker.options.goChildren = go;

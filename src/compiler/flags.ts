@@ -53,9 +53,8 @@ module TypeScript {
         Ambient = 1 << 3,
         Static = 1 << 4,
         IsEnum = 1 << 7,
-        ShouldEmitModuleDecl = 1 << 8,
         IsWholeFile = 1 << 9,
-        IsDynamic = 1 << 10,
+        IsDynamic = 1 << 9,
     }
 
     export enum SymbolFlags {

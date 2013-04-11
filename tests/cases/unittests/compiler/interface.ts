@@ -3,7 +3,7 @@
 
 describe('Optional params dont generate any code inside interface', function () {
     it('Check if inferfaces generate any code', function () {
-        var code = "interface i1 {a?: any;b: any;c(): any;d?(): any;};";
+        var code = "interface i1 {a?: any;b: any;c(): any;d?(): any;}";
         Harness.Compiler.compileString(code, 'interface code-gen', function (result) {
             assert.equal(result.errors.length, 0);
             assert.equal(result.code, "");

@@ -258,7 +258,7 @@ module TypeScript {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
 
-                if (script.emitRequired(this.emitOptions)) {
+                if (!script.isDeclareFile) {
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
                         // First time at finding common path
@@ -452,7 +452,7 @@ module TypeScript {
                      emitter?: Emitter): Emitter {
 
             var script = document.script;
-            if (script.emitRequired(this.emitOptions)) {
+            if (!script.isDeclareFile) {
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);

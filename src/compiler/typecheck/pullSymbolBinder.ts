@@ -149,16 +149,6 @@ module TypeScript {
             return symbol;
         }
 
-        private recordNonInterfaceParentModule() {
-            var parent = this.getParent();
-            if (parent) {
-                var ast = this.semanticInfo.getASTForSymbol(parent);
-                if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
-                    (<ModuleDeclaration>ast).recordNonInterface();
-                }
-            }
-        }
-
         public symbolIsRedeclaration(sym: PullSymbol): boolean {
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) ||
@@ -321,7 +311,6 @@ module TypeScript {
 
                 moduleContainerTypeSymbol.invalidate();
             }
-            this.recordNonInterfaceParentModule();
 
             this.pushParent(moduleContainerTypeSymbol, moduleContainerDecl);
 
@@ -409,7 +398,6 @@ module TypeScript {
                     importSymbol.setContainer(parent);
                 }
             }
-            this.recordNonInterfaceParentModule();
 
             importSymbol.setIsBound(this.bindingPhase);
         }
@@ -481,7 +469,6 @@ module TypeScript {
 
                 enumSymbol.invalidate();
             }
-            this.recordNonInterfaceParentModule();
 
             this.pushParent(enumSymbol, enumDeclaration);
 
@@ -672,7 +659,6 @@ module TypeScript {
                     classSymbol.setContainer(parent);
                 }
             }
-            this.recordNonInterfaceParentModule();
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
@@ -1263,7 +1249,6 @@ module TypeScript {
                     variableSymbol.setContainer(parent);
                 }
             }
-            this.recordNonInterfaceParentModule();
 
             variableSymbol.setIsBound(this.bindingPhase);
         }
@@ -1626,7 +1611,6 @@ module TypeScript {
                     functionSymbol.setContainer(parent);
                 }
             }
-            this.recordNonInterfaceParentModule();
 
             if (!isSignature) {
                 this.pushParent(functionTypeSymbol, functionDeclaration);

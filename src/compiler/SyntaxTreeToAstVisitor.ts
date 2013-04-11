@@ -1001,7 +1001,6 @@ module TypeScript {
             modDecl.preComments = preComments;
             modDecl.postComments = postComments;
             modDecl.setModuleFlags(modDecl.getModuleFlags() | ModuleFlags.IsEnum);
-            modDecl.recordNonInterface();
 
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 modDecl.setModuleFlags(modDecl.getModuleFlags() | ModuleFlags.Exported);
