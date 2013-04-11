@@ -898,12 +898,11 @@ module TypeScript {
         //
         public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             var objectLitAST = <UnaryExpression>ast;
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             // PULLTODO: We're really resolving these expressions twice - need a better way...
-            var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
             var memberDecls = <ASTList>objectLitAST.operand;
-
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var contextualType = this.context.getContextualType();
             var memberType: PullTypeSymbol;
@@ -952,9 +951,52 @@ module TypeScript {
         // validate:
         //  - incompatible types in expression
         public typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+            var arrayLiteralAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            // PULLTODO: We're really resolving these expressions twice - need a better way...
             var type = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
+            var memberASTs = <ASTList>arrayLiteralAST.operand;
+
+            // Find the contextual member type
+            var contextualType = this.context.getContextualType();
+            var contextualMemberType: PullTypeSymbol = null;
+            if (contextualType && contextualType.isArray()) {
+                contextualMemberType = contextualType.getElementType();
+            }
+
+            if (memberASTs && memberASTs.members && memberASTs.members.length) {
+                var elementTypes: PullTypeSymbol[] = [];
+
+                if (contextualMemberType) {
+                    this.context.pushContextualType(contextualMemberType, this.context.inProvisionalResolution(), null);
+                }
+
+                for (var i = 0; i < memberASTs.members.length; i++) {
+                    elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inTypedAssignment*/ false);
+                }
+
+                if (contextualMemberType) {
+                    this.context.popContextualType();
+
+                    // Check if all array members match the contextual Type
+                    var collection: IPullTypeCollection = {
+                        getLength: () => { return elementTypes.length; } ,
+                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; } ,
+                        getTypeAtIndex: (index: number) => { return elementTypes[index]; }
+                    };
+
+                    var comparisonInfo = new TypeScript.TypeComparisonInfo();
+                    var elementType = this.resolver.findBestCommonType(elementTypes[0], contextualMemberType, collection, false, this.context, comparisonInfo);
+                    if (!elementType) {
+                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                            getDiagnosticMessage(DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements, null), enclosingDecl);
+                    }
+                }
+            }
+
             this.checkForResolutionError(type, enclosingDecl);
+
             return type;
         }
 
@@ -1137,7 +1179,10 @@ module TypeScript {
             // "use of new expression as a statement"
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var inSuperConstructorCall = (callExpression.target.nodeType === NodeType.SuperExpression);
-            var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
+
+            var callResolutionData = new PullAdditionalCallResolutionData();
+            var resultType = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).getType();
+
             this.checkForResolutionError(resultType, enclosingDecl);
 
             // Type check the target
@@ -1162,7 +1207,24 @@ module TypeScript {
                 typeCheckContext.inSuperConstructorCall = true;
             }
 
-            this.typeCheckAST(callExpression.arguments, typeCheckContext);
+            // Apply contextual typing
+            var contextTypes = callResolutionData.actualParametersContextTypeSymbols;
+            if (callExpression.arguments) {
+                var argumentASTs = callExpression.arguments.members;
+                for (var i = 0, n = argumentASTs.length; i < n; i++) {
+                    var argumentAST = argumentASTs[i];
+
+                    if (contextTypes && contextTypes[i]) {
+                        this.context.pushContextualType(contextTypes[i], this.context.inProvisionalResolution(), null);
+                    }
+
+                    this.typeCheckAST(argumentAST, typeCheckContext);
+
+                    if (contextTypes && contextTypes[i]) {
+                        this.context.popContextualType();
+                    }
+                }
+            }
 
             typeCheckContext.inSuperConstructorCall = savedInSuperConstructorCall;
 
@@ -1174,12 +1236,32 @@ module TypeScript {
         //
         public typeCheckObjectCreationExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
+
+            var callResolutionData = new PullAdditionalCallResolutionData();
+            var resultType = this.resolver.resolveNewExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).getType();
 
             this.checkForResolutionError(resultType, enclosingDecl);
 
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext);
-            this.typeCheckAST(callExpression.arguments, typeCheckContext);
+
+            // Type check the arguments
+            var contextTypes = callResolutionData.actualParametersContextTypeSymbols;
+            if (callExpression.arguments) {
+                var argumentASTs = callExpression.arguments.members;
+                for (var i = 0, n = argumentASTs.length; i < n; i++) {
+                    var argumentAST = argumentASTs[i];
+
+                    if (contextTypes && contextTypes[i]) {
+                        this.context.pushContextualType(contextTypes[i], this.context.inProvisionalResolution(), null);
+                    }
+
+                    this.typeCheckAST(argumentAST, typeCheckContext);
+
+                    if (contextTypes && contextTypes[i]) {
+                        this.context.popContextualType();
+                    }
+                }
+            }
 
             return resultType;
         }

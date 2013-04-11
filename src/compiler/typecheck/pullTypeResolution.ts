@@ -3197,9 +3197,6 @@ module TypeScript {
             }
 
             if (!elementType) {
-                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath,
-                getDiagnosticMessage(DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements, null), enclosingDecl, true);
-
                 elementType = this.semanticInfoChain.anyTypeSymbol;
             }
             else if (contextualType) {
@@ -3425,7 +3422,7 @@ module TypeScript {
             }
 
             var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(),
-            getDiagnosticMessage(DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]), enclosingDecl);
+                getDiagnosticMessage(DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]), enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
         }
@@ -3643,8 +3640,8 @@ module TypeScript {
                 var signatureDecl = signature.getDeclarations()[0];
                 
                 for (i = 0; i < len; i++) {
-
-                    if (params.length && i < params.length) {
+                    // account for varargs
+                    if (params.length && i < signature.getNonOptionalParameterCount()) {
                         if (typeReplacementMap) {
                             context.pushTypeSpecializationCache(typeReplacementMap);
                         }
@@ -4119,13 +4116,15 @@ module TypeScript {
                 }
                 else {
                     var mergedET = this.mergeOrdered(a.getElementType(), b.getElementType(), acceptVoid, context, comparisonInfo);
-                    var mergedArrayType = mergedET.getArrayType();
+                    if (mergedET) {
+                        var mergedArrayType = mergedET.getArrayType();
 
-                    if (!mergedArrayType) {
-                        mergedArrayType = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, mergedET, this, context);
+                        if (!mergedArrayType) {
+                            mergedArrayType = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, mergedET, this, context);
+                        }
+
+                        return mergedArrayType;
                     }
-
-                    return mergedArrayType;
                 }
             }
             else if (this.sourceIsSubtypeOfTarget(a, b, context, comparisonInfo)) {
@@ -4134,15 +4133,14 @@ module TypeScript {
             else if (this.sourceIsSubtypeOfTarget(b, a, context, comparisonInfo)) {
                 return a;
             }
-            else {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
+
+            return null;
         }
 
         public widenType(type: PullTypeSymbol): PullTypeSymbol {
             if (type == this.semanticInfoChain.undefinedTypeSymbol ||
-            type == this.semanticInfoChain.nullTypeSymbol ||
-            type.isError()) {
+                type == this.semanticInfoChain.nullTypeSymbol ||
+                type.isError()) {
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -4152,7 +4150,7 @@ module TypeScript {
 
         public isNullOrUndefinedType(type: PullTypeSymbol) {
             return type == this.semanticInfoChain.nullTypeSymbol ||
-            type == this.semanticInfoChain.undefinedTypeSymbol;
+                type == this.semanticInfoChain.undefinedTypeSymbol;
         }
 
         public findBestCommonType(initialType: PullTypeSymbol, targetType: PullTypeSymbol, collection: IPullTypeCollection, acceptVoid: boolean, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
@@ -4162,7 +4160,12 @@ module TypeScript {
             var bestCommonType = initialType;
 
             if (targetType) {
-                bestCommonType = bestCommonType ? this.mergeOrdered(bestCommonType, targetType, acceptVoid, context) : targetType;
+                if (bestCommonType) {
+                    bestCommonType = this.mergeOrdered(bestCommonType, targetType, acceptVoid, context);
+                }
+                else {
+                    bestCommonType = targetType
+                }
             }
 
             // it's important that we set the convergence type here, and not in the loop,
@@ -4182,7 +4185,7 @@ module TypeScript {
                         convergenceType = bestCommonType;
                     }
 
-                    if (this.isAnyOrEquivalent(bestCommonType) || bestCommonType == null) {
+                    if (bestCommonType == null || this.isAnyOrEquivalent(bestCommonType)) {
                         break;
                     }
                     else if (targetType) { // set the element type to the target type

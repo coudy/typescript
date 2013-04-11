@@ -24,32 +24,29 @@ class CompilerBaselineRunner extends RunnerBase {
     // the compiler flags which we support and functions to set the right settings
     // Every flag here needs to also be present in the fileMetadataNames array in the TestCaseParser class in harness.ts. They must be all lowercase in both places.
     private supportedFlags: { flag: string; setFlag: (x: TypeScript.CompilationSettings, value: string) => void; }[] = [
-    { flag: 'comments', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.emitComments = value.toLowerCase() === 'true' ? true : false; } },
-    { flag: 'declaration', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.generateDeclarationFiles = value.toLowerCase() === 'true' ? true : false; } },
-    {
-        flag: 'module', setFlag: (x: TypeScript.CompilationSettings, value: string) => {
-            switch (value.toLowerCase()) {
-                // this needs to be set on the global variable
-                case 'amd':
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                    x.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                    break;
-                case 'commonjs':
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-                    x.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-                    break;
-                default:
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
-                    x.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
-                    break;
+        { flag: 'comments', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.emitComments = value.toLowerCase() === 'true' ? true : false; } },
+        { flag: 'declaration', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.generateDeclarationFiles = value.toLowerCase() === 'true' ? true : false; } },
+        {
+            flag: 'module', setFlag: (x: TypeScript.CompilationSettings, value: string) => {
+                switch (value.toLowerCase()) {
+                    // this needs to be set on the global variable
+                    case 'amd':
+                        x.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                        break;
+                    case 'commonjs':
+                        x.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                        break;
+                    default:
+                        x.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
+                        break;
+                }
             }
-        }
-    },
-    { flag: 'nolib', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useDefaultLib = value.toLowerCase() === 'true' ? true : false; } },
-    { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; } },
-    { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
-    { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
-    { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
+        },
+        { flag: 'nolib', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useDefaultLib = value.toLowerCase() === 'true' ? true : false; } },
+        { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; } },
+        { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
+        { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
+        { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
     ];
 
     public checkTestCodeOutput(fileName: string) {

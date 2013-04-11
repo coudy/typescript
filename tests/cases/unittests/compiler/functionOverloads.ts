@@ -462,7 +462,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo([{a:'bar'}]);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             //assert.compilerWarning(result, 1, 131, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 3);
         });
     });
     
