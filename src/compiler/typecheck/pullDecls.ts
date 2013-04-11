@@ -14,6 +14,8 @@ module TypeScript {
 
         private symbol: PullSymbol = null;
 
+        private declGroups: any = {};
+
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
 
@@ -191,5 +193,45 @@ module TypeScript {
 
         public getChildDecls() { return this.childDecls; }
         public getTypeParameters() { return this.typeParameters; }
+
+        public addVariableDeclToGroup(decl: PullDecl) {
+            var declGroup = <PullDeclGroup>this.declGroups[decl.getName()];
+            if (declGroup) {
+                declGroup.addDecl(decl);
+            }
+            else {
+                declGroup = new PullDeclGroup(decl.getName());
+                declGroup.addDecl(decl);
+                this.declGroups[decl.getName()] = declGroup;
+            }
+        }
+
+        public getVariableDeclGroups(): PullDecl[][] {
+            var declGroups: PullDecl[][] = [];
+
+            for (var declName in this.declGroups) {
+                declGroups[declGroups.length] = (<PullDeclGroup>this.declGroups[declName]).getDecls();
+            }
+
+            return declGroups;
+        }
+    }
+
+    export class PullDeclGroup {
+
+        private _decls: PullDecl[] = [];
+
+        constructor(public name: string) {
+        }
+
+        public addDecl(decl: PullDecl) {
+            if (decl.getName() == this.name) {
+                this._decls[this._decls.length] = decl;
+            }
+        }
+
+        public getDecls() {
+            return this._decls;
+        }
     }
 }

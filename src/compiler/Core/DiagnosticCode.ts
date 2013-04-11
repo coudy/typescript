@@ -202,5 +202,7 @@ module TypeScript {
         Function_declared_a_non_void_return_type__but_has_no_return_expression,
         Cannot_resolve_return_type_reference,
         Constructors_must_not_have_a_return_type_of__void_,
+        Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_,
+        All_symbols_within_a__with__block_will_be_resolved_to__any__,
     }
 }

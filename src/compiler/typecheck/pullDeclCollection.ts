@@ -19,6 +19,7 @@ module TypeScript {
         public popParent() { this.parentChain.length--; }
 
         public foundValueDecl = false;
+
     }
 
     export function preCollectImportDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
@@ -26,11 +27,15 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(importDecl.id.text, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(ast, decl);
         context.semanticInfo.setASTForDecl(decl, ast);
-
-        var parent = context.getParent();
 
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
@@ -117,11 +122,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("", PullElementKind.ObjectType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(interfaceDecl, decl);
         context.semanticInfo.setASTForDecl(decl, interfaceDecl);
-
-        var parent = context.getParent();
 
         // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
         if (parent) {
@@ -179,11 +188,16 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var span = TextSpan.fromBounds(argDecl.minChar, argDecl.limChar);
 
         var decl = new PullDecl(argDecl.id.text, PullElementKind.Parameter, declFlags, span, context.scriptName);
 
-        var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 
@@ -221,11 +235,16 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(typeParameterDecl.name.text, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
         context.semanticInfo.setASTForDecl(decl, typeParameterDecl);
         context.semanticInfo.setDeclForAST(typeParameterDecl, decl);
 
-        var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 
@@ -334,11 +353,16 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(varDecl, decl);
         context.semanticInfo.setASTForDecl(decl, varDecl);
 
-        var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 
@@ -380,13 +404,17 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("", declType, declFlags, span, context.semanticInfo.getPath());
         context.semanticInfo.setDeclForAST(functionTypeDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
 
         // parent could be null if we're collecting decls for a lambda expression
-        var parent = context.getParent();
-
         if (parent) {
             parent.addChildDecl(decl);
             decl.setParentDecl(parent);
@@ -415,13 +443,17 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(constructorTypeDeclAST.minChar, constructorTypeDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("{new}", declType, declFlags, span, context.semanticInfo.getPath());
         context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
         // parent could be null if we're collecting decls for a lambda expression
-        var parent = context.getParent();
-
         if (parent) {
             parent.addChildDecl(decl);
             decl.setParentDecl(parent);
@@ -462,11 +494,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(funcDeclAST.name.text, declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(funcDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, funcDeclAST);
-
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -499,11 +535,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("", PullElementKind.FunctionExpression, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
-
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -586,11 +626,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(indexSignatureDeclAST.minChar, indexSignatureDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("[]", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
-
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -620,11 +664,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("()", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
-
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -654,11 +702,15 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(constructSignatureDeclAST.minChar, constructSignatureDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl("new", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
-
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -749,11 +801,16 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(getAccessorDeclAST.name.text, declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(getAccessorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
 
-        var parent = context.getParent();
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -798,11 +855,65 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
 
+        var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
         var decl = new PullDecl(setAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(setAccessorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
 
+        if (parent) {
+            parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
+        }
+
+        context.pushParent(decl);
+
+        return true;
+    }
+
+    export function preCollectCatchDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.CatchBlock;
+
+        var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+
         var parent = context.getParent();
+
+        if (parent && (parent.getKind() == PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
+        var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, ast);
+
+
+        if (parent) {
+            parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
+        }
+
+        context.pushParent(decl);
+
+        return true;
+    }
+
+    export function preCollectWithDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.WithBlock;
+
+        var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+
+        var parent = context.getParent();
+
+        var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, ast);
+
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -930,7 +1041,7 @@ module TypeScript {
             go = true;
         }
 
-            // call and 'new' expressions may contain lambdas with bindings...
+        // call and 'new' expressions may contain lambdas with bindings...
         else if (ast.nodeType == NodeType.InvocationExpression) {
             // want to be able to bind lambdas in return positions
             go = true;
@@ -943,7 +1054,10 @@ module TypeScript {
             go = true;
         }
         else if (ast.nodeType == NodeType.CatchClause) {
-            go = true;
+            go = preCollectCatchDecls(ast, parentAST, context);
+        }
+        else if (ast.nodeType == NodeType.WithStatement) {
+            go = preCollectWithDecls(ast, parentAST, context);
         }
 
         walker.options.goChildren = go;
@@ -1042,6 +1156,27 @@ module TypeScript {
                 parentDecl.setFlags(parentDecl.getFlags() | initFlag);
             }
         }
+        else if (ast.nodeType == NodeType.CatchClause) {
+            parentDecl = context.getParent();
+
+            if (parentDecl && isContainer(parentDecl)) {
+                initFlag = getInitializationFlag(parentDecl);
+                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+            }
+
+            context.popParent();
+        }
+        else if (ast.nodeType == NodeType.WithStatement) {
+            parentDecl = context.getParent();
+
+            if (parentDecl && isContainer(parentDecl)) {
+                initFlag = getInitializationFlag(parentDecl);
+                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+            }
+
+            context.popParent();
+        }
+
 
         return ast;
     }

@@ -91,6 +91,36 @@ module TypeScript {
             enclosingDecl.addDiagnostic(new PullDiagnostic(offset, length, fileName, message));
         }
 
+        public validateVariableDeclarationGroups(enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
+            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
+            var decl: PullDecl;
+            var firstSymbol: PullSymbol;
+            var symbol: PullSymbol;
+            var boundDeclAST: AST;
+
+            for (var i = 0; i < declGroups.length; i++) {
+
+                for (var j = 0; j < declGroups[i].length; j++) {
+                    decl = declGroups[i][j];
+                    symbol = decl.getSymbol();
+                    boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
+                    this.resolver.resolveDeclaration(boundDeclAST, this.context, enclosingDecl);
+                    if (!j) {
+                        firstSymbol = decl.getSymbol();
+
+                        if (this.resolver.isAnyOrEquivalent(this.resolver.widenType(firstSymbol.getType()))) {
+                            return;
+                        }
+                        continue;
+                    }
+
+                    if (!this.resolver.typesAreIdentical(symbol.getType(), firstSymbol.getType())) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_, [symbol.getName(), firstSymbol.getType().toString(), symbol.getType().toString()]), enclosingDecl);
+                    }
+                }
+            }
+        }
+
         // declarations
 
         public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
@@ -343,6 +373,8 @@ module TypeScript {
 
             this.typeCheckAST(script.moduleElements, typeCheckContext);
 
+            this.validateVariableDeclarationGroups(scriptDecl, typeCheckContext);
+
             typeCheckContext.popEnclosingDecl();
 
             unit.setTypeChecked();
@@ -389,7 +421,7 @@ module TypeScript {
                     var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type, null) + typeExprSymbol.toString() + "'", enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type, null), enclosingDecl);
                         typeExprSymbol = null;
                     }
                     else {
@@ -476,7 +508,11 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
+            
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
+
+            this.validateVariableDeclarationGroups(functionDecl, typeCheckContext);
+
             typeCheckContext.popEnclosingDecl();
 
             var functionSignature = functionDecl.getSignatureSymbol();
@@ -530,7 +566,11 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
+
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
+
+            this.validateVariableDeclarationGroups(functionDecl, typeCheckContext);
+
             typeCheckContext.popEnclosingDecl();
 
             var functionSignature = functionDecl.getSignatureSymbol();
@@ -583,7 +623,11 @@ module TypeScript {
             typeCheckContext.seenSuperConstructorCall = false;
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
+
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
+
+            this.validateVariableDeclarationGroups(functionDecl, typeCheckContext);
+
             typeCheckContext.popEnclosingDecl();
 
             var constructorSignature = functionDecl.getSignatureSymbol();
@@ -797,6 +841,8 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
             this.typeCheckAST(moduleDeclAST.members, typeCheckContext);
+
+            this.validateVariableDeclarationGroups(moduleDecl, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1570,6 +1616,10 @@ module TypeScript {
 
         public typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // PULLTODO: "With" statements
+            var withAST = <WithStatement>ast;
+
+            this.postError(withAST.expr.minChar, withAST.expr.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__, null), typeCheckContext.getEnclosingDecl());
+
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
@@ -1586,7 +1636,11 @@ module TypeScript {
         public typeCheckCatchClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var catchAST = <CatchClause>ast;
 
+            var catchDecl = this.resolver.getDeclForAST(catchAST);
+
+            typeCheckContext.pushEnclosingDecl(catchDecl);
             this.typeCheckAST(catchAST.body, typeCheckContext);
+            typeCheckContext.popEnclosingDecl();
 
             return this.semanticInfoChain.voidTypeSymbol;
         }

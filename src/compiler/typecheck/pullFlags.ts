@@ -31,6 +31,8 @@ module TypeScript {
 
         ExpressionElement = 1 << 19,
 
+        DeclaredInAWithBlock = 1 << 20,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule,
     }
@@ -77,10 +79,13 @@ module TypeScript {
 
         Expression = 1 << 29,
 
+        WithBlock = 1 << 30,
+        CatchBlock = 1 << 31,
+
         All = Script | Global | Primitive | Container | Class | Interface | DynamicModule | Enum | Array | TypeAlias |
             ObjectLiteral | Variable | Parameter | Property | TypeParameter | Function | ConstructorMethod | Method |
             FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature | ObjectType |
-            FunctionType | ConstructorType | EnumMember | ErrorType | Expression,
+            FunctionType | ConstructorType | EnumMember | ErrorType | Expression | WithBlock | CatchBlock,
 
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
 
@@ -91,6 +96,8 @@ module TypeScript {
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
 
         SomeContainer = Container | DynamicModule | TypeAlias,
+
+        SomeBlock = WithBlock | CatchBlock,
 
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
 

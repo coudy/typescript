@@ -1039,6 +1039,14 @@ module TypeScript {
 
             var parent = this.getParent(true);
 
+            var parentDecl = variableDeclaration.getParentDecl();
+
+            var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) != 0;
+
+            if (parentDecl && !isImplicit) {
+                parentDecl.addVariableDeclToGroup(variableDeclaration);
+            }
+
             var i = 0;
 
             // The code below accounts for the variable symbol being a type because
@@ -1081,13 +1089,16 @@ module TypeScript {
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
 
-                    variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
+                    if (!parent) {
+                        variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
                         getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
+                    }
+
                     variableSymbol = null;
                     parentHadSymbol = false;
                 }
             }
-            else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable) && ((declFlags & PullElementFlags.ImplicitVariable) == 0)) {
+            else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable) && !isImplicit) {
                 span = variableDeclaration.getSpan();
 
                 variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
@@ -2750,6 +2761,22 @@ module TypeScript {
             setterSymbol.setIsBound(this.bindingPhase);
         }
 
+        public bindCatchBlockPullSymbols(catchBlockDecl: PullDecl) {
+            var childDecls = catchBlockDecl.getChildDecls();
+
+            for (var i = 0; i < childDecls.length; i++) {
+                this.bindDeclToPullSymbol(childDecls[i]);
+            }
+        }
+
+        public bindWithBlockPullSymbols(withBlockDecl: PullDecl) {
+            var childDecls = withBlockDecl.getChildDecls();
+
+            for (var i = 0; i < childDecls.length; i++) {
+                this.bindDeclToPullSymbol(childDecls[i]);
+            }
+        }
+
         // binding
         public bindDeclToPullSymbol(decl: PullDecl, rebind = false) {
 
@@ -2848,6 +2875,13 @@ module TypeScript {
 
                 case PullElementKind.Parameter:
                     // parameters are bound by their enclosing function
+                    break;
+
+                case PullElementKind.CatchBlock:
+                    this.bindCatchBlockPullSymbols(decl);
+
+                case PullElementKind.WithBlock:
+                    this.bindWithBlockPullSymbols(decl);
                     break;
 
                 default:

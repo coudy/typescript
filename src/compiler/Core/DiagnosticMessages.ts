@@ -980,7 +980,7 @@ module TypeScript {
             code: 2120
         },
         The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: {
-        category: DiagnosticCategory.Error,
+            category: DiagnosticCategory.Error,
             message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
             code: 2121
         },
@@ -1043,6 +1043,18 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Constructors must not have a return type of 'void'.",
             code: 2133
+        },
+
+        Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_: {
+            category: DiagnosticCategory.Error,
+            message: "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'",
+            code: 2134
+        },
+
+        All_symbols_within_a__with__block_will_be_resolved_to__any__: {
+            category: DiagnosticCategory.Error,
+            message: "All symbols within a with block will be resolved to 'any'",
+            code: 2135
         },
     };
 

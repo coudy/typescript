@@ -188,7 +188,7 @@ module TypeScript {
 
             var spanToFind = decl.getSpan();
             var candidateSpan: TextSpan = null;
-            var searchKinds = PullElementKind.SomeType | PullElementKind.SomeFunction;
+            var searchKinds = PullElementKind.SomeType | PullElementKind.SomeFunction | PullElementKind.SomeBlock;
             var found = false;
 
             while (true) {
@@ -326,6 +326,10 @@ module TypeScript {
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
+
+                if (decl.getFlags() & PullElementFlags.DeclaredInAWithBlock) {
+                    return this.semanticInfoChain.anyTypeSymbol;
+                }
 
                 if (pathDeclKind & (PullElementKind.Container | PullElementKind.DynamicModule)) {
 
@@ -2885,7 +2889,7 @@ module TypeScript {
                 diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null));
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
-            else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script))) {
+            else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
                 diagnostic = new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), getDiagnosticMessage(DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context, null));
 
                 return this.getNewErrorTypeSymbol(diagnostic);
