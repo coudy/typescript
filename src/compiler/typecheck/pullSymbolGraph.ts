@@ -162,7 +162,10 @@ module TypeScript {
 
             var symbolToAdd = declToAdd.getSymbol();
 
-            this.addSymbol(symbolToAdd);
+            // 'with' and 'catch' blocks have no symbols
+            if (symbolToAdd) {
+                this.addSymbol(symbolToAdd);
+            }
 
             updateVersion++;
         }

@@ -1089,7 +1089,7 @@ module TypeScript {
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
 
-                    if (!parent) {
+                    if (!parent || variableSymbol.getIsSynthesized()) {
                         variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
                         getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
                     }
