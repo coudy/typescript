@@ -913,6 +913,7 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "'{0}.{1}' is inaccessible.",
             code: 2107
+        },
         _this__cannot_be_referenced_within_module_bodies: {
             category: DiagnosticCategory.Error,
             message: "'this' cannot be referenced within module bodies.",
