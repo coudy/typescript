@@ -74,13 +74,10 @@ module TypeScript {
                 return result;
             }
         }
-
-        constructor() {
-        }
     }
 
     export class MemberNameString extends MemberName {
-        constructor (public text: string) {
+        constructor(public text: string) {
             super();
         }
 
