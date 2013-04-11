@@ -325,7 +325,7 @@ module TypeScript {
                     return this.typeCheckExpressionStatement(<ExpressionStatement>ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.CaseClause:
-                    return this.typeCheckCaseClause(ast, typeCheckContext);
+                    return this.typeCheckCaseClause(<CaseClause>ast, typeCheckContext);
 
                 // primitives
                 case NodeType.NumericLiteral:
@@ -1746,11 +1746,9 @@ module TypeScript {
             return this.typeCheckAST(ast.expression, typeCheckContext, inTypedAssignment);
         }
 
-        public typeCheckCaseClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var caseAST = <CaseClause>ast;
-
-            this.typeCheckAST(caseAST.expr, typeCheckContext);
-            this.typeCheckAST(caseAST.body, typeCheckContext);
+        public typeCheckCaseClause(caseClause: CaseClause, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(caseClause.expr, typeCheckContext);
+            this.typeCheckAST(caseClause.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
