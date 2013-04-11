@@ -511,19 +511,9 @@ module TypeScript {
             return false;
         }
 
-        public emitBaseExpression(bases: ASTList, index: number, useExtendsList: boolean) {
-            var containerAst = this.getAstDeclarationContainer();
-            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.fileName);
-            var baseType: PullTypeSymbol
-            if (useExtendsList) {
-                baseType = containerSymbol.getExtendedTypes()[index];
-            } else {
-                baseType = containerSymbol.getImplementedTypes()[index];
-            }
-
-            if (baseType) {
-                this.emitTypeSignature(baseType);
-            }
+        public emitBaseExpression(bases: ASTList, index: number) {
+            var baseType = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(bases.members[index], this.fileName);
+            this.emitTypeSignature(baseType);
         }
 
         private emitBaseList(typeDecl: TypeDeclaration, useExtendsList: boolean) {
@@ -536,7 +526,7 @@ module TypeScript {
                     if (i > 0) {
                         this.declFile.Write(", ");
                     }
-                    this.emitBaseExpression(bases, i, useExtendsList);
+                    this.emitBaseExpression(bases, i);
                 }
             }
         }

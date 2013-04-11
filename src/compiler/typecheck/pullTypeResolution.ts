@@ -913,10 +913,12 @@ module TypeScript {
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
+                        var resolvedParentType = parentType;
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
+                            this.setSymbolForAST(typeDeclAST.extendsList.members[i], resolvedParentType, context);
                             typeDeclSymbol.addExtendedType(parentType);
                         }
                     }
@@ -930,11 +932,13 @@ module TypeScript {
                     var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
+                        var resolvedImplementedType = implementedType;
                         if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
                         }
 
                         if (!typeDeclSymbol.hasBase(implementedType)) {
+                            this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], resolvedImplementedType, context);
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
                     }
@@ -973,8 +977,10 @@ module TypeScript {
                 }
             }
 
-            typeDeclSymbol.setResolved();
+            this.setSymbolForAST(typeDeclAST.name, typeDeclSymbol, context);
             this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
+
+            typeDeclSymbol.setResolved();
 
             return typeDeclSymbol;
         }
