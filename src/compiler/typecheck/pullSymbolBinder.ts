@@ -602,7 +602,6 @@ module TypeScript {
                 }
 
                 if (constructorSymbol.getIsSynthesized()) {
-                    //constructorSymbol.addDeclaration(classDecl);
                     classSymbol.setConstructorMethod(null);
                 }
 
@@ -1051,7 +1050,7 @@ module TypeScript {
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
 
-                    if (variableSymbol) {
+                    if (variableSymbol && !variableSymbol.getIsSynthesized()) {
                         var variableSymbolParent = variableSymbol.getDeclarations()[0].getParentDecl();
 
                         if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
@@ -1167,7 +1166,7 @@ module TypeScript {
                             if (ast) {
                                 this.semanticInfo.setASTForDecl(variableDeclaration, ast);
                             }
-                        }
+                        }                     
                     }
                     else {
                         // PULLTODO: Clodules/Interfaces on classes
@@ -1374,8 +1373,6 @@ module TypeScript {
                 else {
                     propertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
-
-                propertySymbol.setResolved();
             }
 
             if (isOptional) {

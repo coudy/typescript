@@ -1730,6 +1730,19 @@ module TypeScript {
                     return funcSymbol;
                 }
 
+                if (isConstructor && !signature.isResolving()) {
+                    var classAST = funcDeclAST.classDecl;
+
+                    if (classAST) {
+                        var classDecl = this.getDeclForAST(classAST);
+                        var classSymbol = classDecl.getSymbol();
+
+                        if (!classSymbol.isResolved() && !classSymbol.isResolving()) {
+                            this.resolveDeclaredSymbol(classSymbol, this.getEnclosingDecl(classDecl), context);
+                        }
+                    }
+                }
+
                 var diagnostic: PullDiagnostic;
 
                 if (signature.isResolving()) {
