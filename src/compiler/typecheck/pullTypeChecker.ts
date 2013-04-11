@@ -13,7 +13,8 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
 
-        constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }
+        constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
+        }
 
         public pushEnclosingDecl(decl: PullDecl) {
             this.enclosingDeclStack[this.enclosingDeclStack.length] = decl;
@@ -69,7 +70,8 @@ module TypeScript {
         public context: PullTypeResolutionContext = new PullTypeResolutionContext();
 
         constructor(private compilationSettings: CompilationSettings,
-                    public semanticInfoChain: SemanticInfoChain) { }
+                    public semanticInfoChain: SemanticInfoChain) {
+        }
 
         public setUnit(unitPath: string) {
             this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
@@ -200,13 +202,11 @@ module TypeScript {
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
                 case NodeType.BitwiseNotExpression:
-                    return this.semanticInfoChain.numberTypeSymbol;
-
                 case NodeType.PostIncrementExpression:
                 case NodeType.PreIncrementExpression:
                 case NodeType.PostDecrementExpression:
                 case NodeType.PreDecrementExpression:
-                    return this.typeCheckUnaryArithmeticOperation(ast, typeCheckContext);
+                    return this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ElementAccessExpression:
                     return this.typeCheckIndex(ast, typeCheckContext);
@@ -1330,17 +1330,24 @@ module TypeScript {
         // Unary arithmetic expressions 
         // validate:
         //  -
-        public typeCheckUnaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var unex = <UnaryExpression>ast;
-            var lhsType = this.typeCheckAST(unex.operand, typeCheckContext);
-                        
-            var lhsIsFit = this.resolver.isAnyOrEquivalent(lhsType) || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
+        public typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
+            var operandType = this.typeCheckAST(unaryExpression.operand, typeCheckContext, inTypedAssignment);
 
-            if (!lhsIsFit) {
-                this.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
-            }           
+            switch (unaryExpression.nodeType) {
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
+                case NodeType.BitwiseNotExpression:
+                    return this.semanticInfoChain.numberTypeSymbol;
+            }
 
-            return lhsType;
+            var operandIsFit = this.resolver.isAnyOrEquivalent(operandType) || operandType == this.semanticInfoChain.numberTypeSymbol || operandType.getKind() == PullElementKind.Enum;
+
+            if (!operandIsFit) {
+                this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
+            }
+
+            return operandType;
         }
 
         // Index expression 
