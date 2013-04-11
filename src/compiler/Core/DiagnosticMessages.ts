@@ -924,6 +924,12 @@ module TypeScript {
             message: "'this' must only be used inside a function or script context",
             code: 2109
         },
+
+        VarArgs_must_be_array_types: {
+            category: DiagnosticCategory.Error,
+            message: "'...' parameters require both a parameter name and an array type annotation to be specified",
+            code: 2110
+        },
     };
 
     var seenCodes = [];

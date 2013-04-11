@@ -178,7 +178,7 @@ module TypeScript {
         _0_1__is_inaccessible,
         _this__cannot_be_referenced_within_module_bodies,
         _this__must_only_be_used_inside_a_function_or_script_context,
-
+        VarArgs_must_be_array_types,
 
     }
 }
