@@ -1300,10 +1300,19 @@ module TypeScript {
             return typeFlow.typeCheckModule(this);
         }
 
-        private hasNonInterfaceMember(): boolean {
+        private shouldEmit(): boolean {
             for (var i = 0, n = this.members.members.length; i < n; i++) {
                 var member = this.members.members[i];
-                if (member.nodeType !== NodeType.InterfaceDeclaration) {
+
+                // We should emit *this* module if it contains any non-interface types. 
+                // Caveat: if we have contain a module, then we should be emitted *if we want to
+                // emit that inner module as well.
+                if (member.nodeType === NodeType.ModuleDeclaration) {
+                    if ((<ModuleDeclaration>member).shouldEmit()) {
+                        return true;
+                    }
+                }
+                else if (member.nodeType !== NodeType.InterfaceDeclaration) {
                     return true;
                 }
             }
@@ -1312,7 +1321,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            if (this.hasNonInterfaceMember()) {
+            if (this.shouldEmit()) {
                 emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
                 emitter.emitComments(this, false);

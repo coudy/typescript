@@ -153,7 +153,7 @@ module TypeScript {
                     return this.typeCheckCallExpression(<CallExpression>ast, typeCheckContext);
 
                 case NodeType.ObjectCreationExpression:
-                    return this.typeCheckNew(ast, typeCheckContext);
+                    return this.typeCheckObjectCreationExpression(<CallExpression>ast, typeCheckContext);
 
                 case NodeType.CastExpression:
                     return this.typeCheckTypeAssertion(ast, typeCheckContext);
@@ -340,11 +340,7 @@ module TypeScript {
 
             PullTypeChecker.globalPullTypeCheckPhase++;
 
-            if (script.moduleElements.members) {
-                for (var i = 0; i < script.moduleElements.members.length; i++) {
-                    this.typeCheckAST(script.moduleElements.members[i], typeCheckContext);
-                }
-            }
+            this.typeCheckAST(script.moduleElements, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -752,12 +748,8 @@ module TypeScript {
             
             var classDecl = typeCheckContext.semanticInfo.getDeclForAST(classAST);
             typeCheckContext.pushEnclosingDecl(classDecl);
-                        
-            if (classAST.members) {
-                for (var i = 0; i < classAST.members.members.length; i++) {
-                    this.typeCheckAST(classAST.members.members[i], typeCheckContext);
-                }
-            }
+
+            this.typeCheckAST(classAST.members, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
             this.typeCheckBases(classAST, classSymbol, typeCheckContext);
@@ -782,11 +774,7 @@ module TypeScript {
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
             typeCheckContext.pushEnclosingDecl(interfaceDecl);
 
-            if (interfaceAST.members) {
-                for (var i = 0; i < interfaceAST.members.members.length; i++) {
-                    this.typeCheckAST(interfaceAST.members.members[i], typeCheckContext);
-                }
-            }
+            this.typeCheckAST(interfaceAST.members, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
             this.typeCheckBases(<InterfaceDeclaration>ast, interfaceType, typeCheckContext);
@@ -809,9 +797,7 @@ module TypeScript {
             var moduleDecl = typeCheckContext.semanticInfo.getDeclForAST(moduleDeclAST);
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
-            if (moduleDeclAST.members) {
-                this.typeCheckAST(moduleDeclAST.members, typeCheckContext);
-            }
+            this.typeCheckAST(moduleDeclAST.members, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1148,13 +1134,7 @@ module TypeScript {
                 typeCheckContext.inSuperConstructorCall = true;
             }
 
-            var args = callExpression.arguments;
-
-            if (args) {
-                for (var i = 0; i < args.members.length; i++) {
-                    this.typeCheckAST(args.members[i], typeCheckContext);
-                }
-            }
+            this.typeCheckAST(callExpression.arguments, typeCheckContext);
 
             typeCheckContext.inSuperConstructorCall = savedInSuperConstructorCall;
 
@@ -1164,20 +1144,14 @@ module TypeScript {
         // 'New' expressions 
         // validate:
         //
-        public typeCheckNew(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var callEx = <CallExpression>ast;
+        public typeCheckObjectCreationExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var resultType = this.resolver.resolveAST(callEx, false, enclosingDecl, this.context).getType();
+            var resultType = this.resolver.resolveAST(callExpression, false, enclosingDecl, this.context).getType();
 
             this.checkForResolutionError(resultType, enclosingDecl);
 
-            var args = callEx.arguments;
-
-            if (args) {
-                for (var i = 0; i < args.members.length; i++) {
-                    this.typeCheckAST(args.members[i], typeCheckContext);
-                }
-            }
+            this.typeCheckAST(callExpression.typeArguments, typeCheckContext);
+            this.typeCheckAST(callExpression.arguments, typeCheckContext);
 
             return resultType;
         }

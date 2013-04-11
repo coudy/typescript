@@ -1,6 +1,3 @@
-var b;
-(function (b) {
-    })(b || (b = {}));
 var c;
 (function (c) {
     (function (a) {
