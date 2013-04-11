@@ -292,7 +292,7 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='.");
 task("runtests", ["tests", builtTestDirectory], function() {
 	// Clean the local baselines directory
-	if (fs.exists(localBaseline)) {
+	if (fs.existsSync(localBaseline)) {
 		jake.rmRf(localBaseline);
 	}
 	jake.mkdirP(localBaseline);

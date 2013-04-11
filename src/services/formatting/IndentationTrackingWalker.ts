@@ -34,7 +34,7 @@ module TypeScript.Formatting {
             this._textSpan = textSpan;
             this._snapshot = snapshot;
             this._parent = this._indentationNodeContextPool.getNode(null, sourceUnit, 0, 0, 0);
-            
+
             // Is the first token in the span at the start of a new line.
             this._lastTriviaWasNewLine = indentFirstToken;
         }
@@ -88,8 +88,9 @@ module TypeScript.Formatting {
             if (tokenSpan.intersectsWithTextSpan(this._textSpan)) {
                 this.visitTokenInSpan(token);
 
-                // Only track new lines on tokens within the range
-                this._lastTriviaWasNewLine = token.hasTrailingNewLine();
+                // Only track new lines on tokens within the range. Make sure to check that the last trivia is a newline, and not just one of the trivia
+                var trivia = token.trailingTrivia();
+                this._lastTriviaWasNewLine = token.hasTrailingNewLine() && trivia.syntaxTriviaAt(trivia.count() - 1).kind() == SyntaxKind.NewLineTrivia;
             }
 
             // Update the position
@@ -106,7 +107,7 @@ module TypeScript.Formatting {
                 // Update the parent
                 var currentParent = this._parent;
                 this._parent = this._indentationNodeContextPool.getNode(currentParent, node, this._position, indentation.indentationLevel, indentation.indentationLevelDelta);
-                
+
                 // Visit node
                 node.accept(this);
 
@@ -119,16 +120,18 @@ module TypeScript.Formatting {
                 this._position += node.fullWidth();
             }
         }
-        
+
         private getTokenIndentationLevel(token: ISyntaxToken): number {
             // If this is the first token of a node, it should follow the node indentation and not the child indentation; 
             // (e.g.class in a class declaration or module in module declariotion).
             // Open and close braces should follow the indentation of thier parent as well(e.g.
             // class {
             // }
+            // Also in a do-while statement, the while should be indented like the parent.
             if (this._parent.node().firstToken() === token ||
                 token.kind() === SyntaxKind.OpenBraceToken || token.kind() === SyntaxKind.CloseBraceToken ||
-                token.kind() === SyntaxKind.OpenBracketToken || token.kind() === SyntaxKind.CloseBracketToken) {
+                token.kind() === SyntaxKind.OpenBracketToken || token.kind() === SyntaxKind.CloseBracketToken ||
+                (token.kind() === SyntaxKind.WhileKeyword && this._parent.node().kind() == SyntaxKind.DoStatement)) {
                 return this._parent.indentationLevel();
             }
 
@@ -173,6 +176,13 @@ module TypeScript.Formatting {
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.SwitchStatement:
                 case SyntaxKind.ObjectLiteralExpression:
+                case SyntaxKind.ConstructorDeclaration:
+                case SyntaxKind.FunctionDeclaration:
+                case SyntaxKind.FunctionExpression:
+                case SyntaxKind.MemberFunctionDeclaration:
+                case SyntaxKind.GetMemberAccessorDeclaration:
+                case SyntaxKind.SetMemberAccessorDeclaration:
+                case SyntaxKind.CatchClause:
                 // Statements introducing []
                 case SyntaxKind.ArrayLiteralExpression:
                 case SyntaxKind.ArrayType:
@@ -188,7 +198,17 @@ module TypeScript.Formatting {
                 case SyntaxKind.DefaultSwitchClause:
                 case SyntaxKind.ReturnStatement:
                 case SyntaxKind.ThrowStatement:
+                case SyntaxKind.SimpleArrowFunctionExpression:
+                case SyntaxKind.ParenthesizedArrowFunctionExpression:
                 case SyntaxKind.VariableDeclaration:
+                case SyntaxKind.ExportAssignment:
+
+                // Expressions which have argument lists or parameter lists
+                case SyntaxKind.InvocationExpression:
+                case SyntaxKind.ObjectCreationExpression:
+                case SyntaxKind.CallSignature:
+                case SyntaxKind.ConstructSignature:
+
                     // These nodes should follow the child indentation set by its parent;
                     // they introduce a new indenation scope; children should be indented at one level deeper
                     indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
@@ -202,45 +222,39 @@ module TypeScript.Formatting {
                         // This is an else if statement with the if on the same line as the else, do not indent the if statmement.
                         // Note: Children indentation has already been set by the parent if statement, so no need to increment
                         indentationLevel = parentIndentationLevel;
-                        indentationLevelDelta = parentIndentationLevelDelta;
                     }
                     else {
                         // Otherwise introduce a new indenation scope; children should be indented at one level deeper
                         indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                        indentationLevelDelta = 1;
                     }
+                    indentationLevelDelta = 1;
                     break;
 
                 case SyntaxKind.ElseClause:
                     // Else should always follow its parent if statement indentation.
                     // Note: Children indentation has already been set by the parent if statement, so no need to increment
                     indentationLevel = parentIndentationLevel;
-                    indentationLevelDelta = parentIndentationLevelDelta;
+                    indentationLevelDelta = 1;
                     break;
 
+
                 case SyntaxKind.Block:
-                    // Check if the indentation scope has already been accounted for by the parent.
+                    // Check if the block is a member in a list of statements (if the parent is a source unit, module, or block, or switch clause)
                     switch (parent.kind()) {
-                        case SyntaxKind.ForStatement:
-                        case SyntaxKind.ForInStatement:
-                        case SyntaxKind.WhileStatement:
-                        case SyntaxKind.DoStatement:
-                        case SyntaxKind.WithStatement:
-                        case SyntaxKind.IfStatement:
-                        case SyntaxKind.ElseClause:
-                            // This has already been counted before in the parent, no new indentation scopes
-                            // inherit the parents indentation level and its child delta
-                            indentationLevel = parentIndentationLevel;
-                            indentationLevelDelta = parentIndentationLevelDelta;
+                        case SyntaxKind.SourceUnit:
+                        case SyntaxKind.ModuleDeclaration:
+                        case SyntaxKind.Block:
+                        case SyntaxKind.CaseSwitchClause:
+                        case SyntaxKind.DefaultSwitchClause:
+                            indentationLevel = parentIndentationLevel + parentIndentationLevelDelta;
                             break;
 
                         default:
-                            // This is a normal block, it follows the child indentation set by its parent,
-                            // and introduces a new indentation scope
-                            indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                            indentationLevelDelta = 1;
+                            indentationLevel = parentIndentationLevel;
                             break;
                     }
+
+                    indentationLevelDelta = 1;
                     break;
             }
 
@@ -253,11 +267,16 @@ module TypeScript.Formatting {
             //	return {
             //	        a:1
             //	    };
+            // We also need to pass the delta (if it is 1) to the children, so that subsequent lines get indented. Essentially, if any node starting on the given line
+            // has a delta of 1, the resulting delta should be 1. This is to indent cases like the following:
+            //  return a
+            //      || b;
             if (parent) {
                 var parentStartLine = this._snapshot.getLineNumberFromPosition(this._parent.start());
                 var currentNodeStartLine = this._snapshot.getLineNumberFromPosition(this._position + node.leadingTriviaWidth());
                 if (parentStartLine === currentNodeStartLine) {
                     indentationLevel = parentIndentationLevel;
+                    indentationLevelDelta = Math.min(1, parentIndentationLevelDelta + indentationLevelDelta);
                 }
             }
 

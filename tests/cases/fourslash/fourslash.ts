@@ -191,6 +191,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCurrentLineContent(text);
         }
 
+        public currentFileContentIs(text: string) {
+            FourSlash.currentTestState.verifyCurrentFileContent(text);
+        }
+
         public currentParameterHelpArgumentNameIs(name: string) {
             FourSlash.currentTestState.verifyCurrentParameterHelpName(name);
         }

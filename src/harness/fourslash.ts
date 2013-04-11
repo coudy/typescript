@@ -755,6 +755,16 @@ module FourSlash {
             }
         }
 
+        public verifyCurrentFileContent(text: string) {
+            var actual = this.getCurrentFileContent();
+            var replaceNewlines = str => str.replace(/\r\n/g, "\n");
+            if (replaceNewlines(actual) !== replaceNewlines(text)) {
+                throw new Error('verifyCurrentLineContent\n' +
+                    '\tExpected: "' + text + '"\n' +
+                    '\t  Actual: "' + actual + '"');
+            }
+        }
+
         public verifyTextAtCaretIs(text: string) {
             var actual = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getText(this.currentCaretPosition, this.currentCaretPosition + text.length);
             if (actual !== text) {
@@ -972,6 +982,11 @@ module FourSlash {
                 }
                 return text.substr(0, newlinePos);
             }
+        }
+
+        private getCurrentFileContent() {
+            var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+            return snapshot.getText(0, snapshot.getLength());
         }
 
         private getCurrentCaretFilePosition() {
