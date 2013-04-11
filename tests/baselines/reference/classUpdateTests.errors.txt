@@ -5,11 +5,11 @@
 0.ts line 105 col 9: error TS1005: ';' expected.
 0.ts line 111 col 10: error TS1005: ';' expected.
 0.ts line 46 col 16: error TS2073: A class may only extend another class.
-0.ts line 34 col 1: error TS2105: Constructors for derived classes must contain a call to the class's 'super' constructor.
+0.ts line 34 col 1: error TS2105: Constructors for derived classes must contain a 'super' call.
 0.ts line 43 col 17: error TS2103: 'super' may not be referenced in non-derived classes.
 0.ts line 47 col 17: error TS2103: 'super' may not be referenced in non-derived classes.
-0.ts line 57 col 1: error TS2104: If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor.
-0.ts line 70 col 1: error TS2104: If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor.
+0.ts line 57 col 1: error TS2104: A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.
+0.ts line 70 col 1: error TS2104: A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.
 0.ts line 81 col 13: error TS2097: 'this' may not be referenced in current location.
 0.ts line 81 col 13: Keyword 'this' cannot be referenced in initializers in a class body, or in super constructor calls
 0.ts line 81 col 13: Keyword 'this' cannot be referenced in initializers in a class body, or in super constructor calls

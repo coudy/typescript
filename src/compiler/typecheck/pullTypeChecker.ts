@@ -606,11 +606,11 @@ module TypeScript {
 
             this.checkForResolutionError(constructorSignature.getReturnType(), enclosingDecl);
 
-            if (functionDecl.signatureSymbol && functionDecl.signatureSymbol.isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
+            if (functionDecl.getSignatureSymbol() && functionDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
                 // Constructors for derived classes must contain a call to the class's 'super' constructor
                 if (!typeCheckContext.seenSuperConstructorCall) {
                     this.postError(funcDeclAST.minChar, 11 /* "constructor" */, typeCheckContext.scriptName,
-                        getDiagnosticMessage(DiagnosticCode.Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor, null), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call, null), enclosingDecl);
                 }
                 // The first statement in the body of a constructor must be a super call if both of the following are true:
                 //  • The containing class is a derived class.
@@ -619,7 +619,7 @@ module TypeScript {
                     var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST)
                     if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
                         this.postError(funcDeclAST.minChar, 11 /* "constructor" */, typeCheckContext.scriptName,
-                            getDiagnosticMessage(DiagnosticCode.If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor, null), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties, null), enclosingDecl);
                     }
                 }
             }
@@ -1093,7 +1093,7 @@ module TypeScript {
             else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
                 ((nonLambdaEnclosingDecl.getFlags() & PullElementFlags.Static) !== 0)) {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode.Super_property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class, null), enclosingDecl);
+                getDiagnosticMessage(DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class, null), enclosingDecl);
             }
              // A super is permitted only in a derived class 
             else if (!this.enclosingClassIsDerived(typeCheckContext)) {

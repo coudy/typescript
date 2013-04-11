@@ -863,7 +863,7 @@ module TypeScript {
             message: "'this' may not be referenced in current location.",
             code: 2097
         },
-        Use_of_deprecated_bool_type: {
+        Use_of_deprecated__bool__type__Use__boolean__instead: {
             category: DiagnosticCategory.Warning,
             message: "Use of deprecated type 'bool'. Use 'boolean' instead.",
             code: 2098
@@ -883,9 +883,9 @@ module TypeScript {
             message: "Interface '{0}' is recursively referenced as a base type of itself.",
             code: 2101
         },
-        Super_property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: {
+        _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: {
             category: DiagnosticCategory.Error,
-            message: "Super property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
+            message: "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
             code: 2102
         },
         _super__may_not_be_referenced_in_non_derived_classes: {
@@ -893,14 +893,14 @@ module TypeScript {
             message: "'super' may not be referenced in non-derived classes.",
             code: 2103
         },
-        If_a_derived_class_contains_initialized_properties_or_constructor_parameter_properties___the_first_statement_in_the_constructor_body_must_be_a_call_to_the_super_constructor: {
+        A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: {
             category: DiagnosticCategory.Error,
-            message: "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor.",
+            message: "A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.",
             code: 2104
         },
-        Constructors_for_derived_classes_must_contain_a_call_to_the_class_s__super__constructor: {
+        Constructors_for_derived_classes_must_contain_a__super__call: {
             category: DiagnosticCategory.Error,
-            message: "Constructors for derived classes must contain a call to the class's 'super' constructor.",
+            message: "Constructors for derived classes must contain a 'super' call.",
             code: 2105
         },
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: {

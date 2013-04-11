@@ -1344,7 +1344,7 @@ module TypeScript {
                     // Warn for using bool
                     if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
                         this.currentUnit.getProperties().unitContainsBool = true;
-                        diagnostic = context.postError(typeName.minChar, typeName.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Use_of_deprecated_bool_type, []), enclosingDecl, true);
+                        diagnostic = context.postError(typeName.minChar, typeName.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, []), enclosingDecl, true);
                     }
                     typeDeclSymbol = this.semanticInfoChain.booleanTypeSymbol;
                 }
