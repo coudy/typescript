@@ -1,0 +1,5 @@
+var tokens = [
+    {
+        startIndex: deltaOffset
+    }
+];
