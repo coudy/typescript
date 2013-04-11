@@ -300,15 +300,16 @@ module TypeScript {
                 // primitives
                 case NodeType.NumericLiteral:
                     return this.semanticInfoChain.numberTypeSymbol;
+
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
+
                 case NodeType.NullLiteral:
                     return this.semanticInfoChain.nullTypeSymbol;
+
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.booleanTypeSymbol;
-                case NodeType.VoidExpression:
-                    return this.semanticInfoChain.voidTypeSymbol;
 
                 default:
                     break;
