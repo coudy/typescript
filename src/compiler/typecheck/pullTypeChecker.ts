@@ -110,7 +110,7 @@ module TypeScript {
 
                 // lists
                 case NodeType.List:
-                    return this.typeCheckList(ast, typeCheckContext);
+                    return this.typeCheckList(<ASTList>ast, typeCheckContext);
 
                 // decarations
 
@@ -212,7 +212,7 @@ module TypeScript {
                     return this.typeCheckIndex(ast, typeCheckContext);
 
                 case NodeType.LogicalNotExpression:
-                    return this.semanticInfoChain.booleanTypeSymbol;
+                    return this.typeCheckLogicalNotExpression(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.LogicalOrExpression:
                 case NodeType.LogicalAndExpression:
@@ -349,9 +349,7 @@ module TypeScript {
         }
 
         // lists
-        public typeCheckList(ast: AST, typeCheckContext: PullTypeCheckContext) {
-            var list = <ASTList>ast;
-
+        public typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
             if (!list) {
                 return null;
             }
@@ -1326,6 +1324,11 @@ module TypeScript {
 //             }
 
             return this.semanticInfoChain.numberTypeSymbol;
+        }
+
+        private typeCheckLogicalNotExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
+            this.typeCheckAST(unaryExpression.operand, typeCheckContext, inTypedAssignment);
+            return this.semanticInfoChain.booleanTypeSymbol;
         }
 
         // Unary arithmetic expressions 

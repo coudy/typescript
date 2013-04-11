@@ -1283,9 +1283,9 @@ module FourSlash {
         throw new Error(errorMessage);
     }
 
-    function isValidSlashStarMarkerText(text: string): boolean {
-        return !!(text !== null && text.match(markerTextRegexp));
-    }
+    //function isValidSlashStarMarkerText(text: string): boolean {
+    //    return !!(text !== null && text.match(markerTextRegexp));
+    //}
 
     function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]) {
         var markerValue = undefined;
