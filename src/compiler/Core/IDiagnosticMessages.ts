@@ -191,11 +191,18 @@ module TypeScript {
         Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation: DiagnosticInfo;
         Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_: DiagnosticInfo;
         The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter: DiagnosticInfo;
-        The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_: DiagnosticInfo;
-        The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
-        The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
-        The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: DiagnosticInfo;
+        The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_: DiagnosticInfo;
+        The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
+        The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
+        The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: DiagnosticInfo;
         Setters_may_not_return_a_value: DiagnosticInfo;
         Tried_to_set_variable_type_to_uninitialized_module_type: DiagnosticInfo;
+        Tried_to_set_variable_type_to_uninitialized_module_type__0__: DiagnosticInfo;
+        Function_0_declared_a_non_void_return_type__but_has_no_return_expression: DiagnosticInfo;
+        Getters_must_return_a_value: DiagnosticInfo;
+        Getter_and_setter_accessors_do_not_agree_in_visibility: DiagnosticInfo;
+        Index_signatures_must_take_only_one_parameter: DiagnosticInfo;
+        Index_signatures_must_not_have_optional_parameters: DiagnosticInfo;
+        Invalid_left_hand_side_of_assignment_expression: DiagnosticInfo;
     }
 }

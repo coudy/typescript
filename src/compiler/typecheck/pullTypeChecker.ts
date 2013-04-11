@@ -402,7 +402,7 @@ module TypeScript {
                     instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, "Tried to set variable type to uninitialized module type'" + initTypeSymbol.toString() + "'", enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [initTypeSymbol.toString()]), enclosingDecl);
                         initTypeSymbol = null;
                     }
                     else {
@@ -503,7 +503,7 @@ module TypeScript {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
-                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Function_0_declared_a_non_void_return_type__but_has_no_return_expression, [funcName]), typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -547,7 +547,7 @@ module TypeScript {
 
             if (isGetter && !hasReturn) {
                 if (!(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType === NodeType.ThrowStatement)) {
-                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Getters_must_return_a_value, null), typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -561,7 +561,7 @@ module TypeScript {
                 var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
 
                 if (getterIsPrivate != setterIsPrivate) {
-                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null), typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -646,7 +646,7 @@ module TypeScript {
             if (parameters.length) {
 
                 if (parameters.length > 1) {
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_take_only_one_parameter, null), typeCheckContext.getEnclosingDecl());
                 }
 
                 var parameterType: PullTypeSymbol = null;
@@ -654,18 +654,18 @@ module TypeScript {
                 for (var i = 0; i < parameters.length; i++) {
                     this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                     if (parameters[i].getIsOptional() || parameters[i].getIsVarArg()) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_not_have_optional_parameters, null), typeCheckContext.getEnclosingDecl());
                     }
 
                     parameterType = parameters[i].getType();
 
                     if (parameterType != this.semanticInfoChain.stringTypeSymbol && parameterType != this.semanticInfoChain.numberTypeSymbol) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_not_have_optional_parameters, null), typeCheckContext.getEnclosingDecl());
                     }
                 }
             }
             else {
-                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_take_only_one_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
@@ -833,7 +833,7 @@ module TypeScript {
                             hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
 
             if (!isValidLHS) {
-                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, "Invalid left-hand side of assignment expression", enclosingDecl);
+                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
             }
 
             var comparisonInfo = new TypeComparisonInfo();
@@ -1477,12 +1477,12 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
 
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }        
 
             return this.semanticInfoChain.booleanTypeSymbol;
@@ -1498,11 +1498,11 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;

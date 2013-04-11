@@ -964,22 +964,22 @@ module TypeScript {
             message: "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.",
             code: 2117
         },
-        The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_: {
+        The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_: {
             category: DiagnosticCategory.Error,
             message: "The left-hand side of an 'in' expression must be of types 'string' or 'any'.",
             code: 2118
         },
-        The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
+        The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
             category: DiagnosticCategory.Error,
             message: "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter.",
             code: 2119
         },
-        The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
+        The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
             category: DiagnosticCategory.Error,
             message: "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.",
             code: 2120
         },
-        The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: {
+        The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: {
         category: DiagnosticCategory.Error,
             message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
             code: 2121
@@ -993,6 +993,41 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Tried to set variable type to uninitialized module type.",
             code: 2123
+        },
+        Tried_to_set_variable_type_to_uninitialized_module_type__0__: {
+            category: DiagnosticCategory.Error,
+            message: "Tried to set variable type to uninitialized module type '{0}'.",
+            code: 2124
+        },
+        Function_0_declared_a_non_void_return_type__but_has_no_return_expression: {
+            category: DiagnosticCategory.Error,
+            message: "Function {0} declared a non-void return type, but has no return expression.",
+            code: 2125
+        },
+        Getters_must_return_a_value: {
+            category: DiagnosticCategory.Error,
+            message: "Getters must return a value.",
+            code: 2126
+        },
+        Getter_and_setter_accessors_do_not_agree_in_visibility: {
+            category: DiagnosticCategory.Error,
+            message: "Getter and setter accessors do not agree in visibility.",
+            code: 2127
+        },
+        Index_signatures_must_take_only_one_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "Index signatures must take only one parameter.",
+            code: 2128
+        },
+        Index_signatures_must_not_have_optional_parameters: {
+            category: DiagnosticCategory.Error,
+            message: "Index signatures must not have optional parameters.",
+            code: 2129
+        },
+        Invalid_left_hand_side_of_assignment_expression: {
+            category: DiagnosticCategory.Error,
+            message: "Invalid left-hand side of assignment expression.",
+            code: 2130
         },
     };
 
