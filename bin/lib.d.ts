@@ -942,7 +942,7 @@ declare var JSON: JSON;
 interface Array<T> {
     toString(): string;
     toLocaleString(): string;
-    concat(...items: T[][]): T[]; // Note: This overload needs to be picked for arrays of arrays, even though both are applicable
+    concat(...items: T[][]): T[]; 
     concat(...items: T[]): T[];
     join(separator?: string): string;
     pop(): T;
@@ -969,10 +969,10 @@ interface Array<T> {
 
 }
 declare var Array: {
-    new <T>(...items: T[]): T[];
-    new <T>(arrayLength: number): T[];    
+    new <T>(arrayLength: number): T[];   
+    new <T>(...items: T[]): T[]; 
+    <T>(arrayLength: number): T[];    
     <T>(...items: T[]): T[];
-    <T>(arrayLength: number): T[];
     isArray(arg: any): boolean;
     prototype: Array; // Note: Implicitly Array<any>
 }
@@ -6834,7 +6834,7 @@ interface IDBObjectStore {
     deleteIndex(indexName: string): void;
     index(name: string): IDBIndex;
     get(key: any): IDBRequest;
-    delet(key: any): IDBRequest;
+    delete(key: any): IDBRequest;
 }
 declare var IDBObjectStore: {
     prototype: IDBObjectStore;
@@ -6932,8 +6932,8 @@ interface IDBCursor {
     key: any;
     primaryKey: any;
     advance(count: number): void;
-    delet(): IDBRequest;
-    continu(key?: any): void;
+    delete(): IDBRequest;
+    continue(key?: any): void;
     update(value: any): IDBRequest;
 }
 declare var IDBCursor: {
