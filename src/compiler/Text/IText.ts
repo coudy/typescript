@@ -71,10 +71,5 @@ module TypeScript {
         /// Returns a string representation of the contents of this IText within the given span.
         /// </summary>
         toString(span?: TextSpan): string;
-
-        /// <summary>
-        /// Gets the a new IText that corresponds to the contents of this IText for the given span.
-        /// </summary>
-        subText(span: TextSpan): IText;
     }
 }

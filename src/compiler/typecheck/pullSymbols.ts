@@ -1251,7 +1251,9 @@ module TypeScript {
 
             if (this.specializedTypeCache) {
                 for (var specializationID in this.specializedTypeCache) {
-                    specializations[specializations.length] = this.specializedTypeCache[specializationID];
+                    if (this.specializedTypeCache[specializationID]) {
+                        specializations[specializations.length] = this.specializedTypeCache[specializationID];
+                    }
                 }
             }
 
@@ -1281,6 +1283,27 @@ module TypeScript {
             this.specializedTypeCache = null;
 
             this.invalidatedSpecializations = true;
+        }
+
+        public removeSpecialization(specializationType: PullTypeSymbol) {
+            
+            if (this.specializationLinks && this.specializationLinks.length) {
+                for (var i = 0; i < this.specializationLinks.length; i++) {
+                    if (this.specializationLinks[i].end == specializationType) {
+                        this.removeOutgoingLink(this.specializationLinks[i]);
+                        break;
+                    }
+                }
+            }
+
+            if (this.specializedTypeCache) {
+
+                for (var specializationID in this.specializedTypeCache) {
+                    if (this.specializedTypeCache[specializationID] == specializationType) {
+                        this.specializedTypeCache[specializationID] = undefined;
+                    }
+                }
+            }
         }
 
         public getTypeArguments() { return this.typeArguments; }

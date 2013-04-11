@@ -270,37 +270,15 @@ module TypeScript {
         }
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
-        if (link.kind == SymbolLinkKind.TypedAs) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
+        if (link.kind == SymbolLinkKind.ProvidesInferredType) {
 
             // if another type infers its type from this one, unset the link
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameter) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.TypeArgument) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            // no action...
-        }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            (<PullTypeSymbol>symbolToRemove).removeSpecialization(<PullTypeSymbol>affectedSymbol);
             update.updater.removeSymbol(affectedSymbol);
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.TypeConstraint) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-
-            // shouldn't affect the other type - we'd remove the parent type as an
-            // incoming link
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.removeSymbol(affectedSymbol);
@@ -312,24 +290,12 @@ module TypeScript {
             //update.updater.removeSymbol(affectedSymbol);
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
-        }
         else if (link.kind == SymbolLinkKind.ContainedBy) {
             (<PullTypeSymbol>affectedSymbol).removeMember(symbolToRemove);
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.Extends) {
-            // no action...
-        }
-        else if (link.kind == SymbolLinkKind.Implements) {
-            // no action...
-        }
         else if (link.kind == SymbolLinkKind.Parameter) {
             update.updater.removeSymbol(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ReturnType) {
-            // no action...
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
             update.updater.invalidateType(affectedSymbol);
@@ -359,29 +325,18 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            // no action...
-        }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
+            (<PullTypeSymbol>affectedSymbol).removeSpecialization(<PullTypeSymbol>symbolToRemove);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ArrayType) {
-            update.updater.removeSymbol(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-            update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             (<PullTypeSymbol>affectedSymbol).removeMember(symbolToRemove);
@@ -393,9 +348,6 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
         }
         else if (link.kind == SymbolLinkKind.ContainedBy) {
             update.updater.invalidateType(affectedSymbol);
@@ -433,11 +385,7 @@ module TypeScript {
         }
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
-        if (link.kind == SymbolLinkKind.TypedAs) {
-        }
-        else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-        }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
+        if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
@@ -446,44 +394,17 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-            // how could this happen?
-            //update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateMember) {
-            // Don't invalidate the type in this case - we only care about
-            // public properties
-        }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
-        }
-        else if (link.kind == SymbolLinkKind.ContainedBy) {
-            // Don't invalidate the type in this case - we only care about
-            // public properties
-        }
-        else if (link.kind == SymbolLinkKind.Extends) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Implements) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Parameter) {
-            // do nothing...
         }
         else if (link.kind == SymbolLinkKind.ReturnType) {
             update.updater.invalidateType(affectedSymbol);
@@ -514,41 +435,20 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            //update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.SpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-            // shouldn't change anything...
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateMember) {
-            // do nothing...
-        }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
-        }
-        else if (link.kind == SymbolLinkKind.ContainedBy) {
-            // do nothing...
         }
         else if (link.kind == SymbolLinkKind.Extends) {
             update.updater.invalidateType(affectedSymbol);
@@ -556,20 +456,8 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.Implements) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.Parameter) {
-            // do nothing...
-        }
         else if (link.kind == SymbolLinkKind.ReturnType) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.CallSignature) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.ConstructSignature) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.IndexSignature) {
-            // do nothing...
         }
     }
 
@@ -582,13 +470,7 @@ module TypeScript {
         }
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
-        if (link.kind == SymbolLinkKind.TypedAs) {
-            //update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            //update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
+        if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
@@ -597,43 +479,13 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-            // do nothing...
-        }
         else if (link.kind == SymbolLinkKind.PublicMember) {
-            update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.PrivateMember) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
-        }
-        else if (link.kind == SymbolLinkKind.ContainedBy) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Extends) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Implements) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.Parameter) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.ReturnType) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
@@ -662,44 +514,20 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            //update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ArrayType) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.SpecializedTo) {
-            update.updater.invalidateType(affectedSymbol);
-        }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.ArrayOf) {
-            // do nothing...
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateMember) {
-            // do nothing...
-        }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.Aliases) {
-            // PULLTODO
-        }
-        else if (link.kind == SymbolLinkKind.ContainedBy) {
-            // do nothing...
         }
         else if (link.kind == SymbolLinkKind.Extends) {
             update.updater.invalidateType(affectedSymbol);
@@ -707,20 +535,8 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.Implements) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.Parameter) {
-            // do nothing...
-        }
         else if (link.kind == SymbolLinkKind.ReturnType) {
             update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.CallSignature) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.ConstructSignature) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.IndexSignature) {
-            // do nothing...
         }
     }
 }
