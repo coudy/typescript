@@ -822,9 +822,6 @@ module TypeScript {
             interfaceSymbol.addDeclaration(interfaceDecl);
             interfaceDecl.setSymbol(interfaceSymbol);
 
-            this.semanticInfo.setSymbolForAST(interfaceAST.name, interfaceSymbol);
-            this.semanticInfo.setSymbolForAST(interfaceAST, interfaceSymbol);
-
             if (createdNewSymbol) {
 
                 if (parent) {

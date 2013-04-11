@@ -872,16 +872,17 @@ module TypeScript {
             return containerSymbol;
         }
 
-        /**
-        * Resolve the TypeDelcaration type parameters, implements and extends clause, members, call, construct and index signatures
-        */
-        private resolveTypeDeclaration(typeDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullSymbol {
+        //
+        // Resolve a reference type (class or interface) type parameters, implements and extends clause, members, call, construct and index signatures
+        //
+        private resolveReferenceTypeDeclaration(typeDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullSymbol {
             var typeDecl: PullDecl = this.getDeclForAST(typeDeclAST);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclIsClass = typeDeclAST.nodeType == NodeType.ClassDeclaration;
+            var hasVisited = this.getSymbolForAST(typeDeclAST, context) != null;
 
-            if (typeDeclSymbol.isResolved() || (typeDeclSymbol.isResolving() && !context.isInBaseTypeResolution())) {
+            if ((typeDeclSymbol.isResolved() && hasVisited) || (typeDeclSymbol.isResolving() && !context.isInBaseTypeResolution())) {
                 return typeDeclSymbol;
             }
 
@@ -890,19 +891,29 @@ module TypeScript {
             var i;
 
             // Resolve Type Parameters
-            var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
-            for (i = 0; i < typeDeclTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(typeDeclTypeParameters[i], typeDecl, context);
+            
+            if (!typeDeclSymbol.isResolved()) {
+                var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+                for (i = 0; i < typeDeclTypeParameters.length; i++) {
+                    this.resolveDeclaredSymbol(typeDeclTypeParameters[i], typeDecl, context);
+                }
             }
 
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
+            // if it's a "split" interface type, we'll need to consider constituent extends lists separately
+            i = (!typeDeclIsClass && !hasVisited && typeDeclSymbol.isResolved()) ? 0 : typeDeclSymbol.getKnownBaseTypeCount();
+
             // Extends list
             if (typeDeclAST.extendsList) {
-                for (i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
-                    typeDeclSymbol.setKnowsBaseType();
+                for (; i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                    typeDeclSymbol.incrementKnownBaseCount();
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
 
+                    if (typeDeclSymbol.hasBase(parentType)) {
+                        continue;
+                    }
+                    
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
@@ -917,7 +928,7 @@ module TypeScript {
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (i = typeDeclSymbol.getKnownBaseTypeCount(); (i - extendsCount) < typeDeclAST.implementsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
-                    typeDeclSymbol.setKnowsBaseType();
+                    typeDeclSymbol.incrementKnownBaseCount();
                     var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
@@ -936,31 +947,36 @@ module TypeScript {
                 // Do not resolve members as yet
                 return typeDeclSymbol;
             }
-                        
-            // Resolve members
-            var typeDeclMembers = typeDeclSymbol.getMembers();
-            for (i = 0; i < typeDeclMembers.length; i++) {
-                this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
+            
+            
+            if (!typeDeclSymbol.isResolved()) {
+                // Resolve members
+                var typeDeclMembers = typeDeclSymbol.getMembers();
+                for (i = 0; i < typeDeclMembers.length; i++) {
+                    this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
+                }
+
+                if (!typeDeclIsClass) {
+                    // Resolve call, construct and index signatures
+                    var callSignatures = typeDeclSymbol.getCallSignatures();
+                    for (i = 0; i < callSignatures.length; i++) {
+                        this.resolveDeclaredSymbol(callSignatures[i], typeDecl, context);
+                    }
+
+                    var constructSignatures = typeDeclSymbol.getConstructSignatures();
+                    for (i = 0; i < constructSignatures.length; i++) {
+                        this.resolveDeclaredSymbol(constructSignatures[i], typeDecl, context);
+                    }
+
+                    var indexSignatures = typeDeclSymbol.getIndexSignatures();
+                    for (i = 0; i < indexSignatures.length; i++) {
+                        this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
+                    }
+                }
+                typeDeclSymbol.setResolved();
             }
 
-            if (!typeDeclIsClass) {
-                // Resolve call, construct and index signatures
-                var callSignatures = typeDeclSymbol.getCallSignatures();
-                for (i = 0; i < callSignatures.length; i++) {
-                    this.resolveDeclaredSymbol(callSignatures[i], typeDecl, context);
-                }
-
-                var constructSignatures = typeDeclSymbol.getConstructSignatures();
-                for (i = 0; i < constructSignatures.length; i++) {
-                    this.resolveDeclaredSymbol(constructSignatures[i], typeDecl, context);
-                }
-
-                var indexSignatures = typeDeclSymbol.getIndexSignatures();
-                for (i = 0; i < indexSignatures.length; i++) {
-                    this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
-                }
-            }
-            typeDeclSymbol.setResolved();
+            this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
 
             return typeDeclSymbol;
         }
@@ -978,7 +994,7 @@ module TypeScript {
                 return classDeclSymbol;
             }
 
-            this.resolveTypeDeclaration(classDeclAST, context);
+            this.resolveReferenceTypeDeclaration(classDeclAST, context);
             if (!classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
             }
@@ -1045,7 +1061,7 @@ module TypeScript {
             var interfaceDecl: PullDecl = this.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
-            this.resolveTypeDeclaration(interfaceDeclAST, context);
+            this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
             return interfaceDeclSymbol;
         }
 
@@ -1284,7 +1300,6 @@ module TypeScript {
             var previousResolutionSymbol = this.getSymbolForAST(typeRef, context);
 
             if (previousResolutionSymbol) {
-                //CompilerDiagnostics.Alert("Call get hit");
                 return <PullTypeSymbol>previousResolutionSymbol;
             }
 
