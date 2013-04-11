@@ -390,7 +390,7 @@ module TypeScript {
                     var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type, null) + typeExprSymbol.toString() + "'", enclosingDecl);
                         typeExprSymbol = null;
                     }
                     else {
@@ -1267,7 +1267,7 @@ module TypeScript {
             }
 
             if (!exprType) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "Invalid '+' expression - types do not agree", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Invalid__addition__expression___types_do_not_agree, null), typeCheckContext.getEnclosingDecl());
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1291,11 +1291,11 @@ module TypeScript {
             var rhsIsFit = this.resolver.isAnyOrEquivalent(rhsType) || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
 
             if (!rhsIsFit) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!lhsIsFit) {
-                this.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             // check for assignment compatibility
@@ -1337,7 +1337,7 @@ module TypeScript {
             var lhsIsFit = this.resolver.isAnyOrEquivalent(lhsType) || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
 
             if (!lhsIsFit) {
-                this.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+                this.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
             }           
 
             return lhsType;
@@ -1446,7 +1446,7 @@ module TypeScript {
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
-                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
+                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation, null), typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -1457,11 +1457,11 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+                this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, "The right operand of a for/in expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.voidTypeSymbol;
@@ -1477,12 +1477,12 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'in' expression may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
 
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }        
 
             return this.semanticInfoChain.booleanTypeSymbol;
@@ -1498,11 +1498,11 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'instanceOf' expression must be of type Any or a subtype of the 'Function' interface type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;
@@ -1588,7 +1588,7 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             if (enclosingDecl.getKind() == PullElementKind.SetAccessor && returnExpr) {
-                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
+                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Setters_may_not_return_a_value, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {

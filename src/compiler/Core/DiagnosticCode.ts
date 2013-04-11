@@ -179,6 +179,18 @@ module TypeScript {
         _this__cannot_be_referenced_within_module_bodies,
         _this__must_only_be_used_inside_a_function_or_script_context,
         VarArgs_must_be_array_types,
-
+        Invalid__addition__expression___types_do_not_agree,
+        The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
+        The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
+        The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type,
+        Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation,
+        Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_,
+        The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter,
+        The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_,
+        The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter,
+        The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter,
+        The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type,
+        Setters_may_not_return_a_value,
+        Tried_to_set_variable_type_to_uninitialized_module_type,
     }
 }

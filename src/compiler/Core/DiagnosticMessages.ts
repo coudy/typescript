@@ -924,11 +924,75 @@ module TypeScript {
             message: "'this' must only be used inside a function or script context",
             code: 2109
         },
-
         VarArgs_must_be_array_types: {
             category: DiagnosticCategory.Error,
             message: "'...' parameters require both a parameter name and an array type annotation to be specified",
             code: 2110
+        },
+        Invalid__addition__expression___types_do_not_agree: {
+            category: DiagnosticCategory.Error,
+            message: "Invalid '+' expression - types do not agree.",
+            code: 2111
+        },
+        The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
+            category: DiagnosticCategory.Error,
+            message: "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.",
+            code: 2112
+        },
+        The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
+            category: DiagnosticCategory.Error,
+            message: "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.",
+            code: 2113
+        },
+        The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type: {
+            category: DiagnosticCategory.Error,
+            message: "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type.",
+            code: 2114
+        },
+        Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation: {
+            category: DiagnosticCategory.Error,
+            message: "Variable declarations for for/in expressions cannot contain a type annotation.",
+            code: 2115
+        },
+        Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_: {
+            category: DiagnosticCategory.Error,
+            message: "Variable declarations for for/in expressions must be of types 'string' or 'any'.",
+            code: 2116
+        },
+        The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.",
+            code: 2117
+        },
+        The_left___hand_side_of_an__in__expression_must_be_of_types__string__or__any_: {
+            category: DiagnosticCategory.Error,
+            message: "The left-hand side of an 'in' expression must be of types 'string' or 'any'.",
+            code: 2118
+        },
+        The_right___hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter.",
+            code: 2119
+        },
+        The_left___hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.",
+            code: 2120
+        },
+        The_right___hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: {
+        category: DiagnosticCategory.Error,
+            message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
+            code: 2121
+        },
+        Setters_may_not_return_a_value: {
+            category: DiagnosticCategory.Error,
+            message: "Setters may not return a value.",
+            code: 2122
+        },
+        Tried_to_set_variable_type_to_uninitialized_module_type: {
+            category: DiagnosticCategory.Error,
+            message: "Tried to set variable type to uninitialized module type.",
+            code: 2123
         },
     };
 
