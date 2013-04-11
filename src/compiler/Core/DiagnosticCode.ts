@@ -177,7 +177,6 @@ module TypeScript {
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors,
         _0_1__is_inaccessible,
         _this__cannot_be_referenced_within_module_bodies,
-
         _this__must_only_be_used_inside_a_function_or_script_context,
 
 

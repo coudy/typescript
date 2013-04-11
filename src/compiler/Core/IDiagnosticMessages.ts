@@ -173,11 +173,8 @@ module TypeScript {
         Could_not_find_symbol__0_: DiagnosticInfo;
         _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
         _this__may_not_be_referenced_in_current_location: DiagnosticInfo;
-
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
-
-
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: DiagnosticInfo;
         _super__may_not_be_referenced_in_non_derived_classes: DiagnosticInfo;
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: DiagnosticInfo;
