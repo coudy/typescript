@@ -983,6 +983,7 @@ module TypeScript {
         private hasGenericSignature = false;
         private knownBaseTypeCount = 0;
         public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
+        public resetKnownBaseTypeCount() { this.knownBaseTypeCount = 0; }
         public incrementKnownBaseCount() { this.knownBaseTypeCount++; }
 
         private invalidatedSpecializations = false;

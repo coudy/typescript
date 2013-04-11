@@ -902,18 +902,16 @@ module TypeScript {
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
             // if it's a "split" interface type, we'll need to consider constituent extends lists separately
-            i = (!typeDeclIsClass && !hasVisited && typeDeclSymbol.isResolved()) ? 0 : typeDeclSymbol.getKnownBaseTypeCount();
+            if (!typeDeclIsClass && !hasVisited && typeDeclSymbol.isResolved()) {
+                typeDeclSymbol.resetKnownBaseTypeCount();
+            } 
 
             // Extends list
             if (typeDeclAST.extendsList) {
-                for (; i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                for (i = typeDeclSymbol.getKnownBaseTypeCount() ; i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
 
-                    if (typeDeclSymbol.hasBase(parentType)) {
-                        continue;
-                    }
-                    
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
@@ -973,9 +971,9 @@ module TypeScript {
                         this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
                     }
                 }
-                typeDeclSymbol.setResolved();
             }
 
+            typeDeclSymbol.setResolved();
             this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
 
             return typeDeclSymbol;
