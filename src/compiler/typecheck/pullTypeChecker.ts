@@ -682,28 +682,36 @@ module TypeScript {
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
             var baseType = this.resolver.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
             var typeDeclIsClass = typeSymbol.isClass();
+            var message: string;
 
-            if (typeDeclIsClass && isExtendedType && baseType.getKind() != PullElementKind.Class) {
-                // Already reported error for this not being correct extended type no need to check further errors
+            if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
+                // Report error about invalid base kind
+                if (baseType.isError()) {
+                    message = (<PullErrorTypeSymbol>baseType).getDiagnostic().message();
+                } else if (isExtendedType) {
+                    if (typeDeclIsClass) {
+                        message = getDiagnosticMessage(DiagnosticCode.A_class_may_only_extend_another_class, null);
+                    } else {
+                        message = getDiagnosticMessage(DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null);
+                    }
+                } else {
+                    message = getDiagnosticMessage(DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null);
+                }
+                this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
                 return;
             }
 
-            if ((baseType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
-                // Either interface extending non interface or class 
-                // or class implementing non interface or class
+            // Check if its a recursive extend/implement type
+            if (baseType.hasBase(typeSymbol)) {
+                // Report error
+                message = getDiagnosticMessage(typeDeclIsClass ? DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself : DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself, [typeSymbol.getScopedName()]);
+                this.postError(typeDeclAst.name.minChar, typeDeclAst.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
                 return;
             }
 
             // Privacy error:
             this.checkTypePrivacy(typeSymbol, baseType, (errorTypeSymbol: PullTypeSymbol) =>
             this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, typeCheckContext));
-
-            // Check if its a recursive extend/implement type
-            if (baseType.hasBase(typeSymbol)) {
-                // Report error
-                var message = getDiagnosticMessage(typeDeclIsClass ? DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself : DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself, [typeSymbol.getScopedName()]);
-                this.postError(typeDeclAst.name.minChar, typeDeclAst.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
-            }
         }
 
         private typeCheckBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
@@ -719,6 +727,9 @@ module TypeScript {
                 for (i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
+            } else if (typeDeclAst.implementsList) {
+                var message = getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null);
+                this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
         }
 

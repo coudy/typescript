@@ -216,6 +216,19 @@ module TypeScript {
 
         public inSpecialization = false;
         public suppressErrors = false;
+        private inBaseTypeResolution = false;
+
+        public isInBaseTypeResolution() { return this.inBaseTypeResolution; }
+
+        public startBaseTypeResolution() {
+            var wasInBaseTypeResoltion = this.inBaseTypeResolution;
+            this.inBaseTypeResolution = true;
+            return wasInBaseTypeResoltion;
+        }
+
+        public doneBaseTypeResolution(wasInBaseTypeResolution: boolean) {
+            this.inBaseTypeResolution = wasInBaseTypeResolution;
+        }
 
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = this.findSubstitution(type);

@@ -981,6 +981,9 @@ module TypeScript {
         private isSpecialized = false;
         private isBeingSpecialized = false;
         private hasGenericSignature = false;
+        private knownBaseTypeCount = 0;
+        public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
+        public setKnowsBaseType() { this.knownBaseTypeCount++; }
 
         private invalidatedSpecializations = false;
 
@@ -1591,6 +1594,30 @@ module TypeScript {
             return false;
         }
 
+        public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean) {
+            // Error type symbol is invalid base kind
+            if (baseType.isError()) {
+                return false;
+            }
+
+            var thisIsClass = this.isClass();
+            if (isExtendedType) {
+                if (thisIsClass) {
+                    // Class extending non class Type is invalid
+                    return baseType.getKind() == PullElementKind.Class;
+                }
+            } else {
+                if (!thisIsClass) {
+                    // Interface implementing baseType is invalid
+                    return false;
+                }
+            }
+
+            // Interface extending non interface or class 
+            // or class implementing non interface or class - are invalid
+            return !!(baseType.getKind() & (PullElementKind.Interface | PullElementKind.Class));
+        }
+
         public removeExtendedType(extendedType: PullTypeSymbol) {
             var typeLink: PullSymbolLink;
 
@@ -1825,6 +1852,8 @@ module TypeScript {
             this.implementedTypeLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.Implements);
 
             this.extendedTypeLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.Extends);
+            
+            this.knownBaseTypeCount = 0;
 
             super.invalidate();
         }

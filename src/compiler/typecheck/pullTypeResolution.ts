@@ -872,6 +872,99 @@ module TypeScript {
             return containerSymbol;
         }
 
+        /**
+        * Resolve the TypeDelcaration type parameters, implements and extends clause, members, call, construct and index signatures
+        */
+        private resolveTypeDeclaration(typeDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullSymbol {
+            var typeDecl: PullDecl = this.getDeclForAST(typeDeclAST);
+            var enclosingDecl = this.getEnclosingDecl(typeDecl);
+            var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
+            var typeDeclIsClass = typeDeclAST.nodeType == NodeType.ClassDeclaration;
+
+            if (typeDeclSymbol.isResolved() || (typeDeclSymbol.isResolving() && !context.isInBaseTypeResolution())) {
+                return typeDeclSymbol;
+            }
+
+            typeDeclSymbol.startResolving();
+
+            var i;
+
+            // Resolve Type Parameters
+            var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+            for (i = 0; i < typeDeclTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(typeDeclTypeParameters[i], typeDecl, context);
+            }
+
+            var wasInBaseTypeResolution = context.startBaseTypeResolution();
+
+            // Extends list
+            if (typeDeclAST.extendsList) {
+                for (i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                    typeDeclSymbol.setKnowsBaseType();
+                    var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
+
+                    if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
+                        if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
+                            parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
+                        }
+                        if (!typeDeclSymbol.hasBase(parentType)) {
+                            typeDeclSymbol.addExtendedType(parentType);
+                        }
+                    }
+                }
+            }
+
+            if (typeDeclAST.implementsList && typeDeclIsClass) {
+                var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
+                for (i = typeDeclSymbol.getKnownBaseTypeCount(); (i - extendsCount) < typeDeclAST.implementsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                    typeDeclSymbol.setKnowsBaseType();
+                    var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
+
+                    if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
+                        if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
+                            implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
+                        }
+
+                        if (!typeDeclSymbol.hasBase(implementedType)) {
+                            typeDeclSymbol.addImplementedType(implementedType);
+                        }
+                    }
+                }
+            }
+            context.doneBaseTypeResolution(wasInBaseTypeResolution);
+            if (wasInBaseTypeResolution) {
+                // Do not resolve members as yet
+                return typeDeclSymbol;
+            }
+                        
+            // Resolve members
+            var typeDeclMembers = typeDeclSymbol.getMembers();
+            for (i = 0; i < typeDeclMembers.length; i++) {
+                this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
+            }
+
+            if (!typeDeclIsClass) {
+                // Resolve call, construct and index signatures
+                var callSignatures = typeDeclSymbol.getCallSignatures();
+                for (i = 0; i < callSignatures.length; i++) {
+                    this.resolveDeclaredSymbol(callSignatures[i], typeDecl, context);
+                }
+
+                var constructSignatures = typeDeclSymbol.getConstructSignatures();
+                for (i = 0; i < constructSignatures.length; i++) {
+                    this.resolveDeclaredSymbol(constructSignatures[i], typeDecl, context);
+                }
+
+                var indexSignatures = typeDeclSymbol.getIndexSignatures();
+                for (i = 0; i < indexSignatures.length; i++) {
+                    this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
+                }
+            }
+            typeDeclSymbol.setResolved();
+
+            return typeDeclSymbol;
+        }
+
         //
         // Resolve a class declaration
         //
@@ -880,79 +973,17 @@ module TypeScript {
         //
         public resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
-            var enclosingDecl = this.getEnclosingDecl(classDecl);
             var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
-            var parentType: PullTypeSymbol = null;
-
             if (classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
             }
 
+            this.resolveTypeDeclaration(classDeclAST, context);
+            if (!classDeclSymbol.isResolved()) {
+                return classDeclSymbol;
+            }
+
             var i = 0;
-
-            if (classDeclAST.extendsList) {
-                for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
-                    parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
-
-                    if (parentType.getKind() != PullElementKind.Class) {
-                        if (parentType.isError()) {
-                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>parentType).getDiagnostic().message(), enclosingDecl, true);
-                        }
-                        else {
-                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.A_class_may_only_extend_another_class, null), enclosingDecl, true);
-                        }
-                    }
-                    else {
-
-                        if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
-                            parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                        }
-                        if (!classDeclSymbol.hasBase(parentType)) {
-                            classDeclSymbol.addExtendedType(parentType);
-                        }
-                    }
-                }
-            }
-
-            if (classDeclAST.implementsList) {
-                var implementedType: PullTypeSymbol = null;
-
-                for (i = 0; i < classDeclAST.implementsList.members.length; i++) {
-                    implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
-
-                    if ((implementedType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
-                        if (implementedType.isError()) {
-                            context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>implementedType).getDiagnostic().message(), enclosingDecl, true);
-                        }
-                        else {
-                            context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null), enclosingDecl, true);
-                        }
-                    }
-                    else {
-                        if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
-                            implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
-                        }
-
-                        if (!classDeclSymbol.hasBase(implementedType)) {
-                            classDeclSymbol.addImplementedType(implementedType);
-                        }
-                    }
-                }
-            }
-
-            classDeclSymbol.setResolved();
-
-            var classMembers = classDeclSymbol.getMembers();
-            for (i = 0; i < classMembers.length; i++) {
-                this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
-            }
-
-            var classTypeParameters = classDeclSymbol.getTypeParameters();
-            for (i = 0; i < classTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
-            }
 
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             if (constructorMethod) {
@@ -964,7 +995,9 @@ module TypeScript {
                     var constructorSignature: PullSignatureSymbol;
 
                     // inherit parent's constructor signatures
-                    if (parentType && parentType.isClass()) {
+                    var extendedTypes = classDeclSymbol.getExtendedTypes();
+                    var parentType = extendedTypes.length ? extendedTypes[0] : null;
+                    if (parentType) {
                         var parentClass = <PullClassTypeSymbol>parentType;
                         var parentConstructor = parentClass.getConstructorMethod();
                         var parentConstructorType = parentConstructor.getType();
@@ -1010,76 +1043,9 @@ module TypeScript {
 
         public resolveInterfaceDeclaration(interfaceDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceDecl: PullDecl = this.getDeclForAST(interfaceDeclAST);
-            var enclosingDecl = this.getEnclosingDecl(interfaceDecl);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
-            if (interfaceDeclSymbol.isResolved() || interfaceDeclSymbol.isResolving()) {
-                return interfaceDeclSymbol;
-            }
-            
-            interfaceDeclSymbol.startResolving();
-
-            var i = 0;
-            
-            var interfaceTypeParameters = interfaceDeclSymbol.getTypeParameters();
-            for (i = 0; i < interfaceTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(interfaceTypeParameters[i], interfaceDecl, context);
-            }
-
-            var interfaceMembers = interfaceDeclSymbol.getMembers();
-            for (i = 0; i < interfaceMembers.length; i++) {
-                this.resolveDeclaredSymbol(interfaceMembers[i], interfaceDecl, context);
-            }
-
-            if (interfaceDeclAST.extendsList) {
-                var parentType: PullTypeSymbol = null;
-
-                for (i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
-                    parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
-
-                    if ((parentType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
-                        if (parentType.isError()) {
-                            context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>parentType).getDiagnostic().message(), enclosingDecl, true);
-                        }
-                        else {
-                            context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null), enclosingDecl, true);
-                        }
-                    }
-                    else {
-                        if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
-                            parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                        }
-
-                        if (!interfaceDeclSymbol.hasBase(parentType)) {
-                            interfaceDeclSymbol.addExtendedType(parentType);
-                        }
-                    }
-                }
-            }
-
-            if (interfaceDeclAST.implementsList) {
-                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath,
-                getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null), enclosingDecl, true);
-            }
-
-            var callSignatures = interfaceDeclSymbol.getCallSignatures();
-            var constructSignatures = interfaceDeclSymbol.getConstructSignatures();
-            var indexSignatures = interfaceDeclSymbol.getIndexSignatures();
-
-            for (i = 0; i < callSignatures.length; i++) {
-                this.resolveDeclaredSymbol(callSignatures[i], interfaceDecl, context);
-            }
-
-            for (i = 0; i < constructSignatures.length; i++) {
-                this.resolveDeclaredSymbol(constructSignatures[i], interfaceDecl, context);
-            }
-
-            for (i = 0; i < indexSignatures.length; i++) {
-                this.resolveDeclaredSymbol(indexSignatures[i], interfaceDecl, context);
-            }
-
-            interfaceDeclSymbol.setResolved();
+            this.resolveTypeDeclaration(interfaceDeclAST, context);
             return interfaceDeclSymbol;
         }
 
