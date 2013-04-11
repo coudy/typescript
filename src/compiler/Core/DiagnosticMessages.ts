@@ -1014,16 +1014,6 @@ module TypeScript {
             message: "Getter and setter accessors do not agree in visibility.",
             code: 2127
         },
-        Index_signatures_must_take_only_one_parameter: {
-            category: DiagnosticCategory.Error,
-            message: "Index signatures must take only one parameter.",
-            code: 2128
-        },
-        Index_signatures_must_not_have_optional_parameters: {
-            category: DiagnosticCategory.Error,
-            message: "Index signatures must not have optional parameters.",
-            code: 2129
-        },
         Invalid_left_hand_side_of_assignment_expression: {
             category: DiagnosticCategory.Error,
             message: "Invalid left-hand side of assignment expression.",
@@ -1039,22 +1029,25 @@ module TypeScript {
             message: "Cannot resolve return type reference.",
             code: 2132
         },
-        Constructors_must_not_have_a_return_type_of__void_: {
+        Constructors_cannot_have_a_return_type_of__void_: {
             category: DiagnosticCategory.Error,
-            message: "Constructors must not have a return type of 'void'.",
+            message: "Constructors cannot have a return type of 'void'.",
             code: 2133
         },
-
         Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_: {
             category: DiagnosticCategory.Error,
             message: "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'",
             code: 2134
         },
-
         All_symbols_within_a__with__block_will_be_resolved_to__any__: {
             category: DiagnosticCategory.Error,
             message: "All symbols within a with block will be resolved to 'any'",
             code: 2135
+        },
+        Import_declarations_in_an_internal_module_cannot_reference_an_external_module: {
+            category: DiagnosticCategory.Error,
+            message: "Import declarations in an internal module cannot reference an external module.",
+            code: 2136
         },
     };
 

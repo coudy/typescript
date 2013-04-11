@@ -816,10 +816,32 @@ module TypeScript {
             return false;
         }
 
+        private checkForDisallowedImportDeclaration(node: ModuleDeclarationSyntax): boolean {
+            if (node.stringLiteral === null) {
+                var currentElementFullStart = this.childFullStart(node, node.moduleElements);
+
+                for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                    var child = node.moduleElements.childAt(i);
+                    if (child.kind() === SyntaxKind.ImportDeclaration) {
+                        var importDeclaration = <ImportDeclarationSyntax>child;
+                        if (importDeclaration.moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
+                            this.pushDiagnostic1(currentElementFullStart, importDeclaration,
+                                DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module, null);
+                        }
+                    }
+
+                    currentElementFullStart += child.fullWidth();
+                }
+            }
+
+            return false;
+        }
+
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
+                this.checkForDisallowedImportDeclaration(node) ||
                 (!this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements))) {
 
                 this.skip(node);

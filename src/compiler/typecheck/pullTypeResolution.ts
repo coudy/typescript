@@ -1806,7 +1806,7 @@ module TypeScript {
                             signature.setReturnType(returnTypeSymbol);
 
                             if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
-                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Constructors_must_not_have_a_return_type_of__void_, null), funcDecl, true);
+                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_, null), funcDecl, true);
                             }
                         }
                     }
@@ -1860,7 +1860,8 @@ module TypeScript {
                         signature.setReturnType(returnTypeSymbol);
 
                         if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
-                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Constructors_must_not_have_a_return_type_of__void_, null), funcDecl, true);
+                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_, null), funcDecl, true);
                         }
                     }
                 }

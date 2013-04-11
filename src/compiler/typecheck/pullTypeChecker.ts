@@ -687,28 +687,11 @@ module TypeScript {
             var parameters = indexSignature.getParameters();
 
             if (parameters.length) {
-
-                if (parameters.length > 1) {
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_take_only_one_parameter, null), typeCheckContext.getEnclosingDecl());
-                }
-
                 var parameterType: PullTypeSymbol = null;
 
                 for (var i = 0; i < parameters.length; i++) {
                     this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
-                    if (parameters[i].getIsOptional() || parameters[i].getIsVarArg()) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_not_have_optional_parameters, null), typeCheckContext.getEnclosingDecl());
-                    }
-
-                    parameterType = parameters[i].getType();
-
-                    if (parameterType != this.semanticInfoChain.stringTypeSymbol && parameterType != this.semanticInfoChain.numberTypeSymbol) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_not_have_optional_parameters, null), typeCheckContext.getEnclosingDecl());
-                    }
                 }
-            }
-            else {
-                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Index_signatures_must_take_only_one_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);

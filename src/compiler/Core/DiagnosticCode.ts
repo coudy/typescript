@@ -196,13 +196,12 @@ module TypeScript {
         Function__0__declared_a_non_void_return_type__but_has_no_return_expression,
         Getters_must_return_a_value,
         Getter_and_setter_accessors_do_not_agree_in_visibility,
-        Index_signatures_must_take_only_one_parameter,
-        Index_signatures_must_not_have_optional_parameters,
         Invalid_left_hand_side_of_assignment_expression,
         Function_declared_a_non_void_return_type__but_has_no_return_expression,
         Cannot_resolve_return_type_reference,
-        Constructors_must_not_have_a_return_type_of__void_,
-        Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_,
+        Constructors_cannot_have_a_return_type_of__void_ ,
+        Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ ,
         All_symbols_within_a__with__block_will_be_resolved_to__any__,
+        Import_declarations_in_an_internal_module_cannot_reference_an_external_module,
     }
 }
