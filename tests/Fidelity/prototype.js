@@ -18180,14 +18180,10 @@ var TypeScript;
                     var dotToken = this.eatToken(76 /* DotToken */ );
                     var currentToken = this.currentToken();
                     var identifierName;
-                    if (currentToken.tokenKind === 11 /* IdentifierName */ ) {
-                        identifierName = this.eatIdentifierToken();
-                    } else if (TypeScript.SyntaxFacts.isAnyKeyword(currentToken.tokenKind)) {
-                        if (this.previousToken().hasTrailingNewLine() && !currentToken.hasTrailingNewLine() && TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(1))) {
-                            identifierName = this.createMissingToken(11 /* IdentifierName */ , currentToken);
-                        } else {
-                            identifierName = this.eatIdentifierNameToken();
-                        }
+                    if (TypeScript.SyntaxFacts.isAnyKeyword(currentToken.tokenKind) && this.previousToken().hasTrailingNewLine() && !currentToken.hasTrailingNewLine() && TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(1))) {
+                        identifierName = this.createMissingToken(11 /* IdentifierName */ , currentToken);
+                    } else {
+                        identifierName = this.eatIdentifierNameToken();
                     }
                     current = this.factory.qualifiedName(current, dotToken, identifierName);
                     shouldContinue = identifierName.fullWidth() > 0;

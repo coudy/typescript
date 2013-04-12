@@ -1842,38 +1842,34 @@ module TypeScript.Parser {
                 var currentToken = this.currentToken();
                 var identifierName: ISyntaxToken;
 
-                if (currentToken.tokenKind === SyntaxKind.IdentifierName) {
-                    identifierName = this.eatIdentifierToken();
+                // Technically a keyword is valid here as all keywords are identifier names.
+                // However, often we'll encounter this in error situations when the keyword
+                // is actually starting another valid construct.
+
+                // So, we check for the following specific case:
+
+                //      name.
+                //      keyword identifierNameOrKeyword
+
+                // Note: the newlines are important here.  For example, if that above code 
+                // were rewritten into:
+
+                //      name.keyword
+                //      identifierNameOrKeyword
+
+                // Then we would consider it valid.  That's because ASI would take effect and
+                // the code would be implicitly: "name.keyword; identifierNameOrKeyword".  
+                // In the first case though, ASI will not take effect because there is not a
+                // line terminator after the dot.
+                if (SyntaxFacts.isAnyKeyword(currentToken.tokenKind) &&
+                    this.previousToken().hasTrailingNewLine() &&
+                    !currentToken.hasTrailingNewLine() &&
+                    SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(1))) {
+
+                    identifierName = this.createMissingToken(SyntaxKind.IdentifierName, currentToken);
                 }
-                else if (SyntaxFacts.isAnyKeyword(currentToken.tokenKind)) {
-                    // Technically a keyword is valid here as all keywords are identifier names.
-                    // However, often we'll encounter this in error situations when the keyword
-                    // is actually starting another valid construct.
-
-                    // So, we check for the following specific case:
-
-                    //      name.
-                    //      keyword identifierNameOrKeyword
-
-                    // Note: the newlines are important here.  For example, if that above code 
-                    // were rewritten into:
-
-                    //      name.keyword
-                    //      identifierNameOrKeyword
-
-                    // Then we would consider it valid.  That's because ASI would take effect and
-                    // the code would be implicitly: "name.keyword; identifierNameOrKeyword".  
-                    // In the first case though, ASI will not take effect because there is not a
-                    // line terminator after the dot.
-                    if (this.previousToken().hasTrailingNewLine() &&
-                        !currentToken.hasTrailingNewLine() &&
-                        SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(1))) {
-
-                        identifierName = this.createMissingToken(SyntaxKind.IdentifierName, currentToken);
-                    }
-                    else {
-                        identifierName = this.eatIdentifierNameToken();
-                    }
+                else {
+                    identifierName = this.eatIdentifierNameToken();
                 }
 
                 current = this.factory.qualifiedName(current, dotToken, identifierName);
