@@ -1258,6 +1258,9 @@ var TypeScript;
             }
             return this;
         };
+        BinaryExpression.prototype.printLabel = function () {
+            return BinaryExpression.getTextForBinaryToken(this.nodeType);
+        };
         BinaryExpression.getTextForBinaryToken = function getTextForBinaryToken(nodeType) {
             switch(nodeType) {
                 case 25 /* CommaExpression */ :
@@ -9997,6 +10000,7 @@ var TypeScript;
             return changed;
         };
         BBUseDefInfo.prototype.initialize = function (useDefContext) {
+            var _this = this;
             var defSym = function (sym, context) {
                 if (context.isLocalSym(sym)) {
                     var index = context.getSymbolIndex(sym);
@@ -10335,6 +10339,7 @@ var TypeScript;
             }
         };
         ControlFlowContext.prototype.useDef = function (er, funcSym) {
+            var _this = this;
             var useDefContext = new UseDefContext();
             useDefContext.func = funcSym;
             var useDefInit = function (bb) {
@@ -41441,6 +41446,8 @@ var TypeScript;
                         return true;
                     }
                 }
+            } else {
+                return true;
             }
             return false;
         };
@@ -42910,12 +42917,12 @@ var TypeScript;
                     } else if (contextParams.length && contextParams[contextParams.length - 1].getIsVarArg()) {
                         contextParam = (contextParams[contextParams.length - 1].getType()).getElementType();
                     }
-                    this.resolveFunctionExpressionParameter(funcDeclAST.arguments.members[i], contextParam, enclosingDecl, context);
+                    this.resolveFunctionExpressionParameter(funcDeclAST.arguments.members[i], contextParam, functionDecl, context);
                 }
             }
             if (funcDeclAST.returnTypeAnnotation) {
                 var returnTypeRef = funcDeclAST.returnTypeAnnotation;
-                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
+                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, functionDecl, context);
                 signature.setReturnType(returnTypeSymbol);
             } else {
                 if (assigningFunctionSignature) {
@@ -45166,6 +45173,8 @@ var TypeScript;
                 case 63 /* GreaterThanOrEqualExpression */ :
                 case 62 /* GreaterThanExpression */ :
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
+                case 25 /* CommaExpression */ :
+                    return this.typeCheckCommaExpression(ast, typeCheckContext);
                 case 64 /* AddExpression */ :
                 case 39 /* AddAssignmentExpression */ :
                     return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
@@ -45500,7 +45509,7 @@ var TypeScript;
                 classPropertyList = classSymbol.getMembers();
                 var extendsList = classSymbol.getExtendedTypes();
                 for(var i = 0; i < extendsList.length; i++) {
-                    var extendedTypePublicProperties = extendsList[i].getAllMembers(TypeScript.PullElementKind.SomeValue, false);
+                    var extendedTypePublicProperties = extendsList[i].getAllMembers(TypeScript.PullElementKind.SomeValue, true);
                     classPropertyList = classPropertyList.concat(extendedTypePublicProperties);
                 }
                 typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(classPropertyList);
@@ -45944,11 +45953,28 @@ var TypeScript;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
+            var leftType = this.typeCheckAST(binex.operand1, typeCheckContext);
+            var rightType = this.typeCheckAST(binex.operand2, typeCheckContext);
+            var comparisonInfo = new TypeScript.TypeComparisonInfo();
+            if (!this.resolver.sourceIsAssignableToTarget(leftType, rightType, this.context, comparisonInfo) && !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(70 /* Operator__0__cannot_be_applied_to_types__1__and__2_ */ , [
+                    binex.printLabel(), 
+                    leftType.toString(), 
+                    rightType.toString()
+                ]), enclosingDecl);
+            }
+            return type;
+        };
+        PullTypeChecker.prototype.typeCheckLogicalAndOrExpression = function (ast, typeCheckContext) {
+            var binex = ast;
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
             this.typeCheckAST(binex.operand1, typeCheckContext);
             this.typeCheckAST(binex.operand2, typeCheckContext);
             return type;
         };
-        PullTypeChecker.prototype.typeCheckLogicalAndOrExpression = function (ast, typeCheckContext) {
+        PullTypeChecker.prototype.typeCheckCommaExpression = function (ast, typeCheckContext) {
             var binex = ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
