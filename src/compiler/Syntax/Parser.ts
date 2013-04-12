@@ -5002,31 +5002,6 @@ module TypeScript.Parser {
                 inErrorRecovery = true;
             }
 
-            // Now that we're done parsing, ensure the list is properly formed.
-            var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
-            var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
-
-            // If this list requires at least one argument, then report an error if we haven't 
-            // gotten any.
-            if (requiresAtLeastOneItem && items.length === 0) {
-                this.reportUnexpectedTokenDiagnostic(currentListType);
-            }
-            else {
-                // If the list ended with a trailing separator, and that's not allowed, then report
-                // an error for it.  Only do this if the list was successfully terminated.  We don't
-                // want to report multiple errors if we're missing the closing terminator and we 
-                // have a trailing separator.
-                if (listWasTerminated &&
-                    !allowTrailingSeparator &&
-                    items.length > 0 &&
-                    items.length % 2 === 0 &&
-                    items[items.length - 1] === this.previousToken()) {
-
-                    this.addDiagnostic(new SyntaxDiagnostic(this.fileName,
-                        this.previousTokenStart(), this.previousToken().width(), DiagnosticCode.Trailing_separator_not_allowed, null));
-                }
-            }
-            
             var result = Syntax.separatedList(items);
 
             // Can't return if it has more then 1 element.  In that case, the list will have been
@@ -5034,65 +5009,6 @@ module TypeScript.Parser {
             this.returnZeroOrOneLengthArray(items);
 
             return { skippedTokens: skippedTokens, list: result };
-        }
-
-        private allowsTrailingSeparator(currentListType: ListParsingState): boolean {
-            switch (currentListType) {
-                case ListParsingState.EnumDeclaration_EnumElements:
-                case ListParsingState.ObjectType_TypeMembers:
-                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                    return true;
-
-                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
-                case ListParsingState.HeritageClause_TypeNameList:
-                case ListParsingState.ArgumentList_AssignmentExpressions:
-                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ListParsingState.ParameterList_Parameters:
-                    // TODO: It would be great to allow trailing separators for parameters.
-                case ListParsingState.TypeArgumentList_Types:
-                case ListParsingState.TypeParameterList_TypeParameters:
-                    return false;
-
-                case ListParsingState.SourceUnit_ModuleElements:
-                case ListParsingState.ClassDeclaration_ClassElements:
-                case ListParsingState.ModuleDeclaration_ModuleElements:
-                case ListParsingState.SwitchStatement_SwitchClauses:
-                case ListParsingState.SwitchClause_Statements:
-                case ListParsingState.Block_Statements:
-                default:
-                    throw Errors.notYetImplemented();
-            }
-        }
-
-        private requiresAtLeastOneItem(currentListType: ListParsingState): boolean {
-            switch (currentListType) {
-                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ListParsingState.HeritageClause_TypeNameList:
-                case ListParsingState.TypeArgumentList_Types:
-                case ListParsingState.TypeParameterList_TypeParameters:
-                    return true;
-
-                case ListParsingState.ObjectType_TypeMembers:
-                case ListParsingState.EnumDeclaration_EnumElements:
-                case ListParsingState.ArgumentList_AssignmentExpressions:
-                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ListParsingState.ParameterList_Parameters:
-                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                    return false;
-
-                case ListParsingState.SourceUnit_ModuleElements:
-                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
-                case ListParsingState.ClassDeclaration_ClassElements:
-                case ListParsingState.ModuleDeclaration_ModuleElements:
-                case ListParsingState.SwitchStatement_SwitchClauses:
-                case ListParsingState.SwitchClause_Statements:
-                case ListParsingState.Block_Statements:
-                default:
-                    throw Errors.notYetImplemented();
-            }
         }
 
         private allowsAutomaticSemicolonInsertion(currentListType: ListParsingState): boolean {

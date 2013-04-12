@@ -59,7 +59,7 @@ module TypeScript {
 
             // No parser reported diagnostics.  Check for any additional grammar diagnostics.
             var diagnostics: SyntaxDiagnostic[] = [];
-            this.sourceUnit().accept(new GrammarCheckerWalker(this.fileName(), diagnostics, this.isDeclaration()));
+            this.sourceUnit().accept(new GrammarCheckerWalker(this.sourceUnit(), this.fileName(), diagnostics, this.isDeclaration()));
 
             return diagnostics;
         }
@@ -98,7 +98,8 @@ module TypeScript {
         private inAmbientDeclaration: boolean = false;
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
-        constructor(private fileName: string,
+        constructor(private sourceUnit: SourceUnitSyntax,
+                    private fileName: string,
                     private diagnostics: IDiagnostic[],
                     private isDeclaration: boolean) {
             super();
@@ -239,15 +240,99 @@ module TypeScript {
             return false;
         }
 
+        private checkForTrailingSeparator(parent: ISyntaxElement, list: ISeparatedSyntaxList): bool {
+            // If we have at least one child, and we have an even number of children, then that 
+            // means we have an illegal trailing separator.
+            if (list.childCount() === 0 || list.childCount() % 2 === 1) {
+                return false;
+            }
+
+            var currentElementFullStart = this.childFullStart(parent, list);
+
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var child = list.childAt(i);
+                if (i === n - 1) {
+                    this.pushDiagnostic1(currentElementFullStart, child, DiagnosticCode.Trailing_separator_not_allowed);
+                }
+
+                currentElementFullStart += child.fullWidth();
+            }
+
+            return true;
+        }
+
+        private checkForAtLeastOneElement(parent: ISyntaxElement, list: ISeparatedSyntaxList, expected: string): bool {
+            if (list.childCount() > 0) {
+                return false;
+            }
+
+            var listFullStart = this.childFullStart(parent, list);
+            var tokenAtStart = this.sourceUnit.findToken(listFullStart);
+
+            this.pushDiagnostic1(listFullStart, tokenAtStart.token(), DiagnosticCode.Unexpected_token__0_expected, [expected]);
+
+            return true;
+        }
+
         private visitParameterList(node: ParameterListSyntax): void {
             if (this.checkParameterListAcessibilityModifiers(node) ||
-                this.checkParameterListOrder(node)) {
+                this.checkParameterListOrder(node) ||
+                this.checkForTrailingSeparator(node, node.parameters)) {
 
                 this.skip(node);
                 return;
             }
 
             super.visitParameterList(node);
+        }
+
+        private visitHeritageClause(node: HeritageClauseSyntax): void {
+            if (this.checkForTrailingSeparator(node, node.typeNames) ||
+                this.checkForAtLeastOneElement(node, node.typeNames, Strings.type_name)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitHeritageClause(node);
+        }
+
+        private visitArgumentList(node: ArgumentListSyntax): void {
+            if (this.checkForTrailingSeparator(node, node.arguments)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitArgumentList(node);
+        }
+
+        private visitVariableDeclaration(node: VariableDeclarationSyntax): void {
+            if (this.checkForTrailingSeparator(node, node.variableDeclarators) ||
+                this.checkForAtLeastOneElement(node, node.variableDeclarators, Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitVariableDeclaration(node);
+        }
+
+        private visitTypeArgumentList(node: TypeArgumentListSyntax): void {
+            if (this.checkForTrailingSeparator(node, node.typeArguments) ||
+                this.checkForAtLeastOneElement(node, node.typeArguments, Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitTypeArgumentList(node);
+        }
+
+        private visitTypeParameterList(node: TypeParameterListSyntax): void {
+            if (this.checkForTrailingSeparator(node, node.typeParameters) ||
+                this.checkForAtLeastOneElement(node, node.typeParameters, Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitTypeParameterList(node);
         }
 
         private checkIndexSignatureParameter(node: IndexSignatureSyntax): boolean {

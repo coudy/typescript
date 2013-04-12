@@ -483,6 +483,16 @@ else {\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
         }
+
+        public static testGenericError1() {
+            var source = "class Dictionary<> { }\r\nvar y;\r\n";
+
+            var oldText = TextFactory.createText(source);
+            var index = source.length;
+            var newTextAndChange = withInsert(oldText, index, "var x;");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
         
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");

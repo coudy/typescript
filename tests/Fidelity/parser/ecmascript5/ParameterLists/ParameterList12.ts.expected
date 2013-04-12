@@ -6,23 +6,19 @@
     },
     "diagnostics": [
         {
-            "_position": 14,
+            "_position": 12,
             "_width": 1,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                ")"
-            ]
+            "_diagnosticCode": "Trailing_separator_not_allowed"
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 18,
+        "fullWidth": 19,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "FunctionDeclaration",
-                "fullWidth": 18,
-                "isIncrementallyUnusable": true,
+                "fullWidth": 19,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -42,18 +38,16 @@
                 "identifier": {
                     "kind": "IdentifierName",
                     "width": 1,
-                    "text": "f",
-                    "value": "f",
-                    "valueText": "f"
+                    "text": "F",
+                    "value": "F",
+                    "valueText": "F"
                 },
                 "callSignature": {
                     "kind": "CallSignature",
-                    "fullWidth": 4,
-                    "isIncrementallyUnusable": true,
+                    "fullWidth": 5,
                     "parameterList": {
                         "kind": "ParameterList",
-                        "fullWidth": 4,
-                        "isIncrementallyUnusable": true,
+                        "fullWidth": 5,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -76,23 +70,25 @@
                             {
                                 "kind": "CommaToken",
                                 "width": 1,
-                                "fullWidth": 2,
                                 "text": ",",
                                 "value": ",",
-                                "valueText": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
+                                "valueText": ","
                             }
                         ],
                         "closeParenToken": {
                             "kind": "CloseParenToken",
-                            "width": 0,
-                            "text": ""
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     }
                 },
@@ -135,8 +131,8 @@
     "lineMap": {
         "lineStarts": [
             0,
-            17
+            18
         ],
-        "length": 18
+        "length": 19
     }
 }

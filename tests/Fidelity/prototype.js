@@ -20035,73 +20035,12 @@ var TypeScript;
                     items.push(this.eatToken(separatorKind));
                     inErrorRecovery = true;
                 }
-                var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
-                var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
-                if (requiresAtLeastOneItem && items.length === 0) {
-                    this.reportUnexpectedTokenDiagnostic(currentListType);
-                } else {
-                    if (listWasTerminated && !allowTrailingSeparator && items.length > 0 && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
-                        this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.fileName, this.previousTokenStart(), this.previousToken().width(), 15 /* Trailing_separator_not_allowed */ , null));
-                    }
-                }
                 var result = TypeScript.Syntax.separatedList(items);
                 this.returnZeroOrOneLengthArray(items);
                 return {
                     skippedTokens: skippedTokens,
                     list: result
                 };
-            };
-            ParserImpl.prototype.allowsTrailingSeparator = function (currentListType) {
-                switch(currentListType) {
-                    case 256 /* EnumDeclaration_EnumElements */ :
-                    case 512 /* ObjectType_TypeMembers */ :
-                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                        return true;
-                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
-                    case 2048 /* HeritageClause_TypeNameList */ :
-                    case 16384 /* ArgumentList_AssignmentExpressions */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 131072 /* ParameterList_Parameters */ :
-                    case 262144 /* TypeArgumentList_Types */ :
-                    case 524288 /* TypeParameterList_TypeParameters */ :
-                        return false;
-                    case 1 /* SourceUnit_ModuleElements */ :
-                    case 2 /* ClassDeclaration_ClassElements */ :
-                    case 4 /* ModuleDeclaration_ModuleElements */ :
-                    case 8 /* SwitchStatement_SwitchClauses */ :
-                    case 16 /* SwitchClause_Statements */ :
-                    case 32 /* Block_Statements */ :
-                    default:
-                        throw TypeScript.Errors.notYetImplemented();
-                }
-            };
-            ParserImpl.prototype.requiresAtLeastOneItem = function (currentListType) {
-                switch(currentListType) {
-                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 2048 /* HeritageClause_TypeNameList */ :
-                    case 262144 /* TypeArgumentList_Types */ :
-                    case 524288 /* TypeParameterList_TypeParameters */ :
-                        return true;
-                    case 512 /* ObjectType_TypeMembers */ :
-                    case 256 /* EnumDeclaration_EnumElements */ :
-                    case 16384 /* ArgumentList_AssignmentExpressions */ :
-                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 131072 /* ParameterList_Parameters */ :
-                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                        return false;
-                    case 1 /* SourceUnit_ModuleElements */ :
-                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
-                    case 2 /* ClassDeclaration_ClassElements */ :
-                    case 4 /* ModuleDeclaration_ModuleElements */ :
-                    case 8 /* SwitchStatement_SwitchClauses */ :
-                    case 16 /* SwitchClause_Statements */ :
-                    case 32 /* Block_Statements */ :
-                    default:
-                        throw TypeScript.Errors.notYetImplemented();
-                }
             };
             ParserImpl.prototype.allowsAutomaticSemicolonInsertion = function (currentListType) {
                 switch(currentListType) {
@@ -20506,7 +20445,7 @@ var TypeScript;
                 return this._parserDiagnostics;
             }
             var diagnostics = [];
-            this.sourceUnit().accept(new GrammarCheckerWalker(this.fileName(), diagnostics, this.isDeclaration()));
+            this.sourceUnit().accept(new GrammarCheckerWalker(this.sourceUnit(), this.fileName(), diagnostics, this.isDeclaration()));
             return diagnostics;
         };
         SyntaxTree.prototype.diagnostics = function () {
@@ -20535,8 +20474,9 @@ var TypeScript;
     TypeScript.SyntaxTree = SyntaxTree;    
     var GrammarCheckerWalker = (function (_super) {
         __extends(GrammarCheckerWalker, _super);
-        function GrammarCheckerWalker(fileName, diagnostics, isDeclaration) {
+        function GrammarCheckerWalker(sourceUnit, fileName, diagnostics, isDeclaration) {
             _super.call(this);
+            this.sourceUnit = sourceUnit;
             this.fileName = fileName;
             this.diagnostics = diagnostics;
             this.isDeclaration = isDeclaration;
@@ -20632,12 +20572,72 @@ var TypeScript;
             }
             return false;
         };
+        GrammarCheckerWalker.prototype.checkForTrailingSeparator = function (parent, list) {
+            if (list.childCount() === 0 || list.childCount() % 2 === 1) {
+                return false;
+            }
+            var currentElementFullStart = this.childFullStart(parent, list);
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                var child = list.childAt(i);
+                if (i === n - 1) {
+                    this.pushDiagnostic1(currentElementFullStart, child, 15 /* Trailing_separator_not_allowed */ );
+                }
+                currentElementFullStart += child.fullWidth();
+            }
+            return true;
+        };
+        GrammarCheckerWalker.prototype.checkForAtLeastOneElement = function (parent, list, expected) {
+            if (list.childCount() > 0) {
+                return false;
+            }
+            var listFullStart = this.childFullStart(parent, list);
+            var tokenAtStart = this.sourceUnit.findToken(listFullStart);
+            this.pushDiagnostic1(listFullStart, tokenAtStart.token(), 14 /* Unexpected_token__0_expected */ , [
+                expected
+            ]);
+            return true;
+        };
         GrammarCheckerWalker.prototype.visitParameterList = function (node) {
-            if (this.checkParameterListAcessibilityModifiers(node) || this.checkParameterListOrder(node)) {
+            if (this.checkParameterListAcessibilityModifiers(node) || this.checkParameterListOrder(node) || this.checkForTrailingSeparator(node, node.parameters)) {
                 this.skip(node);
                 return;
             }
             _super.prototype.visitParameterList.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitHeritageClause = function (node) {
+            if (this.checkForTrailingSeparator(node, node.typeNames) || this.checkForAtLeastOneElement(node, node.typeNames, TypeScript.Strings.type_name)) {
+                this.skip(node);
+                return;
+            }
+            _super.prototype.visitHeritageClause.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitArgumentList = function (node) {
+            if (this.checkForTrailingSeparator(node, node.arguments)) {
+                this.skip(node);
+                return;
+            }
+            _super.prototype.visitArgumentList.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitVariableDeclaration = function (node) {
+            if (this.checkForTrailingSeparator(node, node.variableDeclarators) || this.checkForAtLeastOneElement(node, node.variableDeclarators, TypeScript.Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+            _super.prototype.visitVariableDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitTypeArgumentList = function (node) {
+            if (this.checkForTrailingSeparator(node, node.typeArguments) || this.checkForAtLeastOneElement(node, node.typeArguments, TypeScript.Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+            _super.prototype.visitTypeArgumentList.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitTypeParameterList = function (node) {
+            if (this.checkForTrailingSeparator(node, node.typeParameters) || this.checkForAtLeastOneElement(node, node.typeParameters, TypeScript.Strings.identifier)) {
+                this.skip(node);
+                return;
+            }
+            _super.prototype.visitTypeParameterList.call(this, node);
         };
         GrammarCheckerWalker.prototype.checkIndexSignatureParameter = function (node) {
             var parameterFullStart = this.childFullStart(node, node.parameter);
@@ -56529,6 +56529,13 @@ else {\
             var newTextAndChange = withDelete(oldText, index, 1);
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
         };
+        IncrementalParserTests.testGenericError1 = function testGenericError1() {
+            var source = "class Dictionary<> { }\r\nvar y;\r\n";
+            var oldText = TypeScript.TextFactory.createText(source);
+            var index = source.length;
+            var newTextAndChange = withInsert(oldText, index, "var x;");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
         return IncrementalParserTests;
     })();
     TypeScript.IncrementalParserTests = IncrementalParserTests;    
@@ -57118,7 +57125,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
