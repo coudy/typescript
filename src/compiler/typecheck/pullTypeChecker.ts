@@ -67,7 +67,7 @@ module TypeScript {
 
         public resolver: PullTypeResolver = null;
 
-        public context: PullTypeResolutionContext = new PullTypeResolutionContext();
+        private context: PullTypeResolutionContext = new PullTypeResolutionContext();
 
         constructor(private compilationSettings: CompilationSettings,
                     public semanticInfoChain: SemanticInfoChain) {
@@ -77,21 +77,21 @@ module TypeScript {
             this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
         }
 
-        public getScriptDecl(fileName: string): PullDecl {
+        private getScriptDecl(fileName: string): PullDecl {
             return this.semanticInfoChain.getUnit(fileName).getTopLevelDecls()[0];
         }
 
-        public checkForResolutionError(typeSymbol: PullTypeSymbol, decl: PullDecl): void {
+        private checkForResolutionError(typeSymbol: PullTypeSymbol, decl: PullDecl): void {
             if (typeSymbol && typeSymbol.isError()) {
                 decl.addDiagnostic((<PullErrorTypeSymbol>typeSymbol).getDiagnostic());
             }
         }
 
-        public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl) {
+        private postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl) {
             enclosingDecl.addDiagnostic(new PullDiagnostic(offset, length, fileName, message));
         }
 
-        public validateVariableDeclarationGroups(enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
+        private validateVariableDeclarationGroups(enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
             var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
             var decl: PullDecl;
             var firstSymbol: PullSymbol;
@@ -123,7 +123,7 @@ module TypeScript {
 
         // declarations
 
-        public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
 
             if (!ast) {
                 return null;
@@ -381,7 +381,7 @@ module TypeScript {
         }
 
         // lists
-        public typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
+        private typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
             if (!list) {
                 return null;
             }
@@ -394,7 +394,7 @@ module TypeScript {
         // variable and argument declarations
         // validate:
         //  - lhs and rhs types agree (if lhs has no type annotation)
-        public typeCheckBoundDecl(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckBoundDecl(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var boundDeclAST = <BoundDecl>ast;
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -488,7 +488,7 @@ module TypeScript {
         //  - getters return a value
         //  - setters return no value
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
-        public typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
                 return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inTypedAssignment);
             }
@@ -547,7 +547,7 @@ module TypeScript {
             return functionSymbol ? functionSymbol.getType() : null;
         }
 
-        public typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             var funcDeclAST = <FunctionDeclaration>ast;
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -609,7 +609,7 @@ module TypeScript {
             return null;
         }
 
-        public typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
+        private typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -666,7 +666,7 @@ module TypeScript {
             return functionSymbol ? functionSymbol.getType() : null;
         }
 
-        public typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -766,7 +766,7 @@ module TypeScript {
         //  - type of overridden member is subtype of original
         //  - method does not overrided field, or vice-versa
         //  - body members
-        public typeCheckClass(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckClass(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var classAST = <ClassDeclaration>ast;
             // resolving the class also resolves its members...
             var classSymbol = <PullClassTypeSymbol>this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
@@ -791,7 +791,7 @@ module TypeScript {
         //  - properties of extended interfaces do not conflict
         //  - bases are interfaces or classes
         //  - declarations agree in generic parameters 
-        public typeCheckInterface(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckInterface(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var interfaceAST = <InterfaceDeclaration>ast;
             // resolving the interface also resolves its members...
             var interfaceType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
@@ -811,7 +811,7 @@ module TypeScript {
         // Modules
         // validate:
         //  - No type parameters?
-        public typeCheckModule(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckModule(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             // we resolve here because resolving a module *does not* resolve its MemberScopeContext
             // PULLREVIEW: Perhaps it should?
@@ -854,7 +854,7 @@ module TypeScript {
         // validate:
         //  - lhs and rhs types agree
         //  - lhs is a valid value type
-        public typeCheckAssignment(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckAssignment(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             this.typeCheckAST(binaryExpression.operand1, typeCheckContext, false);
@@ -887,7 +887,7 @@ module TypeScript {
         // Generic Type references
         // validate:
         //
-        public typeCheckGenericType(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckGenericType(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // validate:
             //  - mutually recursive type parameters and constraints
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -900,7 +900,7 @@ module TypeScript {
         // Object literals
         // validate:
         //
-        public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             var objectLitAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -954,7 +954,7 @@ module TypeScript {
         // Array literals
         // validate:
         //  - incompatible types in expression
-        public typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             var arrayLiteralAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1122,7 +1122,7 @@ module TypeScript {
         // 'This' expressions 
         // validate:
         //
-        public typeCheckThisExpression(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckThisExpression(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             if (enclosingDecl && enclosingDecl.getKind() === PullElementKind.Class) {
@@ -1147,7 +1147,7 @@ module TypeScript {
         // 'Super' expressions 
         // validate:
         //
-        public typeCheckSuper(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckSuper(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
             var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();
@@ -1179,7 +1179,7 @@ module TypeScript {
         // Call expressions 
         // validate:
         //
-        public typeCheckCallExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckCallExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // "use of new expression as a statement"
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var inSuperConstructorCall = (callExpression.target.nodeType === NodeType.SuperExpression);
@@ -1238,7 +1238,7 @@ module TypeScript {
         // 'New' expressions 
         // validate:
         //
-        public typeCheckObjectCreationExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckObjectCreationExpression(callExpression: CallExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var callResolutionData = new PullAdditionalCallResolutionData();
@@ -1273,7 +1273,7 @@ module TypeScript {
         // Type assertion expressions 
         // validate:
         //  - the type assertion and the expression it's applied to are assignment compatible
-        public typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var returnType = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
@@ -1303,7 +1303,7 @@ module TypeScript {
         // Logical operations
         // validate:
         //  - lhs and rhs are compatible
-        public typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             
@@ -1320,7 +1320,7 @@ module TypeScript {
         // Logical 'And' and 'Or' expressions 
         // validate:
         // - lhs and rhs are compatible
-        public typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1334,7 +1334,7 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckBinaryAdditionOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckBinaryAdditionOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
 
@@ -1395,7 +1395,7 @@ module TypeScript {
         // Binary arithmetic expressions 
         // validate:
         //  - lhs and rhs are compatible
-        public typeCheckBinaryArithmeticOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckBinaryArithmeticOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
 
@@ -1444,7 +1444,7 @@ module TypeScript {
         // Unary arithmetic expressions 
         // validate:
         //  -
-        public typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
+        private typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
             var operandType = this.typeCheckAST(unaryExpression.operand, typeCheckContext, inTypedAssignment);
 
             switch (unaryExpression.nodeType) {
@@ -1467,7 +1467,7 @@ module TypeScript {
         // Index expression 
         // validate:
         //  -
-        public typeCheckIndex(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckIndex(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return type;
@@ -1476,7 +1476,7 @@ module TypeScript {
         // 'typeof' expression 
         // validate:
         //  -
-        public typeCheckTypeOf(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckTypeOf(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
 
             return this.semanticInfoChain.stringTypeSymbol;
@@ -1485,7 +1485,7 @@ module TypeScript {
         // Type reference expression
         // validate:
         //  -
-        public typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return type;
@@ -1494,7 +1494,7 @@ module TypeScript {
         // Conditional expressions
         // validate:
         //  -
-        public typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             var condAST = <ConditionalExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -1511,13 +1511,13 @@ module TypeScript {
         }
 
         // new expression types
-        public typeCheckThrowExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckThrowExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var type = this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
@@ -1527,7 +1527,7 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
@@ -1537,7 +1537,7 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckRegExpExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckRegExpExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var type = this.resolver.resolveStatementOrExpression(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return type;
@@ -1545,7 +1545,7 @@ module TypeScript {
 
         // statements
 
-        public typeCheckForStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckForStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var forStatementAST = <ForStatement>ast;
 
             this.typeCheckAST(forStatementAST.init, typeCheckContext);
@@ -1555,7 +1555,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckForInStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckForInStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             var forInStatement = <ForInStatement>ast;
 
@@ -1588,7 +1588,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckInExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckInExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
 
             var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
@@ -1609,7 +1609,7 @@ module TypeScript {
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
-        public typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
 
             var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
@@ -1633,7 +1633,7 @@ module TypeScript {
             return this.typeCheckAST(ast.expression, typeCheckContext);
         }
 
-        public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var whileStatementAST = <WhileStatement>ast;
 
             this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
@@ -1642,14 +1642,14 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckDoStatement(doStatement: DoStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckDoStatement(doStatement: DoStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(doStatement.cond, typeCheckContext);
             this.typeCheckAST(doStatement.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             var ifStatementAST = <IfStatement>ast;
 
@@ -1660,25 +1660,25 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckBlock(block: Block, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckBlock(block: Block, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(block.statements, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckVariableDeclaration(variableDeclaration: VariableDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckVariableDeclaration(variableDeclaration: VariableDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(variableDeclaration.declarators, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckVariableStatement(variableStatement: VariableStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckVariableStatement(variableStatement: VariableStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(variableStatement.declaration, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // PULLTODO: "With" statements
             var withAST = <WithStatement>ast;
 
@@ -1687,7 +1687,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckTryStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckTryStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var tryStatementAST = <TryStatement>ast;
 
             this.typeCheckAST(tryStatementAST.tryBody, typeCheckContext);
@@ -1697,7 +1697,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckCatchClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckCatchClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var catchAST = <CatchClause>ast;
 
             var catchDecl = this.resolver.getDeclForAST(catchAST);
@@ -1709,7 +1709,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckReturnStatement(returnAST: ReturnStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckReturnStatement(returnAST: ReturnStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             typeCheckContext.setEnclosingDeclHasReturn();
             var returnExpr = returnAST.returnExpression;
             var returnType = this.typeCheckAST(returnExpr, typeCheckContext);
@@ -1767,14 +1767,14 @@ module TypeScript {
             return returnType;
         }
 
-        public typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var type = this.resolver.resolveNameExpression(<Identifier>ast, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }
 
-        public typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -1796,7 +1796,7 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var switchAST = <SwitchStatement>ast;
 
             this.typeCheckAST(switchAST.val, typeCheckContext);
@@ -1810,7 +1810,7 @@ module TypeScript {
             return this.typeCheckAST(ast.expression, typeCheckContext, inTypedAssignment);
         }
 
-        public typeCheckCaseClause(caseClause: CaseClause, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckCaseClause(caseClause: CaseClause, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(caseClause.expr, typeCheckContext);
             this.typeCheckAST(caseClause.body, typeCheckContext);
 
