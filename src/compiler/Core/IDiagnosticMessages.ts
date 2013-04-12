@@ -18,7 +18,7 @@ module TypeScript {
         Identifier_expected: DiagnosticInfo;
         _0_keyword_expected: DiagnosticInfo;
         _0_expected: DiagnosticInfo;
-        Identifier_expected__0_is_a_keyword: DiagnosticInfo;
+        Identifier_expected__0__is_a_keyword: DiagnosticInfo;
         Automatic_semicolon_insertion_not_allowed: DiagnosticInfo;
         Unexpected_token__0_expected: DiagnosticInfo;
         Trailing_separator_not_allowed: DiagnosticInfo;

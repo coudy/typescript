@@ -74,7 +74,7 @@ module TypeScript {
             code: 1005
         },
 
-        Identifier_expected__0_is_a_keyword: {
+        Identifier_expected__0__is_a_keyword: {
             category: DiagnosticCategory.Error,
             message: "Identifier expected; '{0}' is a keyword.",
             code: 1006

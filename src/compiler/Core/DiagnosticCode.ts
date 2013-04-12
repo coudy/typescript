@@ -18,7 +18,7 @@ module TypeScript {
         Identifier_expected,
         _0_keyword_expected,
         _0_expected,
-        Identifier_expected__0_is_a_keyword,
+        Identifier_expected__0__is_a_keyword,
         Automatic_semicolon_insertion_not_allowed,
         Unexpected_token__0_expected,
         Trailing_separator_not_allowed,

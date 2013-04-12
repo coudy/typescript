@@ -1397,7 +1397,7 @@ module TypeScript.Parser {
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0__is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
@@ -1839,10 +1839,46 @@ module TypeScript.Parser {
             while (shouldContinue && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                shouldContinue = SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
-                var identifier = this.eatIdentifierNameToken();
+                var currentToken = this.currentToken();
+                var identifierName: ISyntaxToken;
 
-                current = this.factory.qualifiedName(current, dotToken, identifier);
+                if (currentToken.tokenKind === SyntaxKind.IdentifierName) {
+                    identifierName = this.eatIdentifierToken();
+                }
+                else if (SyntaxFacts.isAnyKeyword(currentToken.tokenKind)) {
+                    // Technically a keyword is valid here as all keywords are identifier names.
+                    // However, often we'll encounter this in error situations when the keyword
+                    // is actually starting another valid construct.
+
+                    // So, we check for the following specific case:
+
+                    //      name.
+                    //      keyword identifierNameOrKeyword
+
+                    // Note: the newlines are important here.  For example, if that above code 
+                    // were rewritten into:
+
+                    //      name.keyword
+                    //      identifierNameOrKeyword
+
+                    // Then we would consider it valid.  That's because ASI would take effect and
+                    // the code would be implicitly: "name.keyword; identifierNameOrKeyword".  
+                    // In the first case though, ASI will not take effect because there is not a
+                    // line terminator after the dot.
+                    if (this.previousToken().hasTrailingNewLine() &&
+                        !currentToken.hasTrailingNewLine() &&
+                        SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(1))) {
+
+                        identifierName = this.createMissingToken(SyntaxKind.IdentifierName, currentToken);
+                    }
+                    else {
+                        identifierName = this.eatIdentifierNameToken();
+                    }
+                }
+
+                current = this.factory.qualifiedName(current, dotToken, identifierName);
+
+                shouldContinue = identifierName.fullWidth() > 0;
             }
 
             return current;
