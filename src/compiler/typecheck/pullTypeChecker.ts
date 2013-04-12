@@ -258,7 +258,7 @@ module TypeScript {
                     return this.typeCheckVoidExpression(<UnaryExpression>ast, typeCheckContext);
 
                 case NodeType.ThrowStatement:
-                    return this.typeCheckThrowExpression(<UnaryExpression>ast, typeCheckContext);
+                    return this.typeCheckThrowStatement(<ThrowStatement>ast, typeCheckContext);
 
                 case NodeType.DeleteExpression:
                     return this.typeCheckDeleteExpression(<UnaryExpression>ast, typeCheckContext);
@@ -1511,10 +1511,10 @@ module TypeScript {
         }
 
         // new expression types
-        private typeCheckThrowExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.typeCheckAST(unaryExpression.operand, typeCheckContext);
+        private typeCheckThrowStatement(throwStatement: ThrowStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(throwStatement.expression, typeCheckContext);
 
-            var type = this.resolver.resolveAST(unaryExpression.operand, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var type = this.resolver.resolveAST(throwStatement.expression, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return this.semanticInfoChain.voidTypeSymbol;
         }

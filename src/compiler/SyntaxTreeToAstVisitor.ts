@@ -2321,11 +2321,11 @@ module TypeScript {
             return result;
         }
 
-        private visitThrowStatement(node: ThrowStatementSyntax): UnaryExpression {
+        private visitThrowStatement(node: ThrowStatementSyntax): ThrowStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: UnaryExpression = this.getAST(node);
+            var result: ThrowStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2334,7 +2334,7 @@ module TypeScript {
                 var expression = node.expression.accept(this);
                 this.movePast(node.semicolonToken);
 
-                result = new UnaryExpression(NodeType.ThrowStatement, expression);
+                result = new ThrowStatement(expression);
             }
 
             this.setAST(node, result);

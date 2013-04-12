@@ -548,11 +548,6 @@ module TypeScript {
                     emitter.writeToOutput("--");
                     emitter.emitJavascript(this.operand, false);
                     break;
-                case NodeType.ThrowStatement:
-                    emitter.writeToOutput("throw ");
-                    emitter.emitJavascript(this.operand, false);
-                    emitter.writeToOutput(";");
-                    break;
                 case NodeType.TypeOfExpression:
                     emitter.writeToOutput("typeof ");
                     emitter.emitJavascript(this.operand, false);
@@ -1407,6 +1402,27 @@ module TypeScript {
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.voidType;
             return this;
+        }
+    }
+
+    export class ThrowStatement extends Statement {
+        constructor(public expression: Expression) {
+            super(NodeType.ThrowStatement);
+        }
+
+        public emit(emitter: Emitter, startLine: boolean) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.writeToOutput("throw ");
+            emitter.emitJavascript(this.expression, false);
+            emitter.writeToOutput(";");
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+            structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 

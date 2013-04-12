@@ -173,7 +173,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ReturnStatement] = ChildrenWalkers.walkReturnStatementChildren;
             this.childrenWalkers[NodeType.BreakStatement] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.ContinueStatement] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.ThrowStatement] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.ThrowStatement] = ChildrenWalkers.walkThrowStatementChildren;
             this.childrenWalkers[NodeType.ForStatement] = ChildrenWalkers.walkForStatementChildren;
             this.childrenWalkers[NodeType.ForInStatement] = ChildrenWalkers.walkForInStatementChildren;
             this.childrenWalkers[NodeType.IfStatement] = ChildrenWalkers.walkIfStatementChildren;
@@ -226,6 +226,12 @@ module TypeScript {
 
             for (var i = 0; i < len; i++) {
                 preAst.members[i] = walker.walk(preAst.members[i], preAst);
+            }
+        }
+
+        export function walkThrowStatementChildren(preAst: ThrowStatement, parent: AST, walker: IAstWalker): void {
+            if (preAst.expression) {
+                preAst.expression = walker.walk(preAst.expression, preAst);
             }
         }
 
