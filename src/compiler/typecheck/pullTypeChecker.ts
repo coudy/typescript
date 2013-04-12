@@ -927,19 +927,14 @@ module TypeScript {
             }
         }
 
-        private checkIsValidAssignmentTarget(ast: AST, expressionSymbol: PullSymbol, isEnumInitializer: boolean, typeCheckContext: PullTypeCheckContext): void {
+        private isValidLHS(ast: AST, expressionSymbol: PullSymbol, isEnumInitializer: boolean): boolean {
             var expressionTypeSymbol = expressionSymbol.getType();
 
-            var isValidLHS = isEnumInitializer ||
-                ast.nodeType == NodeType.ElementAccessExpression ||
+            return isEnumInitializer ||
+               ast.nodeType == NodeType.ElementAccessExpression ||
                 this.resolver.isAnyOrEquivalent(expressionTypeSymbol) ||
                 ((!expressionSymbol.isType() || expressionTypeSymbol.isArray()) &&
                 (expressionSymbol.getKind() & PullElementKind.SomeLHS) != 0);
-
-            if (!isValidLHS) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), typeCheckContext.getEnclosingDecl());
-            }
         }
 
         // expressions
@@ -963,7 +958,10 @@ module TypeScript {
             this.context.popContextualType();
 
             // Check if LHS is a valid target
-            this.checkIsValidAssignmentTarget(binaryExpression.operand1, leftExpr, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
+            if (!this.isValidLHS(binaryExpression.operand1, leftExpr, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer))) {
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
+            }
 
             this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
             return leftType;
@@ -1492,7 +1490,10 @@ module TypeScript {
                 if (binaryExpression.nodeType === NodeType.AddAssignmentExpression) {
                     // Check if LHS is a valid target
                     var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-                    this.checkIsValidAssignmentTarget(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
+                    if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer))) {
+                        this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                        getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
+                    }
 
                     this.checkAssignability(binaryExpression.operand1, exprType, lhsType, typeCheckContext);
                 }
@@ -1545,7 +1546,10 @@ module TypeScript {
                     case NodeType.ExclusiveOrAssignmentExpression:
                         // Check if LHS is a valid target
                         var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-                        this.checkIsValidAssignmentTarget(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
+                        if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer))) {
+                            this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                            getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
+                        }
 
                         this.checkAssignability(binaryExpression.operand1, rhsType, lhsType, typeCheckContext);
                         break;
@@ -1578,6 +1582,21 @@ module TypeScript {
             if (!operandIsFit) {
                 this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
+            }
+
+            switch (unaryExpression.nodeType) {
+                case NodeType.PostIncrementExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                case NodeType.PreDecrementExpression:
+                    // Check that operand is classified as a reference 
+                    var expression = this.resolver.resolveAST(unaryExpression.operand, false, typeCheckContext.getEnclosingDecl(), this.context);
+                    if (!this.isValidLHS(unaryExpression.operand, expression, false)) {
+                        this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName,
+                            getDiagnosticMessage(DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer, null), typeCheckContext.getEnclosingDecl());
+                    }
+
+                    break;
             }
 
             return operandType;

@@ -210,6 +210,7 @@ module TypeScript {
         All_symbols_within_a__with__block_will_be_resolved_to__any__,
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module,
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2,
+        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

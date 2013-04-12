@@ -213,6 +213,7 @@ module TypeScript {
         Constructors_cannot_have_a_return_type_of__void_: DiagnosticInfo;
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: DiagnosticInfo;
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
+        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: DiagnosticInfo;
 
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;

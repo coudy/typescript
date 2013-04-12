@@ -1077,8 +1077,11 @@ module TypeScript {
             message: "Class {0} declares interface {1} but does not implement it:{NL}{2}",
             code: 2138
         },
-
-
+        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: {
+            category: DiagnosticCategory.Error,
+            message: "The operand of an increment or decrement operator must be a variable, property or indexer.",
+            code: 2139
+        },
 
 
 
