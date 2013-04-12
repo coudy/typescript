@@ -704,6 +704,10 @@ module TypeScript {
             return this;
         }
 
+        public printLabel(): string {
+            return BinaryExpression.getTextForBinaryToken(this.nodeType);
+        }
+
         private static getTextForBinaryToken(nodeType: NodeType): string {
             switch (nodeType) {
                 case NodeType.CommaExpression: return ",";

@@ -1387,9 +1387,16 @@ module TypeScript {
 
             this.checkForResolutionError(type, enclosingDecl);
 
-            this.typeCheckAST(binex.operand1, typeCheckContext);
-            this.typeCheckAST(binex.operand2, typeCheckContext);
+            var leftType = this.typeCheckAST(binex.operand1, typeCheckContext);
+            var rightType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
+            var comparisonInfo = new TypeComparisonInfo();
+            if (!this.resolver.sourceIsAssignableToTarget(leftType, rightType, this.context, comparisonInfo) &&
+                !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
+
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_, [binex.printLabel(), leftType.toString(), rightType.toString()]), enclosingDecl);
+            }
             return type;
         }
 
