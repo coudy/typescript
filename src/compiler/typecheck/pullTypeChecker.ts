@@ -255,41 +255,41 @@ module TypeScript {
                     return this.typeCheckConditionalExpression(ast, typeCheckContext);
 
                 case NodeType.VoidExpression:
-                    return this.typeCheckVoidExpression(ast, typeCheckContext);
+                    return this.typeCheckVoidExpression(<UnaryExpression>ast, typeCheckContext);
 
                 case NodeType.ThrowStatement:
-                    return this.typeCheckThrowExpression(ast, typeCheckContext);
+                    return this.typeCheckThrowExpression(<UnaryExpression>ast, typeCheckContext);
 
                 case NodeType.DeleteExpression:
-                    return this.typeCheckDeleteExpression(ast, typeCheckContext);
+                    return this.typeCheckDeleteExpression(<UnaryExpression>ast, typeCheckContext);
 
                 case NodeType.RegularExpressionLiteral:
                     return this.typeCheckRegExpExpression(ast, typeCheckContext);
 
                 case NodeType.InExpression:
-                    return this.typeCheckInExpression(ast, typeCheckContext);
+                    return this.typeCheckInExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.InstanceOfExpression:
-                    return this.typeCheckInstanceOfExpression(ast, typeCheckContext);
+                    return this.typeCheckInstanceOfExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.ParenthesizedExpression:
                     return this.typeCheckParenthesizedExpression(<ParenthesizedExpression>ast, typeCheckContext);
 
                 // statements
                 case NodeType.ForStatement:
-                    return this.typeCheckForStatement(ast, typeCheckContext);
+                    return this.typeCheckForStatement(<ForStatement>ast, typeCheckContext);
 
                 case NodeType.ForInStatement:
                     return this.typeCheckForInStatement(ast, typeCheckContext);
 
                 case NodeType.WhileStatement:
-                    return this.typeCheckWhileStatement(ast, typeCheckContext);
+                    return this.typeCheckWhileStatement(<WhileStatement>ast, typeCheckContext);
 
                 case NodeType.DoStatement:
                     return this.typeCheckDoStatement(<DoStatement>ast, typeCheckContext);
 
                 case NodeType.IfStatement:
-                    return this.typeCheckIfStatement(ast, typeCheckContext);
+                    return this.typeCheckIfStatement(<IfStatement>ast, typeCheckContext);
 
                 case NodeType.Block:
                     return this.typeCheckBlock(<Block>ast, typeCheckContext);
@@ -301,13 +301,13 @@ module TypeScript {
                     return this.typeCheckVariableStatement(<VariableStatement>ast, typeCheckContext);
 
                 case NodeType.WithStatement:
-                    return this.typeCheckWithStatement(ast, typeCheckContext);
+                    return this.typeCheckWithStatement(<WithStatement>ast, typeCheckContext);
 
                 case NodeType.TryStatement:
-                    return this.typeCheckTryStatement(ast, typeCheckContext);
+                    return this.typeCheckTryStatement(<TryStatement>ast, typeCheckContext);
 
                 case NodeType.CatchClause:
-                    return this.typeCheckCatchClause(ast, typeCheckContext);
+                    return this.typeCheckCatchClause(<CatchClause>ast, typeCheckContext);
 
                 case NodeType.ReturnStatement:
                     return this.typeCheckReturnStatement(<ReturnStatement>ast, typeCheckContext);
@@ -319,7 +319,7 @@ module TypeScript {
                     return this.typeCheckMemberAccessExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.SwitchStatement:
-                    return this.typeCheckSwitchStatement(ast, typeCheckContext);
+                    return this.typeCheckSwitchStatement(<SwitchStatement>ast, typeCheckContext);
 
                 case NodeType.ExpressionStatement:
                     return this.typeCheckExpressionStatement(<ExpressionStatement>ast, typeCheckContext, inTypedAssignment);
@@ -1511,28 +1511,30 @@ module TypeScript {
         }
 
         // new expression types
-        private typeCheckThrowExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var type = this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        private typeCheckThrowExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(unaryExpression.operand, typeCheckContext);
+
+            var type = this.resolver.resolveAST(unaryExpression.operand, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var unex = <UnaryExpression>ast;
+        private typeCheckDeleteExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(unaryExpression.operand, typeCheckContext);
+
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveAST(unaryExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
-            this.typeCheckAST(unex.operand, typeCheckContext);
 
             return type;
         }
 
-        private typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var unex = <UnaryExpression>ast;
+        private typeCheckVoidExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(unaryExpression.operand, typeCheckContext);
+
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveAST(unaryExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
-            this.typeCheckAST(unex.operand, typeCheckContext);
 
             return type;
         }
@@ -1545,12 +1547,10 @@ module TypeScript {
 
         // statements
 
-        private typeCheckForStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var forStatementAST = <ForStatement>ast;
-
-            this.typeCheckAST(forStatementAST.init, typeCheckContext);
-            this.typeCheckAST(forStatementAST.cond, typeCheckContext);
-            this.typeCheckAST(forStatementAST.body, typeCheckContext);
+        private typeCheckForStatement(forStatement: ForStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(forStatement.init, typeCheckContext);
+            this.typeCheckAST(forStatement.cond, typeCheckContext);
+            this.typeCheckAST(forStatement.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
@@ -1588,56 +1588,54 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckInExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-
-            var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
-            var rhsType = this.resolver.widenType(this.typeCheckAST(binex.operand2, typeCheckContext));
+        private typeCheckInExpression(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var lhsType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand1, typeCheckContext));
+            var rhsType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand2, typeCheckContext));
 
             var isStringOrAny = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(lhsType.getType());
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
 
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
-            }        
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
+            }
 
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
-        private typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-
-            var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
-            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
+        private typeCheckInstanceOfExpression(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var lhsType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand1, typeCheckContext));
+            var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext);
 
             var isValidLHS = lhsType && (this.resolver.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
-        private typeCheckParenthesizedExpression(ast: ParenthesizedExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.typeCheckAST(ast.expression, typeCheckContext);
+        private typeCheckParenthesizedExpression(parenthesizedExpression: ParenthesizedExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.typeCheckAST(parenthesizedExpression.expression, typeCheckContext);
         }
 
-        private typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var whileStatementAST = <WhileStatement>ast;
-
-            this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
-            this.typeCheckAST(whileStatementAST.body, typeCheckContext);
+        private typeCheckWhileStatement(whileStatement: WhileStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(whileStatement.cond, typeCheckContext);
+            this.typeCheckAST(whileStatement.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
@@ -1649,13 +1647,10 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-
-            var ifStatementAST = <IfStatement>ast;
-
-            this.typeCheckAST(ifStatementAST.cond, typeCheckContext);
-            this.typeCheckAST(ifStatementAST.thenBod, typeCheckContext);
-            this.typeCheckAST(ifStatementAST.elseBod, typeCheckContext);
+        private typeCheckIfStatement(ifStatement: IfStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(ifStatement.cond, typeCheckContext);
+            this.typeCheckAST(ifStatement.thenBod, typeCheckContext);
+            this.typeCheckAST(ifStatement.elseBod, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
@@ -1678,32 +1673,26 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            // PULLTODO: "With" statements
-            var withAST = <WithStatement>ast;
-
-            this.postError(withAST.expr.minChar, withAST.expr.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__, null), typeCheckContext.getEnclosingDecl());
+        private typeCheckWithStatement(withStatement: WithStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.postError(withStatement.expr.minChar, withStatement.expr.getLength(), typeCheckContext.scriptName,
+                getDiagnosticMessage(DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__, null), typeCheckContext.getEnclosingDecl());
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckTryStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var tryStatementAST = <TryStatement>ast;
-
-            this.typeCheckAST(tryStatementAST.tryBody, typeCheckContext);
-            this.typeCheckAST(tryStatementAST.catchClause, typeCheckContext);
-            this.typeCheckAST(tryStatementAST.finallyBody, typeCheckContext);
+        private typeCheckTryStatement(tryStatement: TryStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(tryStatement.tryBody, typeCheckContext);
+            this.typeCheckAST(tryStatement.catchClause, typeCheckContext);
+            this.typeCheckAST(tryStatement.finallyBody, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckCatchClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var catchAST = <CatchClause>ast;
-
-            var catchDecl = this.resolver.getDeclForAST(catchAST);
+        private typeCheckCatchClause(catchClause: CatchClause, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var catchDecl = this.resolver.getDeclForAST(catchClause);
 
             typeCheckContext.pushEnclosingDecl(catchDecl);
-            this.typeCheckAST(catchAST.body, typeCheckContext);
+            this.typeCheckAST(catchClause.body, typeCheckContext);
             typeCheckContext.popEnclosingDecl();
 
             return this.semanticInfoChain.voidTypeSymbol;
@@ -1796,12 +1785,10 @@ module TypeScript {
             return type;
         }
 
-        private typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var switchAST = <SwitchStatement>ast;
-
-            this.typeCheckAST(switchAST.val, typeCheckContext);
-            this.typeCheckAST(switchAST.caseList, typeCheckContext);
-            this.typeCheckAST(switchAST.defaultCase, typeCheckContext);
+        private typeCheckSwitchStatement(switchStatement: SwitchStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(switchStatement.val, typeCheckContext);
+            this.typeCheckAST(switchStatement.caseList, typeCheckContext);
+            this.typeCheckAST(switchStatement.defaultCase, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
