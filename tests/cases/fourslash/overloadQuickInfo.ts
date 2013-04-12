@@ -18,6 +18,6 @@
 ////Fo/**/o();
 
 goTo.marker();
-verify.quickInfoIs("() => any (+ 12 overload(s))", "", "Foo", "function");
+verify.quickInfoIs("(): any (+ 12 overload(s))", "", "Foo", "function");
 
 

@@ -3,15 +3,15 @@
 ////class MethodOverload {
 ////    static method();
 ////    static method(foo: string);
-/////*staticMethodDefinition*/    static method(foo?: any) { }
+/////*staticMethodDefinition*/static method(foo?: any) { }
 ////    public method(): any;
 ////    public method(foo: string);
-/////*instanceMethodDefinition*/    public method(foo?: any) { return "foo" }
+/////*instanceMethodDefinition*/public method(foo?: any) { return "foo" }
 ////}
-////
+
 ////// static method
-/////*staticMethodReference*/MethodOverload.method();
-////
+////MethodOverload./*staticMethodReference*/method();
+
 ////// instance method
 ////var methodOverload = new MethodOverload();
 ////methodOverload./*instanceMethodReference*/method();
