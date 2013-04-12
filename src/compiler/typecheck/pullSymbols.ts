@@ -2699,10 +2699,10 @@ module TypeScript {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
 
-            var subsitution = context.findSpecializationForType(typeToSpecialize);
+            var substitution = context.findSpecializationForType(typeToSpecialize);
 
-            if (subsitution != typeToSpecialize) {
-                return subsitution;
+            if (substitution != typeToSpecialize) {
+                return substitution;
             }
 
             if (typeArguments && typeArguments.length) {
@@ -2744,7 +2744,6 @@ module TypeScript {
         var newTypeDecl = typeToSpecialize.getDeclarations()[0];
 
         var rootType: PullTypeSymbol = (typeToSpecialize.getKind() & (PullElementKind.Class | PullElementKind.Interface)) ? <PullTypeSymbol>newTypeDecl.getSymbol().getType() : typeToSpecialize;
-
         
         if (searchForExistingSpecialization) {
             if (!typeArguments.length || context.specializingToAny) {
@@ -2763,6 +2762,15 @@ module TypeScript {
             if (!newType && !typeParameters.length && context.specializingToAny) {
                 newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
             }
+        }
+        else {
+            for (i = 0; i < typeParameters.length; i++) {
+                substitution = context.findSpecializationForType(typeParameters[i]);
+
+                typeArguments[i] = substitution != null ? substitution : typeParameters[i];
+            }
+            
+            newType = rootType.getSpecialization(typeArguments);            
         }
 
         if (newType) {
@@ -2906,6 +2914,7 @@ module TypeScript {
 
             if (!newSignature) {
                 context.inSpecialization = prevInSpecialization;
+                Debug.assert(false, "returning from call");
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }            
 
@@ -2962,6 +2971,7 @@ module TypeScript {
 
             if (!newSignature) {
                 context.inSpecialization = prevInSpecialization;
+                Debug.assert(false, "returning from construct");
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -3018,6 +3028,7 @@ module TypeScript {
 
             if (!newSignature) {
                 context.inSpecialization = prevInSpecialization;
+                Debug.assert(false, "returning from index");
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
             

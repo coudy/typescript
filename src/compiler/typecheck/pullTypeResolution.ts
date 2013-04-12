@@ -3883,7 +3883,7 @@ module TypeScript {
 
                 // if it's a default constructor, and we have a type argument, we need to specialize
                 if (returnType && !signature.isGeneric() && returnType.isGeneric() && !returnType.getIsSpecialized()) {
-                    if (typeArgs.length) {
+                    if (typeArgs && typeArgs.length) {
                         returnType = specializeType(returnType, typeArgs, this, enclosingDecl, context, callEx);
                     }
                     else {
@@ -5461,6 +5461,10 @@ module TypeScript {
         enclosingDecl: PullDecl,
         context: PullTypeResolutionContext): void {
 
+            if (expressionType.isError()) {
+                expressionType = this.semanticInfoChain.anyTypeSymbol;
+            }
+
             if (parameterType == expressionType) {
                 return;
             }
@@ -5471,11 +5475,19 @@ module TypeScript {
             }
 
             if (!parameterType.isArray() && parameterType.getDeclarations()[0].isEqual(expressionType.getDeclarations()[0]) && expressionType.isGeneric()) {
-                var typeParameters = parameterType.getTypeParameters();
-                var typeArguments = expressionType.getTypeArguments();
+                var typeParameters: PullTypeSymbol[] = parameterType.getTypeParameters();
+                var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
+
+                // If we're relating an out-of-order resolution of a function call within the body
+                // of a generic type's method, the relationship will actually be in reverse.
+                if (!typeArguments) {
+                    typeParameters = parameterType.getTypeArguments();
+                    typeArguments = expressionType.getTypeParameters();
+                }
+
                 var hadRelation = false;
 
-                if (typeParameters.length == typeArguments.length) {
+                if (typeParameters && typeArguments && typeParameters.length == typeArguments.length) {
                     for (var i = 0; i < typeParameters.length; i++) {
                         if (typeArguments[i] != typeParameters[i]) {
                             this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], shouldFix, argContext, enclosingDecl, context);
