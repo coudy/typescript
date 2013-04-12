@@ -969,10 +969,8 @@ module TypeScript {
                 var aliasAST = this.alias.nodeType == NodeType.TypeRef ? (<TypeReference>this.alias).term : this.alias;
 
                 emitter.emitJavascript(aliasAST, false);
-                // the dynamic import case will insert the semi-colon automatically
-                if (!this.isDynamicImport) {
-                    emitter.writeToOutput(";");
-                }
+                emitter.writeToOutput(";");
+
                 emitter.emitComments(this, false);
                 emitter.recordSourceMappingEnd(this);
 

@@ -47,7 +47,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_im2_private_v3_private = m1_im2_private.f1;
         var m1_im2_private_v4_private = m1_im2_private.f1();
         var m1_im3_private = __m1_im3_private__;
-
         m1.m1_im3_private_v1_public = m1_im3_private.c1;
         m1.m1_im3_private_v2_public = new m1_im3_private.c1();
         m1.m1_im3_private_v3_public = m1_im3_private.f1;
@@ -57,7 +56,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_im3_private_v3_private = m1_im3_private.f1;
         var m1_im3_private_v4_private = m1_im3_private.f1();
         var m1_im4_private = __m1_im4_private__;
-
         m1.m1_im4_private_v1_public = m1_im4_private.c1;
         m1.m1_im4_private_v2_public = new m1_im4_private.c1();
         m1.m1_im4_private_v3_public = m1_im4_private.f1;
@@ -121,7 +119,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_im2_private_v3_private = m1_im2_private.f1;
         var m1_im2_private_v4_private = m1_im2_private.f1();
         var m1_im3_private = __m1_im3_private__;
-
         m2.m1_im3_private_v1_public = m1_im3_private.c1;
         m2.m1_im3_private_v2_public = new m1_im3_private.c1();
         m2.m1_im3_private_v3_public = m1_im3_private.f1;
@@ -131,7 +128,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_im3_private_v3_private = m1_im3_private.f1;
         var m1_im3_private_v4_private = m1_im3_private.f1();
         var m1_im4_private = __m1_im4_private__;
-
         m2.m1_im4_private_v1_public = m1_im4_private.c1;
         m2.m1_im4_private_v2_public = new m1_im4_private.c1();
         m2.m1_im4_private_v3_public = m1_im4_private.f1;
@@ -183,7 +179,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     var glo_im1_private_v3_private = glo_im1_private.f1;
     var glo_im1_private_v4_private = glo_im1_private.f1();
     var glo_im2_private = __glo_im2_private__;
-
     exports.glo_im2_private_v1_public = glo_im2_private.c1;
     exports.glo_im2_private_v2_public = new glo_im2_private.c1();
     exports.glo_im2_private_v3_public = glo_im2_private.f1;
@@ -202,7 +197,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     var glo_im3_private_v3_private = glo_im3_private.f1;
     var glo_im3_private_v4_private = glo_im3_private.f1();
     var glo_im4_private = __glo_im4_private__;
-
     exports.glo_im4_private_v1_public = glo_im4_private.c1;
     exports.glo_im4_private_v2_public = new glo_im4_private.c1();
     exports.glo_im4_private_v3_public = glo_im4_private.f1;

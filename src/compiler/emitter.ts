@@ -1278,7 +1278,7 @@ module TypeScript {
                 // If it's a dynamic module, we need to print the "require" invocation
                 if (pullSymbol && pullSymbolKind == PullElementKind.DynamicModule) {
                     if (this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous) {
-                        this.writeLineToOutput("__" + this.modAliasId + "__;");
+                        this.writeToOutput("__" + this.modAliasId + "__");
                     }
                     else {
                         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>this.semanticInfoChain.getASTForSymbol(pullSymbol, this.document.fileName);
