@@ -1147,7 +1147,27 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
+        private checkListSeparators(parent: ISyntaxElement, list: ISeparatedSyntaxList, kind: SyntaxKind): boolean {
+            var currentElementFullStart = this.childFullStart(parent, list);
+
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var child = list.childAt(i);
+                if (i % 2 === 1 && child.kind() !== kind) {
+                    this.pushDiagnostic1(currentElementFullStart, child, DiagnosticCode._0_expected, [SyntaxFacts.getText(kind)]);
+                }
+
+                currentElementFullStart += child.fullWidth();
+            }
+
+            return false;
+        }
+
         private visitObjectType(node: ObjectTypeSyntax): void {
+            if (this.checkListSeparators(node, node.typeMembers, SyntaxKind.SemicolonToken)) {
+                this.skip(node);
+                return;
+            }
+
             // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = true;

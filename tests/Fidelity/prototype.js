@@ -20037,8 +20037,9 @@ var TypeScript;
                         }
                     }
                     inErrorRecovery = false;
-                    if (this.currentToken().tokenKind === separatorKind) {
-                        items.push(this.eatToken(separatorKind));
+                    var currentToken = this.currentToken();
+                    if (currentToken.tokenKind === separatorKind || currentToken.tokenKind === 79 /* CommaToken */ ) {
+                        items.push(this.eatAnyToken());
                         continue;
                     }
                     if (this.listIsTerminated(currentListType)) {
@@ -21240,7 +21241,24 @@ var TypeScript;
             _super.prototype.visitVariableStatement.call(this, node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         };
+        GrammarCheckerWalker.prototype.checkListSeparators = function (parent, list, kind) {
+            var currentElementFullStart = this.childFullStart(parent, list);
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                var child = list.childAt(i);
+                if (i % 2 === 1 && child.kind() !== kind) {
+                    this.pushDiagnostic1(currentElementFullStart, child, 11 /* _0_expected */ , [
+                        TypeScript.SyntaxFacts.getText(kind)
+                    ]);
+                }
+                currentElementFullStart += child.fullWidth();
+            }
+            return false;
+        };
         GrammarCheckerWalker.prototype.visitObjectType = function (node) {
+            if (this.checkListSeparators(node, node.typeMembers, 78 /* SemicolonToken */ )) {
+                this.skip(node);
+                return;
+            }
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = true;
             _super.prototype.visitObjectType.call(this, node);
@@ -57167,7 +57185,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "InvalidIdentifiersInVariableStatements1.ts";
+    // "CommaInTypeMemberList2.ts";
     undefined;
 
 var generate = false;

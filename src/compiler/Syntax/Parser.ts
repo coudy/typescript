@@ -4981,10 +4981,13 @@ module TypeScript.Parser {
                 inErrorRecovery = false;
 
                 // Now, we have to see if we have a separator or not.  If we do have a separator
-                // we've got to consume it and continue trying to parse list items.
-                if (this.currentToken().tokenKind === separatorKind) {
+                // we've got to consume it and continue trying to parse list items.  Note: we always
+                // allow 'comma' as a separator (for error tolerance).  We will later do a post pass
+                // to report when a comma was used improperly in a list that needed semicolons.
+                var currentToken = this.currentToken();
+                if (currentToken.tokenKind === separatorKind || currentToken.tokenKind === SyntaxKind.CommaToken) {
                     // Consume the last separator and continue parsing list elements.
-                    items.push(this.eatToken(separatorKind));
+                    items.push(this.eatAnyToken());
                     continue;
                 }
 
