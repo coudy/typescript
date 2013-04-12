@@ -2603,9 +2603,9 @@ module TypeScript {
                 context.doneResolvingTypeArguments();
             }
 
-            if (genericTypeSymbol.isResolving()) {
-                return genericTypeSymbol;
-            }
+            //if (genericTypeSymbol.isResolving()) {
+            //    return genericTypeSymbol;
+            //}
 
             var typeParameters = genericTypeSymbol.getTypeParameters();
 

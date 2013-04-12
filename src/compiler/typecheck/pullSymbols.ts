@@ -2757,10 +2757,13 @@ module TypeScript {
             }
         }
         else {
-            for (var i = 0; i < typeParameters.length; i++) {
-                substitution = context.findSpecializationForType(typeParameters[i]);
+            var knownTypeArguments = typeToSpecialize.getTypeArguments();
+            var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
 
-                typeArguments[i] = substitution != null ? substitution : typeParameters[i];
+            for (var i = 0; i < typesToReplace.length; i++) {
+                substitution = context.findSpecializationForType(typesToReplace[i]);
+
+                typeArguments[i] = substitution != null ? substitution : typesToReplace[i];
             }
             
             newType = rootType.getSpecialization(typeArguments);            
@@ -3072,11 +3075,6 @@ module TypeScript {
 
             if (replacementType) {
                 newField.setType(replacementType);
-                decl = decls[0];
-
-                for (var j = 0; j < decls.length; j++) {
-                    newField.addDeclaration(decls[j]);
-                }
             }
             else {
                 // re-resolve all field decls using the current replacements
