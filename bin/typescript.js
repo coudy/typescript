@@ -40217,9 +40217,11 @@ var TypeScript;
                 ]);
             }
         } else {
-            for(var i = 0; i < typeParameters.length; i++) {
-                substitution = context.findSpecializationForType(typeParameters[i]);
-                typeArguments[i] = substitution != null ? substitution : typeParameters[i];
+            var knownTypeArguments = typeToSpecialize.getTypeArguments();
+            var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
+            for(var i = 0; i < typesToReplace.length; i++) {
+                substitution = context.findSpecializationForType(typesToReplace[i]);
+                typeArguments[i] = substitution != null ? substitution : typesToReplace[i];
             }
             newType = rootType.getSpecialization(typeArguments);
         }
@@ -40432,10 +40434,6 @@ var TypeScript;
             replacementType = typeReplacementMap[fieldType.getSymbolID().toString()];
             if (replacementType) {
                 newField.setType(replacementType);
-                decl = decls[0];
-                for(var j = 0; j < decls.length; j++) {
-                    newField.addDeclaration(decls[j]);
-                }
             } else {
                 if (fieldType.isGeneric() && !fieldType.isFixed()) {
                     unitPath = resolver.getUnitPath();
@@ -42679,9 +42677,6 @@ var TypeScript;
                     }
                 }
                 context.doneResolvingTypeArguments();
-            }
-            if (genericTypeSymbol.isResolving()) {
-                return genericTypeSymbol;
             }
             var typeParameters = genericTypeSymbol.getTypeParameters();
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
