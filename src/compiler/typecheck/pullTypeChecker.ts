@@ -724,7 +724,7 @@ module TypeScript {
                 classPropertyList = classSymbol.getMembers();
                 var extendsList = classSymbol.getExtendedTypes();
                 for (var i = 0; i < extendsList.length; i++) {
-                    var extendedTypePublicProperties = extendsList[i].getAllMembers(PullElementKind.SomeValue, false);
+                    var extendedTypePublicProperties = extendsList[i].getAllMembers(PullElementKind.SomeValue, true);
                     classPropertyList = classPropertyList.concat(extendedTypePublicProperties);
                 }
                 typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(classPropertyList);
