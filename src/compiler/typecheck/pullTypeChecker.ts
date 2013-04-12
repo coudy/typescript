@@ -239,7 +239,7 @@ module TypeScript {
                     return this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ElementAccessExpression:
-                    return this.typeCheckIndex(ast, typeCheckContext);
+                    return this.typeCheckElementAccessExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.LogicalNotExpression:
                     return this.typeCheckLogicalNotExpression(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
@@ -252,7 +252,7 @@ module TypeScript {
                     return this.typeCheckTypeOf(ast, typeCheckContext);
 
                 case NodeType.ConditionalExpression:
-                    return this.typeCheckConditionalExpression(ast, typeCheckContext);
+                    return this.typeCheckConditionalExpression(<ConditionalExpression>ast, typeCheckContext);
 
                 case NodeType.VoidExpression:
                     return this.typeCheckVoidExpression(<UnaryExpression>ast, typeCheckContext);
@@ -1467,8 +1467,11 @@ module TypeScript {
         // Index expression 
         // validate:
         //  -
-        private typeCheckIndex(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        private typeCheckElementAccessExpression(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(binaryExpression.operand1, typeCheckContext);
+            this.typeCheckAST(binaryExpression.operand2, typeCheckContext);
+
+            var type = this.resolver.resolveAST(binaryExpression, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return type;
         }
@@ -1494,18 +1497,15 @@ module TypeScript {
         // Conditional expressions
         // validate:
         //  -
-        private typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckConditionalExpression(conditionalExpression: ConditionalExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(conditionalExpression.operand1, typeCheckContext);
+            this.typeCheckAST(conditionalExpression.operand2, typeCheckContext);
+            this.typeCheckAST(conditionalExpression.operand3, typeCheckContext);
 
-            var condAST = <ConditionalExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
-
+            var type = this.resolver.resolveAST(conditionalExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
-
-            this.typeCheckAST(condAST.operand1, typeCheckContext);
-            this.typeCheckAST(condAST.operand2, typeCheckContext);
-            this.typeCheckAST(condAST.operand3, typeCheckContext);
 
             return type;
         }

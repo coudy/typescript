@@ -3240,7 +3240,7 @@ module TypeScript {
                 return <PullTypeSymbol>previousResolutionSymbol;
             }
 
-            var indexType = <PullTypeSymbol>this.resolveStatementOrExpression((<BinaryExpression>expressionAST).operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var indexType = this.resolveStatementOrExpression((<BinaryExpression>expressionAST).operand1, isTypedAssignment, enclosingDecl, context).getType();
 
             if (indexType.isError()) {
                 return indexType;
