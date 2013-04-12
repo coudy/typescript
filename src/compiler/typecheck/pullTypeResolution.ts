@@ -665,6 +665,11 @@ module TypeScript {
                     }
                 }
             }
+            else {
+                // if there are no type arguments, but the type is generic, we're just returning
+                // the unspecialized version of the type (e.g., via a recursive call)
+                return true;
+            }
 
             return false;
         }
