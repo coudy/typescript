@@ -212,6 +212,9 @@ module TypeScript {
                 case NodeType.GreaterThanExpression:
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
 
+                case NodeType.CommaExpression:
+                    return this.typeCheckCommaExpression(ast, typeCheckContext);
+
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
                     return this.typeCheckBinaryAdditionOperation(<BinaryExpression>ast, typeCheckContext);
@@ -1404,6 +1407,21 @@ module TypeScript {
         // validate:
         // - lhs and rhs are compatible
         private typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var binex = <BinaryExpression>ast;
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
+        }
+
+
+        private typeCheckCommaExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
