@@ -2822,14 +2822,15 @@ module TypeScript {
                         contextParam = (<PullArrayTypeSymbol>contextParams[contextParams.length - 1].getType()).getElementType();
                     }
 
-                    this.resolveFunctionExpressionParameter(<Parameter>funcDeclAST.arguments.members[i], contextParam, enclosingDecl, context);
+                    // use the function decl as the enclosing decl, so as to properly resolve type parameters
+                    this.resolveFunctionExpressionParameter(<Parameter>funcDeclAST.arguments.members[i], contextParam, functionDecl, context);
                 }
             }
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
                 var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
+                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, functionDecl, context);
 
                 signature.setReturnType(returnTypeSymbol);
 
