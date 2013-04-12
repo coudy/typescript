@@ -240,7 +240,7 @@ module TypeScript {
             return false;
         }
 
-        private checkForTrailingSeparator(parent: ISyntaxElement, list: ISeparatedSyntaxList): bool {
+        private checkForTrailingSeparator(parent: ISyntaxElement, list: ISeparatedSyntaxList): boolean {
             // If we have at least one child, and we have an even number of children, then that 
             // means we have an illegal trailing separator.
             if (list.childCount() === 0 || list.childCount() % 2 === 1) {
@@ -261,7 +261,7 @@ module TypeScript {
             return true;
         }
 
-        private checkForAtLeastOneElement(parent: ISyntaxElement, list: ISeparatedSyntaxList, expected: string): bool {
+        private checkForAtLeastOneElement(parent: ISyntaxElement, list: ISeparatedSyntaxList, expected: string): boolean {
             if (list.childCount() > 0) {
                 return false;
             }
