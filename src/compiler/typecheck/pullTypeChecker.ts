@@ -229,6 +229,7 @@ module TypeScript {
                 case NodeType.SignedRightShiftExpression:
                 case NodeType.UnsignedRightShiftExpression:
                 case NodeType.BitwiseExclusiveOrExpression:
+                case NodeType.ExclusiveOrAssignmentExpression:
                 case NodeType.LeftShiftAssignmentExpression:
                 case NodeType.SignedRightShiftAssignmentExpression:
                 case NodeType.UnsignedRightShiftAssignmentExpression:
@@ -926,6 +927,21 @@ module TypeScript {
             }
         }
 
+        private checkIsValidAssignmentTarget(ast: AST, expressionSymbol: PullSymbol, isEnumInitializer: boolean, typeCheckContext: PullTypeCheckContext): void {
+            var expressionTypeSymbol = expressionSymbol.getType();
+
+            var isValidLHS = isEnumInitializer ||
+                ast.nodeType == NodeType.ElementAccessExpression ||
+                this.resolver.isAnyOrEquivalent(expressionTypeSymbol) ||
+                ((!expressionSymbol.isType() || expressionTypeSymbol.isArray()) &&
+                (expressionSymbol.getKind() & PullElementKind.SomeLHS) != 0);
+
+            if (!isValidLHS) {
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), typeCheckContext.getEnclosingDecl());
+            }
+        }
+
         // expressions
 
         // Assignment
@@ -946,16 +962,8 @@ module TypeScript {
             var rightType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
-            var isValidLHS = binaryExpression.operand1.nodeType == NodeType.ElementAccessExpression ||
-                            this.resolver.isAnyOrEquivalent(leftType) ||
-                            ((!leftExpr.isType() || leftType.isArray()) &&
-                                (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
-                            hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer);
-
-            if (!isValidLHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
-            }
+            // Check if LHS is a valid target
+            this.checkIsValidAssignmentTarget(binaryExpression.operand1, leftExpr, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
 
             this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
             return leftType;
@@ -1482,6 +1490,10 @@ module TypeScript {
 
             if (exprType) {
                 if (binaryExpression.nodeType === NodeType.AddAssignmentExpression) {
+                    // Check if LHS is a valid target
+                    var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
+                    this.checkIsValidAssignmentTarget(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
+
                     this.checkAssignability(binaryExpression.operand1, exprType, lhsType, typeCheckContext);
                 }
             }
@@ -1530,7 +1542,13 @@ module TypeScript {
                     case NodeType.ModuloAssignmentExpression:
                     case NodeType.OrAssignmentExpression:
                     case NodeType.AndAssignmentExpression:
+                    case NodeType.ExclusiveOrAssignmentExpression:
+                        // Check if LHS is a valid target
+                        var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
+                        this.checkIsValidAssignmentTarget(binaryExpression.operand1, lhsExpression, hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer), typeCheckContext);
+
                         this.checkAssignability(binaryExpression.operand1, rhsType, lhsType, typeCheckContext);
+                        break;
                 }
             }
 
