@@ -71,7 +71,6 @@ module TypeScript {
 
 
 
-
         // Semantic diagnostics.
         Duplicate_identifier__0_,
         The_name__0__does_not_exist_in_the_current_scope,

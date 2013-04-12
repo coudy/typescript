@@ -2579,9 +2579,30 @@ module TypeScript.Parser {
         }
 
         private isPropertySignature(inErrorRecovery: boolean): boolean {
+            var currentToken = this.currentToken();
+
+            // Keywords can start properties.  However, they're often intended to start something
+            // else.  If we see a modifier before something that can be a property, then don't
+            // try parse it out as a property.  For example, if we have:
+            //
+            //      public foo
+            //
+            // Then don't parse 'public' as a property name.  Note: if you have:
+            //
+            //      public
+            //      foo
+            //
+            // Then we *should* parse it as a property name, as ASI takes effect here.
+            if (ParserImpl.isModifier(currentToken) &&
+                !currentToken.hasTrailingNewLine() &&
+                this.isPropertyName(this.peekToken(1), inErrorRecovery))
+            {
+                return false;
+            }
+
             // Note: property names also start function signatures.  So it's important that we call this
             // after we calll isFunctionSignature.
-            return this.isPropertyName(this.currentToken(), inErrorRecovery);
+            return this.isPropertyName(currentToken, inErrorRecovery);
         }
 
         private isHeritageClause(): boolean {

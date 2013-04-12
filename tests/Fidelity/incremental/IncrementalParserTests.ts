@@ -74,7 +74,7 @@ module TypeScript {
             }
         }
 
-        private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax): number {
+        public static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax): number {
             var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
             var allNewElements = SyntaxElementsCollector.collectElements(newNode);
 
