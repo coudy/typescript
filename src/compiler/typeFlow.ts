@@ -246,8 +246,7 @@ module TypeScript {
         }
 
         public map(fn: (index: number) => any) {
-            var k: number;
-            for (k = 0; k < BitVector.packBits; k++) {
+            for (var k = 0; k < BitVector.packBits; k++) {
                 if (k === this.bitCount) {
                     return;
                 }
@@ -258,7 +257,7 @@ module TypeScript {
             if (this.restOfBits) {
                 var len: number;
                 var cumu = BitVector.packBits;
-                for (k = 0, len = this.restOfBits.length; k < len; k++) {
+                for (var k = 0, len = this.restOfBits.length; k < len; k++) {
                     var myBits = this.restOfBits[k];
                     for (var j = 0; j < BitVector.packBits; j++) {
                         if (((1 << j) & myBits) !== 0) {
@@ -2368,7 +2367,6 @@ module TypeScript {
 
             var paramLen = signature.parameters.length;
             var candidateTypeContext: ContextualTypeContext;
-            var p = 0;
 
             if (!funcDecl.isConstructor && funcDecl.block && !funcDecl.isSignature()) {
                 var tmpParamScope = this.scope;
@@ -2425,7 +2423,7 @@ module TypeScript {
                 var paramTable = ssb.valueMembers;
                 this.scope = new SymbolScopeBuilder(paramTable, null, null, null, prevScope, container);
 
-                for (p = 0; p < paramLen; p++) {
+                for (var p = 0; p < paramLen; p++) {
                     var symbol = signature.parameters[p];
                     var ast = <Parameter>symbol.declAST
 
@@ -2457,7 +2455,7 @@ module TypeScript {
 
                 // Because some terms were not yet type-checkable during binding, ensure that
                 // param symbols are updated with the proper argument types
-                for (p = 0; p < paramLen; p++) {
+                for (var p = 0; p < paramLen; p++) {
                     signature.parameters[p].parameter.typeLink.type = funcDecl.arguments.members[p].type;
                     // Verify the parameter for the privacy
                     this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: boolean) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));

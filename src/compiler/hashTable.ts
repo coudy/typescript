@@ -220,12 +220,11 @@ module TypeScript {
         }
 
         public add(key, data): boolean {
-            var current: HashEntry;
             var entry: HashEntry = new HashEntry(key, data);
             var val: number = this.hashFn(key);
             val = val % this.size;
 
-            for (current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current != null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     return false;
                 }
@@ -237,13 +236,12 @@ module TypeScript {
         }
 
         public remove(key) {
-            var current: HashEntry;
             var val: number = this.hashFn(key);
             val = val % this.size;
             var result = null;
             var prevEntry: HashEntry = null;
 
-            for (current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current != null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     result = current.data;
                     this.itemCount--;
@@ -263,10 +261,9 @@ module TypeScript {
         public count(): number { return this.itemCount; }
 
         public lookup(key) {
-            var current: HashEntry;
             var val: number = this.hashFn(key);
             val = val % this.size;
-            for (current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current != null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     return (current.data);
                 }

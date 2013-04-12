@@ -395,7 +395,6 @@ module TypeScript {
             var pathDeclKind: PullElementKind;
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
             var parameters: PullTypeParameterSymbol[];
-            var i = 0, j = 0, k = 0, m = 0, n = 0;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
@@ -427,7 +426,7 @@ module TypeScript {
                             members = members.concat(searchTypeSymbol.getMembers());
                         }
 
-                        for (j = 0; j < members.length; j++) {
+                        for (var j = 0; j < members.length; j++) {
                             // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
                             if ((members[j].getKind() & declSearchKind) != 0) {
                                 symbols.push(members[j]);
@@ -441,7 +440,7 @@ module TypeScript {
                         // Add generic types prameters
                         if (declSymbol && declSymbol.isGeneric()) {
                             parameters = declSymbol.getTypeParameters();
-                            for (k = 0; k < parameters.length; k++) {
+                            for (var k = 0; k < parameters.length; k++) {
                                 symbols.push(parameters[k]);
                             }
                         }
@@ -457,11 +456,11 @@ module TypeScript {
                             if (functionType.getHasGenericSignature()) {
                                 var signatures = (pathDeclKind == PullElementKind.ConstructorMethod) ? functionType.getConstructSignatures() : functionType.getCallSignatures();
                                 if (signatures && signatures.length) {
-                                    for (j = 0; j < signatures.length; j++) {
+                                    for (var j = 0; j < signatures.length; j++) {
                                         var signature = signatures[j];
                                         if (signature.isGeneric()) {
                                             parameters = signature.getTypeParameters();
-                                            for (k = 0; k < parameters.length; k++) {
+                                            for (var k = 0; k < parameters.length; k++) {
                                                 symbols.push(parameters[k]);
                                             }
                                         }
@@ -485,7 +484,7 @@ module TypeScript {
                 }
                 var topLevelDecls = unit.getTopLevelDecls();
                 if (topLevelDecls.length) {
-                    for (j = 0 , m = topLevelDecls.length; j < m; j++) {
+                    for (var j = 0 , m = topLevelDecls.length; j < m; j++) {
                         var topLevelDecl = topLevelDecls[j];
                         if (topLevelDecl.getKind() === PullElementKind.Script || topLevelDecl.getKind() === PullElementKind.Global) {
                             this.addSymbolsFromDecls(topLevelDecl.getChildDecls(), declSearchKind, symbols);
@@ -5569,7 +5568,7 @@ module TypeScript {
             for (var i = 0; i < parameterSignatures.length; i++) {
                 parameterSignature = parameterSignatures[i];
 
-                for (j = 0; j < objectSignatures.length; j++) {
+                for (var j = 0; j < objectSignatures.length; j++) {
                     this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, enclosingDecl, context);
                 }
             }

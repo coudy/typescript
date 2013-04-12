@@ -33,10 +33,10 @@ module TypeScript {
         public resolveBases(scope: SymbolScope, type: Type) {
             type.extendsList = this.resolveBaseTypeLinks(type.extendsTypeLinks, scope);
 
-            var i = 0, len = type.extendsList.length;
+            var len = type.extendsList.length;
             var derivedIsClass = type.isClassInstance();
             var baseRef: AST = null;
-            for (; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 var baseIsClass = type.extendsList[i].isClassInstance();
                 if (type.extendsList[i] != this.checker.anyType) {
                     baseRef = type.extendsTypeLinks[i].ast;

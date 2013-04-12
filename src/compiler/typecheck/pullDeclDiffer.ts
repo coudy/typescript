@@ -70,7 +70,6 @@ module TypeScript {
             var newChildrenOfName: PullDecl[];
             var oldChild: PullDecl;
             var newChild: PullDecl;
-            var name: string;
 
             // The old decl and new decl have names mapping to lists of children with that name.  
             // For each name we can have the following cases:
@@ -101,7 +100,7 @@ module TypeScript {
             // know about.  
             //
             // First, use the names the old decl knows about. 
-            for (name in oldNameToDecls) {
+            for (var name in oldNameToDecls) {
                 oldChildrenOfName = oldNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
                 newChildrenOfName = newNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
 
@@ -143,7 +142,7 @@ module TypeScript {
             }
 
             // Now use the names the new decl knows about.  
-            for (name in newNameToDecls) {
+            for (var name in newNameToDecls) {
                 oldChildrenOfName = oldNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
                 newChildrenOfName = newNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
 

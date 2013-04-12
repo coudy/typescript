@@ -572,7 +572,7 @@ module TypeScript {
                 decls = classSymbol.getDeclarations();
                 var scriptName = classDecl.getScriptName();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         classSymbol.removeDeclaration(decls[j]);
 
@@ -585,7 +585,7 @@ module TypeScript {
 
                 decls = constructorSymbol.getDeclarations();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         constructorSymbol.removeDeclaration(decls[j]);
 
@@ -1534,7 +1534,7 @@ module TypeScript {
                 var scriptName = functionDeclaration.getScriptName();
                 var isGeneric = functionTypeSymbol.isGeneric();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         functionSymbol.removeDeclaration(decls[j]);
 
@@ -1647,7 +1647,7 @@ module TypeScript {
                     // clean the decls
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    for (j = 0; j < typeParameterDecls.length; j++) {
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
                         if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
                             typeParameter.removeDeclaration(typeParameterDecls[j]);
                         }
@@ -1867,7 +1867,7 @@ module TypeScript {
                 var scriptName = methodDeclaration.getScriptName();
                 var isGeneric = methodTypeSymbol.isGeneric();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         methodSymbol.removeDeclaration(decls[j]);
 
@@ -1876,7 +1876,7 @@ module TypeScript {
                 }
 
                 decls = methodTypeSymbol.getDeclarations();
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         methodTypeSymbol.removeDeclaration(decls[j]);
 
@@ -2084,7 +2084,7 @@ module TypeScript {
 
                     decls = constructorTypeSymbol.getDeclarations();
 
-                    for (j = 0; j < decls.length; j++) {
+                    for (var j = 0; j < decls.length; j++) {
                         if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             constructorTypeSymbol.removeDeclaration(decls[j]);
 
@@ -2098,7 +2098,7 @@ module TypeScript {
                         for (var i = 0; i < specializations.length; i++) {
                             decls = specializations[i].getDeclarations();
 
-                            for (j = 0; j < decls.length; j++) {
+                            for (var j = 0; j < decls.length; j++) {
                                 if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                     specializations[i].removeDeclaration(decls[j]);
                                     specializations[i].addDeclaration(constructorDeclaration);
@@ -2430,7 +2430,7 @@ module TypeScript {
                 var decls = accessorSymbol.getDeclarations();
                 var scriptName = getAccessorDeclaration.getScriptName();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         accessorSymbol.removeDeclaration(decls[j]);
 
@@ -2618,7 +2618,7 @@ module TypeScript {
                 var decls = accessorSymbol.getDeclarations();
                 var scriptName = setAccessorDeclaration.getScriptName();
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         accessorSymbol.removeDeclaration(decls[j]);
 

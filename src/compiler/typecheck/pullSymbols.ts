@@ -1787,7 +1787,7 @@ module TypeScript {
                 for (var i = 0 , n = this.extendedTypeLinks.length; i < n; i++) {
                     var extendedMembers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (j = 0 , m = extendedMembers.length; j < m; j++) {
+                    for (var j = 0 , m = extendedMembers.length; j < m; j++) {
                         var extendedMember = extendedMembers[j];
                         if (!this.memberNameCache[extendedMember.getName()]) {
                             allMembers[allMembers.length] = extendedMember;
@@ -1801,7 +1801,7 @@ module TypeScript {
                 for (var i = 0; i < this.implementedTypeLinks.length; i++) {
                     var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (j = 0 , m = implementedMembers.length; j < m; j++) {
+                    for (var j = 0 , m = implementedMembers.length; j < m; j++) {
                         var implementedMember = implementedMembers[j];
                         if (!this.memberNameCache[implementedMember.getName()]) {
                             allMembers[allMembers.length] = implementedMember;
@@ -2857,7 +2857,6 @@ module TypeScript {
         var parameters: PullSymbol[];
         var newParameters: PullSymbol[];
         var returnType: PullTypeSymbol = null;
-        var p = 0;
 
         for (var i = 0; i < callSignatures.length; i++) {
             signature = callSignatures[i];
@@ -2885,7 +2884,7 @@ module TypeScript {
             parameters = signature.getParameters();
             newParameters = newSignature.getParameters();
 
-            for (p = 0; p < parameters.length; p++) {
+            for (var p = 0; p < parameters.length; p++) {
                 newParameters[p].setType(parameters[p].getType());
             }
             newSignature.setResolved();
@@ -2942,7 +2941,7 @@ module TypeScript {
 
             // we need to clone the parameter types, but the return type
             // was set during resolution
-            for (p = 0; p < parameters.length; p++) {
+            for (var p = 0; p < parameters.length; p++) {
                 newParameters[p].setType(parameters[p].getType());
             }
             newSignature.setResolved();
@@ -2999,7 +2998,7 @@ module TypeScript {
 
             // we need to clone the parameter types, but the return type
             // was set during resolution
-            for (p = 0; p < parameters.length; p++) {
+            for (var p = 0; p < parameters.length; p++) {
                 newParameters[p].setType(parameters[p].getType());
             }
             newSignature.setResolved();
@@ -3075,7 +3074,7 @@ module TypeScript {
                 newField.setType(replacementType);
                 decl = decls[0];
 
-                for (j = 0; j < decls.length; j++) {
+                for (var j = 0; j < decls.length; j++) {
                     newField.addDeclaration(decls[j]);
                 }
             }
