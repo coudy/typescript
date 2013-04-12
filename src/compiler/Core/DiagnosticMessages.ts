@@ -1082,7 +1082,11 @@ module TypeScript {
             message: "The operand of an increment or decrement operator must be a variable, property or indexer.",
             code: 2139
         },
-
+        _this__may_not_be_referenced_in_initializers_in_a_class_body: {
+            category: DiagnosticCategory.Error,
+            message: "'this' may not be referenced in initializers in a class body.",
+            code: 2140
+        },
 
 
 

@@ -1207,17 +1207,23 @@ module TypeScript {
         //
         private typeCheckThisExpression(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            if (enclosingDecl && enclosingDecl.getKind() === PullElementKind.Class) {
-                this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
-            }
+            var enclosingNonLambdaDecl = typeCheckContext.getEnclosingNonLambdaDecl();
 
             if (typeCheckContext.inSuperConstructorCall &&
                 this.superCallMustBeFirstStatementInConstructor(typeCheckContext.getEnclosingDecl(PullElementKind.ConstructorMethod), typeCheckContext.getEnclosingDecl(PullElementKind.Class))) {
 
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
+            }
+            else if (enclosingNonLambdaDecl) {
+                if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class) {
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_initializers_in_a_class_body, null), enclosingDecl);
+                }
+                else if (enclosingNonLambdaDecl.getKind() === PullElementKind.Container || enclosingNonLambdaDecl.getKind() === PullElementKind.DynamicModule) {
+                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
+                        getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null), enclosingDecl);
+                }
             }
 
             this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
