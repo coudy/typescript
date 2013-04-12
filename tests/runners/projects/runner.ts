@@ -613,6 +613,11 @@ class ProjectRunner extends RunnerBase {
                     , collectedFiles: ['test1.ts', 'test2.ts']
                     , outputFiles: []
                     , skipRun: true
+                    , negative: true
+                    , errors: [
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test1.ts(3,1): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test2.ts(5,4): error TS2136: Import declarations in an internal module cannot reference an external module."
+                    ]
             });
 
             // TODO: no errors now?
@@ -623,6 +628,10 @@ class ProjectRunner extends RunnerBase {
                     , collectedFiles: ['test1.ts', 'test2.ts']
                     , outputFiles: []
                     , skipRun: true
+                    , negative: true
+                    , errors: [
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-SimpleCase/test1.ts(2,1): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                    ]
             });
 
             tests.push({
@@ -645,6 +654,8 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(2,4): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(21,4): error TS2136: Import declarations in an internal module cannot reference an external module.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(3,15): error TS2027: Exported variable 'm2.c1' has or is using private type 'me.class1'.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(5,8): error TS2058: Return type of exported function has or is using private type 'me.class1'.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(7,15): error TS2027: Exported variable 'm2.x1' has or is using private type 'me.class1'.",
