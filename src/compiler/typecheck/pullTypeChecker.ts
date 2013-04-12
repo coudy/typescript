@@ -164,7 +164,7 @@ module TypeScript {
 
                 // assignment
                 case NodeType.AssignmentExpression:
-                    return this.typeCheckAssignment(ast, typeCheckContext);
+                    return this.typeCheckAssignment(<BinaryExpression>ast, typeCheckContext);
 
                 case GenericType:
                     return this.typeCheckGenericType(ast, typeCheckContext);
@@ -206,7 +206,7 @@ module TypeScript {
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
-                    return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
+                    return this.typeCheckBinaryAdditionOperation(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.SubtractExpression:
                 case NodeType.MultiplyExpression:
@@ -227,7 +227,7 @@ module TypeScript {
                 case NodeType.ModuloAssignmentExpression:
                 case NodeType.OrAssignmentExpression:
                 case NodeType.AndAssignmentExpression:
-                    return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
+                    return this.typeCheckBinaryArithmeticOperation(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
@@ -832,50 +832,54 @@ module TypeScript {
             return moduleType;
         }
 
+        private checkAssignability(ast: AST, source: PullTypeSymbol, target: PullTypeSymbol, typeCheckContext: PullTypeCheckContext): void {
+            var comparisonInfo = new TypeComparisonInfo();
+
+            var isAssignable = this.resolver.sourceIsAssignableToTarget(source, target, this.context, comparisonInfo);
+
+            if (!isAssignable) {
+                var errorMessage = comparisonInfo.message;
+
+                // ignore comparison info for now
+                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [source.toString(), target.toString()]);
+                
+                var enclosingDecl = typeCheckContext.getEnclosingDecl();
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+            }
+        }
+
         // expressions
 
         // Assignment
         // validate:
         //  - lhs and rhs types agree
         //  - lhs is a valid value type
-        public typeCheckAssignment(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var assignmentAST = <BinaryExpression>ast;
-
+        public typeCheckAssignment(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            this.typeCheckAST(assignmentAST.operand1, typeCheckContext, false);
+            this.typeCheckAST(binaryExpression.operand1, typeCheckContext, false);
 
-            var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
+            var leftExpr = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
             var leftType = leftExpr.getType();
             this.checkForResolutionError(leftType, enclosingDecl);
             leftType = this.resolver.widenType(leftExpr.getType()); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
-            var rightType = this.resolver.widenType(this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true));
+            var rightType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
-            var isValidLHS = assignmentAST.operand1.nodeType == NodeType.ElementAccessExpression ||
+            var isValidLHS = binaryExpression.operand1.nodeType == NodeType.ElementAccessExpression ||
                             this.resolver.isAnyOrEquivalent(leftType) ||
                             ((!leftExpr.isType() || leftType.isArray()) &&
                                 (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
-                            hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
+                            hasFlag(binaryExpression.getFlags(), ASTFlags.EnumInitializer);
 
             if (!isValidLHS) {
-                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null), enclosingDecl);
             }
 
-            var comparisonInfo = new TypeComparisonInfo();
-
-            var isAssignable = this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo);
-
-            if (!isAssignable) {
-                var errorMessage = comparisonInfo.message;
-
-                // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
-
-                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
-            }
+            this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
 
             return leftType;
         }
@@ -1330,15 +1334,14 @@ module TypeScript {
             return type;
         }
 
-        public typeCheckBinaryAdditionOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
+        public typeCheckBinaryAdditionOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
 
             this.checkForResolutionError(type, enclosingDecl);
 
-            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
-            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
+            var lhsType = this.typeCheckAST(binaryExpression.operand1, typeCheckContext);
+            var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext);
 
             if (lhsType.getKind() == PullElementKind.Enum) {
                 lhsType = this.semanticInfoChain.numberTypeSymbol;
@@ -1376,8 +1379,13 @@ module TypeScript {
                 exprType = this.semanticInfoChain.numberTypeSymbol;
             }
 
-            if (!exprType) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Invalid__addition__expression___types_do_not_agree, null), typeCheckContext.getEnclosingDecl());
+            if (exprType) {
+                if (binaryExpression.nodeType === NodeType.AddAssignmentExpression) {
+                    this.checkAssignability(binaryExpression.operand1, exprType, lhsType, typeCheckContext);
+                }
+            }
+            else {
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Invalid__addition__expression___types_do_not_agree, null), typeCheckContext.getEnclosingDecl());
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1387,52 +1395,43 @@ module TypeScript {
         // Binary arithmetic expressions 
         // validate:
         //  - lhs and rhs are compatible
-        public typeCheckBinaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
+        public typeCheckBinaryArithmeticOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
 
             this.checkForResolutionError(type, enclosingDecl);
 
-            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
-            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
+            var lhsType = this.typeCheckAST(binaryExpression.operand1, typeCheckContext);
+            var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext);
 
             var lhsIsFit = this.resolver.isAnyOrEquivalent(lhsType) || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
             var rhsIsFit = this.resolver.isAnyOrEquivalent(rhsType) || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
 
             if (!rhsIsFit) {
-                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (!lhsIsFit) {
-                this.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand2.minChar, binaryExpression.operand2.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type, null), typeCheckContext.getEnclosingDecl());
             }
 
-            // check for assignment compatibility
-//             switch (ast.nodeType) {
-//                 case NodeType.AsgLsh:
-//                 case NodeType.AsgRsh:
-//                 case NodeType.AsgRs2:
-//                 case NodeType.AsgSub:
-//                 case NodeType.AsgMul:
-//                 case NodeType.AsgDiv:
-//                 case NodeType.AsgMod:
-//                 case NodeType.AsgOr:
-//                 case NodeType.AsgAnd:
-
-//                    var isValidLHS = 0;
-//                    /*
-//                    assignmentAST.operand1.nodeType == NodeType.Index ||
-//                    this.resolver.isAnyOrEquivalent(leftType) ||
-//                    ((!leftExpr.isType() || leftType.isArray()) &&
-//                    (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
-//                    hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
-//*/
-//                     }
-
-//                 default:
-//                     break;
-//             }
+            // If we havne't already reported an error, then check for assignment compatibility.
+            if (rhsIsFit && lhsIsFit) {
+                switch (binaryExpression.nodeType) {
+                    case NodeType.LeftShiftAssignmentExpression:
+                    case NodeType.SignedRightShiftAssignmentExpression:
+                    case NodeType.UnsignedRightShiftAssignmentExpression:
+                    case NodeType.SubtractAssignmentExpression:
+                    case NodeType.MultiplyAssignmentExpression:
+                    case NodeType.DivideAssignmentExpression:
+                    case NodeType.ModuloAssignmentExpression:
+                    case NodeType.OrAssignmentExpression:
+                    case NodeType.AndAssignmentExpression:
+                        this.checkAssignability(binaryExpression.operand1, rhsType, lhsType, typeCheckContext);
+                }
+            }
 
             return this.semanticInfoChain.numberTypeSymbol;
         }
