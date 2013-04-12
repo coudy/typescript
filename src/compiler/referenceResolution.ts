@@ -174,13 +174,12 @@ module TypeScript {
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
                     var preProcessedFileInfo = preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
-                    var i = 0;
                     var resolutionResult: boolean;
 
                     sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
 
                     // resolve explicit references
-                    for (i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
+                    for (var i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
                         var fileReference = preProcessedFileInfo.referencedFiles[i];
 
                         normalizedPath = isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
@@ -199,7 +198,7 @@ module TypeScript {
                     }
                     
                     // resolve imports
-                    for (i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
+                    for (var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
                         var fileImport = preProcessedFileInfo.importedFiles[i];
 
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);

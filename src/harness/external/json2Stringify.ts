@@ -306,7 +306,7 @@ var JSON2: any = {};
                     // for non-JSON values.
 
                     length = value.length;
-                    for (i = 0; i < length; i += 1) {
+                    for (var i = 0; i < length; i += 1) {
                         partial[i] = str(i, value) || 'null';
                     }
 
@@ -326,7 +326,7 @@ var JSON2: any = {};
 
                 if (rep && typeof rep === 'object') {
                     length = rep.length;
-                    for (i = 0; i < length; i += 1) {
+                    for (var i = 0; i < length; i += 1) {
                         if (typeof rep[i] === 'string') {
                             k = rep[i];
                             v = str(k, value);
@@ -381,7 +381,7 @@ var JSON2: any = {};
             // many spaces.
 
             if (typeof space === 'number') {
-                for (i = 0; i < space; i += 1) {
+                for (var i = 0; i < space; i += 1) {
                     indent += ' ';
                 }
 

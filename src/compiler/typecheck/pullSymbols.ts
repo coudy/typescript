@@ -849,14 +849,13 @@ module TypeScript {
                 shortform = false;
             }
 
-            var i = 0
             var foundDefinition = false;
             if (candidateSignature && candidateSignature.isDefinition() && len > 1) {
                 // Overloaded signature with candidateSignature = definition - cannot be used.
                 candidateSignature = null;
             }
 
-            for (; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 // the definition signature shouldn't be printed if there are overloads
                 if (len > 1 && signatures[i].isDefinition()) {
                     foundDefinition = true;
@@ -876,7 +875,7 @@ module TypeScript {
 
             if (getPrettyTypeName && result.length && len > 1) {
                 var lastMemberName = <MemberNameArray>result[result.length - 1];
-                for (i = i + 1; i < len; i++) {
+                for (var i = i + 1; i < len; i++) {
                     if (signatures[i].isDefinition()) {
                         foundDefinition = true;
                         break;
@@ -1268,15 +1267,14 @@ module TypeScript {
             }
 
             var specializations = this.getKnownSpecializations();
-            var i = 0;
 
-            for (i = 0; i < specializations.length; i++) {
+            for (var i = 0; i < specializations.length; i++) {
                 specializations[i].invalidate();
             }
 
             if (this.specializationLinks && this.specializationLinks.length) {
                 
-                for (i = 0; i < this.specializationLinks.length; i++) {
+                for (var i = 0; i < this.specializationLinks.length; i++) {
                     this.removeOutgoingLink(this.specializationLinks[i]);
                 }
             }
@@ -1394,7 +1392,7 @@ module TypeScript {
             else {
                 var extendedTypes = this.getExtendedTypes();
 
-                for (i = 0; i < extendedTypes.length; i++) {
+                for (var i = 0; i < extendedTypes.length; i++) {
                     if (extendedTypes[i].hasBase(this)) {
                         continue;
                     }
@@ -1420,7 +1418,7 @@ module TypeScript {
             else {
                 var extendedTypes = this.getExtendedTypes();
 
-                for (i = 0; i < extendedTypes.length; i++) {
+                for (var i = 0; i < extendedTypes.length; i++) {
                     if (extendedTypes[i].hasBase(this)) {
                         continue;
                     }
@@ -1446,7 +1444,7 @@ module TypeScript {
             else {
                 var extendedTypes = this.getExtendedTypes();
 
-                for (i = 0; i < extendedTypes.length; i++) {
+                for (var i = 0; i < extendedTypes.length; i++) {
                     if (extendedTypes[i].hasBase(this)) {
                         continue;
                     }
@@ -1599,9 +1597,8 @@ module TypeScript {
             }
 
             var extendedTypes = this.getExtendedTypes();
-            var i = 0;
 
-            for (i = 0; i < extendedTypes.length; i++) {
+            for (var i = 0; i < extendedTypes.length; i++) {
                 if (extendedTypes[i].hasBase(potentialBase)) {
                     return true;
                 }
@@ -1609,7 +1606,7 @@ module TypeScript {
 
             var implementedTypes = this.getImplementedTypes();
 
-            for (i = 0; i < implementedTypes.length; i++) {
+            for (var i = 0; i < implementedTypes.length; i++) {
                 if (implementedTypes[i].hasBase(potentialBase)) {
                     return true;
                 }
@@ -1660,7 +1657,6 @@ module TypeScript {
 
         public findMember(name: string): PullSymbol {
             var memberSymbol: PullSymbol;
-            var i = 0;
 
             if (!this.memberNameCache) {
                 this.populateMemberCache();
@@ -1675,7 +1671,7 @@ module TypeScript {
             // check parents
             if (!memberSymbol && this.extendedTypeLinks) {
 
-                for (i = 0; i < this.extendedTypeLinks.length; i++) {
+                for (var i = 0; i < this.extendedTypeLinks.length; i++) {
                     memberSymbol = (<PullTypeSymbol>this.extendedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
@@ -1686,7 +1682,7 @@ module TypeScript {
 
             if (!memberSymbol && this.implementedTypeLinks) {
 
-                for (i = 0; i < this.implementedTypeLinks.length; i++) {
+                for (var i = 0; i < this.implementedTypeLinks.length; i++) {
                     memberSymbol = (<PullTypeSymbol>this.implementedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
@@ -1778,7 +1774,7 @@ module TypeScript {
             }
 
             // Add members
-            for (i = 0 , n = this.memberCache.length; i < n; i++) {
+            for (var i = 0 , n = this.memberCache.length; i < n; i++) {
                 var member = this.memberCache[i];
                 if ((member.getKind() & searchDeclKind) && (includePrivate || !member.hasFlag(PullElementFlags.Private))) {
                     allMembers[allMembers.length] = member;
@@ -1788,7 +1784,7 @@ module TypeScript {
             // Add parent members
             if (this.extendedTypeLinks) {
 
-                for (i = 0 , n = this.extendedTypeLinks.length; i < n; i++) {
+                for (var i = 0 , n = this.extendedTypeLinks.length; i < n; i++) {
                     var extendedMembers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
                     for (j = 0 , m = extendedMembers.length; j < m; j++) {
@@ -1802,7 +1798,7 @@ module TypeScript {
 
             if (this.implementedTypeLinks) {
 
-                for (i = 0; i < this.implementedTypeLinks.length; i++) {
+                for (var i = 0; i < this.implementedTypeLinks.length; i++) {
                     var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
                     for (j = 0 , m = implementedMembers.length; j < m; j++) {
@@ -2736,9 +2732,6 @@ module TypeScript {
 
         var isArray = typeToSpecialize == resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        var i = 0;
-        var j = 0;
-
         var newType: PullTypeSymbol = null;
 
         var newTypeDecl = typeToSpecialize.getDeclarations()[0];
@@ -2747,7 +2740,7 @@ module TypeScript {
         
         if (searchForExistingSpecialization) {
             if (!typeArguments.length || context.specializingToAny) {
-                for (i = 0; i < typeParameters.length; i++) {
+                for (var i = 0; i < typeParameters.length; i++) {
                     typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -2764,7 +2757,7 @@ module TypeScript {
             }
         }
         else {
-            for (i = 0; i < typeParameters.length; i++) {
+            for (var i = 0; i < typeParameters.length; i++) {
                 substitution = context.findSpecializationForType(typeParameters[i]);
 
                 typeArguments[i] = substitution != null ? substitution : typeParameters[i];
@@ -2808,7 +2801,7 @@ module TypeScript {
 
         var typeReplacementMap: any = {};
 
-        for (i = 0; i < typeParameters.length; i++) {
+        for (var i = 0; i < typeParameters.length; i++) {
             if (typeParameters[i] != typeArguments[i]) {
                 typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
             }
@@ -2866,7 +2859,7 @@ module TypeScript {
         var returnType: PullTypeSymbol = null;
         var p = 0;
 
-        for (i = 0; i < callSignatures.length; i++) {
+        for (var i = 0; i < callSignatures.length; i++) {
             signature = callSignatures[i];
 
             if (signature.currentlyBeingSpecialized()) {
@@ -2926,7 +2919,7 @@ module TypeScript {
         }
 
         // specialize construct signatures
-        for (i = 0; i < constructSignatures.length; i++) {
+        for (var i = 0; i < constructSignatures.length; i++) {
             signature = constructSignatures[i];
 
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -2983,7 +2976,7 @@ module TypeScript {
         }
 
         // specialize index signatures
-        for (i = 0; i < indexSignatures.length; i++) {
+        for (var i = 0; i < indexSignatures.length; i++) {
             signature = indexSignatures[i];
 
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -3050,7 +3043,7 @@ module TypeScript {
 
         var fieldSignatureSymbol: PullSignatureSymbol = null;
 
-        for (i = 0; i < members.length; i++) {
+        for (var i = 0; i < members.length; i++) {
             field = members[i];
             field.setIsBeingSpecialized();
 
@@ -3058,7 +3051,7 @@ module TypeScript {
 
             newField = new PullSymbol(field.getName(), field.getKind());
 
-            for (j = 0; j < decls.length; j++) {
+            for (var j = 0; j < decls.length; j++) {
                 newField.addDeclaration(decls[j]);
             }
 
@@ -3120,7 +3113,7 @@ module TypeScript {
 
             var constructorDecls: PullDecl[] = constructorMethod.getDeclarations();
 
-            for (i = 0; i < constructorDecls.length; i++) {
+            for (var i = 0; i < constructorDecls.length; i++) {
                 newConstructorMethod.addDeclaration(constructorDecls[i]);
                 newConstructorType.addDeclaration(constructorDecls[i]);
             }
@@ -3151,7 +3144,6 @@ module TypeScript {
         }        
 
         var newSignature = signature.getSpecialization(typeArguments);
-        var i = 0;
 
         if (newSignature) {
             return newSignature;
@@ -3179,7 +3171,7 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
 
-        for (i = 0; i < typeParameters.length; i++) {
+        for (var i = 0; i < typeParameters.length; i++) {
             newSignature.addTypeParameter(typeParameters[i]);
         }
 
@@ -3199,7 +3191,7 @@ module TypeScript {
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
         // enclosing type.  (E.g., "class C<T> { public m<T>() {...} }" )
         if (skipLocalTypeParameters) {
-            for (i = 0; i < typeParameters.length; i++) {
+            for (var i = 0; i < typeParameters.length; i++) {
                 localTypeParameters[typeParameters[i].getName()] = true;
                 localSkipMap[typeParameters[i].getSymbolID().toString()] = typeParameters[i];
             }

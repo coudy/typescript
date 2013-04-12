@@ -509,7 +509,6 @@ module TypeScript {
 
             this.writeToOutput("(");
             var argsLen = 0;
-            var i = 0;
             var arg: Parameter;
             var defaultArgs: Parameter[] = [];
             if (funcDecl.arguments) {
@@ -519,7 +518,7 @@ module TypeScript {
                 if (funcDecl.variableArgList) {
                     printLen--;
                 }
-                for (i = 0; i < printLen; i++) {
+                for (var i = 0; i < printLen; i++) {
                     arg = <Parameter>funcDecl.arguments.members[i];
                     if (arg.init) {
                         defaultArgs.push(arg);
@@ -545,7 +544,7 @@ module TypeScript {
             this.indenter.increaseIndent();
 
             // set default args first
-            for (i = 0; i < defaultArgs.length; i++) {
+            for (var i = 0; i < defaultArgs.length; i++) {
                 arg = defaultArgs[i];
                 this.emitIndent();
                 this.recordSourceMappingStart(arg);
@@ -566,7 +565,7 @@ module TypeScript {
             if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
                 if (funcDecl.arguments) {
                     argsLen = funcDecl.arguments.members.length;
-                    for (i = 0; i < argsLen; i++) {
+                    for (var i = 0; i < argsLen; i++) {
                         arg = <Parameter>funcDecl.arguments.members[i];
                         if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
                             this.emitIndent();
@@ -629,7 +628,7 @@ module TypeScript {
 
                 var nProps = this.thisClassNode.members.members.length;
 
-                for (i = 0; i < nProps; i++) {
+                for (var i = 0; i < nProps; i++) {
                     if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
                         var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
@@ -676,14 +675,13 @@ module TypeScript {
         public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
             var importList = "";
             var dependencyList = "";
-            var i = 0;
 
             var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
             var imports = semanticInfo.getDynamicModuleImports();
 
             // all dependencies are quoted
             if (imports.length) {
-                for (i = 0; i < imports.length; i++) {
+                for (var i = 0; i < imports.length; i++) {
                     var importStatement = imports[i];
                     var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(importStatement.getDeclarations()[0]);
 
@@ -700,7 +698,7 @@ module TypeScript {
             }
 
             // emit any potential amd dependencies
-            for (i = 0; i < moduleDecl.amdDependencies.length; i++) {
+            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
                 dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
             }
 
@@ -1621,7 +1619,6 @@ module TypeScript {
                 this.pushDecl(pullDecl);
 
                 var svClassNode = this.thisClassNode;
-                var i = 0;
                 this.thisClassNode = classDecl;
                 var className = classDecl.name.actualText;
                 this.emitComments(classDecl, true);
@@ -1690,7 +1687,7 @@ module TypeScript {
                     var members = this.thisClassNode.members.members
 
                     // output initialized properties
-                    for (i = 0; i < members.length; i++) {
+                    for (var i = 0; i < members.length; i++) {
                         if (members[i].nodeType === NodeType.VariableDeclarator) {
                             varDecl = <VariableDeclarator>members[i];
                             if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {

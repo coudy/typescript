@@ -429,10 +429,8 @@ module TypeScript {
             // TODO: implement this.
 
             var firstToken: ISyntaxToken;
-            var i = 0;
-            var n = 0;
 
-            for (i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
                 var moduleElement = node.moduleElements.childAt(i);
 
                 firstToken = moduleElement.firstToken();
@@ -453,7 +451,7 @@ module TypeScript {
             if (firstToken.hasLeadingComment()) {
                 var leadingTrivia = firstToken.leadingTrivia();
 
-                for (i = 0, n = leadingTrivia.count(); i < n; i++) {
+                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
                     var trivia = leadingTrivia.syntaxTriviaAt(i);
 
                     if (trivia.isComment()) {
@@ -572,10 +570,7 @@ module TypeScript {
                 var extendsList = new ASTList();
                 var implementsList = new ASTList();
 
-                var i = 0;
-                var n = 0;
-
-                for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
                     var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
                     if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
                         extendsList = heritageClause.accept(this);
@@ -599,7 +594,7 @@ module TypeScript {
                 result.preComments = preComments;
                 result.postComments = postComments;
 
-                for (i = 0; i < members.members.length; i++) {
+                for (var i = 0; i < members.members.length; i++) {
                     var member = members.members[i];
                     if (member.nodeType === NodeType.FunctionDeclaration) {
                         var funcDecl = <FunctionDeclaration>member;
@@ -645,11 +640,9 @@ module TypeScript {
                 this.movePast(node.identifier);
                 var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
 
-                var i = 0;
-                var n = 0;
                 var extendsList: ASTList = null;
 
-                for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
                     var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
                     if (i === 0) {
                         extendsList = heritageClause.accept(this);

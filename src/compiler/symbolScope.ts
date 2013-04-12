@@ -173,7 +173,6 @@ module TypeScript {
 
         public findImplementation(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
-            var i = 0;
             var implCache = this.valueImplCache;
 
             if (typespace) {
@@ -187,7 +186,7 @@ module TypeScript {
                 return sym;
             }
             if (this.parents) {
-                for (i = 0; i < this.parents.length; i++) {
+                for (var i = 0; i < this.parents.length; i++) {
                     sym = this.parents[i].findImplementation(name, publicOnly, typespace);
                     if (sym) {
                         break;
@@ -210,7 +209,6 @@ module TypeScript {
 
         public find(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
-            var i = 0;
             var cache = this.valueCache;
 
             if (typespace) {
@@ -224,7 +222,7 @@ module TypeScript {
                 return sym;
             }
             if (this.parents) {
-                for (i = 0; i < this.parents.length; i++) {
+                for (var i = 0; i < this.parents.length; i++) {
                     sym = this.parents[i].find(name, publicOnly, typespace);
                     if (sym) {
                         break;
@@ -247,7 +245,6 @@ module TypeScript {
 
         public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol {
             var sym: Symbol = null;
-            var i = 0;
             var cache = this.valueAmbientCache;
             if (typespace) {
                 cache = this.typeAmbientCache;
@@ -256,7 +253,7 @@ module TypeScript {
                 return sym;
             }
             if (this.parents) {
-                for (i = 0; i < this.parents.length; i++) {
+                for (var i = 0; i < this.parents.length; i++) {
                     sym = this.parents[i].findAmbient(name, publicOnly, typespace);
                     if (sym) {
                         break;

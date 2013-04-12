@@ -457,7 +457,7 @@ module TypeScript {
             }
             this.bfs(useDefInit, null, null, null);
             var i: number, bbLen: number;
-            for (i = 0, bbLen = this.linearBBs.length; i < bbLen; i++) {
+            for (var i = 0, bbLen = this.linearBBs.length; i < bbLen; i++) {
                 this.linearBBs[i].useDef.initializeGen(useDefContext);
                 this.linearBBs[i].useDef.initializeKill(useDefContext);
             }
@@ -465,7 +465,7 @@ module TypeScript {
 
             while (changed) {
                 changed = false;
-                for (i = 0; i < bbLen; i++) {
+                for (var i = 0; i < bbLen; i++) {
                     changed = this.linearBBs[i].useDef.updateTop() || changed;
                 }
             }
@@ -3564,7 +3564,6 @@ module TypeScript {
             var comparisonInfo = new TypeComparisonInfo();
             var args: ASTList = null;
             var target: AST = null;
-            var i = 0;
 
             if (application.nodeType === NodeType.InvocationExpression || application.nodeType === NodeType.ObjectCreationExpression) {
                 var callEx = <CallExpression>application;
@@ -3572,7 +3571,7 @@ module TypeScript {
                 target = callEx.target;
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
-                    for (i = 0; i < len; i++) {
+                    for (var i = 0; i < len; i++) {
                         actuals[i] = callEx.arguments.members[i].type;
                     }
                 }
@@ -3623,7 +3622,7 @@ module TypeScript {
             else {
                 if (exactCandidates.length > 1) {
                     var applicableSigs: ApplicableSignature[] = [];
-                    for (i = 0; i < exactCandidates.length; i++) {
+                    for (var i = 0; i < exactCandidates.length; i++) {
                         applicableSigs[i] = { signature: exactCandidates[i], hadProvisionalErrors: false };
                     }
                     candidateInfo = this.checker.findMostApplicableSignature(applicableSigs, args);
@@ -3722,9 +3721,7 @@ module TypeScript {
         }
 
         public postTypeCheckCallArgs(callEx: CallExpression) {
-
             var acceptedTargetType = false;
-            var i = 0;
 
             if (callEx.target &&
                 callEx.target.type &&
@@ -3738,7 +3735,7 @@ module TypeScript {
                     var nonVarArgFormalParamLength = sig.hasVariableArgList ? sig.parameters.length - 1 : sig.parameters.length;
                     var nonVarArgActualParamLength = callEx.arguments.members.length < nonVarArgFormalParamLength ? callEx.arguments.members.length : nonVarArgFormalParamLength
 
-                    for (i = 0; i < nonVarArgActualParamLength; i++) {
+                    for (var i = 0; i < nonVarArgActualParamLength; i++) {
                         targetType = sig.parameters[i].getType();
                         switch (callEx.arguments.members[i].nodeType) {
                             case NodeType.FunctionDeclaration:
@@ -3757,7 +3754,7 @@ module TypeScript {
                             targetType = targetType.elementType;
                         }
                         var isParenthesized = sig.parameters[varArgParamIndex].declAST.nodeType !== NodeType.ParenthesizedExpression;
-                        for (i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
+                        for (var i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
                             switch (callEx.arguments.members[i].nodeType) {
                                 case NodeType.FunctionDeclaration:
                                 case NodeType.ObjectLiteralExpression:
@@ -3773,7 +3770,7 @@ module TypeScript {
             if (!acceptedTargetType && callEx.arguments) {
                 this.checker.killCurrentContextualType();
 
-                for (i = 0; i < callEx.arguments.members.length; i++) {
+                for (var i = 0; i < callEx.arguments.members.length; i++) {
                     switch (callEx.arguments.members[i].nodeType) {
                         case NodeType.FunctionDeclaration:
                         case NodeType.ObjectLiteralExpression:

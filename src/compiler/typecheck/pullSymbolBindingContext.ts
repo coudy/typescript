@@ -43,13 +43,12 @@ module TypeScript {
         var nestedSymbolPath: string[] = [];
         var copyOfContextSymbolPath = [];
         var symbol: PullSymbol = null;
-        var i = 0;
         var endTime: number;
 
         // first, search within the given symbol path
         if (typeLookupPath.length) {
 
-            for (i = 0; i < typeLookupPath.length; i++) {
+            for (var i = 0; i < typeLookupPath.length; i++) {
                 nestedSymbolPath[nestedSymbolPath.length] = typeLookupPath[i];
             }
 
@@ -71,11 +70,11 @@ module TypeScript {
         // next, link back up to the enclosing context
         if (contextSymbolPath.length) {
             
-            for (i = 0; i < contextSymbolPath.length; i++) {
+            for (var i = 0; i < contextSymbolPath.length; i++) {
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i];
             }
 
-            for (i = 0; i < typeLookupPath.length; i++) {
+            for (var i = 0; i < typeLookupPath.length; i++) {
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = typeLookupPath[i];
             }
 

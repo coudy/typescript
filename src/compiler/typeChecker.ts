@@ -761,10 +761,9 @@ module TypeScript {
 
         public addBases(resultScope: SymbolAggregateScope, type: Type, baseContext: { base: string; baseId: number; }): void {
             resultScope.addParentScope(new SymbolTableScope(type.members, type.ambientMembers, type.getAllEnclosedTypes(), type.getAllAmbientEnclosedTypes(), type.symbol));
-            var i = 0;
             var parent: Type;
             if (type.extendsList) {
-                for (var len = type.extendsList.length; i < len; i++) {
+                for (var i = 0, n = type.extendsList.length; i < n; i++) {
                     parent = type.extendsList[i];
                     if (baseContext.baseId === parent.typeID) {
                         this.errorReporter.reportErrorFromSym(parent.symbol, "Type '" + baseContext.base + "' is recursively referenced as a base class of itself");
@@ -1168,9 +1167,8 @@ module TypeScript {
 
             for (var qSig = 1; qSig < signatures.length; qSig++) {
                 Q = signatures[qSig];
-                var i = 0;
                 // find the better conversion
-                for (i = 0; args && i < args.members.length; i++) {
+                for (var i = 0; args && i < args.members.length; i++) {
                     AType = args.members[i].type;
                     PType = i < best.signature.parameters.length ? best.signature.parameters[i].getType() : best.signature.parameters[best.signature.parameters.length - 1].getType().elementType;
                     QType = i < Q.signature.parameters.length ? Q.signature.parameters[i].getType() : Q.signature.parameters[Q.signature.parameters.length - 1].getType().elementType;
@@ -1437,11 +1435,10 @@ module TypeScript {
             var targetMember: Symbol = null;
             var text = "";
             var foundSyms = {};
-            var i = 0;
 
             // Check that each property in the object literal is present in the target
             // type
-            for (i = 0; i < memberDecls.members.length; i++) {
+            for (var i = 0; i < memberDecls.members.length; i++) {
                 id = (<BinaryExpression>memberDecls.members[i]).operand1;
 
                 if (id.nodeType === NodeType.Name) {
@@ -1468,7 +1465,7 @@ module TypeScript {
             // Check that all members in the target type are present in the object literal
             var targetMembers = targetType.memberScope.getAllValueSymbolNames(true);
 
-            for (i = 0; i < targetMembers.length; i++) {
+            for (var i = 0; i < targetMembers.length; i++) {
                 var memberName = targetMembers[i];
                 var memberSym = targetType.memberScope.find(memberName, true, false);
 
@@ -1494,7 +1491,6 @@ module TypeScript {
         }
 
         public findBestCommonType(initialType: Type, targetType: Type, collection: ITypeCollection, acceptVoid:boolean, comparisonInfo?: TypeComparisonInfo) {
-            var i = 0;
             var len = collection.getLength();
             var nlastChecked = 0;
             var bestCommonType = initialType;
@@ -1509,7 +1505,7 @@ module TypeScript {
 
             while (nlastChecked < len) {
 
-                for (i = 0; i < len; i++) {
+                for (var i = 0; i < len; i++) {
 
                     // no use in comparing a type against itself
                     if (i === nlastChecked) {

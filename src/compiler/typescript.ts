@@ -622,7 +622,7 @@ module TypeScript {
                 var createDeclsStartTime = new Date().getTime();
 
                 var fileNames = this.fileNameToDocument.getAllKeys();
-                for (i = 0, n = fileNames.length; i < n; i++) {
+                for (var i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
                     var document = this.getDocument(fileName);
                     var semanticInfo = new SemanticInfo(fileName);
@@ -646,7 +646,7 @@ module TypeScript {
                 var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
 
                 // start at '1', so as to skip binding for global primitives such as 'any'
-                for (i = 1; i < this.semanticInfoChain.units.length; i++) {
+                for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
                     binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
                 }
 
@@ -655,7 +655,7 @@ module TypeScript {
                 var findErrorsStartTime = new Date().getTime();
 
                 //// type check
-                for (i = 0, n = fileNames.length; i < n; i++) {
+                for (var i = 0, n = fileNames.length; i < n; i++) {
                     fileName = fileNames[i];
 
                     this.logger.log("Type checking " + fileName);
@@ -717,9 +717,7 @@ module TypeScript {
                 var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
                 binder.setUnit(oldDocument.fileName);
 
-                var i = 0;
-
-                for (i = 0; i < topLevelDecls.length; i++) {
+                for (var i = 0; i < topLevelDecls.length; i++) {
                     binder.bindDeclToPullSymbol(topLevelDecls[i], true);
                 }
 
@@ -733,7 +731,7 @@ module TypeScript {
                     var diff: PullDeclDiff;
 
                     var traceStartTime = new Date().getTime();
-                    for (i = 0; i < diffResults.length; i++) {
+                    for (var i = 0; i < diffResults.length; i++) {
                         diff = diffResults[i];
 
                         if (diff.kind === PullDeclEdit.DeclRemoved) {
@@ -888,10 +886,9 @@ module TypeScript {
                 }
                 else {
                     // otherwise, it's an expression that needs to be resolved, so we must pull...
-                    var i = 0;
 
                     // first, find the enclosing decl
-                    for (i = declStack.length - 1; i >= 0; i--) {
+                    for (var i = declStack.length - 1; i >= 0; i--) {
                         if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
                             enclosingDecl = declStack[i];
                             break;
@@ -906,7 +903,7 @@ module TypeScript {
                     var callExpression: CallExpression = null;
                     if ((foundAST.nodeType == NodeType.SuperExpression || foundAST.nodeType == NodeType.ThisExpression || foundAST.nodeType == NodeType.Name) &&
                     resultASTs.length > 1) {
-                        for (i = resultASTs.length - 2; i >= 0; i--) {
+                        for (var i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.MemberAccessExpression &&
                             (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];
@@ -926,7 +923,7 @@ module TypeScript {
 
                     // if it's a list, we may not have an exact AST, so find the next nearest one
                     if (foundAST.nodeType === NodeType.List) {
-                        for (i = 0; i < (<ASTList>foundAST).members.length; i++) {
+                        for (var i = 0; i < (<ASTList>foundAST).members.length; i++) {
                             if ((<ASTList>foundAST).members[i].minChar > pos) {
                                 foundAST = (<ASTList>foundAST).members[i];
                                 break;
@@ -943,7 +940,7 @@ module TypeScript {
                         var assigningAST: VariableDeclarator;
                         var varSymbol: PullSymbol;
 
-                        for (i = 0; i < declarationInitASTs.length; i++) {
+                        for (var i = 0; i < declarationInitASTs.length; i++) {
 
                             assigningAST = declarationInitASTs[i];
                             isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
@@ -963,7 +960,7 @@ module TypeScript {
                     }
 
                     if (typeAssertionASTs.length) {
-                        for (i = 0; i < typeAssertionASTs.length; i++) {
+                        for (var i = 0; i < typeAssertionASTs.length; i++) {
                             this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], isTypedAssignment, enclosingDecl, resolutionContext);
                         }
                     }
@@ -1060,13 +1057,10 @@ module TypeScript {
                 return null;
             }
 
-            var i = 0;
-            var n = 0;
-
             this.pullTypeChecker.setUnit(semanticInfo.getPath());
 
             // Extract infromation from path
-            for (i = 0 , n = path.count(); i < n; i++) {
+            for (var i = 0 , n = path.count(); i < n; i++) {
                 var current = path.asts[i];
                 var decl = semanticInfo.getDeclForAST(current);
 
@@ -1191,7 +1185,7 @@ module TypeScript {
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
             if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
-                for (i = path.count() - 1; i >= 0; i--) {
+                for (var i = path.count() - 1; i >= 0; i--) {
                     if (path.asts[path.top - 1].nodeType === NodeType.MemberAccessExpression &&
                     (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                         path.pop();

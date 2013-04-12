@@ -151,16 +151,15 @@ module TypeScript {
         }
 
         var tooLong = (value.length > length);
-        var i = 0;
         if (tooLong) {
             var mid = length >> 1;
-            for (i = 0; i < mid; i++) addChar(i);
+            for (var i = 0; i < mid; i++) addChar(i);
             result += "(...)";
-            for (i = value.length - mid; i < value.length; i++) addChar(i);
+            for (var i = value.length - mid; i < value.length; i++) addChar(i);
         }
         else {
             length = value.length;
-            for (i = 0; i < length; i++) addChar(i);
+            for (var i = 0; i < length; i++) addChar(i);
         }
         return result;
     }

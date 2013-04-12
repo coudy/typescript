@@ -66,8 +66,6 @@ module TypeScript {
                       newAST: AST,
                       oldNameToDecls: any,
                       newNameToDecls: any): void {
-            var i = 0;
-            var n = 0;
             var oldChildrenOfName: PullDecl[];
             var newChildrenOfName: PullDecl[];
             var oldChild: PullDecl;
@@ -107,7 +105,7 @@ module TypeScript {
                 oldChildrenOfName = oldNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
                 newChildrenOfName = newNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
 
-                for (i = 0, n = oldChildrenOfName.length; i < n; i++) {
+                for (var i = 0, n = oldChildrenOfName.length; i < n; i++) {
                     oldChild = oldChildrenOfName[i];
 
                     switch (oldChild.getKind()) {
@@ -152,7 +150,7 @@ module TypeScript {
                 // If the old decl also knew about this name, then we would have taken care of this 
                 // name in the loop above.  So, start iterating *after* all the children of the 
                 // old decl.  
-                for (i = oldChildrenOfName.length, n = newChildrenOfName.length; i < n; i++) {
+                for (var i = oldChildrenOfName.length, n = newChildrenOfName.length; i < n; i++) {
                     newChild = newChildrenOfName[i];
                     this.differences.push(new PullDeclDiff(oldDecl, newChild, PullDeclEdit.DeclAdded));
                 }

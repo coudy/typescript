@@ -47,17 +47,16 @@ module TypeScript {
 
     export function getDiagnosticsFromEnclosingDecl(enclosingDecl: PullDecl, errors: IDiagnostic[]) {
         var declErrors = enclosingDecl.getDiagnostics();
-        var i = 0;
 
         if (declErrors) {
-            for (i = 0; i < declErrors.length; i++) {
+            for (var i = 0; i < declErrors.length; i++) {
                 errors[errors.length] = declErrors[i];
             }
         }
 
         var childDecls = enclosingDecl.getChildDecls();
 
-        for (i = 0; i < childDecls.length; i++) {
+        for (var i = 0; i < childDecls.length; i++) {
             getDiagnosticsFromEnclosingDecl(childDecls[i], errors);
         }
     }

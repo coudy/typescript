@@ -58,7 +58,7 @@ module TypeScript {
             type.implementsList = this.resolveBaseTypeLinks(type.implementsTypeLinks, scope);
 
             if (type.implementsList) {
-                for (i = 0, len = type.implementsList.length; i < len; i++) {
+                for (var i = 0, len = type.implementsList.length; i < len; i++) {
                     var iface = type.implementsList[i];
                     baseRef = type.implementsTypeLinks[i].ast;
                     if (iface.isClassInstance()) {

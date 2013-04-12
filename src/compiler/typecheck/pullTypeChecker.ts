@@ -741,12 +741,11 @@ module TypeScript {
                 return;
             }
 
-            var i = 0;
-            for (i = 0; i < typeDeclAst.extendsList.members.length; i++) {
+            for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {
                 this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, typeCheckContext);
             }
             if (typeSymbol.isClass()) {
-                for (i = 0; i < typeDeclAst.implementsList.members.length; i++) {
+                for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
             } else if (typeDeclAst.implementsList) {
@@ -1397,8 +1396,8 @@ module TypeScript {
         //  - lhs and rhs are compatible
         private typeCheckBinaryArithmeticOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
 
+            var type = this.resolver.resolveAST(binaryExpression, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
 
             var lhsType = this.typeCheckAST(binaryExpression.operand1, typeCheckContext);
@@ -1874,7 +1873,7 @@ module TypeScript {
                 }
 
                 var params = signature.getParameters();
-                for (j = 0 ; j < params.length; j++) {
+                for (var j = 0 ; j < params.length; j++) {
                     var paramType = params[j].getType();
                     this.checkTypePrivacy(declSymbol, paramType, privacyErrorReporter);
                 }
