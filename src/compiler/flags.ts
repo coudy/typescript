@@ -145,6 +145,7 @@ module TypeScript {
         IncompatibleReturnTypes = 1 << 4,
         IncompatiblePropertyTypes = 1 << 5,
         IncompatibleParameterTypes = 1 << 6,
+        InconsistantPropertyAccesibility = 1 << 7,
     }
 
     export enum ModuleGenTarget {

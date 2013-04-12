@@ -98,7 +98,7 @@ module TypeScript.Syntax {
             return [this.item];
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             (<any>this.item).collectTextElements(elements);
         }
 
@@ -184,7 +184,7 @@ module TypeScript.Syntax {
             return this.trivia;
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             for (var i = 0; i < this.trivia.length; i++) {
                 (<any>this.trivia[i]).collectTextElements(elements);
             }

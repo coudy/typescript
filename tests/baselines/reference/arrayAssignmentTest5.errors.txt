@@ -5,4 +5,5 @@
 0.ts line 28 col 37: error TS2038: Parameter 'state' of public method from exported class has or is using private type 'Test.IState'.
 0.ts line 28 col 74: error TS2056: Return type of public method from exported class has or is using private type 'Test.ILineTokens'.
 0.ts line 28 col 8: error TS2056: Return type of public method from exported class has or is using private type 'Test.ILineTokens'.
-0.ts line 23 col 16: error TS2011: Cannot convert 'Test.IToken[]' to 'Test.IStateToken[]'.
+0.ts line 23 col 16: error TS2012: Cannot convert 'Test.IToken[]' to 'Test.IStateToken[]':
+	Type 'Test.IToken' is missing property 'state' from type 'Test.IStateToken'.

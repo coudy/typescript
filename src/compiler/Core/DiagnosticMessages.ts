@@ -3,15 +3,38 @@
 module TypeScript {
     export var diagnosticMessages: IDiagnosticMessages = {
         error_TS_0__1: {
-            category: DiagnosticCategory.Error,
+            category: DiagnosticCategory.NoPrefix,
             message: "error TS{0}: {1}",
             code: 0
         },
 
         warning_TS_0__1: {
-            category: DiagnosticCategory.Warning,
+            category: DiagnosticCategory.NoPrefix,
             message: "warning TS{0}: {1}",
             code: 1
+        },
+
+        newLine: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "\r\n",
+            code: 10
+        },
+        tab: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "\t",
+            code: 11
+        },
+
+        _0__NL__1_TB__2: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "{0}{NL}{{1}TB}{2}",
+            code: 21
+        },
+
+        _0_TB__1: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "{{0}TB}{1}",
+            code: 22
         },
 
         // Syntactic errors start at 100.
@@ -427,9 +450,9 @@ module TypeScript {
             code: 2011
         },
 
-        Cannot_convert__0__to__1___2: {
+        Cannot_convert__0__to__1__NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Cannot convert '{0}' to '{1}': {2}.",
+            message: "Cannot convert '{0}' to '{1}':{NL}{2}",
             code: 2012
         },
 
@@ -783,9 +806,9 @@ module TypeScript {
             message: "Supplied parameters do not match any signature of call target.",
             code: 2081
         },
-        Supplied_parameters_do_not_match_any_signature_of_call_target___0: {
+        Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0: {
             category: DiagnosticCategory.Error,
-            message: "Supplied parameters do not match any signature of call target:\r\n\t{0}",
+            message: "Supplied parameters do not match any signature of call target:{NL}{0}",
             code: 2082
         },
         Invalid__new__expression: {
@@ -1048,6 +1071,97 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Import declarations in an internal module cannot reference an external module.",
             code: 2136
+        },
+        Class__0__declares_interface__1__but_does_not_implement_it__NL__2: {
+            category: DiagnosticCategory.Error,
+            message: "Class {0} declares interface {1} but does not implement it:{NL}{2}",
+            code: 2138
+        },
+
+
+
+
+
+
+        Type__0__is_missing_property__1__from_type__2_: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Type '{0}' is missing property '{1}' from type '{2}'.",
+            code: 4000
+        },
+        Types_of_property__0__of_types__1__and__2__are_incompatible: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
+            code: 4001
+        },
+        Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
+            code: 4002
+        },
+        Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.",
+            code: 4003
+        },
+        Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.",
+            code: 4004
+        },
+        Types__0__and__1__define_property__2__as_private: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Types '{0}' and '{1}' define property '{2}' as private.",
+            code: 4005
+        },
+        Call_signatures_of_types__0__and__1__are_incompatible: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Call signatures of types '{0}' and '{1}' are incompatible.",
+            code: 4006
+        },
+        Call_signatures_of_types__0__and__1__are_incompatible__NL__2: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Call signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
+            code: 4007
+        },
+        Type__0__requires_a_call_signature__but_Type__1__lacks_one: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Type '{0}' requires a call signature, but type '{1}' lacks one.",
+            code: 4008
+        },
+        Construct_signatures_of_types__0__and__1__are_incompatible: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Construct signatures of types '{0}' and '{1}' are incompatible.",
+            code: 4009
+        },
+        Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
+            code: 40010
+        },
+        Type__0__requires_a_construct_signature__but_Type__1__lacks_one: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Type '{0}' requires a construct signature, but type '{1}' lacks one.",
+            code: 4011
+        },
+        Index_signatures_of_types__0__and__1__are_incompatible: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Index signatures of types '{0}' and '{1}' are incompatible.",
+            code: 4012
+        },
+        Index_signatures_of_types__0__and__1__are_incompatible__NL__2: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Index signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
+            code: 4013
+        },
+        Call_signature_expects__0__or_fewer_parameters: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Call signature expects {0} or fewer parmeters.",
+            code: 4014
+        },
+        Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
+            code: 4015
         },
     };
 

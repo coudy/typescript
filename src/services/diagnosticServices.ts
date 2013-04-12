@@ -293,10 +293,10 @@ module Services {
         }
 
         
-        public getAstPathToPosition(script: TypeScript.AST, pos: number, options: TypeScript.GetAstPathOptions): TypeScript.AstPath {
+        public getAstPathToPosition(script: TypeScript.AST, pos: number,useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions): TypeScript.AstPath {
 
             var args = "script: " + this.stringify(script) + " pos: " + this.stringify(pos) + " options: " + this.stringify(options);
-            var result = this.internal.getAstPathToPosition(script, pos, options);
+            var result = this.internal.getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, options);
 
             this.writeFile("getAstPathToPosition: " + args + " result: " + this.stringify(result) + "\n");
 

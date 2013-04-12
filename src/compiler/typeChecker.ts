@@ -34,18 +34,28 @@ module TypeScript {
         public flags: TypeRelationshipFlags = TypeRelationshipFlags.SuccessfulComparison;
         public message = "";
         public stringConstantVal: AST = null;
+        private indent = 1;
+        
+        constructor(sourceComparisonInfo?: TypeComparisonInfo) {
+            if (sourceComparisonInfo) {
+                this.flags = sourceComparisonInfo.flags;
+                this.onlyCaptureFirstError = sourceComparisonInfo.onlyCaptureFirstError;
+                this.stringConstantVal = sourceComparisonInfo.stringConstantVal;
+                this.indent = sourceComparisonInfo.indent + 1;
+            }
+        }
 
-        public addMessageToFront(message) {
-            if (!this.onlyCaptureFirstError) {
-                this.message = this.message ? message + ":\n\t" + this.message : message;
+        public addMessage(message) {
+            if (!this.onlyCaptureFirstError && this.message) {
+                this.message = getDiagnosticMessage(DiagnosticCode._0__NL__1_TB__2, [this.message, this.indent, message]);
             }
             else {
-                this.setMessage(message);
+                this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
             }
         }
 
         public setMessage(message) {
-            this.message = message;
+            this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
         }
     }
 
@@ -1264,12 +1274,12 @@ module TypeScript {
                             this.cleanStartedPTO();
                             hadProvisionalErrors = this.hadProvisionalErrors();
 
-                            if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
-                                if (comparisonInfo) {
-                                    comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
-                                }
-                                miss = true;
-                            }
+                            //if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
+                            //    if (comparisonInfo) {
+                            //        comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                            //    }
+                            //    miss = true;
+                            //}
 
                             // clean the type
                             //if (hadProvisionalErrors) {
@@ -1297,12 +1307,12 @@ module TypeScript {
                         this.cleanStartedPTO();
                         hadProvisionalErrors = this.hadProvisionalErrors(); 
 
-                        if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
-                            if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
-                            }
-                            miss = true;
-                        }
+                        //if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
+                        //    if (comparisonInfo) {
+                        //        comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                        //    }
+                        //    miss = true;
+                        //}
 
                         // clean the type
                         //if (hadProvisionalErrors) {
@@ -1331,12 +1341,12 @@ module TypeScript {
                         this.cleanStartedPTO();
                         hadProvisionalErrors = this.hadProvisionalErrors(); 
 
-                        if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
-                            if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
-                            }
-                            break;
-                        }
+                        //if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
+                        //    if (comparisonInfo) {
+                        //        comparisonInfo.setMessage("Could not apply type '" + memberType.getTypeName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                        //    }
+                        //    break;
+                        //}
 
                         // clean the type
                         //if (hadProvisionalErrors) {
@@ -1910,7 +1920,7 @@ module TypeScript {
                                     comparisonCache[comboId] = undefined;
                                     if (comparisonInfo) { // only surface the first error
                                         comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
-                                        comparisonInfo.addMessageToFront("Type '" + source.getTypeName() + "' is missing property '" + mPropKeys[iMProp] + "' from type '" + target.getTypeName() + "'");
+                                        comparisonInfo.addMessage("Type '" + source.getTypeName() + "' is missing property '" + mPropKeys[iMProp] + "' from type '" + target.getTypeName() + "'");
                                     }
                                     return false;
                                 }
@@ -1940,7 +1950,7 @@ module TypeScript {
                         comparisonCache[comboId] = undefined;
                         if (comparisonInfo) { // only surface the first error
                             comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
-                            comparisonInfo.addMessageToFront("Types of property '" + mProp.name + "' of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
+                            comparisonInfo.addMessage("Types of property '" + mProp.name + "' of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         return false;
                     }
@@ -1955,12 +1965,12 @@ module TypeScript {
                 if (!this.signatureGroupIsRelatableToTarget(source.call, target.call, assignableTo, comparisonCache, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (source.call && target.call) {
-                            comparisonInfo.addMessageToFront("Call signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
+                            comparisonInfo.addMessage("Call signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            hasSig = target.call ? target.getTypeName() : source.getTypeName();
-                            lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
-                            comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
+                            //hasSig = target.call ? target.getTypeName() : source.getTypeName();
+                            //lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
+                            //comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                     }
@@ -1973,12 +1983,12 @@ module TypeScript {
                 if (!this.signatureGroupIsRelatableToTarget(source.construct, target.construct, assignableTo, comparisonCache, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (source.construct && target.construct) {
-                            comparisonInfo.addMessageToFront("Construct signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
+                            comparisonInfo.addMessage("Construct signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            hasSig = target.construct ? target.getTypeName() : source.getTypeName();
-                            lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
-                            comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
+                            //hasSig = target.construct ? target.getTypeName() : source.getTypeName();
+                            //lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
+                            //comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                     }
@@ -1993,7 +2003,7 @@ module TypeScript {
 
                 if (!this.signatureGroupIsRelatableToTarget(sourceIndex, targetIndex, assignableTo, comparisonCache, comparisonInfo)) {
                     if (comparisonInfo) {
-                        comparisonInfo.addMessageToFront("Index signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
+                        comparisonInfo.addMessage("Index signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                     }
                     comparisonCache[comboId] = undefined;
@@ -2052,7 +2062,7 @@ module TypeScript {
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableArgList) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= TypeRelationshipFlags.SourceSignatureHasTooManyParameters;
-                    comparisonInfo.addMessageToFront("Call signature expects " + targetVarArgCount + " or fewer parameters");
+                    comparisonInfo.addMessage("Call signature expects " + targetVarArgCount + " or fewer parameters");
                 }
                 return false;
             }
@@ -2065,7 +2075,7 @@ module TypeScript {
                     if (comparisonInfo) {
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleReturnTypes;
                         // No need to print this one here - it's printed as part of the signature error in sourceIsRelatableToTarget
-                        //comparisonInfo.addMessageToFront("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
+                        //comparisonInfo.addMessage("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
                     }
                     return false;
                 }

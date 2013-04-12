@@ -104,7 +104,7 @@ module TypeScript.Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             this.item.collectTextElements(elements);
         }
 
@@ -350,7 +350,7 @@ module TypeScript.Syntax {
             throw Errors.invalidOperation();
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
                 element.collectTextElements(elements);

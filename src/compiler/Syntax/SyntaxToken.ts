@@ -252,18 +252,18 @@ module TypeScript.Syntax {
         }
 
         public toJSON(key) { return tokenToJSON(this); }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
         }
 
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
+        public firstToken() { return this; }
+        public lastToken() { return this; }
+        public isTypeScriptSpecific() { return false; }
 
         // Empty tokens are never incrementally reusable.
-        private isIncrementallyUnusable() { return true; }
+        public isIncrementallyUnusable() { return true; }
 
         public fullWidth() { return 0; }
         public width() { return 0; }
@@ -287,7 +287,7 @@ module TypeScript.Syntax {
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public realize(): ISyntaxToken { return realizeToken(this); }
-        private collectTextElements(elements: string[]): void { }
+        public collectTextElements(elements: string[]): void { }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -332,14 +332,14 @@ module TypeScript.Syntax {
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
+        public firstToken() { return this; }
+        public lastToken() { return this; }
+        public isTypeScriptSpecific() { return false; }
 
         // Realized tokens are created from the parser.  They are *never* incrementally reusable.
-        private isIncrementallyUnusable() { return true; }
+        public isIncrementallyUnusable() { return true; }
 
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
         public childCount(): number {
             return 0;
@@ -386,7 +386,7 @@ module TypeScript.Syntax {
             return new PositionedToken(parent, this, fullStart);
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             this.leadingTrivia().collectTextElements(elements);
             elements.push(this.text());
             this.trailingTrivia().collectTextElements(elements);

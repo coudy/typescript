@@ -26,7 +26,7 @@ module TypeScript.Syntax {
             return [];
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
         }
 
         public firstToken(): ISyntaxToken {
@@ -119,7 +119,7 @@ module TypeScript.Syntax {
             return [this.item];
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             this.item.collectTextElements(elements);
         }
 
@@ -213,7 +213,7 @@ module TypeScript.Syntax {
             return this.nodeOrTokens.slice(0);
         }
 
-        private collectTextElements(elements: string[]): void {
+        public collectTextElements(elements: string[]): void {
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
                 var element = this.nodeOrTokens[i];
                 element.collectTextElements(elements);

@@ -57,7 +57,8 @@ module TypeScript {
         var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticType];
 
         var diagnostic = <DiagnosticInfo>diagnosticMessages[diagnosticName];
-
+        
+        var actualCount = args ? args.length : 0;
         if (!diagnostic) {
             throw new Error("Invalid diagnostic");
         }
@@ -65,29 +66,41 @@ module TypeScript {
             // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
             // (i.e.'1').  We then need one more arg than that to be correct.
             var expectedCount = 1 + getLargestIndex(diagnosticName);
-            var actualCount = args ? args.length : 0;
 
             if (expectedCount !== actualCount) {
                 throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
             }
         }
 
-        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
+        var diagnosticMessage = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
+            var tabChar = getDiagnosticMessage(DiagnosticCode.tab, null);
+            var result = tabChar;
+            if (num && args[num]) {
+                for (var i = 1; i < <number>args[num]; i++) {
+                    result += tabChar;
+                }
+            }
+
+            return result;
+        } );
+        
+
+        diagnosticMessage = diagnosticMessage.replace(/{(\d+)}/g, function (match, num) {
             return typeof args[num] !== 'undefined'
-                ? args[num]
-                : match;
-        });
+            ? args[num]
+            : match;
+        } );
+        
+        diagnosticMessage = diagnosticMessage.replace(/{(NL)}/g, function (match) {
+            return getDiagnosticMessage(DiagnosticCode.newLine, null);
+        } );
 
         var message: string;
-
-        if (diagnosticType != DiagnosticCode.error_TS_0__1 && diagnosticType != DiagnosticCode.warning_TS_0__1) {
-            var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
-                                    DiagnosticCode.error_TS_0__1 :
-                                    DiagnosticCode.warning_TS_0__1;
-
-            message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
-        }
-        else {
+        if (diagnostic.category == DiagnosticCategory.Error) {
+            message = getDiagnosticMessage(DiagnosticCode.error_TS_0__1, [diagnostic.code, diagnosticMessage]);
+        } else if (diagnostic.category == DiagnosticCategory.Warning) {
+            message = getDiagnosticMessage(DiagnosticCode.warning_TS_0__1, [diagnostic.code, diagnosticMessage]);
+        } else {
             message = diagnosticMessage;
         }
 

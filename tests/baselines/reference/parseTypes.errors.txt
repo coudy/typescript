@@ -1,3 +1,7 @@
-0.ts line 10 col 0: error TS2011: Cannot convert '(s: string) => void' to '() => number'.
-0.ts line 11 col 0: error TS2011: Cannot convert '(s: string) => void' to '{ [x: number]: number; }'.
-0.ts line 12 col 0: error TS2011: Cannot convert '(s: string) => void' to 'new() => number'.
+0.ts line 10 col 0: error TS2012: Cannot convert '(s: string) => void' to '() => number':
+	Call signatures of types '(s: string) => void' and '() => number' are incompatible:
+		Call signature expects 0 or fewer parmeters.
+0.ts line 11 col 0: error TS2012: Cannot convert '(s: string) => void' to '{ [x: number]: number; }':
+	Index signatures of types '(s: string) => void' and '{ [x: number]: number; }' are incompatible.
+0.ts line 12 col 0: error TS2012: Cannot convert '(s: string) => void' to 'new() => number':
+	Type 'new() => number' requires a construct signature, but type '(s: string) => void' lacks one.

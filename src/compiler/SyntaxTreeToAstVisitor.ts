@@ -230,7 +230,7 @@ module TypeScript {
             }
         }
 
-        private visitSyntaxList(list: ISyntaxList): ASTList {
+        public visitSyntaxList(list: ISyntaxList): ASTList {
             var start = this.position;
             var result: ASTList = this.getAST(list);
             if (result) {
@@ -252,7 +252,7 @@ module TypeScript {
             return result;
         }
 
-        private visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
+        public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
             var start = this.position;
             var result: ASTList = this.getAST(list);
             if (result) {
@@ -373,7 +373,7 @@ module TypeScript {
             return false;
         }
 
-        private visitToken(token: ISyntaxToken): Expression {
+        public visitToken(token: ISyntaxToken): Expression {
             this.assertElementAtPosition(token);
 
             var result: Expression = this.getAST(token);
@@ -487,7 +487,7 @@ module TypeScript {
             return false;
         }
 
-        private visitSourceUnit(node: SourceUnitSyntax): Script {
+        public visitSourceUnit(node: SourceUnitSyntax): Script {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -536,7 +536,7 @@ module TypeScript {
             return result;
         }
 
-        private visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
+        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
             this.assertElementAtPosition(node);
             this.moveTo(node, node.stringLiteral);
             var result = this.identifierFromToken(node.stringLiteral, /*isOptional:*/ false, /*useValueText:*/ false);
@@ -546,12 +546,12 @@ module TypeScript {
             return result;
         }
 
-        private visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
+        public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
             this.assertElementAtPosition(node);
             return node.moduleName.accept(this);
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
+        public visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -624,7 +624,7 @@ module TypeScript {
             return result;
         }
 
-        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
+        public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -672,7 +672,7 @@ module TypeScript {
             return result;
         }
 
-        private visitHeritageClause(node: HeritageClauseSyntax): ASTList {
+        public visitHeritageClause(node: HeritageClauseSyntax): ASTList {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -730,7 +730,7 @@ module TypeScript {
             }
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
+        public visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -804,7 +804,7 @@ module TypeScript {
             return false;
         }
 
-        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
+        public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -862,7 +862,7 @@ module TypeScript {
             return result;
         }
 
-        private visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
+        public visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1002,12 +1002,12 @@ module TypeScript {
             return modDecl;
         }
 
-        private visitEnumElement(node: EnumElementSyntax): void {
+        public visitEnumElement(node: EnumElementSyntax): void {
             // Processing enum elements should be handled from inside visitEnumDeclaration.
             throw Errors.invalidOperation();
         }
 
-        private visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
+        public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1038,7 +1038,7 @@ module TypeScript {
             return result;
         }
 
-        private visitExportAssignment(node: ExportAssignmentSyntax): ExportAssignment {
+        public visitExportAssignment(node: ExportAssignmentSyntax): ExportAssignment {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1060,7 +1060,7 @@ module TypeScript {
             return result;
         }
 
-        private visitVariableStatement(node: VariableStatementSyntax): VariableStatement {
+        public visitVariableStatement(node: VariableStatementSyntax): VariableStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1097,7 +1097,7 @@ module TypeScript {
             return result;
         }
 
-        private visitVariableDeclaration(node: VariableDeclarationSyntax): VariableDeclaration {
+        public visitVariableDeclaration(node: VariableDeclarationSyntax): VariableDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1120,7 +1120,7 @@ module TypeScript {
             return result;
         }
 
-        private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
+        public visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1144,7 +1144,7 @@ module TypeScript {
             return result;
         }
 
-        private visitEqualsValueClause(node: EqualsValueClauseSyntax): Expression {
+        public visitEqualsValueClause(node: EqualsValueClauseSyntax): Expression {
             this.assertElementAtPosition(node);
 
             this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
@@ -1170,7 +1170,7 @@ module TypeScript {
             }
         }
 
-        private visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
+        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1190,7 +1190,7 @@ module TypeScript {
             return result;
         }
 
-        private visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
+        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1211,7 +1211,7 @@ module TypeScript {
             return result;
         }
 
-        private visitOmittedExpression(node: OmittedExpressionSyntax): OmittedExpression {
+        public visitOmittedExpression(node: OmittedExpressionSyntax): OmittedExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1228,7 +1228,7 @@ module TypeScript {
             return result;
         }
 
-        private visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): ParenthesizedExpression {
+        public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): ParenthesizedExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1263,7 +1263,7 @@ module TypeScript {
             }
         }
 
-        private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionDeclaration {
+        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1297,7 +1297,7 @@ module TypeScript {
             return result;
         }
 
-        private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionDeclaration {
+        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1329,7 +1329,7 @@ module TypeScript {
             return result;
         }
 
-        private visitType(type: ITypeSyntax): TypeReference {
+        public visitType(type: ITypeSyntax): TypeReference {
             this.assertElementAtPosition(type);
 
             var result: TypeReference;
@@ -1347,7 +1347,7 @@ module TypeScript {
             return result;
         }
 
-        private visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
+        public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1372,7 +1372,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
+        public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
             this.assertElementAtPosition(node);
 
             var result = new ASTList();
@@ -1391,7 +1391,7 @@ module TypeScript {
             return result;
         }
 
-        private visitConstructorType(node: ConstructorTypeSyntax): TypeReference {
+        public visitConstructorType(node: ConstructorTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1426,7 +1426,7 @@ module TypeScript {
             return result;
         }
 
-        private visitFunctionType(node: FunctionTypeSyntax): TypeReference {
+        public visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1457,7 +1457,7 @@ module TypeScript {
             return result;
         }
 
-        private visitObjectType(node: ObjectTypeSyntax): TypeReference {
+        public visitObjectType(node: ObjectTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1484,7 +1484,7 @@ module TypeScript {
             return result;
         }
 
-        private visitArrayType(node: ArrayTypeSyntax): TypeReference {
+        public visitArrayType(node: ArrayTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1513,7 +1513,7 @@ module TypeScript {
             return result;
         }
 
-        private visitGenericType(node: GenericTypeSyntax): TypeReference {
+        public visitGenericType(node: GenericTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1538,14 +1538,14 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeAnnotation(node: TypeAnnotationSyntax): TypeReference {
+        public visitTypeAnnotation(node: TypeAnnotationSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             this.movePast(node.colonToken);
             return this.visitType(node.type);
         }
 
-        private visitBlock(node: BlockSyntax): Block {
+        public visitBlock(node: BlockSyntax): Block {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1570,7 +1570,7 @@ module TypeScript {
             return result;
         }
 
-        private visitParameter(node: ParameterSyntax): Parameter {
+        public visitParameter(node: ParameterSyntax): Parameter {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1618,7 +1618,7 @@ module TypeScript {
             return result;
         }
 
-        private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
+        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1640,7 +1640,7 @@ module TypeScript {
             return result;
         }
 
-        private visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
+        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1660,7 +1660,7 @@ module TypeScript {
             return result;
         }
 
-        private visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
+        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1693,7 +1693,7 @@ module TypeScript {
             return result;
         }
 
-        private visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1716,7 +1716,7 @@ module TypeScript {
             return result;
         }
 
-        private visitArgumentList(node: ArgumentListSyntax): ASTList {
+        public visitArgumentList(node: ArgumentListSyntax): ASTList {
             // Processing argument lists should be handled from inside visitInvocationExpression or 
             // visitObjectCreationExpression.
             throw Errors.invalidOperation();
@@ -1765,7 +1765,7 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        private visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
+        public visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1795,7 +1795,7 @@ module TypeScript {
             return result;
         }
 
-        private visitConditionalExpression(node: ConditionalExpressionSyntax): ConditionalExpression {
+        public visitConditionalExpression(node: ConditionalExpressionSyntax): ConditionalExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1818,7 +1818,7 @@ module TypeScript {
             return result;
         }
 
-        private visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
+        public visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1851,7 +1851,7 @@ module TypeScript {
             return result;
         }
 
-        private visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
+        public visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1884,7 +1884,7 @@ module TypeScript {
             return result;
         }
 
-        private visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
+        public visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1924,7 +1924,7 @@ module TypeScript {
             return result;
         }
 
-        private visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
+        public visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1952,7 +1952,7 @@ module TypeScript {
             return result;
         }
 
-        private visitParameterList(node: ParameterListSyntax): ASTList {
+        public visitParameterList(node: ParameterListSyntax): ASTList {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1968,7 +1968,7 @@ module TypeScript {
             return result;
         }
 
-        private visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
+        public visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2000,7 +2000,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
+        public visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
             this.assertElementAtPosition(node);
 
             this.movePast(node.lessThanToken);
@@ -2010,7 +2010,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
+        public visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2031,14 +2031,14 @@ module TypeScript {
             return result;
         }
 
-        private visitConstraint(node: ConstraintSyntax): TypeReference {
+        public visitConstraint(node: ConstraintSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             this.movePast(node.extendsKeyword);
             return this.visitType(node.type);
         }
 
-        private visitIfStatement(node: IfStatementSyntax): IfStatement {
+        public visitIfStatement(node: IfStatementSyntax): IfStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2061,14 +2061,14 @@ module TypeScript {
             return result;
         }
 
-        private visitElseClause(node: ElseClauseSyntax): Statement {
+        public visitElseClause(node: ElseClauseSyntax): Statement {
             this.assertElementAtPosition(node);
 
             this.movePast(node.elseKeyword);
             return node.statement.accept(this);
         }
 
-        private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
+        public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2093,7 +2093,7 @@ module TypeScript {
             return result;
         }
 
-        private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
+        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2136,7 +2136,7 @@ module TypeScript {
             return result;
         }
 
-        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2192,7 +2192,7 @@ module TypeScript {
             return result;
         }
 
-        private visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
+        public visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2237,7 +2237,7 @@ module TypeScript {
             return result;
         }
 
-        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): FunctionDeclaration {
+        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var result = this.visitMemberAccessorDeclaration(node, node.typeAnnotation);
@@ -2248,7 +2248,7 @@ module TypeScript {
             return result;
         }
 
-        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): FunctionDeclaration {
+        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var result = this.visitMemberAccessorDeclaration(node, null);
@@ -2259,7 +2259,7 @@ module TypeScript {
             return result;
         }
 
-        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2314,7 +2314,7 @@ module TypeScript {
             return result;
         }
 
-        private visitThrowStatement(node: ThrowStatementSyntax): ThrowStatement {
+        public visitThrowStatement(node: ThrowStatementSyntax): ThrowStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2335,7 +2335,7 @@ module TypeScript {
             return result;
         }
 
-        private visitReturnStatement(node: ReturnStatementSyntax): ReturnStatement {
+        public visitReturnStatement(node: ReturnStatementSyntax): ReturnStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2356,7 +2356,7 @@ module TypeScript {
             return result;
         }
 
-        private visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
+        public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2389,7 +2389,7 @@ module TypeScript {
             return result;
         }
 
-        private visitSwitchStatement(node: SwitchStatementSyntax): SwitchStatement {
+        public visitSwitchStatement(node: SwitchStatementSyntax): SwitchStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2431,7 +2431,7 @@ module TypeScript {
             return result;
         }
 
-        private visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
+        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2456,7 +2456,7 @@ module TypeScript {
             return result;
         }
 
-        private visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
+        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2478,7 +2478,7 @@ module TypeScript {
             return result;
         }
 
-        private visitBreakStatement(node: BreakStatementSyntax): Jump {
+        public visitBreakStatement(node: BreakStatementSyntax): Jump {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2503,7 +2503,7 @@ module TypeScript {
             return result;
         }
 
-        private visitContinueStatement(node: ContinueStatementSyntax): Jump {
+        public visitContinueStatement(node: ContinueStatementSyntax): Jump {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2528,7 +2528,7 @@ module TypeScript {
             return result;
         }
 
-        private visitForStatement(node: ForStatementSyntax): ForStatement {
+        public visitForStatement(node: ForStatementSyntax): ForStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2559,7 +2559,7 @@ module TypeScript {
             return result;
         }
 
-        private visitForInStatement(node: ForInStatementSyntax): ForInStatement {
+        public visitForInStatement(node: ForInStatementSyntax): ForInStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2584,7 +2584,7 @@ module TypeScript {
             return result;
         }
 
-        private visitWhileStatement(node: WhileStatementSyntax): WhileStatement {
+        public visitWhileStatement(node: WhileStatementSyntax): WhileStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2606,7 +2606,7 @@ module TypeScript {
             return result;
         }
 
-        private visitWithStatement(node: WithStatementSyntax): WithStatement {
+        public visitWithStatement(node: WithStatementSyntax): WithStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2628,7 +2628,7 @@ module TypeScript {
             return result;
         }
 
-        private visitCastExpression(node: CastExpressionSyntax): UnaryExpression {
+        public visitCastExpression(node: CastExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2651,7 +2651,7 @@ module TypeScript {
             return result;
         }
 
-        private visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
+        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2672,7 +2672,7 @@ module TypeScript {
             return result;
         }
 
-        private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
+        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2705,7 +2705,7 @@ module TypeScript {
             return result;
         }
 
-        private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
+        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2741,7 +2741,7 @@ module TypeScript {
             return result;
         }
 
-        private visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
+        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2777,7 +2777,7 @@ module TypeScript {
             return result;
         }
 
-        private visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
+        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2817,7 +2817,7 @@ module TypeScript {
             return result;
         }
 
-        private visitEmptyStatement(node: EmptyStatementSyntax): EmptyStatement {
+        public visitEmptyStatement(node: EmptyStatementSyntax): EmptyStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2836,7 +2836,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTryStatement(node: TryStatementSyntax): TryStatement {
+        public visitTryStatement(node: TryStatementSyntax): TryStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2870,7 +2870,7 @@ module TypeScript {
             return result;
         }
 
-        private visitCatchClause(node: CatchClauseSyntax): CatchClause {
+        public visitCatchClause(node: CatchClauseSyntax): CatchClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2900,12 +2900,12 @@ module TypeScript {
             return result;
         }
 
-        private visitFinallyClause(node: FinallyClauseSyntax): Block {
+        public visitFinallyClause(node: FinallyClauseSyntax): Block {
             this.movePast(node.finallyKeyword);
             return node.block.accept(this);
         }
 
-        private visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
+        public visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2927,7 +2927,7 @@ module TypeScript {
             return result;
         }
 
-        private visitDoStatement(node: DoStatementSyntax): DoStatement {
+        public visitDoStatement(node: DoStatementSyntax): DoStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2956,7 +2956,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
+        public visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2976,7 +2976,7 @@ module TypeScript {
             return result;
         }
 
-        private visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
+        public visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -2996,7 +2996,7 @@ module TypeScript {
             return result;
         }
 
-        private visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
+        public visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -3016,7 +3016,7 @@ module TypeScript {
             return result;
         }
 
-        private visitDebuggerStatement(node: DebuggerStatementSyntax): DebuggerStatement {
+        public visitDebuggerStatement(node: DebuggerStatementSyntax): DebuggerStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;

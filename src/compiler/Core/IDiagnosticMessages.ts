@@ -5,6 +5,12 @@ module TypeScript {
         error_TS_0__1: DiagnosticInfo;
         warning_TS_0__1: DiagnosticInfo;
 
+        newLine: DiagnosticInfo;
+        tab: DiagnosticInfo;
+
+        _0__NL__1_TB__2: DiagnosticInfo;
+        _0_TB__1: DiagnosticInfo;
+
         // Syntactic diagnostics.
         Unrecognized_escape_sequence: DiagnosticInfo;
         Unexpected_character_0: DiagnosticInfo;
@@ -79,7 +85,7 @@ module TypeScript {
         Operator__0__cannot_be_applied_to_types__1__and__2_: DiagnosticInfo;
         Operator__0__cannot_be_applied_to_types__1__and__2__3: DiagnosticInfo;
         Cannot_convert__0__to__1_: DiagnosticInfo;
-        Cannot_convert__0__to__1___2: DiagnosticInfo;
+        Cannot_convert__0__to__1__NL__2: DiagnosticInfo;
         Expected_var__class__interface__or_module: DiagnosticInfo;
         Operator__0__cannot_be_applied_to_type__1_: DiagnosticInfo;
         Getter__0__already_declared: DiagnosticInfo;
@@ -157,7 +163,7 @@ module TypeScript {
         Unable_to_resolve_type_parameter_constraint: DiagnosticInfo;
         Type_parameter_constraint_may_not_be_a_primitive_type: DiagnosticInfo;
         Supplied_parameters_do_not_match_any_signature_of_call_target: DiagnosticInfo;
-        Supplied_parameters_do_not_match_any_signature_of_call_target___0: DiagnosticInfo;
+        Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0: DiagnosticInfo;
         Invalid__new__expression: DiagnosticInfo;
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: DiagnosticInfo;
         Could_not_select_overload_for__new__expression: DiagnosticInfo;
@@ -206,5 +212,24 @@ module TypeScript {
         Cannot_resolve_return_type_reference: DiagnosticInfo;
         Constructors_cannot_have_a_return_type_of__void_: DiagnosticInfo;
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: DiagnosticInfo;
+        Class__0__declares_interface__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
+
+
+        Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
+        Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
+        Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: DiagnosticInfo;
+        Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: DiagnosticInfo;
+        Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: DiagnosticInfo;
+        Types__0__and__1__define_property__2__as_private: DiagnosticInfo;
+        Call_signatures_of_types__0__and__1__are_incompatible: DiagnosticInfo;
+        Call_signatures_of_types__0__and__1__are_incompatible__NL__2: DiagnosticInfo;
+        Type__0__requires_a_call_signature__but_Type__1__lacks_one: DiagnosticInfo;
+        Construct_signatures_of_types__0__and__1__are_incompatible: DiagnosticInfo;
+        Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: DiagnosticInfo;
+        Type__0__requires_a_construct_signature__but_Type__1__lacks_one: DiagnosticInfo;
+        Index_signatures_of_types__0__and__1__are_incompatible: DiagnosticInfo;
+        Index_signatures_of_types__0__and__1__are_incompatible__NL__2: DiagnosticInfo;
+        Call_signature_expects__0__or_fewer_parameters: DiagnosticInfo;
+        Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: DiagnosticInfo;
     }
 }

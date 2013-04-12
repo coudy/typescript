@@ -5,6 +5,12 @@ module TypeScript {
         error_TS_0__1,
         warning_TS_0__1,
 
+        newLine,
+        tab,
+
+        _0__NL__1_TB__2,
+        _0_TB__1,
+
         // Syntactic diagnostics.
         Unrecognized_escape_sequence,
         Unexpected_character_0,
@@ -79,7 +85,7 @@ module TypeScript {
         Operator__0__cannot_be_applied_to_types__1__and__2_,
         Operator__0__cannot_be_applied_to_types__1__and__2__3,
         Cannot_convert__0__to__1_,
-        Cannot_convert__0__to__1___2,
+        Cannot_convert__0__to__1__NL__2,
         Expected_var__class__interface__or_module,
         Operator__0__cannot_be_applied_to_type__1_,
         Getter__0__already_declared,
@@ -149,7 +155,7 @@ module TypeScript {
         Unable_to_resolve_type_parameter_constraint,
         Type_parameter_constraint_may_not_be_a_primitive_type,
         Supplied_parameters_do_not_match_any_signature_of_call_target,
-        Supplied_parameters_do_not_match_any_signature_of_call_target___0,
+        Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0,
         Invalid__new__expression,
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type,
         Could_not_select_overload_for__new__expression,
@@ -203,5 +209,24 @@ module TypeScript {
         Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ ,
         All_symbols_within_a__with__block_will_be_resolved_to__any__,
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module,
+        Class__0__declares_interface__1__but_does_not_implement_it__NL__2,
+
+        // Extra information that is used as part of other error message
+        Type__0__is_missing_property__1__from_type__2_,
+        Types_of_property__0__of_types__1__and__2__are_incompatible,
+        Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3,
+        Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_,
+        Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_,
+        Types__0__and__1__define_property__2__as_private,
+        Call_signatures_of_types__0__and__1__are_incompatible,
+        Call_signatures_of_types__0__and__1__are_incompatible__NL__2,
+        Type__0__requires_a_call_signature__but_Type__1__lacks_one,
+        Construct_signatures_of_types__0__and__1__are_incompatible,
+        Construct_signatures_of_types__0__and__1__are_incompatible__NL__2,
+        Type__0__requires_a_construct_signature__but_Type__1__lacks_one,
+        Index_signatures_of_types__0__and__1__are_incompatible,
+        Index_signatures_of_types__0__and__1__are_incompatible__NL__2,
+        Call_signature_expects__0__or_fewer_parameters,
+        Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
     }
 }

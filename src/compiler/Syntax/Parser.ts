@@ -441,13 +441,13 @@ module TypeScript.Parser {
             return this.scanner.languageVersion();
         }
 
-        private currentNode(): SyntaxNode {
+        public currentNode(): SyntaxNode {
             // The normal parser source never returns nodes.  They're only returned by the 
             // incremental parser source.
             return null;
         }
 
-        private moveToNextNode(): void {
+        public moveToNextNode(): void {
             // Should never get called.
             throw Errors.invalidOperation();
         }
@@ -716,11 +716,11 @@ module TypeScript.Parser {
             return this._normalParserSource.previousToken();
         }
 
-        private tokenDiagnostics(): SyntaxDiagnostic[] {
+        public tokenDiagnostics(): SyntaxDiagnostic[] {
             return this._normalParserSource.tokenDiagnostics();
         }
 
-        private getRewindPoint(): IParserRewindPoint {
+        public getRewindPoint(): IParserRewindPoint {
             // Get a rewind point for our new text reader and for our old source unit cursor.
             var rewindPoint = this._normalParserSource.getRewindPoint();
             var oldSourceUnitCursorIndex = this._oldSourceUnitCursor.getAndPinCursorIndex();
@@ -735,7 +735,7 @@ module TypeScript.Parser {
             return rewindPoint;
         }
 
-        private rewind(rewindPoint: IParserRewindPoint): void {
+        public rewind(rewindPoint: IParserRewindPoint): void {
             // Restore our state to the values when the rewind point was created.
             this._changeRange = rewindPoint.changeRange;
             this._changeDelta = rewindPoint.changeDelta;
@@ -744,7 +744,7 @@ module TypeScript.Parser {
             this._normalParserSource.rewind(rewindPoint);
         }
 
-        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+        public releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
             // Release both the new text reader and the old text cursor.
             this._oldSourceUnitCursor.releaseAndUnpinCursorIndex(rewindPoint.oldSourceUnitCursorIndex);
             this._normalParserSource.releaseRewindPoint(rewindPoint);
@@ -964,7 +964,7 @@ module TypeScript.Parser {
                 ? token : null;
         }
 
-        private moveToNextNode(): void {
+        public moveToNextNode(): void {
             // A node could have only come from the old source unit cursor.  Update it and our 
             // current state.
             // Debug.assert(this._changeDelta === 0);
@@ -993,7 +993,7 @@ module TypeScript.Parser {
             }
         }
 
-        private moveToNextToken(): void {
+        public moveToNextToken(): void {
             // This token may have come from the old source unit, or from the new text.  Handle
             // both accordingly.
             var currentToken = this.currentToken();
@@ -1101,24 +1101,24 @@ module TypeScript.Parser {
             return rewindPoint;
         }
 
-        private rewind(rewindPoint: IParserRewindPoint): void {
+        public rewind(rewindPoint: IParserRewindPoint): void {
             this.source.rewind(rewindPoint);
 
             this.diagnostics.length = rewindPoint.diagnosticsCount;
         }
 
-        private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
+        public releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
             // Debug.assert(this.listParsingState === rewindPoint.listParsingState);
             // Debug.assert(this.isInStrictMode === rewindPoint.isInStrictMode);
 
             this.source.releaseRewindPoint(rewindPoint);
         }
 
-        private currentTokenStart(): number {
+        public currentTokenStart(): number {
             return this.source.absolutePosition() + this.currentToken().leadingTriviaWidth();
         }
 
-        private previousTokenStart(): number {
+        public previousTokenStart(): number {
             if (this.previousToken() === null) {
                 return 0;
             }

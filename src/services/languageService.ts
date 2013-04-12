@@ -63,7 +63,7 @@ module Services {
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
 
-        getAstPathToPosition(script: TypeScript.AST, pos: number, options: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
+        getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
         getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath;
 
         getSymbolTree(): Services.ISymbolTree;

@@ -4412,6 +4412,24 @@ module TypeScript {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
+        public sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, targetProps: PullSymbol[],
+        findPropertyInSource: (propName: String) => PullSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+            return this.sourceMembersAreRelatableToTargetMembers(source, target, targetProps, findPropertyInSource, false, this.subtypeCache,
+            context, comparisonInfo);
+        }
+        
+        public sourceCallSignaturesAreSubtypeOfTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+            return this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
+        }
+
+        public sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+            return this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
+        }
+
+        public sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+            return this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
+        }
+
         public typeIsSubtypeOfFunction(source: PullTypeSymbol, context): boolean {
 
             var callSignatures = source.getCallSignatures();
@@ -4595,158 +4613,254 @@ module TypeScript {
 
             if (target.hasMembers()) {
                 var mProps = target.getAllMembers(PullElementKind.SomeValue, true);
-                var mProp: PullSymbol = null;
-                var nProp: PullSymbol = null;
-                var mPropType: PullTypeSymbol = null;
-                var nPropType: PullTypeSymbol = null;
-
-                for (var iMProp = 0; iMProp < mProps.length; iMProp++) {
-
-                    mProp = mProps[iMProp];
-                    nProp = source.findMember(mProp.getName());
-
-                    if (!mProp.isResolved()) {
-                        this.resolveDeclaredSymbol(mProp, null, context);
-                    }
-
-                    mPropType = mProp.getType();
-
-                    if (!nProp) {
-                        // If it's not present on the type in question, look for the property on 'Object'
-                        if (this.cachedObjectInterfaceType) {
-                            nProp = this.cachedObjectInterfaceType.findMember(mProp.getName());
-                        }
-
-                        if (!nProp) {
-                            // Now, the property was not found on Object, but the type in question is a function, look
-                            // for it on function
-                            if (this.cachedFunctionInterfaceType && (mPropType.getCallSignatures().length || mPropType.getConstructSignatures().length)) {
-                                nProp = this.cachedFunctionInterfaceType.findMember(mProp.getName());
-                            }
-
-                            // finally, check to see if the property is optional
-                            if (!nProp) {
-                                if (!(mProp.getIsOptional())) {
-                                    comparisonCache[comboId] = undefined;
-                                    if (comparisonInfo) { // only surface the first error
-                                        comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
-                                        comparisonInfo.addMessageToFront("Type '" + source.toString() + "' is missing property '" + mProp.getScopedNameEx().toString() + "' from type '" + target.toString() + "'");
-                                    }
-                                    return false;
-                                }
-                                else {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-
-                    var mPropIsPrivate = mProp.hasFlag(PullElementFlags.Private);
-                    var nPropIsPrivate = nProp.hasFlag(PullElementFlags.Private);
-
-                    // if visibility doesn't match, the types don't match
-                    if (mPropIsPrivate != nPropIsPrivate) {
-                        comparisonCache[comboId] = undefined;
-                        return false;
-                    }
-
-                    // if both are private members, test to ensure that they share a declaration
-                    else if (nPropIsPrivate && mPropIsPrivate) {
-                        var mDecl = mProp.getDeclarations()[0];
-                        var nDecl = nProp.getDeclarations()[0];
-
-                        if (!mDecl.isEqual(nDecl)) {
-                            comparisonCache[comboId] = undefined;
-                            return false;
-                        }
-                    }
-
-                    if (!nProp.isResolved()) {
-                        this.resolveDeclaredSymbol(nProp, null, context);
-                    }
-
-                    nPropType = nProp.getType();
-
-                    // catch the mutually recursive or cached cases
-                    if (mPropType && nPropType && (comparisonCache[(nPropType.getSymbolID() << 16) | mPropType.getSymbolID()] != undefined)) {
-                        continue;
-                    }
-
-                    if (!this.sourceIsRelatableToTarget(nPropType, mPropType, assignableTo, comparisonCache, context, comparisonInfo)) {
-                        comparisonCache[comboId] = undefined;
-                        if (comparisonInfo) { // only surface the first error
-                            comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
-                            comparisonInfo.addMessageToFront("Types of property '" + mProp.getScopedNameEx().toString() + "' of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
-                        }
-                        return false;
-                    }
-                }
-            }
-
-            var sourceCallSigs = source.getCallSignatures();
-            var targetCallSigs = target.getCallSignatures();
-
-            var sourceConstructSigs = source.getConstructSignatures();
-            var targetConstructSigs = target.getConstructSignatures();
-
-            var sourceIndexSigs = source.getIndexSignatures();
-            var targetIndexSigs = target.getIndexSignatures();
-
-            var hasSig: string;
-            var lacksSig: string;
-
-            // check signature groups
-            if (targetCallSigs.length) {
-                if (!this.signatureGroupIsRelatableToTarget(sourceCallSigs, targetCallSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
-                    if (comparisonInfo) {
-                        if (sourceCallSigs.length && targetCallSigs.length) {
-                            comparisonInfo.addMessageToFront("Call signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
-                        }
-                        else {
-                            hasSig = targetCallSigs.length ? target.toString() : source.toString();
-                            lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
-                        }
-                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
-                    }
+                if (!this.sourceMembersAreRelatableToTargetMembers(source, target, mProps, (propName: string) => source.findMember(propName),
+                assignableTo, comparisonCache, context, comparisonInfo)) {
                     comparisonCache[comboId] = undefined;
                     return false;
                 }
             }
 
-            if (targetConstructSigs.length) {
-                if (!this.signatureGroupIsRelatableToTarget(sourceConstructSigs, targetConstructSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
-                    if (comparisonInfo) {
-                        if (sourceConstructSigs.length && targetConstructSigs.length) {
-                            comparisonInfo.addMessageToFront("Construct signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
-                        }
-                        else {
-                            hasSig = targetConstructSigs.length ? target.toString() : source.toString();
-                            lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
-                        }
-                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
-                    }
-                    comparisonCache[comboId] = undefined;
-                    return false;
-                }
+            if (!this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+                comparisonCache[comboId] = undefined;
+                return false;
             }
 
-            if (targetIndexSigs.length) {
-                var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : targetIndexSigs;
-                var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : sourceIndexSigs;
+            if (!this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+                comparisonCache[comboId] = undefined;
+                return false;
+            }
 
-                if (!this.signatureGroupIsRelatableToTarget(sourceIndex, targetIndex, assignableTo, comparisonCache, context, comparisonInfo)) {
-                    if (comparisonInfo) {
-                        comparisonInfo.addMessageToFront("Index signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
-                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
-                    }
-                    comparisonCache[comboId] = undefined;
-                    return false;
-                }
+            if (!this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+                comparisonCache[comboId] = undefined;
+                return false;
             }
 
             comparisonCache[comboId] = true;
+            return true;
+        }
+
+        public sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, mProps: PullSymbol[],
+            findPropertyInSource: (propName: String) => PullSymbol, assignableTo: boolean, comparisonCache: any,
+            context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+
+            var mProp: PullSymbol = null;
+            var nProp: PullSymbol = null;
+            var mPropType: PullTypeSymbol = null;
+            var nPropType: PullTypeSymbol = null;
+
+            var returnVal = true;
+
+            for (var iMProp = 0; iMProp < mProps.length; iMProp++) {
+
+                mProp = mProps[iMProp];
+                nProp = findPropertyInSource(mProp.getName());
+
+                if (!mProp.isResolved()) {
+                    this.resolveDeclaredSymbol(mProp, null, context);
+                }
+
+                mPropType = mProp.getType();
+
+                if (!nProp) {
+                    // If it's not present on the type in question, look for the property on 'Object'
+                    if (this.cachedObjectInterfaceType) {
+                        nProp = this.cachedObjectInterfaceType.findMember(mProp.getName());
+                    }
+
+                    if (!nProp) {
+                        // Now, the property was not found on Object, but the type in question is a function, look
+                        // for it on function
+                        if (this.cachedFunctionInterfaceType && (mPropType.getCallSignatures().length || mPropType.getConstructSignatures().length)) {
+                            nProp = this.cachedFunctionInterfaceType.findMember(mProp.getName());
+                        }
+
+                        // finally, check to see if the property is optional
+                        if (!nProp) {
+                            if (!(mProp.getIsOptional())) {
+                                if (comparisonInfo) { // only surface the first error
+                                    comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
+                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Type__0__is_missing_property__1__from_type__2_,
+                                        [source.toString(), mProp.getScopedNameEx().toString(), target.toString()]));
+                                }
+                                return false;
+                            }
+                            continue;
+                        }
+                    }
+                }
+
+                var mPropIsPrivate = mProp.hasFlag(PullElementFlags.Private);
+                var nPropIsPrivate = nProp.hasFlag(PullElementFlags.Private);
+
+                // if visibility doesn't match, the types don't match
+                if (mPropIsPrivate != nPropIsPrivate) {
+                    if (comparisonInfo) { // only surface the first error
+                        if (mPropIsPrivate) {
+                            // Overshadowing property in source that is already defined as private in target
+                            comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_,
+                            [mProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        } else {
+                            // Public property of target is private in source
+                            comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_,
+                            [mProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        }
+                        comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
+                    }
+                    return false;
+                }
+                // if both are private members, test to ensure that they share a declaration
+                else if (nPropIsPrivate && mPropIsPrivate) {
+                    var mDecl = mProp.getDeclarations()[0];
+                    var nDecl = nProp.getDeclarations()[0];
+
+                    if (!mDecl.isEqual(nDecl)) {
+                        // Both types define property with same name as private
+                        comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types__0__and__1__define_property__2__as_private,
+                        [source.toString(), target.toString(), mProp.getScopedNameEx().toString()]));
+                        return false;
+                    }
+                }
+
+                if (!nProp.isResolved()) {
+                    this.resolveDeclaredSymbol(nProp, null, context);
+                }
+
+                nPropType = nProp.getType();
+
+                // catch the mutually recursive or cached cases
+                if (mPropType && nPropType && (comparisonCache[(nPropType.getSymbolID() << 16) | mPropType.getSymbolID()] != undefined)) {
+                    continue;
+                }
+
+                var comparisonInfoPropertyTypeCheck: TypeComparisonInfo = null;
+                if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
+                    comparisonInfoPropertyTypeCheck = new TypeComparisonInfo(comparisonInfo);
+                }
+                if (!this.sourceIsRelatableToTarget(nPropType, mPropType, assignableTo, comparisonCache, context, comparisonInfoPropertyTypeCheck)) {
+                    if (comparisonInfo) {
+                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
+                        var message: string;
+                        if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
+                            message = getDiagnosticMessage(DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3,
+                            [mProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
+                        } else {
+                            message = getDiagnosticMessage(DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible,
+                            [mProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
+                        }
+                        comparisonInfo.addMessage(message);
+                    }
+
+                    return false;
+                }
+            }
+
+            return returnVal;
+        }
+
+        public sourceCallSignaturesAreRelatableToTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
+            comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+            var targetCallSigs = target.getCallSignatures();
+
+            // check signature groups
+            if (targetCallSigs.length) {
+                var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
+                if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
+                    comparisonInfoSignatuesTypeCheck = new TypeComparisonInfo(comparisonInfo);
+                }
+
+                var sourceCallSigs = source.getCallSignatures();
+                if (!this.signatureGroupIsRelatableToTarget(sourceCallSigs, targetCallSigs, assignableTo, comparisonCache, context, comparisonInfoSignatuesTypeCheck)) {
+                    if (comparisonInfo) {
+                        var message: string;
+                        if (sourceCallSigs.length && targetCallSigs.length) {
+                            if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
+                                message = getDiagnosticMessage(DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                                [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                            } else {
+                                message = getDiagnosticMessage(DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible,
+                                [source.toString(), target.toString()]);
+                            }
+                        } else {
+                            var hasSig = targetCallSigs.length ? target.toString() : source.toString();
+                            var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
+                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one, [hasSig, lacksSig]);
+                        }
+                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
+                        comparisonInfo.addMessage(message);
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
+        comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+            // check signature groups
+            var targetConstructSigs = target.getConstructSignatures();
+            if (targetConstructSigs.length) {
+                var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
+                if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
+                    comparisonInfoSignatuesTypeCheck = new TypeComparisonInfo(comparisonInfo);
+                }
+
+                var sourceConstructSigs = source.getConstructSignatures();
+                if (!this.signatureGroupIsRelatableToTarget(sourceConstructSigs, targetConstructSigs, assignableTo, comparisonCache, context, comparisonInfoSignatuesTypeCheck)) {
+                    if (comparisonInfo) {
+                        var message: string;
+                        if (sourceConstructSigs.length && targetConstructSigs.length) {
+                            if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
+                                message = getDiagnosticMessage(DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                                [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                            } else {
+                                message = getDiagnosticMessage(DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible,
+                                [source.toString(), target.toString()]);
+                            }
+                        } else {
+                            var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
+                            var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
+                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one, [hasSig, lacksSig]);
+                        }
+                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
+                        comparisonInfo.addMessage(message);
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
+        comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+            var targetIndexSigs = target.getIndexSignatures();
+            if (targetIndexSigs.length) {
+                var sourceIndexSigs = source.getIndexSignatures();
+                var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : targetIndexSigs;
+                var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : sourceIndexSigs;
+
+                var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
+                if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
+                    comparisonInfoSignatuesTypeCheck = new TypeComparisonInfo(comparisonInfo);
+                }
+                if (!this.signatureGroupIsRelatableToTarget(sourceIndex, targetIndex, assignableTo, comparisonCache, context, comparisonInfoSignatuesTypeCheck)) {
+                    if (comparisonInfo) {
+                        var message: string;
+                        if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
+                            message = getDiagnosticMessage(DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                            [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                        } else {
+                            message = getDiagnosticMessage(DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible,
+                            [source.toString(), target.toString()]);
+                        }
+                        comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
+                        comparisonInfo.addMessage(message);
+                    }
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -4800,7 +4914,7 @@ module TypeScript {
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableParamList()) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= TypeRelationshipFlags.SourceSignatureHasTooManyParameters;
-                    comparisonInfo.addMessageToFront("Call signature expects " + targetVarArgCount + " or fewer parameters");
+                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects__0__or_fewer_parameters, [targetVarArgCount]));
                 }
                 return false;
             }
@@ -4813,7 +4927,7 @@ module TypeScript {
                     if (comparisonInfo) {
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleReturnTypes;
                         // No need to print this one here - it's printed as part of the signature error in sourceIsRelatableToTarget
-                        //comparisonInfo.addMessageToFront("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
+                        //comparisonInfo.addMessage("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
                     }
                     return false;
                 }
@@ -4932,7 +5046,7 @@ module TypeScript {
                     if (comparisonInfo.message) {
                         //this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
                         context.postError(application.minChar, application.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target___0, [comparisonInfo.message]), enclosingDecl, true);
+                        getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0, [comparisonInfo.message]), enclosingDecl, true);
                     }
                     else {
                         context.postError(application.minChar, application.getLength(), this.unitPath,
@@ -5107,7 +5221,8 @@ module TypeScript {
 
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
+                                    comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_, 
+                                    [memberType.toString(),  (j + 1), argSym.getTypeName()]));
                                 }
                                 miss = true;
                             }
@@ -5134,7 +5249,8 @@ module TypeScript {
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
+                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
+                                [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             miss = true;
                         }
@@ -5160,7 +5276,8 @@ module TypeScript {
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
+                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
+                                [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }

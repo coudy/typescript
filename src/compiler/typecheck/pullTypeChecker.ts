@@ -12,8 +12,16 @@ module TypeScript {
         public inSuperConstructorCall = false;
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
+        private currentImplementsClauseTypeCheckClassPublicProperties: PullSymbol[] = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
+        }
+
+        public getCurrentImplementsClauseTypeCheckClassPublicProperties() {
+            return this.currentImplementsClauseTypeCheckClassPublicProperties;
+        }
+        public setCurrentImplementsClauseTypeCheckClassPublicProperties(props: PullSymbol[]) {
+            this.currentImplementsClauseTypeCheckClassPublicProperties = props;
         }
 
         public pushEnclosingDecl(decl: PullDecl) {
@@ -448,10 +456,12 @@ module TypeScript {
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, typeExprSymbol, this.context, comparisonInfo);
 
                     if (!isAssignable) {
-                        var errorMessage = comparisonInfo.message;
-
-                        // ignore comparison info for now
-                        var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
+                        var message: string;
+                        if (comparisonInfo.message) {
+                            message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1__NL__2, [initTypeSymbol.toString(), typeExprSymbol.toString(), comparisonInfo.message]);
+                        } else {
+                            message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
+                        }
 
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
@@ -699,6 +709,57 @@ module TypeScript {
             return null;
         }
 
+        private typeCheckIfTypeExtendsType(typeDecl: TypeDeclaration, typeSymbol: PullTypeSymbol, extendedType: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+            // TODO
+
+            // verify each own member, call, construct and index is subtpe of base
+        }
+
+        private typeCheckIfClassImplementsType(classDecl: TypeDeclaration, classSymbol: PullTypeSymbol, implementedType: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+            var classPropertyList = typeCheckContext.getCurrentImplementsClauseTypeCheckClassPublicProperties();
+            if (!classPropertyList) {
+                classPropertyList = classSymbol.getMembers();
+                var extendsList = classSymbol.getExtendedTypes();
+                for (var i = 0; i < extendsList.length; i++) {
+                    var extendedTypePublicProperties = extendsList[i].getAllMembers(PullElementKind.SomeValue, false);
+                    classPropertyList = classPropertyList.concat(extendedTypePublicProperties);
+                }
+                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(classPropertyList);
+            }
+
+            var implementedTypeMembers = implementedType.getAllMembers(PullElementKind.SomeValue, true);
+
+            var resolutionContext = new PullTypeResolutionContext();
+            var comparisonInfo = new TypeComparisonInfo();
+            var foundError = !this.resolver.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, implementedTypeMembers,
+            (propName: string) => {
+                for (var j = 0; j < classPropertyList.length; j++) {
+                    if (propName == classPropertyList[j].getName()) {
+                        return classPropertyList[j];
+                    }
+                }
+                return null;
+            } , resolutionContext, comparisonInfo);
+            
+            if (!foundError) {
+                foundError = !this.resolver.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                if (!foundError) {
+                    foundError = !this.resolver.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                    if (!foundError) {
+                        foundError = !this.resolver.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                    }
+                }
+            }
+            
+            // Report error
+            if (foundError) {
+                var message = getDiagnosticMessage(DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2,
+                    [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message]);
+               
+                this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+            }
+        }
+
         private typeCheckBase(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, baseDeclAST: AST, isExtendedType: boolean, typeCheckContext: PullTypeCheckContext) {
             var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
@@ -731,6 +792,18 @@ module TypeScript {
                 return;
             }
 
+            if (isExtendedType) {
+                // Verify all own overriding members are subtype
+                this.typeCheckIfTypeExtendsType(typeDeclAst, typeSymbol, baseType, typeCheckContext);
+                
+                // TODO: if extending class is class and baseType is also class - verify constructorType is subtype
+            } else {
+                // If class implementes interface or class, verify all the public members are implemented
+                this.typeCheckIfClassImplementsType(typeDeclAst, typeSymbol, baseType, typeCheckContext);
+            }
+
+            // TODO: Verify members are not colidin with static class properties and if they do they are usbtype of base type properties
+
             // Privacy error:
             this.checkTypePrivacy(typeSymbol, baseType, (errorTypeSymbol: PullTypeSymbol) =>
             this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, typeCheckContext));
@@ -748,6 +821,7 @@ module TypeScript {
                 for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
+                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(null);
             } else if (typeDeclAst.implementsList) {
                 var message = getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null);
                 this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
@@ -837,10 +911,12 @@ module TypeScript {
             var isAssignable = this.resolver.sourceIsAssignableToTarget(source, target, this.context, comparisonInfo);
 
             if (!isAssignable) {
-                var errorMessage = comparisonInfo.message;
-
-                // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [source.toString(), target.toString()]);
+                var message: string;
+                if (comparisonInfo.message) {
+                    message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1__NL__2, [source.toString(), target.toString(), comparisonInfo.message]);
+                } else {
+                    message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [source.toString(), target.toString()]);
+                }
                 
                 var enclosingDecl = typeCheckContext.getEnclosingDecl();
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
@@ -879,7 +955,6 @@ module TypeScript {
             }
 
             this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
-
             return leftType;
         }
 
@@ -1283,15 +1358,17 @@ module TypeScript {
             var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext, true);
             this.context.popContextualType();
 
+            var comparisonInfo = new TypeComparisonInfo();
             var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, exprType, this.context, comparisonInfo) ||
                                 this.resolver.sourceIsAssignableToTarget(exprType, returnType, this.context, comparisonInfo);
 
             if (!isAssignable) {
-                var comparisonInfo = new TypeComparisonInfo();
-                var errorMessage = comparisonInfo.message;
-
-                // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
+                var message: string;
+                if (comparisonInfo.message) {
+                    message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1__NL__2, [exprType.toString(), returnType.toString(), comparisonInfo.message]);
+                } else {
+                    message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
+                }
 
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
@@ -1743,9 +1820,12 @@ module TypeScript {
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
 
                     if (!isAssignable) {
-
-                        // ignore comparison info for now
-                        var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()]);
+                        var message: string;
+                        if (comparisonInfo.message) {
+                            message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1__NL__2, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
+                        } else {
+                            message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()]);
+                        }
 
                         this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
