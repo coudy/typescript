@@ -1,63 +1,121 @@
 ///<reference path='References.ts' />
 
 module TypeScript.Syntax {
-    export var emptySeparatedList: ISeparatedSyntaxList = {
-        kind: () => SyntaxKind.SeparatedList,
+    class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
+        public kind() {
+            return SyntaxKind.SeparatedList;
+        }
 
-        isNode: () => false,
-        isToken: () => false,
-        isList: () => false,
-        isSeparatedList: () => true,
+        public isNode() {
+            return false;
+        }
 
-        toJSON: (key) => [],
+        public isToken() {
+            return false;
+        }
 
-        childCount: () => 0,
-        nonSeparatorCount: () => 0,
-        separatorCount: () => 0,
+        public isList() {
+            return false;
+        }
 
-        toArray: () => [],
-        toNonSeparatorArray: () => [],
+        public isSeparatedList() {
+            return true;
+        }
 
-        childAt: (index: number): ISyntaxNodeOrToken => {
+        toJSON(key) {
+            return [];
+        }
+
+        public childCount() {
+            return 0;
+        }
+
+        public nonSeparatorCount() {
+            return 0;
+        }
+
+        public separatorCount() {
+            return 0;
+        }
+
+        public toArray(): ISyntaxNodeOrToken[] {
+            return [];
+        }
+
+        public toNonSeparatorArray(): ISyntaxNodeOrToken[] {
+            return [];
+        }
+
+        public childAt(index: number): ISyntaxNodeOrToken {
             throw Errors.argumentOutOfRange("index");
-        },
+        }
 
-        nonSeparatorAt: (index: number): ISyntaxNodeOrToken => {
+        public nonSeparatorAt(index: number): ISyntaxNodeOrToken {
             throw Errors.argumentOutOfRange("index");
-        },
+        }
 
-        separatorAt: (index: number): ISyntaxToken => {
+        public separatorAt(index: number): ISyntaxToken {
             throw Errors.argumentOutOfRange("index");
-        },
+        }
 
-        collectTextElements: (elements: string[]): void => { },
+        collectTextElements(elements: string[]): void {
+        }
 
-        firstToken: (): ISyntaxToken => null,
-        lastToken: (): ISyntaxToken => null,
+        firstToken(): ISyntaxToken {
+            return null;
+        }
 
-        fullWidth: () => 0,
-        fullText: () => "",
+        lastToken(): ISyntaxToken {
+            return null;
+        }
 
-        width: () => 0,
+        fullWidth() {
+            return 0;
+        }
 
-        isTypeScriptSpecific: () => false,
-        isIncrementallyUnusable: () => false,
+        fullText() {
+            return "";
+        }
 
-        findTokenInternal: (parent: PositionedElement, position: number, fullStart: number): PositionedToken => {
+        width() {
+            return 0;
+        }
+
+        isTypeScriptSpecific() {
+            return false;
+        }
+
+        isIncrementallyUnusable() {
+            return false;
+        }
+
+        findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
-        },
+        }
 
-        insertChildrenInto: (array: ISyntaxElement[], index: number): void => {
-        },
+        insertChildrenInto(array: ISyntaxElement[], index: number): void {
+        }
 
-        leadingTrivia: () => Syntax.emptyTriviaList,
-        trailingTrivia: () => Syntax.emptyTriviaList,
+        leadingTrivia() {
+            return Syntax.emptyTriviaList;
+        }
 
-        leadingTriviaWidth: () => 0,
-        trailingTriviaWidth:() => 0
+        trailingTrivia() {
+            return Syntax.emptyTriviaList;
+        }
+
+        leadingTriviaWidth() {
+            return 0;
+        }
+
+        trailingTriviaWidth() {
+            return 0;
+        }
     }
+
+    export var emptySeparatedList: ISeparatedSyntaxList = new EmptySeparatedSyntaxList();
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
         private item: ISyntaxNodeOrToken;

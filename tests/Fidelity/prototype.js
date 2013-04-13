@@ -4920,90 +4920,93 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
-        Syntax.emptySeparatedList = {
-            kind: function () {
+        var EmptySeparatedSyntaxList = (function () {
+            function EmptySeparatedSyntaxList() { }
+            EmptySeparatedSyntaxList.prototype.kind = function () {
                 return 2 /* SeparatedList */ ;
-            },
-            isNode: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isNode = function () {
                 return false;
-            },
-            isToken: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isToken = function () {
                 return false;
-            },
-            isList: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isList = function () {
                 return false;
-            },
-            isSeparatedList: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isSeparatedList = function () {
                 return true;
-            },
-            toJSON: function (key) {
+            };
+            EmptySeparatedSyntaxList.prototype.toJSON = function (key) {
                 return [];
-            },
-            childCount: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.childCount = function () {
                 return 0;
-            },
-            nonSeparatorCount: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.nonSeparatorCount = function () {
                 return 0;
-            },
-            separatorCount: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.separatorCount = function () {
                 return 0;
-            },
-            toArray: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.toArray = function () {
                 return [];
-            },
-            toNonSeparatorArray: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.toNonSeparatorArray = function () {
                 return [];
-            },
-            childAt: function (index) {
+            };
+            EmptySeparatedSyntaxList.prototype.childAt = function (index) {
                 throw TypeScript.Errors.argumentOutOfRange("index");
-            },
-            nonSeparatorAt: function (index) {
+            };
+            EmptySeparatedSyntaxList.prototype.nonSeparatorAt = function (index) {
                 throw TypeScript.Errors.argumentOutOfRange("index");
-            },
-            separatorAt: function (index) {
+            };
+            EmptySeparatedSyntaxList.prototype.separatorAt = function (index) {
                 throw TypeScript.Errors.argumentOutOfRange("index");
-            },
-            collectTextElements: function (elements) {
-            },
-            firstToken: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.collectTextElements = function (elements) {
+            };
+            EmptySeparatedSyntaxList.prototype.firstToken = function () {
                 return null;
-            },
-            lastToken: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.lastToken = function () {
                 return null;
-            },
-            fullWidth: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.fullWidth = function () {
                 return 0;
-            },
-            fullText: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.fullText = function () {
                 return "";
-            },
-            width: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.width = function () {
                 return 0;
-            },
-            isTypeScriptSpecific: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isTypeScriptSpecific = function () {
                 return false;
-            },
-            isIncrementallyUnusable: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.isIncrementallyUnusable = function () {
                 return false;
-            },
-            findTokenInternal: function (parent, position, fullStart) {
+            };
+            EmptySeparatedSyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
                 throw TypeScript.Errors.invalidOperation();
-            },
-            insertChildrenInto: function (array, index) {
-            },
-            leadingTrivia: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.insertChildrenInto = function (array, index) {
+            };
+            EmptySeparatedSyntaxList.prototype.leadingTrivia = function () {
                 return Syntax.emptyTriviaList;
-            },
-            trailingTrivia: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.trailingTrivia = function () {
                 return Syntax.emptyTriviaList;
-            },
-            leadingTriviaWidth: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.leadingTriviaWidth = function () {
                 return 0;
-            },
-            trailingTriviaWidth: function () {
+            };
+            EmptySeparatedSyntaxList.prototype.trailingTriviaWidth = function () {
                 return 0;
-            }
-        };
+            };
+            return EmptySeparatedSyntaxList;
+        })();        
+        Syntax.emptySeparatedList = new EmptySeparatedSyntaxList();
         var SingletonSeparatedSyntaxList = (function () {
             function SingletonSeparatedSyntaxList(item) {
                 this.item = item;

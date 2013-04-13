@@ -13,7 +13,7 @@ module TypeScript.Collections {
 
     export class HashTable {
         // TODO: figure out why the type checker dosn't like "HashTableEntry[]" here.
-        private entries /*: HashTableEntry[]*/ = [];
+        private entries: HashTableEntry[] = [];
         private count: number = 0;
 
         constructor(capacity: number,
