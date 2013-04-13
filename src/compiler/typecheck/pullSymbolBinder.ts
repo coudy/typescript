@@ -536,7 +536,7 @@ module TypeScript {
 
             if (parent) {
                 if (isExported) {
-                    classSymbol = <PullClassTypeSymbol>parent.findMember(className);
+                    classSymbol = <PullClassTypeSymbol>parent.findMember(className, false);
                 }
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
@@ -1039,7 +1039,7 @@ module TypeScript {
             // modules may create instance variables
 
             if (parent) {
-                variableSymbol = parent.findMember(declName);
+                variableSymbol = parent.findMember(declName, false);
 
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
@@ -1509,7 +1509,7 @@ module TypeScript {
             var functionTypeSymbol: PullFunctionTypeSymbol = null;
 
             if (parent) {
-                functionSymbol = parent.findMember(funcName);
+                functionSymbol = parent.findMember(funcName, false);
 
                 if (!functionSymbol) {
                     functionSymbol = parent.findContainedMember(funcName);

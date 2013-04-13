@@ -815,7 +815,7 @@ module TypeScript {
             this.nonOptionalParamCount = 0;
             this.hasOptionalParam = false;
             this.hasAGenericParameter = false;
-
+            
             // re-compute non-optional arg count, etc
             if (this.parameterLinks) {
                 for (var i = 0; i < this.parameterLinks.length; i++) {
@@ -831,7 +831,7 @@ module TypeScript {
                     }
                 }
             }
-
+            
             super.invalidate();
         }
 
