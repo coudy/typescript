@@ -12,7 +12,6 @@ foo2([
 function foo3(x) {
 }
 ;
-
 foo3(function (s) {
 });
 foo3(function (n) {

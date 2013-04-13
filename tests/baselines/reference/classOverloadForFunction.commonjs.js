@@ -3,6 +3,5 @@ var foo = (function () {
     return foo;
 })();
 ;
-
 function foo() {
 }

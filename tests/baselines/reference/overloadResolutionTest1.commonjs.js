@@ -2,7 +2,6 @@ function foo(bar) {
     return bar;
 }
 ;
-
 var x1 = foo([
     {
         a: true
@@ -27,7 +26,6 @@ function foo2(bar) {
     return bar;
 }
 ;
-
 var x2 = foo2({
     a: 0
 });
@@ -41,7 +39,6 @@ function foo4(bar) {
     return bar;
 }
 ;
-
 var x = foo4({
     a: true
 });

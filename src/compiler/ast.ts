@@ -2441,7 +2441,7 @@ module TypeScript {
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeLineToOutput(";");
+            emitter.writeToOutput(";");
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }

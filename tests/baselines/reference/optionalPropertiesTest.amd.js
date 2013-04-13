@@ -21,13 +21,9 @@ if (foo.print !== undefined) {
 
 }
 ;
-
 ;
-
 ;
-
 ;
-
 var test1 = {};
 var test2 = {};
 var test3 = {};
