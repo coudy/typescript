@@ -334,7 +334,7 @@ module TypeScript {
             var parent = this.getParent();
 
             if (parent) {
-                importSymbol = <PullTypeAliasSymbol>parent.findMember(declName);
+                importSymbol = <PullTypeAliasSymbol>parent.findMember(declName, false);
 
                 if (!importSymbol) {
                     importSymbol = <PullTypeAliasSymbol>parent.findContainedMember(declName);
@@ -618,6 +618,7 @@ module TypeScript {
                         }
 
                         specialization.addDeclaration(classDecl);
+                        specialization.setUnresolved();
                     }
 
                     classSymbol.cleanTypeParameters();
@@ -1274,6 +1275,8 @@ module TypeScript {
             var declName = propertyDeclaration.getName();
 
             var parentHadSymbol = false;
+            var replaceProperty = false;
+            var previousProperty: PullSymbol = null;
 
             var parent = this.getParent(true);
 
@@ -1287,7 +1290,7 @@ module TypeScript {
                 }
             }
             else {
-                propertySymbol = parent.findMember(declName);
+                propertySymbol = parent.findMember(declName, false);
             }
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
@@ -1363,6 +1366,12 @@ module TypeScript {
                 }
 
                 if (classTypeSymbol) {
+                    replaceProperty = propertySymbol && propertySymbol.getIsSynthesized();
+
+                    if (replaceProperty) {
+                        previousProperty = propertySymbol;
+                    }
+
                     propertySymbol = classTypeSymbol.getConstructorMethod();
                     propertyDeclaration.setSymbol(propertySymbol);
                 }
@@ -1389,6 +1398,10 @@ module TypeScript {
                 else {
                     parent.addMember(propertySymbol, linkKind);
                 }
+            }
+            else if (replaceProperty) {
+                parent.removeMember(previousProperty);
+                parent.addMember(propertySymbol, linkKind);
             }
 
             propertySymbol.setIsBound(this.bindingPhase);
@@ -1844,7 +1857,7 @@ module TypeScript {
                 }
             }
             else {
-                methodSymbol = parent.findMember(methodName);
+                methodSymbol = parent.findMember(methodName, false);
             }
 
             if (methodSymbol &&
@@ -2379,7 +2392,7 @@ module TypeScript {
             var getterTypeSymbol: PullFunctionTypeSymbol = null;
 
             if (!isStatic) {
-                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
             }
             else {
                 var candidate: PullSymbol;
@@ -2567,7 +2580,7 @@ module TypeScript {
             var setterTypeSymbol: PullFunctionTypeSymbol = null;
 
             if (!isStatic) {
-                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
             }
             else {
                 var candidate: PullSymbol;

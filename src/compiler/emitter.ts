@@ -115,6 +115,7 @@ module TypeScript {
         public varListCountStack: number[] = [0];
         private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
+        private resolvingContext = new PullTypeResolutionContext();
 
         public document: Document = null;
 
@@ -347,9 +348,9 @@ module TypeScript {
             var init = boundDeclInfo.boundDecl.init;
             var ident = <Identifier>init;
 
-            var resolvingContext = new PullTypeResolutionContext();
             this.setTypeCheckerUnit(this.document.fileName);
-            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), resolvingContext);
+            var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
+                                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -390,9 +391,8 @@ module TypeScript {
         }
 
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
-            var resolvingContext = new PullTypeResolutionContext();
             this.setTypeCheckerUnit(this.document.fileName);
-            var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), this.resolvingContext);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -1198,10 +1198,9 @@ module TypeScript {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
-                var resolvingContext = new PullTypeResolutionContext();
                 this.setTypeCheckerUnit(this.document.fileName);
-                var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(name,
-                this.getEnclosingDecl(), resolvingContext);
+                var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
+                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container != EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
@@ -1773,8 +1772,11 @@ module TypeScript {
                 this.recordSourceMappingEnd(classDecl.endingToken);
                 this.recordSourceMappingStart(classDecl);
                 this.writeToOutput(")(");
-                if (hasBaseClass)
+                if (hasBaseClass) {
+                    this.resolvingContext.resolvingTypeReference = true;
                     this.emitJavascript(baseName, false);
+                    this.resolvingContext.resolvingTypeReference = false;
+                }
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
 

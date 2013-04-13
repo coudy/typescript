@@ -788,7 +788,7 @@ module TypeScript {
 
             if (symbol.isResolving()) {
 
-                if (!symbol.currentlyBeingSpecialized()) {
+                if (!symbol.isType() && !symbol.currentlyBeingSpecialized()) {
                     symbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
 
@@ -2556,7 +2556,9 @@ module TypeScript {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(nameAST, typeNameSymbol, context);
+            if (typeNameSymbol.isType()) {
+                this.setSymbolForAST(nameAST, typeNameSymbol, context);
+            }
 
             return typeNameSymbol;
         }

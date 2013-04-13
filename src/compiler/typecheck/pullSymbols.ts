@@ -1659,7 +1659,7 @@ module TypeScript {
             this.invalidate();
         }
 
-        public findMember(name: string): PullSymbol {
+        public findMember(name: string, lookInParent = true): PullSymbol {
             var memberSymbol: PullSymbol;
 
             if (!this.memberNameCache) {
@@ -1668,7 +1668,10 @@ module TypeScript {
 
             memberSymbol = this.memberNameCache[name];
 
-            if (memberSymbol) {
+            if (!lookInParent) {
+                return memberSymbol;
+            }
+            else if (memberSymbol) {
                 return memberSymbol;
             }
 
@@ -2024,6 +2027,10 @@ module TypeScript {
             }
 
             return isVisible;
+        }
+
+        public setType(type: PullTypeSymbol) {
+            Debug.assert(false, "tried to set type of type");
         }
     }
 

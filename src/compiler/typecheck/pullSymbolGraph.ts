@@ -388,7 +388,10 @@ module TypeScript {
         }
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
-        if (link.kind == SymbolLinkKind.ProvidesInferredType) {
+        if (link.kind == SymbolLinkKind.ContainedBy) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
@@ -476,6 +479,9 @@ module TypeScript {
         if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
+        else if (link.kind == SymbolLinkKind.ContainedBy) {
+            update.updater.invalidateType(affectedSymbol);
+        }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
@@ -492,6 +498,9 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructSignature) {
@@ -529,7 +538,7 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
+        else if (link.kind == SymbolLinkKind.IndexSignature) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Extends) {
