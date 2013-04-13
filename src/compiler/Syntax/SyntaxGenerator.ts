@@ -2096,7 +2096,7 @@ function generateRewriter(): string {
 "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
+"        public visitList<T extends ISyntaxNodeOrToken>(list: ISyntaxList<T>): ISyntaxList<T> {\r\n" +
 "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
 "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +

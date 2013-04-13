@@ -87,7 +87,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -191,7 +191,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -295,7 +295,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -402,7 +402,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -468,7 +468,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -546,7 +546,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -624,7 +624,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
@@ -705,7 +705,7 @@ module TypeScript.Syntax {
         public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private realize(): ISyntaxToken { return realizeToken(this); }
-        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
+        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             return new PositionedToken(parent, this, fullStart);
