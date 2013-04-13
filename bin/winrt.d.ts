@@ -7731,11 +7731,12 @@ declare module Windows {
                  protocol: string;
             }
             export interface IWebSocket extends Windows.Foundation.IClosable {
-                 outputStream: Windows.Storage.Streams.IOutputStream;
-                 connectAsync(uri: Windows.Foundation.Uri): Windows.Foundation.IAsyncAction;
-                 setRequestHeader(headerName: string, headerValue: string): void;
-                 onclosed: any/* TODO */;
-                 close(code: number, reason: string): void;
+                outputStream: Windows.Storage.Streams.IOutputStream;
+                connectAsync(uri: Windows.Foundation.Uri): Windows.Foundation.IAsyncAction;
+                setRequestHeader(headerName: string, headerValue: string): void;
+                onclosed: any/* TODO */;
+                close(): void;
+                close(code: number, reason: string): void;
             }
             export class WebSocketClosedEventArgs implements Windows.Networking.Sockets.IWebSocketClosedEventArgs {
                 code: number;
@@ -13149,12 +13150,13 @@ declare module Windows {
                     getRecognizers(): Windows.Foundation.Collections.IVectorView__InkRecognizer;
                 }
                 export interface IInkManager extends Windows.UI.Input.Inking.IInkStrokeContainer, Windows.UI.Input.Inking.IInkRecognizerContainer {
-                     mode: Windows.UI.Input.Inking.InkManipulationMode;
-                     processPointerDown(pointerPoint: Windows.UI.Input.PointerPoint): void;
-                     processPointerUpdate(pointerPoint: Windows.UI.Input.PointerPoint): any;
-                     processPointerUp(pointerPoint: Windows.UI.Input.PointerPoint): Windows.Foundation.Rect;
-                     setDefaultDrawingAttributes(drawingAttributes: Windows.UI.Input.Inking.InkDrawingAttributes): void;
-                     recognizeAsync(recognitionTarget: Windows.UI.Input.Inking.InkRecognitionTarget): Windows.Foundation.IAsyncOperation__IVectorView__InkRecognitionResult;
+                    mode: Windows.UI.Input.Inking.InkManipulationMode;
+                    processPointerDown(pointerPoint: Windows.UI.Input.PointerPoint): void;
+                    processPointerUpdate(pointerPoint: Windows.UI.Input.PointerPoint): any;
+                    processPointerUp(pointerPoint: Windows.UI.Input.PointerPoint): Windows.Foundation.Rect;
+                    setDefaultDrawingAttributes(drawingAttributes: Windows.UI.Input.Inking.InkDrawingAttributes): void;
+                    recognizeAsync(strokeCollection: Windows.UI.Input.Inking.InkStrokeContainer, recognitionTarget: Windows.UI.Input.Inking.InkRecognitionTarget): Windows.Foundation.IAsyncOperation__IVectorView__InkRecognitionResult;
+                    recognizeAsync(recognitionTarget: Windows.UI.Input.Inking.InkRecognitionTarget): Windows.Foundation.IAsyncOperation__IVectorView__InkRecognitionResult;
                 }
                 export class InkManager implements Windows.UI.Input.Inking.IInkManager, Windows.UI.Input.Inking.IInkStrokeContainer, Windows.UI.Input.Inking.IInkRecognizerContainer {
                     mode: Windows.UI.Input.Inking.InkManipulationMode;
