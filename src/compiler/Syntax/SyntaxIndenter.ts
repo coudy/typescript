@@ -13,7 +13,7 @@ module TypeScript {
             this.indentationTrivia = Indentation.indentationTrivia(this.indentationAmount, this.options);
         }
 
-        private visitToken(token: ISyntaxToken): ISyntaxToken {
+        public visitToken(token: ISyntaxToken): ISyntaxToken {
             if (token.width() === 0) {
                 return token;
             }
@@ -28,7 +28,7 @@ module TypeScript {
             return result;
         }
 
-        private indentTriviaList(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
+        public indentTriviaList(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
             var result = [];
 
             // First, update any existing trivia with the indent amount.  For example, combine the

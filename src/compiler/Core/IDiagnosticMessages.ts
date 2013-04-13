@@ -5,9 +5,6 @@ module TypeScript {
         error_TS_0__1: DiagnosticInfo;
         warning_TS_0__1: DiagnosticInfo;
 
-        newLine: DiagnosticInfo;
-        tab: DiagnosticInfo;
-
         _0__NL__1_TB__2: DiagnosticInfo;
         _0_TB__1: DiagnosticInfo;
 
@@ -213,9 +210,12 @@ module TypeScript {
         Constructors_cannot_have_a_return_type_of__void_: DiagnosticInfo;
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: DiagnosticInfo;
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
+        Class__0__declares_class__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: DiagnosticInfo;
         _this__may_not_be_referenced_in_initializers_in_a_class_body: DiagnosticInfo;
-
+        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
+        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
+        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;

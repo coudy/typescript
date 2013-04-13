@@ -14,7 +14,7 @@ module TypeScript {
             node.accept(new SyntaxNodeInvariantsChecker());
         }
 
-        private visitToken(token: ISyntaxToken): void {
+        public visitToken(token: ISyntaxToken): void {
             // We're calling 'add', so the table will throw if we try to put the same token in multiple
             // times. 
             this.tokenTable.add(token, token);

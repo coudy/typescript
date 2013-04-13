@@ -14,17 +14,6 @@ module TypeScript {
             code: 1
         },
 
-        newLine: {
-            category: DiagnosticCategory.NoPrefix,
-            message: "\r\n",
-            code: 10
-        },
-        tab: {
-            category: DiagnosticCategory.NoPrefix,
-            message: "\t",
-            code: 11
-        },
-
         _0__NL__1_TB__2: {
             category: DiagnosticCategory.NoPrefix,
             message: "{0}{NL}{{1}TB}{2}",
@@ -1075,6 +1064,11 @@ module TypeScript {
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2: {
             category: DiagnosticCategory.Error,
             message: "Class {0} declares interface {1} but does not implement it:{NL}{2}",
+            code: 2137
+        },
+        Class__0__declares_class__1__but_does_not_implement_it__NL__2: {
+            category: DiagnosticCategory.Error,
+            message: "Class {0} class interface {1} but does not implement it:{NL}{2}",
             code: 2138
         },
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: {
@@ -1087,6 +1081,22 @@ module TypeScript {
             message: "'this' may not be referenced in initializers in a class body.",
             code: 2140
         },
+        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+            category: DiagnosticCategory.Error,
+            message: "Class '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            code: 2141
+        },
+        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+            category: DiagnosticCategory.Error,
+            message: "Interface '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            code: 2142
+        },
+        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2: {
+            category: DiagnosticCategory.Error,
+            message: "Interface '{0}' extends interface '{1}' but their instance types are incompatible:{NL}{2}",
+            code: 2143
+        },
+
 
 
 

@@ -1,2 +1,8 @@
 0.ts line 9 col 8: error TS1026: Class can only extend single type.
 0.ts line 18 col 8: error TS1026: Class can only extend single type.
+0.ts line 25 col 6: error TS2141: Class 'ND' extends class 'N' but their instance types are incompatible:
+	Types of property 'y' of types 'ND' and 'N' are incompatible.
+0.ts line 34 col 6: error TS2141: Class 'Baad' extends class 'Good' but their instance types are incompatible:
+	Types of property 'g' of types 'Baad' and 'Good' are incompatible:
+		Call signatures of types '(n: number) => number' and '() => number' are incompatible:
+			Call signature expects 0 or fewer parmeters.

@@ -28,7 +28,7 @@ module TypeScript {
             return map;
         }
 
-        private visitNode(node: SyntaxNode): void {
+        public visitNode(node: SyntaxNode): void {
             this.trackParents && this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
             this.elementToPosition.add(node, this._currentPosition);
 
@@ -37,7 +37,7 @@ module TypeScript {
             this.trackParents && this._parentStack.pop();
         }
 
-        private visitToken(token: ISyntaxToken): void {
+        public visitToken(token: ISyntaxToken): void {
             this.trackParents && this._elementToParent.add(token, ArrayUtilities.last(this._parentStack));
 
             if (this.trackPreviousToken) {

@@ -7,7 +7,7 @@ module TypeScript {
             super();
         }
 
-        private visitToken(token: ISyntaxToken): ISyntaxToken {
+        public visitToken(token: ISyntaxToken): ISyntaxToken {
             if (token === this.token1) {
                 // Found the token to replace.  Return the new token and null out our state.  This will 
                 // let the later visit methods bail out earlier.
@@ -21,7 +21,7 @@ module TypeScript {
             return token;
         }
 
-        private visitNode(node: SyntaxNode): SyntaxNode {
+        public visitNode(node: SyntaxNode): SyntaxNode {
             if (this.token1 === null) {
                 return node;
             }
@@ -29,7 +29,7 @@ module TypeScript {
             return super.visitNode(node);
         }
 
-        private visitList(list: ISyntaxList): ISyntaxList {
+        public visitList(list: ISyntaxList): ISyntaxList {
             if (this.token1 === null) {
                 return list;
             }
@@ -37,7 +37,7 @@ module TypeScript {
             return super.visitList(list);
         }
 
-        private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
+        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
             if (this.token1 === null) {
                 return list;
             }

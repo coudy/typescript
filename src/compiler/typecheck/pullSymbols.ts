@@ -977,8 +977,6 @@ module TypeScript {
 
         private arrayType: PullTypeSymbol = null;
 
-        private isSpecialized = false;
-        private isBeingSpecialized = false;
         private hasGenericSignature = false;
         private knownBaseTypeCount = 0;
         public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
@@ -1381,6 +1379,8 @@ module TypeScript {
             }
         }
 
+        public hasOwnCallSignatures() { return !!this.callSignatureLinks; }
+
         public getCallSignatures(): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
@@ -1407,7 +1407,9 @@ module TypeScript {
             return <PullSignatureSymbol[]>members;
         }
 
-        public getConstructSignatures(): PullSignatureSymbol[] {
+        public hasOwnConstructSignatures() { return !!this.constructSignatureLinks; }
+
+        public getConstructSignatures(): PullSignatureSymbol[]{
             var members: PullSymbol[] = [];
 
             if (this.constructSignatureLinks) {
@@ -1433,7 +1435,9 @@ module TypeScript {
             return <PullSignatureSymbol[]>members;
         }
 
-        public getIndexSignatures(): PullSignatureSymbol[] {
+        public hasOwnIndexSignatures() { return !!this.indexSignatureLinks; }
+
+        public getIndexSignatures(): PullSignatureSymbol[]{
             var members: PullSymbol[] = [];
 
             if (this.indexSignatureLinks) {

@@ -73,7 +73,7 @@ module TypeScript {
         }
 
         var diagnosticMessage = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
-            var tabChar = getDiagnosticMessage(DiagnosticCode.tab, null);
+            var tabChar = "\t";
             var result = tabChar;
             if (num && args[num]) {
                 for (var i = 1; i < <number>args[num]; i++) {
@@ -92,7 +92,7 @@ module TypeScript {
         } );
         
         diagnosticMessage = diagnosticMessage.replace(/{(NL)}/g, function (match) {
-            return getDiagnosticMessage(DiagnosticCode.newLine, null);
+            return "\r\n";
         } );
 
         var message: string;

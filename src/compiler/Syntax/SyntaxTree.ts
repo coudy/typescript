@@ -138,7 +138,7 @@ module TypeScript {
                 this.fileName, elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticCode, args));
         }
 
-        private visitCatchClause(node: CatchClauseSyntax): void {
+        public visitCatchClause(node: CatchClauseSyntax): void {
             if (node.typeAnnotation) {
                 this.pushDiagnostic(
                     this.childStart(node, node.typeAnnotation),
@@ -274,7 +274,7 @@ module TypeScript {
             return true;
         }
 
-        private visitParameterList(node: ParameterListSyntax): void {
+        public visitParameterList(node: ParameterListSyntax): void {
             if (this.checkParameterListAcessibilityModifiers(node) ||
                 this.checkParameterListOrder(node) ||
                 this.checkForTrailingSeparator(node, node.parameters)) {
@@ -286,7 +286,7 @@ module TypeScript {
             super.visitParameterList(node);
         }
 
-        private visitHeritageClause(node: HeritageClauseSyntax): void {
+        public visitHeritageClause(node: HeritageClauseSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeNames) ||
                 this.checkForAtLeastOneElement(node, node.typeNames, Strings.type_name)) {
                 this.skip(node);
@@ -296,7 +296,7 @@ module TypeScript {
             super.visitHeritageClause(node);
         }
 
-        private visitArgumentList(node: ArgumentListSyntax): void {
+        public visitArgumentList(node: ArgumentListSyntax): void {
             if (this.checkForTrailingSeparator(node, node.arguments)) {
                 this.skip(node);
                 return;
@@ -305,7 +305,7 @@ module TypeScript {
             super.visitArgumentList(node);
         }
 
-        private visitVariableDeclaration(node: VariableDeclarationSyntax): void {
+        public visitVariableDeclaration(node: VariableDeclarationSyntax): void {
             if (this.checkForTrailingSeparator(node, node.variableDeclarators) ||
                 this.checkForAtLeastOneElement(node, node.variableDeclarators, Strings.identifier)) {
                 this.skip(node);
@@ -315,7 +315,7 @@ module TypeScript {
             super.visitVariableDeclaration(node);
         }
 
-        private visitTypeArgumentList(node: TypeArgumentListSyntax): void {
+        public visitTypeArgumentList(node: TypeArgumentListSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeArguments) ||
                 this.checkForAtLeastOneElement(node, node.typeArguments, Strings.identifier)) {
                 this.skip(node);
@@ -325,7 +325,7 @@ module TypeScript {
             super.visitTypeArgumentList(node);
         }
 
-        private visitTypeParameterList(node: TypeParameterListSyntax): void {
+        public visitTypeParameterList(node: TypeParameterListSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeParameters) ||
                 this.checkForAtLeastOneElement(node, node.typeParameters, Strings.identifier)) {
                 this.skip(node);
@@ -380,7 +380,7 @@ module TypeScript {
             return false;
         }
 
-        private visitIndexSignature(node: IndexSignatureSyntax): void {
+        public visitIndexSignature(node: IndexSignatureSyntax): void {
             if (this.checkIndexSignatureParameter(node)) {
                 this.skip(node);
                 return;
@@ -592,7 +592,7 @@ module TypeScript {
             return false;
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): void {
+        public visitClassDeclaration(node: ClassDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.classKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
@@ -657,7 +657,7 @@ module TypeScript {
             return false;
         }
 
-        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
+        public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
             if (this.checkInterfaceModifiers(node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkInterfaceDeclarationHeritageClauses(node)) {
@@ -716,7 +716,7 @@ module TypeScript {
             return false;
         }
 
-        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
             if (this.checkClassElementModifiers(node.modifiers)) {
                 this.skip(node);
                 return;
@@ -725,7 +725,7 @@ module TypeScript {
             super.visitMemberVariableDeclaration(node);
         }
 
-        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
             if (this.checkClassElementModifiers(node.modifiers)) {
                 this.skip(node);
                 return;
@@ -745,7 +745,7 @@ module TypeScript {
             return false;
         }
 
-        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
+        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
             if (this.checkClassElementModifiers(node.modifiers) ||
                 this.checkGetMemberAccessorParameter(node)) {
                 this.skip(node);
@@ -794,7 +794,7 @@ module TypeScript {
             return false;
         }
 
-        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
+        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
             if (this.checkClassElementModifiers(node.modifiers) ||
                 this.checkSetMemberAccessorParameter(node)) {
                 this.skip(node);
@@ -828,7 +828,7 @@ module TypeScript {
             return false;
         }
 
-        private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
+        public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
@@ -844,7 +844,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitInvocationExpression(node: InvocationExpressionSyntax): void {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): void {
             if (node.expression.kind() === SyntaxKind.SuperKeyword &&
                 node.argumentList.typeArgumentList !== null) {
                 this.pushDiagnostic1(this.position(), node,
@@ -922,7 +922,7 @@ module TypeScript {
             return false;
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
+        public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
@@ -947,7 +947,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitBlock(node: BlockSyntax): void {
+        public visitBlock(node: BlockSyntax): void {
             if (this.inAmbientDeclaration || this.isDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
                     DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts);
@@ -973,7 +973,7 @@ module TypeScript {
             return false
         }
 
-        private visitBreakStatement(node: BreakStatementSyntax): void {
+        public visitBreakStatement(node: BreakStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -982,7 +982,7 @@ module TypeScript {
             super.visitBreakStatement(node);
         }
 
-        private visitContinueStatement(node: ContinueStatementSyntax): void {
+        public visitContinueStatement(node: ContinueStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -991,7 +991,7 @@ module TypeScript {
             super.visitContinueStatement(node);
         }
 
-        private visitDebuggerStatement(node: DebuggerStatementSyntax): void {
+        public visitDebuggerStatement(node: DebuggerStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1000,7 +1000,7 @@ module TypeScript {
             super.visitDebuggerStatement(node);
         }
 
-        private visitDoStatement(node: DoStatementSyntax): void {
+        public visitDoStatement(node: DoStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1009,7 +1009,7 @@ module TypeScript {
             super.visitDoStatement(node);
         }
 
-        private visitEmptyStatement(node: EmptyStatementSyntax): void {
+        public visitEmptyStatement(node: EmptyStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1018,7 +1018,7 @@ module TypeScript {
             super.visitEmptyStatement(node);
         }
 
-        private visitExpressionStatement(node: ExpressionStatementSyntax): void {
+        public visitExpressionStatement(node: ExpressionStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1027,7 +1027,7 @@ module TypeScript {
             super.visitExpressionStatement(node);
         }
 
-        private visitForInStatement(node: ForInStatementSyntax): void {
+        public visitForInStatement(node: ForInStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1036,7 +1036,7 @@ module TypeScript {
             super.visitForInStatement(node);
         }
 
-        private visitForStatement(node: ForStatementSyntax): void {
+        public visitForStatement(node: ForStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1045,7 +1045,7 @@ module TypeScript {
             super.visitForStatement(node);
         }
 
-        private visitIfStatement(node: IfStatementSyntax): void {
+        public visitIfStatement(node: IfStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1054,7 +1054,7 @@ module TypeScript {
             super.visitIfStatement(node);
         }
 
-        private visitLabeledStatement(node: LabeledStatementSyntax): void {
+        public visitLabeledStatement(node: LabeledStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1063,7 +1063,7 @@ module TypeScript {
             super.visitLabeledStatement(node);
         }
 
-        private visitReturnStatement(node: ReturnStatementSyntax): void {
+        public visitReturnStatement(node: ReturnStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1072,7 +1072,7 @@ module TypeScript {
             super.visitReturnStatement(node);
         }
 
-        private visitSwitchStatement(node: SwitchStatementSyntax): void {
+        public visitSwitchStatement(node: SwitchStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1081,7 +1081,7 @@ module TypeScript {
             super.visitSwitchStatement(node);
         }
 
-        private visitThrowStatement(node: ThrowStatementSyntax): void {
+        public visitThrowStatement(node: ThrowStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1090,7 +1090,7 @@ module TypeScript {
             super.visitThrowStatement(node);
         }
 
-        private visitTryStatement(node: TryStatementSyntax): void {
+        public visitTryStatement(node: TryStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1099,7 +1099,7 @@ module TypeScript {
             super.visitTryStatement(node);
         }
 
-        private visitWhileStatement(node: WhileStatementSyntax): void {
+        public visitWhileStatement(node: WhileStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1108,7 +1108,7 @@ module TypeScript {
             super.visitWhileStatement(node);
         }
 
-        private visitWithStatement(node: WithStatementSyntax): void {
+        public visitWithStatement(node: WithStatementSyntax): void {
             if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
@@ -1117,7 +1117,7 @@ module TypeScript {
             super.visitWithStatement(node);
         }
 
-        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
+        public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.functionKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
@@ -1132,7 +1132,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitVariableStatement(node: VariableStatementSyntax): void {
+        public visitVariableStatement(node: VariableStatementSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.variableDeclaration, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
@@ -1162,7 +1162,7 @@ module TypeScript {
             return false;
         }
 
-        private visitObjectType(node: ObjectTypeSyntax): void {
+        public visitObjectType(node: ObjectTypeSyntax): void {
             if (this.checkListSeparators(node, node.typeMembers, SyntaxKind.SemicolonToken)) {
                 this.skip(node);
                 return;
@@ -1175,7 +1175,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitArrayType(node: ArrayTypeSyntax): void {
+        public visitArrayType(node: ArrayTypeSyntax): void {
             // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = true;
@@ -1183,7 +1183,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitFunctionType(node: FunctionTypeSyntax): void {
+        public visitFunctionType(node: FunctionTypeSyntax): void {
             // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = true;
@@ -1191,7 +1191,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitConstructorType(node: ConstructorTypeSyntax): void {
+        public visitConstructorType(node: ConstructorTypeSyntax): void {
             // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = true;
@@ -1199,7 +1199,7 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        private visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
+        public visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
                     DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts);
@@ -1210,14 +1210,14 @@ module TypeScript {
             super.visitEqualsValueClause(node);
         }
 
-        private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
+        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
             var savedCurrentConstructor = this.currentConstructor;
             this.currentConstructor = node;
             super.visitConstructorDeclaration(node);
             this.currentConstructor = savedCurrentConstructor;
         }
 
-        private visitSourceUnit(node: SourceUnitSyntax): void {
+        public visitSourceUnit(node: SourceUnitSyntax): void {
             if (this.checkFunctionOverloads(node, node.moduleElements)) {
                 this.skip(node);
                 return;

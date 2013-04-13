@@ -21,7 +21,7 @@ module TypeScript {
             return this.dedentationAmount === 0;
         }
 
-        private visitToken(token: ISyntaxToken): ISyntaxToken {
+        public visitToken(token: ISyntaxToken): ISyntaxToken {
             if (token.width() === 0) {
                 return token;
             }

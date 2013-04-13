@@ -34,7 +34,6 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
     it("Scope check extended class", function() {
         var code  = 'class C { private v; public p; static s; }';
         code += 'class D extends C {';
-        code += '  public v: number;';
         code += '  public p: number;'
         code += '  constructor() {';
         code += '   super();'
@@ -47,6 +46,24 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             assert.arrayLengthIs(result.errors, 0);
         });
     });
+
+    it("Scope check extended class with errors", function () {
+        var code = 'class C { private v; public p; static s; }';
+        code += 'class D extends C {';
+        code += '  public v: number;';
+        code += '  public p: number;'
+        code += '  constructor() {';
+        code += '   super();'
+        code += '   this.v = 1;';
+        code += '   this.p = 1;';
+        code += '   C.s = 1;';
+        code += '  }';
+        code += '}';
+        Harness.Compiler.compileString(code, 'declarations', function (result) {
+            assert.arrayLengthIs(result.errors, 1);
+            assert.compilerWarning(result, 1, 48, "error TS2141: Class 'D' extends class 'C' but their instance types are incompatible:\r\n\tProperty 'v' defined as public in type 'D' is defined as private in type 'C'.");
+        } );
+    } );
 
     it("Scope check extended class inside public method", function() {
         var code  = 'class C { private v; public p; static s; }';

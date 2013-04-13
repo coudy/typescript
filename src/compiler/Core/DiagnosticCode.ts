@@ -5,9 +5,6 @@ module TypeScript {
         error_TS_0__1,
         warning_TS_0__1,
 
-        newLine,
-        tab,
-
         _0__NL__1_TB__2,
         _0_TB__1,
 
@@ -209,8 +206,12 @@ module TypeScript {
         All_symbols_within_a__with__block_will_be_resolved_to__any__,
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module,
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2,
+        Class__0__declares_class__1__but_does_not_implement_it__NL__2,
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer,
         _this__may_not_be_referenced_in_initializers_in_a_class_body,
+        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2,
+        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2,
+        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

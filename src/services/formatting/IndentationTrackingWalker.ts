@@ -82,7 +82,7 @@ module TypeScript.Formatting {
             }
         }
 
-        private visitToken(token: ISyntaxToken): void {
+        public visitToken(token: ISyntaxToken): void {
             var tokenSpan = new TextSpan(this._position, token.fullWidth());
 
             if (tokenSpan.intersectsWithTextSpan(this._textSpan)) {
@@ -97,7 +97,7 @@ module TypeScript.Formatting {
             this._position += token.fullWidth();
         }
 
-        private visitNode(node: SyntaxNode): void {
+        public visitNode(node: SyntaxNode): void {
             var nodeSpan = new TextSpan(this._position, node.fullWidth());
 
             if (nodeSpan.intersectsWithTextSpan(this._textSpan)) {

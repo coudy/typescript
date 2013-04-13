@@ -56,7 +56,7 @@ module TypeScript.Formatting {
             return walker.edits();
         }
 
-        private visitTokenInSpan(token: ISyntaxToken): void {
+        public visitTokenInSpan(token: ISyntaxToken): void {
             if (token.fullWidth() !== 0) {
                 var tokenSpan = new TextSpan(this.position() + token.leadingTriviaWidth(), token.width());
                 if (this.textSpan().containsTextSpan(tokenSpan)) {

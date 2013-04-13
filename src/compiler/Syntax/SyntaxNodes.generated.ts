@@ -259,7 +259,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -346,7 +346,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -435,7 +435,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -559,7 +559,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -733,7 +733,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -847,11 +847,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -953,11 +953,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -2379,11 +2379,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -3143,7 +3143,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): boolean {
+    public isTypeMember(): boolean {
         return true;
     }
 
@@ -3212,7 +3212,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): boolean {
+    public isTypeMember(): boolean {
         return true;
     }
 
@@ -3294,7 +3294,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): boolean {
+    public isTypeMember(): boolean {
         return true;
     }
 
@@ -3379,7 +3379,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): boolean {
+    public isTypeMember(): boolean {
         return true;
     }
 
@@ -3457,7 +3457,7 @@ module TypeScript {
         }
     }
 
-    private isTypeMember(): boolean {
+    public isTypeMember(): boolean {
         return true;
     }
 
@@ -3897,11 +3897,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -4000,11 +4000,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -4076,7 +4076,7 @@ module TypeScript {
         }
     }
 
-    private isClassElement(): boolean {
+    public isClassElement(): boolean {
         return true;
     }
 
@@ -4168,7 +4168,7 @@ module TypeScript {
         return true;
     }
 
-    private isClassElement(): boolean {
+    public isClassElement(): boolean {
         return true;
     }
 
@@ -4243,7 +4243,7 @@ module TypeScript {
         return true;
     }
 
-    private isClassElement(): boolean {
+    public isClassElement(): boolean {
         return true;
     }
 
@@ -4492,7 +4492,7 @@ module TypeScript {
         return true;
     }
 
-    private isClassElement(): boolean {
+    public isClassElement(): boolean {
         return true;
     }
 
@@ -4575,11 +4575,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -4654,11 +4654,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -4831,11 +4831,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -4920,7 +4920,7 @@ module TypeScript {
         super(parsedInStrictMode); 
     }
 
-    private isSwitchClause(): boolean {
+    public isSwitchClause(): boolean {
         return true;
     }
 
@@ -5137,11 +5137,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -5220,11 +5220,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -5280,11 +5280,11 @@ module TypeScript {
         super(parsedInStrictMode); 
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -5698,11 +5698,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -5795,7 +5795,7 @@ module TypeScript {
         }
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -6538,11 +6538,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -6608,11 +6608,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -6864,11 +6864,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
@@ -7259,11 +7259,11 @@ module TypeScript {
         }
     }
 
-    private isStatement(): boolean {
+    public isStatement(): boolean {
         return true;
     }
 
-    private isModuleElement(): boolean {
+    public isModuleElement(): boolean {
         return true;
     }
 
