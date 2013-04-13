@@ -64,7 +64,7 @@ module TypeScript {
         _get__accessor_cannot_have_parameters,
         Rest_parameter_cannot_be_optional,
         Rest_parameter_cannot_have_initializer,
-
+        Modifiers_cannot_appear_here,
 
 
 

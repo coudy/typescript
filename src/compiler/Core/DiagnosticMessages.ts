@@ -357,6 +357,12 @@ module TypeScript {
             code: 1054
         },
 
+        Modifiers_cannot_appear_here: {
+            category: DiagnosticCategory.Error,
+            message: "Modifiers cannot appear here.",
+            code: 1055
+        },
+
 
 
 

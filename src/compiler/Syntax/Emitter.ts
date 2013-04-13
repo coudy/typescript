@@ -10,7 +10,7 @@ module TypeScript.Emitter1 {
     class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
         private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
-        private visitToken(token: ISyntaxToken): ISyntaxToken {
+        public visitToken(token: ISyntaxToken): ISyntaxToken {
             if (this.tokenTable.containsKey(token)) {
                 // already saw this token.  so clone it and return a new one. so that the tree stays
                 // unique/
@@ -80,7 +80,7 @@ module TypeScript.Emitter1 {
             return token.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
         }
 
-        private visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
+        public visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
             return node.withModuleElements(Syntax.list(
                 this.convertModuleElements(node.moduleElements)));
         }
@@ -202,7 +202,7 @@ module TypeScript.Emitter1 {
             }
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): IModuleElementSyntax[]{
+        public visitModuleDeclaration(node: ModuleDeclarationSyntax): IModuleElementSyntax[]{
             var _this = this;
 
             // Recurse downwards and get the rewritten children.
@@ -288,7 +288,7 @@ module TypeScript.Emitter1 {
             return [variableStatement, expressionStatement];
         }
 
-        private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
+        public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
             // Can't have an expression statement with an anonymous function expression in it.
             var rewritten: ExpressionStatementSyntax = super.visitExpressionStatement(node);
 
@@ -313,13 +313,13 @@ module TypeScript.Emitter1 {
             return rewritten;
         }
 
-        private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
+        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
             return FunctionExpressionSyntax.create1()
                 .withCallSignature(callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier))).withTrailingTrivia(this.space))
                 .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 
-        private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
+        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
             return FunctionExpressionSyntax.create1()
                 .withCallSignature(CallSignatureSyntax.create(node.callSignature.parameterList.accept(this)))
                 .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
@@ -485,7 +485,7 @@ module TypeScript.Emitter1 {
                 block, null);
         }
 
-        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclarationSyntax {
+        public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclarationSyntax {
             if (node.block === null) {
                 // Function overloads aren't emitted.
                 return null;
@@ -517,7 +517,7 @@ module TypeScript.Emitter1 {
                             .withLeadingTrivia(rewritten.leadingTrivia());
         }
 
-        private visitParameter(node: ParameterSyntax): ParameterSyntax {
+        public visitParameter(node: ParameterSyntax): ParameterSyntax {
             // transfer the trivia from the first token to the the identifier.
             return ParameterSyntax.create(node.identifier)
                                   .withLeadingTrivia(node.leadingTrivia())
@@ -841,7 +841,7 @@ module TypeScript.Emitter1 {
             return result;
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
+        public visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
             var identifier = this.withNoTrivia(node.identifier);
 
             var statements: IStatementSyntax[] = [];
@@ -924,7 +924,7 @@ module TypeScript.Emitter1 {
                     .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
-        private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
+        public visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclaratorSyntax {
             var result: VariableDeclaratorSyntax = super.visitVariableDeclarator(node);
             if (result.typeAnnotation === null) {
                 return result;
@@ -936,7 +936,7 @@ module TypeScript.Emitter1 {
                          .withIdentifier(result.identifier.withTrailingTrivia(newTrailingTrivia));
         }
 
-        private visitCallSignature(node: CallSignatureSyntax): CallSignatureSyntax {
+        public visitCallSignature(node: CallSignatureSyntax): CallSignatureSyntax {
             var result: CallSignatureSyntax = super.visitCallSignature(node);
             if (result.typeAnnotation === null) {
                 return result;
@@ -948,7 +948,7 @@ module TypeScript.Emitter1 {
             return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
         }
 
-        private visitCastExpression(node: CastExpressionSyntax): IExpressionSyntax {
+        public visitCastExpression(node: CastExpressionSyntax): IExpressionSyntax {
             var result: CastExpressionSyntax = super.visitCastExpression(node);
 
             var subExpression = result.expression;
@@ -957,7 +957,7 @@ module TypeScript.Emitter1 {
             return subExpression.withLeadingTrivia(totalTrivia);
         }
 
-        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
+        public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
             // TODO: transfer trivia if important.
             return null;
         }
@@ -1051,7 +1051,7 @@ module TypeScript.Emitter1 {
                 .withBlock(block);
         }
 
-        private visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {
+        public visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {
             var identifier = this.withNoTrivia(node.identifier);
 
             // Copy existing leading trivia of the enum declaration to this node.
@@ -1104,7 +1104,7 @@ module TypeScript.Emitter1 {
                          .withArgumentList(result.argumentList.withArguments(Syntax.separatedList(arguments)));
         }
 
-        private visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             if (Syntax.isSuperInvocationExpression(node)) {
                 return this.convertSuperInvocationExpression(node);
             }
@@ -1115,14 +1115,14 @@ module TypeScript.Emitter1 {
             return super.visitInvocationExpression(node);
         }
 
-        private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
+        public visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
             var result: VariableStatementSyntax = super.visitVariableStatement(node);
 
             return result.withModifiers(Syntax.emptyList)
                          .withLeadingTrivia(result.leadingTrivia());
         }
 
-        private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
+        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
             var result: MemberAccessExpressionSyntax = super.visitMemberAccessExpression(node);
 
             if (Syntax.isSuperMemberAccessExpression(result)) {
@@ -1134,9 +1134,9 @@ module TypeScript.Emitter1 {
             return result;
         }
 
-        private visitToken(token: ISyntaxToken): INameSyntax {
+        public visitToken(token: ISyntaxToken): ISyntaxToken {
             if (token.kind() === SyntaxKind.IdentifierName) {
-                return this.visitIdentifierName(token);
+                return <any>this.visitIdentifierName(token);
             }
 
             if (token.kind() === SyntaxKind.ThisKeyword) {
@@ -1146,13 +1146,13 @@ module TypeScript.Emitter1 {
             return token;
         }
 
-        private visitThisKeyword(token: ISyntaxToken): ISyntaxToken {
+        public visitThisKeyword(token: ISyntaxToken): ISyntaxToken {
             // TODO: use typecheck information to tell if we're accessing 'this' in a lambda and 
             // should use "_this" instead.
             return token;
         }
 
-        private visitIdentifierName(token: ISyntaxToken): INameSyntax {
+        public visitIdentifierName(token: ISyntaxToken): INameSyntax {
             // Check if a name token needs to become fully qualified.
             var parent = this.syntaxInformationMap.parent(token);
 

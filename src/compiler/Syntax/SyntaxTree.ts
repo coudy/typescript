@@ -96,6 +96,7 @@ module TypeScript {
 
     class GrammarCheckerWalker extends PositionTrackingWalker {
         private inAmbientDeclaration: boolean = false;
+        private inBlock: boolean = false;
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private sourceUnit: SourceUnitSyntax,
@@ -949,8 +950,7 @@ module TypeScript {
 
         public visitBlock(node: BlockSyntax): void {
             if (this.inAmbientDeclaration || this.isDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts);
+                this.pushDiagnostic1(this.position(), node.firstToken(), DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -960,7 +960,10 @@ module TypeScript {
                 return;
             }
 
+            var savedInBlock = this.inBlock;
+            this.inBlock = true;
             super.visitBlock(node);
+            this.inBlock = savedInBlock;
         }
 
         private checkForStatementInAmbientContxt(node: IStatementSyntax): boolean {
@@ -1117,8 +1120,19 @@ module TypeScript {
             super.visitWithStatement(node);
         }
 
+        private checkForDisallowedModifiers(parent: ISyntaxElement, modifiers: ISyntaxList): boolean {
+            if (this.inBlock && modifiers.childCount() > 0) {
+                var modifierFullStart = this.childFullStart(parent, modifiers);
+                this.pushDiagnostic1(modifierFullStart, modifiers.childAt(0), DiagnosticCode.Modifiers_cannot_appear_here);
+                return true;
+            }
+
+            return false;
+        }
+
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForDisallowedModifiers(node, node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.functionKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
 
@@ -1134,6 +1148,7 @@ module TypeScript {
 
         public visitVariableStatement(node: VariableStatementSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForDisallowedModifiers(node, node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.variableDeclaration, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
 

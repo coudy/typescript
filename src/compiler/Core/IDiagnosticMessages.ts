@@ -63,6 +63,7 @@ module TypeScript {
         _set__accessor_parameter_cannot_have_initializer: DiagnosticInfo;
         _set__accessor_cannot_have_rest_parameter: DiagnosticInfo;
         _get__accessor_cannot_have_parameters: DiagnosticInfo;
+        Modifiers_cannot_appear_here: DiagnosticInfo;
 
 
 
