@@ -1846,10 +1846,10 @@ module TypeScript {
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 emitter.emitJavascript(this.returnExpression, false);
-                emitter.writeLineToOutput(";");
+                emitter.writeToOutput(";");
             }
             else {
-                emitter.writeLineToOutput("return;");
+                emitter.writeToOutput("return;");
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
