@@ -1439,7 +1439,7 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             this.expression.emit(emitter, startLine);
-            emitter.writeLineToOutput(";");
+            emitter.writeToOutput(";");
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }

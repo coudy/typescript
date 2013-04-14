@@ -18,7 +18,6 @@ foo = {
 var s = foo.name || "default";
 if (foo.print !== undefined) {
     foo.print();
-
 }
 ;
 ;

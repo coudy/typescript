@@ -1492,7 +1492,6 @@ module TypeScript {
                         }
                     }
                     else if (startLine &&
-                             (emitNode.nodeType !== NodeType.ExpressionStatement) &&
                              (emitNode.nodeType !== NodeType.VariableStatement) &&
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
