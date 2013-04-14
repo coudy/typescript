@@ -4680,7 +4680,7 @@ module TypeScript {
                     this.resolveDeclaredSymbol(targetProp, null, context);
                 }
 
-                var targetPropType = this.substituteUpperBoundForType(targetProp.getType());
+                var targetPropType = targetProp.getType();
 
                 if (!sourceProp) {
                     // If it's not present on the type in question, look for the property on 'Object'
@@ -4759,8 +4759,8 @@ module TypeScript {
                 this.resolveDeclaredSymbol(sourceProp, null, context);
             }
 
-            var sourcePropType = this.substituteUpperBoundForType(sourceProp.getType());
-            var targetPropType = this.substituteUpperBoundForType(targetProp.getType());
+            var sourcePropType = sourceProp.getType();
+            var targetPropType = targetProp.getType();
 
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[(sourcePropType.getSymbolID() << 16) | targetPropType.getSymbolID()] != undefined)) {
@@ -4987,7 +4987,7 @@ module TypeScript {
                     sourceParamName = sourceParameters[iSource].getName();
                 }
                 else if (iSource == sourceVarArgCount) {
-                    sourceParamType = this.substituteUpperBoundForType(sourceParameters[iSource].getType());
+                    sourceParamType = sourceParameters[iSource].getType();
                     if (sourceParamType.isArray()) {
                         sourceParamType = sourceParamType.getElementType();
                     }
@@ -4995,7 +4995,7 @@ module TypeScript {
                 }
 
                 if (iTarget < targetParameters.length && iTarget < targetVarArgCount) {
-                    targetParamType = this.substituteUpperBoundForType(targetParameters[iTarget].getType());
+                    targetParamType = targetParameters[iTarget].getType();
                     targetParamName = targetParameters[iTarget].getName();
                 }
                 else if (targetSig.hasVariableParamList() && iTarget == targetVarArgCount) {
