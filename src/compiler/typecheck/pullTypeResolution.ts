@@ -4420,10 +4420,8 @@ module TypeScript {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, targetProps: PullSymbol[],
-            findPropertyInSource: (propName: String) => PullSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
-            return this.sourceMembersAreRelatableToTargetMembers(source, target, targetProps, findPropertyInSource, false, this.subtypeCache,
-                context, comparisonInfo);
+        public sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+            return this.sourceMembersAreRelatableToTargetMembers(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
         public sourcePropertyIsSubtypeOfTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
@@ -4629,13 +4627,9 @@ module TypeScript {
                 return true;
             }
 
-            if (target.hasMembers()) {
-                var targetProps = target.getAllMembers(PullElementKind.SomeValue, true);
-                if (!this.sourceMembersAreRelatableToTargetMembers(source, target, targetProps, (propName: string) => source.findMember(propName),
-                    assignableTo, comparisonCache, context, comparisonInfo)) {
-                    comparisonCache[comboId] = undefined;
-                    return false;
-                }
+            if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+                comparisonCache[comboId] = undefined;
+                return false;
             }
 
             if (!this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
@@ -4657,13 +4651,13 @@ module TypeScript {
             return true;
         }
 
-        public sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol,
-            targetProps: PullSymbol[], findPropertyInSource: (propName: String) => PullSymbol, assignableTo: boolean,
+        public sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
             comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+            var targetProps = target.getAllMembers(PullElementKind.SomeValue, true);
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
 
                 var targetProp = targetProps[itargetProp];
-                var sourceProp = findPropertyInSource(targetProp.getName());
+                var sourceProp = source.findMember(targetProp.getName());
 
                 if (!targetProp.isResolved()) {
                     this.resolveDeclaredSymbol(targetProp, null, context);

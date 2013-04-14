@@ -1687,17 +1687,6 @@ module TypeScript {
                 }
             }
 
-            if (!memberSymbol && this.implementedTypeLinks) {
-
-                for (var i = 0; i < this.implementedTypeLinks.length; i++) {
-                    memberSymbol = (<PullTypeSymbol>this.implementedTypeLinks[i].end).findMember(name);
-
-                    if (memberSymbol) {
-                        return memberSymbol;
-                    }
-                }
-            }
-
             // when all else fails, look for a nested type name
             return this.findNestedType(name);
         }
@@ -1798,20 +1787,6 @@ module TypeScript {
                         var extendedMember = extendedMembers[j];
                         if (!this.memberNameCache[extendedMember.getName()]) {
                             allMembers[allMembers.length] = extendedMember;
-                        }
-                    }
-                }
-            }
-
-            if (this.implementedTypeLinks) {
-
-                for (var i = 0; i < this.implementedTypeLinks.length; i++) {
-                    var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
-
-                    for (var j = 0 , m = implementedMembers.length; j < m; j++) {
-                        var implementedMember = implementedMembers[j];
-                        if (!this.memberNameCache[implementedMember.getName()]) {
-                            allMembers[allMembers.length] = implementedMember;
                         }
                     }
                 }

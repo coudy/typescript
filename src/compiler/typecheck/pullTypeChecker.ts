@@ -782,16 +782,7 @@ module TypeScript {
 
             var resolutionContext = new PullTypeResolutionContext();
             var comparisonInfo = new TypeComparisonInfo();
-            var foundError = !this.resolver.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, implementedTypeMembers,
-            (propName: string) => {
-                for (var j = 0; j < classPropertyList.length; j++) {
-                    if (propName == classPropertyList[j].getName()) {
-                        return classPropertyList[j];
-                    }
-                }
-                return null;
-            } , resolutionContext, comparisonInfo);
-
+            var foundError = !this.resolver.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
             if (!foundError) {
                 foundError = !this.resolver.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
                 if (!foundError) {
