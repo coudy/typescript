@@ -212,7 +212,14 @@ module TypeScript {
         Class__0__cannot_extend_class__1__NL__2,
         Interface__0__cannot_extend_class__1__NL__2,
         Interface__0__cannot_extend_interface__1__NL__2,
-
+        Duplicate_overload_signature_for__0_,
+        Duplicate_constructor_overload_signature,
+        Duplicate_overload_call_signature,
+        Duplicate_overload_construct_signature,
+        Overload_signature_is_not_compatible_with_function_definition,
+        Overload_signature_is_not_compatible_with_function_definition__NL__0,
+        Overload_signaures_do_not_agree_in_public_private_visibility,
+        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

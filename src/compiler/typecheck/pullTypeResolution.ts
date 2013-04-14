@@ -4965,7 +4965,7 @@ module TypeScript {
 
             for (var iSource = 0, iTarget = 0; iSource < len; iSource++ , iTarget++) {
 
-                if (!sourceSig.hasVariableParamList || iSource < sourceVarArgCount) {
+                if (!sourceSig.hasVariableParamList() || iSource < sourceVarArgCount) {
                     sourceParamType = sourceParameters[iSource].getType();
                     sourceParamName = sourceParameters[iSource].getName();
                 }
@@ -4981,7 +4981,7 @@ module TypeScript {
                     targetParamType = targetParameters[iTarget].getType();
                     targetParamName = targetParameters[iTarget].getName();
                 }
-                else if (targetSig.hasVariableParamList && iTarget == targetVarArgCount) {
+                else if (targetSig.hasVariableParamList() && iTarget == targetVarArgCount) {
                     targetParamType = targetParameters[iTarget].getType();
                     if (targetParamType.isArray()) {
                         targetParamType = targetParamType.getElementType();

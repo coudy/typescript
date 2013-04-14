@@ -1017,7 +1017,7 @@ module TypeScript {
 
                 if (funcDecl) {
                     if (symbol && symbol.getKind() != PullElementKind.Property) {
-                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, scriptName);
+                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain.getUnit(scriptName));
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }

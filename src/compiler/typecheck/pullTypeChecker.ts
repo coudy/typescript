@@ -556,9 +556,97 @@ module TypeScript {
                 }
             }
 
+            this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
             this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
 
             return functionSymbol ? functionSymbol.getType() : null;
+        }
+
+        private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, typeCheckContext: PullTypeCheckContext) {
+            var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
+            if (functionSignatureInfo.allSignatures.length == 1) {
+                // Function deifinition doesnt need to verify anything
+                return;
+            }
+
+            var signature = functionSignatureInfo.signature;
+            var allSignatures = functionSignatureInfo.allSignatures;
+            var funcSymbol = typeCheckContext.semanticInfo.getSymbolForAST(funcDecl);
+            
+            // Find the definition signature for this signature group
+            var definitionSignature: PullSignatureSymbol = null;
+            for (var i = allSignatures.length - 1; i >= 0; i--) {
+                if (allSignatures[i].isDefinition()) {
+                    definitionSignature = allSignatures[i];
+                    break;
+                }
+            }
+
+            // Check for if the signatures are identical, check with the signatures before the current current one
+            for (var i = 0; i < allSignatures.length; i++) {
+                if (allSignatures[i] == signature) {
+                    break;
+                }
+
+                if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
+                    if (funcDecl.isConstructor) {
+                        message = getDiagnosticMessage(DiagnosticCode.Duplicate_constructor_overload_signature, null);
+                    } else if (funcDecl.isConstructMember()) {
+                        message = getDiagnosticMessage(DiagnosticCode.Duplicate_overload_construct_signature, null);
+                    } else if (funcDecl.isCallMember()) {
+                        message = getDiagnosticMessage(DiagnosticCode.Duplicate_overload_call_signature, null);
+                    } else {
+                        message = getDiagnosticMessage(DiagnosticCode.Duplicate_overload_signature_for__0_, [funcSymbol.getScopedNameEx().toString()]);
+                    }
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                    break;
+                }
+            }
+
+            var message: string;
+            if (definitionSignature) {
+                var comparisonInfo = new TypeComparisonInfo();
+                var resolutionContext = new PullTypeResolutionContext();
+                if (!definitionSignature.isResolved()) {
+                    this.resolver.resolveDeclaredSymbol(definitionSignature, typeCheckContext.getEnclosingDecl(), resolutionContext);
+                }
+
+                if (!this.resolver.signatureIsAssignableToTarget(definitionSignature, signature, resolutionContext, comparisonInfo)) {
+                    // definition signature is not assignable to functionSignature then its incorrect overload signature
+                    if (comparisonInfo.message) {
+                        message = getDiagnosticMessage(DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0, [comparisonInfo.message]);
+                    } else {
+                        message = getDiagnosticMessage(DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition, null);
+                    }
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                }
+            }
+
+            var signatureForVisibilityCheck = definitionSignature;
+            if (!definitionSignature) {
+                if (allSignatures[0] == signature) {
+                    return;
+                }
+                signatureForVisibilityCheck = allSignatures[0];
+            }
+
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != allSignatures[0]) {
+                var errorCode: DiagnosticCode;
+                // verify it satisfies all the properties of first signature
+                if (funcSymbol.getKind() == PullElementKind.Method) {
+                    if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) == signature.hasFlag(PullElementFlags.Private)) {
+                        return;
+                    }
+                    errorCode = DiagnosticCode.Overload_signaures_do_not_agree_in_public_private_visibility;
+                } else {
+                    if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) == signature.hasFlag(PullElementFlags.Exported)) {
+                        return;
+                    }
+                    errorCode = DiagnosticCode.Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier;
+                }
+                message = getDiagnosticMessage(errorCode, null);
+                this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+            }
         }
 
         private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
@@ -655,8 +743,6 @@ module TypeScript {
                 }
             }
 
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
-
             this.checkForResolutionError(constructorSignature.getReturnType(), enclosingDecl);
 
             if (functionDecl.getSignatureSymbol() && functionDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
@@ -677,6 +763,8 @@ module TypeScript {
                 }
             }
 
+            this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
+            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
             return functionSymbol ? functionSymbol.getType() : null;
         }
 
@@ -709,6 +797,7 @@ module TypeScript {
             }
 
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
+            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
 
             return null;
         }
@@ -800,6 +889,12 @@ module TypeScript {
                         var propName = typeConstructorTypeMembers[i].getName();
                         var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
                         if (extendedConstructorTypeProp) {
+                            if (!extendedConstructorTypeProp.isResolved()) {
+                                var extendedClassAst = typeCheckContext.semanticInfo.getASTForSymbol(extendedType);
+                                var extendedClassDecl = typeCheckContext.semanticInfo.getDeclForAST(extendedClassAst);
+                                this.resolver.resolveDeclaredSymbol(extendedConstructorTypeProp, extendedClassDecl, resolutionContext);
+                            }
+
                             // check if type of property is subtype of extended type's property type
                             var typeConstructorTypePropType = typeConstructorTypeMembers[i].getType();
                             var extendedConstructorTypePropType = extendedConstructorTypeProp.getType();

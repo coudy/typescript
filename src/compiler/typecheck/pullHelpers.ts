@@ -13,15 +13,15 @@ module TypeScript {
             allSignatures: PullSignatureSymbol[];
         }
 
-        export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
-            var funcSymbol = semanticInfoChain.getSymbolForAST(funcDecl, unitPath);
+        export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfo: SemanticInfo) {
+            var funcSymbol = semanticInfo.getSymbolForAST(funcDecl);
             if (funcSymbol.isSignature()) {
                 return {
                     signature: <PullSignatureSymbol>funcSymbol,
                     allSignatures: [<PullSignatureSymbol>funcSymbol]
                 };
             }
-            var functionDecl = semanticInfoChain.getDeclForAST(funcDecl, unitPath);
+            var functionDecl = semanticInfo.getDeclForAST(funcDecl);
             var functionSignature = functionDecl.getSignatureSymbol();
             var funcTypeSymbol = funcSymbol.getType();
             var signatures: PullSignatureSymbol[];

@@ -1102,6 +1102,47 @@ module TypeScript {
             message: "Interface '{0}' cannot extend interface '{1}':{NL}{2}",
             code: 2143
         },
+        Duplicate_overload_signature_for__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Duplicate overload signature for '{0}'.",
+            code: 2144
+        },
+        Duplicate_constructor_overload_signature: {
+            category: DiagnosticCategory.Error,
+            message: "Duplicate constructor overload signature.",
+            code: 2145
+        },
+        Duplicate_overload_call_signature: {
+            category: DiagnosticCategory.Error,
+            message: "Duplicate overload call signature.",
+            code: 2146
+        },
+        Duplicate_overload_construct_signature: {
+            category: DiagnosticCategory.Error,
+            message: "Duplicate overload construct signature.",
+            code: 2147
+        },
+        Overload_signature_is_not_compatible_with_function_definition: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signature is not compatible with function definition.",
+            code: 2148
+        },
+        Overload_signature_is_not_compatible_with_function_definition__NL__0: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signature is not compatible with function definition:{NL}{0}",
+            code: 2149
+        },
+        Overload_signaures_do_not_agree_in_public_private_visibility: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signaures do not agree in public/private visibility.",
+            code: 2150
+        },
+        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signatures do not agree with presence/absense of export modifier.",
+            code: 2151
+        },
+
 
 
 

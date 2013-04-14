@@ -217,6 +217,15 @@ module TypeScript {
         Class__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
         Interface__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
         Interface__0__cannot_extend_interface__1__NL__2: DiagnosticInfo;
+        Duplicate_overload_signature_for__0_: DiagnosticInfo;
+        Duplicate_constructor_overload_signature: DiagnosticInfo;
+        Duplicate_overload_call_signature: DiagnosticInfo;
+        Duplicate_overload_construct_signature: DiagnosticInfo;
+        Overload_signature_is_not_compatible_with_function_definition: DiagnosticInfo;
+        Overload_signature_is_not_compatible_with_function_definition__NL__0: DiagnosticInfo;
+        Overload_signaures_do_not_agree_in_public_private_visibility: DiagnosticInfo;
+        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: DiagnosticInfo;
+
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
