@@ -420,8 +420,7 @@ module TypeScript {
                 return false;
             }
 
-            var funcSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.fileName);
-            var funcSignature = funcSignatureInfo ? funcSignatureInfo.signature : null;
+            var funcSignature = this.semanticInfoChain.getDeclForAST(funcDecl, this.fileName).getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
             if (funcDecl.isConstructor) {
                 this.emitIndent();

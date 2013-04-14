@@ -15,12 +15,14 @@ module TypeScript {
 
         export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
             var funcSymbol = semanticInfoChain.getSymbolForAST(funcDecl, unitPath);
-            var result: SignatureInfoForFuncDecl = { signature: null, allSignatures: null };
             if (funcSymbol.isSignature()) {
-                result.signature = <PullSignatureSymbol>funcSymbol;
-                result.allSignatures = [<PullSignatureSymbol>funcSymbol];
-                return result;
+                return {
+                    signature: <PullSignatureSymbol>funcSymbol,
+                    allSignatures: [<PullSignatureSymbol>funcSymbol]
+                };
             }
+            var functionDecl = semanticInfoChain.getDeclForAST(funcDecl, unitPath);
+            var functionSignature = functionDecl.getSignatureSymbol();
             var funcTypeSymbol = funcSymbol.getType();
             var signatures: PullSignatureSymbol[];
             if (funcDecl.isConstructor || funcDecl.isConstructMember()) {
@@ -30,17 +32,10 @@ module TypeScript {
             } else {
                 signatures = funcTypeSymbol.getCallSignatures();
             }
-            for (var i = 0; i < signatures.length; i++) {
-                var signatureDecl = signatures[i].getDeclarations()[0];
-                var signatureAST = semanticInfoChain.getASTForDecl(signatureDecl);
-                if (signatureAST == funcDecl) {
-                    result.signature = signatures[i];
-                    result.allSignatures = signatures;
-                    return result;
-                }
-            }
-
-            return null;
+            return {
+                signature: functionSignature,
+                allSignatures: signatures
+            };
         }
 
         export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
