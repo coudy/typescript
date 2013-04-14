@@ -478,6 +478,32 @@ module TypeScript {
             enumSymbol.setIsBound(this.bindingPhase);
         }
 
+        private cleanInterfaceSignatures(interfaceSymbol: PullTypeSymbol) {
+            var callSigs = interfaceSymbol.getCallSignatures();
+            var constructSigs = interfaceSymbol.getConstructSignatures();
+            var indexSigs = interfaceSymbol.getIndexSignatures();
+
+            for (var i = 0; i < callSigs.length; i++) {
+                if (callSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeCallSignature(callSigs[i], false);
+                }
+            }
+            for (var i = 0; i < constructSigs.length; i++) {
+                if (constructSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeConstructSignature(constructSigs[i], false);
+                }
+            }
+            for (var i = 0; i < indexSigs.length; i++) {
+                if (indexSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeIndexSignature(indexSigs[i], false);
+                }
+            }
+
+            interfaceSymbol.recomputeCallSignatures();
+            interfaceSymbol.recomputeConstructSignatures();
+            interfaceSymbol.recomputeIndexSignatures();
+        }
+
         private cleanClassSignatures(classSymbol: PullClassTypeSymbol) {
             var callSigs = classSymbol.getCallSignatures();
             var constructSigs = classSymbol.getConstructSignatures();
@@ -854,12 +880,15 @@ module TypeScript {
                         }
 
                         specialization.addDeclaration(interfaceDecl);
+                        this.cleanInterfaceSignatures(specialization);
                     }
 
                     interfaceSymbol.cleanTypeParameters();
 
                     interfaceSymbol.setUnresolved();
                 }
+
+                this.cleanInterfaceSignatures(interfaceSymbol);
             }
 
             this.pushParent(interfaceSymbol, interfaceDecl);
