@@ -1,12 +1,10 @@
-
     interface IComparable<T> {
        compareTo(other: T);
     }
 
-    declare function sort<U extends IComparable<U>>(items: U[]): U[];
+    declare function sort<U extends IComparable>(items: U[]): U[];
 
-    interface StringComparable {
-    	compareTo(other: string);
+    interface StringComparable extends IComparable<string> {
     }
 
     var sc: StringComparable[];

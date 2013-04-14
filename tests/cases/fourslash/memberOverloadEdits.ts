@@ -14,5 +14,5 @@
 
 verify.numberOfErrorsInCurrentFile(0);
 goTo.marker('1');
-edit.insert("public m(n: number) { return 10; }");
+edit.insert("public m(n: number) { return 0; }");
 verify.numberOfErrorsInCurrentFile(0);

@@ -4416,6 +4416,20 @@ module TypeScript {
 
         // Assignment Compatibility and Subtyping
 
+        public substituteUpperBoundForType(type: PullTypeSymbol) {
+            if (!type || !type.isTypeParameter()) {
+                return type;
+            }
+
+            var constraint = (<PullTypeParameterSymbol>type).getConstraint();
+
+            if (constraint) {
+                return this.substituteUpperBoundForType(constraint);
+            }
+
+            return type;
+        }
+
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
@@ -4488,6 +4502,9 @@ module TypeScript {
         }
 
         public sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+
+            source = this.substituteUpperBoundForType(source);
+            target = this.substituteUpperBoundForType(target);
 
             // REVIEW: Does this check even matter?
             //if (this.typesAreIdentical(source, target)) {
@@ -4663,7 +4680,7 @@ module TypeScript {
                     this.resolveDeclaredSymbol(targetProp, null, context);
                 }
 
-                var targetPropType = targetProp.getType();
+                var targetPropType = this.substituteUpperBoundForType(targetProp.getType());
 
                 if (!sourceProp) {
                     // If it's not present on the type in question, look for the property on 'Object'
@@ -4742,8 +4759,8 @@ module TypeScript {
                 this.resolveDeclaredSymbol(sourceProp, null, context);
             }
 
-            var sourcePropType = sourceProp.getType();
-            var targetPropType = targetProp.getType();
+            var sourcePropType = this.substituteUpperBoundForType(sourceProp.getType());
+            var targetPropType = this.substituteUpperBoundForType(targetProp.getType());
 
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[(sourcePropType.getSymbolID() << 16) | targetPropType.getSymbolID()] != undefined)) {
@@ -4970,7 +4987,7 @@ module TypeScript {
                     sourceParamName = sourceParameters[iSource].getName();
                 }
                 else if (iSource == sourceVarArgCount) {
-                    sourceParamType = sourceParameters[iSource].getType();
+                    sourceParamType = this.substituteUpperBoundForType(sourceParameters[iSource].getType());
                     if (sourceParamType.isArray()) {
                         sourceParamType = sourceParamType.getElementType();
                     }
@@ -4978,11 +4995,12 @@ module TypeScript {
                 }
 
                 if (iTarget < targetParameters.length && iTarget < targetVarArgCount) {
-                    targetParamType = targetParameters[iTarget].getType();
+                    targetParamType = this.substituteUpperBoundForType(targetParameters[iTarget].getType());
                     targetParamName = targetParameters[iTarget].getName();
                 }
                 else if (targetSig.hasVariableParamList() && iTarget == targetVarArgCount) {
                     targetParamType = targetParameters[iTarget].getType();
+
                     if (targetParamType.isArray()) {
                         targetParamType = targetParamType.getElementType();
                     }
