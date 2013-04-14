@@ -1087,19 +1087,19 @@ module TypeScript {
             message: "'this' may not be referenced in initializers in a class body.",
             code: 2140
         },
-        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+        Class__0__cannot_extend_class__1__NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Class '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Class '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2141
         },
-        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+        Interface__0__cannot_extend_class__1__NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Interface '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Interface '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2142
         },
-        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2: {
+        Interface__0__cannot_extend_interface__1__NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Interface '{0}' extends interface '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Interface '{0}' cannot extend interface '{1}':{NL}{2}",
             code: 2143
         },
 
@@ -1185,6 +1185,36 @@ module TypeScript {
             category: DiagnosticCategory.NoPrefix,
             message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
             code: 4015
+        },
+        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.",
+            code: 4016
+        },
+        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.",
+            code: 4017
+        },
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.",
+            code: 4018
+        },
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.",
+            code: 4019
+        },
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.",
+            code: 4020
+        },
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
+            code: 4021
         },
     };
 

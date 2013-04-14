@@ -61,7 +61,7 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
         code += '}';
         Harness.Compiler.compileString(code, 'declarations', function (result) {
             assert.arrayLengthIs(result.errors, 1);
-            assert.compilerWarning(result, 1, 48, "error TS2141: Class 'D' extends class 'C' but their instance types are incompatible:\r\n\tProperty 'v' defined as public in type 'D' is defined as private in type 'C'.");
+            assert.compilerWarning(result, 1, 48, "error TS2141: Class 'D' cannot extend class 'C':\r\n\tProperty 'v' defined as public in type 'D' is defined as private in type 'C'.");
         } );
     } );
 

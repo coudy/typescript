@@ -1,6 +1,6 @@
 0.ts line 39 col 13: error TS1005: '{' expected.
 0.ts line 39 col 17: error TS1005: ';' expected.
-0.ts line 18 col 10: error TS2143: Interface 'I3' extends interface 'Foo.I1' but their instance types are incompatible:
+0.ts line 18 col 10: error TS2143: Interface 'I3' cannot extend interface 'Foo.I1':
 	Types of property 'item' of types 'I3' and 'Foo.I1' are incompatible.
 0.ts line 27 col 6: error TS2137: Class C2 declares interface I4 but does not implement it:
 	Type 'C2' is missing property 'item' from type 'I4'.

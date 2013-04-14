@@ -214,9 +214,9 @@ module TypeScript {
         Class__0__declares_class__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: DiagnosticInfo;
         _this__may_not_be_referenced_in_initializers_in_a_class_body: DiagnosticInfo;
-        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
-        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
-        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2: DiagnosticInfo;
+        Class__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
+        Interface__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
+        Interface__0__cannot_extend_interface__1__NL__2: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -234,5 +234,12 @@ module TypeScript {
         Index_signatures_of_types__0__and__1__are_incompatible__NL__2: DiagnosticInfo;
         Call_signature_expects__0__or_fewer_parameters: DiagnosticInfo;
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: DiagnosticInfo;
+        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: DiagnosticInfo;
+        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: DiagnosticInfo;
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: DiagnosticInfo;
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: DiagnosticInfo;
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: DiagnosticInfo;
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: DiagnosticInfo;
+
     }
 }

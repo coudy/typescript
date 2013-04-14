@@ -209,9 +209,10 @@ module TypeScript {
         Class__0__declares_class__1__but_does_not_implement_it__NL__2,
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer,
         _this__may_not_be_referenced_in_initializers_in_a_class_body,
-        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2,
-        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2,
-        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2,
+        Class__0__cannot_extend_class__1__NL__2,
+        Interface__0__cannot_extend_class__1__NL__2,
+        Interface__0__cannot_extend_interface__1__NL__2,
+
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,
@@ -230,5 +231,11 @@ module TypeScript {
         Index_signatures_of_types__0__and__1__are_incompatible__NL__2,
         Call_signature_expects__0__or_fewer_parameters,
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
+        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function,
+        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function,
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor,
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property,
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible,
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3,
     }
 }

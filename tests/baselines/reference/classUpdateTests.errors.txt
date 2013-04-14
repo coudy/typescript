@@ -5,9 +5,9 @@
 0.ts line 105 col 9: error TS1005: ';' expected.
 0.ts line 111 col 10: error TS1005: ';' expected.
 0.ts line 46 col 16: error TS2073: A class may only extend another class.
-0.ts line 63 col 6: error TS2141: Class 'L' extends class 'G' but their instance types are incompatible:
+0.ts line 63 col 6: error TS2141: Class 'L' cannot extend class 'G':
 	Property 'p1' defined as private in type 'L' is defined as public in type 'G'.
-0.ts line 69 col 6: error TS2141: Class 'M' extends class 'G' but their instance types are incompatible:
+0.ts line 69 col 6: error TS2141: Class 'M' cannot extend class 'G':
 	Property 'p1' defined as private in type 'M' is defined as public in type 'G'.
 0.ts line 34 col 1: error TS2105: Constructors for derived classes must contain a 'super' call.
 0.ts line 43 col 17: error TS2103: 'super' may not be referenced in non-derived classes.
