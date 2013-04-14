@@ -952,7 +952,6 @@ module TypeScript {
                 return typeDeclSymbol;
             }
 
-
             if (!typeDeclSymbol.isResolved()) {
                 // Resolve members
                 var typeDeclMembers = typeDeclSymbol.getMembers();
@@ -2640,7 +2639,7 @@ module TypeScript {
                     }
 
                     if (typeArg.isResolving()) {
-                        return genericTypeSymbol;
+                        return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
                         context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(),
