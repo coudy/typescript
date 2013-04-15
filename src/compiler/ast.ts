@@ -1512,13 +1512,13 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
-            emitter.emitJavascript(this.declaration, startLine);
+            emitter.emitJavascript(this.declaration, false);
 
             // If it was an ambient declarator without an initializer, then we won't emit anything.
             var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
             var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
-                emitter.writeLineToOutput(";");
+                emitter.writeToOutput(";");
             }
             
             emitter.setInObjectLiteral(temp);
