@@ -564,7 +564,7 @@ module TypeScript {
 
         private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, typeCheckContext: PullTypeCheckContext) {
             var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
-            if (functionSignatureInfo.allSignatures.length == 1) {
+            if (functionSignatureInfo.allSignatures.length == 1 || functionSignatureInfo.signature.isDefinition()) {
                 // Function deifinition doesnt need to verify anything
                 return;
             }
@@ -630,9 +630,9 @@ module TypeScript {
                 signatureForVisibilityCheck = allSignatures[0];
             }
 
-            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != allSignatures[0]) {
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
                 var errorCode: DiagnosticCode;
-                // verify it satisfies all the properties of first signature
+                // verify it satisfies all the properties of definition signature or the first one incase it is ambient declaration
                 if (funcSymbol.getKind() == PullElementKind.Method) {
                     if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) == signature.hasFlag(PullElementFlags.Private)) {
                         return;
