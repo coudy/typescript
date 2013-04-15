@@ -1,17 +1,17 @@
 ///<reference path='References.ts' />
 
 module TypeScript {
-    export interface ISeparatedSyntaxList<T extends ISyntaxNodeOrToken> extends ISyntaxElement {
-        childAt(index: number): T;
+    export interface ISeparatedSyntaxList extends ISyntaxElement {
+        childAt(index: number): ISyntaxNodeOrToken;
 
         toArray(): ISyntaxNodeOrToken[];
-        toNonSeparatorArray(): T[];
+        toNonSeparatorArray(): ISyntaxNodeOrToken[];
 
         separatorCount();
         separatorAt(index: number): ISyntaxToken;
 
         nonSeparatorCount();
-        nonSeparatorAt(index: number): T;
+        nonSeparatorAt(index: number): ISyntaxNodeOrToken;
 
         insertChildrenInto(array: ISyntaxElement[], index: number): void;
     }

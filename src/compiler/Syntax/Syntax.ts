@@ -148,7 +148,7 @@ module TypeScript.Syntax {
                trivia1.fullText() === trivia2.fullText();
     }
 
-    export function listStructuralEquals<T extends ISyntaxNodeOrToken>(list1: ISyntaxList<T>, list2: ISyntaxList<T>): boolean {
+    export function listStructuralEquals(list1: ISyntaxList, list2: ISyntaxList): boolean {
         if (list1.childCount() !== list2.childCount()) {
             return false;
         }
@@ -165,7 +165,7 @@ module TypeScript.Syntax {
         return true;
     }
 
-    export function separatedListStructuralEquals<T extends ISyntaxNodeOrToken>(list1: ISeparatedSyntaxList<T>, list2: ISeparatedSyntaxList<T>): boolean {
+    export function separatedListStructuralEquals(list1: ISeparatedSyntaxList, list2: ISeparatedSyntaxList): boolean {
         if (list1.childCount() !== list2.childCount()) {
             return false;
         }
@@ -201,10 +201,10 @@ module TypeScript.Syntax {
             return nodeStructuralEquals(<SyntaxNode>element1, <SyntaxNode>element2) ;
         }
         else if (element1.isList()) {
-            return listStructuralEquals<any>(<any>element1, <any>element2);
+            return listStructuralEquals(<ISyntaxList>element1, <ISyntaxList>element2);
         }
         else if (element1.isSeparatedList()) {
-            return separatedListStructuralEquals<any>(<any>element1, <any>element2);
+            return separatedListStructuralEquals(<ISeparatedSyntaxList>element1, <ISeparatedSyntaxList>element2);
         }
 
         throw Errors.invalidOperation();
