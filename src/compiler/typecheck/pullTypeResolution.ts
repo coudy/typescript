@@ -5025,7 +5025,7 @@ module TypeScript {
 
             for (var iSource = 0, iTarget = 0; iSource < len; iSource++ , iTarget++) {
 
-                if (!sourceSig.hasVariableParamList() || iSource < sourceVarArgCount) {
+                if (iSource < sourceParameters.length && (!sourceSig.hasVariableParamList() || iSource < sourceVarArgCount)) {
                     sourceParamType = sourceParameters[iSource].getType();
                     sourceParamName = sourceParameters[iSource].getName();
                 }
