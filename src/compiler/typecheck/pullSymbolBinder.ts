@@ -340,10 +340,14 @@ module TypeScript {
                     importSymbol = <PullTypeAliasSymbol>parent.findContainedMember(declName);
 
                     if (importSymbol) {
-                        var importSymbolParent = importSymbol.getDeclarations()[0].getParentDecl();
+                        var declarations = importSymbol.getDeclarations();
 
-                        if ((importSymbolParent != importDeclaration.getParentDecl()) && (!this.reBindingAfterChange || (importSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            importSymbol = null;
+                        if (declarations.length) {
+                            var importSymbolParent = declarations[0].getParentDecl();
+
+                            if ((importSymbolParent != importDeclaration.getParentDecl()) && (!this.reBindingAfterChange || (importSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                importSymbol = null;
+                            }
                         }
                     }
                 }
@@ -573,10 +577,15 @@ module TypeScript {
 
                     if (classSymbol) {
 
-                        var classSymbolParent = classSymbol.getDeclarations()[0].getParentDecl();
+                        var declarations = classSymbol.getDeclarations();
 
-                        if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            classSymbol = null;
+                        if (declarations.length) {
+
+                            var classSymbolParent = declarations[0].getParentDecl();
+
+                            if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                classSymbol = null;
+                            }
                         }
                     }
                 }
@@ -1078,10 +1087,14 @@ module TypeScript {
                     variableSymbol = parent.findContainedMember(declName);
 
                     if (variableSymbol && !variableSymbol.getIsSynthesized()) {
-                        var variableSymbolParent = variableSymbol.getDeclarations()[0].getParentDecl();
+                        var declarations = variableSymbol.getDeclarations();
 
-                        if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            variableSymbol = null;
+                        if (declarations.length) {
+                            var variableSymbolParent = declarations[0].getParentDecl();
+
+                            if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                variableSymbol = null;
+                            }
                         }
                     }
                 }
@@ -1548,10 +1561,14 @@ module TypeScript {
                     functionSymbol = parent.findContainedMember(funcName);
 
                     if (functionSymbol) {
-                        var funcSymbolParent = functionSymbol.getDeclarations()[0].getParentDecl();
+                        var declarations = functionSymbol.getDeclarations();
 
-                        if ((this.getParentDecl() != funcSymbolParent) && (!this.reBindingAfterChange || (funcSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            functionSymbol = null;
+                        if (declarations.length) {
+                            var funcSymbolParent = declarations[0].getParentDecl();
+
+                            if ((this.getParentDecl() != funcSymbolParent) && (!this.reBindingAfterChange || (funcSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                functionSymbol = null;
+                            }
                         }
                     }
                 }

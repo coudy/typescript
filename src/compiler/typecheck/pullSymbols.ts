@@ -1047,7 +1047,7 @@ module TypeScript {
             }
 
             if (!this.containedMemberCache) {
-                this.containedMemberCache = {};
+                this.containedMemberCache = new BlockIntrinsics();
             }
 
             this.containedByLinks[this.containedByLinks.length] = containedByLink;
@@ -1058,7 +1058,7 @@ module TypeScript {
 
             if (!this.containedByLinks) {
                 this.containedByLinks = this.findIncomingLinks(psl => psl.kind == SymbolLinkKind.ContainedBy);
-                this.containedMemberCache = {};
+                this.containedMemberCache = new BlockIntrinsics();
 
                 for (var i = 0; i < this.containedByLinks.length; i++) {
                     this.containedMemberCache[this.containedByLinks[i].start.getName()] = this.containedByLinks[i].start;
@@ -1211,7 +1211,7 @@ module TypeScript {
             }
 
             if (!this.specializedTypeCache) {
-                this.specializedTypeCache = {};
+                this.specializedTypeCache = new BlockIntrinsics();
             }
 
             if (!this.specializationLinks) {
@@ -1230,7 +1230,7 @@ module TypeScript {
             }
 
             if (!this.specializedTypeCache) {
-                this.specializedTypeCache = {};
+                this.specializedTypeCache = new BlockIntrinsics();
 
                 return null;
             }
