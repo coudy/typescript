@@ -4,3 +4,5 @@ var baz = (function () {
     };
     return baz;
 })();
+function bar(s) {
+}

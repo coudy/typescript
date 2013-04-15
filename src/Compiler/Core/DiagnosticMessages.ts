@@ -1132,15 +1132,25 @@ module TypeScript {
             message: "Overload signature is not compatible with function definition:{NL}{0}",
             code: 2149
         },
-        Overload_signaures_do_not_agree_in_public_private_visibility: {
+        Overload_signatures_must_all_be_public_or_private: {
             category: DiagnosticCategory.Error,
-            message: "Overload signaures do not agree in public/private visibility.",
+            message: "Overload signatures must all be public or private.",
             code: 2150
         },
-        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: {
+        Overload_signatures_must_all_be_exported_or_local: {
             category: DiagnosticCategory.Error,
-            message: "Overload signatures do not agree with presence/absense of export modifier.",
+            message: "Overload signatures must all be exported or local.",
             code: 2151
+        },
+        Overload_signatures_must_all_be_ambient_or_non_ambient: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signatures must all be ambient or non-ambient.",
+            code: 2152
+        },
+        Overload_signatures_must_all_be_optional_or_required: {
+            category: DiagnosticCategory.Error,
+            message: "Overload signatures must all be optional or required.",
+            code: 2153
         },
 
 

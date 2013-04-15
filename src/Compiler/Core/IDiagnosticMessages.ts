@@ -223,8 +223,10 @@ module TypeScript {
         Duplicate_overload_construct_signature: DiagnosticInfo;
         Overload_signature_is_not_compatible_with_function_definition: DiagnosticInfo;
         Overload_signature_is_not_compatible_with_function_definition__NL__0: DiagnosticInfo;
-        Overload_signaures_do_not_agree_in_public_private_visibility: DiagnosticInfo;
-        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: DiagnosticInfo;
+        Overload_signatures_must_all_be_public_or_private: DiagnosticInfo;
+        Overload_signatures_must_all_be_exported_or_local: DiagnosticInfo;
+        Overload_signatures_must_all_be_ambient_or_non_ambient: DiagnosticInfo;
+        Overload_signatures_must_all_be_optional_or_required: DiagnosticInfo;
 
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;

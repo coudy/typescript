@@ -583,6 +583,7 @@ module TypeScript {
             }
 
             // Check for if the signatures are identical, check with the signatures before the current current one
+            var message: string;
             for (var i = 0; i < allSignatures.length; i++) {
                 if (allSignatures[i] == signature) {
                     break;
@@ -603,7 +604,6 @@ module TypeScript {
                 }
             }
 
-            var message: string;
             if (definitionSignature) {
                 var comparisonInfo = new TypeComparisonInfo();
                 var resolutionContext = new PullTypeResolutionContext();
@@ -632,20 +632,24 @@ module TypeScript {
 
             if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
                 var errorCode: DiagnosticCode;
-                // verify it satisfies all the properties of definition signature or the first one incase it is ambient declaration
-                if (funcSymbol.getKind() == PullElementKind.Method) {
-                    if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) == signature.hasFlag(PullElementFlags.Private)) {
-                        return;
-                    }
-                    errorCode = DiagnosticCode.Overload_signaures_do_not_agree_in_public_private_visibility;
-                } else {
-                    if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) == signature.hasFlag(PullElementFlags.Exported)) {
-                        return;
-                    }
-                    errorCode = DiagnosticCode.Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier;
+                // verify it satisfies all the properties of first signature
+                if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_public_or_private;
                 }
-                message = getDiagnosticMessage(errorCode, null);
-                this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) != signature.hasFlag(PullElementFlags.Exported)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_exported_or_local;
+                }
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Ambient) != signature.hasFlag(PullElementFlags.Ambient)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient;
+                }
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Optional) != signature.hasFlag(PullElementFlags.Optional)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_optional_or_required;
+                }
+
+                if (errorCode) {
+                    message = getDiagnosticMessage(errorCode, null);
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                }
             }
         }
 

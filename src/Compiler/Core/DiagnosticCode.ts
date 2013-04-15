@@ -218,8 +218,10 @@ module TypeScript {
         Duplicate_overload_construct_signature,
         Overload_signature_is_not_compatible_with_function_definition,
         Overload_signature_is_not_compatible_with_function_definition__NL__0,
-        Overload_signaures_do_not_agree_in_public_private_visibility,
-        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier,
+        Overload_signatures_must_all_be_public_or_private,
+        Overload_signatures_must_all_be_exported_or_local,
+        Overload_signatures_must_all_be_ambient_or_non_ambient,
+        Overload_signatures_must_all_be_optional_or_required,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,
