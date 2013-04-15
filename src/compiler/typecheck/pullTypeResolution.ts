@@ -5842,6 +5842,7 @@ module TypeScript {
                 typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
             }
 
+
             var prevSpecialize = context.specializingToAny;
 
             context.specializingToAny = true;

@@ -42736,6 +42736,8 @@ var TypeScript;
                     return this.resolveParenthesizedExpression(expressionAST, enclosingDecl, context);
                 case 88 /* ExpressionStatement */ :
                     return this.resolveExpressionStatement(expressionAST, isTypedAssignment, enclosingDecl, context);
+                case 33 /* InstanceOfExpression */ :
+                    return this.semanticInfoChain.booleanTypeSymbol;
             }
             return this.semanticInfoChain.anyTypeSymbol;
         };
@@ -45648,7 +45650,7 @@ var TypeScript;
         };
         PullTypeChecker.prototype.typeCheckFunctionOverloads = function (funcDecl, typeCheckContext) {
             var functionSignatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
-            if (functionSignatureInfo.allSignatures.length == 1) {
+            if (functionSignatureInfo.allSignatures.length == 1 || functionSignatureInfo.signature.isDefinition()) {
                 return;
             }
             var signature = functionSignatureInfo.signature;
@@ -45706,7 +45708,7 @@ var TypeScript;
                 }
                 signatureForVisibilityCheck = allSignatures[0];
             }
-            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != allSignatures[0]) {
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
                 var errorCode;
                 if (funcSymbol.getKind() == 131072 /* Method */ ) {
                     if (signatureForVisibilityCheck.hasFlag(2 /* Private */ ) == signature.hasFlag(2 /* Private */ )) {
