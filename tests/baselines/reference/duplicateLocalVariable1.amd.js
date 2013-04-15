@@ -1,4 +1,6 @@
 define(["require", "exports"], function(require, exports) {
+
+
     var TestFileDir = ".\\TempTestFiles";
     var TestCase = (function () {
         function TestCase(name, test, errorMessageRegEx) {

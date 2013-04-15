@@ -1,3 +1,4 @@
+
 function f() {
     if (lineTokens[index].trim() === '=' && index > 0 && token.type === '' && tokens[index - 1].type === 'attribute.name.html') {
         if (index === (tokens.length - 1)) {

@@ -1,3 +1,5 @@
+
+
 var TestFileDir = ".\\TempTestFiles";
 var TestCase = (function () {
     function TestCase(name, test, errorMessageRegEx) {

@@ -15,6 +15,11 @@ exports.exportedWithComplicatedValue = {
     y: 70,
     desc: "position"
 };
+
+
+
+
+
 var arrayVar = [
     'a', 
     'b'
