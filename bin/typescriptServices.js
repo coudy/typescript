@@ -2028,7 +2028,7 @@ var TypeScript;
             var varDecl = this.declaration.declarators.members[0];
             var isAmbientWithoutInit = TypeScript.hasFlag(varDecl.getVarFlags(), 8 /* Ambient */ ) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
-                emitter.writeLineToOutput(";");
+                emitter.writeToOutput(";");
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
@@ -5539,7 +5539,7 @@ var TypeScript;
                         } else {
                             this.writeToOutput(delimiter);
                         }
-                    } else if (startLine && (emitNode.nodeType !== 97 /* VariableStatement */ ) && (emitNode.nodeType != 15 /* ModuleDeclaration */ ) && (emitNode.nodeType != 14 /* InterfaceDeclaration */ ) && (!((emitNode.nodeType === 17 /* VariableDeclarator */ ) && ((((emitNode).getVarFlags()) & 8 /* Ambient */ ) === 8 /* Ambient */ ) && (((emitNode).init) === null)) && this.varListCount() >= 0) && (emitNode.nodeType != 12 /* FunctionDeclaration */ )) {
+                    } else if (startLine && (emitNode.nodeType != 15 /* ModuleDeclaration */ ) && (emitNode.nodeType != 14 /* InterfaceDeclaration */ ) && (!((emitNode.nodeType === 17 /* VariableDeclarator */ ) && ((((emitNode).getVarFlags()) & 8 /* Ambient */ ) === 8 /* Ambient */ ) && (((emitNode).init) === null)) && this.varListCount() >= 0) && (emitNode.nodeType != 12 /* FunctionDeclaration */ )) {
                         this.writeLineToOutput("");
                     }
                 }
@@ -20038,7 +20038,9 @@ var TypeScript;
                 return false;
             }
             for(var i = 0, n = list1.childCount(); i < n; i++) {
-                if (!TypeScript.Syntax.nodeOrTokenStructuralEquals(list1.childAt(i), list2.childAt(i))) {
+                var child1 = list1.childAt(i);
+                var child2 = list2.childAt(i);
+                if (!TypeScript.Syntax.nodeOrTokenStructuralEquals(child1, child2)) {
                     return false;
                 }
             }
@@ -39099,7 +39101,7 @@ var TypeScript;
                 this.containedByLinks = [];
             }
             if (!this.containedMemberCache) {
-                this.containedMemberCache = {};
+                this.containedMemberCache = new TypeScript.BlockIntrinsics();
             }
             this.containedByLinks[this.containedByLinks.length] = containedByLink;
             this.containedMemberCache[containedByLink.start.getName()] = containedByLink.start;
@@ -39109,7 +39111,7 @@ var TypeScript;
                 this.containedByLinks = this.findIncomingLinks(function (psl) {
                     return psl.kind == 9 /* ContainedBy */ ;
                 });
-                this.containedMemberCache = {};
+                this.containedMemberCache = new TypeScript.BlockIntrinsics();
                 for(var i = 0; i < this.containedByLinks.length; i++) {
                     this.containedMemberCache[this.containedByLinks[i].start.getName()] = this.containedByLinks[i].start;
                 }
@@ -39224,7 +39226,7 @@ var TypeScript;
                 return;
             }
             if (!this.specializedTypeCache) {
-                this.specializedTypeCache = {};
+                this.specializedTypeCache = new TypeScript.BlockIntrinsics();
             }
             if (!this.specializationLinks) {
                 this.specializationLinks = [];
@@ -39237,7 +39239,7 @@ var TypeScript;
                 return null;
             }
             if (!this.specializedTypeCache) {
-                this.specializedTypeCache = {};
+                this.specializedTypeCache = new TypeScript.BlockIntrinsics();
                 return null;
             }
             var specialization = this.specializedTypeCache[getIDForTypeSubstitutions(substitutingTypes)];
@@ -41269,8 +41271,8 @@ var TypeScript;
                     break;
                 }
             }
+            var parent = decl.getParentDecl();
             if (decls.length && (decl.getKind() & (TypeScript.PullElementKind.SomeFunction | 16777216 /* ObjectType */  | 33554432 /* FunctionType */  | 67108864 /* ConstructorType */ )) && (decls[decls.length - 1] != decl)) {
-                var parent = decl.getParentDecl();
                 if (parent && decls[decls.length - 1] != parent && !(parent.getKind() & 1024 /* ObjectLiteral */ )) {
                     decls[decls.length] = parent;
                 }
@@ -41677,13 +41679,15 @@ var TypeScript;
         };
         PullTypeResolver.prototype.resolveDeclaredSymbol = function (symbol, enclosingDecl, context) {
             if (!symbol || symbol.isResolved()) {
-                return;
+                return symbol;
             }
             if (symbol.isResolving()) {
-                if (!symbol.isType() && !symbol.currentlyBeingSpecialized()) {
-                    symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                if (!symbol.currentlyBeingSpecialized()) {
+                    if (!symbol.isType()) {
+                        symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                    }
+                    return symbol;
                 }
-                return symbol;
             }
             var thisUnit = this.unitPath;
             var decls = symbol.getDeclarations();
@@ -42257,7 +42261,11 @@ var TypeScript;
             return typeParameterSymbol;
         };
         PullTypeResolver.prototype.resolveFunctionBodyReturnTypes = function (funcDeclAST, signature, useContextualType, enclosingDecl, context) {
+            var _this = this;
             var returnStatements = [];
+            var enclosingDeclStack = [
+                enclosingDecl
+            ];
             var preFindReturnExpressionTypes = function (ast, parent, walker) {
                 var go = true;
                 switch(ast.nodeType) {
@@ -42266,8 +42274,15 @@ var TypeScript;
                         break;
                     case 93 /* ReturnStatement */ :
                         var returnStatement = ast;
-                        returnStatements[returnStatements.length] = returnStatement;
+                        returnStatements[returnStatements.length] = {
+                            returnStatement: returnStatement,
+                            enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1]
+                        };
                         go = false;
+                        break;
+                    case 101 /* CatchClause */ :
+                    case 99 /* WithStatement */ :
+                        enclosingDeclStack[enclosingDeclStack.length] = _this.getDeclForAST(ast);
                         break;
                     default:
                         break;
@@ -42275,7 +42290,19 @@ var TypeScript;
                 walker.options.goChildren = go;
                 return ast;
             };
-            TypeScript.getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes);
+            var postFindReturnExpressionEnclosingDecls = function (ast, parent, walker) {
+                switch(ast.nodeType) {
+                    case 101 /* CatchClause */ :
+                    case 99 /* WithStatement */ :
+                        enclosingDeclStack.length--;
+                        break;
+                    default:
+                        break;
+                }
+                walker.options.goChildren = true;
+                return ast;
+            };
+            TypeScript.getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
             if (!returnStatements.length) {
                 if (useContextualType) {
                     var contextualType = this.widenType(context.getContextualType());
@@ -42291,8 +42318,8 @@ var TypeScript;
                 var returnExpressionSymbols = [];
                 var returnType;
                 for(var i = 0; i < returnStatements.length; i++) {
-                    if (returnStatements[i].returnExpression) {
-                        returnType = this.resolveStatementOrExpression(returnStatements[i].returnExpression, useContextualType, enclosingDecl, context).getType();
+                    if (returnStatements[i].returnStatement.returnExpression) {
+                        returnType = this.resolveStatementOrExpression(returnStatements[i].returnStatement.returnExpression, useContextualType, returnStatements[i].enclosingDecl, context).getType();
                         if (returnType.isError()) {
                             signature.setReturnType(returnType);
                             return;
@@ -43534,26 +43561,32 @@ var TypeScript;
                             inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeScript.TypeComparisonInfo(), enclosingDecl, context);
                         }
                         if (inferredTypeArgs) {
-                            if (inferredTypeArgs.length < typeParameters.length) {
-                                continue;
-                            }
                             typeReplacementMap = {};
-                            for(var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
-                                typeConstraint = typeParameters[j].getConstraint();
-                                if (typeConstraint) {
-                                    if (typeConstraint.isTypeParameter()) {
-                                        context.pushTypeSpecializationCache(typeReplacementMap);
-                                        typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
-                                        context.popTypeSpecializationCache();
+                            if (inferredTypeArgs.length) {
+                                if (inferredTypeArgs.length < typeParameters.length) {
+                                    continue;
+                                }
+                                for(var j = 0; j < typeParameters.length; j++) {
+                                    typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+                                    typeConstraint = typeParameters[j].getConstraint();
+                                    if (typeConstraint) {
+                                        if (typeConstraint.isTypeParameter()) {
+                                            context.pushTypeSpecializationCache(typeReplacementMap);
+                                            typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
+                                            context.popTypeSpecializationCache();
+                                        }
+                                        if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
+                                                inferredTypeArgs[j].toString(true), 
+                                                typeConstraint.toString(true), 
+                                                typeParameters[j].toString(true)
+                                            ]), enclosingDecl, true);
+                                        }
                                     }
-                                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
-                                            inferredTypeArgs[j].toString(true), 
-                                            typeConstraint.toString(true), 
-                                            typeParameters[j].toString(true)
-                                        ]), enclosingDecl, true);
-                                    }
+                                }
+                            } else {
+                                for(j = 0; j < typeParameters.length; j++) {
+                                    inferredTypeArgs[inferredTypeArgs.length] = this.semanticInfoChain.anyTypeSymbol;
                                 }
                             }
                             specializedSignature = TypeScript.specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
@@ -43704,26 +43737,32 @@ var TypeScript;
                             }
                             if (inferredTypeArgs) {
                                 typeParameters = constructSignatures[i].getTypeParameters();
-                                if (inferredTypeArgs.length < typeParameters.length) {
-                                    continue;
-                                }
                                 typeReplacementMap = {};
-                                for(var j = 0; j < typeParameters.length; j++) {
-                                    typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
-                                    typeConstraint = typeParameters[j].getConstraint();
-                                    if (typeConstraint) {
-                                        if (typeConstraint.isTypeParameter()) {
-                                            context.pushTypeSpecializationCache(typeReplacementMap);
-                                            typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
-                                            context.popTypeSpecializationCache();
+                                if (inferredTypeArgs.length) {
+                                    if (inferredTypeArgs.length < typeParameters.length) {
+                                        continue;
+                                    }
+                                    for(var j = 0; j < typeParameters.length; j++) {
+                                        typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+                                        typeConstraint = typeParameters[j].getConstraint();
+                                        if (typeConstraint) {
+                                            if (typeConstraint.isTypeParameter()) {
+                                                context.pushTypeSpecializationCache(typeReplacementMap);
+                                                typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
+                                                context.popTypeSpecializationCache();
+                                            }
+                                            if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                                context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
+                                                    inferredTypeArgs[j].toString(true), 
+                                                    typeConstraint.toString(true), 
+                                                    typeParameters[j].toString(true)
+                                                ]), enclosingDecl, true);
+                                            }
                                         }
-                                        if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
-                                                inferredTypeArgs[j].toString(true), 
-                                                typeConstraint.toString(true), 
-                                                typeParameters[j].toString(true)
-                                            ]), enclosingDecl, true);
-                                        }
+                                    }
+                                } else {
+                                    for(j = 0; j < typeParameters.length; j++) {
+                                        inferredTypeArgs[inferredTypeArgs.length] = this.semanticInfoChain.anyTypeSymbol;
                                     }
                                 }
                                 specializedSignature = TypeScript.specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
@@ -45024,7 +45063,8 @@ var TypeScript;
                 return null;
             }
             var resultTypes = [];
-            for(var i = 0; i < inferenceResults.results.length; i++) {
+            var len = typeParameters.length < inferenceResults.results.length ? typeParameters.length : inferenceResults.results.length;
+            for(var i = 0; i < len; i++) {
                 resultTypes[resultTypes.length] = inferenceResults.results[i].type;
             }
             if (!args.members.length && !resultTypes.length && typeParameters.length) {
@@ -45045,7 +45085,9 @@ var TypeScript;
                 argContext.addCandidateForInference(parameterType, expressionType, shouldFix);
                 return;
             }
-            if (!parameterType.isArray() && parameterType.getDeclarations()[0].isEqual(expressionType.getDeclarations()[0]) && expressionType.isGeneric()) {
+            var parameterDeclarations = parameterType.getDeclarations();
+            var expressionDeclarations = expressionType.getDeclarations();
+            if (!parameterType.isArray() && parameterDeclarations.length && expressionDeclarations.length && parameterDeclarations[0].isEqual(expressionDeclarations[0]) && expressionType.isGeneric()) {
                 var typeParameters = parameterType.getTypeParameters();
                 var typeArguments = expressionType.getTypeArguments();
                 if (!typeArguments) {
@@ -48706,9 +48748,12 @@ var TypeScript;
                 if (!importSymbol) {
                     importSymbol = parent.findContainedMember(declName);
                     if (importSymbol) {
-                        var importSymbolParent = importSymbol.getDeclarations()[0].getParentDecl();
-                        if ((importSymbolParent != importDeclaration.getParentDecl()) && (!this.reBindingAfterChange || (importSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            importSymbol = null;
+                        var declarations = importSymbol.getDeclarations();
+                        if (declarations.length) {
+                            var importSymbolParent = declarations[0].getParentDecl();
+                            if ((importSymbolParent != importDeclaration.getParentDecl()) && (!this.reBindingAfterChange || (importSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                importSymbol = null;
+                            }
                         }
                     }
                 }
@@ -48868,13 +48913,19 @@ var TypeScript;
             var isGeneric = false;
             if (parent) {
                 if (isExported) {
-                    classSymbol = parent.findMember(className, false);
+                    classSymbol = parent.findNestedType(className);
+                    if (!classSymbol) {
+                        classSymbol = parent.findMember(className, false);
+                    }
                 } else {
                     classSymbol = parent.findContainedMember(className);
                     if (classSymbol) {
-                        var classSymbolParent = classSymbol.getDeclarations()[0].getParentDecl();
-                        if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            classSymbol = null;
+                        var declarations = classSymbol.getDeclarations();
+                        if (declarations.length) {
+                            var classSymbolParent = declarations[0].getParentDecl();
+                            if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                classSymbol = null;
+                            }
                         }
                     }
                 }
@@ -49201,9 +49252,12 @@ var TypeScript;
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
                     if (variableSymbol && !variableSymbol.getIsSynthesized()) {
-                        var variableSymbolParent = variableSymbol.getDeclarations()[0].getParentDecl();
-                        if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            variableSymbol = null;
+                        var declarations = variableSymbol.getDeclarations();
+                        if (declarations.length) {
+                            var variableSymbolParent = declarations[0].getParentDecl();
+                            if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                variableSymbol = null;
+                            }
                         }
                     }
                 }
@@ -49512,9 +49566,12 @@ var TypeScript;
                 if (!functionSymbol) {
                     functionSymbol = parent.findContainedMember(funcName);
                     if (functionSymbol) {
-                        var funcSymbolParent = functionSymbol.getDeclarations()[0].getParentDecl();
-                        if ((this.getParentDecl() != funcSymbolParent) && (!this.reBindingAfterChange || (funcSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                            functionSymbol = null;
+                        var declarations = functionSymbol.getDeclarations();
+                        if (declarations.length) {
+                            var funcSymbolParent = declarations[0].getParentDecl();
+                            if ((this.getParentDecl() != funcSymbolParent) && (!this.reBindingAfterChange || (funcSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                functionSymbol = null;
+                            }
                         }
                     }
                 }
@@ -53948,10 +54005,6 @@ var TypeScript;
             this.pullTypeChecker.setUnit(semanticInfo.getPath());
             for(var i = 0, n = path.count(); i < n; i++) {
                 var current = path.asts[i];
-                var decl = semanticInfo.getDeclForAST(current);
-                if (decl && !(decl.getKind() & (2048 /* Variable */  | 4096 /* Parameter */  | 16384 /* TypeParameter */ ))) {
-                    enclosingDecl = decl;
-                }
                 switch(current.nodeType) {
                     case 12 /* FunctionDeclaration */ :
                         if (TypeScript.hasFlag((current).getFunctionFlags(), 8192 /* IsFunctionExpression */ )) {
@@ -54028,6 +54081,10 @@ var TypeScript;
                     case 9 /* TypeParameter */ :
                         resolutionContext.searchTypeSpace = true;
                         break;
+                }
+                var decl = semanticInfo.getDeclForAST(current);
+                if (decl && !(decl.getKind() & (2048 /* Variable */  | 4096 /* Parameter */  | 16384 /* TypeParameter */ ))) {
+                    enclosingDecl = decl;
                 }
             }
             if (path.isNameOfInterface() || path.isInClassImplementsList() || path.isInInterfaceExtendsList()) {
@@ -56955,38 +57012,20 @@ var Services;
         return result;
     }
     Services.simpleForwardCall = simpleForwardCall;
-    function forwardCall(logger, actionDescription, action, throwOnError) {
-        if (typeof throwOnError === "undefined") { throwOnError = false; }
-        try  {
-            return simpleForwardCall(logger, actionDescription, action);
-        } catch (err) {
-            Services.logInternalError(logger, err);
-            if (throwOnError) {
-                throw err;
-            }
-            return "##ERROR##" + err.name + "##" + err.message;
-        }
-    }
-    Services.forwardCall = forwardCall;
     function forwardJSONCall(logger, actionDescription, action) {
         try  {
-            return simpleForwardCall(logger, actionDescription, action);
+            var result = simpleForwardCall(logger, actionDescription, action);
+            return JSON.stringify({
+                result: result
+            });
         } catch (err) {
             Services.logInternalError(logger, err);
-            return _errorToJSON(err);
+            return JSON.stringify({
+                error: err
+            });
         }
     }
     Services.forwardJSONCall = forwardJSONCall;
-    function _resultToJSON(result) {
-        return JSON.stringify({
-            result: result
-        });
-    }
-    function _errorToJSON(err) {
-        return JSON.stringify({
-            error: err
-        });
-    }
     var LanguageServiceShim = (function (_super) {
         __extends(LanguageServiceShim, _super);
         function LanguageServiceShim(factory, host, languageService) {
@@ -56995,10 +57034,6 @@ var Services;
             this.languageService = languageService;
             this.logger = this.host;
         }
-        LanguageServiceShim.prototype.forwardCall = function (actionDescription, action, throwOnError) {
-            if (typeof throwOnError === "undefined") { throwOnError = false; }
-            return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
-        };
         LanguageServiceShim.prototype.forwardJSONCall = function (actionDescription, action) {
             return Services.forwardJSONCall(this.logger, actionDescription, action);
         };
@@ -57010,10 +57045,10 @@ var Services;
         };
         LanguageServiceShim.prototype.refresh = function (throwOnError) {
             var _this = this;
-            this.forwardCall("refresh(" + throwOnError + ")", function () {
+            this.forwardJSONCall("refresh(" + throwOnError + ")", function () {
                 _this.languageService.refresh();
                 return null;
-            }, throwOnError);
+            });
         };
         LanguageServiceShim.realizeDiagnostic = function realizeDiagnostic(diagnostic) {
             return {
@@ -57026,52 +57061,52 @@ var Services;
             var _this = this;
             return this.forwardJSONCall("getSyntacticDiagnostics(\"" + fileName + "\")", function () {
                 var errors = _this.languageService.getSyntacticDiagnostics(fileName);
-                return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
+                return errors.map(LanguageServiceShim.realizeDiagnostic);
             });
         };
         LanguageServiceShim.prototype.getSemanticDiagnostics = function (fileName) {
             var _this = this;
             return this.forwardJSONCall("getSemanticDiagnostics(\"" + fileName + "\")", function () {
                 var errors = _this.languageService.getSemanticDiagnostics(fileName);
-                return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
+                return errors.map(LanguageServiceShim.realizeDiagnostic);
             });
         };
         LanguageServiceShim.prototype.getTypeAtPosition = function (fileName, pos) {
             var _this = this;
             return this.forwardJSONCall("getTypeAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var typeInfo = _this.languageService.getTypeAtPosition(fileName, pos);
-                return _resultToJSON(typeInfo);
+                return typeInfo;
             });
         };
         LanguageServiceShim.prototype.getNameOrDottedNameSpan = function (fileName, startPos, endPos) {
             var _this = this;
             return this.forwardJSONCall("getNameOrDottedNameSpan(\"" + fileName + "\", " + startPos + ", " + endPos + ")", function () {
                 var spanInfo = _this.languageService.getNameOrDottedNameSpan(fileName, startPos, endPos);
-                return _resultToJSON(spanInfo);
+                return spanInfo;
             });
         };
         LanguageServiceShim.prototype.getBreakpointStatementAtPosition = function (fileName, pos) {
             var _this = this;
             return this.forwardJSONCall("getBreakpointStatementAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var spanInfo = _this.languageService.getBreakpointStatementAtPosition(fileName, pos);
-                return _resultToJSON(spanInfo);
+                return spanInfo;
             });
         };
         LanguageServiceShim.prototype.getSignatureAtPosition = function (fileName, pos) {
             var _this = this;
             return this.forwardJSONCall("getSignatureAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var signatureInfo = _this.languageService.getSignatureAtPosition(fileName, pos);
-                return _resultToJSON(signatureInfo);
+                return signatureInfo;
             });
         };
         LanguageServiceShim.prototype.getDefinitionAtPosition = function (fileName, pos) {
             var _this = this;
-            return this.forwardCall("getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")", function () {
+            return this.forwardJSONCall("getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var definition = _this.languageService.getDefinitionAtPosition(fileName, pos);
                 if (definition === null) {
                     return null;
                 }
-                return JSON.stringify({
+                return {
                     fileName: definition.fileName,
                     minChar: definition.minChar,
                     limChar: definition.limChar,
@@ -57079,14 +57114,14 @@ var Services;
                     name: definition.name,
                     containerKind: definition.containerKind,
                     containerName: definition.containerName
-                });
+                };
             });
         };
         LanguageServiceShim.prototype.getBraceMatchingAtPosition = function (fileName, pos) {
             var _this = this;
             return this.forwardJSONCall("getBraceMatchingAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var textRanges = _this.languageService.getBraceMatchingAtPosition(fileName, pos);
-                return _resultToJSON(textRanges);
+                return textRanges;
             });
         };
         LanguageServiceShim.prototype.getSmartIndentAtLineNumber = function (fileName, position, options) {
@@ -57094,9 +57129,9 @@ var Services;
             return this.forwardJSONCall("getSmartIndentAtLineNumber(\"" + fileName + "\", " + position + ")", function () {
                 var localOptions = JSON.parse(options);
                 var columnOffset = _this.languageService.getSmartIndentAtLineNumber(fileName, position, localOptions);
-                return _resultToJSON({
+                return {
                     value: columnOffset
-                });
+                };
             });
         };
         LanguageServiceShim.prototype.getReferencesAtPosition = function (fileName, pos) {
@@ -57108,7 +57143,7 @@ var Services;
         };
         LanguageServiceShim.prototype.getOccurrencesAtPosition = function (fileName, pos) {
             var _this = this;
-            return this.forwardCall("getOccurrencesAtPosition(\"" + fileName + "\", " + pos + ")", function () {
+            return this.forwardJSONCall("getOccurrencesAtPosition(\"" + fileName + "\", " + pos + ")", function () {
                 var entries = _this.languageService.getOccurrencesAtPosition(fileName, pos);
                 return _this._referencesToResult(entries);
             });
@@ -57131,14 +57166,13 @@ var Services;
                     isWriteAccess: entry.isWriteAccess
                 });
             }
-            return JSON.stringify(result);
+            return result;
         };
         LanguageServiceShim.prototype.getCompletionsAtPosition = function (fileName, pos, isMemberCompletion) {
             var _this = this;
             return this.forwardJSONCall("getCompletionsAtPosition(\"" + fileName + "\", " + pos + ", " + isMemberCompletion + ")", function () {
                 var completion = _this.languageService.getCompletionsAtPosition(fileName, pos, isMemberCompletion);
-                var result = _resultToJSON(completion);
-                return result;
+                return completion;
             });
         };
         LanguageServiceShim.prototype.getFormattingEditsForRange = function (fileName, minChar, limChar, options) {
@@ -57146,8 +57180,7 @@ var Services;
             return this.forwardJSONCall("getFormattingEditsForRange(\"" + fileName + "\", " + minChar + ", " + limChar + ")", function () {
                 var localOptions = JSON.parse(options);
                 var edits = _this.languageService.getFormattingEditsForRange(fileName, minChar, limChar, localOptions);
-                var result = _resultToJSON(edits);
-                return result;
+                return edits;
             });
         };
         LanguageServiceShim.prototype.getFormattingEditsForDocument = function (fileName, minChar, limChar, options) {
@@ -57155,8 +57188,7 @@ var Services;
             return this.forwardJSONCall("getFormattingEditsForDocument(\"" + fileName + "\", " + minChar + ", " + limChar + ")", function () {
                 var localOptions = JSON.parse(options);
                 var edits = _this.languageService.getFormattingEditsForDocument(fileName, minChar, limChar, localOptions);
-                var result = _resultToJSON(edits);
-                return result;
+                return edits;
             });
         };
         LanguageServiceShim.prototype.getFormattingEditsOnPaste = function (fileName, minChar, limChar, options) {
@@ -57164,8 +57196,7 @@ var Services;
             return this.forwardJSONCall("getFormattingEditsOnPaste(\"" + fileName + "\", " + minChar + ", " + limChar + ")", function () {
                 var localOptions = JSON.parse(options);
                 var edits = _this.languageService.getFormattingEditsOnPaste(fileName, minChar, limChar, localOptions);
-                var result = _resultToJSON(edits);
-                return result;
+                return edits;
             });
         };
         LanguageServiceShim.prototype.getFormattingEditsAfterKeystroke = function (fileName, position, key, options) {
@@ -57173,13 +57204,12 @@ var Services;
             return this.forwardJSONCall("getFormattingEditsAfterKeystroke(\"" + fileName + "\", " + position + ", \"" + key + "\")", function () {
                 var localOptions = JSON.parse(options);
                 var edits = _this.languageService.getFormattingEditsAfterKeystroke(fileName, position, key, localOptions);
-                var result = _resultToJSON(edits);
-                return result;
+                return edits;
             });
         };
         LanguageServiceShim.prototype.getNavigateToItems = function (searchValue) {
             var _this = this;
-            return this.forwardCall("getNavigateToItems(\"" + searchValue + "\")", function () {
+            return this.forwardJSONCall("getNavigateToItems(\"" + searchValue + "\")", function () {
                 var items = _this.languageService.getNavigateToItems(searchValue);
                 var result = _this._navigateToItemsToString(items);
                 return result;
@@ -57187,7 +57217,7 @@ var Services;
         };
         LanguageServiceShim.prototype.getScriptLexicalStructure = function (fileName) {
             var _this = this;
-            return this.forwardCall("getScriptLexicalStructure(\"" + fileName + "\")", function () {
+            return this.forwardJSONCall("getScriptLexicalStructure(\"" + fileName + "\")", function () {
                 var items = _this.languageService.getScriptLexicalStructure(fileName);
                 var result = _this._navigateToItemsToString(items);
                 return result;
@@ -57195,17 +57225,16 @@ var Services;
         };
         LanguageServiceShim.prototype.getOutliningRegions = function (fileName) {
             var _this = this;
-            return this.forwardCall("getOutliningRegions(\"" + fileName + "\")", function () {
+            return this.forwardJSONCall("getOutliningRegions(\"" + fileName + "\")", function () {
                 var items = _this.languageService.getOutliningRegions(fileName);
-                return _resultToJSON(items);
+                return items;
             });
         };
         LanguageServiceShim.prototype.getEmitOutput = function (fileName) {
             var _this = this;
             return this.forwardJSONCall("getEmitOutput(\"" + fileName + "\")", function () {
                 var output = _this.languageService.getEmitOutput(fileName);
-                var result = _resultToJSON(output);
-                return result;
+                return output;
             });
         };
         LanguageServiceShim.prototype._navigateToItemsToString = function (items) {
@@ -57224,7 +57253,7 @@ var Services;
                     limChar: item.limChar
                 });
             }
-            return JSON.stringify(result);
+            return result;
         };
         return LanguageServiceShim;
     })(ShimBase);
@@ -57258,10 +57287,6 @@ var Services;
             this.logger = this.host.logger;
             this.services = new Services.CoreServices(this.host);
         }
-        CoreServicesShim.prototype.forwardCall = function (actionDescription, action, throwOnError) {
-            if (typeof throwOnError === "undefined") { throwOnError = false; }
-            return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
-        };
         CoreServicesShim.prototype.forwardJSONCall = function (actionDescription, action) {
             return Services.forwardJSONCall(this.logger, actionDescription, action);
         };
@@ -57269,19 +57294,19 @@ var Services;
             var _this = this;
             return this.forwardJSONCall("getPreProcessedFileInfo(\"" + fileName + "\")", function () {
                 var result = _this.services.getPreProcessedFileInfo(fileName, sourceText);
-                return _resultToJSON(result);
+                return result;
             });
         };
         CoreServicesShim.prototype.getDefaultCompilationSettings = function () {
             var _this = this;
             return this.forwardJSONCall("getDefaultCompilationSettings()", function () {
                 var result = _this.services.getDefaultCompilationSettings();
-                return _resultToJSON(result);
+                return result;
             });
         };
         CoreServicesShim.prototype.dumpMemory = function (dummy) {
             var _this = this;
-            return this.forwardCall("dumpMemory()", function () {
+            return this.forwardJSONCall("dumpMemory()", function () {
                 return _this.services.dumpMemory();
             });
         };
@@ -57289,7 +57314,7 @@ var Services;
             var _this = this;
             return this.forwardJSONCall("getMemoryInfo()", function () {
                 var result = _this.services.getMemoryInfo();
-                return _resultToJSON(result);
+                return result;
             });
         };
         return CoreServicesShim;
