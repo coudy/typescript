@@ -787,12 +787,13 @@ module TypeScript {
             }
 
             if (symbol.isResolving()) {
-
-                if (!symbol.isType() && !symbol.currentlyBeingSpecialized()) {
+                if (!symbol.currentlyBeingSpecialized()) {
+                    if (!symbol.isType()) {
                     symbol.setType(this.semanticInfoChain.anyTypeSymbol);
-                }
-
-                return symbol;
+                    }
+                    
+                    return symbol;
+                }                
             }
 
             var thisUnit = this.unitPath;
@@ -5576,7 +5577,9 @@ module TypeScript {
 
             var resultTypes: PullTypeSymbol[] = [];
 
-            for (var i = 0; i < inferenceResults.results.length; i++) {
+            var len = typeParameters.length < inferenceResults.results.length ? typeParameters.length : inferenceResults.results.length;
+
+            for (var i = 0; i < len; i++) {
                 resultTypes[resultTypes.length] = inferenceResults.results[i].type;
             }
 
@@ -5706,6 +5709,8 @@ module TypeScript {
 
             if (objectTypeArguments && (objectTypeArguments.length == parameterTypeParameters.length)) {
                 for (var i = 0; i < objectTypeArguments.length; i++) {
+                    // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
+                    // (which could occur via mutually recursive method calls within a generic class declaration)
                     argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i], shouldFix);
                 }
             }
