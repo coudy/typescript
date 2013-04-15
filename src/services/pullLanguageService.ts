@@ -416,15 +416,15 @@ module Services {
                     return false;
                 case TypeScript.PullElementKind.Variable:
                 case TypeScript.PullElementKind.Property:
-	// Do not include the value side of modules or classes, as thier types has already been included
+                    // Do not include the value side of modules or classes, as thier types has already been included
                     var symbol = declaration.getSymbol();
                     return !this.isModule(symbol) && !this.isDynamicModule(symbol)  && !this.isConstructorMethod(symbol) && !this.isClass(symbol);
                 case TypeScript.PullElementKind.EnumMember:
-	// Ignore the _map for enums. this should be removed once enum new implmentation is in place
+                    // Ignore the _map for enums. this should be removed once enum new implmentation is in place
                     return declaration.getName() !== "_map";
                 case TypeScript.PullElementKind.FunctionExpression:
                 case TypeScript.PullElementKind.Function:
-	// Ignore anonomus functions
+                    // Ignore anonomus functions
                     return declaration.getName() !== "";
             }
 

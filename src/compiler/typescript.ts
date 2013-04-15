@@ -1062,11 +1062,6 @@ module TypeScript {
             // Extract infromation from path
             for (var i = 0 , n = path.count(); i < n; i++) {
                 var current = path.asts[i];
-                var decl = semanticInfo.getDeclForAST(current);
-
-                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
-                    enclosingDecl = decl;
-                }
 
                 switch (current.nodeType) {
                     case NodeType.FunctionDeclaration:
@@ -1175,6 +1170,11 @@ module TypeScript {
                         break;
                 }
 
+                // Record enclosing Decl
+                var decl = semanticInfo.getDeclForAST(current);
+                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
+                    enclosingDecl = decl;
+                }
             }
 
             // Other possible type space references
