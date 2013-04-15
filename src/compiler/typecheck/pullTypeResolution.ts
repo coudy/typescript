@@ -213,14 +213,14 @@ module TypeScript {
                 }
             }
 
+            var parent = decl.getParentDecl();
+
             // if the decl is a function expression, it would not have been parented during binding
             if (decls.length && (decl.getKind() & (PullElementKind.SomeFunction |
                 PullElementKind.ObjectType |
                 PullElementKind.FunctionType |
                 PullElementKind.ConstructorType)) &&
                 (decls[decls.length - 1] != decl)) {
-
-                var parent = decl.getParentDecl();
 
                 if (parent && decls[decls.length - 1] != parent && !(parent.getKind() & PullElementKind.ObjectLiteral)) {
                     decls[decls.length] = parent;
@@ -1658,9 +1658,13 @@ module TypeScript {
         }
 
         public resolveFunctionBodyReturnTypes(funcDeclAST: FunctionDeclaration, signature: PullSignatureSymbol, useContextualType: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var returnStatements: ReturnStatement[] = [];
+            var returnStatements: {
+                returnStatement: ReturnStatement; enclosingDecl: PullDecl;
+            }[] = [];
 
-            var preFindReturnExpressionTypes = function (ast: AST, parent: AST, walker: IAstWalker) {
+            var enclosingDeclStack: PullDecl[] = [enclosingDecl];
+
+            var preFindReturnExpressionTypes = (ast: AST, parent: AST, walker: IAstWalker) => {
                 var go = true;
 
                 switch (ast.nodeType) {
@@ -1672,8 +1676,13 @@ module TypeScript {
 
                     case NodeType.ReturnStatement:
                         var returnStatement: ReturnStatement = <ReturnStatement>ast;
-                        returnStatements[returnStatements.length] = returnStatement;
+                        returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1]};
                         go = false;
+                        break;
+
+                    case NodeType.CatchClause:
+                    case NodeType.WithStatement:
+                        enclosingDeclStack[enclosingDeclStack.length] = this.getDeclForAST(ast);
                         break;
 
                     default:
@@ -1685,7 +1694,22 @@ module TypeScript {
                 return ast;
             }
 
-            getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes);
+            var postFindReturnExpressionEnclosingDecls = function (ast: AST, parent: AST, walker: IAstWalker) {
+                switch (ast.nodeType) {
+                    case NodeType.CatchClause:
+                    case NodeType.WithStatement:
+                        enclosingDeclStack.length--;
+                        break;
+                    default:
+                        break;
+                    }
+
+                walker.options.goChildren = true;
+
+                return ast;
+            }
+
+            getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
 
             if (!returnStatements.length) {
                 if (useContextualType) {
@@ -1709,8 +1733,8 @@ module TypeScript {
                 var returnType: PullTypeSymbol;
 
                 for (var i = 0; i < returnStatements.length; i++) {
-                    if (returnStatements[i].returnExpression) {
-                        returnType = this.resolveStatementOrExpression(returnStatements[i].returnExpression, useContextualType, enclosingDecl, context).getType();
+                    if (returnStatements[i].returnStatement.returnExpression) {
+                        returnType = this.resolveStatementOrExpression(returnStatements[i].returnStatement.returnExpression, useContextualType, returnStatements[i].enclosingDecl, context).getType();
 
                         if (returnType.isError()) {
                             signature.setReturnType(returnType);
