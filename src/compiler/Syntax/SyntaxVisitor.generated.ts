@@ -94,343 +94,343 @@ module TypeScript {
             return null;
         }
 
-        private visitToken(token: ISyntaxToken): any {
+        public visitToken(token: ISyntaxToken): any {
             return this.defaultVisit(token);
         }
 
-        private visitSourceUnit(node: SourceUnitSyntax): any {
+        public visitSourceUnit(node: SourceUnitSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
+        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
+        public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitImportDeclaration(node: ImportDeclarationSyntax): any {
+        public visitImportDeclaration(node: ImportDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitExportAssignment(node: ExportAssignmentSyntax): any {
+        public visitExportAssignment(node: ExportAssignmentSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): any {
+        public visitClassDeclaration(node: ClassDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
+        public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitHeritageClause(node: HeritageClauseSyntax): any {
+        public visitHeritageClause(node: HeritageClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
+        public visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
+        public visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitVariableStatement(node: VariableStatementSyntax): any {
+        public visitVariableStatement(node: VariableStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitVariableDeclaration(node: VariableDeclarationSyntax): any {
+        public visitVariableDeclaration(node: VariableDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitVariableDeclarator(node: VariableDeclaratorSyntax): any {
+        public visitVariableDeclarator(node: VariableDeclaratorSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitEqualsValueClause(node: EqualsValueClauseSyntax): any {
+        public visitEqualsValueClause(node: EqualsValueClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any {
+        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any {
+        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitOmittedExpression(node: OmittedExpressionSyntax): any {
+        public visitOmittedExpression(node: OmittedExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): any {
+        public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any {
+        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any {
+        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitQualifiedName(node: QualifiedNameSyntax): any {
+        public visitQualifiedName(node: QualifiedNameSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTypeArgumentList(node: TypeArgumentListSyntax): any {
+        public visitTypeArgumentList(node: TypeArgumentListSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitConstructorType(node: ConstructorTypeSyntax): any {
+        public visitConstructorType(node: ConstructorTypeSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitFunctionType(node: FunctionTypeSyntax): any {
+        public visitFunctionType(node: FunctionTypeSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitObjectType(node: ObjectTypeSyntax): any {
+        public visitObjectType(node: ObjectTypeSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitArrayType(node: ArrayTypeSyntax): any {
+        public visitArrayType(node: ArrayTypeSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitGenericType(node: GenericTypeSyntax): any {
+        public visitGenericType(node: GenericTypeSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTypeAnnotation(node: TypeAnnotationSyntax): any {
+        public visitTypeAnnotation(node: TypeAnnotationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitBlock(node: BlockSyntax): any {
+        public visitBlock(node: BlockSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitParameter(node: ParameterSyntax): any {
+        public visitParameter(node: ParameterSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): any {
+        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {
+        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitElementAccessExpression(node: ElementAccessExpressionSyntax): any {
+        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitInvocationExpression(node: InvocationExpressionSyntax): any {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitArgumentList(node: ArgumentListSyntax): any {
+        public visitArgumentList(node: ArgumentListSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitBinaryExpression(node: BinaryExpressionSyntax): any {
+        public visitBinaryExpression(node: BinaryExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitConditionalExpression(node: ConditionalExpressionSyntax): any {
+        public visitConditionalExpression(node: ConditionalExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitConstructSignature(node: ConstructSignatureSyntax): any {
+        public visitConstructSignature(node: ConstructSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitMethodSignature(node: MethodSignatureSyntax): any {
+        public visitMethodSignature(node: MethodSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitIndexSignature(node: IndexSignatureSyntax): any {
+        public visitIndexSignature(node: IndexSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitPropertySignature(node: PropertySignatureSyntax): any {
+        public visitPropertySignature(node: PropertySignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitCallSignature(node: CallSignatureSyntax): any {
+        public visitCallSignature(node: CallSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitParameterList(node: ParameterListSyntax): any {
+        public visitParameterList(node: ParameterListSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTypeParameterList(node: TypeParameterListSyntax): any {
+        public visitTypeParameterList(node: TypeParameterListSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTypeParameter(node: TypeParameterSyntax): any {
+        public visitTypeParameter(node: TypeParameterSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitConstraint(node: ConstraintSyntax): any {
+        public visitConstraint(node: ConstraintSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitElseClause(node: ElseClauseSyntax): any {
+        public visitElseClause(node: ElseClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitIfStatement(node: IfStatementSyntax): any {
+        public visitIfStatement(node: IfStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitExpressionStatement(node: ExpressionStatementSyntax): any {
+        public visitExpressionStatement(node: ExpressionStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): any {
+        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): any {
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any {
+        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): any {
+        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any {
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitThrowStatement(node: ThrowStatementSyntax): any {
+        public visitThrowStatement(node: ThrowStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitReturnStatement(node: ReturnStatementSyntax): any {
+        public visitReturnStatement(node: ReturnStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): any {
+        public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitSwitchStatement(node: SwitchStatementSyntax): any {
+        public visitSwitchStatement(node: SwitchStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitCaseSwitchClause(node: CaseSwitchClauseSyntax): any {
+        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): any {
+        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitBreakStatement(node: BreakStatementSyntax): any {
+        public visitBreakStatement(node: BreakStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitContinueStatement(node: ContinueStatementSyntax): any {
+        public visitContinueStatement(node: ContinueStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitForStatement(node: ForStatementSyntax): any {
+        public visitForStatement(node: ForStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitForInStatement(node: ForInStatementSyntax): any {
+        public visitForInStatement(node: ForInStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitWhileStatement(node: WhileStatementSyntax): any {
+        public visitWhileStatement(node: WhileStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitWithStatement(node: WithStatementSyntax): any {
+        public visitWithStatement(node: WithStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitEnumDeclaration(node: EnumDeclarationSyntax): any {
+        public visitEnumDeclaration(node: EnumDeclarationSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitEnumElement(node: EnumElementSyntax): any {
+        public visitEnumElement(node: EnumElementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitCastExpression(node: CastExpressionSyntax): any {
+        public visitCastExpression(node: CastExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): any {
+        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any {
+        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any {
+        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): any {
+        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitFunctionExpression(node: FunctionExpressionSyntax): any {
+        public visitFunctionExpression(node: FunctionExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitEmptyStatement(node: EmptyStatementSyntax): any {
+        public visitEmptyStatement(node: EmptyStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTryStatement(node: TryStatementSyntax): any {
+        public visitTryStatement(node: TryStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitCatchClause(node: CatchClauseSyntax): any {
+        public visitCatchClause(node: CatchClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitFinallyClause(node: FinallyClauseSyntax): any {
+        public visitFinallyClause(node: FinallyClauseSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitLabeledStatement(node: LabeledStatementSyntax): any {
+        public visitLabeledStatement(node: LabeledStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitDoStatement(node: DoStatementSyntax): any {
+        public visitDoStatement(node: DoStatementSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitTypeOfExpression(node: TypeOfExpressionSyntax): any {
+        public visitTypeOfExpression(node: TypeOfExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitDeleteExpression(node: DeleteExpressionSyntax): any {
+        public visitDeleteExpression(node: DeleteExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitVoidExpression(node: VoidExpressionSyntax): any {
+        public visitVoidExpression(node: VoidExpressionSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitDebuggerStatement(node: DebuggerStatementSyntax): any {
+        public visitDebuggerStatement(node: DebuggerStatementSyntax): any {
             return this.defaultVisit(node);
         }
     }

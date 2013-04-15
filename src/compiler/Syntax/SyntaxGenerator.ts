@@ -1518,7 +1518,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
             }
 
             result += "\r\n";
-            result += "    private is" + type + "(): boolean {\r\n";
+            result += "    public is" + type + "(): boolean {\r\n";
             result += "        return true;\r\n";
             result += "    }\r\n";
         }
@@ -2096,7 +2096,7 @@ function generateRewriter(): string {
 "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        public visitList<T extends ISyntaxNodeOrToken>(list: ISyntaxList<T>): ISyntaxList<T> {\r\n" +
+"        public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
 "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
 "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
@@ -2432,7 +2432,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
 "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" +
-"        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+"        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result +=
 "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" +
@@ -2788,7 +2788,7 @@ function generateVisitor(): string {
         result += "            return null;\r\n";
         result += "        }\r\n";
         result += "\r\n";
-        result += "        private visitToken(token: ISyntaxToken): any {\r\n";
+        result += "        public visitToken(token: ISyntaxToken): any {\r\n";
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
 
@@ -2796,7 +2796,7 @@ function generateVisitor(): string {
             definition = definitions[i];
 
             if (!definition.isAbstract) {
-                result += "\r\n        private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+                result += "\r\n        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
                 result += "            return this.defaultVisit(node);\r\n";
                 result += "        }\r\n";
             }

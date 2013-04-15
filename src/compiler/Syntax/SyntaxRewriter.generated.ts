@@ -14,7 +14,7 @@ module TypeScript {
             return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);
         }
 
-        public visitList<T extends ISyntaxNodeOrToken>(list: ISyntaxList<T>): ISyntaxList<T> {
+        public visitList(list: ISyntaxList): ISyntaxList {
             var newItems: ISyntaxNodeOrToken[] = null;
 
             for (var i = 0, n = list.childCount(); i < n; i++) {

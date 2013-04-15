@@ -623,44 +623,72 @@ var TypeScript;
         DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 197;
         DiagnosticCode._map[198] = "_this__may_not_be_referenced_in_initializers_in_a_class_body";
         DiagnosticCode._this__may_not_be_referenced_in_initializers_in_a_class_body = 198;
-        DiagnosticCode._map[199] = "Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2";
-        DiagnosticCode.Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2 = 199;
-        DiagnosticCode._map[200] = "Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2";
-        DiagnosticCode.Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2 = 200;
-        DiagnosticCode._map[201] = "Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2";
-        DiagnosticCode.Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2 = 201;
-        DiagnosticCode._map[202] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 202;
-        DiagnosticCode._map[203] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 203;
-        DiagnosticCode._map[204] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 204;
-        DiagnosticCode._map[205] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 205;
-        DiagnosticCode._map[206] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 206;
-        DiagnosticCode._map[207] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 207;
-        DiagnosticCode._map[208] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 208;
-        DiagnosticCode._map[209] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 209;
-        DiagnosticCode._map[210] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 210;
-        DiagnosticCode._map[211] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 211;
-        DiagnosticCode._map[212] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 212;
-        DiagnosticCode._map[213] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 213;
-        DiagnosticCode._map[214] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 214;
-        DiagnosticCode._map[215] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 215;
-        DiagnosticCode._map[216] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 216;
-        DiagnosticCode._map[217] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 217;
+        DiagnosticCode._map[199] = "Class__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 199;
+        DiagnosticCode._map[200] = "Interface__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 200;
+        DiagnosticCode._map[201] = "Interface__0__cannot_extend_interface__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 201;
+        DiagnosticCode._map[202] = "Duplicate_overload_signature_for__0_";
+        DiagnosticCode.Duplicate_overload_signature_for__0_ = 202;
+        DiagnosticCode._map[203] = "Duplicate_constructor_overload_signature";
+        DiagnosticCode.Duplicate_constructor_overload_signature = 203;
+        DiagnosticCode._map[204] = "Duplicate_overload_call_signature";
+        DiagnosticCode.Duplicate_overload_call_signature = 204;
+        DiagnosticCode._map[205] = "Duplicate_overload_construct_signature";
+        DiagnosticCode.Duplicate_overload_construct_signature = 205;
+        DiagnosticCode._map[206] = "Overload_signature_is_not_compatible_with_function_definition";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 206;
+        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 207;
+        DiagnosticCode._map[208] = "Overload_signaures_do_not_agree_in_public_private_visibility";
+        DiagnosticCode.Overload_signaures_do_not_agree_in_public_private_visibility = 208;
+        DiagnosticCode._map[209] = "Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier";
+        DiagnosticCode.Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier = 209;
+        DiagnosticCode._map[210] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 210;
+        DiagnosticCode._map[211] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 211;
+        DiagnosticCode._map[212] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 212;
+        DiagnosticCode._map[213] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 213;
+        DiagnosticCode._map[214] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 214;
+        DiagnosticCode._map[215] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 215;
+        DiagnosticCode._map[216] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 216;
+        DiagnosticCode._map[217] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 217;
+        DiagnosticCode._map[218] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 218;
+        DiagnosticCode._map[219] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 219;
+        DiagnosticCode._map[220] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 220;
+        DiagnosticCode._map[221] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 221;
+        DiagnosticCode._map[222] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 222;
+        DiagnosticCode._map[223] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 223;
+        DiagnosticCode._map[224] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 224;
+        DiagnosticCode._map[225] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 225;
+        DiagnosticCode._map[226] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 226;
+        DiagnosticCode._map[227] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 227;
+        DiagnosticCode._map[228] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 228;
+        DiagnosticCode._map[229] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 229;
+        DiagnosticCode._map[230] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 230;
+        DiagnosticCode._map[231] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 231;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1662,20 +1690,60 @@ var TypeScript;
             message: "'this' may not be referenced in initializers in a class body.",
             code: 2140
         },
-        Class__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+        Class__0__cannot_extend_class__1__NL__2: {
             category: 1 /* Error */ ,
-            message: "Class '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Class '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2141
         },
-        Interface__0__extends_class__1__but_their_instance_types_are_incompatible__NL__2: {
+        Interface__0__cannot_extend_class__1__NL__2: {
             category: 1 /* Error */ ,
-            message: "Interface '{0}' extends class '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Interface '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2142
         },
-        Interface__0__extends_interface__1__but_their_instance_types_are_incompatible__NL__2: {
+        Interface__0__cannot_extend_interface__1__NL__2: {
             category: 1 /* Error */ ,
-            message: "Interface '{0}' extends interface '{1}' but their instance types are incompatible:{NL}{2}",
+            message: "Interface '{0}' cannot extend interface '{1}':{NL}{2}",
             code: 2143
+        },
+        Duplicate_overload_signature_for__0_: {
+            category: 1 /* Error */ ,
+            message: "Duplicate overload signature for '{0}'.",
+            code: 2144
+        },
+        Duplicate_constructor_overload_signature: {
+            category: 1 /* Error */ ,
+            message: "Duplicate constructor overload signature.",
+            code: 2145
+        },
+        Duplicate_overload_call_signature: {
+            category: 1 /* Error */ ,
+            message: "Duplicate overload call signature.",
+            code: 2146
+        },
+        Duplicate_overload_construct_signature: {
+            category: 1 /* Error */ ,
+            message: "Duplicate overload construct signature.",
+            code: 2147
+        },
+        Overload_signature_is_not_compatible_with_function_definition: {
+            category: 1 /* Error */ ,
+            message: "Overload signature is not compatible with function definition.",
+            code: 2148
+        },
+        Overload_signature_is_not_compatible_with_function_definition__NL__0: {
+            category: 1 /* Error */ ,
+            message: "Overload signature is not compatible with function definition:{NL}{0}",
+            code: 2149
+        },
+        Overload_signaures_do_not_agree_in_public_private_visibility: {
+            category: 1 /* Error */ ,
+            message: "Overload signaures do not agree in public/private visibility.",
+            code: 2150
+        },
+        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: {
+            category: 1 /* Error */ ,
+            message: "Overload signatures do not agree with presence/absense of export modifier.",
+            code: 2151
         },
         Type__0__is_missing_property__1__from_type__2_: {
             category: 2 /* NoPrefix */ ,
@@ -1756,6 +1824,36 @@ var TypeScript;
             category: 2 /* NoPrefix */ ,
             message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
             code: 4015
+        },
+        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: {
+            category: 2 /* NoPrefix */ ,
+            message: "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.",
+            code: 4016
+        },
+        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: {
+            category: 2 /* NoPrefix */ ,
+            message: "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.",
+            code: 4017
+        },
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: {
+            category: 2 /* NoPrefix */ ,
+            message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.",
+            code: 4018
+        },
+        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: {
+            category: 2 /* NoPrefix */ ,
+            message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.",
+            code: 4019
+        },
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: {
+            category: 2 /* NoPrefix */ ,
+            message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.",
+            code: 4020
+        },
+        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: {
+            category: 2 /* NoPrefix */ ,
+            message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
+            code: 4021
         }
     };
     var seenCodes = [];
@@ -2431,7 +2529,6 @@ var Environment = (function () {
         };
     }
     ;
-
     function getNodeEnvironment() {
         var _fs = require('fs');
         var _path = require('path');
@@ -2544,7 +2641,6 @@ var Environment = (function () {
         };
     }
     ;
-
     if (typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     } else if (typeof require === "function") {
@@ -6039,7 +6135,7 @@ function generateIsMethod(definition) {
                 type = type.substr(1);
             }
             result += "\r\n";
-            result += "    private is" + type + "(): boolean {\r\n";
+            result += "    public is" + type + "(): boolean {\r\n";
             result += "        return true;\r\n";
             result += "    }\r\n";
         }
@@ -6442,7 +6538,7 @@ function isNodeOrToken(child) {
 }
 function generateRewriter() {
     var result = "///<reference path='References.ts' />\r\n\r\n";
-    result += "module TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList<T extends ISyntaxNodeOrToken>(list: ISyntaxList<T>): ISyntaxList<T> {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
+    result += "module TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
@@ -6625,7 +6721,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): boolean { return false; }\r\n";
-    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";
@@ -6795,13 +6891,13 @@ function generateVisitor() {
         result += "            return null;\r\n";
         result += "        }\r\n";
         result += "\r\n";
-        result += "        private visitToken(token: ISyntaxToken): any {\r\n";
+        result += "        public visitToken(token: ISyntaxToken): any {\r\n";
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
         for(i = 0; i < definitions.length; i++) {
             definition = definitions[i];
             if (!definition.isAbstract) {
-                result += "\r\n        private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+                result += "\r\n        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
                 result += "            return this.defaultVisit(node);\r\n";
                 result += "        }\r\n";
             }
