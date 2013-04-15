@@ -154,7 +154,6 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 });
             });
 
-            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 1", function () {
                 var code = "function foo(a?:string, ...b:number[]){} ";
                 code += "foo('foo', 1); ";
@@ -174,7 +173,6 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 });
             });
 
-            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 3", function () {
                 var code = "function foo(a:string, b?:string, ...c:number[]){} ";
                 code += "foo('foo', 1); ";
@@ -188,7 +186,6 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 });
             });
 
-            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 4", function () {
                 var code = "function foo(a:string, b?:string, c?:number, ...d:number[]){} ";
                 code += "foo('foo', 1); ";

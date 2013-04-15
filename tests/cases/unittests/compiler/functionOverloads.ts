@@ -45,15 +45,14 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
         });
     });
 
-    assert.bug('[Errors] No error trying to call/define ambiguous functions overload');
-    //it("Overload signatures should be assign compatible with their implementation", function() {
-    //    var code  = 'function foo():number;';
-    //        code += 'function foo():string { return "a" };'
-    //    Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-    //        assert.compilerWarning(result, 1, 0, 'Overload signature is not compatible with function definition');
-    //        assert.equal(result.errors.length, 1);
-    //    });
-    //});
+    it("Overload signatures should be assign compatible with their implementation", function() {
+        var code  = 'function foo():number;';
+            code += 'function foo():string { return "a" };'
+        Harness.Compiler.compileString(code, 'functionOverload', function(result) {
+            assert.compilerWarning(result, 1, 0, 'error TS2148: Overload signature is not compatible with function definition.');
+            assert.equal(result.errors.length, 1);
+        });
+    });
 
     assert.bug('[Errors] No error for function overloads with accessibility modifiers that don"t agree');
     //it("Private / Public overloads shouldn't be allowed inside classes", function() {
@@ -130,15 +129,14 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
         });
     });            
         
-    assert.bug('[Errors] No error trying to call/define ambiguous functions overload');
-    //it("Check for overload with not compatible return type", function() {
-    //    var code  = "function foo():number;";
-    //        code += 'function foo():string { return "" };';
-    //    Harness.Compiler.compileString(code, 'overload', function(result) {    
-    //        assert.compilerWarning(result, 1, 0, 'Overload signature is not compatible with function definition');      
-    //        assert.arrayLengthIs(result.errors, 1);
-    //    });
-    //});      
+    it("Check for overload with not compatible return type", function() {
+        var code  = "function foo():number;";
+            code += 'function foo():string { return "" };';
+        Harness.Compiler.compileString(code, 'overload', function(result) {    
+            assert.compilerWarning(result, 1, 0, 'error TS2148: Overload signature is not compatible with function definition.');      
+            assert.arrayLengthIs(result.errors, 1);
+        });
+    });      
 
     it("Check for overload with compatible return type", function() {
         var code  = "function foo():string;";

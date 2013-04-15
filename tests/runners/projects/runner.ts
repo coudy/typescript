@@ -451,14 +451,13 @@ class ProjectRunner extends RunnerBase {
 
             var tests = [];
 
-            assert.bug("Can't resolve fully qualified types from a module within that module");
-            //tests.push({
-            //    scenario: 'module identifier'
-            //        , projectRoot: 'tests/cases/projects/ModuleIdentifier'
-            //        , inputFiles: ['consume.ts']
-            //        , collectedFiles: ['consume.ts', 'decl.ts']
-            //        , outputFiles: ['consume.js', 'decl.js']
-            //});
+            tests.push({
+                scenario: 'module identifier'
+                    , projectRoot: 'tests/cases/projects/ModuleIdentifier'
+                    , inputFiles: ['consume.ts']
+                    , collectedFiles: ['consume.ts', 'decl.ts']
+                    , outputFiles: ['consume.js', 'decl.js']
+            });
 
             tests.push({
                 scenario: 'relative - global'
