@@ -2293,6 +2293,9 @@ module TypeScript {
 
                 case NodeType.ExpressionStatement:
                     return this.resolveExpressionStatement(<ExpressionStatement>expressionAST, isTypedAssignment, enclosingDecl, context);
+
+                case NodeType.InstanceOfExpression:
+                    return this.semanticInfoChain.booleanTypeSymbol;
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
@@ -5838,7 +5841,6 @@ module TypeScript {
             if (!typeArguments.length) {
                 typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
             }
-
 
             var prevSpecialize = context.specializingToAny;
 
