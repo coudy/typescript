@@ -235,35 +235,16 @@ module Services {
         return result;
     }
 
-    export function forwardCall(logger: TypeScript.ILogger, actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
-        try {
-            return simpleForwardCall(logger, actionDescription, action);
-        }
-        catch (err) {
-            Services.logInternalError(logger, err);
-            if (throwOnError)
-                throw err;
-            return "##ERROR##" + err.name + "##" + err.message;
-        }
-    }
-
     export function forwardJSONCall(logger: TypeScript.ILogger, actionDescription: string, action: () =>any): string {
         try {
-            return simpleForwardCall(logger, actionDescription, action);
+            var result = simpleForwardCall(logger, actionDescription, action);
+            return JSON.stringify({ result: result });
         }
         catch (err) {
             Services.logInternalError(logger, err);
             //throw err; //TODO: Remove this!
-            return _errorToJSON(err);
+            return JSON.stringify({ error: err });
         }
-    }
-
-    function _resultToJSON(result: any): string {
-        return JSON.stringify({ result: result });
-    }
-
-    function _errorToJSON(err): string {
-        return JSON.stringify({ error: err });
     }
 
     export class LanguageServiceShim extends ShimBase implements ILanguageServiceShim {
@@ -274,10 +255,6 @@ module Services {
                     public languageService: Services.ILanguageService) {
             super(factory);
             this.logger = this.host;
-        }
-
-        public forwardCall(actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
-            return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
         }
 
         public forwardJSONCall(actionDescription: string, action: () =>any): string {
@@ -298,13 +275,12 @@ module Services {
         // REFRESH
         // Update the list of scripts known to the compiler
         public refresh(throwOnError: boolean): void {
-            this.forwardCall(
+            this.forwardJSONCall(
                 "refresh(" + throwOnError + ")",
                 () => {
                     this.languageService.refresh();
                     return null;
-                },
-                throwOnError);
+                });
         }
 
         /// SQUIGGLES
@@ -319,7 +295,7 @@ module Services {
                 "getSyntacticDiagnostics(\"" + fileName + "\")",
                 () => {
                     var errors = this.languageService.getSyntacticDiagnostics(fileName);
-                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
+                    return errors.map(LanguageServiceShim.realizeDiagnostic);
                 });
         }
 
@@ -328,7 +304,7 @@ module Services {
                 "getSemanticDiagnostics(\"" + fileName + "\")",
                 () => {
                     var errors = this.languageService.getSemanticDiagnostics(fileName);
-                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
+                    return errors.map(LanguageServiceShim.realizeDiagnostic);
                 });
         }
 
@@ -340,7 +316,7 @@ module Services {
                 "getTypeAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var typeInfo = this.languageService.getTypeAtPosition(fileName, pos);
-                    return _resultToJSON(typeInfo);
+                    return typeInfo;
                 });
         }
 
@@ -352,7 +328,7 @@ module Services {
                 "getNameOrDottedNameSpan(\"" + fileName + "\", " + startPos + ", "  + endPos + ")",
                 () => {
                     var spanInfo = this.languageService.getNameOrDottedNameSpan(fileName, startPos, endPos);
-                    return _resultToJSON(spanInfo);
+                    return spanInfo;
                 });
         }
 
@@ -363,7 +339,7 @@ module Services {
                 "getBreakpointStatementAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var spanInfo = this.languageService.getBreakpointStatementAtPosition(fileName, pos);
-                    return _resultToJSON(spanInfo);
+                    return spanInfo;
                 });
         }
 
@@ -375,7 +351,7 @@ module Services {
                 "getSignatureAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var signatureInfo = this.languageService.getSignatureAtPosition(fileName, pos);
-                    return _resultToJSON(signatureInfo);
+                    return signatureInfo;
                 });
         }
 
@@ -383,7 +359,7 @@ module Services {
         /// Computes the definition location and file for the symbol
         /// at the requested position. 
         public getDefinitionAtPosition(fileName: string, pos: number): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var definition = this.languageService.getDefinitionAtPosition(fileName, pos);
@@ -391,14 +367,14 @@ module Services {
                         return null;
                     }
 
-                    return JSON.stringify({
+                    return {
                         fileName: definition.fileName,
                         minChar: definition.minChar,
                         limChar: definition.limChar,
                         kind: definition.kind,
                         name: definition.name,
                         containerKind: definition.containerKind,
-                        containerName: definition.containerName });
+                        containerName: definition.containerName };
                 });
         }
 
@@ -408,7 +384,7 @@ module Services {
                 "getBraceMatchingAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var textRanges = this.languageService.getBraceMatchingAtPosition(fileName, pos);
-                    return _resultToJSON(textRanges);
+                    return textRanges;
                 });
         }
 
@@ -419,7 +395,7 @@ module Services {
                 () => {
                     var localOptions: Services.EditorOptions = JSON.parse(options);
                     var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, position, localOptions);
-                    return _resultToJSON({ value: columnOffset });
+                    return { value: columnOffset };
                 });
         }
 
@@ -437,7 +413,7 @@ module Services {
         }
 
         public getOccurrencesAtPosition(fileName: string, pos: number): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "getOccurrencesAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var entries = this.languageService.getOccurrencesAtPosition(fileName, pos);
@@ -455,14 +431,14 @@ module Services {
                 });
         }
 
-        private _referencesToResult(entries: Services.ReferenceEntry[]): string {
+        private _referencesToResult(entries: Services.ReferenceEntry[]): any {
             var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean; }[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
                 result.push({ fileName: entry.fileName, minChar: entry.ast.minChar, limChar: entry.ast.limChar, isWriteAccess: entry.isWriteAccess });
             }
 
-            return JSON.stringify(result);
+            return result;
         }
 
         /// COMPLETION LISTS
@@ -474,8 +450,7 @@ module Services {
                 "getCompletionsAtPosition(\"" + fileName + "\", " + pos + ", " + isMemberCompletion + ")",
                 () => {
                     var completion = this.languageService.getCompletionsAtPosition(fileName, pos, isMemberCompletion);
-                    var result = _resultToJSON(completion);
-                    return result;
+                    return completion;
                 });
         }
 
@@ -486,8 +461,7 @@ module Services {
                 () => {
                     var localOptions: Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsForRange(fileName, minChar, limChar, localOptions);
-                    var result = _resultToJSON(edits);
-                    return result;
+                    return edits;
                 });
         }
 
@@ -498,8 +472,7 @@ module Services {
                 () => {
                     var localOptions: Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsForDocument(fileName, minChar, limChar, localOptions);
-                    var result = _resultToJSON(edits);
-                    return result;
+                    return edits;
                 });
         }
 
@@ -510,8 +483,7 @@ module Services {
                 () => {
                     var localOptions: Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsOnPaste(fileName, minChar, limChar, localOptions);
-                    var result = _resultToJSON(edits);
-                    return result;
+                    return edits;
                 });
         }
 
@@ -522,15 +494,14 @@ module Services {
                 () => {
                     var localOptions: Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsAfterKeystroke(fileName, position, key, localOptions);
-                    var result = _resultToJSON(edits);
-                    return result;
+                    return edits;
                 });
         }
 
         /// NAVIGATE TO
         ///  Return a list of symbols that are interesting to navigate to
         public getNavigateToItems(searchValue: string): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "getNavigateToItems(\"" + searchValue + "\")",
                 () => {
                     var items = this.languageService.getNavigateToItems(searchValue);
@@ -542,7 +513,7 @@ module Services {
         // GET SCRIPT LEXICAL STRUCTURE
         //
         public getScriptLexicalStructure(fileName: string): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "getScriptLexicalStructure(\"" + fileName + "\")",
                 () => {
                     var items = this.languageService.getScriptLexicalStructure(fileName);
@@ -554,11 +525,11 @@ module Services {
         // GET OUTLINING REGIONS
         //
         public getOutliningRegions(fileName: string): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "getOutliningRegions(\"" + fileName + "\")",
                 () => {
                     var items = this.languageService.getOutliningRegions(fileName);
-                    return _resultToJSON(items);
+                    return items;
                 });
         }
 
@@ -568,12 +539,11 @@ module Services {
                 "getEmitOutput(\"" + fileName + "\")",
                 () => {
                     var output = this.languageService.getEmitOutput(fileName);
-                    var result = _resultToJSON(output);
-                    return result;
+                    return output;
                 });
         }
 
-        private _navigateToItemsToString(items: Services.NavigateToItem[]): string {
+        private _navigateToItemsToString(items: Services.NavigateToItem[]): any {
             var result: {
                 name: string;
                 kind: string;
@@ -602,7 +572,7 @@ module Services {
                 });
             }
 
-            return JSON.stringify(result);
+            return result;
         }
     }
 
@@ -638,10 +608,6 @@ module Services {
             this.services = new Services.CoreServices(this.host);
         }
 
-        private forwardCall(actionDescription: string, action: () =>any, throwOnError: boolean = false): any {
-            return Services.forwardCall(this.logger, actionDescription, action, throwOnError);
-        }
-
         private forwardJSONCall(actionDescription: string, action: () =>any): any {
             return Services.forwardJSONCall(this.logger, actionDescription, action);
         }
@@ -654,7 +620,7 @@ module Services {
                 "getPreProcessedFileInfo(\"" + fileName + "\")",
                 () => {
                     var result = this.services.getPreProcessedFileInfo(fileName, sourceText);
-                    return _resultToJSON(result);
+                    return result;
                 });
         }
 
@@ -666,7 +632,7 @@ module Services {
                 "getDefaultCompilationSettings()",
                 () => {
                     var result = this.services.getDefaultCompilationSettings();
-                    return _resultToJSON(result);
+                    return result;
                 });
         }
 
@@ -674,7 +640,7 @@ module Services {
         /// dumpMemory
         ///
         public dumpMemory(dummy: any): string {
-            return this.forwardCall(
+            return this.forwardJSONCall(
                 "dumpMemory()",
                 () => {
                     return this.services.dumpMemory();
@@ -689,7 +655,7 @@ module Services {
                 "getMemoryInfo()",
                 () => {
                     var result = this.services.getMemoryInfo();
-                    return _resultToJSON(result);
+                    return result;
                 });
         }
     }
