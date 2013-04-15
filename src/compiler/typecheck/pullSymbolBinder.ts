@@ -562,7 +562,11 @@ module TypeScript {
 
             if (parent) {
                 if (isExported) {
-                    classSymbol = <PullClassTypeSymbol>parent.findMember(className, false);
+                    classSymbol = <PullClassTypeSymbol>parent.findNestedType(className);
+
+                    if (!classSymbol) {
+                        classSymbol = <PullClassTypeSymbol>parent.findMember(className, false);
+                    }
                 }
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);

@@ -783,7 +783,7 @@ module TypeScript {
         public resolveDeclaredSymbol(symbol: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             if (!symbol || symbol.isResolved()) {
-                return;
+                return symbol;
             }
 
             if (symbol.isResolving()) {
