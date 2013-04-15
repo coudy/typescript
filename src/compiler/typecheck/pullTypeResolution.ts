@@ -1335,46 +1335,11 @@ module TypeScript {
             if (typeRef.term.nodeType == NodeType.Name) {
                 var typeName = <Identifier>typeRef.term;
 
-                // if it's a known primitive name, cheat
-                if (typeName.actualText == "any") {
-                    typeDeclSymbol = this.semanticInfoChain.anyTypeSymbol;
-                }
-                else if (typeName.actualText == "string") {
-                    typeDeclSymbol = this.semanticInfoChain.stringTypeSymbol;
-                }
-                else if (typeName.actualText == "number") {
-                    typeDeclSymbol = this.semanticInfoChain.numberTypeSymbol;
-                }
-                else if (typeName.actualText == "bool") {
-                    // Warn for using bool
-                    if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
-                        this.currentUnit.getProperties().unitContainsBool = true;
-                        diagnostic = context.postError(typeName.minChar, typeName.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, []), enclosingDecl, true);
-                    }
-                    typeDeclSymbol = this.semanticInfoChain.booleanTypeSymbol;
-                }
-                else if (typeName.actualText == "boolean") {
-                    typeDeclSymbol = this.semanticInfoChain.booleanTypeSymbol;
-                }
-                else if (typeName.actualText == "null") {
-                    typeDeclSymbol = this.semanticInfoChain.nullTypeSymbol;
-                }
-                else if (typeName.actualText == "undefined") {
-                    typeDeclSymbol = this.semanticInfoChain.undefinedTypeSymbol;
-                }
-                else if (typeName.actualText == "void") {
-                    typeDeclSymbol = this.semanticInfoChain.voidTypeSymbol;
-                }
-                else if (typeName.actualText == "_element") {
-                    typeDeclSymbol = this.semanticInfoChain.elementTypeSymbol;
-                }
-                else {
-                    context.resolvingTypeReference = true;
+                context.resolvingTypeReference = true;
 
-                    typeDeclSymbol = <PullTypeSymbol>this.resolveTypeNameExpression(typeName, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>this.resolveTypeNameExpression(typeName, enclosingDecl, context);
 
-                    context.resolvingTypeReference = prevResolvingTypeReference;
-                }
+                context.resolvingTypeReference = prevResolvingTypeReference;
 
                 if (typeDeclSymbol.isError()) {
                     return typeDeclSymbol;
@@ -2545,39 +2510,75 @@ module TypeScript {
 
             var id = nameAST.text;
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-            var diagnostic: PullDiagnostic;
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
+            // if it's a known primitive name, cheat
+            if (id == "any") {
+                typeNameSymbol = this.semanticInfoChain.anyTypeSymbol;
             }
+            else if (id == "string") {
+                typeNameSymbol = this.semanticInfoChain.stringTypeSymbol;
+            }
+            else if (id == "number") {
+                typeNameSymbol = this.semanticInfoChain.numberTypeSymbol;
+            }
+            else if (id == "bool") {
+                // Warn for using bool
+                if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
+                    this.currentUnit.getProperties().unitContainsBool = true;
+                    diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, []), enclosingDecl, true);
+                }
+                typeNameSymbol = this.semanticInfoChain.booleanTypeSymbol;
+            }
+            else if (id == "boolean") {
+                typeNameSymbol = this.semanticInfoChain.booleanTypeSymbol;
+            }
+            else if (id == "null") {
+                typeNameSymbol = this.semanticInfoChain.nullTypeSymbol;
+            }
+            else if (id == "undefined") {
+                typeNameSymbol = this.semanticInfoChain.undefinedTypeSymbol;
+            }
+            else if (id == "void") {
+                typeNameSymbol = this.semanticInfoChain.voidTypeSymbol;
+            }
+            else if (id == "_element") {
+                typeNameSymbol = this.semanticInfoChain.elementTypeSymbol;
+            }
+            else {
 
-            typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+                var diagnostic: PullDiagnostic;
 
-            if (!typeNameSymbol) {
-                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
+                if (enclosingDecl && !declPath.length) {
+                    declPath = [enclosingDecl];
+                }
+
+                typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+                if (!typeNameSymbol) {
+                    diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
                     getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [id]), enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
-            }
+                    return this.getNewErrorTypeSymbol(diagnostic);
+                }
 
-            if (typeNameSymbol.isTypeParameter()) {
-                if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
-                    var parentDecl = typeNameSymbol.getDeclarations()[0];
+                if (typeNameSymbol.isTypeParameter()) {
+                    if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
+                        var parentDecl = typeNameSymbol.getDeclarations()[0];
 
-                    if (parentDecl != enclosingDecl) {
-                        diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
+                        if (parentDecl != enclosingDecl) {
+                            diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
                             getDiagnosticMessage(DiagnosticCode.Static_methods_may_not_reference_class_type_parameters, null), enclosingDecl);
 
-                        typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                            typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
 
-                        this.setSymbolForAST(nameAST, typeNameSymbol, context);
+                            this.setSymbolForAST(nameAST, typeNameSymbol, context);
 
-                        return typeNameSymbol;
+                            return typeNameSymbol;
+                        }
                     }
                 }
-            }
 
-            typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
+                typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
+            }
 
             if (!typeNameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
