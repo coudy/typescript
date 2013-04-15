@@ -3577,7 +3577,6 @@ var TypeScript;
         AstPath.prototype.nodeType = function () {
             if (this.ast() === null) {
                 return 0 /* None */ ;
-
             }
             return this.ast().nodeType;
         };
@@ -3596,42 +3595,36 @@ var TypeScript;
         AstPath.prototype.isNameOfClass = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 13 /* ClassDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfInterface = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 14 /* InterfaceDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfArgument = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 19 /* Parameter */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 17 /* VariableDeclarator */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfModule = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 15 /* ModuleDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 12 /* FunctionDeclaration */ ) && ((this.parent()).name === this.ast());
         };
@@ -3650,14 +3643,12 @@ var TypeScript;
         AstPath.prototype.isInClassImplementsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.parent().nodeType === 13 /* ClassDeclaration */ ) && (this.isMemberOfList((this.parent()).implementsList, this.ast()));
         };
         AstPath.prototype.isInInterfaceExtendsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.parent().nodeType === 14 /* InterfaceDeclaration */ ) && (this.isMemberOfList((this.parent()).extendsList, this.ast()));
         };
@@ -3717,11 +3708,9 @@ var TypeScript;
     function isValidAstNode(ast) {
         if (ast === null) {
             return false;
-
         }
         if (ast.minChar === -1 || ast.limChar === -1) {
             return false;
-
         }
         return true;
     }
@@ -12837,11 +12826,9 @@ var TypeScript;
                 var result = new MemberNameArray();
                 if (arg2) {
                     result.prefix = arg2;
-
                 }
                 if (arg3) {
                     result.suffix = arg3;
-
                 }
                 result.entries.push(arg1);
                 return result;
@@ -42868,7 +42855,7 @@ var TypeScript;
                         }
                     }
                     if (typeArg.isResolving()) {
-                        return genericTypeSymbol;
+                        return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
                         context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
@@ -44081,6 +44068,16 @@ var TypeScript;
             }
             return true;
         };
+        PullTypeResolver.prototype.substituteUpperBoundForType = function (type) {
+            if (!type || !type.isTypeParameter()) {
+                return type;
+            }
+            var constraint = (type).getConstraint();
+            if (constraint) {
+                return this.substituteUpperBoundForType(constraint);
+            }
+            return type;
+        };
         PullTypeResolver.prototype.sourceIsSubtypeOfTarget = function (source, target, context, comparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         };
@@ -44129,6 +44126,8 @@ var TypeScript;
             return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, context, comparisonInfo);
         };
         PullTypeResolver.prototype.sourceIsRelatableToTarget = function (source, target, assignableTo, comparisonCache, context, comparisonInfo) {
+            source = this.substituteUpperBoundForType(source);
+            target = this.substituteUpperBoundForType(target);
             if (source == target) {
                 return true;
             }
@@ -48719,6 +48718,29 @@ var TypeScript;
             this.popParent();
             enumSymbol.setIsBound(this.bindingPhase);
         };
+        PullSymbolBinder.prototype.cleanInterfaceSignatures = function (interfaceSymbol) {
+            var callSigs = interfaceSymbol.getCallSignatures();
+            var constructSigs = interfaceSymbol.getConstructSignatures();
+            var indexSigs = interfaceSymbol.getIndexSignatures();
+            for(var i = 0; i < callSigs.length; i++) {
+                if (callSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeCallSignature(callSigs[i], false);
+                }
+            }
+            for(var i = 0; i < constructSigs.length; i++) {
+                if (constructSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeConstructSignature(constructSigs[i], false);
+                }
+            }
+            for(var i = 0; i < indexSigs.length; i++) {
+                if (indexSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeIndexSignature(indexSigs[i], false);
+                }
+            }
+            interfaceSymbol.recomputeCallSignatures();
+            interfaceSymbol.recomputeConstructSignatures();
+            interfaceSymbol.recomputeIndexSignatures();
+        };
         PullSymbolBinder.prototype.cleanClassSignatures = function (classSymbol) {
             var callSigs = classSymbol.getCallSignatures();
             var constructSigs = classSymbol.getConstructSignatures();
@@ -48974,10 +48996,12 @@ var TypeScript;
                             }
                         }
                         specialization.addDeclaration(interfaceDecl);
+                        this.cleanInterfaceSignatures(specialization);
                     }
                     interfaceSymbol.cleanTypeParameters();
                     interfaceSymbol.setUnresolved();
                 }
+                this.cleanInterfaceSignatures(interfaceSymbol);
             }
             this.pushParent(interfaceSymbol, interfaceDecl);
             var childDecls = interfaceDecl.getChildDecls();
@@ -54225,18 +54249,15 @@ var TypeScript;
             var mid = length >> 1;
             for(var i = 0; i < mid; i++) {
                 addChar(i);
-
             }
             result += "(...)";
             for(var i = value.length - mid; i < value.length; i++) {
                 addChar(i);
-
             }
         } else {
             length = value.length;
             for(var i = 0; i < length; i++) {
                 addChar(i);
-
             }
         }
         return result;

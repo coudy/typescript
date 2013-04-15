@@ -5611,8 +5611,9 @@ module TypeScript {
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }
-
-            if (!parameterType.isArray() && parameterType.getDeclarations()[0].isEqual(expressionType.getDeclarations()[0]) && expressionType.isGeneric()) {
+            var parameterDeclarations = parameterType.getDeclarations();
+            var expressionDeclarations = expressionType.getDeclarations();
+            if (!parameterType.isArray() && parameterDeclarations.length && expressionDeclarations.length && parameterDeclarations[0].isEqual(expressionDeclarations[0]) && expressionType.isGeneric()) {
                 var typeParameters: PullTypeSymbol[] = parameterType.getTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 

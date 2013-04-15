@@ -3662,7 +3662,6 @@ var TypeScript;
         AstPath.prototype.nodeType = function () {
             if (this.ast() === null) {
                 return 0 /* None */ ;
-
             }
             return this.ast().nodeType;
         };
@@ -3681,42 +3680,36 @@ var TypeScript;
         AstPath.prototype.isNameOfClass = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 13 /* ClassDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfInterface = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 14 /* InterfaceDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfArgument = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 19 /* Parameter */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 17 /* VariableDeclarator */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfModule = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 15 /* ModuleDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.ast().nodeType === 20 /* Name */ ) && (this.parent().nodeType === 12 /* FunctionDeclaration */ ) && ((this.parent()).name === this.ast());
         };
@@ -3735,14 +3728,12 @@ var TypeScript;
         AstPath.prototype.isInClassImplementsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.parent().nodeType === 13 /* ClassDeclaration */ ) && (this.isMemberOfList((this.parent()).implementsList, this.ast()));
         };
         AstPath.prototype.isInInterfaceExtendsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
-
             }
             return (this.parent().nodeType === 14 /* InterfaceDeclaration */ ) && (this.isMemberOfList((this.parent()).extendsList, this.ast()));
         };
@@ -3802,11 +3793,9 @@ var TypeScript;
     function isValidAstNode(ast) {
         if (ast === null) {
             return false;
-
         }
         if (ast.minChar === -1 || ast.limChar === -1) {
             return false;
-
         }
         return true;
     }
@@ -12922,11 +12911,9 @@ var TypeScript;
                 var result = new MemberNameArray();
                 if (arg2) {
                     result.prefix = arg2;
-
                 }
                 if (arg3) {
                     result.suffix = arg3;
-
                 }
                 result.entries.push(arg1);
                 return result;
@@ -42953,7 +42940,7 @@ var TypeScript;
                         }
                     }
                     if (typeArg.isResolving()) {
-                        return genericTypeSymbol;
+                        return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
                         context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(146 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */ , [
@@ -44166,6 +44153,16 @@ var TypeScript;
             }
             return true;
         };
+        PullTypeResolver.prototype.substituteUpperBoundForType = function (type) {
+            if (!type || !type.isTypeParameter()) {
+                return type;
+            }
+            var constraint = (type).getConstraint();
+            if (constraint) {
+                return this.substituteUpperBoundForType(constraint);
+            }
+            return type;
+        };
         PullTypeResolver.prototype.sourceIsSubtypeOfTarget = function (source, target, context, comparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         };
@@ -44214,6 +44211,8 @@ var TypeScript;
             return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, context, comparisonInfo);
         };
         PullTypeResolver.prototype.sourceIsRelatableToTarget = function (source, target, assignableTo, comparisonCache, context, comparisonInfo) {
+            source = this.substituteUpperBoundForType(source);
+            target = this.substituteUpperBoundForType(target);
             if (source == target) {
                 return true;
             }
@@ -48804,6 +48803,29 @@ var TypeScript;
             this.popParent();
             enumSymbol.setIsBound(this.bindingPhase);
         };
+        PullSymbolBinder.prototype.cleanInterfaceSignatures = function (interfaceSymbol) {
+            var callSigs = interfaceSymbol.getCallSignatures();
+            var constructSigs = interfaceSymbol.getConstructSignatures();
+            var indexSigs = interfaceSymbol.getIndexSignatures();
+            for(var i = 0; i < callSigs.length; i++) {
+                if (callSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeCallSignature(callSigs[i], false);
+                }
+            }
+            for(var i = 0; i < constructSigs.length; i++) {
+                if (constructSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeConstructSignature(constructSigs[i], false);
+                }
+            }
+            for(var i = 0; i < indexSigs.length; i++) {
+                if (indexSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    interfaceSymbol.removeIndexSignature(indexSigs[i], false);
+                }
+            }
+            interfaceSymbol.recomputeCallSignatures();
+            interfaceSymbol.recomputeConstructSignatures();
+            interfaceSymbol.recomputeIndexSignatures();
+        };
         PullSymbolBinder.prototype.cleanClassSignatures = function (classSymbol) {
             var callSigs = classSymbol.getCallSignatures();
             var constructSigs = classSymbol.getConstructSignatures();
@@ -49059,10 +49081,12 @@ var TypeScript;
                             }
                         }
                         specialization.addDeclaration(interfaceDecl);
+                        this.cleanInterfaceSignatures(specialization);
                     }
                     interfaceSymbol.cleanTypeParameters();
                     interfaceSymbol.setUnresolved();
                 }
+                this.cleanInterfaceSignatures(interfaceSymbol);
             }
             this.pushParent(interfaceSymbol, interfaceDecl);
             var childDecls = interfaceDecl.getChildDecls();
@@ -54310,18 +54334,15 @@ var TypeScript;
             var mid = length >> 1;
             for(var i = 0; i < mid; i++) {
                 addChar(i);
-
             }
             result += "(...)";
             for(var i = value.length - mid; i < value.length; i++) {
                 addChar(i);
-
             }
         } else {
             length = value.length;
             for(var i = 0; i < length; i++) {
                 addChar(i);
-
             }
         }
         return result;
@@ -54382,7 +54403,6 @@ if (!Array.prototype.filter) {
                 var val = t[i];
                 if (fun.call(thisp, val, i, t)) {
                     res.push(val);
-
                 }
             }
         }
@@ -54434,12 +54454,10 @@ if (!Array.prototype.reduce) {
             i = 1;
         } else {
             curr = arguments[1];
-
         }
         while(i < l) {
             if (i in this) {
                 curr = accumulator.call(undefined, curr, this[i], i, this);
-
             }
             ++i;
         }
@@ -54494,7 +54512,6 @@ if (!Array.prototype.some) {
             var idx = i.toString();
             if (idx in t && fun.call(thisp, t[i], i, t)) {
                 return true;
-
             }
         }
         return false;
@@ -54912,7 +54929,6 @@ var Services;
         ReferenceEntry.prototype.equals = function (other) {
             if (other === null || other === undefined) {
                 return false;
-
             }
             return (this.fileName === other.fileName) && (this.ast.minChar === other.ast.minChar) && (this.ast.limChar === other.ast.limChar);
         };
@@ -55497,7 +55513,6 @@ var Services;
         SymbolArraySet.prototype.add = function (sym) {
             if (this.contains(sym)) {
                 return false;
-
             }
             this.values.push(sym);
             return true;
@@ -55619,12 +55634,10 @@ var Services;
             }
             if (members == null) {
                 return null;
-
             }
             var override = members.allMembers.lookup(memberSym.name);
             if (override == null) {
                 return null;
-
             }
             if ((this.isMethod(memberSym) === this.isMethod(override)) && (this.isField(memberSym) === this.isField(override)) && (this.isStatic(memberSym) === this.isStatic(override))) {
                 return override;
@@ -55667,7 +55680,6 @@ var Services;
                     if (type !== null) {
                         if (type.instanceType != null) {
                             type = type.instanceType;
-
                         }
                         _this.addBaseTypes(closure, result, type.implementsList);
                         _this.addBaseTypes(closure, result, type.extendsList);
@@ -55686,7 +55698,6 @@ var Services;
                         if (type !== null) {
                             if (type.instanceType != null) {
                                 type = type.instanceType;
-
                             }
                             var emptySet = new Services.SymbolSet();
                             var baseTypes = new Services.SymbolSet();
@@ -55707,7 +55718,6 @@ var Services;
             var _this = this;
             if (bases == null) {
                 return;
-
             }
             bases.forEach(function (base) {
                 if (base.symbol !== null) {
@@ -55765,7 +55775,6 @@ var Services;
             result.add(memberSym);
             if (memberSym.container === null) {
                 return result;
-
             }
             var baseTypes = (lookInBases ? this.symbolTree.findBaseTypesTransitiveClosure(memberSym.container) : new Services.SymbolSet());
             var derivedTypes = (lookInDerived ? this.symbolTree.findDerivedTypesTransitiveClosure(memberSym.container) : new Services.SymbolSet());
@@ -55971,11 +55980,9 @@ var Services;
         LanguageService.prototype.convertCallExprToActualSignatureInfo = function (ast, caretPosition, atEOF) {
             if (!TypeScript.isValidAstNode(ast)) {
                 return null;
-
             }
             if (!TypeScript.isValidAstNode(ast.arguments)) {
                 return null;
-
             }
             var result = new Services.ActualSignatureInfo();
             result.currentParameter = -1;
@@ -56156,7 +56163,6 @@ var Services;
             var path = this.getAstPathToPosition(script, pos, true, 1 /* EdgeInclusive */ );
             if (path.count() == 0) {
                 return null;
-
             }
             if (path.nodeType() !== 20 /* Name */ ) {
                 return null;
@@ -57548,7 +57554,6 @@ var Services;
                         var child = list.childAt(i);
                         if (child !== null && child === element) {
                             return Indenter.getListItemIndentation(list, i - 1);
-
                         }
                     }
                     break;
@@ -57615,12 +57620,10 @@ var Services;
             if (typeof dst[e] == "object") {
                 if (!compareDataObjects(dst[e], src[e])) {
                     return false;
-
                 }
             } else if (typeof dst[e] != "function") {
                 if (dst[e] !== src[e]) {
                     return false;
-
                 }
             }
         }
@@ -58404,14 +58407,12 @@ var TypeScript;
             Rules.IsSingleLineBlockContext = function IsSingleLineBlockContext(context) {
                 if (!Rules.IsBlockContext(context)) {
                     return false;
-
                 }
                 return context.ContextNodeAllOnSameLine();
             };
             Rules.IsMultilineBlockContext = function IsMultilineBlockContext(context) {
                 if (!Rules.IsBlockContext(context)) {
                     return false;
-
                 }
                 return !context.ContextNodeAllOnSameLine();
             };
@@ -58574,7 +58575,6 @@ var TypeScript;
                         var rule = bucket.Rules()[i];
                         if (rule.Operation.Context.InContext(context)) {
                             return rule;
-
                         }
                     }
                 }
@@ -59529,7 +59529,6 @@ var TypeScript;
             Formatter.prototype.TrimWhitespace2 = function (token, line) {
                 if ((token.kind() == 6 /* MultiLineCommentTrivia */  || token.kind() == 7 /* SingleLineCommentTrivia */ ) && token.start() <= line.endPosition() && token.end() >= line.endPosition()) {
                     return;
-
                 }
                 var text = line.getText();
                 var index = 0;
