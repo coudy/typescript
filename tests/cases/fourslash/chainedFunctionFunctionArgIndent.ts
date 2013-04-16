@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 //// declare var $: any;
 //// $(".contentDiv").each(function (index, element) {/**/
 ////     // <-- ensure cursor is here after return on above

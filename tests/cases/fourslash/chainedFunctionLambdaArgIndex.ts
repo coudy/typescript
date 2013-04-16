@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 //// class C2 {
 ////     eventEmitter: any;
 ////     constructor() {

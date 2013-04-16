@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 // @Filename: file_0.ts
 /////** Module comment*/

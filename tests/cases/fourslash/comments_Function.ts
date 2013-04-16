@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 /////** This comment should appear for foo*/
 ////function f/*6*/oo() {
