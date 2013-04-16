@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts'/>
+/// <reference path='FourSlash.ts' />
 
 ////interface Comparable<T> {
 ////    compareTo(other: T): T;

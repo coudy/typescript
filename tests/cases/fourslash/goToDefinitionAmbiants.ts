@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////declare var /*ambientVariableDefinition*/ambientVar;
 /////*ambientFunctionDefinition*/declare function ambientFunction();

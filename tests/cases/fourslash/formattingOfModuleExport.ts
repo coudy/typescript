@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 ////module MemoryAnalyzer {
 ////    export module Foo.Charting { }
 ////    /**/

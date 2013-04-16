@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////module Alpha/*1*//*2*/ { class Foo { public bar() { } } }
 

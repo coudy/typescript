@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////class ConstructorCall { 
 ////    constructor(str: string, num: number) {

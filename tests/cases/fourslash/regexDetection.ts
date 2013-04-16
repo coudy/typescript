@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////  /*1*/15 / /*2*/Math.min(61 / /*3*/42, 32 / 15) / /*4*/15;
 

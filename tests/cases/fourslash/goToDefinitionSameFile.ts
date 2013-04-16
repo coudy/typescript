@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////var /*localVariableDefinition*/localVariable;
 /////*localFunctionDefinition*/function localFunction() { }

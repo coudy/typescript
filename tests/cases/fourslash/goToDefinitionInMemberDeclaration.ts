@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 /////*interfaceDefinition*/interface IFoo { method1(): number; }
 ////

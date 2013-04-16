@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 ////interface Number {
 ////    toString(radix?: number): string;

@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////class Foo { static bar() { return "x"; } }
 ////var baz = Foo/**/;

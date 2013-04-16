@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 ////// less than and greater than tests
 ////    public bar(a, b) {

@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 //// declare class myString {
 ////     charAt(pos: number): string;

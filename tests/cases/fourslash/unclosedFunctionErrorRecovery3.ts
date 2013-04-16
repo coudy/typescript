@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////        class alpha { static beta() return 5; } }
 ////  /**/  var gamma = alpha.beta() * 5;             

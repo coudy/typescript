@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////var alpha = [1, 2, 3];
 ////for (var beta in alpha) {

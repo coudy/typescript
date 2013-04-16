@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 // @BaselineFile: nameOrDottedSpan_stmts.baseline
 // @Filename: nameOrDottedSpan_stmts.ts

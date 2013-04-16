@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////declare function forEach(f: () => void);
 ////forEach(/*1*/() => {

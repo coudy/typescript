@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////var foo: Function = function (/*1*/a, /*2*/b, /*3*/c) { };
 

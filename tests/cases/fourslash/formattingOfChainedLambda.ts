@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 //// var fn = (x: string) => ()=> alert(x)/**/
 
 goTo.marker();

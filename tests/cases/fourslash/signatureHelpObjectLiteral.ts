@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////var objectLiteral = { n: 5, s: "", f: (a: number, b: string) => "" };
 ////objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");

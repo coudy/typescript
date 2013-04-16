@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 ////// Interface
 ////{| "itemName": "IPoint", "kind": "interface", "parentName": "" |}interface IPoint {

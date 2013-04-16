@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////if (true)
 ////if (true)/*parentOutsideBlock*/

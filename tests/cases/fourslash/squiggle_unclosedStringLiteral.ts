@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 ////var x = /*1*/"asd
 /////*2*/var y = 2;

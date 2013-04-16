@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 // Bug 620985: Fourslash results do not match the language service behavior
 

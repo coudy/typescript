@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////// Completion after dot in named type, when the following line has a keyword
 ////module TypeModule1 {

@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts'/>
+/// <reference path='FourSlash.ts' />
 
 ////interface A { a: string; }
 ////interface B extends A { b: string; }

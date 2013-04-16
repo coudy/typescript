@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////// Simple function test
 ////function functionCall(str: string, num: number) {

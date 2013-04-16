@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 ////var n = '';/**/
 ////interface x extends /*1*/string/*2*/ {}

@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts" />
+/// <reference path='FourSlash.ts' />
 
 ////declare interface ifoo {
 ////    text: (value: any) => ifoo;

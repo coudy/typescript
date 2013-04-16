@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts'/>
+/// <reference path='FourSlash.ts' />
 
 ////interface TelemetryService {
 ////    publicLog(eventName: string, data: any): any;

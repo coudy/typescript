@@ -1,4 +1,4 @@
-/// <reference path="fourslash.ts"/>
+/// <reference path='FourSlash.ts' />
 
 // Bug 17898: Error span is incorrect making errors hard to spot
 
