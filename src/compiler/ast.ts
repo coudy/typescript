@@ -2413,7 +2413,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("debugger");
             emitter.recordSourceMappingEnd(this);
-            emitter.writeLineToOutput(";");
+            emitter.writeToOutput(";");
             emitter.emitComments(this, false);
         }
     }
