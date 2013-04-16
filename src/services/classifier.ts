@@ -59,12 +59,28 @@ module Services {
 
         /// COLORIZATION
         public getClassificationsForLine(text: string, lexState: EndOfLineState): ClassificationResult {
+            var offset = 0;
+            if (lexState !== EndOfLineState.Start) {
+                // If we're in a string literal, then prepend: "\
+                // (and a newline).  That way when we lex we'll think we're still in a string literal.
+                //
+                // If we're in a multiline comment, then prepend: /*
+                // (and a newline).  That way when we lex we'll think we're still in a multiline comment.
+                if (lexState === EndOfLineState.InDoubleQuoteStringLiteral) {
+                    text = '"\\\n' + text;
+                }
+                else if (lexState === EndOfLineState.InSingleQuoteStringLiteral) {
+                    text = "'\\\n" + text;
+                }
+                else if (lexState === EndOfLineState.InMultiLineCommentTrivia) {
+                    text = "/*\n" + text;
+                }
+
+                offset = 3;
+            }
+
             var result = new ClassificationResult();
             this.scanner = new TypeScript.Scanner("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
-
-            if (this.checkForContinuedToken(text, lexState, result)) {
-                return result;
-            }
 
             var lastTokenKind = TypeScript.SyntaxKind.None;
 
@@ -73,16 +89,16 @@ module Services {
                 var token = this.scanner.scan(this.diagnostics, !noRegexTable[lastTokenKind]);
                 lastTokenKind = token.tokenKind;
 
-                this.processToken(text, token, result);
+                this.processToken(text, offset, token, result);
             }
 
             return result;
         }
 
-        private processToken(text: string, token: TypeScript.ISyntaxToken, result: ClassificationResult): void {
-            this.processTriviaList(text, token.leadingTrivia(), result);
-            this.addResult(text, result, token.width(), token.tokenKind);
-            this.processTriviaList(text, token.trailingTrivia(), result);
+        private processToken(text: string, offset: number, token: TypeScript.ISyntaxToken, result: ClassificationResult): void {
+            this.processTriviaList(text, offset, token.leadingTrivia(), result);
+            this.addResult(text, offset, result, token.width(), token.tokenKind);
+            this.processTriviaList(text, offset, token.trailingTrivia(), result);
 
             if (this.scanner.absoluteIndex() >= text.length) {
                 // We're at the end.
@@ -98,23 +114,29 @@ module Services {
                     if (tokenText.length > 0 && tokenText.charCodeAt(tokenText.length - 1) === TypeScript.CharacterCodes.backslash) {
                         var quoteChar = tokenText.charCodeAt(0);
                         result.finalLexState = quoteChar === TypeScript.CharacterCodes.doubleQuote
-                        ? EndOfLineState.InDoubleQuoteStringLiteral
-                        : EndOfLineState.InSingleQuoteStringLiteral;
+                            ? EndOfLineState.InDoubleQuoteStringLiteral
+                            : EndOfLineState.InSingleQuoteStringLiteral;
                         return;
                     }
                 }
             }
         }
 
-        private processTriviaList(text, triviaList: TypeScript.ISyntaxTriviaList, result: ClassificationResult): void {
+        private processTriviaList(text: string, offset: number, triviaList: TypeScript.ISyntaxTriviaList, result: ClassificationResult): void {
             for (var i = 0, n = triviaList.count(); i < n; i++) {
                 var trivia = triviaList.syntaxTriviaAt(i);
-                this.addResult(text, result, trivia.fullWidth(), trivia.kind());
+                this.addResult(text, offset, result, trivia.fullWidth(), trivia.kind());
             }
         }
 
-        private addResult(text: string, result: ClassificationResult, length: number, kind: TypeScript.SyntaxKind): void {
+        private addResult(text: string, offset: number, result: ClassificationResult, length: number, kind: TypeScript.SyntaxKind): void {
             if (length > 0) {
+                // If this is the first classification we're adding to the list, then remove any 
+                // offset we have if we were continuing a construct from the previous line.
+                if (result.entries.length === 0) {
+                    length -= offset;
+                }
+
                 result.entries.push(new ClassificationInfo(length, this.classFromKind(kind)));
             }
         }
@@ -147,78 +169,6 @@ module Services {
                 default:
                     return TokenClass.Identifier;
             }
-        }
-
-        private checkForContinuedToken(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
-            if (lexState === EndOfLineState.InMultiLineCommentTrivia) {
-                return this.handleMultilineComment(text, lexState, result);
-            }
-            else if (lexState === EndOfLineState.InDoubleQuoteStringLiteral ||
-                     lexState === EndOfLineState.InSingleQuoteStringLiteral) {
-                return this.handleMultilineString(text, lexState, result);
-            }
-            else {
-                return false;
-            }
-        }
-
-        private handleMultilineComment(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
-            var index = text.indexOf("*/");
-            if (index >= 0) {
-                var commentEnd = index + "*/".length;
-                this.scanner.setAbsoluteIndex(commentEnd);
-                result.entries.push(new ClassificationInfo(commentEnd, TokenClass.Comment));
-                return false;
-            }
-            else {
-                // Comment didn't end.
-                result.entries.push(new ClassificationInfo(text.length, TokenClass.Comment));
-                result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
-                return true;
-            }
-        }
-
-        private handleMultilineString(text: string, lexState: EndOfLineState, result: ClassificationResult): boolean {
-            var endChar = lexState === EndOfLineState.InDoubleQuoteStringLiteral
-                ? TypeScript.CharacterCodes.doubleQuote
-                : TypeScript.CharacterCodes.singleQuote;
-
-            var seenBackslash = true;
-            for (var i = 0, n = text.length; i < n; i++) {
-                if (seenBackslash) {
-                    // Ignore this character.
-                    seenBackslash = false;
-                    continue;
-                }
-
-                var ch = text.charCodeAt(i);
-                if (ch === TypeScript.CharacterCodes.backslash) {
-                    seenBackslash = true;
-                    continue;
-                }
-
-                if (ch === endChar) {
-                    var stringEnd = i + 1;
-                    this.scanner.setAbsoluteIndex(stringEnd);
-                    result.entries.push(new ClassificationInfo(stringEnd, TokenClass.StringLiteral));
-                    return false;
-                }
-            }
-
-            this.scanner.setAbsoluteIndex(text.length);
-            result.entries.push(new ClassificationInfo(
-                text.length, TokenClass.StringLiteral));
-
-            // We didn't see an terminator.  If the line ends with \ then we're still in 
-            // teh string literal.  Otherwise, we're done.
-            if (seenBackslash) {
-                result.finalLexState = lexState;
-            }
-            else {
-                result.finalLexState = EndOfLineState.Start;
-            }
-
-            return true;
         }
     }
 
