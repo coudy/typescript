@@ -744,7 +744,7 @@ module TypeScript {
             return false;
         }
 
-        private checkEcmaScriptVersionIsAtLeast(parent: ISyntaxElement, node: ISyntaxElement, languageVersion: LanguageVersion, code: DiagnosticCode): bool {
+        private checkEcmaScriptVersionIsAtLeast(parent: ISyntaxElement, node: ISyntaxElement, languageVersion: LanguageVersion, code: DiagnosticCode): boolean {
             if (this.syntaxTree.languageVersion() < languageVersion) {
                 var nodeFullStart = this.childFullStart(parent, node);
                 this.pushDiagnostic1(nodeFullStart, node, code);
