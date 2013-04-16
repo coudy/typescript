@@ -668,8 +668,7 @@ verify.completionListContains("i1_s_nc_p", "number", "", "i1_s_nc_p", "var");
 verify.completionListContains("i1_s_ncf", "(b: number) => number", "", "i1_s_ncf", "var");
 verify.completionListContains("i1_s_ncr", "number", "", "i1_s_ncr", "var");
 verify.completionListContains("i1_s_ncprop", "number", "", "i1_s_ncprop", "var");
-// BUG
-//verify.completionListContains("i1_c", "{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "", "i1_c", "var");
+
 verify.completionListContains("i1_c", "{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "", "i1_c", "var");
 
 goTo.marker('110');
