@@ -4600,6 +4600,11 @@ module TypeScript {
                 }
             }
 
+            if (source.isPrimitive() && (<PullPrimitiveTypeSymbol>source).isStringConstant() && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
+                // Both are string constants
+                return TypeScript.stripQuotes(source.getName()) == TypeScript.stripQuotes(target.getName());
+            }
+
             if (source == this.semanticInfoChain.undefinedTypeSymbol) {
                 return true;
             }

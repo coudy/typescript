@@ -13,16 +13,8 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
         public inConstructorArguments = false;
-        private currentImplementsClauseTypeCheckClassPublicProperties: PullSymbol[] = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
-        }
-
-        public getCurrentImplementsClauseTypeCheckClassPublicProperties() {
-            return this.currentImplementsClauseTypeCheckClassPublicProperties;
-        }
-        public setCurrentImplementsClauseTypeCheckClassPublicProperties(props: PullSymbol[]) {
-            this.currentImplementsClauseTypeCheckClassPublicProperties = props;
         }
 
         public pushEnclosingDecl(decl: PullDecl) {
@@ -606,7 +598,32 @@ module TypeScript {
                 }
             }
 
-            if (definitionSignature) {
+            // Verify assignment compatibility or in case of constantOverload signature, if its subtype of atleast one signature
+            var isConstantOverloadSignature = signature.isStringConstantOverloadSignature();
+            if (isConstantOverloadSignature) {
+                var resolutionContext = new PullTypeResolutionContext();
+                var foundSubtypeSignature = false;
+                for (var i = 0; i < allSignatures.length; i++) {
+                    if (allSignatures[i].isDefinition() || allSignatures[i] == signature) {
+                        continue;
+                    }
+
+                    if (!allSignatures[i].isResolved()) {
+                        this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
+                    }
+
+                    if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
+                        foundSubtypeSignature = true;
+                        break;
+                    }
+                }
+                
+                if (!foundSubtypeSignature) {
+                    // Could not find the overload signature subtype
+                    message = getDiagnosticMessage(DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null);
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                }
+            } else if (definitionSignature) {
                 var comparisonInfo = new TypeComparisonInfo();
                 var resolutionContext = new PullTypeResolutionContext();
                 if (!definitionSignature.isResolved()) {
@@ -945,19 +962,6 @@ module TypeScript {
         private typeCheckIfClassImplementsType(classDecl: TypeDeclaration, classSymbol: PullTypeSymbol,
             implementedType: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
 
-            var classPropertyList = typeCheckContext.getCurrentImplementsClauseTypeCheckClassPublicProperties();
-            if (!classPropertyList) {
-                classPropertyList = classSymbol.getMembers();
-                var extendsList = classSymbol.getExtendedTypes();
-                for (var i = 0; i < extendsList.length; i++) {
-                    var extendedTypePublicProperties = extendsList[i].getAllMembers(PullElementKind.SomeValue, true);
-                    classPropertyList = classPropertyList.concat(extendedTypePublicProperties);
-                }
-                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(classPropertyList);
-            }
-
-            var implementedTypeMembers = implementedType.getAllMembers(PullElementKind.SomeValue, true);
-
             var resolutionContext = new PullTypeResolutionContext();
             var comparisonInfo = new TypeComparisonInfo();
             var foundError = !this.resolver.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
@@ -1041,7 +1045,6 @@ module TypeScript {
                 for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
-                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(null);
             } else if (typeDeclAst.implementsList) {
                 var message = getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null);
                 this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());

@@ -222,6 +222,7 @@ module TypeScript {
         Overload_signatures_must_all_be_exported_or_local,
         Overload_signatures_must_all_be_ambient_or_non_ambient,
         Overload_signatures_must_all_be_optional_or_required,
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature,
         _this__may_not_be_referenced_in_constructor_arguments,
 
         // Extra information that is used as part of other error message

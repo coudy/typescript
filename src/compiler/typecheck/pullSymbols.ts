@@ -617,6 +617,7 @@ module TypeScript {
         private memberTypeParameterNameCache: any = null;
 
         private hasAGenericParameter = false;
+        private stringConstantOverload: boolean = undefined;
 
         constructor(kind: PullElementKind) {
             super("", kind);
@@ -815,6 +816,7 @@ module TypeScript {
             this.nonOptionalParamCount = 0;
             this.hasOptionalParam = false;
             this.hasAGenericParameter = false;
+            this.stringConstantOverload = undefined;
             
             // re-compute non-optional arg count, etc
             if (this.parameterLinks) {
@@ -833,6 +835,21 @@ module TypeScript {
             }
             
             super.invalidate();
+        }
+
+        public isStringConstantOverloadSignature() {
+            if (this.stringConstantOverload === undefined) {
+                var params = this.getParameters();
+                this.stringConstantOverload = false;
+                for (var i = 0; i < params.length; i++) {
+                    var paramType = params[i].getType();
+                    if (paramType && paramType.isPrimitive() && (<PullPrimitiveTypeSymbol>paramType).isStringConstant()) {
+                        this.stringConstantOverload = true;
+                    }
+                }
+            }
+
+            return this.stringConstantOverload;
         }
 
         static getSignatureTypeMemberName(candidateSignature: PullSignatureSymbol, signatures: PullSignatureSymbol[], scopeSymbol: PullSymbol) {

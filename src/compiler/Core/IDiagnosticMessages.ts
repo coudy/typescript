@@ -227,6 +227,7 @@ module TypeScript {
         Overload_signatures_must_all_be_exported_or_local: DiagnosticInfo;
         Overload_signatures_must_all_be_ambient_or_non_ambient: DiagnosticInfo;
         Overload_signatures_must_all_be_optional_or_required: DiagnosticInfo;
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: DiagnosticInfo;
         _this__may_not_be_referenced_in_constructor_arguments: DiagnosticInfo;
 
 
