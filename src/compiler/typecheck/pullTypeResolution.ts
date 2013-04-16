@@ -2440,7 +2440,7 @@ module TypeScript {
                     nameSymbol = lhsType.findMember(rhsName);
                 }
                 // could be a function symbol
-                else if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
+                else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType) {
                     lhsType = this.cachedFunctionInterfaceType;
 
                     nameSymbol = lhsType.findMember(rhsName);

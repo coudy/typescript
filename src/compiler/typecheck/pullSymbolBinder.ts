@@ -575,7 +575,7 @@ module TypeScript {
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
 
-                    if (classSymbol) {
+                    if (classSymbol && classSymbol.getKind() == PullElementKind.Class) {
 
                         var declarations = classSymbol.getDeclarations();
 
@@ -587,6 +587,9 @@ module TypeScript {
                                 classSymbol = null;
                             }
                         }
+                    }
+                    else {
+                        classSymbol = null;
                     }
                 }
             }
@@ -1014,6 +1017,10 @@ module TypeScript {
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
+            if ((<FunctionDeclaration>constructorTypeAST).variableArgList) {
+                signature.setHasVariableParamList();
+            }
+
             signature.addDeclaration(constructorTypeDeclaration);
             constructorTypeDeclaration.setSignatureSymbol(signature);
 
@@ -1057,7 +1064,7 @@ module TypeScript {
             var declKind = variableDeclaration.getKind();
             var varDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(variableDeclaration);
 
-            var isExported = false;
+            var isExported = (declFlags & PullElementFlags.Exported) != 0;
 
             var linkKind = SymbolLinkKind.PrivateMember;
 
@@ -1081,24 +1088,24 @@ module TypeScript {
             // modules may create instance variables
 
             if (parent) {
-                variableSymbol = parent.findMember(declName, false);
-
-                if (!variableSymbol) {
+                if (isExported) {
+                    variableSymbol = parent.findMember(declName, false);
+                }
+                else {
                     variableSymbol = parent.findContainedMember(declName);
+                }
 
-                    if (variableSymbol && !variableSymbol.getIsSynthesized()) {
-                        var declarations = variableSymbol.getDeclarations();
+                if (variableSymbol && !variableSymbol.getIsSynthesized()) {
+                    var declarations = variableSymbol.getDeclarations();
 
-                        if (declarations.length) {
-                            var variableSymbolParent = declarations[0].getParentDecl();
+                    if (declarations.length) {
+                        var variableSymbolParent = declarations[0].getParentDecl();
 
-                            if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                                variableSymbol = null;
-                            }
+                        if ((this.getParentDecl() != variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                            variableSymbol = null;
                         }
                     }
                 }
-
             }
             else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
                 variableSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
@@ -1187,11 +1194,28 @@ module TypeScript {
                     }
 
                     if (!classTypeSymbol) {
-                        classTypeSymbol = <PullClassTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                        var parentDecl = variableDeclaration.getParentDecl();
 
-                        if (classTypeSymbol && (classTypeSymbol.getKind() != PullElementKind.Class)) {
-                            classTypeSymbol = null;
+                        if (parentDecl) {
+                            var childDecls = parentDecl.searchChildDecls(declName, true);
+
+                            if (childDecls.length) {
+
+                                for (var i = 0; i < childDecls.length; i++) {
+                                    if (childDecls[i].getValueDecl() == variableDeclaration) {
+                                        classTypeSymbol = <PullClassTypeSymbol>childDecls[i].getSymbol();
+                                    }
+                                }
+                            }
                         }
+
+                        if (!classTypeSymbol) {
+                            classTypeSymbol = <PullClassTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                        }
+                    }
+
+                    if (classTypeSymbol && (classTypeSymbol.getKind() != PullElementKind.Class)) {
+                        classTypeSymbol = null;
                     }
 
                     if (classTypeSymbol && classTypeSymbol.isClass()) { // protect against duplicate declarations
@@ -1209,7 +1233,7 @@ module TypeScript {
                             if (ast) {
                                 this.semanticInfo.setASTForDecl(variableDeclaration, ast);
                             }
-                        }                     
+                        }
                     }
                     else {
                         // PULLTODO: Clodules/Interfaces on classes
@@ -1239,11 +1263,27 @@ module TypeScript {
                     }
 
                     if (!moduleContainerTypeSymbol) {
-                        moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                        var parentDecl = variableDeclaration.getParentDecl();
 
-                        if (moduleContainerTypeSymbol && (!moduleContainerTypeSymbol.isContainer())) {
-                            moduleContainerTypeSymbol = null;
+                        if (parentDecl) {
+                            var childDecls = parentDecl.searchChildDecls(declName, true);
+
+                            if (childDecls.length) {
+
+                                for (var i = 0; i < childDecls.length; i++) {
+                                    if (childDecls[i].getValueDecl() == variableDeclaration) {
+                                        moduleContainerTypeSymbol = <PullContainerTypeSymbol>childDecls[i].getSymbol();
+                                    }
+                                }
+                            }
                         }
+                        if (!moduleContainerTypeSymbol) {
+                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                        }
+                    }
+
+                    if (moduleContainerTypeSymbol && (!moduleContainerTypeSymbol.isContainer())) {
+                        moduleContainerTypeSymbol = null;
                     }
 
                     if (moduleContainerTypeSymbol) {
