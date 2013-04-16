@@ -1,4 +1,4 @@
-///<reference path="..\..\..\..\src\Harness\Harness.ts" />
+///<reference path="..\..\..\..\src\harness\harness.ts" />
 
 describe('Compiling samples', function ()
 {

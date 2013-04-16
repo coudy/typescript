@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 // @Filename: a.ts
 //// /*2*/export class Foo {}

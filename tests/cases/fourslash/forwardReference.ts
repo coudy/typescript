@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////function f() {
 ////    var x = new t();

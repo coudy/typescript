@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////function parameterFunction(callback: (a: number, b: string) => void) {
 ////    callback(/*parameterFunction1*/5, /*parameterFunction2*/"");

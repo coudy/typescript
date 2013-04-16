@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts'/>
 
 ////class C {
 /////*1*/    private _mspointerupHandler(args) {

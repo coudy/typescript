@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 //// function of1(b: { r: { c: number/**/
 

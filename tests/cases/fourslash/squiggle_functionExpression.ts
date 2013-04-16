@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 
 ////function takesCallback(callback: (n) => any) { }
 ////takesCallback(function inner(n) { var /*1*/k: string = 10/*2*/; });

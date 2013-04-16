@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts" />
 
 ////"an unclosed string is a terrible thing!
 ////

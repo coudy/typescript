@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 
 // Ensure there is only one error here and that it is in the type ref of the base
 

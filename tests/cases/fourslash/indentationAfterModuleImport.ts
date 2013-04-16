@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 ////declare module "fs" { };
 ////import im = module("fs");/**/
 

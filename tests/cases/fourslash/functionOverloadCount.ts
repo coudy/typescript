@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 
 ////class C1 {
 ////    public attr(): string;

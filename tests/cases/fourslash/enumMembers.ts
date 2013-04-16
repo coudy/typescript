@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 //// enum Foo { A, B, C }
 //// var n = Foo./*1*/A;

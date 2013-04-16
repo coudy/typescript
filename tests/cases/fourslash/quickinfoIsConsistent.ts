@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 
 ////declare var /*1*/f: (x: number) => number;
 ////function baz() {

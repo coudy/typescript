@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 // @BaselineFile: bpSpan_classes.baseline
 // @Filename: bpSpan_classes.ts

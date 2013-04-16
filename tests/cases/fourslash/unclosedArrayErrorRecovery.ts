@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts" />
 
 ////var table: number[;
 /////**/table.push(1)

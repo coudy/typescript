@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 /////** this is multi declare module*/
 ////module mult/*3*/iM {

@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////interface Foo {
 ////    doStuff(x: string, callback: (a: string) => string);

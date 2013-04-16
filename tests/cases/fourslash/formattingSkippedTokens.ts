@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 /////*1*/foo(): Bar { }
 /////*2*/function Foo      () #   { }

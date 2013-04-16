@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts" />
 
 // What's the deal with bug 662364 here? If the line between 
 // the class and the interface is removed, the 

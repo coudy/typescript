@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////class n {
 ////    constructor (public x: number, public y: number, private z: string) { }

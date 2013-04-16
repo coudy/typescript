@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 /////** this is signature 1*/
 ////function /*1*/f1(/**param a*/a: number): number;

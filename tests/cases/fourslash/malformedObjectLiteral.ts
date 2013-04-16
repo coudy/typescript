@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+///<reference path="fourslash.ts"/>
 
 ////var tt = { aa };/**/
 ////var y = /*1*/"unclosed string literal

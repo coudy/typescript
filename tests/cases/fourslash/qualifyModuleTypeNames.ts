@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////module m { export class c { } };
 ////function x(arg: m.c) { return arg; }

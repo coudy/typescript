@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////function someFn1(someFn: { (): void; }) { }
 ////class Foo {

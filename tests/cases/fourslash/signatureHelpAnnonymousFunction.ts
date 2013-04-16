@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 ////var anonymousFunctionTest = function(n: number, s: string): (a: number, b: string) => string {
 ////    return null;

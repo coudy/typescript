@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 
 ////{| "itemName": "Bar", "kind": "class", "parentName": "" |}export class Bar {
 ////    {| "itemName": "s", "kind": "property", "parentName": "Bar" |}public s: string;

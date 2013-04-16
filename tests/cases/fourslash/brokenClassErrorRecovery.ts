@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts" />
 
 ////class Foo {
 ////    constructor() { var x = [1, 2, 3 }

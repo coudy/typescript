@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 /////** This is class c2 without constuctor*/
 ////class c/*1*/2 {

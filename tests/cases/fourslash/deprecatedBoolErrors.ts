@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path='fourslash.ts' />
 
 // When bool becomes disallowed, remove the lines that say "verify.numberOfErrorsInCurrentFile(0);" and uncomment the lines that verify errors.
 

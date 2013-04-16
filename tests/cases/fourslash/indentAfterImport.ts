@@ -1,4 +1,4 @@
-/// <reference path='FourSlash.ts' />
+/// <reference path="fourslash.ts"/>
 //// import f = module('foo');/**/
 
 goTo.marker();
