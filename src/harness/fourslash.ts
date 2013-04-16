@@ -627,17 +627,26 @@ module FourSlash {
 
         private checkSyntacticErrors() {
             // Get syntactic errors (to force a refresh)
-            var incrErrs = JSON2.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
+            var incrSyntaxErrs = JSON2.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
 
             // Check syntactic structure
             var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
             var content = snapshot.getText(0, snapshot.getLength());
             var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), TypeScript.LanguageVersion.EcmaScript5);
-            var fullErrs = JSON2.stringify(refSyntaxTree.diagnostics());
+            var fullSyntaxErrs = JSON2.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, new TypeScript.CompilationSettings());
+            var compiler = new TypeScript.TypeScriptCompiler();
+            compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), 0, true);
+            compiler.pullTypeCheck();
+            var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.activeFile.fileName));
+            var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.activeFile.fileName));
 
-            if (incrErrs !== fullErrs) {
-                throw new Error('Mismatched incremental/full errors.\n=== Incremental errors ===\n' + incrErrs + '\n=== Full Errors ===\n' + fullErrs);
+            if (incrSyntaxErrs !== fullSyntaxErrs) {
+                throw new Error('Mismatched incremental/full syntactic errors.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+            }
+
+            if (incrSemanticErrs !== refSemanticErrs) {
+                throw new Error('Mismatched incremental/full semantic errors.\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
             }
 
             if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
