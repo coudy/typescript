@@ -1229,7 +1229,7 @@ module TypeScript {
         },
         Call_signature_expects__0__or_fewer_parameters: {
             category: DiagnosticCategory.NoPrefix,
-            message: "Call signature expects {0} or fewer parmeters.",
+            message: "Call signature expects {0} or fewer parameters.",
             code: 4014
         },
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
