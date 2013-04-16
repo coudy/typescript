@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////export class encoder {
 ////    static getEncoding(buffer: buffer/**/Pointer
