@@ -1,6 +1,6 @@
-///<reference path='..\..\..\src\harness\fourslash.ts' />
-///<reference path='..\..\..\src\harness\harness.ts'/>
-///<reference path='..\runnerbase.ts' />
+///<reference path='..\..\..\src\Harness\FourSlash.ts' />
+///<reference path='..\..\..\src\Harness\Harness.ts'/>
+///<reference path='..\RunnerBase.ts' />
 
 class FourslashRunner extends RunnerBase {
     private basePath = 'tests/cases/';

@@ -127,14 +127,14 @@ var harnessSources = [
 	path.join(harnessDirectory, "Diff.ts"),
 	path.join(harnessDirectory, "Harness.ts"),
 	path.join(harnessDirectory, "Baselining.ts"),
-	path.join(harnessDirectory, "Fourslash.ts"),
+	path.join(harnessDirectory, "FourSlash.ts"),
 	path.join(harnessDirectory, "DumpAST-baselining.ts"),
 	path.join(harnessDirectory, "external/json2.ts"),
 	path.join(harnessDirectory, "Runner.ts"),
 
-	path.join(runnersDirectory, "Runnerbase.ts"),
+	path.join(runnersDirectory, "RunnerBase.ts"),
 	path.join(runnersDirectory, "Compiler/Runner.ts"),
-	path.join(runnersDirectory, "Fourslash/FSRunner.ts"),
+	path.join(runnersDirectory, "FourSlash/FSRunner.ts"),
 	path.join(runnersDirectory, "Projects/Runner.ts"),
 	path.join(runnersDirectory, "UnitTest/UnitTestRunner.ts")
 ];

@@ -1,6 +1,6 @@
-/// <reference path='..\..\..\src\harness\harness.ts' />
-/// <reference path='..\..\..\src\compiler\diagnostics.ts' />
-/// <reference path='..\runnerbase.ts' />
+/// <reference path='..\..\..\src\Harness\Harness.ts' />
+/// <reference path='..\..\..\src\Compiler\Diagnostics.ts' />
+/// <reference path='..\RunnerBase.ts' />
 
 class CompilerBaselineRunner extends RunnerBase {
 
