@@ -307,11 +307,23 @@ module TypeScript {
         }
 
         public emitArrayLiteral(content: ASTList) {
+            var useNewLines = true;
+            for (var i = this.varListCountStack.length - 1; i >= 0; i--) {
+                // If we're in any var decl, not in the last position, then don't emit newlines.
+                if (this.varListCountStack[i] < -1 || this.varListCountStack[i] > 1) {
+                    useNewLines = false;
+                    break;
+                }
+            }
+
             this.writeToOutput("[");
             if (content && content.members.length > 0) {
-                this.writeLineToOutput("");
+                if (useNewLines) {
+                    this.writeLineToOutput("");
+                }
+
                 this.indenter.increaseIndent();
-                this.emitJavascriptList(content, ", ", true, false, false);
+                this.emitJavascriptList(content, ", ", useNewLines, false, false);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }
