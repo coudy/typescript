@@ -180,25 +180,6 @@ module TypeScript {
 
             var createdNewSymbol = false;
 
-            /*
-                                    if (parent) {
-                            if (isExported) {
-                                classSymbol = <PullClassTypeSymbol>parent.findMember(className);
-                            }
-                            else {
-                                classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
-
-                                if (classSymbol) {
-
-                                    var classSymbolParent = classSymbol.getDeclarations()[0].getParentDecl();
-
-                                    if ((classSymbolParent != this.getParentDecl()) && (!this.reBindingAfterChange || (classSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                                        classSymbol = null;
-                                    }
-                                }
-                            }
-                        }
-            */
             if (parent) {
                 if (isExported) {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeType);

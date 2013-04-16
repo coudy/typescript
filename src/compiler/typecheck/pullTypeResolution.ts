@@ -5277,7 +5277,7 @@ module TypeScript {
                     memberType = parameters[j].getType();
 
                     // account for varargs
-                    if (signature.hasVariableParamList() && (j >= signature.getNonOptionalParameterCount() - 1) && memberType.isArray()) {
+                    if (signature.hasVariableParamList() && (j >= signature.getNonOptionalParameterCount()) && memberType.isArray()) {
                         memberType = memberType.getElementType();
                     }
 
