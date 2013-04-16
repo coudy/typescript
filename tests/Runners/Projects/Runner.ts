@@ -1,6 +1,6 @@
-///<reference path="../../../src/harness/harness.ts" />
-///<reference path="../../../src/harness/exec.ts" />
-///<reference path="../runnerbase.ts" />
+///<reference path="../../../src/Harness/Harness.ts" />
+///<reference path="../../../src/Harness/Exec.ts" />
+///<reference path="../RunnerBase.ts" />
 
 class HarnessHost implements TypeScript.IResolverHost {
     public pathMap: any = {};
