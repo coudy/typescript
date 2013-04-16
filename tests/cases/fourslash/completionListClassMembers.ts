@@ -32,7 +32,8 @@ verify.memberListContains("publicStaticMethod");
 // No instance properties
 verify.not.memberListContains("privateProperty");
 verify.not.memberListContains("privateInstanceMethod");
-
+// constructors should have a 'prototype' member
+verify.memberListContains("prototype");
 
 goTo.marker("instanceMembersInsideClassScope");
 verify.memberListContains("privateProperty");
@@ -54,6 +55,8 @@ verify.memberListContains("publicStaticMethod");
 // No instance properties
 verify.not.memberListContains("publicProperty");
 verify.not.memberListContains("publicInstanceMethod");
+// constructors should have a 'prototype' member
+verify.memberListContains("prototype");
 
 goTo.marker("instanceMembersOutsideClassScope");
 // No privates

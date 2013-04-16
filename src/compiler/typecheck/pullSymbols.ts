@@ -1024,6 +1024,7 @@ module TypeScript {
             return false;
         }
         public isFunction() { return false; }
+        public isConstructor() { return false; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
         public isError() { return false; }

@@ -612,6 +612,7 @@ module TypeScript {
                     }
 
                     members = lhsType.getAllMembers(PullElementKind.SomeValue, includePrivate);
+
                     if (lhsType.isContainer()) {
                         var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
                         if (associatedInstance) {
@@ -619,6 +620,12 @@ module TypeScript {
                             var instanceMembers = instanceType.getAllMembers(PullElementKind.SomeValue, includePrivate);
                             members = members.concat(instanceMembers);
                         }
+                    }
+                    // Constructor types have a "prototype" property
+                    else if (lhsType.isConstructor()) {
+                        var prototypeSymbol = new PullSymbol("prototype", PullElementKind.Property);
+                        // prototypeSymbol.setType(lhsType);
+                        members.push(prototypeSymbol);
                     }
                 }
 
