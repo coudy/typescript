@@ -24,7 +24,7 @@
 ///<reference path='LanguageService.ts' />
 ///<reference path='PullLanguageService.ts' />
 ///<reference path='Shims.ts' />
-///<reference path='Formatting\formatting.ts' />
+///<reference path='Formatting\Formatting.ts' />
 ///<reference path='OutliningElementsCollector.ts' />
 ///<reference path='BraceMatcher.ts' />
 ///<reference path='Indenter.ts' />

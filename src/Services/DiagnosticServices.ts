@@ -1,4 +1,4 @@
-///<reference path='languageService.ts'/>
+///<reference path='LanguageService.ts'/>
 
 module Services {
 

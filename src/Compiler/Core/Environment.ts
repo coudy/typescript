@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 ///<reference path='..\Enumerator.ts' />
-///<reference path='..\process.ts' />
+///<reference path='..\Process.ts' />
 
 var Environment = (function () {
 
