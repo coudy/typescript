@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 /////** This is my variable*/
 ////var myV/*1*/ariable = 10;

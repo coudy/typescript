@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 ////var items = [0, 1, 2];
 ////items.forEach((n) => {

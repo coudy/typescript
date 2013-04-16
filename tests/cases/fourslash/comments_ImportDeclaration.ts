@@ -1,4 +1,4 @@
-/// <reference path='fourslash.ts' />
+/// <reference path='FourSlash.ts' />
 
 /////** ExtMod - contains m1*/
 ////declare module /*1*/"extMod" {
