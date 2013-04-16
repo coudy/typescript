@@ -1152,6 +1152,11 @@ module TypeScript {
             message: "Overload signatures must all be optional or required.",
             code: 2153
         },
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: {
+            category: DiagnosticCategory.Error,
+            message: "Specialized overload signature is not subtype of any non-specialized signature.",
+            code: 2154
+        },
 
 
 

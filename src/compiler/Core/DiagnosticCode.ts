@@ -222,6 +222,7 @@ module TypeScript {
         Overload_signatures_must_all_be_exported_or_local,
         Overload_signatures_must_all_be_ambient_or_non_ambient,
         Overload_signatures_must_all_be_optional_or_required,
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,
