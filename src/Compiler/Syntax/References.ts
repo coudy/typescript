@@ -1,6 +1,6 @@
 ///<reference path='..\Text\References.ts' />
 
-///<reference path='..\..\harness\external\json2stringify.ts' />
+///<reference path='..\..\Harness\External\json2stringify.ts' />
 ///<reference path='CharacterInfo.ts' />
 ///<reference path='Constants.ts' />
 ///<reference path='Diagnostic.ts' />

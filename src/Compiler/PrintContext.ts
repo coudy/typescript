@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='typescript.ts' />
+///<reference path='Typescript.ts' />
 
 module TypeScript {
     // TODO: refactor indent logic for use in emit

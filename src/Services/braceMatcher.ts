@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-///<reference path='typescriptServices.ts' />
-///<reference path='..\compiler\syntax\TextSpanWalker.ts' />
-///<reference path='..\compiler\syntax\SyntaxUtilities.ts' />
+///<reference path='TypescriptServices.ts' />
+///<reference path='..\Compiler\Syntax\TextSpanWalker.ts' />
+///<reference path='..\Compiler\Syntax\SyntaxUtilities.ts' />
 
 module Services {
     export class BraceMatcher {

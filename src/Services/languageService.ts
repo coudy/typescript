@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-///<reference path='typescriptServices.ts' />
-///<reference path='diagnosticServices.ts' />
+///<reference path='TypescriptServices.ts' />
+///<reference path='DiagnosticServices.ts' />
 
 module Services {
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='typescriptServices.ts' />
+///<reference path='TypescriptServices.ts' />
 ///<reference path='..\compiler\syntax\DepthLimitedWalker.ts' />
 
 module Services {

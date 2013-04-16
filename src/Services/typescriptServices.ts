@@ -14,20 +14,20 @@
 //
 
 ///<reference path='es5compat.ts' />
-///<reference path='..\compiler\typescript.ts' />
-///<reference path='coreServices.ts' />
-///<reference path='classifier.ts' />
+///<reference path='..\Compiler\Typescript.ts' />
+///<reference path='CoreServices.ts' />
+///<reference path='Classifier.ts' />
 ///<reference path='CompilerState.ts' />
-///<reference path='symbolSet.ts' />
-///<reference path='symbolTree.ts' />
-///<reference path='overridesCollector.ts' />
-///<reference path='languageService.ts' />
-///<reference path='pullLanguageService.ts' />
-///<reference path='shims.ts' />
-///<reference path='formatting\formatting.ts' />
-///<reference path='outliningElementsCollector.ts' />
-///<reference path='braceMatcher.ts' />
-///<reference path='indenter.ts' />
+///<reference path='SymbolSet.ts' />
+///<reference path='SymbolTree.ts' />
+///<reference path='OverridesCollector.ts' />
+///<reference path='LanguageService.ts' />
+///<reference path='PullLanguageService.ts' />
+///<reference path='Shims.ts' />
+///<reference path='Formatting\formatting.ts' />
+///<reference path='OutliningElementsCollector.ts' />
+///<reference path='BraceMatcher.ts' />
+///<reference path='Indenter.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {

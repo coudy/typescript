@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-///<reference path='..\compiler\io.ts'/>
-///<reference path='..\compiler\typescript.ts'/>
-///<reference path='..\services\typescriptServices.ts' />
-///<reference path='diff.ts'/>
+///<reference path='..\Compiler\IO.ts'/>
+///<reference path='..\Compiler\Typescript.ts'/>
+///<reference path='..\Services\TypescriptServices.ts' />
+///<reference path='Diff.ts'/>
 
 declare var assert: Harness.Assert;
 declare var it;

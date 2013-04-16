@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='typescript.ts' />
+///<reference path='Typescript.ts' />
 ///<reference path='Text\IScriptSnapshot.ts' />
 
 module TypeScript {

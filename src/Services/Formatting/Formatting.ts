@@ -13,27 +13,27 @@
 // limitations under the License.
 //
 
-///<reference path='..\typescriptServices.ts' />
+///<reference path='..\TypescriptServices.ts' />
 ///<reference path='ITextSnapshot.ts' />
 ///<reference path='ITextSnapshotLine.ts' />
 ///<reference path='TextSnapshot.ts' />
 ///<reference path='TextSnapshotLine.ts' />
 ///<reference path='SnapshotPoint.ts' />
-///<reference path='formattingContext.ts' />
-///<reference path='formattingManager.ts' />
-///<reference path='formattingRequestKind.ts' />
-///<reference path='rule.ts' />
-///<reference path='ruleAction.ts' />
-///<reference path='ruleDescriptor.ts' />
-///<reference path='ruleFlag.ts' />
-///<reference path='ruleOperation.ts' />
-///<reference path='ruleOperationContext.ts' />
-///<reference path='rules.ts' />
-///<reference path='rulesMap.ts' />
-///<reference path='rulesProvider.ts' />
-///<reference path='textEditInfo.ts' />
-///<reference path='tokenRange.ts' />
-///<reference path='tokenSpan.ts' /> 
+///<reference path='FormattingContext.ts' />
+///<reference path='FormattingManager.ts' />
+///<reference path='FormattingRequestKind.ts' />
+///<reference path='Rule.ts' />
+///<reference path='RuleAction.ts' />
+///<reference path='RuleDescriptor.ts' />
+///<reference path='RuleFlag.ts' />
+///<reference path='RuleOperation.ts' />
+///<reference path='RuleOperationContext.ts' />
+///<reference path='Rules.ts' />
+///<reference path='RulesMap.ts' />
+///<reference path='RulesProvider.ts' />
+///<reference path='TextEditInfo.ts' />
+///<reference path='TokenRange.ts' />
+///<reference path='TokenSpan.ts' /> 
 ///<reference path='IndentationNodeContext.ts' /> 
 ///<reference path='IndentationNodeContextPool.ts' /> 
 ///<reference path='IndentationTrackingWalker.ts' /> 

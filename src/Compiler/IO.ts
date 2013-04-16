@@ -14,7 +14,7 @@
 //
 
 ///<reference path='Enumerator.ts' />
-///<reference path='process.ts' />
+///<reference path='Process.ts' />
 ///<reference path='Core\References.ts' />
 
 interface IResolvedFile {

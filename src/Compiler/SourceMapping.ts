@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-///<reference path='typescript.ts' />
-///<reference path='..\harness\external\json2Stringify.ts' />
+///<reference path='Typescript.ts' />
+///<reference path='..\Harness\External\json2Stringify.ts' />
 
 module TypeScript {
     export class SourceMapPosition {

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+///<reference path='Formatting.ts' />
 
 module TypeScript.Formatting {
     export module Shared {

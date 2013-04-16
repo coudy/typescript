@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='typescriptServices.ts' />
+///<reference path='TypescriptServices.ts' />
 
 module Services {
     export class Indenter {

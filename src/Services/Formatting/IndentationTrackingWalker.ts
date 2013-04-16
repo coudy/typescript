@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+///<reference path='Formatting.ts' />
 ///<reference path='..\..\compiler\Syntax\Indentation.ts'/>
 
 module TypeScript.Formatting {

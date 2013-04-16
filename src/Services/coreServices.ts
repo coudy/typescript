@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-///<reference path='..\compiler\typescript.ts' />
-///<reference path='classifier.ts' />
-///<reference path='languageService.ts' />
-///<reference path='formatting\formatting.ts' />
+///<reference path='..\Compiler\Typescript.ts' />
+///<reference path='Classifier.ts' />
+///<reference path='LanguageService.ts' />
+///<reference path='Formatting\Formatting.ts' />
 
 // Access to "Debug" object 
 var debugObjectHost = (<any>this);
