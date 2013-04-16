@@ -363,6 +363,12 @@ module TypeScript {
             code: 1055
         },
 
+        Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: {
+            category: DiagnosticCategory.Error,
+            message: "Accessors are only when targeting EcmaScript5 and higher.",
+            code: 1056
+        },
+
 
 
 

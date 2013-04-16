@@ -65,6 +65,8 @@ module TypeScript {
         Rest_parameter_cannot_be_optional,
         Rest_parameter_cannot_have_initializer,
         Modifiers_cannot_appear_here,
+        Accessors_are_only_available_when_targeting_EcmaScript5_and_higher,
+
 
 
 

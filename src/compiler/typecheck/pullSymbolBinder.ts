@@ -2479,11 +2479,6 @@ module TypeScript {
                 }
             }
 
-            if (this.compilationSettings.codeGenTarget < LanguageVersion.EcmaScript5) {
-                getAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                    "Property accessors are only available when targeting ES5 or greater"));
-            }
-
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     getAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
@@ -2665,11 +2660,6 @@ module TypeScript {
                         break;
                     }
                 }
-            }
-
-            if (this.compilationSettings.codeGenTarget < LanguageVersion.EcmaScript5) {
-                setAccessorDeclaration.addDiagnostic(new PullDiagnostic(
-                    funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
             }
 
             if (accessorSymbol) {

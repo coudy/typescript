@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "CommaInTypeMemberList2.ts";
+    // "Accessors1.ts";
     undefined;
 
 var generate = false;
@@ -46,9 +46,13 @@ class Program {
             TypeScript.IncrementalParserTests.runAllTests();
         }
 
-        Environment.standardOut.WriteLine("Testing parser.");
+        Environment.standardOut.WriteLine("Testing parser ES5.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+
+        Environment.standardOut.WriteLine("Testing parser ES3.");
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript3",
+            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript3, verify, /*generateBaselines:*/ generate));
 
         if (specificFile === undefined) {
             TypeScript.SyntaxTreeToAstVisitor.checkPositions = false;
