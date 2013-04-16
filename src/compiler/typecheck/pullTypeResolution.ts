@@ -1206,7 +1206,8 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), enclosingDecl);
+                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
                     context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
                 }
                 else {
@@ -1220,7 +1221,8 @@ module TypeScript {
             } // PULLTODO: default values?
             else {
                 if (paramSymbol.getIsVarArg()) {
-                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), enclosingDecl);
+                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
                     context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
                 }
                 else if (contextParam) {
@@ -1242,7 +1244,8 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), enclosingDecl);
+                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
                     context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
                 }
                 else {
@@ -1252,7 +1255,8 @@ module TypeScript {
             } // PULLTODO: default values?
             else {
                 if (paramSymbol.getIsVarArg()) {
-                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), enclosingDecl);
+                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
                     context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
                 }
                 else if (contextParam) {
@@ -1488,7 +1492,8 @@ module TypeScript {
                     }
 
                     if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray()) {
-                        diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), decl);
+                        diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), decl);
                         typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                         hadError = true;
                     }
@@ -1526,7 +1531,8 @@ module TypeScript {
                 }
             }
             else if (declSymbol.getIsVarArg()) {
-                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.VarArgs_must_be_array_types, null), decl);
+                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), decl);
                 typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                 context.setTypeInContext(declSymbol, typeExprSymbol);
                 hadError = true;

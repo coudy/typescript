@@ -939,12 +939,12 @@ module TypeScript {
         },
         _this__must_only_be_used_inside_a_function_or_script_context: {
             category: DiagnosticCategory.Error,
-            message: "'this' must only be used inside a function or script context",
+            message: "'this' must only be used inside a function or script context.",
             code: 2109
         },
-        VarArgs_must_be_array_types: {
+        ______parameters_must_be_array_types: {
             category: DiagnosticCategory.Error,
-            message: "'...' parameters require both a parameter name and an array type annotation to be specified",
+            message: "'...' parameters must be array types.",
             code: 2110
         },
         Invalid__addition__expression___types_do_not_agree: {
@@ -1059,7 +1059,7 @@ module TypeScript {
         },
         All_symbols_within_a__with__block_will_be_resolved_to__any__: {
             category: DiagnosticCategory.Error,
-            message: "All symbols within a with block will be resolved to 'any'",
+            message: "All symbols within a with block will be resolved to 'any'.",
             code: 2135
         },
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: {
@@ -1151,6 +1151,11 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Overload signatures must all be optional or required.",
             code: 2153
+        },
+        _this__may_not_be_referenced_in_constructor_arguments: {
+            category: DiagnosticCategory.Error,
+            message: "'this' may not be referenced in constructor arguments.",
+            code: 2154
         },
 
 

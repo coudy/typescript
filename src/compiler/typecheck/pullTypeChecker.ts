@@ -12,6 +12,7 @@ module TypeScript {
         public inSuperConstructorCall = false;
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
+        public inConstructorArguments = false;
         private currentImplementsClauseTypeCheckClassPublicProperties: PullSymbol[] = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
@@ -521,6 +522,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
@@ -668,8 +670,9 @@ module TypeScript {
             var setter = accessorSymbol.getSetter();
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
-
             typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
@@ -721,14 +724,15 @@ module TypeScript {
 
             var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
 
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
-
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+            typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            typeCheckContext.inConstructorArguments = true;
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
+            typeCheckContext.inConstructorArguments = false;
 
             // Reset the flag
             typeCheckContext.seenSuperConstructorCall = false;
-
-            typeCheckContext.pushEnclosingDecl(functionDecl);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
@@ -782,8 +786,9 @@ module TypeScript {
             var funcDeclAST = <FunctionDeclaration>ast;
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
-
             typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
@@ -1434,6 +1439,10 @@ module TypeScript {
                 else if (enclosingNonLambdaDecl.getKind() === PullElementKind.Container || enclosingNonLambdaDecl.getKind() === PullElementKind.DynamicModule) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
                         getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null), enclosingDecl);
+                }
+                else if (typeCheckContext.inConstructorArguments) {
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
+                        getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_constructor_arguments, null), enclosingDecl);
                 }
             }
 

@@ -180,7 +180,7 @@ module TypeScript {
         _0_1__is_inaccessible,
         _this__cannot_be_referenced_within_module_bodies,
         _this__must_only_be_used_inside_a_function_or_script_context,
-        VarArgs_must_be_array_types,
+        ______parameters_must_be_array_types,
         Invalid__addition__expression___types_do_not_agree,
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
         The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
@@ -222,6 +222,7 @@ module TypeScript {
         Overload_signatures_must_all_be_exported_or_local,
         Overload_signatures_must_all_be_ambient_or_non_ambient,
         Overload_signatures_must_all_be_optional_or_required,
+        _this__may_not_be_referenced_in_constructor_arguments,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,
