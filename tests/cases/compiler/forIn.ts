@@ -14,3 +14,8 @@ for (j in arr2) { // ok
     var x3 = arr2[j];
     var y3 = arr2[j];
 }
+
+for (var l in arr) { 
+   // error in the body
+   k[l] = 1;
+}

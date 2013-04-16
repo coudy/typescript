@@ -1940,6 +1940,8 @@ module TypeScript {
                 this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter, null), typeCheckContext.getEnclosingDecl());
             }
 
+            this.typeCheckAST(forInStatement.body, typeCheckContext);
+
             return this.semanticInfoChain.voidTypeSymbol;
         }
 

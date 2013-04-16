@@ -12,3 +12,6 @@ for(j in arr2) {
     var x3 = arr2[j];
     var y3 = arr2[j];
 }
+for(var l in arr) {
+    k[l] = 1;
+}
