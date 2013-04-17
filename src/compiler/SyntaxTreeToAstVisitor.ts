@@ -878,6 +878,7 @@ module TypeScript {
             var members = new ASTList();
 
             var mapDecl = new VariableDeclarator(new Identifier("_map"));
+
             var declarators = new ASTList();
             declarators.append(mapDecl);
             var declaration = new VariableDeclaration(declarators);
@@ -885,9 +886,8 @@ module TypeScript {
 
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.ClassProperty);
 
-            // REVIEW: Is this still necessary?
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | (VariableFlags.Property | VariableFlags.Public));
             mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, null);
             members.append(statement);
             var lastValue: NumberLiteral = null;
