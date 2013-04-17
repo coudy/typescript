@@ -4975,8 +4975,17 @@ module TypeScript {
             for (var iMSig = 0; iMSig < targetSG.length; iMSig++) {
                 mSig = targetSG[iMSig];
 
+                if (mSig.isStringConstantOverloadSignature()) {
+                    continue;
+                }
+
                 for (var iNSig = 0; iNSig < sourceSG.length; iNSig++) {
                     nSig = sourceSG[iNSig];
+
+                    if (nSig.isStringConstantOverloadSignature()) {
+                        continue;
+                    }
+
                     if (this.signatureIsRelatableToTarget(nSig, mSig, assignableTo, comparisonCache, context, comparisonInfo)) {
                         foundMatch = true;
                         break;
