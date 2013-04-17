@@ -1766,7 +1766,8 @@ module TypeScript {
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
 
-            var functionSymbol: PullSymbol = new PullSymbol(functionExpressionDeclaration.getName(), PullElementKind.Function);
+            var functionName = (<PullFunctionExpressionDecl>functionExpressionDeclaration).getFunctionExpressionName();
+            var functionSymbol: PullSymbol = new PullSymbol(functionName, PullElementKind.Function);
             var functionTypeSymbol = new PullFunctionTypeSymbol();
 
             functionSymbol.setType(functionTypeSymbol);

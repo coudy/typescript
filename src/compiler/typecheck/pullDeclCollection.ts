@@ -541,7 +541,8 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new PullDecl("", PullElementKind.FunctionExpression, declFlags, span, context.scriptName);
+        var name = functionExpressionDeclAST.name ? functionExpressionDeclAST.name.actualText : "";
+        var decl = new PullFunctionExpressionDecl(name, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
 
@@ -929,10 +930,7 @@ module TypeScript {
 
         var funcDecl = <FunctionDeclaration>ast;
 
-        if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction))) {
-            return createFunctionExpressionDeclaration(funcDecl, context);
-        }
-        else if (funcDecl.isConstructor) {
+        if (funcDecl.isConstructor) {
             return createClassConstructorDeclaration(funcDecl, context);
         }
         else if (funcDecl.isGetAccessor()) {
@@ -958,6 +956,9 @@ module TypeScript {
         else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method) ||
                  hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
             return createMemberFunctionDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction))) {
+            return createFunctionExpressionDeclaration(funcDecl, context);
         }
 
         return createFunctionDeclaration(funcDecl, context);

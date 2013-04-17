@@ -374,6 +374,10 @@ module TypeScript {
 
                 }
                 else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
+                    if (pathDeclKind === PullElementKind.FunctionExpression && symbolName === (<PullFunctionExpressionDecl>decl).getFunctionExpressionName()) {
+                        return decl.getSymbol();
+                    }
+
                     childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
 
                     if (childDecls.length) {
@@ -447,10 +451,16 @@ module TypeScript {
 
                         break;
 
+                    case PullElementKind.FunctionExpression:
+                        var functionExpressionName = (<PullFunctionExpressionDecl>decl).getFunctionExpressionName();
+                        if (declSymbol && functionExpressionName) {
+                            symbols.push(declSymbol);
+                        }
+                        // intentional fall through
+
                     case PullElementKind.Function:
                     case PullElementKind.ConstructorMethod:
                     case PullElementKind.Method:
-                    case PullElementKind.FunctionExpression:
                         if (declSymbol) {
                             var functionType = declSymbol.getType();
                             if (functionType.getHasGenericSignature()) {

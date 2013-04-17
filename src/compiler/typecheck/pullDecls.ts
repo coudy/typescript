@@ -217,6 +217,19 @@ module TypeScript {
         }
     }
 
+    export class PullFunctionExpressionDecl extends PullDecl {
+        private functionExpressionName: string;
+
+        constructor(expressionName: string, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+            super("", PullElementKind.FunctionExpression, declFlags, span, scriptName);
+            this.functionExpressionName = expressionName;
+        }
+
+        public getFunctionExpressionName(): string {
+            return this.functionExpressionName;
+        }
+    }
+
     export class PullDeclGroup {
 
         private _decls: PullDecl[] = [];
