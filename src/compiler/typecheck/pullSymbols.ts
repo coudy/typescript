@@ -2782,6 +2782,7 @@ module TypeScript {
         }
         
         var prevInSpecialization = context.inSpecialization;
+        context.inSpecialization = true;
 
         nSpecializationsCreated++;
 

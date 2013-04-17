@@ -1457,10 +1457,11 @@ module TypeScript {
 
             if (declSymbol.isResolving()) {
                 // PULLTODO: Error or warning?
-                declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
-                declSymbol.setResolved();
-
-                return this.semanticInfoChain.anyTypeSymbol;
+                if (!context.inSpecialization) {
+                    declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                    declSymbol.setResolved();
+                    return declSymbol;//this.semanticInfoChain.anyTypeSymbol;
+                }               
             }
 
             declSymbol.startResolving();
@@ -4971,6 +4972,7 @@ module TypeScript {
             var mSig: PullSignatureSymbol = null;
             var nSig: PullSignatureSymbol = null;
             var foundMatch = false;
+            var testedSignature: boolean;
 
             for (var iMSig = 0; iMSig < targetSG.length; iMSig++) {
                 mSig = targetSG[iMSig];
@@ -4979,6 +4981,8 @@ module TypeScript {
                     continue;
                 }
 
+                testedSignature = false;
+
                 for (var iNSig = 0; iNSig < sourceSG.length; iNSig++) {
                     nSig = sourceSG[iNSig];
 
@@ -4986,13 +4990,15 @@ module TypeScript {
                         continue;
                     }
 
+                    testedSignature = true;
+
                     if (this.signatureIsRelatableToTarget(nSig, mSig, assignableTo, comparisonCache, context, comparisonInfo)) {
                         foundMatch = true;
                         break;
                     }
                 }
 
-                if (foundMatch) {
+                if (foundMatch || !testedSignature) {
                     foundMatch = false;
                     continue;
                 }
