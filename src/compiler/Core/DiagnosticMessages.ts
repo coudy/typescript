@@ -481,9 +481,9 @@ module TypeScript {
             code: 2016
         },
 
-        Accessor_may_not_take_type_parameters: {
+        Accessor_cannot_have_type_parameters: {
             category: DiagnosticCategory.Error,
-            message: "Accessors may not take type parameters.",
+            message: "Accessors cannot have type parameters.",
             code: 2017
         },
 
@@ -777,9 +777,9 @@ module TypeScript {
             message: "An interface may only extend another class or interface.",
             code: 2075
         },
-        An_interface_may_not_implement_another_type: {
+        An_interface_cannot_implement_another_type: {
             category: DiagnosticCategory.Error,
-            message: "An interface may not implement another type.",
+            message: "An interface cannot implement another type.",
             code: 2076
         },
         Unable_to_resolve_type: {
@@ -797,9 +797,9 @@ module TypeScript {
             message: "Unable to resolve type parameter constraint.",
             code: 2079
         },
-        Type_parameter_constraint_may_not_be_a_primitive_type: {
+        Type_parameter_constraint_cannot_be_a_primitive_type: {
             category: DiagnosticCategory.Error,
-            message: "Type parameter constraint may not be a primitive type.",
+            message: "Type parameter constraint cannot be a primitive type.",
             code: 2080
         },
         Supplied_parameters_do_not_match_any_signature_of_call_target: {
@@ -882,9 +882,9 @@ module TypeScript {
             message: "'get' and 'set' accessor must have the same type.",
             code: 2096
         },
-        _this__may_not_be_referenced_in_current_location: {
+        _this__cannot_be_referenced_in_current_location: {
             category: DiagnosticCategory.Error,
-            message: "'this' may not be referenced in current location.",
+            message: "'this' cannot be referenced in current location.",
             code: 2097
         },
         Use_of_deprecated__bool__type__Use__boolean__instead: {
@@ -892,9 +892,9 @@ module TypeScript {
             message: "Use of deprecated type 'bool'. Use 'boolean' instead.",
             code: 2098
         },
-        Static_methods_may_not_reference_class_type_parameters: {
+        Static_methods_cannot_reference_class_type_parameters: {
             category: DiagnosticCategory.Error,
-            message: "Static methods may not reference class type parameters.",
+            message: "Static methods cannot reference class type parameters.",
             code: 2099
         },
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: {
@@ -913,9 +913,9 @@ module TypeScript {
             message: "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
             code: 2102
         },
-        _super__may_not_be_referenced_in_non_derived_classes: {
+        _super__cannot_be_referenced_in_non_derived_classes: {
             category: DiagnosticCategory.Error,
-            message: "'super' may not be referenced in non-derived classes.",
+            message: "'super' cannot be referenced in non-derived classes.",
             code: 2103
         },
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: {
@@ -1008,9 +1008,9 @@ module TypeScript {
             message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
             code: 2121
         },
-        Setters_may_not_return_a_value: {
+        Setters_cannot_return_a_value: {
             category: DiagnosticCategory.Error,
-            message: "Setters may not return a value.",
+            message: "Setters cannot return a value.",
             code: 2122
         },
         Tried_to_set_variable_type_to_uninitialized_module_type: {
@@ -1088,9 +1088,9 @@ module TypeScript {
             message: "The operand of an increment or decrement operator must be a variable, property or indexer.",
             code: 2139
         },
-        _this__may_not_be_referenced_in_initializers_in_a_class_body: {
+        _this__cannot_be_referenced_in_initializers_in_a_class_body: {
             category: DiagnosticCategory.Error,
-            message: "'this' may not be referenced in initializers in a class body.",
+            message: "'this' cannot be referenced in initializers in a class body.",
             code: 2140
         },
         Class__0__cannot_extend_class__1__NL__2: {
@@ -1163,11 +1163,22 @@ module TypeScript {
             message: "Specialized overload signature is not subtype of any non-specialized signature.",
             code: 2154
         },
-        _this__may_not_be_referenced_in_constructor_arguments: {
+        _this__cannot_be_referenced_in_constructor_arguments: {
             category: DiagnosticCategory.Error,
-            message: "'this' may not be referenced in constructor arguments.",
+            message: "'this' cannot be referenced in constructor arguments.",
             code: 2155
         },
+        Static_member_cannot_be_accessed_off_an_instance_variable: {
+            category: DiagnosticCategory.Error,
+            message: "Static member cannot be accessed off an instance variable.",
+            code: 2156
+        },
+        Instance_member_cannot_be_accessed_off_a_class: {
+            category: DiagnosticCategory.Error,
+            message: "Instance member cannot be accessed off a class.",
+            code: 2157
+        },
+
 
 
 

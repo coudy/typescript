@@ -89,7 +89,7 @@ module TypeScript {
         Operator__0__cannot_be_applied_to_type__1_: DiagnosticInfo;
         Getter__0__already_declared: DiagnosticInfo;
         Setter__0__already_declared: DiagnosticInfo;
-        Accessor_may_not_take_type_parameters: DiagnosticInfo;
+        Accessor_cannot_have_type_parameters: DiagnosticInfo;
         _set__accessor_must_have_only_one_parameter: DiagnosticInfo;
         Use_of_deprecated__bool__type__Use__boolean__instead: DiagnosticInfo;
 
@@ -156,11 +156,11 @@ module TypeScript {
         A_class_may_only_extend_another_class: DiagnosticInfo;
         A_class_may_only_implement_another_class_or_interface: DiagnosticInfo;
         An_interface_may_only_extend_another_class_or_interface: DiagnosticInfo;
-        An_interface_may_not_implement_another_type: DiagnosticInfo;
+        An_interface_cannot_implement_another_type: DiagnosticInfo;
         Unable_to_resolve_type: DiagnosticInfo;
         Unable_to_resolve_type_of__0_: DiagnosticInfo;
         Unable_to_resolve_type_parameter_constraint: DiagnosticInfo;
-        Type_parameter_constraint_may_not_be_a_primitive_type: DiagnosticInfo;
+        Type_parameter_constraint_cannot_be_a_primitive_type: DiagnosticInfo;
         Supplied_parameters_do_not_match_any_signature_of_call_target: DiagnosticInfo;
         Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0: DiagnosticInfo;
         Invalid__new__expression: DiagnosticInfo;
@@ -177,11 +177,11 @@ module TypeScript {
         The_property__0__does_not_exist_on_value_of_type__1__: DiagnosticInfo;
         Could_not_find_symbol__0_: DiagnosticInfo;
         _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
-        _this__may_not_be_referenced_in_current_location: DiagnosticInfo;
+        _this__cannot_be_referenced_in_current_location: DiagnosticInfo;
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself: DiagnosticInfo;
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: DiagnosticInfo;
-        _super__may_not_be_referenced_in_non_derived_classes: DiagnosticInfo;
+        _super__cannot_be_referenced_in_non_derived_classes: DiagnosticInfo;
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: DiagnosticInfo;
         Constructors_for_derived_classes_must_contain_a__super__call: DiagnosticInfo;
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: DiagnosticInfo;
@@ -200,7 +200,7 @@ module TypeScript {
         The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
         The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: DiagnosticInfo;
         The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: DiagnosticInfo;
-        Setters_may_not_return_a_value: DiagnosticInfo;
+        Setters_cannot_return_a_value: DiagnosticInfo;
         Tried_to_set_variable_type_to_uninitialized_module_type: DiagnosticInfo;
         Tried_to_set_variable_type_to_uninitialized_module_type__0__: DiagnosticInfo;
         Function__0__declared_a_non_void_return_type__but_has_no_return_expression: DiagnosticInfo;
@@ -214,7 +214,7 @@ module TypeScript {
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
         Class__0__declares_class__1__but_does_not_implement_it__NL__2: DiagnosticInfo;
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: DiagnosticInfo;
-        _this__may_not_be_referenced_in_initializers_in_a_class_body: DiagnosticInfo;
+        _this__cannot_be_referenced_in_initializers_in_a_class_body: DiagnosticInfo;
         Class__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
         Interface__0__cannot_extend_class__1__NL__2: DiagnosticInfo;
         Interface__0__cannot_extend_interface__1__NL__2: DiagnosticInfo;
@@ -229,7 +229,11 @@ module TypeScript {
         Overload_signatures_must_all_be_ambient_or_non_ambient: DiagnosticInfo;
         Overload_signatures_must_all_be_optional_or_required: DiagnosticInfo;
         Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: DiagnosticInfo;
-        _this__may_not_be_referenced_in_constructor_arguments: DiagnosticInfo;
+        _this__cannot_be_referenced_in_constructor_arguments: DiagnosticInfo;
+        Static_member_cannot_be_accessed_off_an_instance_variable: DiagnosticInfo;
+        Instance_member_cannot_be_accessed_off_a_class: DiagnosticInfo;
+
+
 
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
