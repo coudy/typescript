@@ -775,9 +775,9 @@ module Services {
         }
 
         private isInObjectExpressionContext(path: TypeScript.AstPath): boolean {
-            return (path.count() >= 0 && path.asts[path.top].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = {
-                (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.List && path.asts[path.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = { a:1, 
-                (path.count() >= 3 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
+            return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = {
+                (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.List && path.asts[path.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = { a:1, 
+                (path.count() >= 4 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
         }
 
         private isCompletionListBlocker(path: TypeScript.AstPath): boolean {
@@ -798,7 +798,7 @@ module Services {
             if (path.isNameOfVariable() // var <here>
                 || path.isNameOfArgument() // function foo(a, b<here>
                 || path.isArgumentListOfFunction() // function foo(<here>
-                || path.ast().nodeType === TypeScript.NodeType.Parameter // function foo(a <here>
+                || (path.count() >= 1 && path.ast().nodeType === TypeScript.NodeType.Parameter) // function foo(a <here>
                 ) {
                 return false;
             }

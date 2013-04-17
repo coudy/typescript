@@ -526,7 +526,7 @@ module TypeScript {
             }
 
             var result = new Script();
-            this.setSpanExplicit(result, start, this.position);
+            this.setSpanExplicit(result, start, start + node.fullWidth());
 
             result.moduleElements = bod;
             result.topLevelMod = topLevelMod;
