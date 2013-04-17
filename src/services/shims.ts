@@ -144,7 +144,7 @@ module Services {
         }
 
         public getLineStartPositions(): number[]{
-            if (this.lineStartPositions === null) {
+            if (this.lineStartPositions == null) {
                 this.lineStartPositions = JSON.parse(this.scriptSnapshotShim.getLineStartPositions());
             }
 
@@ -153,7 +153,7 @@ module Services {
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
             var encoded = this.scriptSnapshotShim.getTextChangeRangeSinceVersion(scriptVersion);
-            if (encoded === null) {
+            if (encoded == null) {
                 return null;
             }
 
