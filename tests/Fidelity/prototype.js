@@ -704,8 +704,8 @@ var TypeScript;
         DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 153;
         DiagnosticCode._map[154] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
         DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 154;
-        DiagnosticCode._map[155] = "Could_not_find_dotted_name__0_";
-        DiagnosticCode.Could_not_find_dotted_name__0_ = 155;
+        DiagnosticCode._map[155] = "The_property__0__does_not_exist_on_value_of_type__1__";
+        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 155;
         DiagnosticCode._map[156] = "Could_not_find_symbol__0_";
         DiagnosticCode.Could_not_find_symbol__0_ = 156;
         DiagnosticCode._map[157] = "_get__and__set__accessor_must_have_the_same_type";
@@ -820,52 +820,54 @@ var TypeScript;
         DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 211;
         DiagnosticCode._map[212] = "Overload_signatures_must_all_be_optional_or_required";
         DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 212;
-        DiagnosticCode._map[213] = "_this__may_not_be_referenced_in_constructor_arguments";
-        DiagnosticCode._this__may_not_be_referenced_in_constructor_arguments = 213;
-        DiagnosticCode._map[214] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 214;
-        DiagnosticCode._map[215] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 215;
-        DiagnosticCode._map[216] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 216;
-        DiagnosticCode._map[217] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 217;
-        DiagnosticCode._map[218] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 218;
-        DiagnosticCode._map[219] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 219;
-        DiagnosticCode._map[220] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 220;
-        DiagnosticCode._map[221] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 221;
-        DiagnosticCode._map[222] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 222;
-        DiagnosticCode._map[223] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 223;
-        DiagnosticCode._map[224] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 224;
-        DiagnosticCode._map[225] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 225;
-        DiagnosticCode._map[226] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 226;
-        DiagnosticCode._map[227] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 227;
-        DiagnosticCode._map[228] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 228;
-        DiagnosticCode._map[229] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 229;
-        DiagnosticCode._map[230] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 230;
-        DiagnosticCode._map[231] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 231;
-        DiagnosticCode._map[232] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 232;
-        DiagnosticCode._map[233] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 233;
-        DiagnosticCode._map[234] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 234;
-        DiagnosticCode._map[235] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 235;
+        DiagnosticCode._map[213] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
+        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 213;
+        DiagnosticCode._map[214] = "_this__may_not_be_referenced_in_constructor_arguments";
+        DiagnosticCode._this__may_not_be_referenced_in_constructor_arguments = 214;
+        DiagnosticCode._map[215] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 215;
+        DiagnosticCode._map[216] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 216;
+        DiagnosticCode._map[217] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 217;
+        DiagnosticCode._map[218] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 218;
+        DiagnosticCode._map[219] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 219;
+        DiagnosticCode._map[220] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 220;
+        DiagnosticCode._map[221] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 221;
+        DiagnosticCode._map[222] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 222;
+        DiagnosticCode._map[223] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 223;
+        DiagnosticCode._map[224] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 224;
+        DiagnosticCode._map[225] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 225;
+        DiagnosticCode._map[226] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 226;
+        DiagnosticCode._map[227] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 227;
+        DiagnosticCode._map[228] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 228;
+        DiagnosticCode._map[229] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 229;
+        DiagnosticCode._map[230] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 230;
+        DiagnosticCode._map[231] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 231;
+        DiagnosticCode._map[232] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 232;
+        DiagnosticCode._map[233] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 233;
+        DiagnosticCode._map[234] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 234;
+        DiagnosticCode._map[235] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 235;
+        DiagnosticCode._map[236] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 236;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1647,9 +1649,9 @@ var TypeScript;
             message: "Could not find enclosing symbol for dotted name '{0}'.",
             code: 2093
         },
-        Could_not_find_dotted_name__0_: {
+        The_property__0__does_not_exist_on_value_of_type__1__: {
             category: 1 /* Error */ ,
-            message: "Could not find dotted name '{0}'.",
+            message: "The property '{0}' does not exist on value of type '{1}'.",
             code: 2094
         },
         Could_not_find_symbol__0_: {
@@ -1937,10 +1939,15 @@ var TypeScript;
             message: "Overload signatures must all be optional or required.",
             code: 2153
         },
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: {
+            category: 1 /* Error */ ,
+            message: "Specialized overload signature is not subtype of any non-specialized signature.",
+            code: 2154
+        },
         _this__may_not_be_referenced_in_constructor_arguments: {
             category: 1 /* Error */ ,
             message: "'this' may not be referenced in constructor arguments.",
-            code: 2154
+            code: 2155
         },
         Type__0__is_missing_property__1__from_type__2_: {
             category: 2 /* NoPrefix */ ,
@@ -21980,18 +21987,12 @@ var TypeScript;
             12704, 
             12727, 
             13312, 
-            13312, 
-            19893, 
             19893, 
             19968, 
-            19968, 
-            40869, 
             40869, 
             40960, 
             42124, 
             44032, 
-            44032, 
-            55203, 
             55203, 
             63744, 
             64045, 
@@ -22045,12 +22046,72 @@ var TypeScript;
             65500
         ];
         Unicode.unicodeES3IdentifierPart = [
+            170, 
+            170, 
+            181, 
+            181, 
+            186, 
+            186, 
+            192, 
+            214, 
+            216, 
+            246, 
+            248, 
+            543, 
+            546, 
+            563, 
+            592, 
+            685, 
+            688, 
+            696, 
+            699, 
+            705, 
+            720, 
+            721, 
+            736, 
+            740, 
+            750, 
+            750, 
             768, 
             846, 
             864, 
             866, 
+            890, 
+            890, 
+            902, 
+            902, 
+            904, 
+            906, 
+            908, 
+            908, 
+            910, 
+            929, 
+            931, 
+            974, 
+            976, 
+            983, 
+            986, 
+            1011, 
+            1024, 
+            1153, 
             1155, 
             1158, 
+            1164, 
+            1220, 
+            1223, 
+            1224, 
+            1227, 
+            1228, 
+            1232, 
+            1269, 
+            1272, 
+            1273, 
+            1329, 
+            1366, 
+            1369, 
+            1369, 
+            1377, 
+            1415, 
             1425, 
             1441, 
             1443, 
@@ -22063,42 +22124,58 @@ var TypeScript;
             1474, 
             1476, 
             1476, 
-            1611, 
+            1488, 
+            1514, 
+            1520, 
+            1522, 
+            1569, 
+            1594, 
+            1600, 
             1621, 
             1632, 
             1641, 
             1648, 
-            1648, 
-            1750, 
+            1747, 
+            1749, 
             1756, 
             1759, 
-            1764, 
-            1767, 
             1768, 
             1770, 
             1773, 
             1776, 
-            1785, 
-            1809, 
-            1809, 
+            1788, 
+            1808, 
+            1836, 
             1840, 
             1866, 
-            1958, 
+            1920, 
             1968, 
             2305, 
             2307, 
+            2309, 
+            2361, 
             2364, 
-            2364, 
-            2366, 
             2381, 
-            2385, 
+            2384, 
             2388, 
-            2402, 
+            2392, 
             2403, 
             2406, 
             2415, 
             2433, 
             2435, 
+            2437, 
+            2444, 
+            2447, 
+            2448, 
+            2451, 
+            2472, 
+            2474, 
+            2480, 
+            2482, 
+            2482, 
+            2486, 
+            2489, 
             2492, 
             2492, 
             2494, 
@@ -22109,12 +22186,28 @@ var TypeScript;
             2509, 
             2519, 
             2519, 
-            2530, 
+            2524, 
+            2525, 
+            2527, 
             2531, 
             2534, 
-            2543, 
+            2545, 
             2562, 
             2562, 
+            2565, 
+            2570, 
+            2575, 
+            2576, 
+            2579, 
+            2600, 
+            2602, 
+            2608, 
+            2610, 
+            2611, 
+            2613, 
+            2614, 
+            2616, 
+            2617, 
             2620, 
             2620, 
             2622, 
@@ -22123,25 +22216,55 @@ var TypeScript;
             2632, 
             2635, 
             2637, 
+            2649, 
+            2652, 
+            2654, 
+            2654, 
             2662, 
-            2673, 
+            2676, 
             2689, 
             2691, 
+            2693, 
+            2699, 
+            2701, 
+            2701, 
+            2703, 
+            2705, 
+            2707, 
+            2728, 
+            2730, 
+            2736, 
+            2738, 
+            2739, 
+            2741, 
+            2745, 
             2748, 
-            2748, 
-            2750, 
             2757, 
             2759, 
             2761, 
             2763, 
             2765, 
+            2768, 
+            2768, 
+            2784, 
+            2784, 
             2790, 
             2799, 
             2817, 
             2819, 
+            2821, 
+            2828, 
+            2831, 
+            2832, 
+            2835, 
+            2856, 
+            2858, 
+            2864, 
+            2866, 
+            2867, 
+            2870, 
+            2873, 
             2876, 
-            2876, 
-            2878, 
             2883, 
             2887, 
             2888, 
@@ -22149,10 +22272,34 @@ var TypeScript;
             2893, 
             2902, 
             2903, 
+            2908, 
+            2909, 
+            2911, 
+            2913, 
             2918, 
             2927, 
             2946, 
             2947, 
+            2949, 
+            2954, 
+            2958, 
+            2960, 
+            2962, 
+            2965, 
+            2969, 
+            2970, 
+            2972, 
+            2972, 
+            2974, 
+            2975, 
+            2979, 
+            2980, 
+            2984, 
+            2986, 
+            2990, 
+            2997, 
+            2999, 
+            3001, 
             3006, 
             3010, 
             3014, 
@@ -22165,6 +22312,16 @@ var TypeScript;
             3055, 
             3073, 
             3075, 
+            3077, 
+            3084, 
+            3086, 
+            3088, 
+            3090, 
+            3112, 
+            3114, 
+            3123, 
+            3125, 
+            3129, 
             3134, 
             3140, 
             3142, 
@@ -22173,10 +22330,22 @@ var TypeScript;
             3149, 
             3157, 
             3158, 
+            3168, 
+            3169, 
             3174, 
             3183, 
             3202, 
             3203, 
+            3205, 
+            3212, 
+            3214, 
+            3216, 
+            3218, 
+            3240, 
+            3242, 
+            3251, 
+            3253, 
+            3257, 
             3262, 
             3268, 
             3270, 
@@ -22185,10 +22354,22 @@ var TypeScript;
             3277, 
             3285, 
             3286, 
+            3294, 
+            3294, 
+            3296, 
+            3297, 
             3302, 
             3311, 
             3330, 
             3331, 
+            3333, 
+            3340, 
+            3342, 
+            3344, 
+            3346, 
+            3368, 
+            3370, 
+            3385, 
             3390, 
             3395, 
             3398, 
@@ -22197,10 +22378,22 @@ var TypeScript;
             3405, 
             3415, 
             3415, 
+            3424, 
+            3425, 
             3430, 
             3439, 
             3458, 
             3459, 
+            3461, 
+            3478, 
+            3482, 
+            3505, 
+            3507, 
+            3515, 
+            3517, 
+            3517, 
+            3520, 
+            3526, 
             3530, 
             3530, 
             3535, 
@@ -22211,24 +22404,50 @@ var TypeScript;
             3551, 
             3570, 
             3571, 
-            3633, 
-            3633, 
-            3636, 
+            3585, 
             3642, 
-            3655, 
+            3648, 
             3662, 
             3664, 
             3673, 
-            3761, 
-            3761, 
-            3764, 
+            3713, 
+            3714, 
+            3716, 
+            3716, 
+            3719, 
+            3720, 
+            3722, 
+            3722, 
+            3725, 
+            3725, 
+            3732, 
+            3735, 
+            3737, 
+            3743, 
+            3745, 
+            3747, 
+            3749, 
+            3749, 
+            3751, 
+            3751, 
+            3754, 
+            3755, 
+            3757, 
             3769, 
             3771, 
-            3772, 
+            3773, 
+            3776, 
+            3780, 
+            3782, 
+            3782, 
             3784, 
             3789, 
             3792, 
             3801, 
+            3804, 
+            3805, 
+            3840, 
+            3840, 
             3864, 
             3865, 
             3872, 
@@ -22240,61 +22459,277 @@ var TypeScript;
             3897, 
             3897, 
             3902, 
-            3903, 
+            3911, 
+            3913, 
+            3946, 
             3953, 
             3972, 
             3974, 
-            3975, 
+            3979, 
             3984, 
             3991, 
             3993, 
             4028, 
             4038, 
             4038, 
+            4096, 
+            4129, 
+            4131, 
+            4135, 
+            4137, 
+            4138, 
             4140, 
             4146, 
             4150, 
             4153, 
             4160, 
             4169, 
-            4182, 
+            4176, 
             4185, 
+            4256, 
+            4293, 
+            4304, 
+            4342, 
+            4352, 
+            4441, 
+            4447, 
+            4514, 
+            4520, 
+            4601, 
+            4608, 
+            4614, 
+            4616, 
+            4678, 
+            4680, 
+            4680, 
+            4682, 
+            4685, 
+            4688, 
+            4694, 
+            4696, 
+            4696, 
+            4698, 
+            4701, 
+            4704, 
+            4742, 
+            4744, 
+            4744, 
+            4746, 
+            4749, 
+            4752, 
+            4782, 
+            4784, 
+            4784, 
+            4786, 
+            4789, 
+            4792, 
+            4798, 
+            4800, 
+            4800, 
+            4802, 
+            4805, 
+            4808, 
+            4814, 
+            4816, 
+            4822, 
+            4824, 
+            4846, 
+            4848, 
+            4878, 
+            4880, 
+            4880, 
+            4882, 
+            4885, 
+            4888, 
+            4894, 
+            4896, 
+            4934, 
+            4936, 
+            4954, 
             4969, 
             4977, 
-            6068, 
+            5024, 
+            5108, 
+            5121, 
+            5740, 
+            5743, 
+            5750, 
+            5761, 
+            5786, 
+            5792, 
+            5866, 
+            6016, 
             6099, 
             6112, 
             6121, 
             6160, 
             6169, 
+            6176, 
+            6263, 
+            6272, 
             6313, 
-            6313, 
+            7680, 
+            7835, 
+            7840, 
+            7929, 
+            7936, 
+            7957, 
+            7960, 
+            7965, 
+            7968, 
+            8005, 
+            8008, 
+            8013, 
+            8016, 
+            8023, 
+            8025, 
+            8025, 
+            8027, 
+            8027, 
+            8029, 
+            8029, 
+            8031, 
+            8061, 
+            8064, 
+            8116, 
+            8118, 
+            8124, 
+            8126, 
+            8126, 
+            8130, 
+            8132, 
+            8134, 
+            8140, 
+            8144, 
+            8147, 
+            8150, 
+            8155, 
+            8160, 
+            8172, 
+            8178, 
+            8180, 
+            8182, 
+            8188, 
             8255, 
             8256, 
+            8319, 
+            8319, 
             8400, 
             8412, 
             8417, 
             8417, 
-            12330, 
+            8450, 
+            8450, 
+            8455, 
+            8455, 
+            8458, 
+            8467, 
+            8469, 
+            8469, 
+            8473, 
+            8477, 
+            8484, 
+            8484, 
+            8486, 
+            8486, 
+            8488, 
+            8488, 
+            8490, 
+            8493, 
+            8495, 
+            8497, 
+            8499, 
+            8505, 
+            8544, 
+            8579, 
+            12293, 
+            12295, 
+            12321, 
             12335, 
+            12337, 
+            12341, 
+            12344, 
+            12346, 
+            12353, 
+            12436, 
             12441, 
             12442, 
-            12539, 
-            12539, 
-            64286, 
-            64286, 
+            12445, 
+            12446, 
+            12449, 
+            12542, 
+            12549, 
+            12588, 
+            12593, 
+            12686, 
+            12704, 
+            12727, 
+            13312, 
+            19893, 
+            19968, 
+            40869, 
+            40960, 
+            42124, 
+            44032, 
+            55203, 
+            63744, 
+            64045, 
+            64256, 
+            64262, 
+            64275, 
+            64279, 
+            64285, 
+            64296, 
+            64298, 
+            64310, 
+            64312, 
+            64316, 
+            64318, 
+            64318, 
+            64320, 
+            64321, 
+            64323, 
+            64324, 
+            64326, 
+            64433, 
+            64467, 
+            64829, 
+            64848, 
+            64911, 
+            64914, 
+            64967, 
+            65008, 
+            65019, 
             65056, 
             65059, 
             65075, 
             65076, 
             65101, 
             65103, 
+            65136, 
+            65138, 
+            65140, 
+            65140, 
+            65142, 
+            65276, 
             65296, 
             65305, 
+            65313, 
+            65338, 
             65343, 
             65343, 
+            65345, 
+            65370, 
             65381, 
-            65381
+            65470, 
+            65474, 
+            65479, 
+            65482, 
+            65487, 
+            65490, 
+            65495, 
+            65498, 
+            65500
         ];
         Unicode.unicodeES5IdentifierStart = [
             170, 
@@ -22886,12 +23321,8 @@ var TypeScript;
             12784, 
             12799, 
             13312, 
-            13312, 
-            19893, 
             19893, 
             19968, 
-            19968, 
-            40908, 
             40908, 
             40960, 
             42124, 
@@ -22986,8 +23417,6 @@ var TypeScript;
             43968, 
             44002, 
             44032, 
-            44032, 
-            55203, 
             55203, 
             55216, 
             55238, 
@@ -23045,10 +23474,54 @@ var TypeScript;
             65500
         ];
         Unicode.unicodeES5IdentifierPart = [
+            170, 
+            170, 
+            181, 
+            181, 
+            186, 
+            186, 
+            192, 
+            214, 
+            216, 
+            246, 
+            248, 
+            705, 
+            710, 
+            721, 
+            736, 
+            740, 
+            748, 
+            748, 
+            750, 
+            750, 
             768, 
-            879, 
+            884, 
+            886, 
+            887, 
+            890, 
+            893, 
+            902, 
+            902, 
+            904, 
+            906, 
+            908, 
+            908, 
+            910, 
+            929, 
+            931, 
+            1013, 
+            1015, 
+            1153, 
             1155, 
             1159, 
+            1162, 
+            1319, 
+            1329, 
+            1366, 
+            1369, 
+            1369, 
+            1377, 
+            1415, 
             1425, 
             1469, 
             1471, 
@@ -23059,74 +23532,94 @@ var TypeScript;
             1477, 
             1479, 
             1479, 
+            1488, 
+            1514, 
+            1520, 
+            1522, 
             1552, 
             1562, 
-            1611, 
+            1568, 
             1641, 
-            1648, 
-            1648, 
-            1750, 
+            1646, 
+            1747, 
+            1749, 
             1756, 
             1759, 
-            1764, 
-            1767, 
             1768, 
             1770, 
-            1773, 
-            1776, 
-            1785, 
-            1809, 
-            1809, 
-            1840, 
+            1788, 
+            1791, 
+            1791, 
+            1808, 
             1866, 
-            1958, 
-            1968, 
+            1869, 
+            1969, 
             1984, 
-            1993, 
-            2027, 
-            2035, 
-            2070, 
-            2073, 
-            2075, 
-            2083, 
-            2085, 
-            2087, 
-            2089, 
+            2037, 
+            2042, 
+            2042, 
+            2048, 
             2093, 
-            2137, 
+            2112, 
             2139, 
+            2208, 
+            2208, 
+            2210, 
+            2220, 
             2276, 
             2302, 
             2304, 
-            2307, 
-            2362, 
-            2364, 
-            2366, 
-            2383, 
-            2385, 
-            2391, 
-            2402, 
             2403, 
             2406, 
             2415, 
+            2417, 
+            2423, 
+            2425, 
+            2431, 
             2433, 
             2435, 
+            2437, 
+            2444, 
+            2447, 
+            2448, 
+            2451, 
+            2472, 
+            2474, 
+            2480, 
+            2482, 
+            2482, 
+            2486, 
+            2489, 
             2492, 
-            2492, 
-            2494, 
             2500, 
             2503, 
             2504, 
             2507, 
-            2509, 
+            2510, 
             2519, 
             2519, 
-            2530, 
+            2524, 
+            2525, 
+            2527, 
             2531, 
             2534, 
-            2543, 
+            2545, 
             2561, 
             2563, 
+            2565, 
+            2570, 
+            2575, 
+            2576, 
+            2579, 
+            2600, 
+            2602, 
+            2608, 
+            2610, 
+            2611, 
+            2613, 
+            2614, 
+            2616, 
+            2617, 
             2620, 
             2620, 
             2622, 
@@ -23137,29 +23630,53 @@ var TypeScript;
             2637, 
             2641, 
             2641, 
+            2649, 
+            2652, 
+            2654, 
+            2654, 
             2662, 
-            2673, 
-            2677, 
             2677, 
             2689, 
             2691, 
+            2693, 
+            2701, 
+            2703, 
+            2705, 
+            2707, 
+            2728, 
+            2730, 
+            2736, 
+            2738, 
+            2739, 
+            2741, 
+            2745, 
             2748, 
-            2748, 
-            2750, 
             2757, 
             2759, 
             2761, 
             2763, 
             2765, 
-            2786, 
+            2768, 
+            2768, 
+            2784, 
             2787, 
             2790, 
             2799, 
             2817, 
             2819, 
+            2821, 
+            2828, 
+            2831, 
+            2832, 
+            2835, 
+            2856, 
+            2858, 
+            2864, 
+            2866, 
+            2867, 
+            2869, 
+            2873, 
             2876, 
-            2876, 
-            2878, 
             2884, 
             2887, 
             2888, 
@@ -23167,25 +23684,59 @@ var TypeScript;
             2893, 
             2902, 
             2903, 
-            2914, 
+            2908, 
+            2909, 
+            2911, 
             2915, 
             2918, 
             2927, 
+            2929, 
+            2929, 
             2946, 
-            2946, 
+            2947, 
+            2949, 
+            2954, 
+            2958, 
+            2960, 
+            2962, 
+            2965, 
+            2969, 
+            2970, 
+            2972, 
+            2972, 
+            2974, 
+            2975, 
+            2979, 
+            2980, 
+            2984, 
+            2986, 
+            2990, 
+            3001, 
             3006, 
             3010, 
             3014, 
             3016, 
             3018, 
             3021, 
+            3024, 
+            3024, 
             3031, 
             3031, 
             3046, 
             3055, 
             3073, 
             3075, 
-            3134, 
+            3077, 
+            3084, 
+            3086, 
+            3088, 
+            3090, 
+            3112, 
+            3114, 
+            3123, 
+            3125, 
+            3129, 
+            3133, 
             3140, 
             3142, 
             3144, 
@@ -23193,15 +23744,25 @@ var TypeScript;
             3149, 
             3157, 
             3158, 
-            3170, 
+            3160, 
+            3161, 
+            3168, 
             3171, 
             3174, 
             3183, 
             3202, 
             3203, 
+            3205, 
+            3212, 
+            3214, 
+            3216, 
+            3218, 
+            3240, 
+            3242, 
+            3251, 
+            3253, 
+            3257, 
             3260, 
-            3260, 
-            3262, 
             3268, 
             3270, 
             3272, 
@@ -23209,26 +23770,48 @@ var TypeScript;
             3277, 
             3285, 
             3286, 
-            3298, 
+            3294, 
+            3294, 
+            3296, 
             3299, 
             3302, 
             3311, 
+            3313, 
+            3314, 
             3330, 
             3331, 
-            3390, 
+            3333, 
+            3340, 
+            3342, 
+            3344, 
+            3346, 
+            3386, 
+            3389, 
             3396, 
             3398, 
             3400, 
             3402, 
-            3405, 
+            3406, 
             3415, 
             3415, 
-            3426, 
+            3424, 
             3427, 
             3430, 
             3439, 
+            3450, 
+            3455, 
             3458, 
             3459, 
+            3461, 
+            3478, 
+            3482, 
+            3505, 
+            3507, 
+            3515, 
+            3517, 
+            3517, 
+            3520, 
+            3526, 
             3530, 
             3530, 
             3535, 
@@ -23239,24 +23822,50 @@ var TypeScript;
             3551, 
             3570, 
             3571, 
-            3633, 
-            3633, 
-            3636, 
+            3585, 
             3642, 
-            3655, 
+            3648, 
             3662, 
             3664, 
             3673, 
-            3761, 
-            3761, 
-            3764, 
+            3713, 
+            3714, 
+            3716, 
+            3716, 
+            3719, 
+            3720, 
+            3722, 
+            3722, 
+            3725, 
+            3725, 
+            3732, 
+            3735, 
+            3737, 
+            3743, 
+            3745, 
+            3747, 
+            3749, 
+            3749, 
+            3751, 
+            3751, 
+            3754, 
+            3755, 
+            3757, 
             3769, 
             3771, 
-            3772, 
+            3773, 
+            3776, 
+            3780, 
+            3782, 
+            3782, 
             3784, 
             3789, 
             3792, 
             3801, 
+            3804, 
+            3807, 
+            3840, 
+            3840, 
             3864, 
             3865, 
             3872, 
@@ -23268,48 +23877,96 @@ var TypeScript;
             3897, 
             3897, 
             3902, 
-            3903, 
+            3911, 
+            3913, 
+            3948, 
             3953, 
             3972, 
             3974, 
-            3975, 
-            3981, 
             3991, 
             3993, 
             4028, 
             4038, 
             4038, 
-            4139, 
-            4158, 
-            4160, 
+            4096, 
             4169, 
-            4182, 
-            4185, 
-            4190, 
-            4192, 
-            4194, 
-            4196, 
-            4199, 
-            4205, 
-            4209, 
-            4212, 
-            4226, 
-            4237, 
-            4239, 
+            4176, 
             4253, 
+            4256, 
+            4293, 
+            4295, 
+            4295, 
+            4301, 
+            4301, 
+            4304, 
+            4346, 
+            4348, 
+            4680, 
+            4682, 
+            4685, 
+            4688, 
+            4694, 
+            4696, 
+            4696, 
+            4698, 
+            4701, 
+            4704, 
+            4744, 
+            4746, 
+            4749, 
+            4752, 
+            4784, 
+            4786, 
+            4789, 
+            4792, 
+            4798, 
+            4800, 
+            4800, 
+            4802, 
+            4805, 
+            4808, 
+            4822, 
+            4824, 
+            4880, 
+            4882, 
+            4885, 
+            4888, 
+            4954, 
             4957, 
             4959, 
-            5906, 
+            4992, 
+            5007, 
+            5024, 
+            5108, 
+            5121, 
+            5740, 
+            5743, 
+            5759, 
+            5761, 
+            5786, 
+            5792, 
+            5866, 
+            5870, 
+            5872, 
+            5888, 
+            5900, 
+            5902, 
             5908, 
-            5938, 
+            5920, 
             5940, 
-            5970, 
+            5952, 
             5971, 
+            5984, 
+            5996, 
+            5998, 
+            6000, 
             6002, 
             6003, 
-            6068, 
+            6016, 
             6099, 
-            6109, 
+            6103, 
+            6103, 
+            6108, 
             6109, 
             6112, 
             6121, 
@@ -23317,23 +23974,31 @@ var TypeScript;
             6157, 
             6160, 
             6169, 
-            6313, 
-            6313, 
+            6176, 
+            6263, 
+            6272, 
+            6314, 
+            6320, 
+            6389, 
+            6400, 
+            6428, 
             6432, 
             6443, 
             6448, 
             6459, 
             6470, 
-            6479, 
+            6509, 
+            6512, 
+            6516, 
+            6528, 
+            6571, 
             6576, 
-            6592, 
-            6600, 
             6601, 
             6608, 
             6617, 
-            6679, 
+            6656, 
             6683, 
-            6741, 
+            6688, 
             6750, 
             6752, 
             6780, 
@@ -23341,132 +24006,300 @@ var TypeScript;
             6793, 
             6800, 
             6809, 
+            6823, 
+            6823, 
             6912, 
-            6916, 
-            6964, 
-            6980, 
+            6987, 
             6992, 
             7001, 
             7019, 
             7027, 
             7040, 
-            7042, 
-            7073, 
-            7085, 
-            7088, 
-            7097, 
-            7142, 
             7155, 
-            7204, 
+            7168, 
             7223, 
             7232, 
             7241, 
-            7248, 
-            7257, 
+            7245, 
+            7293, 
             7376, 
             7378, 
             7380, 
-            7400, 
-            7405, 
-            7405, 
-            7410, 
-            7412, 
-            7616, 
+            7414, 
+            7424, 
             7654, 
             7676, 
-            7679, 
+            7957, 
+            7960, 
+            7965, 
+            7968, 
+            8005, 
+            8008, 
+            8013, 
+            8016, 
+            8023, 
+            8025, 
+            8025, 
+            8027, 
+            8027, 
+            8029, 
+            8029, 
+            8031, 
+            8061, 
+            8064, 
+            8116, 
+            8118, 
+            8124, 
+            8126, 
+            8126, 
+            8130, 
+            8132, 
+            8134, 
+            8140, 
+            8144, 
+            8147, 
+            8150, 
+            8155, 
+            8160, 
+            8172, 
+            8178, 
+            8180, 
+            8182, 
+            8188, 
             8204, 
             8205, 
             8255, 
             8256, 
             8276, 
             8276, 
+            8305, 
+            8305, 
+            8319, 
+            8319, 
+            8336, 
+            8348, 
             8400, 
             8412, 
             8417, 
             8417, 
             8421, 
             8432, 
-            11503, 
-            11505, 
+            8450, 
+            8450, 
+            8455, 
+            8455, 
+            8458, 
+            8467, 
+            8469, 
+            8469, 
+            8473, 
+            8477, 
+            8484, 
+            8484, 
+            8486, 
+            8486, 
+            8488, 
+            8488, 
+            8490, 
+            8493, 
+            8495, 
+            8505, 
+            8508, 
+            8511, 
+            8517, 
+            8521, 
+            8526, 
+            8526, 
+            8544, 
+            8584, 
+            11264, 
+            11310, 
+            11312, 
+            11358, 
+            11360, 
+            11492, 
+            11499, 
+            11507, 
+            11520, 
+            11557, 
+            11559, 
+            11559, 
+            11565, 
+            11565, 
+            11568, 
+            11623, 
+            11631, 
+            11631, 
             11647, 
-            11647, 
+            11670, 
+            11680, 
+            11686, 
+            11688, 
+            11694, 
+            11696, 
+            11702, 
+            11704, 
+            11710, 
+            11712, 
+            11718, 
+            11720, 
+            11726, 
+            11728, 
+            11734, 
+            11736, 
+            11742, 
             11744, 
             11775, 
-            12330, 
+            11823, 
+            11823, 
+            12293, 
+            12295, 
+            12321, 
             12335, 
+            12337, 
+            12341, 
+            12344, 
+            12348, 
+            12353, 
+            12438, 
             12441, 
             12442, 
-            42528, 
-            42537, 
-            42607, 
+            12445, 
+            12447, 
+            12449, 
+            12538, 
+            12540, 
+            12543, 
+            12549, 
+            12589, 
+            12593, 
+            12686, 
+            12704, 
+            12730, 
+            12784, 
+            12799, 
+            13312, 
+            19893, 
+            19968, 
+            40908, 
+            40960, 
+            42124, 
+            42192, 
+            42237, 
+            42240, 
+            42508, 
+            42512, 
+            42539, 
+            42560, 
             42607, 
             42612, 
             42621, 
+            42623, 
+            42647, 
             42655, 
-            42655, 
-            42736, 
             42737, 
-            43010, 
-            43010, 
-            43014, 
-            43014, 
-            43019, 
-            43019, 
-            43043, 
+            42775, 
+            42783, 
+            42786, 
+            42888, 
+            42891, 
+            42894, 
+            42896, 
+            42899, 
+            42912, 
+            42922, 
+            43000, 
             43047, 
+            43072, 
+            43123, 
             43136, 
-            43137, 
-            43188, 
             43204, 
             43216, 
             43225, 
             43232, 
-            43249, 
+            43255, 
+            43259, 
+            43259, 
             43264, 
-            43273, 
-            43302, 
             43309, 
-            43335, 
+            43312, 
             43347, 
+            43360, 
+            43388, 
             43392, 
-            43395, 
-            43443, 
             43456, 
-            43472, 
+            43471, 
             43481, 
-            43561, 
+            43520, 
             43574, 
-            43587, 
-            43587, 
-            43596, 
+            43584, 
             43597, 
             43600, 
             43609, 
+            43616, 
+            43638, 
+            43642, 
             43643, 
-            43643, 
-            43696, 
-            43696, 
-            43698, 
-            43700, 
-            43703, 
-            43704, 
-            43710, 
-            43711, 
-            43713, 
-            43713, 
-            43755, 
+            43648, 
+            43714, 
+            43739, 
+            43741, 
+            43744, 
             43759, 
-            43765, 
+            43762, 
             43766, 
-            44003, 
+            43777, 
+            43782, 
+            43785, 
+            43790, 
+            43793, 
+            43798, 
+            43808, 
+            43814, 
+            43816, 
+            43822, 
+            43968, 
             44010, 
             44012, 
             44013, 
             44016, 
             44025, 
-            64286, 
-            64286, 
+            44032, 
+            55203, 
+            55216, 
+            55238, 
+            55243, 
+            55291, 
+            63744, 
+            64109, 
+            64112, 
+            64217, 
+            64256, 
+            64262, 
+            64275, 
+            64279, 
+            64285, 
+            64296, 
+            64298, 
+            64310, 
+            64312, 
+            64316, 
+            64318, 
+            64318, 
+            64320, 
+            64321, 
+            64323, 
+            64324, 
+            64326, 
+            64433, 
+            64467, 
+            64829, 
+            64848, 
+            64911, 
+            64914, 
+            64967, 
+            65008, 
+            65019, 
             65024, 
             65039, 
             65056, 
@@ -23475,10 +24308,28 @@ var TypeScript;
             65076, 
             65101, 
             65103, 
+            65136, 
+            65140, 
+            65142, 
+            65276, 
             65296, 
             65305, 
+            65313, 
+            65338, 
             65343, 
-            65343
+            65343, 
+            65345, 
+            65370, 
+            65382, 
+            65470, 
+            65474, 
+            65479, 
+            65482, 
+            65487, 
+            65490, 
+            65495, 
+            65498, 
+            65500
         ];
         Unicode.lookupInUnicodeMap = function lookupInUnicodeMap(code, map) {
             if (code < map[0]) {
@@ -38272,6 +39123,18 @@ var TypeScript;
         return PullDecl;
     })();
     TypeScript.PullDecl = PullDecl;    
+    var PullFunctionExpressionDecl = (function (_super) {
+        __extends(PullFunctionExpressionDecl, _super);
+        function PullFunctionExpressionDecl(expressionName, declFlags, span, scriptName) {
+            _super.call(this, "", 262144 /* FunctionExpression */ , declFlags, span, scriptName);
+            this.functionExpressionName = expressionName;
+        }
+        PullFunctionExpressionDecl.prototype.getFunctionExpressionName = function () {
+            return this.functionExpressionName;
+        };
+        return PullFunctionExpressionDecl;
+    })(PullDecl);
+    TypeScript.PullFunctionExpressionDecl = PullFunctionExpressionDecl;    
     var PullDeclGroup = (function () {
         function PullDeclGroup(name) {
             this.name = name;
@@ -38816,6 +39679,7 @@ var TypeScript;
             this.specializationCache = {};
             this.memberTypeParameterNameCache = null;
             this.hasAGenericParameter = false;
+            this.stringConstantOverload = undefined;
         }
         PullSignatureSymbol.prototype.isDefinition = function () {
             return false;
@@ -38973,6 +39837,7 @@ var TypeScript;
             this.nonOptionalParamCount = 0;
             this.hasOptionalParam = false;
             this.hasAGenericParameter = false;
+            this.stringConstantOverload = undefined;
             if (this.parameterLinks) {
                 for(var i = 0; i < this.parameterLinks.length; i++) {
                     this.parameterLinks[i].end.invalidate();
@@ -38985,6 +39850,19 @@ var TypeScript;
                 }
             }
             _super.prototype.invalidate.call(this);
+        };
+        PullSignatureSymbol.prototype.isStringConstantOverloadSignature = function () {
+            if (this.stringConstantOverload === undefined) {
+                var params = this.getParameters();
+                this.stringConstantOverload = false;
+                for(var i = 0; i < params.length; i++) {
+                    var paramType = params[i].getType();
+                    if (paramType && paramType.isPrimitive() && (paramType).isStringConstant()) {
+                        this.stringConstantOverload = true;
+                    }
+                }
+            }
+            return this.stringConstantOverload;
         };
         PullSignatureSymbol.getSignatureTypeMemberName = function getSignatureTypeMemberName(candidateSignature, signatures, scopeSymbol) {
             var allMemberNames = new TypeScript.MemberNameArray();
@@ -39138,6 +40016,9 @@ var TypeScript;
             return false;
         };
         PullTypeSymbol.prototype.isFunction = function () {
+            return false;
+        };
+        PullTypeSymbol.prototype.isConstructor = function () {
             return false;
         };
         PullTypeSymbol.prototype.isTypeParameter = function () {
@@ -40557,6 +41438,7 @@ var TypeScript;
             }
         }
         var prevInSpecialization = context.inSpecialization;
+        context.inSpecialization = true;
         TypeScript.nSpecializationsCreated++;
         newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) : isArray ? new PullArrayTypeSymbol() : typeToSpecialize.isTypeParameter() ? new PullTypeVariableSymbol(typeToSpecialize.getName()) : new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
         newType.addDeclaration(newTypeDecl);
@@ -41459,6 +42341,9 @@ var TypeScript;
                         }
                     }
                 } else if ((declSearchKind & TypeScript.PullElementKind.SomeType) || !(pathDeclKind & 16 /* Class */ )) {
+                    if (pathDeclKind === 262144 /* FunctionExpression */  && symbolName === (decl).getFunctionExpressionName()) {
+                        return decl.getSymbol();
+                    }
                     childDecls = decl.searchChildDecls(symbolName, (declSearchKind & TypeScript.PullElementKind.SomeType) !== 0);
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -41512,10 +42397,14 @@ var TypeScript;
                             }
                         }
                         break;
+                    case 262144 /* FunctionExpression */ :
+                        var functionExpressionName = (decl).getFunctionExpressionName();
+                        if (declSymbol && functionExpressionName) {
+                            symbols.push(declSymbol);
+                        }
                     case 32768 /* Function */ :
                     case 65536 /* ConstructorMethod */ :
                     case 131072 /* Method */ :
-                    case 262144 /* FunctionExpression */ :
                         if (declSymbol) {
                             var functionType = declSymbol.getType();
                             if (functionType.getHasGenericSignature()) {
@@ -41650,6 +42539,9 @@ var TypeScript;
                             var instanceMembers = instanceType.getAllMembers(TypeScript.PullElementKind.SomeValue, includePrivate);
                             members = members.concat(instanceMembers);
                         }
+                    } else if (lhsType.isConstructor()) {
+                        var prototypeSymbol = new TypeScript.PullSymbol("prototype", 8192 /* Property */ );
+                        members.push(prototypeSymbol);
                     }
                 }
                 if ((lhsType.getKind() == 128 /* Enum */ ) && this.cachedNumberInterfaceType) {
@@ -42201,9 +43093,11 @@ var TypeScript;
                 return declSymbol.getType();
             }
             if (declSymbol.isResolving()) {
-                declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
-                declSymbol.setResolved();
-                return this.semanticInfoChain.anyTypeSymbol;
+                if (!context.inSpecialization) {
+                    declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                    declSymbol.setResolved();
+                    return declSymbol;
+                }
             }
             declSymbol.startResolving();
             var wrapperDecl = this.getEnclosingDecl(decl);
@@ -42920,8 +43814,9 @@ var TypeScript;
                     nameSymbol = this.cachedObjectInterfaceType.findMember(rhsName);
                 }
                 if (!nameSymbol) {
-                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* Could_not_find_dotted_name__0_ */ , [
-                        rhsName
+                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* The_property__0__does_not_exist_on_value_of_type__1__ */ , [
+                        rhsName, 
+                        lhsType.getName()
                     ]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
@@ -43110,8 +44005,9 @@ var TypeScript;
                 }
             }
             if (!childTypeSymbol) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* Could_not_find_dotted_name__0_ */ , [
-                    rhsName
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* The_property__0__does_not_exist_on_value_of_type__1__ */ , [
+                    rhsName, 
+                    lhsType.getName()
                 ]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
@@ -44363,6 +45259,9 @@ var TypeScript;
                     return true;
                 }
             }
+            if (source.isPrimitive() && (source).isStringConstant() && target.isPrimitive() && (target).isStringConstant()) {
+                return TypeScript.stripQuotes(source.getName()) == TypeScript.stripQuotes(target.getName());
+            }
             if (source == this.semanticInfoChain.undefinedTypeSymbol) {
                 return true;
             }
@@ -44468,7 +45367,7 @@ var TypeScript;
                             if (!(targetProp.getIsOptional())) {
                                 if (comparisonInfo) {
                                     comparisonInfo.flags |= 2 /* RequiredPropertyIsMissing */ ;
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(214 /* Type__0__is_missing_property__1__from_type__2_ */ , [
+                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(215 /* Type__0__is_missing_property__1__from_type__2_ */ , [
                                         source.toString(), 
                                         targetProp.getScopedNameEx().toString(), 
                                         target.toString()
@@ -44492,13 +45391,13 @@ var TypeScript;
             if (targetPropIsPrivate != sourcePropIsPrivate) {
                 if (comparisonInfo) {
                     if (targetPropIsPrivate) {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(218 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */ , [
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(219 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */ , [
                             targetProp.getScopedNameEx().toString(), 
                             source.toString(), 
                             target.toString()
                         ]));
                     } else {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(217 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */ , [
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(218 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */ , [
                             targetProp.getScopedNameEx().toString(), 
                             source.toString(), 
                             target.toString()
@@ -44512,7 +45411,7 @@ var TypeScript;
                 var sourceDecl = sourceProp.getDeclarations()[0];
                 if (!targetDecl.isEqual(sourceDecl)) {
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */ ;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(219 /* Types__0__and__1__define_property__2__as_private */ , [
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(220 /* Types__0__and__1__define_property__2__as_private */ , [
                         source.toString(), 
                         target.toString(), 
                         targetProp.getScopedNameEx().toString()
@@ -44537,14 +45436,14 @@ var TypeScript;
                     comparisonInfo.flags |= 32 /* IncompatiblePropertyTypes */ ;
                     var message;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = TypeScript.getDiagnosticMessage(216 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */ , [
+                        message = TypeScript.getDiagnosticMessage(217 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */ , [
                             targetProp.getScopedNameEx().toString(), 
                             source.toString(), 
                             target.toString(), 
                             comparisonInfoPropertyTypeCheck.message
                         ]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(215 /* Types_of_property__0__of_types__1__and__2__are_incompatible */ , [
+                        message = TypeScript.getDiagnosticMessage(216 /* Types_of_property__0__of_types__1__and__2__are_incompatible */ , [
                             targetProp.getScopedNameEx().toString(), 
                             source.toString(), 
                             target.toString()
@@ -44569,13 +45468,13 @@ var TypeScript;
                         var message;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(221 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
+                                message = TypeScript.getDiagnosticMessage(222 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
                                     source.toString(), 
                                     target.toString(), 
                                     comparisonInfoSignatuesTypeCheck.message
                                 ]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(220 /* Call_signatures_of_types__0__and__1__are_incompatible */ , [
+                                message = TypeScript.getDiagnosticMessage(221 /* Call_signatures_of_types__0__and__1__are_incompatible */ , [
                                     source.toString(), 
                                     target.toString()
                                 ]);
@@ -44583,7 +45482,7 @@ var TypeScript;
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(222 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */ , [
+                            message = TypeScript.getDiagnosticMessage(223 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */ , [
                                 hasSig, 
                                 lacksSig
                             ]);
@@ -44609,13 +45508,13 @@ var TypeScript;
                         var message;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(224 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
+                                message = TypeScript.getDiagnosticMessage(225 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
                                     source.toString(), 
                                     target.toString(), 
                                     comparisonInfoSignatuesTypeCheck.message
                                 ]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(223 /* Construct_signatures_of_types__0__and__1__are_incompatible */ , [
+                                message = TypeScript.getDiagnosticMessage(224 /* Construct_signatures_of_types__0__and__1__are_incompatible */ , [
                                     source.toString(), 
                                     target.toString()
                                 ]);
@@ -44623,7 +45522,7 @@ var TypeScript;
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(225 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */ , [
+                            message = TypeScript.getDiagnosticMessage(226 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */ , [
                                 hasSig, 
                                 lacksSig
                             ]);
@@ -44650,13 +45549,13 @@ var TypeScript;
                     if (comparisonInfo) {
                         var message;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = TypeScript.getDiagnosticMessage(227 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
+                            message = TypeScript.getDiagnosticMessage(228 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */ , [
                                 source.toString(), 
                                 target.toString(), 
                                 comparisonInfoSignatuesTypeCheck.message
                             ]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(226 /* Index_signatures_of_types__0__and__1__are_incompatible */ , [
+                            message = TypeScript.getDiagnosticMessage(227 /* Index_signatures_of_types__0__and__1__are_incompatible */ , [
                                 source.toString(), 
                                 target.toString()
                             ]);
@@ -44679,16 +45578,25 @@ var TypeScript;
             var mSig = null;
             var nSig = null;
             var foundMatch = false;
+            var testedSignature;
             for(var iMSig = 0; iMSig < targetSG.length; iMSig++) {
                 mSig = targetSG[iMSig];
+                if (mSig.isStringConstantOverloadSignature()) {
+                    continue;
+                }
+                testedSignature = false;
                 for(var iNSig = 0; iNSig < sourceSG.length; iNSig++) {
                     nSig = sourceSG[iNSig];
+                    if (nSig.isStringConstantOverloadSignature()) {
+                        continue;
+                    }
+                    testedSignature = true;
                     if (this.signatureIsRelatableToTarget(nSig, mSig, assignableTo, comparisonCache, context, comparisonInfo)) {
                         foundMatch = true;
                         break;
                     }
                 }
-                if (foundMatch) {
+                if (foundMatch || !testedSignature) {
                     foundMatch = false;
                     continue;
                 }
@@ -44707,7 +45615,7 @@ var TypeScript;
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableParamList()) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= 3 /* SourceSignatureHasTooManyParameters */ ;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(228 /* Call_signature_expects__0__or_fewer_parameters */ , [
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(229 /* Call_signature_expects__0__or_fewer_parameters */ , [
                         targetVarArgCount
                     ]));
                 }
@@ -44907,7 +45815,7 @@ var TypeScript;
                         this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
                     }
                     memberType = parameters[j].getType();
-                    if (signature.hasVariableParamList() && (j >= signature.getNonOptionalParameterCount() - 1) && memberType.isArray()) {
+                    if (signature.hasVariableParamList() && (j >= signature.getNonOptionalParameterCount()) && memberType.isArray()) {
                         memberType = memberType.getElementType();
                     }
                     if (this.isAnyOrEquivalent(memberType)) {
@@ -44930,7 +45838,7 @@ var TypeScript;
                             argSym = this.resolveFunctionExpression(args.members[j], true, enclosingDecl, context);
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(229 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
+                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(230 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
                                         memberType.toString(), 
                                         (j + 1), 
                                         argSym.getTypeName()
@@ -44953,7 +45861,7 @@ var TypeScript;
                         argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(229 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(230 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
                                     memberType.toString(), 
                                     (j + 1), 
                                     argSym.getTypeName()
@@ -44975,7 +45883,7 @@ var TypeScript;
                         argSym = this.resolveArrayLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(229 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(230 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */ , [
                                     memberType.toString(), 
                                     (j + 1), 
                                     argSym.getTypeName()
@@ -45314,14 +46222,7 @@ var TypeScript;
             this.inSuperConstructorTarget = false;
             this.seenSuperConstructorCall = false;
             this.inConstructorArguments = false;
-            this.currentImplementsClauseTypeCheckClassPublicProperties = null;
         }
-        PullTypeCheckContext.prototype.getCurrentImplementsClauseTypeCheckClassPublicProperties = function () {
-            return this.currentImplementsClauseTypeCheckClassPublicProperties;
-        };
-        PullTypeCheckContext.prototype.setCurrentImplementsClauseTypeCheckClassPublicProperties = function (props) {
-            this.currentImplementsClauseTypeCheckClassPublicProperties = props;
-        };
         PullTypeCheckContext.prototype.pushEnclosingDecl = function (decl) {
             this.enclosingDeclStack[this.enclosingDeclStack.length] = decl;
             this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length] = false;
@@ -45743,7 +46644,27 @@ var TypeScript;
                     break;
                 }
             }
-            if (definitionSignature) {
+            var isConstantOverloadSignature = signature.isStringConstantOverloadSignature();
+            if (isConstantOverloadSignature) {
+                var resolutionContext = new TypeScript.PullTypeResolutionContext();
+                var foundSubtypeSignature = false;
+                for(var i = 0; i < allSignatures.length; i++) {
+                    if (allSignatures[i].isDefinition() || allSignatures[i] == signature) {
+                        continue;
+                    }
+                    if (!allSignatures[i].isResolved()) {
+                        this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
+                    }
+                    if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
+                        foundSubtypeSignature = true;
+                        break;
+                    }
+                }
+                if (!foundSubtypeSignature) {
+                    message = TypeScript.getDiagnosticMessage(213 /* Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature */ , null);
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                }
+            } else if (definitionSignature) {
                 var comparisonInfo = new TypeScript.TypeComparisonInfo();
                 var resolutionContext = new TypeScript.PullTypeResolutionContext();
                 if (!definitionSignature.isResolved()) {
@@ -45891,15 +46812,15 @@ var TypeScript;
             var errorCode;
             if (typeMemberKind == 8192 /* Property */ ) {
                 if (typeMember.isAccessor()) {
-                    errorCode = 230 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */ ;
+                    errorCode = 231 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */ ;
                 } else {
-                    errorCode = 231 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */ ;
+                    errorCode = 232 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */ ;
                 }
             } else if (typeMemberKind == 131072 /* Method */ ) {
                 if (extendedTypeMember.isAccessor()) {
-                    errorCode = 232 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */ ;
+                    errorCode = 233 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */ ;
                 } else {
-                    errorCode = 233 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */ ;
+                    errorCode = 234 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */ ;
                 }
             }
             var message = TypeScript.getDiagnosticMessage(errorCode, [
@@ -45957,14 +46878,14 @@ var TypeScript;
                             if (!this.resolver.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
                                 var propMessage;
                                 if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = TypeScript.getDiagnosticMessage(235 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */ , [
+                                    propMessage = TypeScript.getDiagnosticMessage(236 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */ , [
                                         extendedConstructorTypeProp.getScopedNameEx().toString(), 
                                         typeSymbol.toString(), 
                                         extendedType.toString(), 
                                         comparisonInfoForPropTypeCheck.message
                                     ]);
                                 } else {
-                                    propMessage = TypeScript.getDiagnosticMessage(234 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */ , [
+                                    propMessage = TypeScript.getDiagnosticMessage(235 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */ , [
                                         extendedConstructorTypeProp.getScopedNameEx().toString(), 
                                         typeSymbol.toString(), 
                                         extendedType.toString()
@@ -45998,17 +46919,6 @@ var TypeScript;
             }
         };
         PullTypeChecker.prototype.typeCheckIfClassImplementsType = function (classDecl, classSymbol, implementedType, typeCheckContext) {
-            var classPropertyList = typeCheckContext.getCurrentImplementsClauseTypeCheckClassPublicProperties();
-            if (!classPropertyList) {
-                classPropertyList = classSymbol.getMembers();
-                var extendsList = classSymbol.getExtendedTypes();
-                for(var i = 0; i < extendsList.length; i++) {
-                    var extendedTypePublicProperties = extendsList[i].getAllMembers(TypeScript.PullElementKind.SomeValue, true);
-                    classPropertyList = classPropertyList.concat(extendedTypePublicProperties);
-                }
-                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(classPropertyList);
-            }
-            var implementedTypeMembers = implementedType.getAllMembers(TypeScript.PullElementKind.SomeValue, true);
             var resolutionContext = new TypeScript.PullTypeResolutionContext();
             var comparisonInfo = new TypeScript.TypeComparisonInfo();
             var foundError = !this.resolver.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
@@ -46080,7 +46990,6 @@ var TypeScript;
                 for(var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
-                typeCheckContext.setCurrentImplementsClauseTypeCheckClassPublicProperties(null);
             } else if (typeDeclAst.implementsList) {
                 var message = TypeScript.getDiagnosticMessage(137 /* An_interface_may_not_implement_another_type */ , null);
                 this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
@@ -46334,7 +47243,7 @@ var TypeScript;
                 } else if (enclosingNonLambdaDecl.getKind() === 8 /* Container */  || enclosingNonLambdaDecl.getKind() === 64 /* DynamicModule */ ) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(169 /* _this__cannot_be_referenced_within_module_bodies */ , null), enclosingDecl);
                 } else if (typeCheckContext.inConstructorArguments) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(213 /* _this__may_not_be_referenced_in_constructor_arguments */ , null), enclosingDecl);
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(214 /* _this__may_not_be_referenced_in_constructor_arguments */ , null), enclosingDecl);
                 }
             }
             this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
@@ -48194,7 +49103,8 @@ var TypeScript;
         if (parent && (parent.getKind() == 1073741824 /* WithBlock */  || (parent.getFlags() & 1048576 /* DeclaredInAWithBlock */ ))) {
             declFlags |= 1048576 /* DeclaredInAWithBlock */ ;
         }
-        var decl = new TypeScript.PullDecl("", 262144 /* FunctionExpression */ , declFlags, span, context.scriptName);
+        var name = functionExpressionDeclAST.name ? functionExpressionDeclAST.name.actualText : "";
+        var decl = new TypeScript.PullFunctionExpressionDecl(name, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
         if (parent) {
@@ -48449,9 +49359,7 @@ var TypeScript;
     TypeScript.preCollectWithDecls = preCollectWithDecls;
     function preCollectFuncDecls(ast, parentAST, context) {
         var funcDecl = ast;
-        if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), (8192 /* IsFunctionExpression */  | 2048 /* IsFatArrowFunction */ ))) {
-            return createFunctionExpressionDeclaration(funcDecl, context);
-        } else if (funcDecl.isConstructor) {
+        if (funcDecl.isConstructor) {
             return createClassConstructorDeclaration(funcDecl, context);
         } else if (funcDecl.isGetAccessor()) {
             return createGetAccessorDeclaration(funcDecl, context);
@@ -48467,6 +49375,8 @@ var TypeScript;
             return createFunctionTypeDeclaration(funcDecl, context);
         } else if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), 256 /* Method */ ) || TypeScript.hasFlag(funcDecl.getFunctionFlags(), 16384 /* ClassMethod */ )) {
             return createMemberFunctionDeclaration(funcDecl, context);
+        } else if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), (8192 /* IsFunctionExpression */  | 2048 /* IsFatArrowFunction */ ))) {
+            return createFunctionExpressionDeclaration(funcDecl, context);
         }
         return createFunctionDeclaration(funcDecl, context);
     }
@@ -49819,7 +50729,8 @@ var TypeScript;
             var declKind = functionExpressionDeclaration.getKind();
             var declFlags = functionExpressionDeclaration.getFlags();
             var funcExpAST = this.semanticInfo.getASTForDecl(functionExpressionDeclaration);
-            var functionSymbol = new TypeScript.PullSymbol(functionExpressionDeclaration.getName(), 32768 /* Function */ );
+            var functionName = (functionExpressionDeclaration).getFunctionExpressionName();
+            var functionSymbol = new TypeScript.PullSymbol(functionName, 32768 /* Function */ );
             var functionTypeSymbol = new TypeScript.PullFunctionTypeSymbol();
             functionSymbol.setType(functionTypeSymbol);
             functionExpressionDeclaration.setSymbol(functionSymbol);
@@ -54212,7 +55123,7 @@ var TypeScript;
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("debugger");
             emitter.recordSourceMappingEnd(this);
-            emitter.writeLineToOutput(";");
+            emitter.writeToOutput(";");
             emitter.emitComments(this, false);
         };
         return DebuggerStatement;
@@ -54861,7 +55772,7 @@ var TypeScript;
                 bod.append(topLevelMod);
             }
             var result = new TypeScript.Script();
-            this.setSpanExplicit(result, start, this.position);
+            this.setSpanExplicit(result, start, start + node.fullWidth());
             result.moduleElements = bod;
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = this.isParsingDeclareFile;
@@ -57678,7 +58589,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

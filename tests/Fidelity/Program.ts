@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "Accessors1.ts";
+    // "Unicode2.ts";
     undefined;
 
 var generate = false;
