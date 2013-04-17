@@ -174,7 +174,7 @@ module TypeScript {
         Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_: DiagnosticInfo;
         Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements: DiagnosticInfo;
         Could_not_find_enclosing_symbol_for_dotted_name__0_: DiagnosticInfo;
-        Could_not_find_dotted_name__0_: DiagnosticInfo;
+        The_property__0__does_not_exist_on_value_of_type__1__: DiagnosticInfo;
         Could_not_find_symbol__0_: DiagnosticInfo;
         _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
         _this__may_not_be_referenced_in_current_location: DiagnosticInfo;

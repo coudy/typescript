@@ -2,10 +2,10 @@
 0.ts line 13 col 14: error TS1005: ';' expected.
 0.ts line 11 col 6: error TS2137: Class C declares interface I but does not implement it:
 	Type 'C' is missing property 'x' from type 'I'.
-0.ts line 17 col 8: error TS2094: Could not find dotted name 'x'.
-0.ts line 18 col 8: error TS2094: Could not find dotted name 'y'.
-0.ts line 7 col 13: error TS2094: Could not find dotted name 'y'.
+0.ts line 17 col 8: error TS2094: The property 'x' does not exist on value of type 'C'.
+0.ts line 18 col 8: error TS2094: The property 'y' does not exist on value of type 'C'.
+0.ts line 7 col 13: error TS2094: The property 'y' does not exist on value of type 'B'.
 0.ts line 7 col 16: error TS2095: Could not find symbol 'any'.
 0.ts line 12 col 4: error TS2105: Constructors for derived classes must contain a 'super' call.
-0.ts line 13 col 13: error TS2094: Could not find dotted name 'x'.
+0.ts line 13 col 13: error TS2094: The property 'x' does not exist on value of type 'C'.
 0.ts line 13 col 16: error TS2095: Could not find symbol 'any'.

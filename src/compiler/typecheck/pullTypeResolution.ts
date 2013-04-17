@@ -2484,7 +2484,7 @@ module TypeScript {
 
                 if (!nameSymbol) {
                     diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.Could_not_find_dotted_name__0_, [rhsName]), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [rhsName, lhsType.getName()]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -2753,7 +2753,7 @@ module TypeScript {
 
             if (!childTypeSymbol) {
                 diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.Could_not_find_dotted_name__0_, [rhsName]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [rhsName, lhsType.getName()]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 

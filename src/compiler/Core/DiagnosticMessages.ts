@@ -867,9 +867,9 @@ module TypeScript {
             message: "Could not find enclosing symbol for dotted name '{0}'.",
             code: 2093
         },
-        Could_not_find_dotted_name__0_: {
+        The_property__0__does_not_exist_on_value_of_type__1__: {
             category: DiagnosticCategory.Error,
-            message: "Could not find dotted name '{0}'.",
+            message: "The property '{0}' does not exist on value of type '{1}'.",
             code: 2094
         },
         Could_not_find_symbol__0_: {
