@@ -26,7 +26,7 @@ goTo.marker('3');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");
 
 goTo.marker('4');
-verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");
+verify.quickInfoIs("multiM");
 
 goTo.marker('5');
-verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");
+verify.quickInfoIs("multiM");

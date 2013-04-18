@@ -1098,16 +1098,12 @@ module TypeScript {
                 memberSymbol.setContainer(this);
             }
 
-            if (!this.memberCache) {
-                this.memberCache = [];
-            }
-
-            if (!this.memberNameCache) {
-                this.populateMemberCache();
-            }
-
             if (!this.memberLinks) {
                 this.memberLinks = [];
+            }            
+
+            if (!this.memberCache || !this.memberNameCache) {
+                this.populateMemberCache();
             }
 
             if (!memberSymbol.isType()) {
@@ -1435,19 +1431,13 @@ module TypeScript {
                     members[members.length] = this.constructSignatureLinks[i].end;
                 }
             }
-            else {
-                var extendedTypes = this.getExtendedTypes();
+            var extendedTypes = this.getExtendedTypes();
 
-                for (var i = 0; i < extendedTypes.length; i++) {
-                    if (extendedTypes[i].hasBase(this)) {
-                        continue;
-                    }
-                    members = extendedTypes[i].getConstructSignatures();
-
-                    if (members.length) {
-                        break;
-                    }
+            for (var i = 0; i < extendedTypes.length; i++) {
+                if (extendedTypes[i].hasBase(this)) {
+                    continue;
                 }
+                members = members.concat(extendedTypes[i].getConstructSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -1463,19 +1453,13 @@ module TypeScript {
                     members[members.length] = this.indexSignatureLinks[i].end;
                 }
             }
-            else {
-                var extendedTypes = this.getExtendedTypes();
+            var extendedTypes = this.getExtendedTypes();
 
-                for (var i = 0; i < extendedTypes.length; i++) {
-                    if (extendedTypes[i].hasBase(this)) {
-                        continue;
-                    }
-                    members = extendedTypes[i].getIndexSignatures();
-
-                    if (members.length) {
-                        break;
-                    }
+            for (var i = 0; i < extendedTypes.length; i++) {
+                if (extendedTypes[i].hasBase(this)) {
+                    continue;
                 }
+                members = members.concat(extendedTypes[i].getIndexSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -1726,7 +1710,7 @@ module TypeScript {
         }
 
         private populateMemberCache() {
-            if (!this.memberNameCache) {
+            if (!this.memberNameCache || !this.memberCache) {
                 this.memberNameCache = new BlockIntrinsics();
                 this.memberCache = [];
 

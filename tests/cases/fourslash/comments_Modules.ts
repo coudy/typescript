@@ -114,7 +114,7 @@ verify.completionListContains("m1", "m1", "Module comment", "m1", "module");
 goTo.marker('5');
 verify.memberListContains("b", "number", "b's comment", "m1.b", "var");
 verify.memberListContains("fooExport", "(): number", "exported function", "m1.fooExport", "function");
-verify.memberListContains("m2", "m1.m2", "m2 comments", "m1.m2", "module");
+verify.memberListContains("m2", "m1.m2");
 verify.quickInfoIs("(): number", "exported function", "m1.fooExport", "function");
 
 goTo.marker('6');
@@ -130,11 +130,11 @@ verify.memberListContains("i", "m1.m2.c", "i", "m1.m2.i", "var");
 
 goTo.marker('9');
 verify.completionListContains("m2", "m2", "", "m2", "module");
-verify.quickInfoIs("m2", "", "m2", "module");
+verify.quickInfoIs("m2", "", "m2", "var");
 
 goTo.marker('10');
-verify.memberListContains("m3", "m2.m3", "module comment of m2.m3", "m2.m3", "module");
-verify.quickInfoIs("m2.m3", "module comment of m2.m3", "m2.m3", "module");
+verify.memberListContains("m3", "m2.m3");
+verify.quickInfoIs("m2.m3");
 
 goTo.marker('11');
 verify.quickInfoIs("(): m2.m3.c", "", "m2.m3.c", "constructor");
@@ -142,15 +142,15 @@ verify.memberListContains("c", undefined, "Exported class comment", "m2.m3.c", "
 
 goTo.marker('12');
 verify.completionListContains("m3", "m3", "", "m3", "module");
-verify.quickInfoIs("m3", "", "m3", "module");
+verify.quickInfoIs("m3", "", "m3", "var");
 
 goTo.marker('13');
-verify.memberListContains("m4", "m3.m4", "", "m3.m4", "module");
-verify.quickInfoIs("m3.m4", "", "m3.m4", "module");
+verify.memberListContains("m4", "m3.m4", "", "m3.m4", "var");
+verify.quickInfoIs("m3.m4", "", "m3.m4", "var");
 
 goTo.marker('14');
-verify.memberListContains("m5", "m3.m4.m5", "module comment of m3.m4.m5", "m3.m4.m5", "module");
-verify.quickInfoIs("m3.m4.m5", "module comment of m3.m4.m5", "m3.m4.m5", "module");
+verify.memberListContains("m5", "m3.m4.m5");
+verify.quickInfoIs("m3.m4.m5");
 
 goTo.marker('15');
 verify.memberListContains("c", undefined, "Exported class comment", "m3.m4.m5.c", "class");
@@ -158,71 +158,71 @@ verify.quickInfoIs("(): m3.m4.m5.c", "", "m3.m4.m5.c", "constructor");
 
 goTo.marker('16');
 verify.completionListContains("m4", "m4", "", "m4", "module");
-verify.quickInfoIs("m4", "", "m4", "module");
+verify.quickInfoIs("m4");
 
 goTo.marker('17');
-verify.memberListContains("m5", "m4.m5", "", "m4.m5", "module");
-verify.quickInfoIs("m4.m5", "", "m4.m5", "module");
+verify.memberListContains("m5", "m4.m5", "", "m4.m5");
+verify.quickInfoIs("m4.m5");
 
 goTo.marker('18');
-verify.memberListContains("m6", "m4.m5.m6", "module comment of m4.m5.m6", "m4.m5.m6", "module");
-verify.quickInfoIs("m4.m5.m6", "module comment of m4.m5.m6", "m4.m5.m6", "module");
+verify.memberListContains("m6", "m4.m5.m6");
+verify.quickInfoIs("m4.m5.m6");
 
 goTo.marker('19');
-verify.memberListContains("m7", "m4.m5.m6.m7", "", "m4.m5.m6.m7", "module");
-verify.quickInfoIs("m4.m5.m6.m7", "", "m4.m5.m6.m7", "module");
+verify.memberListContains("m7", "m4.m5.m6.m7");
+verify.quickInfoIs("m4.m5.m6.m7");
 
 goTo.marker('20');
 verify.memberListContains("c", undefined, "Exported class comment", "m4.m5.m6.m7.c", "class");
 verify.quickInfoIs("(): m4.m5.m6.m7.c", "", "m4.m5.m6.m7.c", "constructor");
 
 goTo.marker('21');
-verify.completionListContains("m5", "m5", "", "m5", "module");
-verify.quickInfoIs("m5", "", "m5", "module");
+verify.completionListContains("m5", "m5");
+verify.quickInfoIs("m5");
 
 goTo.marker('22');
-verify.memberListContains("m6", "m5.m6", "", "m5.m6", "module");
-verify.quickInfoIs("m5.m6", "", "m5.m6", "module");
+verify.memberListContains("m6", "m5.m6");
+verify.quickInfoIs("m5.m6");
 
 goTo.marker('23');
-verify.memberListContains("m7", "m5.m6.m7", "module comment of m5.m6.m7", "m5.m6.m7", "module");
-verify.quickInfoIs("m5.m6.m7", "module comment of m5.m6.m7", "m5.m6.m7", "module");
+verify.memberListContains("m7", "m5.m6.m7");
+verify.quickInfoIs("m5.m6.m7");
 
 goTo.marker('24');
-verify.memberListContains("m8", "m5.m6.m7.m8", "module m8 comment", "m5.m6.m7.m8", "module");
-verify.quickInfoIs("m5.m6.m7.m8", "module m8 comment", "m5.m6.m7.m8", "module");
+verify.memberListContains("m8", "m5.m6.m7.m8");
+verify.quickInfoIs("m5.m6.m7.m8");
 
 goTo.marker('25');
 verify.memberListContains("c", undefined, "Exported class comment", "m5.m6.m7.m8.c", "class");
 verify.quickInfoIs("(): m5.m6.m7.m8.c", "", "m5.m6.m7.m8.c", "constructor");
 
 goTo.marker('26');
-verify.completionListContains("m6", "m6", "", "m6", "module");
-verify.quickInfoIs("m6", "", "m6", "module");
+verify.completionListContains("m6", "m6");
+verify.quickInfoIs("m6");
 
 goTo.marker('27');
-verify.memberListContains("m7", "m6.m7", "", "m6.m7", "module");
-verify.quickInfoIs("m6.m7", "", "m6.m7", "module");
+verify.memberListContains("m7", "m6.m7");
+verify.quickInfoIs("m6.m7");
 
 goTo.marker('28');
-verify.memberListContains("m8", "m6.m7.m8", "", "m6.m7.m8", "module");
-verify.quickInfoIs("m6.m7.m8", "", "m6.m7.m8", "module");
+verify.memberListContains("m8", "m6.m7.m8");
+verify.quickInfoIs("m6.m7.m8");
 
 goTo.marker('29');
 verify.memberListContains("c", undefined, "Exported class comment", "m6.m7.m8.c", "class");
 verify.quickInfoIs("(): m6.m7.m8.c", "", "m6.m7.m8.c", "constructor");
 
 goTo.marker('30');
-verify.completionListContains("m7", "m7", "", "m7", "module");
-verify.quickInfoIs("m7", "", "m7", "module");
+verify.completionListContains("m7", "m7");
+verify.quickInfoIs("m7");
 
 goTo.marker('31');
-verify.memberListContains("m8", "m7.m8", "", "m7.m8", "module");
-verify.quickInfoIs("m7.m8", "", "m7.m8", "module");
+verify.memberListContains("m8", "m7.m8");
+verify.quickInfoIs("m7.m8");
 
 goTo.marker('32');
-verify.memberListContains("m9", "m7.m8.m9", "module m9 comment", "m7.m8.m9", "module");
-verify.quickInfoIs("m7.m8.m9", "module m9 comment", "m7.m8.m9", "module");
+verify.memberListContains("m9", "m7.m8.m9");
+verify.quickInfoIs("m7.m8.m9");
 
 goTo.marker('33');
 verify.memberListContains("c", undefined, "Exported class comment", "m7.m8.m9.c", "class");
@@ -236,10 +236,10 @@ goTo.marker('35');
 verify.quickInfoIs("number", "", 'myComplexVal', "var");
 
 goTo.marker('36');
-verify.quickInfoIs("complexM", "", 'complexM', "module");
+verify.quickInfoIs("complexM");
 
 goTo.marker('37');
-verify.quickInfoIs("complexM.m2", "", 'complexM.m2', "module");
+verify.quickInfoIs("complexM.m2");
 
 goTo.marker('38');
 verify.quickInfoIs("(): complexM.m2.c", "", 'complexM.m2.c', "constructor");

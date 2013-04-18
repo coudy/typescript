@@ -91,7 +91,6 @@ module TypeScript {
 
         if (hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
-            constructorDeclKind = PullElementKind.Property;
         }
 
         var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);

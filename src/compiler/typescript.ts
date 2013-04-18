@@ -560,7 +560,7 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        private pullResolveFile(fileName: string): boolean {
+        public pullResolveFile(fileName: string): boolean {
             if (!this.pullTypeChecker) {
                 return false;
             }

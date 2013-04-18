@@ -288,7 +288,7 @@ class BatchCompiler {
         //    return true;
         //}
 
-        this.ioHost.stdout.WriteLine("Initial type check errors:");
+        this.ioHost.stdout.WriteLine("**** Initial type check errors:");
         compiler.pullTypeCheck();
 
         var semanticDiagnostics: TypeScript.IDiagnostic[];
@@ -306,11 +306,12 @@ class BatchCompiler {
             var snapshot: TypeScript.IScriptSnapshot;
 
             for (; iCode < this.resolvedEnvironment.code.length; iCode++) {
-                this.ioHost.stdout.WriteLine("Update type check and errors for " + this.resolvedEnvironment.code[iCode].path + ":");
+                this.ioHost.stdout.WriteLine("**** Update type check and errors for " + this.resolvedEnvironment.code[iCode].path + ":");
                 var text = this.resolvedEnvironment.code[iCode].getText(0, this.resolvedEnvironment.code[iCode].getLength());
                 snapshot = TypeScript.ScriptSnapshot.fromString(text);
-
                 compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, /*version:*/ 0, /*isOpen:*/ true, null);
+                // resolve the file to simulate an IDE-driven pull
+                compiler.pullResolveFile(lastTypecheckedFileName);
                 semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }

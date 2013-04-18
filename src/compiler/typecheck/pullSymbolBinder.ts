@@ -215,13 +215,11 @@ module TypeScript {
                 moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
 
                 // The instance symbol is further set up in bindVariableDeclaration
+                // (We add the declaration there, invalidate previous decls on edit and add the instance symbol to the parent)
                 moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
-                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
-            } else if (moduleInstanceSymbol) {
-                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
             }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -237,17 +235,9 @@ module TypeScript {
 
                     if (linkKind == SymbolLinkKind.PublicMember) {
                         parent.addMember(moduleContainerTypeSymbol, linkKind);
-
-                        if (moduleInstanceSymbol && parentInstanceSymbol && (parentInstanceSymbol != moduleInstanceSymbol)) {
-                            parentInstanceSymbol.addMember(moduleInstanceSymbol, linkKind);
-                        }
                     }
                     else {
                         moduleContainerTypeSymbol.setContainer(parent);
-
-                        if (moduleInstanceSymbol && parentInstanceSymbol && (parentInstanceSymbol != moduleInstanceSymbol)) {
-                            moduleInstanceSymbol.setContainer(parentInstanceSymbol);
-                        }
                     }
                 }
             }
@@ -260,31 +250,6 @@ module TypeScript {
                     if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
                         moduleContainerTypeSymbol.removeDeclaration(decls[i]);
                     }
-                }
-
-                if (moduleInstanceSymbol) {
-                    decls = moduleInstanceSymbol.getDeclarations();
-
-                    for (var i = 0; i < decls.length; i++) {
-                        if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
-                            moduleInstanceSymbol.removeDeclaration(decls[i]);
-                        }
-                    }
-
-                    moduleInstanceTypeSymbol = moduleInstanceSymbol.getType();
-
-                    decls = moduleInstanceTypeSymbol.getDeclarations();
-
-                    for (var i = 0; i < decls.length; i++) {
-                        if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
-                            moduleInstanceTypeSymbol.removeDeclaration(decls[i]);
-                        }
-                    }
-
-                    // add the current module decl to the declaration list, to make up for the ones we just deleted
-                    moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
-
-                    moduleInstanceSymbol.invalidate();
                 }
 
                 moduleContainerTypeSymbol.invalidate();
@@ -881,11 +846,10 @@ module TypeScript {
                     }
 
                     interfaceSymbol.cleanTypeParameters();
-
-                    interfaceSymbol.setUnresolved();
                 }
 
                 this.cleanInterfaceSignatures(interfaceSymbol);
+                interfaceSymbol.setUnresolved();
             }
 
             this.pushParent(interfaceSymbol, interfaceDecl);
@@ -1076,7 +1040,7 @@ module TypeScript {
                     variableSymbol = parent.findContainedMember(declName);
                 }
 
-                if (variableSymbol && !variableSymbol.getIsSynthesized()) {
+                if (variableSymbol) {
                     var declarations = variableSymbol.getDeclarations();
 
                     if (declarations.length) {
@@ -1106,7 +1070,7 @@ module TypeScript {
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
-                if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
+                if (!isImplicit || (!variableSymbol.hasFlag(PullElementFlags.ImplicitVariable) && (variableSymbol.getKind() != declKind))) {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
@@ -1141,6 +1105,9 @@ module TypeScript {
 
                 variableSymbol.invalidate();
             }
+
+            var replaceProperty = false;
+            var previousProperty: PullSymbol = null;
 
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
                 if (!variableSymbol) {
@@ -1200,6 +1167,12 @@ module TypeScript {
                     }
 
                     if (classTypeSymbol && classTypeSymbol.isClass()) { // protect against duplicate declarations
+                        replaceProperty = variableSymbol && variableSymbol.getIsSynthesized();
+
+                        if (replaceProperty) {
+                            previousProperty = variableSymbol;
+                        }
+
                         variableSymbol = classTypeSymbol.getConstructorMethod();
                         variableDeclaration.setSymbol(variableSymbol);
 
@@ -1287,7 +1260,7 @@ module TypeScript {
                         }
 
                         // we added the variable to the parent when binding the module
-                        parentHadSymbol = true;
+                        //parentHadSymbol = true;
                     }
                     else {
                         // PULLTODO: Raise an Error here
@@ -1309,6 +1282,10 @@ module TypeScript {
                     variableSymbol.setContainer(parent);
                 }
             }
+            else if (replaceProperty) {
+                parent.removeMember(previousProperty);
+                parent.addMember(variableSymbol, linkKind);
+            }
 
             variableSymbol.setIsBound(this.bindingPhase);
         }
@@ -1321,7 +1298,6 @@ module TypeScript {
 
             var isStatic = false;
             var isOptional = false;
-            var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) != 0;
 
             var linkKind = SymbolLinkKind.PublicMember;
 
@@ -1342,8 +1318,6 @@ module TypeScript {
             var declName = propertyDeclaration.getName();
 
             var parentHadSymbol = false;
-            var replaceProperty = false;
-            var previousProperty: PullSymbol = null;
 
             var parent = this.getParent(true);
 
@@ -1362,17 +1336,11 @@ module TypeScript {
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
 
-                if (!propertySymbol.isType() || 
-                    !isImplicit ||
-                    (!(<PullTypeSymbol>propertySymbol).isClass() && isImplicit)) {
+                var span = propertyDeclaration.getSpan();
 
-                    // use the span, since we may not have an AST if this is a class constructor property for a class
-                    // with an implicit constructor...
-                    var span = propertyDeclaration.getSpan();
+                propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
+                    getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
 
-                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
-                        getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
-                }
 
                 propertySymbol = null;
             }
@@ -1398,54 +1366,15 @@ module TypeScript {
 
             var classTypeSymbol: PullClassTypeSymbol;
 
-            if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
-                if (!parentHadSymbol) {
-                    propertySymbol = new PullSymbol(declName, declKind);
-                }
-
-                propertySymbol.addDeclaration(propertyDeclaration);
-                propertyDeclaration.setSymbol(propertySymbol);
-
-                this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
-                this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
+            if (!parentHadSymbol) {
+                propertySymbol = new PullSymbol(declName, declKind);
             }
-            else {
-                // it's really an implicit class decl, so we need to set the type of the symbol to
-                // the constructor type
 
-                if (parent) {
-                    var members = parent.getMembers();
+            propertySymbol.addDeclaration(propertyDeclaration);
+            propertyDeclaration.setSymbol(propertySymbol);
 
-                    for (var i = 0; i < members.length; i++) {
-                        if ((members[i].getName() == declName) && (members[i].getKind() == PullElementKind.Class)) {
-                            classTypeSymbol = <PullClassTypeSymbol>members[i];
-                            break;
-                        }
-                    }
-                }
-
-                if (!classTypeSymbol) {
-                    classTypeSymbol = <PullClassTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
-
-                    if (classTypeSymbol && (classTypeSymbol.getKind() != PullElementKind.Class)) {
-                        classTypeSymbol = null;
-                    }
-                }
-
-                if (classTypeSymbol) {
-                    replaceProperty = propertySymbol && propertySymbol.getIsSynthesized();
-
-                    if (replaceProperty) {
-                        previousProperty = propertySymbol;
-                    }
-
-                    propertySymbol = classTypeSymbol.getConstructorMethod();
-                    propertyDeclaration.setSymbol(propertySymbol);
-                }
-                else {
-                    propertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
-                }
-            }
+            this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
+            this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);            
 
             if (isOptional) {
                 propertySymbol.setIsOptional();
@@ -1465,10 +1394,6 @@ module TypeScript {
                 else {
                     parent.addMember(propertySymbol, linkKind);
                 }
-            }
-            else if (replaceProperty) {
-                parent.removeMember(previousProperty);
-                parent.addMember(propertySymbol, linkKind);
             }
 
             propertySymbol.setIsBound(this.bindingPhase);

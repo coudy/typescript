@@ -39,12 +39,12 @@ goTo.marker('5');
 verify.completionListContains("extMod", "extMod", "Import declaration", "extMod", "module");
 
 goTo.marker('6');
-verify.memberListContains("m1", "extMod.m1", "ModuleComment", "extMod.m1", "module");
+verify.memberListContains("m1", "extMod.m1");
 
 goTo.marker('7');
 verify.memberListContains("b", "number", "b's comment", "extMod.m1.b", "var");
 verify.memberListContains("fooExport", "(): number", "exported function", "extMod.m1.fooExport", "function");
-verify.memberListContains("m2", "extMod.m1.m2", "m2 comments", "extMod.m1.m2", "module");
+verify.memberListContains("m2", "extMod.m1.m2");
 
 goTo.marker('8');
 verify.currentSignatureHelpDocCommentIs("exported function");

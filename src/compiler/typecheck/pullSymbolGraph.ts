@@ -141,9 +141,18 @@ module TypeScript {
                     this.removeDecl(childDecls[i]);
                 }
 
-                this.removeSymbol(declSymbol);
+                var remainingDecls = declSymbol.getDeclarations();
 
-                this.semanticInfoChain.removeSymbolFromCache(declSymbol);
+                // if the symbol is "split" amongst multiple decls (e.g., an interface or internal module), don't remove the
+                // symbol unless all decls have been removed
+                if (!remainingDecls.length) {
+                    this.removeSymbol(declSymbol);
+
+                    this.semanticInfoChain.removeSymbolFromCache(declSymbol);
+                }
+                else {
+                    declSymbol.invalidate();
+                }
             }
 
             // if we're removing a class, enum, etc., remove the implicit

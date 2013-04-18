@@ -50,7 +50,7 @@ verify.completionListContains("m1", "m1", "Module comment", "m1", "module");
 goTo.marker('5');
 verify.memberListContains("b", "number", "b's comment", "m1.b", "var");
 verify.memberListContains("fooExport", "(): number", "exported function", "m1.fooExport", "function");
-verify.memberListContains("m2", "m1.m2", "m2 comments", "m1.m2", "module");
+verify.memberListContains("m2", "m1.m2");
 
 goTo.marker('6');
 verify.currentSignatureHelpDocCommentIs("exported function");
@@ -72,12 +72,12 @@ goTo.marker('10');
 verify.completionListContains("extMod", "extMod", "This is on import declaration", "extMod", "module");
 
 goTo.marker('11');
-verify.memberListContains("m1", "extMod.m1", "Module comment", "extMod.m1", "module");
+verify.memberListContains("m1", "extMod.m1");
 
 goTo.marker('12');
 verify.memberListContains("b", "number", "b's comment", "extMod.m1.b", "var");
 verify.memberListContains("fooExport", "(): number", "exported function", "extMod.m1.fooExport", "function");
-verify.memberListContains("m2", "extMod.m1.m2", "m2 comments", "extMod.m1.m2", "module");
+verify.memberListContains("m2", "extMod.m1.m2");
 
 goTo.marker('13');
 verify.currentSignatureHelpDocCommentIs("exported function");
