@@ -18540,7 +18540,7 @@ var TypeScript;
                 var semicolonToken = null;
                 var block = null;
                 if (this.isBlock()) {
-                    block = this.parseBlock(false, false);
+                    block = this.parseBlock(false, true);
                 } else {
                     semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
                 }
@@ -18580,7 +18580,7 @@ var TypeScript;
                 var block = null;
                 var semicolon = null;
                 if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
-                    block = this.parseBlock(parseBlockEvenWithNoOpenBrace, false);
+                    block = this.parseBlock(parseBlockEvenWithNoOpenBrace, true);
                 } else {
                     semicolon = this.eatExplicitOrAutomaticSemicolon(false);
                 }
@@ -58669,7 +58669,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

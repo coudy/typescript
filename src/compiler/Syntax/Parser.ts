@@ -2127,7 +2127,7 @@ module TypeScript.Parser {
             var block: BlockSyntax = null;
 
             if (this.isBlock()) {
-                block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
+                block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
             }
             else {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2200,7 +2200,7 @@ module TypeScript.Parser {
             var semicolon: ISyntaxToken = null;
 
             if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
-                block = this.parseBlock(parseBlockEvenWithNoOpenBrace, /*checkForStrictMode:*/ false);
+                block = this.parseBlock(parseBlockEvenWithNoOpenBrace, /*checkForStrictMode:*/ true);
             }
             else {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
