@@ -1634,7 +1634,7 @@ module TypeScript {
                 }
                 else if (constraintTypeSymbol.isPrimitive()) {
                     context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.Type_parameter_constraint_may_not_be_a_primitive_type, null), enclosingDecl, true);
+                        getDiagnosticMessage(DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null), enclosingDecl, true);
                 }
                 else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -2590,7 +2590,7 @@ module TypeScript {
 
                         if (parentDecl != enclosingDecl) {
                             diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.Static_methods_may_not_reference_class_type_parameters, null), enclosingDecl);
+                                getDiagnosticMessage(DiagnosticCode.Static_methods_cannot_reference_class_type_parameters, null), enclosingDecl);
 
                             typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
 

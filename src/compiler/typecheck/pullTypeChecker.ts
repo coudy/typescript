@@ -1046,7 +1046,7 @@ module TypeScript {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
             } else if (typeDeclAst.implementsList) {
-                var message = getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null);
+                var message = getDiagnosticMessage(DiagnosticCode.An_interface_cannot_implement_another_type, null);
                 this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
         }
@@ -1432,12 +1432,12 @@ module TypeScript {
                 this.superCallMustBeFirstStatementInConstructor(typeCheckContext.getEnclosingDecl(PullElementKind.ConstructorMethod), typeCheckContext.getEnclosingDecl(PullElementKind.Class))) {
 
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_current_location, null), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_in_current_location, null), enclosingDecl);
             }
             else if (enclosingNonLambdaDecl) {
                 if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
-                        getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_initializers_in_a_class_body, null), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body, null), enclosingDecl);
                 }
                 else if (enclosingNonLambdaDecl.getKind() === PullElementKind.Container || enclosingNonLambdaDecl.getKind() === PullElementKind.DynamicModule) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
@@ -1445,7 +1445,7 @@ module TypeScript {
                 }
                 else if (typeCheckContext.inConstructorArguments) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName,
-                        getDiagnosticMessage(DiagnosticCode._this__may_not_be_referenced_in_constructor_arguments, null), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments, null), enclosingDecl);
                 }
             }
 
@@ -1481,7 +1481,7 @@ module TypeScript {
             // A super is permitted only in a derived class 
             else if (!this.enclosingClassIsDerived(typeCheckContext)) {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode._super__may_not_be_referenced_in_non_derived_classes, null), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes, null), enclosingDecl);
             }
 
             this.checkForResolutionError(type, enclosingDecl);
@@ -2075,7 +2075,8 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             if (enclosingDecl.getKind() == PullElementKind.SetAccessor && returnExpr) {
-                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Setters_may_not_return_a_value, null), typeCheckContext.getEnclosingDecl());
+                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName,
+                    getDiagnosticMessage(DiagnosticCode.Setters_cannot_return_a_value, null), typeCheckContext.getEnclosingDecl());
             }
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
