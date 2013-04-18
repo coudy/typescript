@@ -4388,6 +4388,9 @@ module TypeScript.Parser {
             else if (this.isSetAccessorPropertyAssignment(/*inErrorRecovery:*/ false)) {
                 return this.parseSetAccessorPropertyAssignment();
             }
+            else if (this.isFunctionPropertyAssignment(/*inErrorRecovery:*/ false)) {
+                return this.parseFunctionPropertyAssignment();
+            }
             else if (this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false)) {
                 return this.parseSimplePropertyAssignment();
             }
@@ -4399,6 +4402,7 @@ module TypeScript.Parser {
         private isPropertyAssignment(inErrorRecovery: boolean): boolean {
             return this.isGetAccessorPropertyAssignment(inErrorRecovery) ||
                    this.isSetAccessorPropertyAssignment(inErrorRecovery) ||
+                   this.isFunctionPropertyAssignment(inErrorRecovery) ||
                    this.isSimplePropertyAssignment(inErrorRecovery);
         }
 
@@ -4438,14 +4442,29 @@ module TypeScript.Parser {
             return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         }
 
-        private isSimplePropertyAssignment(inErrorRecovery: boolean): boolean {
-            return this.isPropertyName(this.currentToken(), inErrorRecovery);
-        }
-
         private eatPropertyName(): ISyntaxToken {
             return SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())
                 ? this.eatIdentifierNameToken()
                 : this.eatAnyToken();
+        }
+
+        private isFunctionPropertyAssignment(inErrorRecovery: boolean): boolean {
+            return this.isPropertyName(this.currentToken(), inErrorRecovery) &&
+                   this.isCallSignature(/*index:*/ 1);
+        }
+
+        private parseFunctionPropertyAssignment(): FunctionPropertyAssignmentSyntax {
+            // Debug.assert(this.isFunctionPropertyAssignment(/*inErrorRecovery:*/ false));
+
+            var propertyName = this.eatPropertyName();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
+            var block = this.parseBlock(/*parseBlockEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
+
+            return this.factory.functionPropertyAssignment(propertyName, callSignature, block);
+        }
+
+        private isSimplePropertyAssignment(inErrorRecovery: boolean): boolean {
+            return this.isPropertyName(this.currentToken(), inErrorRecovery);
         }
 
         private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {

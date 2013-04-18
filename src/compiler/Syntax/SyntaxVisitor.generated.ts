@@ -74,6 +74,7 @@ module TypeScript {
         visitCastExpression(node: CastExpressionSyntax): any;
         visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): any;
         visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any;
+        visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): any;
         visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any;
         visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): any;
         visitFunctionExpression(node: FunctionExpressionSyntax): any;
@@ -379,6 +380,10 @@ module TypeScript {
         }
 
         public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any {
+            return this.defaultVisit(node);
+        }
+
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): any {
             return this.defaultVisit(node);
         }
 

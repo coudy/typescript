@@ -1,3 +1,4 @@
+
 var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
@@ -345,350 +346,364 @@ var TypeScript;
         DiagnosticCode.Rest_parameter_cannot_have_initializer = 58;
         DiagnosticCode._map[59] = "Modifiers_cannot_appear_here";
         DiagnosticCode.Modifiers_cannot_appear_here = 59;
-        DiagnosticCode._map[60] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 60;
-        DiagnosticCode._map[61] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 61;
-        DiagnosticCode._map[62] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 62;
-        DiagnosticCode._map[63] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 63;
-        DiagnosticCode._map[64] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 64;
-        DiagnosticCode._map[65] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 65;
-        DiagnosticCode._map[66] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 66;
-        DiagnosticCode._map[67] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 67;
-        DiagnosticCode._map[68] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 68;
-        DiagnosticCode._map[69] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 69;
-        DiagnosticCode._map[70] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 70;
-        DiagnosticCode._map[71] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 71;
-        DiagnosticCode._map[72] = "Cannot_convert__0__to__1__NL__2";
-        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 72;
-        DiagnosticCode._map[73] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 73;
-        DiagnosticCode._map[74] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 74;
-        DiagnosticCode._map[75] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 75;
-        DiagnosticCode._map[76] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 76;
-        DiagnosticCode._map[77] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 77;
-        DiagnosticCode._map[78] = "Exported_class__0__extends_private_class__1_";
-        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 78;
-        DiagnosticCode._map[79] = "Exported_class__0__implements_private_interface__1_";
-        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 79;
-        DiagnosticCode._map[80] = "Exported_interface__0__extends_private_interface__1_";
-        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 80;
-        DiagnosticCode._map[81] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 81;
-        DiagnosticCode._map[82] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 82;
-        DiagnosticCode._map[83] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 83;
-        DiagnosticCode._map[84] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 84;
-        DiagnosticCode._map[85] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 85;
-        DiagnosticCode._map[86] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 86;
-        DiagnosticCode._map[87] = "Exported_variable__0__has_or_is_using_private_type__1_";
-        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 87;
-        DiagnosticCode._map[88] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 88;
-        DiagnosticCode._map[89] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 89;
-        DiagnosticCode._map[90] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 90;
-        DiagnosticCode._map[91] = "Exported_variable__0__is_using_inaccessible_module__1_";
-        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 91;
-        DiagnosticCode._map[92] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 92;
-        DiagnosticCode._map[93] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 93;
-        DiagnosticCode._map[94] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 94;
-        DiagnosticCode._map[95] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 95;
-        DiagnosticCode._map[96] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 96;
-        DiagnosticCode._map[97] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 97;
-        DiagnosticCode._map[98] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 98;
-        DiagnosticCode._map[99] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 99;
-        DiagnosticCode._map[100] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 100;
-        DiagnosticCode._map[101] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 101;
-        DiagnosticCode._map[102] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 102;
-        DiagnosticCode._map[103] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 103;
-        DiagnosticCode._map[104] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 104;
-        DiagnosticCode._map[105] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 105;
-        DiagnosticCode._map[106] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 106;
-        DiagnosticCode._map[107] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 107;
-        DiagnosticCode._map[108] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 108;
-        DiagnosticCode._map[109] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 109;
-        DiagnosticCode._map[110] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 110;
-        DiagnosticCode._map[111] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 111;
-        DiagnosticCode._map[112] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 112;
-        DiagnosticCode._map[113] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 113;
-        DiagnosticCode._map[114] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
-        DiagnosticCode._map[115] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 115;
-        DiagnosticCode._map[116] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 116;
-        DiagnosticCode._map[117] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 117;
-        DiagnosticCode._map[118] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 118;
-        DiagnosticCode._map[119] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 119;
-        DiagnosticCode._map[120] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 120;
-        DiagnosticCode._map[121] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 121;
-        DiagnosticCode._map[122] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 122;
-        DiagnosticCode._map[123] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
-        DiagnosticCode._map[124] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 124;
-        DiagnosticCode._map[125] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 125;
-        DiagnosticCode._map[126] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 126;
-        DiagnosticCode._map[127] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 127;
-        DiagnosticCode._map[128] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
-        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 128;
-        DiagnosticCode._map[129] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
-        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 129;
-        DiagnosticCode._map[130] = "Multiple_constructor_implementations_are_not_allowed";
-        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 130;
-        DiagnosticCode._map[131] = "Unable_to_resolve_external_module__0_";
-        DiagnosticCode.Unable_to_resolve_external_module__0_ = 131;
-        DiagnosticCode._map[132] = "Module_cannot_be_aliased_to_a_non_module_type";
-        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 132;
-        DiagnosticCode._map[133] = "A_class_may_only_extend_another_class";
-        DiagnosticCode.A_class_may_only_extend_another_class = 133;
-        DiagnosticCode._map[134] = "A_class_may_only_implement_another_class_or_interface";
-        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 134;
-        DiagnosticCode._map[135] = "An_interface_may_only_extend_another_class_or_interface";
-        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 135;
-        DiagnosticCode._map[136] = "An_interface_may_not_implement_another_type";
-        DiagnosticCode.An_interface_may_not_implement_another_type = 136;
-        DiagnosticCode._map[137] = "Unable_to_resolve_type";
-        DiagnosticCode.Unable_to_resolve_type = 137;
-        DiagnosticCode._map[138] = "Unable_to_resolve_type_of__0_";
-        DiagnosticCode.Unable_to_resolve_type_of__0_ = 138;
-        DiagnosticCode._map[139] = "Unable_to_resolve_type_parameter_constraint";
-        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 139;
-        DiagnosticCode._map[140] = "Type_parameter_constraint_may_not_be_a_primitive_type";
-        DiagnosticCode.Type_parameter_constraint_may_not_be_a_primitive_type = 140;
-        DiagnosticCode._map[141] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 141;
-        DiagnosticCode._map[142] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 142;
-        DiagnosticCode._map[143] = "Invalid__new__expression";
-        DiagnosticCode.Invalid__new__expression = 143;
-        DiagnosticCode._map[144] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
-        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 144;
-        DiagnosticCode._map[145] = "Could_not_select_overload_for__new__expression";
-        DiagnosticCode.Could_not_select_overload_for__new__expression = 145;
-        DiagnosticCode._map[146] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
-        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 146;
-        DiagnosticCode._map[147] = "Could_not_select_overload_for__call__expression";
-        DiagnosticCode.Could_not_select_overload_for__call__expression = 147;
-        DiagnosticCode._map[148] = "Unable_to_invoke_type_with_no_call_signatures";
-        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 148;
-        DiagnosticCode._map[149] = "Calls_to__super__are_only_valid_inside_a_class";
-        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 149;
-        DiagnosticCode._map[150] = "Generic_type__0__requires_1_type_argument_s_";
-        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 150;
-        DiagnosticCode._map[151] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
-        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 151;
-        DiagnosticCode._map[152] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
-        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 152;
-        DiagnosticCode._map[153] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
-        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 153;
-        DiagnosticCode._map[154] = "Could_not_find_dotted_name__0_";
-        DiagnosticCode.Could_not_find_dotted_name__0_ = 154;
-        DiagnosticCode._map[155] = "Could_not_find_symbol__0_";
-        DiagnosticCode.Could_not_find_symbol__0_ = 155;
-        DiagnosticCode._map[156] = "_get__and__set__accessor_must_have_the_same_type";
-        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 156;
-        DiagnosticCode._map[157] = "_this__may_not_be_referenced_in_current_location";
-        DiagnosticCode._this__may_not_be_referenced_in_current_location = 157;
-        DiagnosticCode._map[158] = "Use_of_deprecated__bool__type__Use__boolean__instead";
-        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 158;
-        DiagnosticCode._map[159] = "Static_methods_may_not_reference_class_type_parameters";
-        DiagnosticCode.Static_methods_may_not_reference_class_type_parameters = 159;
-        DiagnosticCode._map[160] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 160;
-        DiagnosticCode._map[161] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself = 161;
-        DiagnosticCode._map[162] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
-        DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class = 162;
-        DiagnosticCode._map[163] = "_super__may_not_be_referenced_in_non_derived_classes";
-        DiagnosticCode._super__may_not_be_referenced_in_non_derived_classes = 163;
-        DiagnosticCode._map[164] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
-        DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties = 164;
-        DiagnosticCode._map[165] = "Constructors_for_derived_classes_must_contain_a__super__call";
-        DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call = 165;
-        DiagnosticCode._map[166] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
-        DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors = 166;
-        DiagnosticCode._map[167] = "_0_1__is_inaccessible";
-        DiagnosticCode._0_1__is_inaccessible = 167;
-        DiagnosticCode._map[168] = "_this__cannot_be_referenced_within_module_bodies";
-        DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 168;
-        DiagnosticCode._map[169] = "_this__must_only_be_used_inside_a_function_or_script_context";
-        DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 169;
-        DiagnosticCode._map[170] = "VarArgs_must_be_array_types";
-        DiagnosticCode.VarArgs_must_be_array_types = 170;
-        DiagnosticCode._map[171] = "Invalid__addition__expression___types_do_not_agree";
-        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 171;
-        DiagnosticCode._map[172] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 172;
-        DiagnosticCode._map[173] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
-        DiagnosticCode._map[174] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 174;
-        DiagnosticCode._map[175] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 175;
-        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 176;
-        DiagnosticCode._map[177] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 177;
-        DiagnosticCode._map[178] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
-        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 178;
-        DiagnosticCode._map[179] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 179;
-        DiagnosticCode._map[180] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
-        DiagnosticCode._map[181] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
-        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 181;
-        DiagnosticCode._map[182] = "Setters_may_not_return_a_value";
-        DiagnosticCode.Setters_may_not_return_a_value = 182;
-        DiagnosticCode._map[183] = "Tried_to_set_variable_type_to_uninitialized_module_type";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 183;
-        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 184;
-        DiagnosticCode._map[185] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 185;
-        DiagnosticCode._map[186] = "Getters_must_return_a_value";
-        DiagnosticCode.Getters_must_return_a_value = 186;
-        DiagnosticCode._map[187] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
-        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 187;
-        DiagnosticCode._map[188] = "Invalid_left_hand_side_of_assignment_expression";
-        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 188;
-        DiagnosticCode._map[189] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 189;
-        DiagnosticCode._map[190] = "Cannot_resolve_return_type_reference";
-        DiagnosticCode.Cannot_resolve_return_type_reference = 190;
-        DiagnosticCode._map[191] = "Constructors_cannot_have_a_return_type_of__void_";
-        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 191;
-        DiagnosticCode._map[192] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
-        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 192;
-        DiagnosticCode._map[193] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
-        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 193;
-        DiagnosticCode._map[194] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
-        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 194;
-        DiagnosticCode._map[195] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 195;
-        DiagnosticCode._map[196] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 196;
-        DiagnosticCode._map[197] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 197;
-        DiagnosticCode._map[198] = "_this__may_not_be_referenced_in_initializers_in_a_class_body";
-        DiagnosticCode._this__may_not_be_referenced_in_initializers_in_a_class_body = 198;
-        DiagnosticCode._map[199] = "Class__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 199;
-        DiagnosticCode._map[200] = "Interface__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 200;
-        DiagnosticCode._map[201] = "Interface__0__cannot_extend_interface__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 201;
-        DiagnosticCode._map[202] = "Duplicate_overload_signature_for__0_";
-        DiagnosticCode.Duplicate_overload_signature_for__0_ = 202;
-        DiagnosticCode._map[203] = "Duplicate_constructor_overload_signature";
-        DiagnosticCode.Duplicate_constructor_overload_signature = 203;
-        DiagnosticCode._map[204] = "Duplicate_overload_call_signature";
-        DiagnosticCode.Duplicate_overload_call_signature = 204;
-        DiagnosticCode._map[205] = "Duplicate_overload_construct_signature";
-        DiagnosticCode.Duplicate_overload_construct_signature = 205;
-        DiagnosticCode._map[206] = "Overload_signature_is_not_compatible_with_function_definition";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 206;
-        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 207;
-        DiagnosticCode._map[208] = "Overload_signaures_do_not_agree_in_public_private_visibility";
-        DiagnosticCode.Overload_signaures_do_not_agree_in_public_private_visibility = 208;
-        DiagnosticCode._map[209] = "Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier";
-        DiagnosticCode.Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier = 209;
-        DiagnosticCode._map[210] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 210;
-        DiagnosticCode._map[211] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 211;
-        DiagnosticCode._map[212] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 212;
-        DiagnosticCode._map[213] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 213;
-        DiagnosticCode._map[214] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 214;
-        DiagnosticCode._map[215] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 215;
-        DiagnosticCode._map[216] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 216;
-        DiagnosticCode._map[217] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 217;
-        DiagnosticCode._map[218] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 218;
-        DiagnosticCode._map[219] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 219;
-        DiagnosticCode._map[220] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 220;
-        DiagnosticCode._map[221] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 221;
-        DiagnosticCode._map[222] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 222;
-        DiagnosticCode._map[223] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 223;
-        DiagnosticCode._map[224] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 224;
-        DiagnosticCode._map[225] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 225;
-        DiagnosticCode._map[226] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 226;
-        DiagnosticCode._map[227] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 227;
-        DiagnosticCode._map[228] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 228;
-        DiagnosticCode._map[229] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 229;
-        DiagnosticCode._map[230] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 230;
-        DiagnosticCode._map[231] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 231;
+        DiagnosticCode._map[60] = "Accessors_are_only_available_when_targeting_EcmaScript5_and_higher";
+        DiagnosticCode.Accessors_are_only_available_when_targeting_EcmaScript5_and_higher = 60;
+        DiagnosticCode._map[61] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 61;
+        DiagnosticCode._map[62] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 62;
+        DiagnosticCode._map[63] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 63;
+        DiagnosticCode._map[64] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 64;
+        DiagnosticCode._map[65] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 65;
+        DiagnosticCode._map[66] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 66;
+        DiagnosticCode._map[67] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 67;
+        DiagnosticCode._map[68] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 68;
+        DiagnosticCode._map[69] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 69;
+        DiagnosticCode._map[70] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 70;
+        DiagnosticCode._map[71] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 71;
+        DiagnosticCode._map[72] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 72;
+        DiagnosticCode._map[73] = "Cannot_convert__0__to__1__NL__2";
+        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 73;
+        DiagnosticCode._map[74] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 74;
+        DiagnosticCode._map[75] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 75;
+        DiagnosticCode._map[76] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 76;
+        DiagnosticCode._map[77] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 77;
+        DiagnosticCode._map[78] = "Accessor_cannot_have_type_parameters";
+        DiagnosticCode.Accessor_cannot_have_type_parameters = 78;
+        DiagnosticCode._map[79] = "Exported_class__0__extends_private_class__1_";
+        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 79;
+        DiagnosticCode._map[80] = "Exported_class__0__implements_private_interface__1_";
+        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 80;
+        DiagnosticCode._map[81] = "Exported_interface__0__extends_private_interface__1_";
+        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 81;
+        DiagnosticCode._map[82] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 82;
+        DiagnosticCode._map[83] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 83;
+        DiagnosticCode._map[84] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 84;
+        DiagnosticCode._map[85] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 85;
+        DiagnosticCode._map[86] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 86;
+        DiagnosticCode._map[87] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 87;
+        DiagnosticCode._map[88] = "Exported_variable__0__has_or_is_using_private_type__1_";
+        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 88;
+        DiagnosticCode._map[89] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 89;
+        DiagnosticCode._map[90] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 90;
+        DiagnosticCode._map[91] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 91;
+        DiagnosticCode._map[92] = "Exported_variable__0__is_using_inaccessible_module__1_";
+        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 92;
+        DiagnosticCode._map[93] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 93;
+        DiagnosticCode._map[94] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 94;
+        DiagnosticCode._map[95] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 95;
+        DiagnosticCode._map[96] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 96;
+        DiagnosticCode._map[97] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 97;
+        DiagnosticCode._map[98] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 98;
+        DiagnosticCode._map[99] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 99;
+        DiagnosticCode._map[100] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 100;
+        DiagnosticCode._map[101] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 101;
+        DiagnosticCode._map[102] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 102;
+        DiagnosticCode._map[103] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 103;
+        DiagnosticCode._map[104] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 104;
+        DiagnosticCode._map[105] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 105;
+        DiagnosticCode._map[106] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 106;
+        DiagnosticCode._map[107] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 107;
+        DiagnosticCode._map[108] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 108;
+        DiagnosticCode._map[109] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 109;
+        DiagnosticCode._map[110] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 110;
+        DiagnosticCode._map[111] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 111;
+        DiagnosticCode._map[112] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 112;
+        DiagnosticCode._map[113] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 113;
+        DiagnosticCode._map[114] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
+        DiagnosticCode._map[115] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 115;
+        DiagnosticCode._map[116] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 116;
+        DiagnosticCode._map[117] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 117;
+        DiagnosticCode._map[118] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 118;
+        DiagnosticCode._map[119] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 119;
+        DiagnosticCode._map[120] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 120;
+        DiagnosticCode._map[121] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 121;
+        DiagnosticCode._map[122] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 122;
+        DiagnosticCode._map[123] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
+        DiagnosticCode._map[124] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 124;
+        DiagnosticCode._map[125] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 125;
+        DiagnosticCode._map[126] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 126;
+        DiagnosticCode._map[127] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 127;
+        DiagnosticCode._map[128] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 128;
+        DiagnosticCode._map[129] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
+        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 129;
+        DiagnosticCode._map[130] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
+        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 130;
+        DiagnosticCode._map[131] = "Multiple_constructor_implementations_are_not_allowed";
+        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 131;
+        DiagnosticCode._map[132] = "Unable_to_resolve_external_module__0_";
+        DiagnosticCode.Unable_to_resolve_external_module__0_ = 132;
+        DiagnosticCode._map[133] = "Module_cannot_be_aliased_to_a_non_module_type";
+        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 133;
+        DiagnosticCode._map[134] = "A_class_may_only_extend_another_class";
+        DiagnosticCode.A_class_may_only_extend_another_class = 134;
+        DiagnosticCode._map[135] = "A_class_may_only_implement_another_class_or_interface";
+        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 135;
+        DiagnosticCode._map[136] = "An_interface_may_only_extend_another_class_or_interface";
+        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 136;
+        DiagnosticCode._map[137] = "An_interface_cannot_implement_another_type";
+        DiagnosticCode.An_interface_cannot_implement_another_type = 137;
+        DiagnosticCode._map[138] = "Unable_to_resolve_type";
+        DiagnosticCode.Unable_to_resolve_type = 138;
+        DiagnosticCode._map[139] = "Unable_to_resolve_type_of__0_";
+        DiagnosticCode.Unable_to_resolve_type_of__0_ = 139;
+        DiagnosticCode._map[140] = "Unable_to_resolve_type_parameter_constraint";
+        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 140;
+        DiagnosticCode._map[141] = "Type_parameter_constraint_cannot_be_a_primitive_type";
+        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 141;
+        DiagnosticCode._map[142] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 142;
+        DiagnosticCode._map[143] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 143;
+        DiagnosticCode._map[144] = "Invalid__new__expression";
+        DiagnosticCode.Invalid__new__expression = 144;
+        DiagnosticCode._map[145] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
+        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 145;
+        DiagnosticCode._map[146] = "Could_not_select_overload_for__new__expression";
+        DiagnosticCode.Could_not_select_overload_for__new__expression = 146;
+        DiagnosticCode._map[147] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
+        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 147;
+        DiagnosticCode._map[148] = "Could_not_select_overload_for__call__expression";
+        DiagnosticCode.Could_not_select_overload_for__call__expression = 148;
+        DiagnosticCode._map[149] = "Unable_to_invoke_type_with_no_call_signatures";
+        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 149;
+        DiagnosticCode._map[150] = "Calls_to__super__are_only_valid_inside_a_class";
+        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 150;
+        DiagnosticCode._map[151] = "Generic_type__0__requires_1_type_argument_s_";
+        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 151;
+        DiagnosticCode._map[152] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
+        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 152;
+        DiagnosticCode._map[153] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
+        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 153;
+        DiagnosticCode._map[154] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
+        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 154;
+        DiagnosticCode._map[155] = "The_property__0__does_not_exist_on_value_of_type__1__";
+        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 155;
+        DiagnosticCode._map[156] = "Could_not_find_symbol__0_";
+        DiagnosticCode.Could_not_find_symbol__0_ = 156;
+        DiagnosticCode._map[157] = "_get__and__set__accessor_must_have_the_same_type";
+        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 157;
+        DiagnosticCode._map[158] = "_this__cannot_be_referenced_in_current_location";
+        DiagnosticCode._this__cannot_be_referenced_in_current_location = 158;
+        DiagnosticCode._map[159] = "Use_of_deprecated__bool__type__Use__boolean__instead";
+        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 159;
+        DiagnosticCode._map[160] = "Static_methods_cannot_reference_class_type_parameters";
+        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 160;
+        DiagnosticCode._map[161] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 161;
+        DiagnosticCode._map[162] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself = 162;
+        DiagnosticCode._map[163] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
+        DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class = 163;
+        DiagnosticCode._map[164] = "_super__cannot_be_referenced_in_non_derived_classes";
+        DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes = 164;
+        DiagnosticCode._map[165] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
+        DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties = 165;
+        DiagnosticCode._map[166] = "Constructors_for_derived_classes_must_contain_a__super__call";
+        DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call = 166;
+        DiagnosticCode._map[167] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
+        DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors = 167;
+        DiagnosticCode._map[168] = "_0_1__is_inaccessible";
+        DiagnosticCode._0_1__is_inaccessible = 168;
+        DiagnosticCode._map[169] = "_this__cannot_be_referenced_within_module_bodies";
+        DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 169;
+        DiagnosticCode._map[170] = "_this__must_only_be_used_inside_a_function_or_script_context";
+        DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 170;
+        DiagnosticCode._map[171] = "______parameters_must_be_array_types";
+        DiagnosticCode.______parameters_must_be_array_types = 171;
+        DiagnosticCode._map[172] = "Invalid__addition__expression___types_do_not_agree";
+        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 172;
+        DiagnosticCode._map[173] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
+        DiagnosticCode._map[174] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 174;
+        DiagnosticCode._map[175] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 175;
+        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 176;
+        DiagnosticCode._map[177] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 177;
+        DiagnosticCode._map[178] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 178;
+        DiagnosticCode._map[179] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
+        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 179;
+        DiagnosticCode._map[180] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
+        DiagnosticCode._map[181] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 181;
+        DiagnosticCode._map[182] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
+        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 182;
+        DiagnosticCode._map[183] = "Setters_cannot_return_a_value";
+        DiagnosticCode.Setters_cannot_return_a_value = 183;
+        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 184;
+        DiagnosticCode._map[185] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 185;
+        DiagnosticCode._map[186] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 186;
+        DiagnosticCode._map[187] = "Getters_must_return_a_value";
+        DiagnosticCode.Getters_must_return_a_value = 187;
+        DiagnosticCode._map[188] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
+        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 188;
+        DiagnosticCode._map[189] = "Invalid_left_hand_side_of_assignment_expression";
+        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 189;
+        DiagnosticCode._map[190] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 190;
+        DiagnosticCode._map[191] = "Cannot_resolve_return_type_reference";
+        DiagnosticCode.Cannot_resolve_return_type_reference = 191;
+        DiagnosticCode._map[192] = "Constructors_cannot_have_a_return_type_of__void_";
+        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 192;
+        DiagnosticCode._map[193] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
+        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 193;
+        DiagnosticCode._map[194] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
+        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 194;
+        DiagnosticCode._map[195] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
+        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 195;
+        DiagnosticCode._map[196] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 196;
+        DiagnosticCode._map[197] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 197;
+        DiagnosticCode._map[198] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 198;
+        DiagnosticCode._map[199] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
+        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 199;
+        DiagnosticCode._map[200] = "Class__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 200;
+        DiagnosticCode._map[201] = "Interface__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 201;
+        DiagnosticCode._map[202] = "Interface__0__cannot_extend_interface__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 202;
+        DiagnosticCode._map[203] = "Duplicate_overload_signature_for__0_";
+        DiagnosticCode.Duplicate_overload_signature_for__0_ = 203;
+        DiagnosticCode._map[204] = "Duplicate_constructor_overload_signature";
+        DiagnosticCode.Duplicate_constructor_overload_signature = 204;
+        DiagnosticCode._map[205] = "Duplicate_overload_call_signature";
+        DiagnosticCode.Duplicate_overload_call_signature = 205;
+        DiagnosticCode._map[206] = "Duplicate_overload_construct_signature";
+        DiagnosticCode.Duplicate_overload_construct_signature = 206;
+        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 207;
+        DiagnosticCode._map[208] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 208;
+        DiagnosticCode._map[209] = "Overload_signatures_must_all_be_public_or_private";
+        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 209;
+        DiagnosticCode._map[210] = "Overload_signatures_must_all_be_exported_or_local";
+        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 210;
+        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
+        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 211;
+        DiagnosticCode._map[212] = "Overload_signatures_must_all_be_optional_or_required";
+        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 212;
+        DiagnosticCode._map[213] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
+        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 213;
+        DiagnosticCode._map[214] = "_this__cannot_be_referenced_in_constructor_arguments";
+        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 214;
+        DiagnosticCode._map[215] = "Static_member_cannot_be_accessed_off_an_instance_variable";
+        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 215;
+        DiagnosticCode._map[216] = "Instance_member_cannot_be_accessed_off_a_class";
+        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 216;
+        DiagnosticCode._map[217] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 217;
+        DiagnosticCode._map[218] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 218;
+        DiagnosticCode._map[219] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 219;
+        DiagnosticCode._map[220] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 220;
+        DiagnosticCode._map[221] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 221;
+        DiagnosticCode._map[222] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 222;
+        DiagnosticCode._map[223] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 223;
+        DiagnosticCode._map[224] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 224;
+        DiagnosticCode._map[225] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 225;
+        DiagnosticCode._map[226] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 226;
+        DiagnosticCode._map[227] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 227;
+        DiagnosticCode._map[228] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 228;
+        DiagnosticCode._map[229] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 229;
+        DiagnosticCode._map[230] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 230;
+        DiagnosticCode._map[231] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 231;
+        DiagnosticCode._map[232] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 232;
+        DiagnosticCode._map[233] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 233;
+        DiagnosticCode._map[234] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 234;
+        DiagnosticCode._map[235] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 235;
+        DiagnosticCode._map[236] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 236;
+        DiagnosticCode._map[237] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 237;
+        DiagnosticCode._map[238] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 238;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -995,6 +1010,11 @@ var TypeScript;
             message: "Modifiers cannot appear here.",
             code: 1055
         },
+        Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: {
+            category: 1 /* Error */ ,
+            message: "Accessors are only when targeting EcmaScript5 and higher.",
+            code: 1056
+        },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
             message: "Duplicate identifier '{0}'.",
@@ -1080,9 +1100,9 @@ var TypeScript;
             message: "Setter '{0}' already declared.",
             code: 2016
         },
-        Accessor_may_not_take_type_parameters: {
+        Accessor_cannot_have_type_parameters: {
             category: 1 /* Error */ ,
-            message: "Accessors may not take type parameters.",
+            message: "Accessors cannot have type parameters.",
             code: 2017
         },
         Exported_class__0__extends_private_class__1_: {
@@ -1375,9 +1395,9 @@ var TypeScript;
             message: "An interface may only extend another class or interface.",
             code: 2075
         },
-        An_interface_may_not_implement_another_type: {
+        An_interface_cannot_implement_another_type: {
             category: 1 /* Error */ ,
-            message: "An interface may not implement another type.",
+            message: "An interface cannot implement another type.",
             code: 2076
         },
         Unable_to_resolve_type: {
@@ -1395,9 +1415,9 @@ var TypeScript;
             message: "Unable to resolve type parameter constraint.",
             code: 2079
         },
-        Type_parameter_constraint_may_not_be_a_primitive_type: {
+        Type_parameter_constraint_cannot_be_a_primitive_type: {
             category: 1 /* Error */ ,
-            message: "Type parameter constraint may not be a primitive type.",
+            message: "Type parameter constraint cannot be a primitive type.",
             code: 2080
         },
         Supplied_parameters_do_not_match_any_signature_of_call_target: {
@@ -1465,9 +1485,9 @@ var TypeScript;
             message: "Could not find enclosing symbol for dotted name '{0}'.",
             code: 2093
         },
-        Could_not_find_dotted_name__0_: {
+        The_property__0__does_not_exist_on_value_of_type__1__: {
             category: 1 /* Error */ ,
-            message: "Could not find dotted name '{0}'.",
+            message: "The property '{0}' does not exist on value of type '{1}'.",
             code: 2094
         },
         Could_not_find_symbol__0_: {
@@ -1480,9 +1500,9 @@ var TypeScript;
             message: "'get' and 'set' accessor must have the same type.",
             code: 2096
         },
-        _this__may_not_be_referenced_in_current_location: {
+        _this__cannot_be_referenced_in_current_location: {
             category: 1 /* Error */ ,
-            message: "'this' may not be referenced in current location.",
+            message: "'this' cannot be referenced in current location.",
             code: 2097
         },
         Use_of_deprecated__bool__type__Use__boolean__instead: {
@@ -1490,9 +1510,9 @@ var TypeScript;
             message: "Use of deprecated type 'bool'. Use 'boolean' instead.",
             code: 2098
         },
-        Static_methods_may_not_reference_class_type_parameters: {
+        Static_methods_cannot_reference_class_type_parameters: {
             category: 1 /* Error */ ,
-            message: "Static methods may not reference class type parameters.",
+            message: "Static methods cannot reference class type parameters.",
             code: 2099
         },
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: {
@@ -1510,9 +1530,9 @@ var TypeScript;
             message: "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
             code: 2102
         },
-        _super__may_not_be_referenced_in_non_derived_classes: {
+        _super__cannot_be_referenced_in_non_derived_classes: {
             category: 1 /* Error */ ,
-            message: "'super' may not be referenced in non-derived classes.",
+            message: "'super' cannot be referenced in non-derived classes.",
             code: 2103
         },
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: {
@@ -1542,12 +1562,12 @@ var TypeScript;
         },
         _this__must_only_be_used_inside_a_function_or_script_context: {
             category: 1 /* Error */ ,
-            message: "'this' must only be used inside a function or script context",
+            message: "'this' must only be used inside a function or script context.",
             code: 2109
         },
-        VarArgs_must_be_array_types: {
+        ______parameters_must_be_array_types: {
             category: 1 /* Error */ ,
-            message: "'...' parameters require both a parameter name and an array type annotation to be specified",
+            message: "'...' parameters must be array types.",
             code: 2110
         },
         Invalid__addition__expression___types_do_not_agree: {
@@ -1605,9 +1625,9 @@ var TypeScript;
             message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
             code: 2121
         },
-        Setters_may_not_return_a_value: {
+        Setters_cannot_return_a_value: {
             category: 1 /* Error */ ,
-            message: "Setters may not return a value.",
+            message: "Setters cannot return a value.",
             code: 2122
         },
         Tried_to_set_variable_type_to_uninitialized_module_type: {
@@ -1662,7 +1682,7 @@ var TypeScript;
         },
         All_symbols_within_a__with__block_will_be_resolved_to__any__: {
             category: 1 /* Error */ ,
-            message: "All symbols within a with block will be resolved to 'any'",
+            message: "All symbols within a with block will be resolved to 'any'.",
             code: 2135
         },
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: {
@@ -1685,9 +1705,9 @@ var TypeScript;
             message: "The operand of an increment or decrement operator must be a variable, property or indexer.",
             code: 2139
         },
-        _this__may_not_be_referenced_in_initializers_in_a_class_body: {
+        _this__cannot_be_referenced_in_initializers_in_a_class_body: {
             category: 1 /* Error */ ,
-            message: "'this' may not be referenced in initializers in a class body.",
+            message: "'this' cannot be referenced in initializers in a class body.",
             code: 2140
         },
         Class__0__cannot_extend_class__1__NL__2: {
@@ -1735,15 +1755,45 @@ var TypeScript;
             message: "Overload signature is not compatible with function definition:{NL}{0}",
             code: 2149
         },
-        Overload_signaures_do_not_agree_in_public_private_visibility: {
+        Overload_signatures_must_all_be_public_or_private: {
             category: 1 /* Error */ ,
-            message: "Overload signaures do not agree in public/private visibility.",
+            message: "Overload signatures must all be public or private.",
             code: 2150
         },
-        Overload_signatures_do_not_agree_with_presence_absense_of_export_modifier: {
+        Overload_signatures_must_all_be_exported_or_local: {
             category: 1 /* Error */ ,
-            message: "Overload signatures do not agree with presence/absense of export modifier.",
+            message: "Overload signatures must all be exported or local.",
             code: 2151
+        },
+        Overload_signatures_must_all_be_ambient_or_non_ambient: {
+            category: 1 /* Error */ ,
+            message: "Overload signatures must all be ambient or non-ambient.",
+            code: 2152
+        },
+        Overload_signatures_must_all_be_optional_or_required: {
+            category: 1 /* Error */ ,
+            message: "Overload signatures must all be optional or required.",
+            code: 2153
+        },
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: {
+            category: 1 /* Error */ ,
+            message: "Specialized overload signature is not subtype of any non-specialized signature.",
+            code: 2154
+        },
+        _this__cannot_be_referenced_in_constructor_arguments: {
+            category: 1 /* Error */ ,
+            message: "'this' cannot be referenced in constructor arguments.",
+            code: 2155
+        },
+        Static_member_cannot_be_accessed_off_an_instance_variable: {
+            category: 1 /* Error */ ,
+            message: "Static member cannot be accessed off an instance variable.",
+            code: 2156
+        },
+        Instance_member_cannot_be_accessed_off_a_class: {
+            category: 1 /* Error */ ,
+            message: "Instance member cannot be accessed off a class.",
+            code: 2157
         },
         Type__0__is_missing_property__1__from_type__2_: {
             category: 2 /* NoPrefix */ ,
@@ -1817,7 +1867,7 @@ var TypeScript;
         },
         Call_signature_expects__0__or_fewer_parameters: {
             category: 2 /* NoPrefix */ ,
-            message: "Call signature expects {0} or fewer parmeters.",
+            message: "Call signature expects {0} or fewer parameters.",
             code: 4014
         },
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
@@ -2669,8 +2719,8 @@ var TypeScript;
         SyntaxKind.MultiLineCommentTrivia = 6;
         SyntaxKind._map[7] = "SingleLineCommentTrivia";
         SyntaxKind.SingleLineCommentTrivia = 7;
-        SyntaxKind._map[8] = "SkippedTextTrivia";
-        SyntaxKind.SkippedTextTrivia = 8;
+        SyntaxKind._map[8] = "SkippedTokenTrivia";
+        SyntaxKind.SkippedTokenTrivia = 8;
         SyntaxKind._map[9] = "ErrorToken";
         SyntaxKind.ErrorToken = 9;
         SyntaxKind._map[10] = "EndOfFileToken";
@@ -3127,22 +3177,24 @@ var TypeScript;
         SyntaxKind.TypeParameter = 235;
         SyntaxKind._map[236] = "Constraint";
         SyntaxKind.Constraint = 236;
-        SyntaxKind._map[237] = "Parameter";
-        SyntaxKind.Parameter = 237;
-        SyntaxKind._map[238] = "EnumElement";
-        SyntaxKind.EnumElement = 238;
-        SyntaxKind._map[239] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 239;
-        SyntaxKind._map[240] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 240;
-        SyntaxKind._map[241] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 241;
-        SyntaxKind._map[242] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 242;
-        SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 243;
-        SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 244;
+        SyntaxKind._map[237] = "SimplePropertyAssignment";
+        SyntaxKind.SimplePropertyAssignment = 237;
+        SyntaxKind._map[238] = "GetAccessorPropertyAssignment";
+        SyntaxKind.GetAccessorPropertyAssignment = 238;
+        SyntaxKind._map[239] = "SetAccessorPropertyAssignment";
+        SyntaxKind.SetAccessorPropertyAssignment = 239;
+        SyntaxKind._map[240] = "FunctionPropertyAssignment";
+        SyntaxKind.FunctionPropertyAssignment = 240;
+        SyntaxKind._map[241] = "Parameter";
+        SyntaxKind.Parameter = 241;
+        SyntaxKind._map[242] = "EnumElement";
+        SyntaxKind.EnumElement = 242;
+        SyntaxKind._map[243] = "TypeAnnotation";
+        SyntaxKind.TypeAnnotation = 243;
+        SyntaxKind._map[244] = "ExternalModuleReference";
+        SyntaxKind.ExternalModuleReference = 244;
+        SyntaxKind._map[245] = "ModuleNameModuleReference";
+        SyntaxKind.ModuleNameModuleReference = 245;
         SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
         SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
         SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5440,6 +5492,29 @@ var definitions = [
         ]
     }, 
     {
+        name: 'FunctionPropertyAssignmentSyntax',
+        baseType: 'PropertyAssignmentSyntax',
+        children: [
+            {
+                name: 'propertyName',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
+                ]
+            }, 
+            {
+                name: 'callSignature',
+                type: 'CallSignatureSyntax'
+            }, 
+            {
+                name: 'block',
+                type: 'BlockSyntax'
+            }
+        ]
+    }, 
+    {
         name: 'AccessorPropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         isAbstract: true,
@@ -5949,7 +6024,7 @@ function generateConstructor(definition) {
         return c.name;
     });
     var result = "";
-    result += "    constructor(";
+    result += "        constructor(";
     var children = definition.children;
     if (subchildren.length > 0) {
         children = subchildren;
@@ -5960,10 +6035,10 @@ function generateConstructor(definition) {
             result += "public ";
         }
         result += child.name + ": " + getType(child);
-        result += ",\r\n                ";
+        result += ",\r\n                    ";
     }
     result += "parsedInStrictMode: boolean) {\r\n";
-    result += "        super(";
+    result += "            super(";
     for(i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
     }
@@ -5975,10 +6050,10 @@ function generateConstructor(definition) {
     for(i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
         if (child.type === "SyntaxKind") {
-            result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
+            result += "            " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
         }
     }
-    result += "    }\r\n";
+    result += "        }\r\n";
     return result;
 }
 function isOptional(child) {
@@ -6720,7 +6795,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public hasTrailingSkippedText(): boolean { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
-    result += "        public hasSkippedText(): boolean { return false; }\r\n";
+    result += "        public hasSkippedToken(): boolean { return false; }\r\n";
     result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";

@@ -19,24 +19,19 @@
             "_diagnosticCode": "Identifier_expected"
         },
         {
-            "_position": 515,
-            "_width": 1,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                ":"
-            ]
-        },
-        {
             "_position": 516,
             "_width": 3,
-            "_diagnosticCode": "Identifier_expected"
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "type parameter"
+            ]
         },
         {
             "_position": 519,
             "_width": 1,
             "_diagnosticCode": "_0_expected",
             "_arguments": [
-                ","
+                ":"
             ]
         },
         {
@@ -373,8 +368,8 @@
                             "text": ""
                         },
                         {
-                            "kind": "SimplePropertyAssignment",
-                            "fullWidth": 10,
+                            "kind": "FunctionPropertyAssignment",
+                            "fullWidth": 6,
                             "isIncrementallyUnusable": true,
                             "propertyName": {
                                 "kind": "IdentifierName",
@@ -383,54 +378,102 @@
                                 "value": "index",
                                 "valueText": "index"
                             },
+                            "callSignature": {
+                                "kind": "CallSignature",
+                                "fullWidth": 1,
+                                "isIncrementallyUnusable": true,
+                                "typeParameterList": {
+                                    "kind": "TypeParameterList",
+                                    "fullWidth": 1,
+                                    "isIncrementallyUnusable": true,
+                                    "lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<",
+                                        "value": "<",
+                                        "valueText": "<"
+                                    },
+                                    "typeParameters": [],
+                                    "greaterThanToken": {
+                                        "kind": "GreaterThanToken",
+                                        "width": 0,
+                                        "text": ""
+                                    }
+                                },
+                                "parameterList": {
+                                    "kind": "ParameterList",
+                                    "fullWidth": 0,
+                                    "isIncrementallyUnusable": true,
+                                    "openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "width": 0,
+                                        "text": ""
+                                    },
+                                    "parameters": [],
+                                    "closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "width": 0,
+                                        "text": ""
+                                    }
+                                }
+                            },
+                            "block": {
+                                "kind": "Block",
+                                "fullWidth": 0,
+                                "isIncrementallyUnusable": true,
+                                "openBraceToken": {
+                                    "kind": "OpenBraceToken",
+                                    "width": 0,
+                                    "text": ""
+                                },
+                                "statements": [],
+                                "closeBraceToken": {
+                                    "kind": "CloseBraceToken",
+                                    "width": 0,
+                                    "text": ""
+                                }
+                            }
+                        },
+                        {
+                            "kind": "CommaToken",
+                            "width": 0,
+                            "text": ""
+                        },
+                        {
+                            "kind": "SimplePropertyAssignment",
+                            "fullWidth": 4,
+                            "isIncrementallyUnusable": true,
+                            "propertyName": {
+                                "kind": "NumericLiteral",
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": "100",
+                                "value": 100,
+                                "valueText": "100",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingSkippedText": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "SemicolonToken",
+                                            "width": 1,
+                                            "text": ";",
+                                            "value": ";",
+                                            "valueText": ";"
+                                        }
+                                    }
+                                ]
+                            },
                             "colonToken": {
                                 "kind": "ColonToken",
                                 "width": 0,
                                 "text": ""
                             },
                             "expression": {
-                                "kind": "CastExpression",
-                                "fullWidth": 5,
-                                "isIncrementallyUnusable": true,
-                                "lessThanToken": {
-                                    "kind": "LessThanToken",
-                                    "width": 1,
-                                    "text": "<",
-                                    "value": "<",
-                                    "valueText": "<"
-                                },
-                                "type": {
-                                    "kind": "IdentifierName",
-                                    "width": 0,
-                                    "text": ""
-                                },
-                                "greaterThanToken": {
-                                    "kind": "GreaterThanToken",
-                                    "width": 0,
-                                    "text": ""
-                                },
-                                "expression": {
-                                    "kind": "NumericLiteral",
-                                    "width": 3,
-                                    "fullWidth": 4,
-                                    "text": "100",
-                                    "value": 100,
-                                    "valueText": "100",
-                                    "hasTrailingTrivia": true,
-                                    "hasTrailingSkippedText": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "SkippedTokenTrivia",
-                                            "skippedToken": {
-                                                "kind": "SemicolonToken",
-                                                "width": 1,
-                                                "text": ";",
-                                                "value": ";",
-                                                "valueText": ";"
-                                            }
-                                        }
-                                    ]
-                                }
+                                "kind": "IdentifierName",
+                                "width": 0,
+                                "text": ""
                             }
                         },
                         {

@@ -286,15 +286,18 @@ module TypeScript {
         TypeParameter,
         Constraint,
 
+        // Property Assignment
+        SimplePropertyAssignment,
+        GetAccessorPropertyAssignment,
+        SetAccessorPropertyAssignment,
+        FunctionPropertyAssignment,
+
         // Misc.
         Parameter,
         EnumElement,
         TypeAnnotation,
-        SimplePropertyAssignment,
         ExternalModuleReference,
         ModuleNameModuleReference,
-        GetAccessorPropertyAssignment,
-        SetAccessorPropertyAssignment,
 
         FirstStandardKeyword = BreakKeyword,
         LastStandardKeyword = WithKeyword,

@@ -2705,6 +2705,30 @@ module TypeScript {
             return result;
         }
 
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): BinaryExpression {
+            this.assertElementAtPosition(node);
+
+            var start = this.position;
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var left = node.propertyName.accept(this);
+                var functionDeclaration = <FunctionDeclaration>node.callSignature.accept(this);
+                var block = node.block.accept(this);
+
+                functionDeclaration.hint = left.text;
+                functionDeclaration.block = block;
+
+                result = new BinaryExpression(NodeType.Member, left, functionDeclaration);
+            }
+
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
+        }
+
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
             this.assertElementAtPosition(node);
 

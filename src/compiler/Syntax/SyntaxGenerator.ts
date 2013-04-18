@@ -862,6 +862,15 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'expression', type: 'IExpressionSyntax' }
         ]
     },
+    <any> {
+        name: 'FunctionPropertyAssignmentSyntax',
+        baseType: 'PropertyAssignmentSyntax',
+        children: [
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
+            <any>{ name: 'block', type: 'BlockSyntax' }
+        ]
+    },
     <any>{
         name: 'AccessorPropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
@@ -1248,7 +1257,7 @@ function generateConstructor(definition: ITypeDefinition): string {
     var baseSubchildrenNames = TypeScript.ArrayUtilities.select(baseSubchildren, c => c.name);
 
     var result = "";
-    result += "    constructor("
+    result += "        constructor("
 
     var children = definition.children;
     if (subchildren.length > 0) {
@@ -1263,12 +1272,12 @@ function generateConstructor(definition: ITypeDefinition): string {
         }
 
         result += child.name + ": " + getType(child);
-        result += ",\r\n                ";
+        result += ",\r\n                    ";
     }
 
     result += "parsedInStrictMode: boolean) {\r\n";
     
-    result += "        super(";
+    result += "            super(";
 
     for (i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
@@ -1285,11 +1294,11 @@ function generateConstructor(definition: ITypeDefinition): string {
         child = definition.children[i];
 
         if (child.type === "SyntaxKind") {
-            result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
+            result += "            " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
         }
     }
 
-    result += "    }\r\n";
+    result += "        }\r\n";
 
     return result;
 }

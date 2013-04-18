@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "Unicode2.ts";
+    // "FunctionPropertyAssignment1.ts";
     undefined;
 
 var generate = false;

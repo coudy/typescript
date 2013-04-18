@@ -527,6 +527,12 @@ module TypeScript {
             this.visitNodeOrToken(node.expression);
         }
 
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): void {
+            this.visitToken(node.propertyName);
+            this.visitNode(node.callSignature);
+            this.visitNode(node.block);
+        }
+
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
             this.visitToken(node.getKeyword);
             this.visitToken(node.propertyName);

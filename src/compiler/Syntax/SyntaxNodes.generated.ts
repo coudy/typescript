@@ -3,12 +3,12 @@
 module TypeScript {
     export class SourceUnitSyntax extends SyntaxNode {
 
-    constructor(public moduleElements: ISyntaxList,
-                public endOfFileToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public moduleElements: ISyntaxList,
+                    public endOfFileToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSourceUnit(this);
@@ -74,9 +74,9 @@ module TypeScript {
     }
 
     export class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
-    constructor(parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public isModuleReference(): boolean {
         return true;
@@ -97,14 +97,14 @@ module TypeScript {
 
     export class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
-    constructor(public moduleKeyword: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public stringLiteral: ISyntaxToken,
-                public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public moduleKeyword: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public stringLiteral: ISyntaxToken,
+                    public closeParenToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExternalModuleReference(this);
@@ -174,11 +174,11 @@ module TypeScript {
 
     export class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
-    constructor(public moduleName: INameSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public moduleName: INameSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitModuleNameModuleReference(this);
@@ -226,15 +226,15 @@ module TypeScript {
 
     export class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public importKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public equalsToken: ISyntaxToken,
-                public moduleReference: ModuleReferenceSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public importKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public equalsToken: ISyntaxToken,
+                    public moduleReference: ModuleReferenceSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitImportDeclaration(this);
@@ -315,14 +315,14 @@ module TypeScript {
 
     export class ExportAssignmentSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public exportKeyword: ISyntaxToken,
-                public equalsToken: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public exportKeyword: ISyntaxToken,
+                    public equalsToken: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExportAssignment(this);
@@ -396,18 +396,18 @@ module TypeScript {
 
     export class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public classKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public typeParameterList: TypeParameterListSyntax,
-                public heritageClauses: ISyntaxList,
-                public openBraceToken: ISyntaxToken,
-                public classElements: ISyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public classKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public typeParameterList: TypeParameterListSyntax,
+                    public heritageClauses: ISyntaxList,
+                    public openBraceToken: ISyntaxToken,
+                    public classElements: ISyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitClassDeclaration(this);
@@ -524,16 +524,16 @@ module TypeScript {
 
     export class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public interfaceKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public typeParameterList: TypeParameterListSyntax,
-                public heritageClauses: ISyntaxList,
-                public body: ObjectTypeSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public interfaceKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public typeParameterList: TypeParameterListSyntax,
+                    public heritageClauses: ISyntaxList,
+                    public body: ObjectTypeSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitInterfaceDeclaration(this);
@@ -633,12 +633,12 @@ module TypeScript {
 
     export class HeritageClauseSyntax extends SyntaxNode {
 
-    constructor(public extendsOrImplementsKeyword: ISyntaxToken,
-                public typeNames: ISeparatedSyntaxList,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public extendsOrImplementsKeyword: ISyntaxToken,
+                    public typeNames: ISeparatedSyntaxList,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitHeritageClause(this);
@@ -696,17 +696,17 @@ module TypeScript {
 
     export class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public moduleKeyword: ISyntaxToken,
-                public moduleName: INameSyntax,
-                public stringLiteral: ISyntaxToken,
-                public openBraceToken: ISyntaxToken,
-                public moduleElements: ISyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public moduleKeyword: ISyntaxToken,
+                    public moduleName: INameSyntax,
+                    public stringLiteral: ISyntaxToken,
+                    public openBraceToken: ISyntaxToken,
+                    public moduleElements: ISyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitModuleDeclaration(this);
@@ -812,16 +812,16 @@ module TypeScript {
 
     export class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public functionKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public callSignature: CallSignatureSyntax,
-                public block: BlockSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public functionKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    public block: BlockSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionDeclaration(this);
@@ -924,13 +924,13 @@ module TypeScript {
 
     export class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public variableDeclaration: VariableDeclarationSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public variableDeclaration: VariableDeclarationSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableStatement(this);
@@ -1013,12 +1013,12 @@ module TypeScript {
 
     export class VariableDeclarationSyntax extends SyntaxNode {
 
-    constructor(public varKeyword: ISyntaxToken,
-                public variableDeclarators: ISeparatedSyntaxList,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public varKeyword: ISyntaxToken,
+                    public variableDeclarators: ISeparatedSyntaxList,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableDeclaration(this);
@@ -1081,13 +1081,13 @@ module TypeScript {
 
     export class VariableDeclaratorSyntax extends SyntaxNode {
 
-    constructor(public identifier: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public identifier: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    public equalsValueClause: EqualsValueClauseSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableDeclarator(this);
@@ -1157,12 +1157,12 @@ module TypeScript {
 
     export class EqualsValueClauseSyntax extends SyntaxNode {
 
-    constructor(public equalsToken: ISyntaxToken,
-                public value: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public equalsToken: ISyntaxToken,
+                    public value: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEqualsValueClause(this);
@@ -1222,14 +1222,14 @@ module TypeScript {
     export class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
 
-    constructor(kind: SyntaxKind,
-                public operatorToken: ISyntaxToken,
-                public operand: IUnaryExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(kind: SyntaxKind,
+                    public operatorToken: ISyntaxToken,
+                    public operand: IUnaryExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-        this._kind = kind;
-    }
+            this._kind = kind;
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitPrefixUnaryExpression(this);
@@ -1297,13 +1297,13 @@ module TypeScript {
 
     export class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public openBracketToken: ISyntaxToken,
-                public expressions: ISeparatedSyntaxList,
-                public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openBracketToken: ISyntaxToken,
+                    public expressions: ISeparatedSyntaxList,
+                    public closeBracketToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitArrayLiteralExpression(this);
@@ -1384,9 +1384,9 @@ module TypeScript {
     }
 
     export class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
-    constructor(parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitOmittedExpression(this);
@@ -1427,13 +1427,13 @@ module TypeScript {
 
     export class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public openParenToken: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openParenToken: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    public closeParenToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParenthesizedExpression(this);
@@ -1505,11 +1505,11 @@ module TypeScript {
     }
 
     export class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    constructor(public equalsGreaterThanToken: ISyntaxToken,
-                public body: ISyntaxNodeOrToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(public equalsGreaterThanToken: ISyntaxToken,
+                    public body: ISyntaxNodeOrToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public isUnaryExpression(): boolean {
         return true;
@@ -1534,13 +1534,13 @@ module TypeScript {
 
     export class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
 
-    constructor(public identifier: ISyntaxToken,
-                equalsGreaterThanToken: ISyntaxToken,
-                body: ISyntaxNodeOrToken,
-                parsedInStrictMode: boolean) {
-        super(equalsGreaterThanToken, body, parsedInStrictMode); 
+        constructor(public identifier: ISyntaxToken,
+                    equalsGreaterThanToken: ISyntaxToken,
+                    body: ISyntaxNodeOrToken,
+                    parsedInStrictMode: boolean) {
+            super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSimpleArrowFunctionExpression(this);
@@ -1605,13 +1605,13 @@ module TypeScript {
 
     export class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
 
-    constructor(public callSignature: CallSignatureSyntax,
-                equalsGreaterThanToken: ISyntaxToken,
-                body: ISyntaxNodeOrToken,
-                parsedInStrictMode: boolean) {
-        super(equalsGreaterThanToken, body, parsedInStrictMode); 
+        constructor(public callSignature: CallSignatureSyntax,
+                    equalsGreaterThanToken: ISyntaxToken,
+                    body: ISyntaxNodeOrToken,
+                    parsedInStrictMode: boolean) {
+            super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParenthesizedArrowFunctionExpression(this);
@@ -1675,13 +1675,13 @@ module TypeScript {
 
     export class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 
-    constructor(public left: INameSyntax,
-                public dotToken: ISyntaxToken,
-                public right: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public left: INameSyntax,
+                    public dotToken: ISyntaxToken,
+                    public right: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitQualifiedName(this);
@@ -1762,13 +1762,13 @@ module TypeScript {
 
     export class TypeArgumentListSyntax extends SyntaxNode {
 
-    constructor(public lessThanToken: ISyntaxToken,
-                public typeArguments: ISeparatedSyntaxList,
-                public greaterThanToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public lessThanToken: ISyntaxToken,
+                    public typeArguments: ISeparatedSyntaxList,
+                    public greaterThanToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeArgumentList(this);
@@ -1841,15 +1841,15 @@ module TypeScript {
 
     export class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
-    constructor(public newKeyword: ISyntaxToken,
-                public typeParameterList: TypeParameterListSyntax,
-                public parameterList: ParameterListSyntax,
-                public equalsGreaterThanToken: ISyntaxToken,
-                public type: ITypeSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public newKeyword: ISyntaxToken,
+                    public typeParameterList: TypeParameterListSyntax,
+                    public parameterList: ParameterListSyntax,
+                    public equalsGreaterThanToken: ISyntaxToken,
+                    public type: ITypeSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstructorType(this);
@@ -1944,14 +1944,14 @@ module TypeScript {
 
     export class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
-    constructor(public typeParameterList: TypeParameterListSyntax,
-                public parameterList: ParameterListSyntax,
-                public equalsGreaterThanToken: ISyntaxToken,
-                public type: ITypeSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public typeParameterList: TypeParameterListSyntax,
+                    public parameterList: ParameterListSyntax,
+                    public equalsGreaterThanToken: ISyntaxToken,
+                    public type: ITypeSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionType(this);
@@ -2039,13 +2039,13 @@ module TypeScript {
 
     export class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
-    constructor(public openBraceToken: ISyntaxToken,
-                public typeMembers: ISeparatedSyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openBraceToken: ISyntaxToken,
+                    public typeMembers: ISeparatedSyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitObjectType(this);
@@ -2130,13 +2130,13 @@ module TypeScript {
 
     export class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
-    constructor(public type: ITypeSyntax,
-                public openBracketToken: ISyntaxToken,
-                public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public type: ITypeSyntax,
+                    public openBracketToken: ISyntaxToken,
+                    public closeBracketToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitArrayType(this);
@@ -2212,12 +2212,12 @@ module TypeScript {
 
     export class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
-    constructor(public name: INameSyntax,
-                public typeArgumentList: TypeArgumentListSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public name: INameSyntax,
+                    public typeArgumentList: TypeArgumentListSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitGenericType(this);
@@ -2287,12 +2287,12 @@ module TypeScript {
 
     export class TypeAnnotationSyntax extends SyntaxNode {
 
-    constructor(public colonToken: ISyntaxToken,
-                public type: ITypeSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public colonToken: ISyntaxToken,
+                    public type: ITypeSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeAnnotation(this);
@@ -2350,13 +2350,13 @@ module TypeScript {
 
     export class BlockSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public openBraceToken: ISyntaxToken,
-                public statements: ISyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openBraceToken: ISyntaxToken,
+                    public statements: ISyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitBlock(this);
@@ -2438,16 +2438,16 @@ module TypeScript {
 
     export class ParameterSyntax extends SyntaxNode {
 
-    constructor(public dotDotDotToken: ISyntaxToken,
-                public publicOrPrivateKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public questionToken: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public dotDotDotToken: ISyntaxToken,
+                    public publicOrPrivateKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public questionToken: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    public equalsValueClause: EqualsValueClauseSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParameter(this);
@@ -2538,13 +2538,13 @@ module TypeScript {
 
     export class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public expression: IExpressionSyntax,
-                public dotToken: ISyntaxToken,
-                public name: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public expression: IExpressionSyntax,
+                    public dotToken: ISyntaxToken,
+                    public name: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberAccessExpression(this);
@@ -2619,14 +2619,14 @@ module TypeScript {
     export class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
 
-    constructor(kind: SyntaxKind,
-                public operand: IExpressionSyntax,
-                public operatorToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(kind: SyntaxKind,
+                    public operand: IExpressionSyntax,
+                    public operatorToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-        this._kind = kind;
-    }
+            this._kind = kind;
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitPostfixUnaryExpression(this);
@@ -2694,14 +2694,14 @@ module TypeScript {
 
     export class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public expression: IExpressionSyntax,
-                public openBracketToken: ISyntaxToken,
-                public argumentExpression: IExpressionSyntax,
-                public closeBracketToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public expression: IExpressionSyntax,
+                    public openBracketToken: ISyntaxToken,
+                    public argumentExpression: IExpressionSyntax,
+                    public closeBracketToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitElementAccessExpression(this);
@@ -2782,12 +2782,12 @@ module TypeScript {
 
     export class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public expression: IExpressionSyntax,
-                public argumentList: ArgumentListSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public expression: IExpressionSyntax,
+                    public argumentList: ArgumentListSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitInvocationExpression(this);
@@ -2855,14 +2855,14 @@ module TypeScript {
 
     export class ArgumentListSyntax extends SyntaxNode {
 
-    constructor(public typeArgumentList: TypeArgumentListSyntax,
-                public openParenToken: ISyntaxToken,
-                public arguments: ISeparatedSyntaxList,
-                public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public typeArgumentList: TypeArgumentListSyntax,
+                    public openParenToken: ISyntaxToken,
+                    public arguments: ISeparatedSyntaxList,
+                    public closeParenToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitArgumentList(this);
@@ -2944,15 +2944,15 @@ module TypeScript {
     export class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     private _kind: SyntaxKind;
 
-    constructor(kind: SyntaxKind,
-                public left: IExpressionSyntax,
-                public operatorToken: ISyntaxToken,
-                public right: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(kind: SyntaxKind,
+                    public left: IExpressionSyntax,
+                    public operatorToken: ISyntaxToken,
+                    public right: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-        this._kind = kind;
-    }
+            this._kind = kind;
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitBinaryExpression(this);
@@ -3023,15 +3023,15 @@ module TypeScript {
 
     export class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
-    constructor(public condition: IExpressionSyntax,
-                public questionToken: ISyntaxToken,
-                public whenTrue: IExpressionSyntax,
-                public colonToken: ISyntaxToken,
-                public whenFalse: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public condition: IExpressionSyntax,
+                    public questionToken: ISyntaxToken,
+                    public whenTrue: IExpressionSyntax,
+                    public colonToken: ISyntaxToken,
+                    public whenFalse: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConditionalExpression(this);
@@ -3116,12 +3116,12 @@ module TypeScript {
 
     export class ConstructSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public newKeyword: ISyntaxToken,
-                public callSignature: CallSignatureSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public newKeyword: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstructSignature(this);
@@ -3183,13 +3183,13 @@ module TypeScript {
 
     export class MethodSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public propertyName: ISyntaxToken,
-                public questionToken: ISyntaxToken,
-                public callSignature: CallSignatureSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public propertyName: ISyntaxToken,
+                    public questionToken: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMethodSignature(this);
@@ -3263,14 +3263,14 @@ module TypeScript {
 
     export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public openBracketToken: ISyntaxToken,
-                public parameter: ParameterSyntax,
-                public closeBracketToken: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openBracketToken: ISyntaxToken,
+                    public parameter: ParameterSyntax,
+                    public closeBracketToken: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitIndexSignature(this);
@@ -3350,13 +3350,13 @@ module TypeScript {
 
     export class PropertySignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public propertyName: ISyntaxToken,
-                public questionToken: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public propertyName: ISyntaxToken,
+                    public questionToken: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitPropertySignature(this);
@@ -3428,13 +3428,13 @@ module TypeScript {
 
     export class CallSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public typeParameterList: TypeParameterListSyntax,
-                public parameterList: ParameterListSyntax,
-                public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public typeParameterList: TypeParameterListSyntax,
+                    public parameterList: ParameterListSyntax,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCallSignature(this);
@@ -3509,13 +3509,13 @@ module TypeScript {
 
     export class ParameterListSyntax extends SyntaxNode {
 
-    constructor(public openParenToken: ISyntaxToken,
-                public parameters: ISeparatedSyntaxList,
-                public closeParenToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openParenToken: ISyntaxToken,
+                    public parameters: ISeparatedSyntaxList,
+                    public closeParenToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParameterList(this);
@@ -3589,13 +3589,13 @@ module TypeScript {
 
     export class TypeParameterListSyntax extends SyntaxNode {
 
-    constructor(public lessThanToken: ISyntaxToken,
-                public typeParameters: ISeparatedSyntaxList,
-                public greaterThanToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public lessThanToken: ISyntaxToken,
+                    public typeParameters: ISeparatedSyntaxList,
+                    public greaterThanToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeParameterList(this);
@@ -3668,12 +3668,12 @@ module TypeScript {
 
     export class TypeParameterSyntax extends SyntaxNode {
 
-    constructor(public identifier: ISyntaxToken,
-                public constraint: ConstraintSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public identifier: ISyntaxToken,
+                    public constraint: ConstraintSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeParameter(this);
@@ -3735,12 +3735,12 @@ module TypeScript {
 
     export class ConstraintSyntax extends SyntaxNode {
 
-    constructor(public extendsKeyword: ISyntaxToken,
-                public type: ITypeSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public extendsKeyword: ISyntaxToken,
+                    public type: ITypeSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstraint(this);
@@ -3798,12 +3798,12 @@ module TypeScript {
 
     export class ElseClauseSyntax extends SyntaxNode {
 
-    constructor(public elseKeyword: ISyntaxToken,
-                public statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public elseKeyword: ISyntaxToken,
+                    public statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitElseClause(this);
@@ -3862,16 +3862,16 @@ module TypeScript {
 
     export class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public ifKeyword: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public condition: IExpressionSyntax,
-                public closeParenToken: ISyntaxToken,
-                public statement: IStatementSyntax,
-                public elseClause: ElseClauseSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public ifKeyword: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public condition: IExpressionSyntax,
+                    public closeParenToken: ISyntaxToken,
+                    public statement: IStatementSyntax,
+                    public elseClause: ElseClauseSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitIfStatement(this);
@@ -3973,12 +3973,12 @@ module TypeScript {
 
     export class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public expression: IExpressionSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public expression: IExpressionSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExpressionStatement(this);
@@ -4045,14 +4045,14 @@ module TypeScript {
 
     export class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
 
-    constructor(public constructorKeyword: ISyntaxToken,
-                public parameterList: ParameterListSyntax,
-                public block: BlockSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public constructorKeyword: ISyntaxToken,
+                    public parameterList: ParameterListSyntax,
+                    public block: BlockSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstructorDeclaration(this);
@@ -4131,15 +4131,15 @@ module TypeScript {
 
     export class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public propertyName: ISyntaxToken,
-                public callSignature: CallSignatureSyntax,
-                public block: BlockSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public propertyName: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    public block: BlockSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberFunctionDeclaration(this);
@@ -4231,13 +4231,13 @@ module TypeScript {
     }
 
     export class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
-    constructor(public modifiers: ISyntaxList,
-                public propertyName: ISyntaxToken,
-                public parameterList: ParameterListSyntax,
-                public block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(public modifiers: ISyntaxList,
+                    public propertyName: ISyntaxToken,
+                    public parameterList: ParameterListSyntax,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public isMemberDeclaration(): boolean {
         return true;
@@ -4262,16 +4262,16 @@ module TypeScript {
 
     export class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
 
-    constructor(modifiers: ISyntaxList,
-                public getKeyword: ISyntaxToken,
-                propertyName: ISyntaxToken,
-                parameterList: ParameterListSyntax,
-                public typeAnnotation: TypeAnnotationSyntax,
-                block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
+        constructor(modifiers: ISyntaxList,
+                    public getKeyword: ISyntaxToken,
+                    propertyName: ISyntaxToken,
+                    parameterList: ParameterListSyntax,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitGetMemberAccessorDeclaration(this);
@@ -4364,15 +4364,15 @@ module TypeScript {
 
     export class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
 
-    constructor(modifiers: ISyntaxList,
-                public setKeyword: ISyntaxToken,
-                propertyName: ISyntaxToken,
-                parameterList: ParameterListSyntax,
-                block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
+        constructor(modifiers: ISyntaxList,
+                    public setKeyword: ISyntaxToken,
+                    propertyName: ISyntaxToken,
+                    parameterList: ParameterListSyntax,
+                    block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSetMemberAccessorDeclaration(this);
@@ -4459,13 +4459,13 @@ module TypeScript {
 
     export class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public variableDeclarator: VariableDeclaratorSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public variableDeclarator: VariableDeclaratorSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberVariableDeclaration(this);
@@ -4546,13 +4546,13 @@ module TypeScript {
 
     export class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public throwKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public throwKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitThrowStatement(this);
@@ -4625,13 +4625,13 @@ module TypeScript {
 
     export class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public returnKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public returnKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitReturnStatement(this);
@@ -4709,13 +4709,13 @@ module TypeScript {
 
     export class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public newKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                public argumentList: ArgumentListSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public newKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    public argumentList: ArgumentListSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitObjectCreationExpression(this);
@@ -4794,17 +4794,17 @@ module TypeScript {
 
     export class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public switchKeyword: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                public closeParenToken: ISyntaxToken,
-                public openBraceToken: ISyntaxToken,
-                public switchClauses: ISyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public switchKeyword: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    public closeParenToken: ISyntaxToken,
+                    public openBraceToken: ISyntaxToken,
+                    public switchClauses: ISyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSwitchStatement(this);
@@ -4914,11 +4914,11 @@ module TypeScript {
     }
 
     export class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
-    constructor(public colonToken: ISyntaxToken,
-                public statements: ISyntaxList,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(public colonToken: ISyntaxToken,
+                    public statements: ISyntaxList,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public isSwitchClause(): boolean {
         return true;
@@ -4939,14 +4939,14 @@ module TypeScript {
 
     export class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
-    constructor(public caseKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                colonToken: ISyntaxToken,
-                statements: ISyntaxList,
-                parsedInStrictMode: boolean) {
-        super(colonToken, statements, parsedInStrictMode); 
+        constructor(public caseKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    colonToken: ISyntaxToken,
+                    statements: ISyntaxList,
+                    parsedInStrictMode: boolean) {
+            super(colonToken, statements, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCaseSwitchClause(this);
@@ -5028,13 +5028,13 @@ module TypeScript {
 
     export class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
-    constructor(public defaultKeyword: ISyntaxToken,
-                colonToken: ISyntaxToken,
-                statements: ISyntaxList,
-                parsedInStrictMode: boolean) {
-        super(colonToken, statements, parsedInStrictMode); 
+        constructor(public defaultKeyword: ISyntaxToken,
+                    colonToken: ISyntaxToken,
+                    statements: ISyntaxList,
+                    parsedInStrictMode: boolean) {
+            super(colonToken, statements, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDefaultSwitchClause(this);
@@ -5108,13 +5108,13 @@ module TypeScript {
 
     export class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public breakKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public breakKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitBreakStatement(this);
@@ -5191,13 +5191,13 @@ module TypeScript {
 
     export class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public continueKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public continueKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitContinueStatement(this);
@@ -5273,12 +5273,12 @@ module TypeScript {
     }
 
     export class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    constructor(public openParenToken: ISyntaxToken,
-                public closeParenToken: ISyntaxToken,
-                public statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(public openParenToken: ISyntaxToken,
+                    public closeParenToken: ISyntaxToken,
+                    public statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public isStatement(): boolean {
         return true;
@@ -5302,14 +5302,14 @@ module TypeScript {
     }
 
     export class BaseForStatementSyntax extends IterationStatementSyntax {
-    constructor(public forKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                public variableDeclaration: VariableDeclarationSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
-    }
+        constructor(public forKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    public variableDeclaration: VariableDeclarationSyntax,
+                    closeParenToken: ISyntaxToken,
+                    statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
+        }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BaseForStatementSyntax {
         return <BaseForStatementSyntax>super.withLeadingTrivia(trivia);
@@ -5326,20 +5326,20 @@ module TypeScript {
 
     export class ForStatementSyntax extends BaseForStatementSyntax {
 
-    constructor(forKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                variableDeclaration: VariableDeclarationSyntax,
-                public initializer: IExpressionSyntax,
-                public firstSemicolonToken: ISyntaxToken,
-                public condition: IExpressionSyntax,
-                public secondSemicolonToken: ISyntaxToken,
-                public incrementor: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
+        constructor(forKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    variableDeclaration: VariableDeclarationSyntax,
+                    public initializer: IExpressionSyntax,
+                    public firstSemicolonToken: ISyntaxToken,
+                    public condition: IExpressionSyntax,
+                    public secondSemicolonToken: ISyntaxToken,
+                    public incrementor: IExpressionSyntax,
+                    closeParenToken: ISyntaxToken,
+                    statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitForStatement(this);
@@ -5459,18 +5459,18 @@ module TypeScript {
 
     export class ForInStatementSyntax extends BaseForStatementSyntax {
 
-    constructor(forKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                variableDeclaration: VariableDeclarationSyntax,
-                public left: IExpressionSyntax,
-                public inKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
+        constructor(forKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    variableDeclaration: VariableDeclarationSyntax,
+                    public left: IExpressionSyntax,
+                    public inKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    closeParenToken: ISyntaxToken,
+                    statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitForInStatement(this);
@@ -5578,15 +5578,15 @@ module TypeScript {
 
     export class WhileStatementSyntax extends IterationStatementSyntax {
 
-    constructor(public whileKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                public condition: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
+        constructor(public whileKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    public condition: IExpressionSyntax,
+                    closeParenToken: ISyntaxToken,
+                    statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitWhileStatement(this);
@@ -5665,15 +5665,15 @@ module TypeScript {
 
     export class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public withKeyword: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public condition: IExpressionSyntax,
-                public closeParenToken: ISyntaxToken,
-                public statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public withKeyword: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public condition: IExpressionSyntax,
+                    public closeParenToken: ISyntaxToken,
+                    public statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitWithStatement(this);
@@ -5760,16 +5760,16 @@ module TypeScript {
 
     export class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-    constructor(public modifiers: ISyntaxList,
-                public enumKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public openBraceToken: ISyntaxToken,
-                public enumElements: ISeparatedSyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public modifiers: ISyntaxList,
+                    public enumKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public openBraceToken: ISyntaxToken,
+                    public enumElements: ISeparatedSyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEnumDeclaration(this);
@@ -5870,12 +5870,12 @@ module TypeScript {
 
     export class EnumElementSyntax extends SyntaxNode {
 
-    constructor(public propertyName: ISyntaxToken,
-                public equalsValueClause: EqualsValueClauseSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public propertyName: ISyntaxToken,
+                    public equalsValueClause: EqualsValueClauseSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEnumElement(this);
@@ -5938,14 +5938,14 @@ module TypeScript {
 
     export class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public lessThanToken: ISyntaxToken,
-                public type: ITypeSyntax,
-                public greaterThanToken: ISyntaxToken,
-                public expression: IUnaryExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public lessThanToken: ISyntaxToken,
+                    public type: ITypeSyntax,
+                    public greaterThanToken: ISyntaxToken,
+                    public expression: IUnaryExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCastExpression(this);
@@ -6024,13 +6024,13 @@ module TypeScript {
 
     export class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public openBraceToken: ISyntaxToken,
-                public propertyAssignments: ISeparatedSyntaxList,
-                public closeBraceToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public openBraceToken: ISyntaxToken,
+                    public propertyAssignments: ISeparatedSyntaxList,
+                    public closeBraceToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitObjectLiteralExpression(this);
@@ -6111,10 +6111,10 @@ module TypeScript {
     }
 
     export class PropertyAssignmentSyntax extends SyntaxNode {
-    constructor(public propertyName: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
-    }
+        constructor(public propertyName: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+        }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
         return <PropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
@@ -6131,13 +6131,13 @@ module TypeScript {
 
     export class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
-    constructor(propertyName: ISyntaxToken,
-                public colonToken: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(propertyName, parsedInStrictMode); 
+        constructor(propertyName: ISyntaxToken,
+                    public colonToken: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(propertyName, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSimplePropertyAssignment(this);
@@ -6201,14 +6201,86 @@ module TypeScript {
     }
     }
 
-    export class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-    constructor(propertyName: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public closeParenToken: ISyntaxToken,
-                public block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(propertyName, parsedInStrictMode); 
+    export class FunctionPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+
+        constructor(propertyName: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(propertyName, parsedInStrictMode); 
+
+        }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitFunctionPropertyAssignment(this);
     }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.FunctionPropertyAssignment;
+    }
+
+    public childCount(): number {
+        return 3;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.propertyName;
+            case 1: return this.callSignature;
+            case 2: return this.block;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    public update(propertyName: ISyntaxToken,
+                  callSignature: CallSignatureSyntax,
+                  block: BlockSyntax): FunctionPropertyAssignmentSyntax {
+        if (this.propertyName === propertyName && this.callSignature === callSignature && this.block === block) {
+            return this;
+        }
+
+        return new FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(propertyName: ISyntaxToken): FunctionPropertyAssignmentSyntax {
+        return new FunctionPropertyAssignmentSyntax(propertyName, CallSignatureSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionPropertyAssignmentSyntax {
+        return <FunctionPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionPropertyAssignmentSyntax {
+        return <FunctionPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withPropertyName(propertyName: ISyntaxToken): FunctionPropertyAssignmentSyntax {
+        return this.update(propertyName, this.callSignature, this.block);
+    }
+
+    public withCallSignature(callSignature: CallSignatureSyntax): FunctionPropertyAssignmentSyntax {
+        return this.update(this.propertyName, callSignature, this.block);
+    }
+
+    public withBlock(block: BlockSyntax): FunctionPropertyAssignmentSyntax {
+        return this.update(this.propertyName, this.callSignature, block);
+    }
+
+    public isTypeScriptSpecific(): boolean {
+        if (this.callSignature.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
+        return false;
+    }
+    }
+
+    export class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+        constructor(propertyName: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public closeParenToken: ISyntaxToken,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(propertyName, parsedInStrictMode); 
+        }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
         return <AccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
@@ -6225,16 +6297,16 @@ module TypeScript {
 
     export class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
 
-    constructor(public getKeyword: ISyntaxToken,
-                propertyName: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                closeParenToken: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
+        constructor(public getKeyword: ISyntaxToken,
+                    propertyName: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    closeParenToken: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitGetAccessorPropertyAssignment(this);
@@ -6326,16 +6398,16 @@ module TypeScript {
 
     export class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
 
-    constructor(public setKeyword: ISyntaxToken,
-                propertyName: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                public parameter: ParameterSyntax,
-                closeParenToken: ISyntaxToken,
-                block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
+        constructor(public setKeyword: ISyntaxToken,
+                    propertyName: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    public parameter: ParameterSyntax,
+                    closeParenToken: ISyntaxToken,
+                    block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSetAccessorPropertyAssignment(this);
@@ -6420,14 +6492,14 @@ module TypeScript {
 
     export class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public functionKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public callSignature: CallSignatureSyntax,
-                public block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public functionKeyword: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public callSignature: CallSignatureSyntax,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionExpression(this);
@@ -6513,11 +6585,11 @@ module TypeScript {
 
     export class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEmptyStatement(this);
@@ -6577,14 +6649,14 @@ module TypeScript {
 
     export class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public tryKeyword: ISyntaxToken,
-                public block: BlockSyntax,
-                public catchClause: CatchClauseSyntax,
-                public finallyClause: FinallyClauseSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public tryKeyword: ISyntaxToken,
+                    public block: BlockSyntax,
+                    public catchClause: CatchClauseSyntax,
+                    public finallyClause: FinallyClauseSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTryStatement(this);
@@ -6670,16 +6742,16 @@ module TypeScript {
 
     export class CatchClauseSyntax extends SyntaxNode {
 
-    constructor(public catchKeyword: ISyntaxToken,
-                public openParenToken: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public typeAnnotation: TypeAnnotationSyntax,
-                public closeParenToken: ISyntaxToken,
-                public block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public catchKeyword: ISyntaxToken,
+                    public openParenToken: ISyntaxToken,
+                    public identifier: ISyntaxToken,
+                    public typeAnnotation: TypeAnnotationSyntax,
+                    public closeParenToken: ISyntaxToken,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCatchClause(this);
@@ -6771,12 +6843,12 @@ module TypeScript {
 
     export class FinallyClauseSyntax extends SyntaxNode {
 
-    constructor(public finallyKeyword: ISyntaxToken,
-                public block: BlockSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public finallyKeyword: ISyntaxToken,
+                    public block: BlockSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFinallyClause(this);
@@ -6835,13 +6907,13 @@ module TypeScript {
 
     export class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public identifier: ISyntaxToken,
-                public colonToken: ISyntaxToken,
-                public statement: IStatementSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public identifier: ISyntaxToken,
+                    public colonToken: ISyntaxToken,
+                    public statement: IStatementSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitLabeledStatement(this);
@@ -6915,17 +6987,17 @@ module TypeScript {
 
     export class DoStatementSyntax extends IterationStatementSyntax {
 
-    constructor(public doKeyword: ISyntaxToken,
-                statement: IStatementSyntax,
-                public whileKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                public condition: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
+        constructor(public doKeyword: ISyntaxToken,
+                    statement: IStatementSyntax,
+                    public whileKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    public condition: IExpressionSyntax,
+                    closeParenToken: ISyntaxToken,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDoStatement(this);
@@ -7016,12 +7088,12 @@ module TypeScript {
 
     export class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public typeOfKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public typeOfKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeOfExpression(this);
@@ -7088,12 +7160,12 @@ module TypeScript {
 
     export class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public deleteKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public deleteKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDeleteExpression(this);
@@ -7160,12 +7232,12 @@ module TypeScript {
 
     export class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
-    constructor(public voidKeyword: ISyntaxToken,
-                public expression: IExpressionSyntax,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public voidKeyword: ISyntaxToken,
+                    public expression: IExpressionSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVoidExpression(this);
@@ -7232,12 +7304,12 @@ module TypeScript {
 
     export class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
-    constructor(public debuggerKeyword: ISyntaxToken,
-                public semicolonToken: ISyntaxToken,
-                parsedInStrictMode: boolean) {
-        super(parsedInStrictMode); 
+        constructor(public debuggerKeyword: ISyntaxToken,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
 
-    }
+        }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDebuggerStatement(this);

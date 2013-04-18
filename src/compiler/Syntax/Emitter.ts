@@ -945,7 +945,7 @@ module TypeScript.Emitter1 {
             var newTrailingTrivia = result.parameterList.trailingTrivia().concat(
                 result.typeAnnotation.trailingTrivia());
 
-            return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
+            return result.withTypeAnnotation(null).withTypeParameterList(null).withTrailingTrivia(newTrailingTrivia);
         }
 
         public visitCastExpression(node: CastExpressionSyntax): IExpressionSyntax {

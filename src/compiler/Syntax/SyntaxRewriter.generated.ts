@@ -606,6 +606,13 @@ module TypeScript {
                 <IExpressionSyntax>this.visitNodeOrToken(node.expression));
         }
 
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): any {
+            return node.update(
+                this.visitToken(node.propertyName),
+                <CallSignatureSyntax>this.visitNode(node.callSignature),
+                <BlockSyntax>this.visitNode(node.block));
+        }
+
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any {
             return node.update(
                 this.visitToken(node.getKeyword),

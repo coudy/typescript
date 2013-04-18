@@ -885,6 +885,13 @@ module TypeScript.PrettyPrinter {
             node.expression.accept(this);
         }
 
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): void {
+            this.appendToken(node.propertyName);
+            node.callSignature.accept(this);
+            this.ensureSpace();
+            node.block.accept(this);
+        }
+
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
             this.appendToken(node.getKeyword);
             this.ensureSpace();

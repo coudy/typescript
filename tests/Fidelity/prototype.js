@@ -5619,7 +5619,7 @@ var TypeScript;
                 var parent = positionedNodeOrToken.containingNode();
                 if (parent !== null) {
                     switch(parent.kind()) {
-                        case 242 /* ModuleNameModuleReference */ :
+                        case 245 /* ModuleNameModuleReference */ :
                             return true;
                         case 121 /* QualifiedName */ :
                             return true;
@@ -5642,7 +5642,7 @@ var TypeScript;
                         return (parent).type === nodeOrToken;
                     case 218 /* CastExpression */ :
                         return (parent).type === nodeOrToken;
-                    case 239 /* TypeAnnotation */ :
+                    case 243 /* TypeAnnotation */ :
                     case 228 /* HeritageClause */ :
                     case 226 /* TypeArgumentList */ :
                         return true;
@@ -6080,6 +6080,9 @@ var TypeScript;
             NormalModeFactory.prototype.simplePropertyAssignment = function (propertyName, colonToken, expression) {
                 return new TypeScript.SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, false);
             };
+            NormalModeFactory.prototype.functionPropertyAssignment = function (propertyName, callSignature, block) {
+                return new TypeScript.FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, false);
+            };
             NormalModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block) {
                 return new TypeScript.GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, false);
             };
@@ -6336,6 +6339,9 @@ var TypeScript;
             };
             StrictModeFactory.prototype.simplePropertyAssignment = function (propertyName, colonToken, expression) {
                 return new TypeScript.SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, true);
+            };
+            StrictModeFactory.prototype.functionPropertyAssignment = function (propertyName, callSignature, block) {
+                return new TypeScript.FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, true);
             };
             StrictModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block) {
                 return new TypeScript.GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, true);
@@ -6862,22 +6868,24 @@ var TypeScript;
         SyntaxKind.TypeParameter = 235;
         SyntaxKind._map[236] = "Constraint";
         SyntaxKind.Constraint = 236;
-        SyntaxKind._map[237] = "Parameter";
-        SyntaxKind.Parameter = 237;
-        SyntaxKind._map[238] = "EnumElement";
-        SyntaxKind.EnumElement = 238;
-        SyntaxKind._map[239] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 239;
-        SyntaxKind._map[240] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 240;
-        SyntaxKind._map[241] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 241;
-        SyntaxKind._map[242] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 242;
-        SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 243;
-        SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 244;
+        SyntaxKind._map[237] = "SimplePropertyAssignment";
+        SyntaxKind.SimplePropertyAssignment = 237;
+        SyntaxKind._map[238] = "GetAccessorPropertyAssignment";
+        SyntaxKind.GetAccessorPropertyAssignment = 238;
+        SyntaxKind._map[239] = "SetAccessorPropertyAssignment";
+        SyntaxKind.SetAccessorPropertyAssignment = 239;
+        SyntaxKind._map[240] = "FunctionPropertyAssignment";
+        SyntaxKind.FunctionPropertyAssignment = 240;
+        SyntaxKind._map[241] = "Parameter";
+        SyntaxKind.Parameter = 241;
+        SyntaxKind._map[242] = "EnumElement";
+        SyntaxKind.EnumElement = 242;
+        SyntaxKind._map[243] = "TypeAnnotation";
+        SyntaxKind.TypeAnnotation = 243;
+        SyntaxKind._map[244] = "ExternalModuleReference";
+        SyntaxKind.ExternalModuleReference = 244;
+        SyntaxKind._map[245] = "ModuleNameModuleReference";
+        SyntaxKind.ModuleNameModuleReference = 245;
         SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
         SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
         SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -7939,7 +7947,7 @@ var TypeScript;
             return visitor.visitExternalModuleReference(this);
         };
         ExternalModuleReferenceSyntax.prototype.kind = function () {
-            return 241 /* ExternalModuleReference */ ;
+            return 244 /* ExternalModuleReference */ ;
         };
         ExternalModuleReferenceSyntax.prototype.childCount = function () {
             return 4;
@@ -8001,7 +8009,7 @@ var TypeScript;
             return visitor.visitModuleNameModuleReference(this);
         };
         ModuleNameModuleReferenceSyntax.prototype.kind = function () {
-            return 242 /* ModuleNameModuleReference */ ;
+            return 245 /* ModuleNameModuleReference */ ;
         };
         ModuleNameModuleReferenceSyntax.prototype.childCount = function () {
             return 1;
@@ -9794,7 +9802,7 @@ var TypeScript;
             return visitor.visitTypeAnnotation(this);
         };
         TypeAnnotationSyntax.prototype.kind = function () {
-            return 239 /* TypeAnnotation */ ;
+            return 243 /* TypeAnnotation */ ;
         };
         TypeAnnotationSyntax.prototype.childCount = function () {
             return 2;
@@ -9927,7 +9935,7 @@ var TypeScript;
             return visitor.visitParameter(this);
         };
         ParameterSyntax.prototype.kind = function () {
-            return 237 /* Parameter */ ;
+            return 241 /* Parameter */ ;
         };
         ParameterSyntax.prototype.childCount = function () {
             return 6;
@@ -12854,7 +12862,7 @@ var TypeScript;
             return visitor.visitEnumElement(this);
         };
         EnumElementSyntax.prototype.kind = function () {
-            return 238 /* EnumElement */ ;
+            return 242 /* EnumElement */ ;
         };
         EnumElementSyntax.prototype.childCount = function () {
             return 2;
@@ -13078,7 +13086,7 @@ var TypeScript;
             return visitor.visitSimplePropertyAssignment(this);
         };
         SimplePropertyAssignmentSyntax.prototype.kind = function () {
-            return 240 /* SimplePropertyAssignment */ ;
+            return 237 /* SimplePropertyAssignment */ ;
         };
         SimplePropertyAssignmentSyntax.prototype.childCount = function () {
             return 3;
@@ -13128,6 +13136,70 @@ var TypeScript;
         return SimplePropertyAssignmentSyntax;
     })(PropertyAssignmentSyntax);
     TypeScript.SimplePropertyAssignmentSyntax = SimplePropertyAssignmentSyntax;    
+    var FunctionPropertyAssignmentSyntax = (function (_super) {
+        __extends(FunctionPropertyAssignmentSyntax, _super);
+        function FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, parsedInStrictMode) {
+            _super.call(this, propertyName, parsedInStrictMode);
+            this.callSignature = callSignature;
+            this.block = block;
+        }
+        FunctionPropertyAssignmentSyntax.prototype.accept = function (visitor) {
+            return visitor.visitFunctionPropertyAssignment(this);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.kind = function () {
+            return 240 /* FunctionPropertyAssignment */ ;
+        };
+        FunctionPropertyAssignmentSyntax.prototype.childCount = function () {
+            return 3;
+        };
+        FunctionPropertyAssignmentSyntax.prototype.childAt = function (slot) {
+            switch(slot) {
+                case 0:
+                    return this.propertyName;
+                case 1:
+                    return this.callSignature;
+                case 2:
+                    return this.block;
+                default:
+                    throw TypeScript.Errors.invalidOperation();
+            }
+        };
+        FunctionPropertyAssignmentSyntax.prototype.update = function (propertyName, callSignature, block) {
+            if (this.propertyName === propertyName && this.callSignature === callSignature && this.block === block) {
+                return this;
+            }
+            return new FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, this.parsedInStrictMode());
+        };
+        FunctionPropertyAssignmentSyntax.create1 = function create1(propertyName) {
+            return new FunctionPropertyAssignmentSyntax(propertyName, CallSignatureSyntax.create1(), BlockSyntax.create1(), false);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
+            return _super.prototype.withLeadingTrivia.call(this, trivia);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.withTrailingTrivia = function (trivia) {
+            return _super.prototype.withTrailingTrivia.call(this, trivia);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
+            return this.update(propertyName, this.callSignature, this.block);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.withCallSignature = function (callSignature) {
+            return this.update(this.propertyName, callSignature, this.block);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.withBlock = function (block) {
+            return this.update(this.propertyName, this.callSignature, block);
+        };
+        FunctionPropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
+            if (this.callSignature.isTypeScriptSpecific()) {
+                return true;
+            }
+            if (this.block.isTypeScriptSpecific()) {
+                return true;
+            }
+            return false;
+        };
+        return FunctionPropertyAssignmentSyntax;
+    })(PropertyAssignmentSyntax);
+    TypeScript.FunctionPropertyAssignmentSyntax = FunctionPropertyAssignmentSyntax;    
     var AccessorPropertyAssignmentSyntax = (function (_super) {
         __extends(AccessorPropertyAssignmentSyntax, _super);
         function AccessorPropertyAssignmentSyntax(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode) {
@@ -13159,7 +13231,7 @@ var TypeScript;
             return visitor.visitGetAccessorPropertyAssignment(this);
         };
         GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-            return 243 /* GetAccessorPropertyAssignment */ ;
+            return 238 /* GetAccessorPropertyAssignment */ ;
         };
         GetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
             return 6;
@@ -13241,7 +13313,7 @@ var TypeScript;
             return visitor.visitSetAccessorPropertyAssignment(this);
         };
         SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-            return 244 /* SetAccessorPropertyAssignment */ ;
+            return 239 /* SetAccessorPropertyAssignment */ ;
         };
         SetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
             return 6;
@@ -14326,6 +14398,9 @@ var TypeScript;
         };
         SyntaxRewriter.prototype.visitSimplePropertyAssignment = function (node) {
             return node.update(this.visitToken(node.propertyName), this.visitToken(node.colonToken), this.visitNodeOrToken(node.expression));
+        };
+        SyntaxRewriter.prototype.visitFunctionPropertyAssignment = function (node) {
+            return node.update(this.visitToken(node.propertyName), this.visitNode(node.callSignature), this.visitNode(node.block));
         };
         SyntaxRewriter.prototype.visitGetAccessorPropertyAssignment = function (node) {
             return node.update(this.visitToken(node.getKeyword), this.visitToken(node.propertyName), this.visitToken(node.openParenToken), this.visitToken(node.closeParenToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation), this.visitNode(node.block));
@@ -16734,6 +16809,9 @@ var TypeScript;
         SyntaxVisitor.prototype.visitSimplePropertyAssignment = function (node) {
             return this.defaultVisit(node);
         };
+        SyntaxVisitor.prototype.visitFunctionPropertyAssignment = function (node) {
+            return this.defaultVisit(node);
+        };
         SyntaxVisitor.prototype.visitGetAccessorPropertyAssignment = function (node) {
             return this.defaultVisit(node);
         };
@@ -17222,6 +17300,11 @@ var TypeScript;
             this.visitToken(node.propertyName);
             this.visitToken(node.colonToken);
             this.visitNodeOrToken(node.expression);
+        };
+        SyntaxWalker.prototype.visitFunctionPropertyAssignment = function (node) {
+            this.visitToken(node.propertyName);
+            this.visitNode(node.callSignature);
+            this.visitNode(node.block);
         };
         SyntaxWalker.prototype.visitGetAccessorPropertyAssignment = function (node) {
             this.visitToken(node.getKeyword);
@@ -18405,13 +18488,13 @@ var TypeScript;
                 return this.factory.enumDeclaration(modifiers, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken);
             };
             ParserImpl.prototype.isEnumElement = function (inErrorRecovery) {
-                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* EnumElement */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 242 /* EnumElement */ ) {
                     return true;
                 }
                 return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
             ParserImpl.prototype.parseEnumElement = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* EnumElement */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 242 /* EnumElement */ ) {
                     return this.eatNode();
                 }
                 var propertyName = this.eatPropertyName();
@@ -19847,6 +19930,8 @@ var TypeScript;
                     return this.parseGetAccessorPropertyAssignment();
                 } else if (this.isSetAccessorPropertyAssignment(false)) {
                     return this.parseSetAccessorPropertyAssignment();
+                } else if (this.isFunctionPropertyAssignment(false)) {
+                    return this.parseFunctionPropertyAssignment();
                 } else if (this.isSimplePropertyAssignment(false)) {
                     return this.parseSimplePropertyAssignment();
                 } else {
@@ -19854,7 +19939,7 @@ var TypeScript;
                 }
             };
             ParserImpl.prototype.isPropertyAssignment = function (inErrorRecovery) {
-                return this.isGetAccessorPropertyAssignment(inErrorRecovery) || this.isSetAccessorPropertyAssignment(inErrorRecovery) || this.isSimplePropertyAssignment(inErrorRecovery);
+                return this.isGetAccessorPropertyAssignment(inErrorRecovery) || this.isSetAccessorPropertyAssignment(inErrorRecovery) || this.isFunctionPropertyAssignment(inErrorRecovery) || this.isSimplePropertyAssignment(inErrorRecovery);
             };
             ParserImpl.prototype.isGetAccessorPropertyAssignment = function (inErrorRecovery) {
                 return this.currentToken().tokenKind === 65 /* GetKeyword */  && this.isPropertyName(this.peekToken(1), inErrorRecovery);
@@ -19880,11 +19965,20 @@ var TypeScript;
                 var block = this.parseBlock(false, true);
                 return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
             };
-            ParserImpl.prototype.isSimplePropertyAssignment = function (inErrorRecovery) {
-                return this.isPropertyName(this.currentToken(), inErrorRecovery);
-            };
             ParserImpl.prototype.eatPropertyName = function () {
                 return TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken()) ? this.eatIdentifierNameToken() : this.eatAnyToken();
+            };
+            ParserImpl.prototype.isFunctionPropertyAssignment = function (inErrorRecovery) {
+                return this.isPropertyName(this.currentToken(), inErrorRecovery) && this.isCallSignature(1);
+            };
+            ParserImpl.prototype.parseFunctionPropertyAssignment = function () {
+                var propertyName = this.eatPropertyName();
+                var callSignature = this.parseCallSignature(false);
+                var block = this.parseBlock(false, true);
+                return this.factory.functionPropertyAssignment(propertyName, callSignature, block);
+            };
+            ParserImpl.prototype.isSimplePropertyAssignment = function (inErrorRecovery) {
+                return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
             ParserImpl.prototype.parseSimplePropertyAssignment = function () {
                 var propertyName = this.eatPropertyName();
@@ -20081,7 +20175,7 @@ var TypeScript;
                 return false;
             };
             ParserImpl.prototype.isParameter = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 237 /* Parameter */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 241 /* Parameter */ ) {
                     return true;
                 }
                 var token = this.currentToken();
@@ -20094,7 +20188,7 @@ var TypeScript;
                 return this.isIdentifier(token);
             };
             ParserImpl.prototype.parseParameter = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 237 /* Parameter */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 241 /* Parameter */ ) {
                     return this.eatNode();
                 }
                 var dotDotDotToken = this.tryEatToken(77 /* DotDotDotToken */ );
@@ -21279,7 +21373,7 @@ var TypeScript;
                     var child = node.moduleElements.childAt(i);
                     if (child.kind() === 132 /* ImportDeclaration */ ) {
                         var importDeclaration = child;
-                        if (importDeclaration.moduleReference.kind() === 241 /* ExternalModuleReference */ ) {
+                        if (importDeclaration.moduleReference.kind() === 244 /* ExternalModuleReference */ ) {
                             this.pushDiagnostic1(currentElementFullStart, importDeclaration, 195 /* Import_declarations_in_an_internal_module_cannot_reference_an_external_module */ , null);
                         }
                     }
@@ -24916,7 +25010,7 @@ var TypeScript;
                     return result;
                 }
                 var newTrailingTrivia = result.parameterList.trailingTrivia().concat(result.typeAnnotation.trailingTrivia());
-                return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
+                return result.withTypeAnnotation(null).withTypeParameterList(null).withTrailingTrivia(newTrailingTrivia);
             };
             EmitterImpl.prototype.visitCastExpression = function (node) {
                 var result = _super.prototype.visitCastExpression.call(this, node);
@@ -25803,6 +25897,12 @@ var TypeScript;
                 this.appendToken(node.colonToken);
                 this.ensureSpace();
                 node.expression.accept(this);
+            };
+            PrettyPrinterImpl.prototype.visitFunctionPropertyAssignment = function (node) {
+                this.appendToken(node.propertyName);
+                node.callSignature.accept(this);
+                this.ensureSpace();
+                node.block.accept(this);
             };
             PrettyPrinterImpl.prototype.visitGetAccessorPropertyAssignment = function (node) {
                 this.appendToken(node.getKeyword);
@@ -55795,7 +55895,7 @@ var TypeScript;
                 }
                 if (moduleElement.kind() === 132 /* ImportDeclaration */ ) {
                     var importDecl = moduleElement;
-                    if (importDecl.moduleReference.kind() === 241 /* ExternalModuleReference */ ) {
+                    if (importDecl.moduleReference.kind() === 244 /* ExternalModuleReference */ ) {
                         return true;
                     }
                 }
@@ -56226,7 +56326,7 @@ var TypeScript;
                 result = new TypeScript.ImportDeclaration(name, alias);
                 result.preComments = preComments;
                 result.postComments = postComments;
-                result.isDynamicImport = node.moduleReference.kind() === 241 /* ExternalModuleReference */ ;
+                result.isDynamicImport = node.moduleReference.kind() === 244 /* ExternalModuleReference */ ;
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -57513,6 +57613,24 @@ var TypeScript;
                     var funcDecl = right;
                     funcDecl.hint = left.text;
                 }
+            }
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
+        };
+        SyntaxTreeToAstVisitor.prototype.visitFunctionPropertyAssignment = function (node) {
+            this.assertElementAtPosition(node);
+            var start = this.position;
+            var result = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            } else {
+                var left = node.propertyName.accept(this);
+                var functionDeclaration = node.callSignature.accept(this);
+                var block = node.block.accept(this);
+                functionDeclaration.hint = left.text;
+                functionDeclaration.block = block;
+                result = new TypeScript.BinaryExpression(80 /* Member */ , left, functionDeclaration);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
