@@ -1,3 +1,5 @@
+<!DOCTYPE html> 
+
 <html>
 <head>
     <title>TypeScript Web harness</title>
@@ -33,25 +35,6 @@
             }
         }
 
-        function lineMap() {
-            run(function () {
-                var text = TypeScript.TextFactory.createText(compilerString.substr(0, TypeScript.IntegerUtilities.integerDivide(compilerString.length, 10)));
-                var start = new Date().getTime();
-                text.lineCount();
-                var end = new Date().getTime();
-                appendTime("Line map", end - start);
-            });
-        }
-
-        function oldParse() {
-            run(function() {
-                var start = new Date().getTime();
-                batch.oldParse();
-                var end = new Date().getTime();
-                appendTime("Old Parse", end - start);
-            });
-        }
-
         function newParse() {
             run(function () {
                 var start = new Date().getTime();
@@ -66,7 +49,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
 
                 var end = new Date().getTime();
                 appendTime("AST", end - start);
@@ -78,7 +61,7 @@
 
             run(function () {
                 var start = new Date().getTime();
-                tree = batch.incrementalParse(tree);
+                tree = batch.newIncrementalParse(tree);
                 var end = new Date().getTime();
                 appendTime("Incremental Parse", end - start);
             });
@@ -86,12 +69,12 @@
 
         function newIncrementalParseAndAST() {
             var tree = batch.newParse();
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
 
             run(function () {
                 var start = new Date().getTime();
-                tree = batch.incrementalParse(tree);
-                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+                tree = batch.newIncrementalParse(tree);
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
                 var end = new Date().getTime();
                 appendTime("Incremental Parse and AST", end - start);
             });
@@ -116,12 +99,10 @@
 </head>
 <body>
     <h1>TypeScript Perf Testbed</h1>
-    <button onclick="oldParse()">Old Parse</button>
-    <button onclick="newParse()">New Parse</button>
-    <button onclick="newParseAndAST()">New Parse + AST</button>
-    <button onclick="newIncrementalParse()">New Incremental Parse</button>
-    <button onclick="newIncrementalParseAndAST()">New Incremental Parse + AST</button>
-    <button onclick="lineMap()">Line Map</button>
+    <button onclick="newParse()">Parse</button>
+    <button onclick="newParseAndAST()">Parse + AST</button>
+    <button onclick="newIncrementalParse()">Incremental Parse</button>
+    <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
     <button onclick="clear1()">Clear</button>
 </body>
