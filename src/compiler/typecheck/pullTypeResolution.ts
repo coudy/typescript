@@ -656,6 +656,10 @@ module TypeScript {
             return (type == this.semanticInfoChain.anyTypeSymbol) || type.isError();
         }
 
+        public isNumberOrEquivalent(type: PullTypeSymbol) {
+            return (type == this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType && type == this.cachedNumberInterfaceType);
+        }
+
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
             if (!type) {
                 return false;

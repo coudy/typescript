@@ -1412,19 +1412,14 @@ module TypeScript {
                     members[members.length] = this.callSignatureLinks[i].end;
                 }
             }
-            else {
-                var extendedTypes = this.getExtendedTypes();
+            
+            var extendedTypes = this.getExtendedTypes();
 
-                for (var i = 0; i < extendedTypes.length; i++) {
-                    if (extendedTypes[i].hasBase(this)) {
-                        continue;
-                    }
-                    members = extendedTypes[i].getCallSignatures();
-
-                    if (members.length) {
-                        break;
-                    }
+            for (var i = 0; i < extendedTypes.length; i++) {
+                if (extendedTypes[i].hasBase(this)) {
+                    continue;
                 }
+                members = members.concat(extendedTypes[i].getCallSignatures());
             }
 
             return <PullSignatureSymbol[]>members;

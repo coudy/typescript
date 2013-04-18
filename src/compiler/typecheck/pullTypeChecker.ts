@@ -1941,10 +1941,11 @@ module TypeScript {
             var varSym = this.resolver.resolveAST(forInStatement.lval, false, typeCheckContext.getEnclosingDecl(), this.context);
             this.checkForResolutionError(varSym.getType(), typeCheckContext.getEnclosingDecl());
 
-            var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(varSym.getType());
+            var isStringOrNumber = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(varSym.getType());
+
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
-            if (!isStringOrAny) {
+            if (!isStringOrNumber) {
                 this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, getDiagnosticMessage(DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
 
@@ -1961,10 +1962,12 @@ module TypeScript {
             var lhsType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand1, typeCheckContext));
             var rhsType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand2, typeCheckContext));
 
-            var isStringOrAny = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(lhsType.getType());
+            var isStringAnyOrNumber = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol ||
+                                        this.resolver.isAnyOrEquivalent(lhsType.getType()) ||
+                                        this.resolver.isNumberOrEquivalent(lhsType.getType());
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
-            if (!isStringOrAny) {
+            if (!isStringAnyOrNumber) {
                 this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName,
                     getDiagnosticMessage(DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_, null), typeCheckContext.getEnclosingDecl());
             }
