@@ -21,7 +21,7 @@ exports.exportedWithComplicatedValue = {
 
 
 var arrayVar = [
-    'a', 
+    'a',
     'b'
 ];
 exports.exportedArrayVar;

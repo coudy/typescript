@@ -27,68 +27,68 @@ var f = (function () {
     };
     f.prototype.x = function () {
         (this.voidIfAny([
-            4, 
+            4,
             2
         ][0]));
         (this.voidIfAny([
-            4, 
-            2, 
+            4,
+            2,
             undefined
         ][0]));
         (this.voidIfAny([
-            undefined, 
-            2, 
+            undefined,
+            2,
             4
         ][0]));
         (this.voidIfAny([
-            null, 
-            2, 
+            null,
+            2,
             4
         ][0]));
         (this.voidIfAny([
-            2, 
-            4, 
+            2,
+            4,
             null
         ][0]));
         (this.voidIfAny([
-            undefined, 
-            4, 
+            undefined,
+            4,
             null
         ][0]));
         (this.voidIfAny([
-            '', 
+            '',
             "q"
         ][0]));
         (this.voidIfAny([
-            '', 
-            "q", 
+            '',
+            "q",
             undefined
         ][0]));
         (this.voidIfAny([
-            undefined, 
-            "q", 
+            undefined,
+            "q",
             ''
         ][0]));
         (this.voidIfAny([
-            null, 
-            "q", 
+            null,
+            "q",
             ''
         ][0]));
         (this.voidIfAny([
-            "q", 
-            '', 
+            "q",
+            '',
             null
         ][0]));
         (this.voidIfAny([
-            undefined, 
-            '', 
+            undefined,
+            '',
             null
         ][0]));
         (this.voidIfAny([
             [
-                3, 
+                3,
                 4
-            ], 
+            ],
             [
                 null
             ]
@@ -97,7 +97,7 @@ var f = (function () {
             {
                 x: 7,
                 y: new derived()
-            }, 
+            },
             {
                 x: 5,
                 y: new base()
@@ -107,7 +107,7 @@ var f = (function () {
             {
                 x: true,
                 y: new derived()
-            }, 
+            },
             {
                 x: false,
                 y: new base()
@@ -117,7 +117,7 @@ var f = (function () {
             {
                 x: undefined,
                 y: new base()
-            }, 
+            },
             {
                 x: '',
                 y: new derived()
@@ -128,11 +128,11 @@ var f = (function () {
             {
                 x: 0,
                 y: 'a'
-            }, 
+            },
             {
                 x: 'a',
                 y: 'a'
-            }, 
+            },
             {
                 x: anyObj,
                 y: 'a'
@@ -142,11 +142,11 @@ var f = (function () {
             {
                 x: anyObj,
                 y: 'a'
-            }, 
+            },
             {
                 x: 0,
                 y: 'a'
-            }, 
+            },
             {
                 x: 'a',
                 y: 'a'
@@ -156,11 +156,11 @@ var f = (function () {
             {
                 x: 0,
                 y: 'a'
-            }, 
+            },
             {
                 x: anyObj,
                 y: 'a'
-            }, 
+            },
             {
                 x: 'a',
                 y: 'a'
@@ -170,23 +170,23 @@ var f = (function () {
         var baseObj = new base();
         var base2Obj = new base2();
         var b1 = [
-            baseObj, 
-            base2Obj, 
+            baseObj,
+            base2Obj,
             ifaceObj
         ];
         var b2 = [
-            base2Obj, 
-            baseObj, 
+            base2Obj,
+            baseObj,
             ifaceObj
         ];
         var b3 = [
-            baseObj, 
-            ifaceObj, 
+            baseObj,
+            ifaceObj,
             base2Obj
         ];
         var b4 = [
-            ifaceObj, 
-            baseObj, 
+            ifaceObj,
+            baseObj,
             base2Obj
         ];
     };

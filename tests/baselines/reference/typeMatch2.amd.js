@@ -38,13 +38,13 @@ function f2() {
     var a = new Animal();
     var g = new Giraffe();
     var aa = [
-        a, 
-        a, 
+        a,
+        a,
         a
     ];
     var gg = [
-        g, 
-        g, 
+        g,
+        g,
         g
     ];
     aa = gg;

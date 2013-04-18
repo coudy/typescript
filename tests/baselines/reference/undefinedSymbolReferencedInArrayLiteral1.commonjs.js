@@ -6,8 +6,8 @@ var tokens = [
 var functions = [
     function () {
         [
-            1, 
-            2, 
+            1,
+            2,
             3
         ].NonexistantMethod();
         anotherNonExistingMethod();

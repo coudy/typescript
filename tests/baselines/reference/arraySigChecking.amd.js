@@ -5,7 +5,7 @@ var strArray = [
 var myArray;
 myArray = [
     [
-        1, 
+        1,
         2
     ]
 ];

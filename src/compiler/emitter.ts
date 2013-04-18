@@ -290,31 +290,40 @@ module TypeScript {
             }
         }
 
-        public emitObjectLiteral(content: ASTList) {
-            if (content.members.length === 0) {
-                this.writeToOutput("{}");
-                return;
-            }
-
-            this.writeLineToOutput("{");
-            this.indenter.increaseIndent();
-            var inObjectLiteral = this.setInObjectLiteral(true);
-            this.emitJavascriptList(content, ",", true, false, false);
-            this.setInObjectLiteral(inObjectLiteral);
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutput("}");
-        }
-
-        public emitArrayLiteral(content: ASTList) {
+        private useNewLinesInLiteral(): boolean {
             var useNewLines = true;
             for (var i = this.varListCountStack.length - 1; i >= 0; i--) {
                 // If we're in any var decl, not in the last position, then don't emit newlines.
                 if (this.varListCountStack[i] < -1 || this.varListCountStack[i] > 1) {
-                    useNewLines = false;
-                    break;
+                    return false;
                 }
             }
+
+            return true;
+        }
+
+        public emitObjectLiteral(content: ASTList) {
+            var useNewLines = this.useNewLinesInLiteral();
+
+            this.writeToOutput("{");
+            if (content && content.members.length > 0) {
+                if (useNewLines) {
+                    this.writeLineToOutput("");
+                }
+
+                this.indenter.increaseIndent();
+                var inObjectLiteral = this.setInObjectLiteral(true);
+                var separator = useNewLines ? "," : ", ";
+                this.emitJavascriptList(content, separator, useNewLines, false, false);
+                this.setInObjectLiteral(inObjectLiteral);
+                this.indenter.decreaseIndent();
+                this.emitIndent();
+            }
+            this.writeToOutput("}");
+        }
+
+        public emitArrayLiteral(content: ASTList) {
+            var useNewLines = this.useNewLinesInLiteral();
 
             this.writeToOutput("[");
             if (content && content.members.length > 0) {
@@ -323,7 +332,8 @@ module TypeScript {
                 }
 
                 this.indenter.increaseIndent();
-                this.emitJavascriptList(content, ", ", useNewLines, false, false);
+                var separator = useNewLines ? "," : ", ";
+                this.emitJavascriptList(content, separator, useNewLines, false, false);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }

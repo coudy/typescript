@@ -945,7 +945,7 @@ module TypeScript.Emitter1 {
             var newTrailingTrivia = result.parameterList.trailingTrivia().concat(
                 result.typeAnnotation.trailingTrivia());
 
-            return result.withTypeAnnotation(null).withTypeParameterList(null).withTrailingTrivia(newTrailingTrivia);
+            return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
         }
 
         public visitCastExpression(node: CastExpressionSyntax): IExpressionSyntax {
@@ -959,6 +959,10 @@ module TypeScript.Emitter1 {
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclarationSyntax {
             // TODO: transfer trivia if important.
+            return null;
+        }
+
+        public visitTypeParameterList(node: TypeParameterListSyntax): TypeParameterListSyntax {
             return null;
         }
 

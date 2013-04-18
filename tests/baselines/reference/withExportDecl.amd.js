@@ -22,7 +22,7 @@ define(["require", "exports"], function(require, exports) {
 
 
     var arrayVar = [
-        'a', 
+        'a',
         'b'
     ];
     exports.exportedArrayVar;

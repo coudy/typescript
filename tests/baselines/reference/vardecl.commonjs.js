@@ -13,7 +13,7 @@ var withComplicatedValue = {
 
 
 var arrayVar = [
-    'a', 
+    'a',
     'b'
 ];
 var complicatedArrayVar;

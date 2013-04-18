@@ -1,5 +1,5 @@
 var a = [
-    1, 
+    1,
     2
 ];
 a.forEach(function (v, i, a) {

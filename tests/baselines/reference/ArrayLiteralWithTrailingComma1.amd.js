@@ -4,15 +4,15 @@ var arrTest = (function () {
     };
     arrTest.prototype.callTest = function () {
         this.test([
-            1, 
-            2, 
-            "hi", 
+            1,
+            2,
+            "hi",
             5
         ]);
         this.test([
-            1, 
-            2, 
-            "hi", 
+            1,
+            2,
+            "hi",
             5
         ]);
     };

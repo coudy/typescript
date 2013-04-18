@@ -10,13 +10,13 @@ var A = (function () {
         this.foo = "foo";
         this.bar = "bar";
         [
-            1, 
+            1,
             2
         ].forEach(function (p) {
             return _this.foo;
         });
         [
-            1, 
+            1,
             2
         ].forEach(function (p) {
             return _this.bar;

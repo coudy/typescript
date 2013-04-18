@@ -6,7 +6,7 @@ foo1({
 function foo2(x) {
 }
 foo2([
-    "s", 
+    "s",
     "t"
 ]);
 function foo3(x) {

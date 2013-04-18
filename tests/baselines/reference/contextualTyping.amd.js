@@ -35,11 +35,11 @@ var c3t8 = function (n) {
     return n;
 };
 var c3t9 = [
-    [], 
+    [],
     []
 ];
 var c3t10 = [
-    ({}), 
+    ({}),
     ({})
 ];
 var c3t11 = [
@@ -104,11 +104,11 @@ objc8.t8 = function (n) {
     return n;
 };
 objc8.t9 = [
-    [], 
+    [],
     []
 ];
 objc8.t10 = [
-    ({}), 
+    ({}),
     ({})
 ];
 objc8.t11 = [
@@ -169,11 +169,11 @@ var c12t8 = function (n) {
     return n;
 };
 var c12t9 = [
-    [], 
+    [],
     []
 ];
 var c12t10 = [
-    ({}), 
+    ({}),
     ({})
 ];
 var c12t11 = [

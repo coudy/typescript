@@ -2,7 +2,7 @@ function makeArray(items) {
     return items;
 }
 var b = [
-    1, 
+    1,
     ""
 ];
 var b1G = makeArray(1, "");

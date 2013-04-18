@@ -14,7 +14,7 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
 
 
     var arrayVar = [
-        'a', 
+        'a',
         'b'
     ];
     function simpleFunction() {
