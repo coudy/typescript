@@ -21,7 +21,7 @@ module TypeScript {
         hasTrailingNewLine(): boolean;
         hasTrailingSkippedText(): boolean;
 
-        hasSkippedText(): boolean;
+        hasSkippedToken(): boolean;
 
         leadingTrivia(): ISyntaxTriviaList;
         trailingTrivia(): ISyntaxTriviaList;

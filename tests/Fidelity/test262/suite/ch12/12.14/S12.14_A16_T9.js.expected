@@ -104,8 +104,14 @@
                                         "text": "\n"
                                     },
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": "catch"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "CatchKeyword",
+                                            "width": 5,
+                                            "text": "catch",
+                                            "value": "catch",
+                                            "valueText": "catch"
+                                        }
                                     }
                                 ]
                             },
@@ -152,8 +158,14 @@
                                     "text": "\n"
                                 },
                                 {
-                                    "kind": "SkippedTextTrivia",
-                                    "text": "finally"
+                                    "kind": "SkippedTokenTrivia",
+                                    "skippedToken": {
+                                        "kind": "FinallyKeyword",
+                                        "width": 7,
+                                        "text": "finally",
+                                        "value": "finally",
+                                        "valueText": "finally"
+                                    }
                                 }
                             ]
                         }

@@ -417,8 +417,14 @@
                                         "text": "    "
                                     },
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": "case"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "CaseKeyword",
+                                            "width": 4,
+                                            "text": "case",
+                                            "value": "case",
+                                            "valueText": "case"
+                                        }
                                     },
                                     {
                                         "kind": "WhitespaceTrivia",
@@ -443,8 +449,14 @@
                                 "hasTrailingSkippedText": true,
                                 "trailingTrivia": [
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": ":"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "text": ":",
+                                            "value": ":",
+                                            "valueText": ":"
+                                        }
                                     },
                                     {
                                         "kind": "NewLineTrivia",
@@ -530,12 +542,24 @@
                                         "text": "    "
                                     },
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": "default"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "DefaultKeyword",
+                                            "width": 7,
+                                            "text": "default",
+                                            "value": "default",
+                                            "valueText": "default"
+                                        }
                                     },
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": ":"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "text": ":",
+                                            "value": ":",
+                                            "valueText": ":"
+                                        }
                                     },
                                     {
                                         "kind": "NewLineTrivia",
@@ -731,8 +755,14 @@
                             "text": "\n"
                         },
                         {
-                            "kind": "SkippedTextTrivia",
-                            "text": "}"
+                            "kind": "SkippedTokenTrivia",
+                            "skippedToken": {
+                                "kind": "CloseBraceToken",
+                                "width": 1,
+                                "text": "}",
+                                "value": "}",
+                                "valueText": "}"
+                            }
                         },
                         {
                             "kind": "NewLineTrivia",

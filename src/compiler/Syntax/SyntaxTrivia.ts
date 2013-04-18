@@ -3,17 +3,23 @@
 module TypeScript.Syntax {
     class SyntaxTrivia implements ISyntaxTrivia {
         private _kind: SyntaxKind;
-        private _text: string;
+        private _textOrToken: any;
 
-        constructor(kind: SyntaxKind, text: string) {
+        constructor(kind: SyntaxKind, textOrToken: any) {
             this._kind = kind;
-            this._text = text;
+            this._textOrToken = textOrToken;
         }
 
         public toJSON(key) {
             var result: any = {};
             result.kind = (<any>SyntaxKind)._map[this._kind];
-            result.text = this._text;
+
+            if (this.isSkippedToken()) {
+                result.skippedToken = this._textOrToken;
+            }
+            else {
+                result.text = this._textOrToken;
+            }
             return result;
         }
 
@@ -22,11 +28,11 @@ module TypeScript.Syntax {
         }
 
         public fullWidth(): number {
-            return this._text.length;
+            return this.fullText().length;
         }
 
         public fullText(): string {
-            return this._text;
+            return this.isSkippedToken() ? this.skippedToken().fullText() : this._textOrToken;
         }
 
         public isWhitespace(): boolean {
@@ -41,8 +47,13 @@ module TypeScript.Syntax {
             return this.kind() === SyntaxKind.NewLineTrivia;
         }
 
-        public isSkippedText(): boolean {
-            return this.kind() === SyntaxKind.SkippedTextTrivia;
+        public isSkippedToken(): boolean {
+            return this.kind() === SyntaxKind.SkippedTokenTrivia;
+        }
+
+        public skippedToken(): ISyntaxToken {
+            Debug.assert(this.isSkippedToken());
+            return this._textOrToken;
         }
 
         public collectTextElements(elements: string[]): void {
@@ -54,6 +65,13 @@ module TypeScript.Syntax {
         // Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia || kind === SyntaxKind.NewLineTrivia || kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.WhitespaceTrivia || kind === SyntaxKind.SkippedTextTrivia);
         // Debug.assert(text.length > 0);
         return new SyntaxTrivia(kind, text);
+    }
+
+    export function skippedTokenTrivia(token: ISyntaxToken): ISyntaxTrivia {
+        Debug.assert(!token.hasLeadingTrivia());
+        Debug.assert(!token.hasTrailingTrivia());
+        Debug.assert(token.fullWidth() > 0);
+        return new SyntaxTrivia(SyntaxKind.SkippedTokenTrivia, token);
     }
 
     export function spaces(count: number): ISyntaxTrivia {

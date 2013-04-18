@@ -19,7 +19,7 @@ module TypeScript.Syntax {
 
         hasComment: (): boolean => false,
         hasNewLine: (): boolean => false,
-        hasSkippedText: (): boolean => false,
+        hasSkippedToken: (): boolean => false,
 
         toJSON: (key) => [],
 
@@ -90,8 +90,8 @@ module TypeScript.Syntax {
             return this.item.kind() === SyntaxKind.NewLineTrivia;
         }
 
-        public hasSkippedText(): boolean {
-            return this.item.kind() === SyntaxKind.SkippedTextTrivia;
+        public hasSkippedToken(): boolean {
+            return this.item.kind() === SyntaxKind.SkippedTokenTrivia;
         }
 
         public toJSON(key) {
@@ -170,9 +170,9 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasSkippedText(): boolean {
+        public hasSkippedToken(): boolean {
             for (var i = 0; i < this.trivia.length; i++) {
-                if (this.trivia[i].kind() === SyntaxKind.SkippedTextTrivia) {
+                if (this.trivia[i].kind() === SyntaxKind.SkippedTokenTrivia) {
                     return true;
                 }
             }

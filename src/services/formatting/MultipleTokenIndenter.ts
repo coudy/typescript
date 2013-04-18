@@ -84,7 +84,7 @@ module TypeScript.Formatting {
                             break;
 
                         case SyntaxKind.SingleLineCommentTrivia:
-                        case SyntaxKind.SkippedTextTrivia:
+                        case SyntaxKind.SkippedTokenTrivia:
                             if (indentNextTokenOrTrivia) {
                                 this.recordIndentationEditsForSingleLineOrSkippedText(trivia, position, commentIndentationString);
                                 indentNextTokenOrTrivia = false;

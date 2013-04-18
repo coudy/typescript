@@ -1568,7 +1568,8 @@ module TypeScript.Parser {
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
 
             // now, add the text of the token as skipped text to the trivia array.
-            array.push(Syntax.trivia(SyntaxKind.SkippedTextTrivia, skippedToken.text()));
+            var trimmedToken = skippedToken.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
+            array.push(Syntax.skippedTokenTrivia(trimmedToken));
 
             // Finally, add the trailing trivia of the skipped token to the trivia array.
             this.addTriviaTo(skippedToken.trailingTrivia(), array);

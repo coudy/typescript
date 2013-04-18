@@ -13,7 +13,7 @@ module TypeScript {
         NewLineTrivia,
         MultiLineCommentTrivia,
         SingleLineCommentTrivia,
-        SkippedTextTrivia,
+        SkippedTokenTrivia,
 
         // Note: all variable width tokens must come before all fixed width tokens.
 

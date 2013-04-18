@@ -13,7 +13,7 @@ module TypeScript {
 
         hasComment(): boolean;
         hasNewLine(): boolean;
-        hasSkippedText(): boolean;
+        hasSkippedToken(): boolean;
 
         last(): ISyntaxTrivia;
         toArray(): ISyntaxTrivia[];

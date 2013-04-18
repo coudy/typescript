@@ -64,8 +64,12 @@
                             "text": " "
                         },
                         {
-                            "kind": "SkippedTextTrivia",
-                            "text": "\\"
+                            "kind": "SkippedTokenTrivia",
+                            "skippedToken": {
+                                "kind": "ErrorToken",
+                                "width": 1,
+                                "text": "\\"
+                            }
                         },
                         {
                             "kind": "WhitespaceTrivia",

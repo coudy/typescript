@@ -224,8 +224,14 @@
                     "hasTrailingSkippedText": true,
                     "trailingTrivia": [
                         {
-                            "kind": "SkippedTextTrivia",
-                            "text": ")"
+                            "kind": "SkippedTokenTrivia",
+                            "skippedToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")",
+                                "value": ")",
+                                "valueText": ")"
+                            }
                         },
                         {
                             "kind": "WhitespaceTrivia",
@@ -275,8 +281,14 @@
                             "text": "\r\n"
                         },
                         {
-                            "kind": "SkippedTextTrivia",
-                            "text": "}"
+                            "kind": "SkippedTokenTrivia",
+                            "skippedToken": {
+                                "kind": "CloseBraceToken",
+                                "width": 1,
+                                "text": "}",
+                                "value": "}",
+                                "valueText": "}"
+                            }
                         }
                     ]
                 }

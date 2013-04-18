@@ -260,7 +260,7 @@ module TypeScript.Syntax {
             if (child != null && child.isToken()) {
                 var token = <ISyntaxToken>child;
                 // If a token is skipped, return true. Or if it is a missing token. The only empty token that is not missing is EOF
-                if (token.hasSkippedText() || (token.width() == 0 && token.kind() != SyntaxKind.EndOfFileToken)) {
+                if (token.hasSkippedToken() || (token.width() == 0 && token.kind() != SyntaxKind.EndOfFileToken)) {
                     return true;
                 }
             }

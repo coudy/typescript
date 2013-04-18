@@ -120,8 +120,14 @@
                                 "hasTrailingSkippedText": true,
                                 "trailingTrivia": [
                                     {
-                                        "kind": "SkippedTextTrivia",
-                                        "text": "*"
+                                        "kind": "SkippedTokenTrivia",
+                                        "skippedToken": {
+                                            "kind": "AsteriskToken",
+                                            "width": 1,
+                                            "text": "*",
+                                            "value": "*",
+                                            "valueText": "*"
+                                        }
                                     }
                                 ]
                             }

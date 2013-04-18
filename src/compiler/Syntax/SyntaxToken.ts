@@ -281,7 +281,7 @@ module TypeScript.Syntax {
         public hasTrailingComment() { return false; }
         public hasTrailingNewLine() { return false; }
         public hasTrailingSkippedText() { return false; }
-        public hasSkippedText() { return false; }
+        public hasSkippedToken() { return false; }
 
         public trailingTriviaWidth() { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
@@ -368,16 +368,16 @@ module TypeScript.Syntax {
         public hasLeadingTrivia(): boolean { return this._leadingTrivia.count() > 0; }
         public hasLeadingComment(): boolean { return this._leadingTrivia.hasComment(); }
         public hasLeadingNewLine(): boolean { return this._leadingTrivia.hasNewLine(); }
-        public hasLeadingSkippedText(): boolean { return this._leadingTrivia.hasSkippedText(); }
+        public hasLeadingSkippedText(): boolean { return this._leadingTrivia.hasSkippedToken(); }
         public leadingTriviaWidth(): number { return this._leadingTrivia.fullWidth(); }
 
         public hasTrailingTrivia(): boolean { return this._trailingTrivia.count() > 0; }
         public hasTrailingComment(): boolean { return this._trailingTrivia.hasComment(); }
         public hasTrailingNewLine(): boolean { return this._trailingTrivia.hasNewLine(); }
-        public hasTrailingSkippedText(): boolean { return this._trailingTrivia.hasSkippedText(); }
+        public hasTrailingSkippedText(): boolean { return this._trailingTrivia.hasSkippedToken(); }
         public trailingTriviaWidth(): number { return this._trailingTrivia.fullWidth(); }
 
-        public hasSkippedText(): boolean { return this.hasLeadingSkippedText() || this.hasTrailingSkippedText(); }
+        public hasSkippedToken(): boolean { return this.hasLeadingSkippedText() || this.hasTrailingSkippedText(); }
 
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }

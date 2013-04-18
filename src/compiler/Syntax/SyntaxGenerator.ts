@@ -2422,7 +2422,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
         ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
-    result += "        public hasSkippedText(): boolean { return false; }\r\n";
+    result += "        public hasSkippedToken(): boolean { return false; }\r\n";
 
     result +=
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +

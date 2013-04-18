@@ -46,7 +46,7 @@ module TypeScript {
                         continue;
 
                     case SyntaxKind.SingleLineCommentTrivia:
-                    case SyntaxKind.SkippedTextTrivia:
+                    case SyntaxKind.SkippedTokenTrivia:
                         this.indentSingleLineOrSkippedText(trivia, indentThisTrivia, result);
                         continue;
 

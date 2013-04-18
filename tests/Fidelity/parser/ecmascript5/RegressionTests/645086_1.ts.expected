@@ -106,8 +106,14 @@
                                     "hasTrailingSkippedText": true,
                                     "trailingTrivia": [
                                         {
-                                            "kind": "SkippedTextTrivia",
-                                            "text": "]"
+                                            "kind": "SkippedTokenTrivia",
+                                            "skippedToken": {
+                                                "kind": "CloseBracketToken",
+                                                "width": 1,
+                                                "text": "]",
+                                                "value": "]",
+                                                "valueText": "]"
+                                            }
                                         }
                                     ]
                                 }
