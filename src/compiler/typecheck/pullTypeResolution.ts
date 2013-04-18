@@ -1316,12 +1316,19 @@ module TypeScript {
             if (interfaceDeclAST.members) {
 
                 var memberSymbol: PullSymbol = null;
+                var memberType: PullTypeSymbol = null;
                 var typeMembers = <ASTList> interfaceDeclAST.members;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
                     memberSymbol = this.getSymbolForAST(typeMembers.members[i], context, this.unitPath);
 
                     this.resolveDeclaredSymbol(memberSymbol, enclosingDecl, context);
+
+                    memberType = memberSymbol.getType();
+
+                    if (memberType && memberType.isGeneric()) {
+                        interfaceSymbol.setHasGenericMember();
+                    }
                 }
             }
 
@@ -1455,7 +1462,9 @@ module TypeScript {
                 typeDeclSymbol = arraySymbol;
             }
 
-            this.setSymbolForAST(typeRef, typeDeclSymbol, context);
+            if (!typeDeclSymbol.isGeneric() /*|| typeDeclSymbol.isArray()*/) {
+                this.setSymbolForAST(typeRef, typeDeclSymbol, context);
+            }
 
             return typeDeclSymbol;
         }
@@ -1539,7 +1548,7 @@ module TypeScript {
                         // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                         // we filter out arrays, since for those we just want to know if their element type is a type parameter...
                         if ((varDecl.nodeType == NodeType.Parameter) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
-                            var signature = enclosingDecl.getSignatureSymbol();
+                            var signature = enclosingDecl.getSpecializingSignatureSymbol();
 
                             if (signature) {
                                 signature.setHasGenericParameter();
@@ -1627,6 +1636,10 @@ module TypeScript {
             if (typeParameterAST.constraint) {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
+
+                if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && constraintTypeSymbol.isResolved && !constraintTypeSymbol.getIsSpecialized()) {
+                    constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
+                }
 
                 if (!constraintTypeSymbol) {
                     context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath,
@@ -1766,7 +1779,7 @@ module TypeScript {
 
             var funcSymbol = <PullFunctionTypeSymbol>funcDecl.getSymbol();
 
-            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
 
             var hadError = false;
 
@@ -3167,7 +3180,7 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
-                    context.setTypeInContext(memberSymbol, this.widenType(memberExprType.getType()));
+                    context.setTypeInContext(memberSymbol, memberExprType.getType());
 
                     memberSymbol.setResolved();
 
@@ -4247,7 +4260,10 @@ module TypeScript {
                     if (bestCommonType == null || this.isAnyOrEquivalent(bestCommonType)) {
                         break;
                     }
-                    else if (targetType) { // set the element type to the target type
+                    // set the element type to the target type
+                    // If the contextual type is a type variable, but the BCT is not, we won't set the BCT
+                    // to the contextual type, so as not to short-circuit type argument inference calculations
+                    else if (targetType && !(bestCommonType.isTypeVariable() || targetType.isTypeVariable())) {
                         collection.setTypeAtIndex(i, targetType);
                     }
                 }
@@ -4498,6 +4514,17 @@ module TypeScript {
             return type;
         }
 
+        public symbolsShareDeclaration(symbol1: PullSymbol, symbol2: PullSymbol) {
+            var decls1 = symbol1.getDeclarations();
+            var decls2 = symbol2.getDeclarations();
+
+            if (decls1.length && decls2.length) {
+                return decls1[0].isEqual(decls2[0]);
+            }
+
+            return false;
+        }
+
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
@@ -4656,7 +4683,12 @@ module TypeScript {
             }
 
             if (target.isTypeParameter()) {
-                return true;
+
+                if (!source.isTypeParameter()) {
+                    return false;
+                }
+
+                return this.symbolsShareDeclaration(source, target);
             }
 
             // this check ensures that we only operate on object types from this point forward,

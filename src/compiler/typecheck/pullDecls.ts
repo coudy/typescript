@@ -18,6 +18,7 @@ module TypeScript {
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
+        private specializingSignatureSymbol: PullSignatureSymbol = null;
 
         private childDecls: PullDecl[] = [];
         private typeParameters: PullDecl[] = [];
@@ -62,6 +63,15 @@ module TypeScript {
 
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
         public getSignatureSymbol(): PullSignatureSymbol { return this.signatureSymbol; }
+
+        public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
+        public getSpecializingSignatureSymbol() {
+            if (this.specializingSignatureSymbol) {
+                return this.specializingSignatureSymbol;
+            }
+
+            return this.signatureSymbol;
+        }
 
         public getFlags(): PullElementFlags { return this.declFlags; }
         public setFlags(flags: PullElementFlags) { this.declFlags = flags; }

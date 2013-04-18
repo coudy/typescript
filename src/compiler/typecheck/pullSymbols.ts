@@ -995,6 +995,7 @@ module TypeScript {
         private arrayType: PullTypeSymbol = null;
 
         private hasGenericSignature = false;
+        private hasGenericMember = false;
         private knownBaseTypeCount = 0;
         public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
         public resetKnownBaseTypeCount() { this.knownBaseTypeCount = 0; }
@@ -1031,6 +1032,9 @@ module TypeScript {
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
         public getHasGenericSignature() { return this.hasGenericSignature; }
+
+        public setHasGenericMember() { this.hasGenericMember = true; }
+        public getHasGenericMember() { return this.hasGenericMember; }
 
         public setAssociatedContainerType(type: PullTypeSymbol) {
             this.associatedContainerTypeSymbol = type;
@@ -1195,8 +1199,9 @@ module TypeScript {
 
         public isGeneric(): boolean {
             return (this.typeParameterLinks && this.typeParameterLinks.length != 0) ||
-            this.hasGenericSignature ||
-            (this.typeArguments && this.typeArguments.length);
+                this.hasGenericSignature ||
+                this.hasGenericMember || 
+                (this.typeArguments && this.typeArguments.length);
         }
 
         public isFixed() {
@@ -2683,10 +2688,6 @@ module TypeScript {
             return typeToSpecialize;
         }
 
-        if (typeToSpecialize.currentlyBeingSpecialized()) {
-            return typeToSpecialize;
-        }
-
         var searchForExistingSpecialization = typeArguments != null;
 
         if (typeArguments == null || (context.specializingToAny && typeArguments.length)) {
@@ -2714,6 +2715,10 @@ module TypeScript {
 
         // In this case, we have an array type that may have been specialized to a type variable
         if (typeToSpecialize.isArray()) {
+
+            if (typeToSpecialize.currentlyBeingSpecialized()) {
+                return typeToSpecialize;
+            }
 
             var newElementType: PullTypeSymbol = null;
 
@@ -2805,6 +2810,10 @@ module TypeScript {
             typeArguments[0].setArrayType(newType);
         }
 
+        if (typeToSpecialize.currentlyBeingSpecialized()) {
+            return newType;
+        }
+
         // create the type replacement map
 
         var typeReplacementMap: any = {};
@@ -2865,6 +2874,7 @@ module TypeScript {
         var parameters: PullSymbol[];
         var newParameters: PullSymbol[];
         var returnType: PullTypeSymbol = null;
+        var prevSpecializationSignature: PullSignatureSymbol = null;
 
         for (var i = 0; i < callSignatures.length; i++) {
             signature = callSignatures[i];
@@ -2885,9 +2895,10 @@ module TypeScript {
             newSignature.mimicSignature(signature);
             declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-            decl.setSignatureSymbol(newSignature);
+            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+            decl.setSpecializingSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSignatureSymbol(signature);
+            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
             parameters = signature.getParameters();
             newParameters = newSignature.getParameters();
@@ -2940,9 +2951,10 @@ module TypeScript {
             newSignature.mimicSignature(signature);
             declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-            decl.setSignatureSymbol(newSignature);
+            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+            decl.setSpecializingSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSignatureSymbol(signature);
+            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
             parameters = signature.getParameters();
             newParameters = newSignature.getParameters();
@@ -2997,9 +3009,10 @@ module TypeScript {
             newSignature.mimicSignature(signature);
             declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-            decl.setSignatureSymbol(newSignature);
+            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+            decl.setSpecializingSignatureSymbol(newSignature);
             resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSignatureSymbol(signature);
+            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
             parameters = signature.getParameters();
             newParameters = newSignature.getParameters();

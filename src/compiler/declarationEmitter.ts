@@ -61,6 +61,14 @@ module TypeScript {
             this.declFile = new DeclFileWriter(file);
         }
 
+        public widenType(type: PullTypeSymbol) {
+            if (type == this.semanticInfoChain.undefinedTypeSymbol || type == this.semanticInfoChain.nullTypeSymbol) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            return type;
+        }
+
         public close() {
             try {
                 this.declFile.Close();
@@ -299,7 +307,7 @@ module TypeScript {
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.fileName);
-            var type = pullSymbol.getType();
+            var type = this.widenType(pullSymbol.getType());
             if (!type) {
                 // PULLTODO
                 return;
