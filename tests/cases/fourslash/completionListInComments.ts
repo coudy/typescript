@@ -5,4 +5,4 @@
 
 goTo.marker();
 // Completion list should not be available within comments
-verify.not.completionListContains('foo');
+verify.completionListIsEmpty();

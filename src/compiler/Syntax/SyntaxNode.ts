@@ -225,7 +225,7 @@ module TypeScript {
         ///  3) Otherwise an ArgumentOutOfRangeException is thrown
         ///
         /// Note: findToken will always return a non missing token with width greater than or equal to
-        /// 1 (except for EOF).  Empty tokens syntehsized by teh parser are never returned.
+        /// 1 (except for EOF).  Empty tokens syntehsized by the parser are never returned.
         /// </summary>
         public findToken(position: number): PositionedToken {
             var endOfFileToken = this.tryGetEndOfFileAt(position);

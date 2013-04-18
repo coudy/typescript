@@ -267,4 +267,104 @@ module TypeScript.Syntax {
         }
         return false;
     }
+
+    export function isUnterminatedStringLiteral(token: ISyntaxToken): boolean {
+        if (token && token.kind() === SyntaxKind.StringLiteral) {
+            var text = token.text();
+            return !(text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0));
+        }
+
+        return false;
+    }
+
+    export function isUnterminatedMultilineCommentTrivia(trivia: ISyntaxTrivia): boolean {
+        if (trivia && trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
+            var text = trivia.fullText();
+            return text.substring(text.length - 2) !== "*/";
+        }
+        return false;
+    }
+
+    export function isEntirelyIndiseCommentTrivia(trivia: ISyntaxTrivia, fullStart: number, position: number): boolean {
+        if (trivia && trivia.isComment() && position > fullStart) {
+            var end = fullStart + trivia.fullWidth();
+            return (position < end) ||
+                (position === end && (trivia.kind() === SyntaxKind.SingleLineCommentTrivia || isUnterminatedMultilineCommentTrivia(trivia)));
+        }
+
+        return false;
+    }
+
+    export function isEntirelyInsideComment(sourceUnit: SourceUnitSyntax, position: number): boolean {
+        var positionedToken = sourceUnit.findToken(position);
+        var fullStart = positionedToken.fullStart();
+
+        var lastTriviaBeforeToken: ISyntaxTrivia;
+
+        if (positionedToken.kind() === SyntaxKind.EndOfFileToken) {
+            // Check if the trivia is leading on the EndOfFile token
+            if (positionedToken.token().hasLeadingTrivia()) {
+                lastTriviaBeforeToken = positionedToken.token().leadingTrivia().last();
+                fullStart += positionedToken.token().leadingTriviaWidth() - lastTriviaBeforeToken.fullWidth();
+            }
+            // Or trailing on the previous token
+            else {
+                positionedToken = positionedToken.previousToken();
+                fullStart = positionedToken.fullStart();
+                if (positionedToken && positionedToken.token().hasTrailingTrivia()) {
+                    lastTriviaBeforeToken = positionedToken.token().trailingTrivia().last();
+                    fullStart += positionedToken.token().fullWidth() - lastTriviaBeforeToken.fullWidth();
+                }
+            }
+        }
+        else {
+            var triviaList: ISyntaxTriviaList = null;
+            if (position <= (fullStart + positionedToken.token().leadingTriviaWidth())) {
+                triviaList = positionedToken.token().leadingTrivia();
+            }
+            else if (position >= (fullStart + positionedToken.token().width())) {
+                triviaList = positionedToken.token().trailingTrivia();
+                fullStart += positionedToken.token().width();
+            }
+
+            if (triviaList) {
+                // Try to find the trivia matching the position
+                for (var i = 0, n = triviaList.count(); i < n; i++) {
+                    var trivia = triviaList.syntaxTriviaAt(i);
+                    if (position <= fullStart) {
+                        // Moved passed the trivia we need
+                        break;
+                    }
+                    else if (position <= fullStart + trivia.fullWidth() && trivia.isComment()) {
+                        // Found the comment trivia we were looking for
+                        lastTriviaBeforeToken = trivia;
+                        break;
+                    }
+
+                    fullStart += trivia.fullWidth();
+                }
+            }
+        }
+
+        return lastTriviaBeforeToken && isEntirelyIndiseCommentTrivia(lastTriviaBeforeToken, fullStart, position);
+    }
+
+    export function isEntirelyWithinStringOrRegularExpressionLiteral(sourceUnit: SourceUnitSyntax, position: number): boolean {
+        var positionedToken = sourceUnit.findToken(position);
+        
+        if (positionedToken) {
+            if (positionedToken.kind() === SyntaxKind.EndOfFileToken) {
+                // EndOfFile token, enusre it did not follow an unterminated string literal
+                positionedToken = positionedToken.previousToken();
+                return positionedToken && positionedToken.token().trailingTriviaWidth() === 0 && isUnterminatedStringLiteral(positionedToken.token());
+            }
+            else if (position > positionedToken.start()) {
+                // Ensure position falls enterily within the literal if it is terminated, or the line if it is not
+                return (position < positionedToken.end() && (positionedToken.kind() === TypeScript.SyntaxKind.StringLiteral || positionedToken.kind() === TypeScript.SyntaxKind.RegularExpressionLiteral)) ||
+                    (position <= positionedToken.end() && isUnterminatedStringLiteral(positionedToken.token()));
+            }
+        }
+
+        return false;
+    }
 }

@@ -664,11 +664,12 @@ module Services {
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
-            var path = this.getAstPathToPosition(script, position);
-            if (this.isCompletionListBlocker(path)) {
+            if (this.isCompletionListBlocker(document.syntaxTree(), position)) {
                 this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
                 return null;
             }
+
+            var path = this.getAstPathToPosition(script, position);
 
             var isRightOfDot = false;
             if (path.count() >= 1 &&
@@ -780,16 +781,17 @@ module Services {
                 (path.count() >= 4 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
         }
 
-        private isCompletionListBlocker(path: TypeScript.AstPath): boolean {
-            var asts = path.asts;
-            var node = path.count() >= 1 && path.ast();
-            if (node) {
-                if (node.nodeType === TypeScript.NodeType.Comment ||
-                    node.nodeType === TypeScript.NodeType.RegularExpressionLiteral ||
-                    node.nodeType === TypeScript.NodeType.StringLiteral) {
-                    return true;
-                }
-            }
+        private isCompletionListBlocker(syntaxTree: TypeScript.SyntaxTree, position: number): boolean {
+            return TypeScript.Syntax.isEntirelyInsideComment(syntaxTree.sourceUnit(), position) ||
+                TypeScript.Syntax.isEntirelyWithinStringOrRegularExpressionLiteral(syntaxTree.sourceUnit(), position) ||
+                this.isIdentifierDefinitionLocation(syntaxTree.sourceUnit(), position);
+        }
+
+        private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
+            var positionedToken = sourceUnit.findToken(position);
+
+
+
             return false;
         }
 
