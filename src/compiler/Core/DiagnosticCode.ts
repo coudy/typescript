@@ -182,7 +182,6 @@ module TypeScript {
         _0_1__is_inaccessible,
         _this__cannot_be_referenced_within_module_bodies,
         _this__must_only_be_used_inside_a_function_or_script_context,
-        ______parameters_must_be_array_types,
         Invalid__addition__expression___types_do_not_agree,
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
         The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,

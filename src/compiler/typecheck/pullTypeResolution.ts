@@ -1227,13 +1227,12 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
-                    context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
+                    if (this.cachedArrayInterfaceType) {
+                        typeRef = specializeToArrayType(this.cachedArrayInterfaceType, typeRef, this, context);
+                    }
                 }
-                else {
-                    context.setTypeInContext(paramSymbol, typeRef);
-                }
+
+                context.setTypeInContext(paramSymbol, typeRef);
 
                 // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                 if (this.isTypeArgumentOrWrapper(typeRef)) {
@@ -1241,10 +1240,13 @@ module TypeScript {
                 }
             } // PULLTODO: default values?
             else {
-                if (paramSymbol.getIsVarArg()) {
-                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
-                    context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
+                if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
+                    if (this.cachedArrayInterfaceType) {
+                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType, paramSymbol.getType(), this, context));
+                    }
+                    else {
+                        context.setTypeInContext(paramSymbol, paramSymbol.getType());
+                    }
                 }
                 else if (contextParam) {
                     context.setTypeInContext(paramSymbol, contextParam.getType());
@@ -1265,20 +1267,21 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
-                    context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
-                }
-                else {
-                    context.setTypeInContext(paramSymbol, typeRef);
+                    if (this.cachedArrayInterfaceType) {
+                        typeRef = specializeToArrayType(this.cachedArrayInterfaceType, typeRef, this, context);
+                    }
                 }
 
+                context.setTypeInContext(paramSymbol, typeRef);
             } // PULLTODO: default values?
             else {
-                if (paramSymbol.getIsVarArg()) {
-                    diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), enclosingDecl);
-                    context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(diagnostic));
+                if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
+                    if (this.cachedArrayInterfaceType) {
+                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType, paramSymbol.getType(), this, context));
+                    }
+                    else {
+                        context.setTypeInContext(paramSymbol, paramSymbol.getType());
+                    }
                 }
                 else if (contextParam) {
                     context.setTypeInContext(paramSymbol, contextParam.getType());
@@ -1522,51 +1525,39 @@ module TypeScript {
                         typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
                     }
 
-                    if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray()) {
-                        diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
-                            getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), decl);
-                        typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                        hadError = true;
-                    }
-                    else {
-                        // PULLREVIEW: If the type annotation is a container type, use the module instance type
-                        if (typeExprSymbol.isContainer()) {
-                            var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
+                    // PULLREVIEW: If the type annotation is a container type, use the module instance type
+                    if (typeExprSymbol.isContainer()) {
+                        var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
 
                         if (!instanceSymbol) {
-                                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [typeExprSymbol.toString()]), decl);
-                                typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                                hadError = true;
-                            }
-                            else {
-                                typeExprSymbol = instanceSymbol.getType();
-                            }
+                            diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, getDiagnosticMessage(DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [typeExprSymbol.toString()]), decl);
+                            typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                            hadError = true;
                         }
-
-                        context.setTypeInContext(declSymbol, typeExprSymbol);
-
-                        if (declParameterSymbol) {
-                            declParameterSymbol.setType(typeExprSymbol);
+                        else {
+                            typeExprSymbol = instanceSymbol.getType();
                         }
+                    }
+                    else if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray() && this.cachedArrayInterfaceType) {
+                        typeExprSymbol = specializeToArrayType(this.cachedArrayInterfaceType, typeExprSymbol, this, context);
+                    }
 
-                        // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
-                        // we filter out arrays, since for those we just want to know if their element type is a type parameter...
-                        if ((varDecl.nodeType == NodeType.Parameter) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
-                            var signature = enclosingDecl.getSpecializingSignatureSymbol();
+                    context.setTypeInContext(declSymbol, typeExprSymbol);
 
-                            if (signature) {
-                                signature.setHasGenericParameter();
-                            }
+                    if (declParameterSymbol) {
+                        declParameterSymbol.setType(typeExprSymbol);
+                    }
+
+                    // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
+                    // we filter out arrays, since for those we just want to know if their element type is a type parameter...
+                    if ((varDecl.nodeType == NodeType.Parameter) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
+                        var signature = enclosingDecl.getSpecializingSignatureSymbol();
+
+                        if (signature) {
+                            signature.setHasGenericParameter();
                         }
                     }
                 }
-            }
-            else if (declSymbol.getIsVarArg()) {
-                diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.______parameters_must_be_array_types, null), decl);
-                typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                context.setTypeInContext(declSymbol, typeExprSymbol);
-                hadError = true;
             }
             // Does it have an initializer? If so, typecheck and use that
             else if (varDecl.init) {

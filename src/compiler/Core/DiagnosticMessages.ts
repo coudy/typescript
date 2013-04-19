@@ -948,11 +948,6 @@ module TypeScript {
             message: "'this' must only be used inside a function or script context.",
             code: 2109
         },
-        ______parameters_must_be_array_types: {
-            category: DiagnosticCategory.Error,
-            message: "'...' parameters must be array types.",
-            code: 2110
-        },
         Invalid__addition__expression___types_do_not_agree: {
             category: DiagnosticCategory.Error,
             message: "Invalid '+' expression - types do not agree.",
