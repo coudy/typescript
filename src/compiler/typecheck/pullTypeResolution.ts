@@ -2603,7 +2603,7 @@ module TypeScript {
 
                 if (typeNameSymbol.isTypeParameter()) {
                     if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
-                        var parentDecl = typeNameSymbol.getDeclarations()[0];
+                        var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl != enclosingDecl) {
                             diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
