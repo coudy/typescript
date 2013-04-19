@@ -25010,7 +25010,7 @@ var TypeScript;
                     return result;
                 }
                 var newTrailingTrivia = result.parameterList.trailingTrivia().concat(result.typeAnnotation.trailingTrivia());
-                return result.withTypeAnnotation(null).withTypeParameterList(null).withTrailingTrivia(newTrailingTrivia);
+                return result.withTypeAnnotation(null).withTrailingTrivia(newTrailingTrivia);
             };
             EmitterImpl.prototype.visitCastExpression = function (node) {
                 var result = _super.prototype.visitCastExpression.call(this, node);
@@ -25019,6 +25019,9 @@ var TypeScript;
                 return subExpression.withLeadingTrivia(totalTrivia);
             };
             EmitterImpl.prototype.visitInterfaceDeclaration = function (node) {
+                return null;
+            };
+            EmitterImpl.prototype.visitTypeParameterList = function (node) {
                 return null;
             };
             EmitterImpl.prototype.generateEnumValueExpression = function (enumDeclaration, enumElement, assignDefaultValues, index) {
@@ -28839,35 +28842,42 @@ var TypeScript;
                 }
             }
         };
-        Emitter.prototype.emitObjectLiteral = function (content) {
-            if (content.members.length === 0) {
-                this.writeToOutput("{}");
-                return;
-            }
-            this.writeLineToOutput("{");
-            this.indenter.increaseIndent();
-            var inObjectLiteral = this.setInObjectLiteral(true);
-            this.emitJavascriptList(content, ",", true, false, false);
-            this.setInObjectLiteral(inObjectLiteral);
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutput("}");
-        };
-        Emitter.prototype.emitArrayLiteral = function (content) {
+        Emitter.prototype.useNewLinesInLiteral = function () {
             var useNewLines = true;
             for(var i = this.varListCountStack.length - 1; i >= 0; i--) {
                 if (this.varListCountStack[i] < -1 || this.varListCountStack[i] > 1) {
-                    useNewLines = false;
-                    break;
+                    return false;
                 }
             }
+            return true;
+        };
+        Emitter.prototype.emitObjectLiteral = function (content) {
+            var useNewLines = this.useNewLinesInLiteral();
+            this.writeToOutput("{");
+            if (content && content.members.length > 0) {
+                if (useNewLines) {
+                    this.writeLineToOutput("");
+                }
+                this.indenter.increaseIndent();
+                var inObjectLiteral = this.setInObjectLiteral(true);
+                var separator = useNewLines ? "," : ", ";
+                this.emitJavascriptList(content, separator, useNewLines, false, false);
+                this.setInObjectLiteral(inObjectLiteral);
+                this.indenter.decreaseIndent();
+                this.emitIndent();
+            }
+            this.writeToOutput("}");
+        };
+        Emitter.prototype.emitArrayLiteral = function (content) {
+            var useNewLines = this.useNewLinesInLiteral();
             this.writeToOutput("[");
             if (content && content.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
                 }
                 this.indenter.increaseIndent();
-                this.emitJavascriptList(content, ", ", useNewLines, false, false);
+                var separator = useNewLines ? "," : ", ";
+                this.emitJavascriptList(content, separator, useNewLines, false, false);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }
