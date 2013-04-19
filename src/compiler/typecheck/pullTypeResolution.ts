@@ -3553,6 +3553,10 @@ module TypeScript {
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     for (var i = 0; i < callEx.typeArguments.members.length; i++) {
                         typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+
+                        if (typeArg.isError()) {
+                            return typeArg;
+                        }
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
@@ -3813,6 +3817,11 @@ module TypeScript {
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
                             typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+
+                            if (typeArg.isError()) {
+                                return typeArg;
+                            }
+
                             typeArgs[i] = context.findSpecializationForType(typeArg);
                         }
                     }
