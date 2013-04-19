@@ -3463,18 +3463,19 @@ module TypeScript {
             if (this.typesAreIdentical(leftType, rightType)) {
                 return leftType;
             }
+            else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
+                var collection: IPullTypeCollection = {
+                    getLength: () => { return 2; } ,
+                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } , // no contextual typing here, so no need to do anything
+                    getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
+                }
 
-            var collection: IPullTypeCollection = {
-                getLength: () => { return 2; } ,
-                setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } , // no contextual typing here, so no need to do anything
-                getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
-            }
+                var bct = this.findBestCommonType(leftType, null, collection, false, context);
 
-            var bct = this.findBestCommonType(leftType, null, collection, false, context);
-
-            if (bct) {
-                this.setSymbolForAST(trinex, bct, context);
-                return bct;
+                if (bct) {
+                    this.setSymbolForAST(trinex, bct, context);
+                    return bct;
+                }
             }
 
             var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(),
