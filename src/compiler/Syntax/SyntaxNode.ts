@@ -224,10 +224,10 @@ module TypeScript {
         /// 
         ///  3) Otherwise an ArgumentOutOfRangeException is thrown
         ///
-        /// Note: findToken will always return a non missing token with width greater than or equal to
-        /// 1 (except for EOF).  Empty tokens syntehsized by the parser are never returned.
+        /// Note: findToken will always return a non-missing token with width greater than or equal to
+        /// 1 (except for EOF).  Empty tokens synthesized by the parser are never returned.
         /// </summary>
-        public findToken(position: number): PositionedToken {
+        public findToken(position: number, includeSkippedTokens: boolean = false): PositionedToken {
             var endOfFileToken = this.tryGetEndOfFileAt(position);
             if (endOfFileToken !== null) {
                 return endOfFileToken;
@@ -237,7 +237,15 @@ module TypeScript {
                 throw Errors.argumentOutOfRange("position");
             }
 
-            return this.findTokenInternal(null, position, 0);
+            var positionedToken= this.findTokenInternal(null, position, 0);
+
+            if (includeSkippedTokens) {
+                return Syntax.findSkippedTokenInPositionedToken(positionedToken, position) || positionedToken;
+            }
+
+            // Could not find a better match
+            return positionedToken;
+
         }
 
         private tryGetEndOfFileAt(position: number): PositionedToken {
@@ -273,31 +281,19 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public findTokenOnLeft(position: number): PositionedToken {
-            var positionedToken = this.findToken(position);
-            var start = positionedToken.start();
+        public findTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
+            var positionedToken = this.findToken(position, includeSkippedTokens);
 
             // Position better fall within this token.
             // Debug.assert(position >= positionedToken.fullStart());
             // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
 
-            // if position is after the start of the token, then this token is the token on the left.
-            if (position > start) {
+            // if position is after the end of the token, then this token is the token on the left.
+            if (position >= positionedToken.end()) {
                 return positionedToken;
             }
 
-            // we're in the trivia before the start of the token.  Need to return the previous token.
-            if (positionedToken.fullStart() === 0) {
-                // Already on the first token.  Nothing before us.
-                return null;
-            }
-
-            var previousToken = this.findToken(positionedToken.fullStart() - 1);
-
-            // Position better be after this token.
-            // Debug.assert(previousToken.fullEnd() <= position);
-
-            return previousToken;
+            return positionedToken.previousToken(includeSkippedTokens);
         }
 
         public isModuleElement(): boolean {

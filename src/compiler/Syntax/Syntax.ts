@@ -271,7 +271,7 @@ module TypeScript.Syntax {
     export function isUnterminatedStringLiteral(token: ISyntaxToken): boolean {
         if (token && token.kind() === SyntaxKind.StringLiteral) {
             var text = token.text();
-            return !(text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0));
+            return text.length < 2 || text.charCodeAt(text.length - 1) !== text.charCodeAt(0);
         }
 
         return false;
@@ -280,16 +280,19 @@ module TypeScript.Syntax {
     export function isUnterminatedMultilineCommentTrivia(trivia: ISyntaxTrivia): boolean {
         if (trivia && trivia.kind() === SyntaxKind.MultiLineCommentTrivia) {
             var text = trivia.fullText();
-            return text.substring(text.length - 2) !== "*/";
+            return text.length < 4 || text.substring(text.length - 2) !== "*/";
         }
         return false;
     }
 
-    export function isEntirelyIndiseCommentTrivia(trivia: ISyntaxTrivia, fullStart: number, position: number): boolean {
+    export function isEntirelyInsideCommentTrivia(trivia: ISyntaxTrivia, fullStart: number, position: number): boolean {
         if (trivia && trivia.isComment() && position > fullStart) {
             var end = fullStart + trivia.fullWidth();
-            return (position < end) ||
-                (position === end && (trivia.kind() === SyntaxKind.SingleLineCommentTrivia || isUnterminatedMultilineCommentTrivia(trivia)));
+            if (position < end) {
+                return true;
+            } else if (position === end) {
+                return trivia.kind() === SyntaxKind.SingleLineCommentTrivia || isUnterminatedMultilineCommentTrivia(trivia);
+            }
         }
 
         return false;
@@ -346,10 +349,10 @@ module TypeScript.Syntax {
             }
         }
 
-        return lastTriviaBeforeToken && isEntirelyIndiseCommentTrivia(lastTriviaBeforeToken, fullStart, position);
+        return lastTriviaBeforeToken && isEntirelyInsideCommentTrivia(lastTriviaBeforeToken, fullStart, position);
     }
 
-    export function isEntirelyWithinStringOrRegularExpressionLiteral(sourceUnit: SourceUnitSyntax, position: number): boolean {
+    export function isEntirelyInStringOrRegularExpressionLiteral(sourceUnit: SourceUnitSyntax, position: number): boolean {
         var positionedToken = sourceUnit.findToken(position);
         
         if (positionedToken) {
@@ -366,5 +369,35 @@ module TypeScript.Syntax {
         }
 
         return false;
+    }
+
+    export function findSkippedTokenInTriviaList(triviaList: TypeScript.ISyntaxTriviaList, parentToken: PositionedToken, fullStart: number, position: number): PositionedSkippedToken {
+        for (var i = 0, n = triviaList.count(); i < n; i++) {
+            var trivia = triviaList.syntaxTriviaAt(i);
+            var triviaWidth = trivia.fullWidth();
+
+            if (trivia.isSkippedToken() && position >= fullStart && position < fullStart + triviaWidth) {
+                return new PositionedSkippedToken(parentToken, trivia.skippedToken(), fullStart);
+            }
+
+            fullStart += triviaWidth;
+        }
+
+        return null;
+    }
+
+    export function findSkippedTokenInPositionedToken(positionedToken: PositionedToken, position: number): PositionedSkippedToken {
+        if (position < positionedToken.start()) {
+            var leadingTrivia = positionedToken.token().leadingTrivia();
+            if (leadingTrivia && leadingTrivia.hasSkippedToken()) {
+                return Syntax.findSkippedTokenInTriviaList(leadingTrivia, positionedToken, positionedToken.fullStart(), position);
+            }
+        }
+        else if (position >= positionedToken.end()) {
+            var trailingTrivia = positionedToken.token().trailingTrivia();
+            if (trailingTrivia && trailingTrivia.hasSkippedToken()) {
+                return Syntax.findSkippedTokenInTriviaList(trailingTrivia, positionedToken, positionedToken.end(), position);
+            }
+        }
     }
 }

@@ -85,7 +85,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToDefinition();
         }
 
-        public position(position: number) {
+        public position(position: number, fileIndex: number);
+        public position(position: number, fileName: string);
+        public position(position: number, fileNameOrIndex: any) {
+            this.file(fileNameOrIndex);
             FourSlash.currentTestState.goToPosition(position);
         }
 

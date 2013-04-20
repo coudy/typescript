@@ -7,9 +7,7 @@ goTo.marker();
 verify.completionListIsEmpty();
 edit.insert("a");  // foo(a|
 verify.completionListIsEmpty();
-edit.insert(" ");  // foo(a |
-verify.completionListIsEmpty();
-edit.insert(", "); // foo(a ,|
+edit.insert(" , "); // foo(a ,|
 verify.completionListIsEmpty();
 edit.insert("b"); // foo(a ,b|
 verify.completionListIsEmpty();

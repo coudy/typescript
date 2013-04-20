@@ -139,21 +139,47 @@ module TypeScript {
             return <ISyntaxToken>this.element();
         }
 
-        public previousToken(): PositionedToken {
-            var fullStart = this.fullStart();
-            if (fullStart === 0) {
+        public previousToken(includeSkippedTokens: boolean = false): PositionedToken {
+            var triviaList = this.token().leadingTrivia();
+            if (includeSkippedTokens && triviaList && triviaList.hasSkippedToken()) {
+                var currentTriviaEndPosition = this.start();
+                for (var i = triviaList.count() - 1; i >= 0; i--) {
+                    var trivia = triviaList.syntaxTriviaAt(i);
+                    if (trivia.isSkippedToken()) {
+                        return new PositionedSkippedToken(this, trivia.skippedToken(), currentTriviaEndPosition - trivia.fullWidth());
+                    }
+
+                    currentTriviaEndPosition -= trivia.fullWidth();
+                }
+            }
+
+            var start = this.fullStart();
+            if (start === 0) {
                 return null;
             }
 
-            return this.root().node().findToken(fullStart - 1);
+            return this.root().node().findToken(start - 1, includeSkippedTokens);
         }
 
-        public nextToken(): PositionedToken {
+        public nextToken(includeSkippedTokens: boolean = false): PositionedToken {
             if (this.token().tokenKind === SyntaxKind.EndOfFileToken) {
                 return null;
             }
 
-            return this.root().node().findToken(this.fullEnd());
+            var triviaList = this.token().trailingTrivia();
+            if (includeSkippedTokens && triviaList && triviaList.hasSkippedToken()) {
+                var fullStart = this.end();
+                for (var i =0, n = triviaList.count(); i < n; i++) {
+                    var trivia = triviaList.syntaxTriviaAt(i);
+                    if (trivia.isSkippedToken()) {
+                        return new PositionedSkippedToken(this, trivia.skippedToken(), fullStart);
+                    }
+
+                    fullStart += trivia.fullWidth();
+                }
+            }
+
+            return this.root().node().findToken(this.fullEnd(), includeSkippedTokens);
         }
     }
 
@@ -174,6 +200,53 @@ module TypeScript {
 
         public list(): ISeparatedSyntaxList {
             return <ISeparatedSyntaxList>this.element();
+        }
+    }
+
+    export class PositionedSkippedToken extends PositionedToken {
+        private _parentToken: PositionedToken;
+
+        constructor(parentToken: PositionedToken, token: ISyntaxToken, fullStart: number) {
+            super(parentToken.parent(), token, fullStart);
+            this._parentToken = parentToken;
+        }
+
+        public parentToken(): PositionedToken {
+            return this._parentToken;
+        }
+
+        public previousToken(includeSkippedTokens: boolean = false): PositionedToken {
+            var start = this.fullStart();
+
+            // find previous skipped token within the same parent
+            if (includeSkippedTokens) {
+                var previousSkippedToken = Syntax.findSkippedTokenInPositionedToken(this.parentToken(), start - 1);
+                if (previousSkippedToken) {
+                    return previousSkippedToken;
+                }
+            }
+
+            var start = this.parentToken().fullStart();
+            if (start === 0) {
+                return null;
+            }
+
+            return this.root().node().findToken(start - 1, includeSkippedTokens);
+        }
+
+        public nextToken(includeSkippedTokens: boolean = false): PositionedToken {
+            if (this.token().tokenKind === SyntaxKind.EndOfFileToken) {
+                return null;
+            }
+
+            if (includeSkippedTokens) {
+                var nextSkippedToken = Syntax.findSkippedTokenInPositionedToken(this.parentToken(), this.fullEnd());
+                if (nextSkippedToken) {
+                    return nextSkippedToken;
+                }
+            }
+
+            return this.root().node().findToken(this.parentToken().fullEnd(), includeSkippedTokens);
         }
     }
 }

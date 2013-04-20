@@ -22,18 +22,12 @@
 ////var v8 = '';
 /////** /*inComment4*/ **/
 
-var markers = [
-    "openString1", 
-    "openString2", 
-    "openString3",
-    "inComment1",
-    "inComment2",
-    "inComment3",
-    "inComment4"
-];
+////var v9 = '';
+/////* /*inComment5*/
 
-markers.forEach((m) => {
-    goTo.marker(m);
+////var v10 = /reg/*inRegExp1*/ex/;
+
+test.markers().forEach((m) => {
+    goTo.position(m.position, m.fileName);
     verify.completionListIsEmpty();
 });
-

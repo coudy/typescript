@@ -716,9 +716,8 @@ module Services {
                     });
                 }
             }
-            // Ensure we are in a position where it is ok to provide a completion list
-            else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
-                // Get scope memebers
+            // Get scope memebers
+            else {
                 completions.isMemberCompletion = false;
                 var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
                 completions.entries = this.getCompletionEntriesFromSymbols(symbols);
@@ -782,51 +781,55 @@ module Services {
         }
 
         private isCompletionListBlocker(syntaxTree: TypeScript.SyntaxTree, position: number): boolean {
+            // This method uses Fidelity completelly. Some information can be reached using the AST, but not everything.
             return TypeScript.Syntax.isEntirelyInsideComment(syntaxTree.sourceUnit(), position) ||
-                TypeScript.Syntax.isEntirelyWithinStringOrRegularExpressionLiteral(syntaxTree.sourceUnit(), position) ||
+                TypeScript.Syntax.isEntirelyInStringOrRegularExpressionLiteral(syntaxTree.sourceUnit(), position) ||
                 this.isIdentifierDefinitionLocation(syntaxTree.sourceUnit(), position);
         }
 
         private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
-            var positionedToken = sourceUnit.findToken(position);
+            var positionedToken = sourceUnit.findTokenOnLeft(position, /*includeSkippedTokens*/true);
 
+            if (positionedToken && position === positionedToken.end() && positionedToken.kind() == TypeScript.SyntaxKind.EndOfFileToken) {
+                // EndOfFile token is not intresting, get the one before it
+                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
+            }
 
+            if (positionedToken && position === positionedToken.end() && positionedToken.kind() === TypeScript.SyntaxKind.IdentifierName) {
+                // The caret is at the end of an identifier, the decession to provide completion depends on the previous token
+                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
+            }
+
+            if (positionedToken) {
+                var containingNodeKind = positionedToken.containingNode() && positionedToken.containingNode().kind();
+                switch (positionedToken.kind()) {
+                    case TypeScript.SyntaxKind.CommaToken:
+                        return containingNodeKind === TypeScript.SyntaxKind.ParameterList ||
+                            containingNodeKind === TypeScript.SyntaxKind.VariableDeclaration;
+
+                    case TypeScript.SyntaxKind.OpenParenToken:
+                        return containingNodeKind === TypeScript.SyntaxKind.ParameterList ||
+                            containingNodeKind === TypeScript.SyntaxKind.CatchClause;
+
+                    case TypeScript.SyntaxKind.PublicKeyword:
+                    case TypeScript.SyntaxKind.PrivateKeyword:
+                    case TypeScript.SyntaxKind.StaticKeyword:
+                    case TypeScript.SyntaxKind.DotDotDotToken:
+                        return containingNodeKind === TypeScript.SyntaxKind.Parameter;
+
+                    case TypeScript.SyntaxKind.ClassKeyword:
+                    case TypeScript.SyntaxKind.ModuleKeyword:
+                    case TypeScript.SyntaxKind.EnumKeyword:
+                    case TypeScript.SyntaxKind.InterfaceKeyword:
+                    case TypeScript.SyntaxKind.FunctionKeyword:
+                    case TypeScript.SyntaxKind.VarKeyword:
+                    case TypeScript.SyntaxKind.GetKeyword:
+                    case TypeScript.SyntaxKind.SetKeyword:
+                        return true;
+                }
+            }
 
             return false;
-        }
-
-        private isCompletionListTriggerPoint(path: TypeScript.AstPath): boolean {
-
-            if (path.isNameOfVariable() // var <here>
-                || path.isNameOfArgument() // function foo(a, b<here>
-                || path.isArgumentListOfFunction() // function foo(<here>
-                || (path.count() >= 1 && path.ast().nodeType === TypeScript.NodeType.Parameter) // function foo(a <here>
-                ) {
-                return false;
-            }
-
-            if (path.isNameOfVariable() // var <here>
-                || path.isNameOfFunction() // function <here>
-                || path.isNameOfArgument() // function foo(<here>
-                || path.isArgumentListOfFunction() // function foo(<here>
-                || path.isNameOfInterface() // interface <here>
-                || path.isNameOfClass() // class <here>
-                || path.isNameOfModule() // module <here>
-                ) {
-                return false;
-            }
-
-            //var node = path.count() >= 1 && path.ast();
-            //if (node) {
-            //    if (node.nodeType === TypeScript.NodeType.Member // class C() { property <here>
-            //    || node.nodeType === TypeScript.NodeType.TryCatch // try { } catch(<here>
-            //    || node.nodeType === TypeScript.NodeType.Catch // try { } catch(<here>
-            //    ) {
-            //        return false
-            //    }
-            //}
-
-            return true;
         }
 
         private isLocal(symbol: TypeScript.PullSymbol) {
