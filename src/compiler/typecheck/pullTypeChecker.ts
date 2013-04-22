@@ -4,6 +4,35 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
+    export class TypeComparisonInfo {
+        public onlyCaptureFirstError = false;
+        public flags: TypeRelationshipFlags = TypeRelationshipFlags.SuccessfulComparison;
+        public message = "";
+        public stringConstantVal: AST = null;
+        private indent = 1;
+
+        constructor(sourceComparisonInfo?: TypeComparisonInfo) {
+            if (sourceComparisonInfo) {
+                this.flags = sourceComparisonInfo.flags;
+                this.onlyCaptureFirstError = sourceComparisonInfo.onlyCaptureFirstError;
+                this.stringConstantVal = sourceComparisonInfo.stringConstantVal;
+                this.indent = sourceComparisonInfo.indent + 1;
+            }
+        }
+
+        public addMessage(message) {
+            if (!this.onlyCaptureFirstError && this.message) {
+                this.message = getDiagnosticMessage(DiagnosticCode._0__NL__1_TB__2, [this.message, this.indent, message]);
+            }
+            else {
+                this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
+            }
+        }
+
+        public setMessage(message) {
+            this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
+        }
+    }
 
     export class PullTypeCheckContext {
         public enclosingDeclStack: PullDecl[] = [];

@@ -32,7 +32,6 @@
 ///<reference path='signatures.ts' />
 ///<reference path='symbols.ts' />
 ///<reference path='symbolScope.ts' />
-///<reference path='typeChecker.ts' />
 ///<reference path='typeCollection.ts' />
 ///<reference path='typeFlow.ts' />
 ///<reference path='types.ts' />
