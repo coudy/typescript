@@ -25,7 +25,6 @@
 ///<reference path='base64.ts' />
 ///<reference path='sourceMapping.ts' />
 ///<reference path='emitter.ts' />
-///<reference path='errorReporter.ts' />
 ///<reference path='printContext.ts' />
 ///<reference path='signatures.ts' />
 ///<reference path='symbols.ts' />

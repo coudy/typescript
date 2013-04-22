@@ -33,7 +33,6 @@ var compilerSources = [
 	"types.ts",
 	"signatures.ts",
 	"symbols.ts",
-	"errorReporter.ts",
 	"base64.ts",
 	"sourceMapping.ts",
 	"emitter.ts",
