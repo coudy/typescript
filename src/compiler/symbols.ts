@@ -16,27 +16,15 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-
-    export enum TypeCheckStatus {
-        NotStarted,
-        Started,
-        Finished,
-    }
-
     export class Symbol {
         public bound = false;
         public container: Symbol;
-        public isVariable() { return false; }
-        public isMember() { return false; }
-        public isInferenceSymbol() { return false; }
-        public isWith() { return false; }
         public writeable() { return false; }
         public isType(): boolean { return false; }
         public getType(): Type { return null; }
         public flags: SymbolFlags = SymbolFlags.None;
         public refs: Identifier[];
         public isAccessor() { return false; }
-        public isObjectLitField = false;
 
         public declAST: AST = null;
         public declModule: ModuleDeclaration = null;  // if child of module, this is the module that declared it
@@ -106,12 +94,12 @@ module TypeScript {
         }
 
         // Gets the pretty Name for the symbol withing the scope
-        public getPrettyName(scopeSymbol: Symbol) {
+        public getPrettyName() {
             return this.name;
         }
 
         public scopeRelativeName(): string {
-            return this.getPrettyName(null) + this.getOptionalNameString();
+            return this.getPrettyName() + this.getOptionalNameString();
         }
 
         public addRef(identifier: Identifier) {
@@ -172,32 +160,6 @@ module TypeScript {
         constructor (name: string, location: number, length: number, fileName: string) {
             super(name, location, length, fileName);
         }
-
-        public typeCheckStatus = TypeCheckStatus.NotStarted;
-        public isInferenceSymbol() { return true; }
-        public transferVarFlags(varFlags: VariableFlags) {
-            if (hasFlag(varFlags, VariableFlags.Ambient)) {
-                this.flags |= SymbolFlags.Ambient;
-            }
-            if (hasFlag(varFlags, VariableFlags.Constant)) {
-                this.flags |= SymbolFlags.Constant;
-            }
-            if (hasFlag(varFlags, VariableFlags.Static)) {
-                this.flags |= SymbolFlags.Static;
-            }
-            if (hasFlag(varFlags, VariableFlags.Property)) {
-                this.flags |= SymbolFlags.Property;
-            }
-            if (hasFlag(varFlags, VariableFlags.Private)) {
-                this.flags |= SymbolFlags.Private;
-            }
-            if (hasFlag(varFlags, VariableFlags.Public)) {
-                this.flags |= SymbolFlags.Public;
-            }
-            if (hasFlag(varFlags, VariableFlags.Exported)) {
-                this.flags |= SymbolFlags.Exported;
-            }
-        }
     }
 
     export class TypeSymbol extends InferenceSymbol {
@@ -246,17 +208,7 @@ module TypeScript {
 
         // Gets the pretty name of the symbol with respect to symbol of the scope (scopeSymbol)
         // searchTillRoot specifies if the name need to searched in the root path of the scope
-        public getPrettyName(scopeSymbol: Symbol) {
-            if (!!scopeSymbol && isQuoted(this.prettyName) && this.type.isModuleType()) {
-                // Its a dynamic module - and need to be specialized with the scope
-                // Check in exported module members in each scope
-                var symbolPath = scopeSymbol.pathToRoot();
-                var prettyName = this.getPrettyNameOfDynamicModule(symbolPath);
-                if (prettyName != null) {
-                    return prettyName.name;
-                }
-            }
-
+        public getPrettyName() {
             return this.prettyName;
         }
 
@@ -321,7 +273,6 @@ module TypeScript {
         public setType(type: Type) {
             this.parameter.typeLink.type = type;
         }
-        public isVariable() { return true; }
         public argsOffset = (-1);
         public isOptional() {
             if (this.parameter && this.parameter.symbol && this.parameter.symbol.declAST) {
