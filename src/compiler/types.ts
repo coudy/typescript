@@ -120,10 +120,6 @@ module TypeScript {
 
         public primitiveTypeClass: number = Primitive.None;
 
-        // REVIEW: Prune constructorScope
-        public constructorScope: SymbolScope;
-        public containedScope: SymbolScope;
-
         public typeFlags = TypeFlags.None;
 
         public symbol: TypeSymbol;

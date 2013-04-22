@@ -26,7 +26,6 @@ module TypeScript {
     export class Symbol {
         public bound = false;
         public container: Symbol;
-        public instanceScope(): SymbolScope { return null; }
         public isVariable() { return false; }
         public isMember() { return false; }
         public isInferenceSymbol() { return false; }
@@ -245,15 +244,6 @@ module TypeScript {
             return this.type.getMemberTypeNameEx(this.name ? this.name + this.getOptionalNameString() : "", false, false, scope);
         }
 
-        public instanceScope(): SymbolScope {
-            // Don't use the constructor scope for a class body or methods - use the contained scope
-            if (!(this.type.typeFlags & TypeFlags.IsClass) && this.type.isClass()) {
-                return this.type.instanceType.constructorScope;
-            }
-            else {
-                return this.type.containedScope;
-            }
-        }
         // corresponding instance type if this is a class
         public instanceType: Type;
 
