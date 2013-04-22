@@ -128,11 +128,8 @@ module TypeScript {
         None = 0,
         HasImplementation = 1,
         HasSelfReference = 1 << 1,
-        MergeResult = 1 << 2,
         IsEnum = 1 << 3,
         BuildingName = 1 << 4,
-        HasBaseType = 1 << 5,
-        HasBaseTypeOfObject = 1 << 6,
         IsClass = 1 << 7,
     }
 
