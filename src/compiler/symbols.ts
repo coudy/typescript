@@ -212,34 +212,6 @@ module TypeScript {
             return this.prettyName;
         }
 
-        public getPrettyNameOfDynamicModule(scopeSymbolPath: Symbol[]) {
-            var scopeSymbolPathLength = scopeSymbolPath.length;
-            var externalSymbol: { name: string; symbol: Symbol; } = null;
-            var moduleType: ModuleType;
-
-            if (scopeSymbolPath.length > 0 &&
-                scopeSymbolPath[scopeSymbolPathLength - 1].getType().isModuleType() &&
-                (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 1]).isDynamic) {
-
-                // Check if submodule is dynamic
-                if (scopeSymbolPathLength > 1 &&
-                    scopeSymbolPath[scopeSymbolPathLength - 2].getType().isModuleType() &&
-                    (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 2]).isDynamic) {
-                    moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 2].getType();
-                    externalSymbol = moduleType.findDynamicModuleName(this.type);
-
-                }
-
-                if (externalSymbol === null) {
-                    // Check in this module
-                    moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 1].getType();
-                    externalSymbol = moduleType.findDynamicModuleName(this.type);
-                }
-            }
-
-            return externalSymbol;
-        }
-
         public getDocComments(): Comment[]{
             var comments : Comment[] = [];
             if (this.declAST != null) {

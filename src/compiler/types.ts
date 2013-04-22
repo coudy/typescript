@@ -224,24 +224,6 @@ module TypeScript {
             }
         }
 
-        public hasBase(baseType: Type): boolean {
-            if (baseType === this) {
-                return true;
-            }
-            else {
-                if (this.extendsList) {
-                    for (var i = 0, len = this.extendsList.length; i < len; i++) {
-                        if (this.extendsList[i].hasBase(baseType)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        public isModuleType() { return false; }
-
         public getDocComments(): Comment[]{
             if (this.elementType || !this.symbol) {
                 return [];
@@ -263,41 +245,6 @@ module TypeScript {
             }
 
             return [];
-        }
-    }
-
-    export class ModuleType extends Type {
-        public isModuleType() { return true; }
-        public importedModules: ImportDeclaration[] = [];
-
-        // Finds the dynamic module name of moduleType in the members
-        // ignoreSymbols define list of symbols already visited - to avoid recursion
-        static findDynamicModuleNameInHashTable(moduleType: Type, members: IHashTable) {
-            var moduleName: { name: string; symbol: Symbol; } = null;
-            members.map((key, s, c) => {
-                if (moduleName === null && !isQuoted(key)) {
-                    var symbol = <Symbol>s;
-                    var type = symbol.getType();
-                    if (type === moduleType) {
-                        // If this is the module type we were looking for
-                        moduleName = { name: key, symbol: symbol };
-                    }
-                }
-            }, null);
-
-            return moduleName;
-        }
-
-        // Finds the Dynamic module name of the moduleType in this moduleType
-        // onlyPublic tells if we are looking for module name in public members only
-        public findDynamicModuleName(moduleType: Type): { name: string; symbol: Symbol; } {
-            var moduleName: { name: string; symbol: Symbol; } = null;
-            // Not cached, so seach and add to the cache
-            moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.allMembers);
-            if (moduleName === null) {
-                moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.allMembers);
-            }
-            return moduleName;
         }
     }
 

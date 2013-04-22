@@ -972,7 +972,6 @@ module TypeScript {
 
     export class ModuleDeclaration extends NamedDeclaration {
         private _moduleFlags = ModuleFlags.None;
-        public mod: ModuleType = null;
         public prettyName: string;
         public amdDependencies: string[] = [];
         // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
