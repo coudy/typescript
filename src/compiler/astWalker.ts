@@ -288,6 +288,10 @@ module TypeScript {
         export function walkCallExpressionChildren(preAst: CallExpression, parent: AST, walker: IAstWalker): void {
             preAst.target = walker.walk(preAst.target, preAst);
 
+            if (preAst.typeArguments) {
+                preAst.typeArguments = <ASTList> walker.walk(preAst.typeArguments, preAst);
+            }
+
             if (preAst.arguments) {
                 preAst.arguments = <ASTList> walker.walk(preAst.arguments, preAst);
             }
