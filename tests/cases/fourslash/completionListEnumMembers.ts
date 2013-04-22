@@ -14,5 +14,5 @@ verify.memberListContains("baz");
 
 
 goTo.marker('typeReference');
-verify.not.memberListContains("bar");
-verify.not.memberListContains("baz");
+verify.memberListContains("bar");
+verify.memberListContains("baz");

@@ -392,12 +392,11 @@ module TypeScript {
             return symbol;
         }
 
-        public getVisibleSymbolsFromDeclPath(declPath: PullDecl[]): PullSymbol[] {
+        public getVisibleSymbolsFromDeclPath(declPath: PullDecl[], declSearchKind: PullElementKind): PullSymbol[] {
             var symbols: PullSymbol[] = [];
             var decl: PullDecl = null;
             var childDecls: PullDecl[];
             var pathDeclKind: PullElementKind;
-            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
             var parameters: PullTypeParameterSymbol[];
 
             for (var i = declPath.length - 1; i >= 0; i--) {
@@ -527,7 +526,9 @@ module TypeScript {
                 declPath = [enclosingDecl];
             }
 
-            return this.getVisibleSymbolsFromDeclPath(declPath);
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+
+            return this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
         }
 
         public getVisibleContextSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
@@ -536,13 +537,8 @@ module TypeScript {
                 return null;
             }
 
-            var members: PullSymbol[];
-            if (context.searchTypeSpace) {
-                members = contextualTypeSymbol.getAllMembers(PullElementKind.SomeType, /*includePrivate*/ false);
-            }
-            else {
-                members = contextualTypeSymbol.getAllMembers(PullElementKind.SomeValue, /*includePrivate*/ false);
-            }
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+            var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
 
             return members;
         }
@@ -580,76 +576,82 @@ module TypeScript {
                 }
             }
 
-            if (context.searchTypeSpace) {
-                return lhsType.getAllMembers(PullElementKind.SomeType, includePrivate);
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+
+            var members: PullSymbol[] = [];
+
+            // could be a type parameter with a contraint
+            if (lhsType.isTypeParameter()) {
+                var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
+
+                if (constraint) {
+                    lhsType = constraint;
+                    members = lhsType.getAllMembers(declSearchKind, /*includePrivate*/ false);
+                }
             }
             else {
-                var members: PullSymbol[] = [];
+                // could be a number
+                if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+                    lhsType = this.cachedNumberInterfaceType;
+                }
+                // could be a string
+                else if (lhsType == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
+                    lhsType = this.cachedStringInterfaceType;
+                }
+                // could be a boolean
+                else if (lhsType == this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
+                    lhsType = this.cachedBooleanInterfaceType;
+                }
 
-                // could be a type parameter with a contraint
-                if (lhsType.isTypeParameter()) {
-                    var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
+                if (!lhsType.isResolved()) {
+                    var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
 
-                    if (constraint) {
-                        lhsType = constraint;
-                        members = lhsType.getAllMembers(PullElementKind.SomeValue, /*includePrivate*/ false);
+                    if (potentiallySpecializedType != lhsType) {
+                        if (!lhs.isType()) {
+                            context.setTypeInContext(lhs, potentiallySpecializedType);
+                        }
+
+                        lhsType = potentiallySpecializedType;
                     }
+                }
+
+                members = lhsType.getAllMembers(declSearchKind, includePrivate);
+
+                if (lhsType.isContainer()) {
+                    var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
+                    if (associatedInstance) {
+                        var instanceType = associatedInstance.getType();
+                        var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
+                        members = members.concat(instanceMembers);
+                    }
+                }
+                // Constructor types have a "prototype" property
+                else if (lhsType.isConstructor()) {
+                    var prototypeSymbol = new PullSymbol("prototype", PullElementKind.Property);
+                    // prototypeSymbol.setType(lhsType);
+                    members.push(prototypeSymbol);
                 }
                 else {
-                    // could be a number
-                    if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
-                        lhsType = this.cachedNumberInterfaceType;
-                    }
-                    // could be a string
-                    else if (lhsType == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
-                        lhsType = this.cachedStringInterfaceType;
-                    }
-                    // could be a boolean
-                    else if (lhsType == this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
-                        lhsType = this.cachedBooleanInterfaceType;
-                    }
-
-                    if (!lhsType.isResolved()) {
-                        var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
-
-                        if (potentiallySpecializedType != lhsType) {
-                            if (!lhs.isType()) {
-                                context.setTypeInContext(lhs, potentiallySpecializedType);
-                            }
-
-                            lhsType = potentiallySpecializedType;
-                        }
-                    }
-
-                    members = lhsType.getAllMembers(PullElementKind.SomeValue, includePrivate);
-
-                    if (lhsType.isContainer()) {
-                        var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
-                        if (associatedInstance) {
-                            var instanceType = associatedInstance.getType();
-                            var instanceMembers = instanceType.getAllMembers(PullElementKind.SomeValue, includePrivate);
-                            members = members.concat(instanceMembers);
-                        }
-                    }
-                    // Constructor types have a "prototype" property
-                    else if (lhsType.isConstructor()) {
-                        var prototypeSymbol = new PullSymbol("prototype", PullElementKind.Property);
-                        // prototypeSymbol.setType(lhsType);
-                        members.push(prototypeSymbol);
+                    var associatedContainerSymbol = lhsType.getAssociatedContainerType();
+                    if (associatedContainerSymbol) {
+                        var containerType = associatedContainerSymbol.getType();
+                        var containerMembers = containerType.getAllMembers(declSearchKind, includePrivate);
+                        members = members.concat(containerMembers);
                     }
                 }
-
-                // could be an enum
-                if ((lhsType.getKind() == PullElementKind.Enum) && this.cachedNumberInterfaceType) {
-                    members = members.concat(this.cachedNumberInterfaceType.getAllMembers(PullElementKind.SomeValue, /*includePrivate*/ false));
-                }
-                // could be a function symbol
-                else if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
-                    members = members.concat(this.cachedFunctionInterfaceType.getAllMembers(PullElementKind.SomeValue, /*includePrivate*/ false));
-                }
-
-                return members;
             }
+
+            // could be an enum
+            if ((lhsType.getKind() == PullElementKind.Enum) && this.cachedNumberInterfaceType) {
+                members = members.concat(this.cachedNumberInterfaceType.getAllMembers(declSearchKind, /*includePrivate*/ false));
+            }
+
+            // could be a function symbol
+            else if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
+                members = members.concat(this.cachedFunctionInterfaceType.getAllMembers(declSearchKind, /*includePrivate*/ false));
+            }
+
+            return members;
         }
 
         public isAnyOrEquivalent(type: PullTypeSymbol) {
