@@ -41,7 +41,7 @@ module Services {
                     // Collect types (class/interface) in "script"
                     TypeScript.walkAST(script, (path, walker) => {
                         if (path.isNameOfClass() || path.isNameOfInterface()) {
-                            var sym = (<TypeScript.Identifier>path.ast()).sym;
+                            var sym = null;//(<TypeScript.Identifier>path.ast()).sym;
                             if (sym != null) {
                                 if (sym.kind() === TypeScript.SymbolKind.Type) {
                                     var typeSym = <TypeScript.TypeSymbol>sym;

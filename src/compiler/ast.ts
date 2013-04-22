@@ -162,7 +162,6 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        // public enclosingScope: SymbolScope = null;
         public members: AST[] = [];
 
         constructor() {
@@ -193,7 +192,6 @@ module TypeScript {
     }
 
     export class Identifier extends Expression {
-        public sym: Symbol = null;
         public text: string;
 
         // 'actualText' is the text that the user has entered for the identifier. the text might 
@@ -446,8 +444,6 @@ module TypeScript {
                     public arguments: ASTList) {
             super(nodeType);
         }
-
-        public signature: Signature = null;
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
@@ -776,7 +772,6 @@ module TypeScript {
         public init: AST = null;
         public typeExpr: AST = null;
         private _varFlags = VariableFlags.None;
-        public sym: Symbol = null;
         public isDeclaration() { return true; }
         public isStatementOrExpression() { return true; }
 
@@ -859,8 +854,6 @@ module TypeScript {
         public returnTypeAnnotation: AST = null;
         public symbols: IHashTable;
         public variableArgList = false;
-        public signature: Signature;
-        public freeVariables: Symbol[] = [];
         public classDecl: NamedDeclaration = null;
 
         public accessorSymbol: Symbol = null;
@@ -1676,7 +1669,6 @@ module TypeScript {
         }
 
         public statement: ASTSpan = new ASTSpan();
-        public containedScope: SymbolScope = null;
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
