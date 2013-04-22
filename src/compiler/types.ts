@@ -144,13 +144,11 @@ module TypeScript {
         // REVIEW: Prune constructorScope
         public constructorScope: SymbolScope;
         public containedScope: SymbolScope;
-        public memberScope: SymbolScope;
 
         public typeFlags = TypeFlags.None;
 
         public symbol: TypeSymbol;
 
-        public enclosingType: Type;
         public instanceType: Type;
 
         // REVIEW: Prune
@@ -160,30 +158,11 @@ module TypeScript {
             return this.symbol && !this.elementType && (<TypeSymbol>this.symbol).type.isClass();
         }
 
-        public getInstanceType() {
-            if (this.isClass()) {
-                return this.instanceType;
-            }
-            else {
-                return this;
-            }
-        }
-
-        public hasImplementation() { return hasFlag(this.typeFlags, TypeFlags.HasImplementation); }
-        public setHasImplementation() { this.typeFlags |= TypeFlags.HasImplementation; }
-
-        public isDouble() { return hasFlag(this.primitiveTypeClass, Primitive.Double); }
         public isString() { return hasFlag(this.primitiveTypeClass, Primitive.String); }
-        public isBoolean() { return hasFlag(this.primitiveTypeClass, Primitive.Boolean); }
-        public isNull() { return hasFlag(this.primitiveTypeClass, Primitive.Null); }
 
         // REVIEW: No need for this to be a method
         public getTypeName(): string {
             return this.getMemberTypeName("", true, false, null);
-        }
-
-        public getScopedTypeName(scope: SymbolScope, getPrettyTypeName?: boolean) {
-            return this.getMemberTypeName("", true, false, scope, getPrettyTypeName);
         }
 
         public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: boolean) {
@@ -289,12 +268,6 @@ module TypeScript {
                     return MemberName.create("{}");
                 }
             }
-        }
-
-        public isReferenceType() {
-            return this.members || this.extendsList ||
-                this.construct || this.call || this.index ||
-                this.elementType;
         }
 
         public hasBase(baseType: Type): boolean {

@@ -841,8 +841,6 @@ module TypeScript {
             return "arg: " + this.id.actualText;
         }
 
-        public parameterPropertySym: FieldSymbol = null;
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
@@ -1493,8 +1491,6 @@ module TypeScript {
     }
 
     export class WithStatement extends Statement {
-        public withSym: WithSymbol = null;
-
         constructor(public expr: AST, public body: AST) {
             super(NodeType.WithStatement);
         }

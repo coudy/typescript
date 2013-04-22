@@ -344,65 +344,6 @@ module TypeScript {
         }
     }
 
-    export class WithSymbol extends TypeSymbol {
-        constructor(location: number, fileName: string, withType: Type, optimizeModuleCodeGen: boolean) {
-            super("with", location, 4, fileName, withType, optimizeModuleCodeGen);
-        }
-        public isWith() { return true; }
-    }
-
-    export class FieldSymbol extends InferenceSymbol {
-        public name: string;
-        public location: number;
-
-        constructor (name: string, location: number, fileName: string, public canWrite: boolean,
-                      public field: ValueLocation) {
-
-            super(name, location, name.length, fileName);
-            this.name = name;
-            this.location = location;
-        }
-        public kind() { return SymbolKind.Field; }
-        public writeable() { return this.isAccessor() ? this.setter != null : this.canWrite; }
-        public getType() { return this.field.typeLink.type; }
-        public getTypeNameEx(scope: SymbolScope) {
-            return MemberName.create(this.field.typeLink.type ? this.field.typeLink.type.getScopedTypeNameEx(scope) : MemberName.create("any"), this.name + this.getOptionalNameString() + ": ", "");
-        }
-
-        public isMember() { return true; }
-        public setType(type: Type) {
-            this.field.typeLink.type = type;
-        }
-
-        public getter: TypeSymbol = null;
-        public setter: TypeSymbol = null;
-        public hasBeenEmitted = false; // since getters and setters are emitted together, need to track if one has been emitted
-
-        public isAccessor() { return this.getter != null || this.setter != null; }
-
-        public isVariable() { return true; }
-        public toString() { return this.getTypeNameEx(null).toString(); }
-
-        public getDocComments(): Comment[] {
-            if (this.getter != null || this.setter != null) {
-                var comments : Comment[] = [];
-                if (this.getter != null) {
-                    comments = comments.concat(this.getter.getDocComments());
-                }
-                if (this.setter != null) {
-                    comments = comments.concat(this.setter.getDocComments());
-                }
-                return comments;
-            }
-            else if (this.declAST != null) {
-                return this.declAST.getDocComments();
-            }
-
-            return [];
-        }
-
-    }
-
     export class ParameterSymbol extends InferenceSymbol {
         public name: string;
         public location: number;
@@ -463,23 +404,5 @@ module TypeScript {
         public fullName(): string {
             return this.name;
         }
-    }
-
-    export class VariableSymbol extends InferenceSymbol {
-        constructor (name: string, location: number, fileName: string, public variable: ValueLocation) {
-            super(name, location, name.length, fileName);
-        }
-
-        public kind() { return SymbolKind.Variable; }
-        public writeable() { return true; }
-        public getType() { return this.variable.typeLink.type; }
-        public getTypeNameEx(scope: SymbolScope) {
-            return MemberName.create(this.getType().getScopedTypeNameEx(scope), this.name + ": ", "");
-        }
-
-        public setType(type: Type) {
-            this.variable.typeLink.type = type;
-        }
-        public isVariable() { return true; }
     }
 }
