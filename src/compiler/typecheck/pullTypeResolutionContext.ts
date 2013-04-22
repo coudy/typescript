@@ -101,13 +101,9 @@ module TypeScript {
                     }
                 }
 
-                bestCommonType = resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, true, context, new TypeComparisonInfo());
+                bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, true, context, new TypeComparisonInfo()));
 
                 if (!bestCommonType) {
-                    bestCommonType = resolver.semanticInfoChain.undefinedTypeSymbol;
-                }
-
-                if (bestCommonType == resolver.semanticInfoChain.undefinedTypeSymbol) {
                     unfit = true;
                 }
 
