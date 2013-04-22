@@ -2039,18 +2039,5 @@ module TypeScript {
 
             return "";
         }
-
-        static getDocCommentFirstOverloadSignature(signatureGroup: SignatureGroup) {
-            for (var i = 0; i < signatureGroup.signatures.length; i++) {
-                var signature = signatureGroup.signatures[i];
-                if (signature === signatureGroup.definitionSignature) {
-                    continue;
-                }
-
-                return TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments());
-            }
-
-            return "";
-        }
     }
 }
