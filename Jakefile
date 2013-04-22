@@ -98,8 +98,6 @@ var servicesSources = [
 	"classifier.ts",
 	"coreServices.ts",
 	"compilerState.ts",
-	"symbolSet.ts",
-	"symbolTree.ts",
 	"languageService.ts",
 	"pullLanguageService.ts",
 	"shims.ts",

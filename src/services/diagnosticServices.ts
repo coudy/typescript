@@ -313,21 +313,8 @@ module Services {
             this.writeFile("getIdentifierPathToPosition: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
-
         }
 
-        
-        public getSymbolTree(): Services.ISymbolTree {
-
-            var result = this.internal.getSymbolTree();
-
-            this.writeFile("getSymbolTree: " + " result: " + this.stringify(result) + "\n");
-
-            return result;
-
-        }
-
-        
         public getEmitOutput(fileName: string): Services.IOutputFile[] {
 
             var args = "fileName: " + this.stringify(fileName);
@@ -336,7 +323,6 @@ module Services {
             this.writeFile("getEmitOutput: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
-
         }
 
         private stringify(object: any): string {

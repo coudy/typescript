@@ -89,7 +89,6 @@ module Services {
         //
         private compiler: TypeScript.TypeScriptCompiler = null;
         private hostCache: HostCache = null;
-        private symbolTree: SymbolTree = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
 
         constructor(private host: ILanguageServiceHost) {
@@ -103,14 +102,6 @@ module Services {
 
         public compilationSettings() {
             return this._compilationSettings;
-        }
-
-        private onTypeCheckStarting(): void {
-            this.symbolTree = new SymbolTree(this);
-        }
-
-        public getSymbolTree(): ISymbolTree {
-            return this.symbolTree;
         }
 
         public getFileNames(): string[] {
@@ -169,7 +160,6 @@ module Services {
             }
 
             // Initial typecheck
-            this.onTypeCheckStarting();
             this.compiler.pullTypeCheck();
         }
 

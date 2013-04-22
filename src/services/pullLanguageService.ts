@@ -31,11 +31,6 @@ module Services {
             });
         }
 
-        public getSymbolTree(): ISymbolTree {
-            this.refresh();
-            return this.compilerState.getSymbolTree();
-        }
-
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             this.refresh();
 
