@@ -28,7 +28,6 @@
 ///<reference path='errorReporter.ts' />
 ///<reference path='printContext.ts' />
 ///<reference path='scopeAssignment.ts' />
-///<reference path='scopeWalk.ts' />
 ///<reference path='signatures.ts' />
 ///<reference path='symbols.ts' />
 ///<reference path='symbolScope.ts' />

@@ -23,7 +23,6 @@ var compilerSources = [
 	"nodeTypes.ts",
 	"hashTable.ts",
 	"printContext.ts",
-	"scopeWalk.ts",
 	"typeCollection.ts",
 	"scopeAssignment.ts",
 	"binder.ts",

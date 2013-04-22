@@ -345,13 +345,6 @@ module TypeScript {
         }
     }
 
-    export interface ITypeCollection {
-        // returns null when types are exhausted
-        getLength(): number;
-        setTypeAtIndex(index: number, type: Type): void;
-        getTypeAtIndex(index: number): Type;
-    }
-
     export class ModuleType extends Type {
 
         constructor (public enclosedTypes: ScopedMembers, public ambientEnclosedTypes: ScopedMembers) {
