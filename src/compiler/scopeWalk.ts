@@ -16,31 +16,4 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export class TypeCollectionContext {
-        public script: Script = null;
-
-        constructor (public scopeChain: ScopeChain, public checker: TypeChecker) {
-        }
-    }
-
-    export function pushTypeCollectionScope(container: Symbol,
-        valueMembers: ScopedMembers,
-        ambientValueMembers: ScopedMembers,
-        enclosedTypes: ScopedMembers,
-        ambientEnclosedTypes: ScopedMembers,
-        context: TypeCollectionContext,
-        thisType: Type,
-        classType: Type,
-        moduleDecl: ModuleDeclaration) {
-        var builder = new SymbolScopeBuilder(valueMembers, ambientValueMembers, enclosedTypes, ambientEnclosedTypes, null, container);
-        var chain: ScopeChain = new ScopeChain(container, context.scopeChain, builder);
-        chain.thisType = thisType;
-        chain.classType = classType;
-        chain.moduleDecl = moduleDecl;
-        context.scopeChain = chain;
-    }
-
-    export function popTypeCollectionScope(context: TypeCollectionContext) {
-        context.scopeChain = context.scopeChain.previous;
-    }
 }

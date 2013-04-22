@@ -97,32 +97,6 @@ module TypeScript {
             return false;
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            switch (this.nodeType) {
-                case NodeType.OmittedExpression:
-                    this.type = typeFlow.anyType;
-                    break;
-                case NodeType.ThisExpression:
-                    return typeFlow.typeCheckThis(this);
-                case NodeType.NullLiteral:
-                    this.type = typeFlow.nullType;
-                    break;
-                case NodeType.FalseLiteral:
-                case NodeType.TrueLiteral:
-                    this.type = typeFlow.booleanType;
-                    break;
-                case NodeType.SuperExpression:
-                    return typeFlow.typeCheckSuper(this);
-                case NodeType.EmptyStatement:
-                case NodeType.VoidExpression:
-                    this.type = typeFlow.voidType;
-                    break;
-                default:
-                    throw new Error("please implement in derived class");
-            }
-            return this;
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             throw new Error("please implement in derived class");
         }
@@ -227,18 +201,6 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            var len = this.members.length;
-            typeFlow.nestingLevel++;
-            for (var i = 0; i < len; i++) {
-                if (this.members[i]) {
-                    this.members[i] = this.members[i].typeCheck(typeFlow);
-                }
-            }
-            typeFlow.nestingLevel--;
-            return this;
-        }
-
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    astArrayStructuralEquals(this.members, ast.members, includingPosition);
@@ -290,10 +252,6 @@ module TypeScript {
             else {
                 return "name node";
             }
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckName(this);
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
@@ -434,72 +392,6 @@ module TypeScript {
             }
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            switch (this.nodeType) {
-                case NodeType.BitwiseNotExpression:
-                    return typeFlow.typeCheckBitNot(this);
-
-                case NodeType.LogicalNotExpression:
-                    return typeFlow.typeCheckLogNot(this);
-
-                case NodeType.PlusExpression:
-                case NodeType.NegateExpression:
-                    return typeFlow.typeCheckUnaryNumberOperator(this);
-
-                case NodeType.PostIncrementExpression:
-                case NodeType.PreIncrementExpression:
-                case NodeType.PostDecrementExpression:
-                case NodeType.PreDecrementExpression:
-                    return typeFlow.typeCheckIncOrDec(this);
-
-                case NodeType.ArrayLiteralExpression:
-                    typeFlow.typeCheckArrayLit(this);
-                    return this;
-
-                case NodeType.ObjectLiteralExpression:
-                    typeFlow.typeCheckObjectLit(this);
-                    return this;
-
-                case NodeType.ThrowStatement:
-                    this.operand = typeFlow.typeCheck(this.operand);
-                    this.type = typeFlow.voidType;
-                    return this;
-
-                case NodeType.TypeOfExpression:
-                    this.operand = typeFlow.typeCheck(this.operand);
-                    this.type = typeFlow.stringType;
-                    return this;
-
-                case NodeType.DeleteExpression:
-                    this.operand = typeFlow.typeCheck(this.operand);
-                    this.type = typeFlow.booleanType;
-                    break;
-
-                case NodeType.CastExpression:
-                    this.castTerm = typeFlow.typeCheck(this.castTerm);
-                    var applyTargetType = this.operand.nodeType !== NodeType.ParenthesizedExpression;
-
-                    var targetType = applyTargetType ? this.castTerm.type : null;
-
-                    typeFlow.checker.typeCheckWithContextualType(targetType, typeFlow.checker.inProvisionalTypecheckMode(), true, this.operand);
-                    typeFlow.castWithCoercion(this.operand, this.castTerm.type, false, true);
-                    this.type = this.castTerm.type;
-                    return this;
-
-                case NodeType.VoidExpression:
-                    // REVIEW - Although this is good to do for completeness's sake,
-                    // this shouldn't be strictly necessary from the void operator's
-                    // point of view
-                    this.operand = typeFlow.typeCheck(this.operand);
-                    this.type = typeFlow.checker.undefinedType;
-                    break;
-
-                default:
-                    throw new Error("please implement in derived class");
-            }
-            return this;
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
@@ -587,15 +479,6 @@ module TypeScript {
 
         public signature: Signature = null;
 
-        public typeCheck(typeFlow: TypeFlow) {
-            if (this.nodeType === NodeType.ObjectCreationExpression) {
-                return typeFlow.typeCheckNew(this);
-            }
-            else {
-                return typeFlow.typeCheckCall(this);
-            }
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
@@ -624,84 +507,6 @@ module TypeScript {
                     public operand1: AST,
                     public operand2: AST) {
             super(nodeType);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            switch (this.nodeType) {
-                case NodeType.MemberAccessExpression:
-                    return typeFlow.typeCheckDotOperator(this);
-                case NodeType.AssignmentExpression:
-                    return typeFlow.typeCheckAsgOperator(this);
-                case NodeType.AddExpression:
-                case NodeType.SubtractExpression:
-                case NodeType.MultiplyExpression:
-                case NodeType.DivideExpression:
-                case NodeType.ModuloExpression:
-                case NodeType.BitwiseOrExpression:
-                case NodeType.BitwiseAndExpression:
-                    return typeFlow.typeCheckArithmeticOperator(this, false);
-                case NodeType.BitwiseExclusiveOrExpression:
-                    return typeFlow.typeCheckBitwiseOperator(this, false);
-                case NodeType.NotEqualsWithTypeConversionExpression:
-                case NodeType.EqualsWithTypeConversionExpression:
-                    /*
-                    var text: string;
-                    if (typeFlow.checker.styleSettings.eqeqeq) {
-                        text = nodeTypeTable[this.nodeType];
-                        typeFlow.checker.errorReporter.styleError(this, "use of " + text);
-                    }
-                    else if (typeFlow.checker.styleSettings.eqnull) {
-                        text = nodeTypeTable[this.nodeType];
-                        if ((this.operand2 !== null) && (this.operand2.nodeType === NodeType.Null)) {
-                            typeFlow.checker.errorReporter.styleError(this, "use of " + text + " to compare with null");
-                        }
-                    }
-                    */
-                case NodeType.EqualsExpression:
-                case NodeType.NotEqualsExpression:
-                case NodeType.LessThanExpression:
-                case NodeType.LessThanOrEqualExpression:
-                case NodeType.GreaterThanOrEqualExpression:
-                case NodeType.GreaterThanExpression:
-                    return typeFlow.typeCheckBooleanOperator(this);
-                case NodeType.ElementAccessExpression:
-                    return typeFlow.typeCheckIndex(this);
-                case NodeType.Member:
-                    this.type = typeFlow.voidType;
-                    return this;
-                case NodeType.LogicalOrExpression:
-                    return typeFlow.typeCheckLogOr(this);
-                case NodeType.LogicalAndExpression:
-                    return typeFlow.typeCheckLogAnd(this);
-                case NodeType.AddAssignmentExpression:
-                case NodeType.SubtractAssignmentExpression:
-                case NodeType.MultiplyAssignmentExpression:
-                case NodeType.DivideAssignmentExpression:
-                case NodeType.ModuloAssignmentExpression:
-                case NodeType.OrAssignmentExpression:
-                case NodeType.AndAssignmentExpression:
-                    return typeFlow.typeCheckArithmeticOperator(this, true);
-                case NodeType.ExclusiveOrAssignmentExpression:
-                    return typeFlow.typeCheckBitwiseOperator(this, true);
-                case NodeType.LeftShiftExpression:
-                case NodeType.SignedRightShiftExpression:
-                case NodeType.UnsignedRightShiftExpression:
-                    return typeFlow.typeCheckShift(this, false);
-                case NodeType.LeftShiftAssignmentExpression:
-                case NodeType.SignedRightShiftAssignmentExpression:
-                case NodeType.UnsignedRightShiftAssignmentExpression:
-                    return typeFlow.typeCheckShift(this, true);
-                case NodeType.CommaExpression:
-                    return typeFlow.typeCheckCommaOperator(this);
-                case NodeType.InstanceOfExpression:
-                    return typeFlow.typeCheckInstOf(this);
-                case NodeType.InExpression:
-                    return typeFlow.typeCheckInOperator(this);
-                    break;
-                default:
-                    throw new Error("please implement in derived class");
-            }
-            return this;
         }
 
         public printLabel(): string {
@@ -830,10 +635,6 @@ module TypeScript {
             super(NodeType.ConditionalExpression);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckQMark(this);
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
@@ -857,11 +658,6 @@ module TypeScript {
     export class NumberLiteral extends Expression {
         constructor(public value: number, public text: string) {
             super(NodeType.NumericLiteral);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            this.type = typeFlow.doubleType;
-            return this;
         }
 
         public treeViewLabel() {
@@ -892,11 +688,6 @@ module TypeScript {
             super(NodeType.RegularExpressionLiteral);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            this.type = typeFlow.regexType;
-            return this;
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
@@ -922,11 +713,6 @@ module TypeScript {
             emitter.emitStringLiteral(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            this.type = typeFlow.stringType;
-            return this;
         }
 
         public treeViewLabel() {
@@ -976,10 +762,6 @@ module TypeScript {
                 emitter.modAliasId = prevModAliasId;
                 emitter.firstModAlias = prevFirstModAlias;
             }
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckImportDecl(this);
         }
 
         public getAliasName(aliasAST: AST = this.alias): string {
@@ -1042,10 +824,6 @@ module TypeScript {
         }
 
         public isProperty() { return hasFlag(this.getVarFlags(), VariableFlags.Property); }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckBoundDecl(this);
-        }
 
         public printLabel() {
             return this.treeViewLabel();
@@ -1171,10 +949,6 @@ module TypeScript {
             return context;
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckFunction(this);
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptFunction(this);
         }
@@ -1225,10 +999,6 @@ module TypeScript {
 
         constructor() {
             super(NodeType.Script);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckScript(this);
         }
 
         public treeViewLabel() {
@@ -1292,10 +1062,6 @@ module TypeScript {
 
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckModule(this);
-        }
 
         private shouldEmit(): boolean {
             for (var i = 0, n = this.members.members.length; i < n; i++) {
@@ -1368,10 +1134,6 @@ module TypeScript {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckClass(this);
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptClass(this);
         }
@@ -1386,10 +1148,6 @@ module TypeScript {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckInterface(this);
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
         }
     }
@@ -1402,11 +1160,8 @@ module TypeScript {
         public isStatement() {
             return true;
         }
+
         public isStatementOrExpression() { return true; }
-        public typeCheck(typeFlow: TypeFlow) {
-            this.type = typeFlow.voidType;
-            return this;
-        }
     }
 
     export class ThrowStatement extends Statement {
@@ -1467,11 +1222,6 @@ module TypeScript {
             this.statement.emit(emitter, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            this.statement = this.statement.typeCheck(typeFlow);
-            return this;
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -1569,17 +1319,6 @@ module TypeScript {
             }
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            if (!typeFlow.checker.styleSettings.emptyBlocks) {
-                if ((this.statements === null) || (this.statements.members.length === 0)) {
-                    typeFlow.checker.errorReporter.styleError(this, "empty block");
-                }
-            }
-
-            typeFlow.typeCheck(this.statements);
-            return this;
-        }
-
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.statements, ast.statements, includingPosition);
@@ -1641,10 +1380,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckWhile(this);
-        }
-
         public addToControlFlow(context: ControlFlowContext): void {
             var loopHeader = context.current;
             var loopStart = new BasicBlock();
@@ -1703,10 +1438,6 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckDo(this);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -1774,10 +1505,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckIf(this);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -1861,10 +1588,6 @@ module TypeScript {
             context.returnStmt();
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckReturn(this);
-        }
-
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.returnExpression, ast.returnExpression, includingPosition);
@@ -1893,10 +1616,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckForIn(this);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -1968,10 +1687,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckFor(this);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -2061,10 +1776,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckWith(this);
-        }
-
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expr, ast.expr, includingPosition) &&
@@ -2103,17 +1814,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            var len = this.caseList.members.length;
-            this.val = typeFlow.typeCheck(this.val);
-            for (var i = 0; i < len; i++) {
-                this.caseList.members[i] = typeFlow.typeCheck(this.caseList.members[i]);
-            }
-            this.defaultCase = <CaseClause>typeFlow.typeCheck(this.defaultCase);
-            this.type = typeFlow.voidType;
-            return this;
         }
 
         // if there are break statements that match this switch, then just link cond block with block after switch
@@ -2188,13 +1888,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public typeCheck(typeFlow: TypeFlow) {
-            this.expr = typeFlow.typeCheck(this.expr);
-            typeFlow.typeCheck(this.body);
-            this.type = typeFlow.voidType;
-            return this;
-        }
-
         // TODO: more reasoning about unreachable cases (such as duplicate literals as case expressions)
         // for now, assume all cases are reachable, regardless of whether some cases fall through
         public addToControlFlow(context: ControlFlowContext) {
@@ -2261,29 +1954,6 @@ module TypeScript {
 
         public emit(emitter: Emitter, startLine: boolean) {
             throw new Error("should not emit a type ref");
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            var prevInTCTR = typeFlow.inTypeRefTypeCheck;
-            typeFlow.inTypeRefTypeCheck = true;
-            var typeLink = getTypeLink(this, typeFlow.checker, true);
-            typeFlow.checker.resolveTypeLink(typeFlow.scope, typeLink, false);
-
-            if (this.term) {
-                typeFlow.typeCheck(this.term);
-            }
-
-            typeFlow.checkForVoidConstructor(typeLink.type, this);
-
-            this.type = typeLink.type;
-
-            // in error recovery cases, there may not be a term
-            if (this.term) {
-                this.term.type = this.type;
-            }
-
-            typeFlow.inTypeRefTypeCheck = prevInTCTR;
-            return this;
         }
 
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
@@ -2356,44 +2026,6 @@ module TypeScript {
             }
             context.noContinuation = false;
             context.walker.options.goChildren = false;
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            var prevScope = typeFlow.scope;
-            typeFlow.scope = this.containedScope;
-            this.param = <VariableDeclarator>typeFlow.typeCheck(this.param);
-            var exceptVar = new ValueLocation();
-            var varSym = new VariableSymbol((<VariableDeclarator>this.param).id.text,
-                                          this.param.minChar,
-                                          null /*typeFlow.checker.locationInfo.fileName*/,
-                                          exceptVar);
-            exceptVar.symbol = varSym;
-            exceptVar.typeLink = new TypeLink();
-            // var type for now (add syntax for type annotation)
-            exceptVar.typeLink.type = typeFlow.anyType;
-            var thisFnc = typeFlow.thisFnc;
-            if (thisFnc && thisFnc.type) {
-                exceptVar.symbol.container = thisFnc.type.symbol;
-            }
-            else {
-                exceptVar.symbol.container = null;
-            }
-            this.param.sym = exceptVar.symbol;
-            typeFlow.scope.enter(exceptVar.symbol.container, this.param, exceptVar.symbol,
-                                 typeFlow.checker.errorReporter, false, false, false);
-            this.body = typeFlow.typeCheck(this.body);
-
-            // if we're in provisional typecheck mode, clean up the symbol entry
-            // REVIEW: This is obviously bad form, since we're counting on the internal
-            // layout of the symbol table, but this is also the only place where we insert
-            // symbols during typecheck
-            if (typeFlow.checker.inProvisionalTypecheckMode()) {
-                var table = typeFlow.scope.getTable();
-                (<any>table).secondaryTable.table[exceptVar.symbol.name] = undefined;
-            }
-            this.type = typeFlow.voidType;
-            typeFlow.scope = prevScope;
-            return this;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {

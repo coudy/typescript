@@ -171,93 +171,6 @@ module TypeScript {
             return builder;
         }
 
-        public isExternallyVisible(checker: TypeChecker) {
-            // Global module is not hidden
-            if (this === checker.gloMod) {
-                return true;
-            }
-
-            // private symbol
-            if (hasFlag(this.flags, SymbolFlags.Private)) {
-                return false;
-            }
-
-            // If the current container is not exported
-            // If its in global - it is visible, otherwise it isn't
-            if (!hasFlag(this.flags, SymbolFlags.Exported)) {
-                return this.container === checker.gloMod;
-            }
-
-            // It is visible if its container is visible too
-            return this.container.isExternallyVisible(checker);
-        }
-
-        public visible(scope: SymbolScope, checker: TypeChecker) {
-            if (checker === null || this.container === checker.gloMod) {
-                return true;
-            }
-
-            if (hasFlag(this.flags, SymbolFlags.ModuleMember)) {
-
-                if (hasFlag(this.flags, SymbolFlags.Exported)) {
-                    if (!hasFlag(this.flags, SymbolFlags.Private)) {
-                        return true;
-                    }
-                    else {
-                        return aEnclosesB(this, scope.container);
-                    }
-                }
-                else {
-                    // REVIEW:
-                    // Note that in the scope-assignment and binding phases,
-                    // currentModDecl will point to the "master" module decl,
-                    // and not necessarily the one that the symbol in question
-                    // was declared in.
-                    // That's ok - there's no harm done in attributing the symbol
-                    // to the master mod decl in either of those phases, so long
-                    // as we reference the actual module fragment of declaration
-                    // during typecheck.  Doing this also prevents us from printing
-                    // multiple error messages if the symbol is not visible.
-                    return checker && (checker.currentModDecl === this.declModule) ||
-                                                (checker.currentModDecl &&
-                                                    checker.currentModDecl.mod &&
-                                                    checker.currentModDecl.mod.symbol &&
-                                                    this.declModule &&
-                                                    this.declModule.mod &&
-                                                    this.declModule.mod.symbol &&
-                                                    aEnclosesB(checker.currentModDecl.mod.symbol, this.declModule.mod.symbol));
-                }
-            }
-            else {
-                // field or method
-                var isFunction = this.declAST && this.declAST.nodeType === NodeType.FunctionDeclaration;
-                var isMethod = isFunction && (<FunctionDeclaration>this.declAST).isMethod();
-                var isStaticFunction = isFunction && hasFlag((<FunctionDeclaration>this.declAST).getFunctionFlags(), FunctionFlags.Static)
-                var isPrivateMethod = isMethod && hasFlag((<FunctionDeclaration>this.declAST).getFunctionFlags(), FunctionFlags.Private);
-                var isAlias = this.isType() && (<TypeSymbol>this).aliasLink;
-
-                if (this.isMember() || isMethod || isStaticFunction || isAlias) {
-                    if (hasFlag(this.flags, SymbolFlags.Private) || isPrivateMethod) {
-                        if (scope.container === null && this.container != scope.container) {
-                            return false; // it's an inner member being accessed by the global scope
-                        }
-                        else {
-                            return this.container === null ? true : aEnclosesB(scope.container, this.container);
-                        }
-                    }
-                    else {
-                        return true;
-                    }
-                }
-                else if (this.container) {
-                    return aEnclosesB(this, scope.container);
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-
         public addRef(identifier: Identifier) {
             if (!this.refs) {
                 this.refs = [];
@@ -278,28 +191,12 @@ module TypeScript {
             outfile.Write(this.toString());
         }
 
-        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
-            throw new Error("please implement in derived class");
-        }
-
         public setType(type: Type) {
             throw new Error("please implement in derived class");
         }
 
         public kind(): SymbolKind {
             throw new Error("please implement in derived class");
-        }
-
-        public getInterfaceDeclFromSymbol(checker: TypeChecker) {
-            if (this.declAST != null) {
-                if (this.declAST.nodeType === NodeType.InterfaceDeclaration) {
-                    return <InterfaceDeclaration>this.declAST;
-                } else if (this.container != null && this.container != checker.gloMod && this.container.declAST.nodeType === NodeType.InterfaceDeclaration) {
-                    return <InterfaceDeclaration>this.container.declAST;
-                }
-            }
-
-            return null;
         }
 
         public getVarDeclFromSymbol() {
@@ -413,22 +310,6 @@ module TypeScript {
         public isClass() { return this.instanceType != null; }
         public isFunction() { return this.declAST != null && this.declAST.nodeType === NodeType.FunctionDeclaration; }
 
-        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
-            if (this.type === pattern) {
-                return replacement.symbol;
-            }
-            else {
-                var replType = this.type.specializeType(pattern, replacement, checker, false);
-                if (replType != this.type) {
-                    var result = new TypeSymbol(this.name, -1, 0, ""/*unknownLocationInfo.fileName*/, replType, checker.compilationSettings.optimizeModuleCodeGen);
-                    return result;
-                }
-                else {
-                    return this;
-                }
-            }
-        }
-
         // Gets the pretty name of the symbol with respect to symbol of the scope (scopeSymbol)
         // searchTillRoot specifies if the name need to searched in the root path of the scope
         public getPrettyName(scopeSymbol: Symbol) {
@@ -525,23 +406,6 @@ module TypeScript {
 
         public isVariable() { return true; }
         public toString() { return this.getTypeNameEx(null).toString(); }
-        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
-            var rType = this.field.typeLink.type.specializeType(pattern, replacement, checker, false);
-            if (rType != this.field.typeLink.type) {
-                var fieldDef = new ValueLocation();
-                var result = new FieldSymbol(this.name, 0, null /*checker.locationInfo.fileName*/,
-                                           this.canWrite, fieldDef);
-                result.flags = this.flags;
-                fieldDef.symbol = result;
-                fieldDef.typeLink = new TypeLink();
-                result.setType(rType);
-                result.typeCheckStatus = TypeCheckStatus.Finished;
-                return result;
-            }
-            else {
-                return this;
-            }
-        }
 
         public getDocComments(): Comment[] {
             if (this.getter != null || this.setter != null) {
@@ -598,20 +462,6 @@ module TypeScript {
         }
 
         public toString() { return this.getTypeNameEx(null).toString(); }
-
-        public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
-            var rType = this.parameter.typeLink.type.specializeType(pattern, replacement, checker, false);
-            if (this.parameter.typeLink.type != rType) {
-                var paramDef = new ValueLocation();
-                var result = new ParameterSymbol(this.name, 0, null /*checker.locationInfo.fileName*/, paramDef);
-                paramDef.symbol = result;
-                result.setType(rType);
-                return result;
-            }
-            else {
-                return this;
-            }
-        }
 
         public getParameterDocComments() {
             if (!this.paramDocComment) {
