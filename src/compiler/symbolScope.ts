@@ -76,11 +76,6 @@ module TypeScript {
             }
         }
 
-        public enter(container: Symbol, ast: AST, symbol: Symbol, errorReporter: ErrorReporter, publicOnly: boolean,
-            typespace: boolean, ambient: boolean): void {
-            throw new Error("please implement in derived class");
-        }
-
         public getTable(): IHashTable {
             throw new Error("please implement in derived class");
         }
