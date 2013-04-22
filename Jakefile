@@ -24,7 +24,6 @@ var compilerSources = [
 	"hashTable.ts",
 	"printContext.ts",
 	"typeCollection.ts",
-	"scopeAssignment.ts",
 	"binder.ts",
 	"ast.ts",
 	"astWalker.ts",

@@ -58,8 +58,7 @@ module TypeScript {
         public getAllValueSymbolNames(members: boolean): string[]{
             return ["please", "implement", "in", "derived", "classes"];
         }
-        // advanced search using a filter
-        public search(filter: ScopeSearchFilter, name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
+
         // find in this immediate scope
         public findLocal(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
         // find in value namespace 

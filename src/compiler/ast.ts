@@ -118,12 +118,6 @@ module TypeScript {
             */
         }
 
-        public addToControlFlow(context: ControlFlowContext): void {
-            // by default, AST adds itself to current basic block and does not check its children
-            context.walker.options.goChildren = false;
-            context.addContent(this);
-        }
-
         public treeViewLabel(): string {
             return (<any>NodeType)._map[this.nodeType];
         }
@@ -174,20 +168,6 @@ module TypeScript {
 
         constructor() {
             super(NodeType.List);
-        }
-
-        public addToControlFlow(context: ControlFlowContext) {
-            var len = this.members.length;
-            for (var i = 0; i < len; i++) {
-                if (context.noContinuation) {
-                    context.addUnreachable(this.members[i]);
-                    break;
-                }
-                else {
-                    this.members[i] = context.walk(this.members[i], this);
-                }
-            }
-            context.walker.options.goChildren = false;
         }
 
         public append(ast: AST) {
@@ -382,14 +362,6 @@ module TypeScript {
 
         constructor(nodeType: NodeType, public operand: AST) {
             super(nodeType);
-        }
-
-        public addToControlFlow(context: ControlFlowContext): void {
-            super.addToControlFlow(context);
-            // TODO: add successor as catch block/finally block if present
-            if (this.nodeType === NodeType.ThrowStatement) {
-                context.returnStmt();
-            }
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
@@ -931,24 +903,6 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public buildControlFlow(): ControlFlowContext {
-            var entry = new BasicBlock();
-            var exit = new BasicBlock();
-
-            var context = new ControlFlowContext(entry, exit);
-
-            var controlFlowPrefix = (ast: AST, parent: AST, walker: IAstWalker) => {
-                ast.addToControlFlow(walker.state);
-                return ast;
-            }
-
-            var walker = getAstWalkerFactory().getWalker(controlFlowPrefix, null, null, context);
-            context.walker = walker;
-            walker.walk(this.block, this);
-
-            return context;
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptFunction(this);
         }
@@ -1224,13 +1178,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public addToControlFlow(context: ControlFlowContext): void {
-            var beforeBB = context.current;
-            var bb = new BasicBlock();
-            context.current = bb;
-            beforeBB.addSuccessor(bb);
-        }
-
         public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.identifier, ast.identifier, includingPosition) &&
@@ -1305,20 +1252,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public addToControlFlow(context: ControlFlowContext) {
-            var afterIfNeeded = new BasicBlock();
-            context.pushStatement(this, context.current, afterIfNeeded);
-            if (this.statements) {
-                context.walk(this.statements, this);
-            }
-            context.walker.options.goChildren = false;
-            context.popStatement();
-            if (afterIfNeeded.predecessors.length > 0) {
-                context.current.addSuccessor(afterIfNeeded);
-                context.current = afterIfNeeded;
-            }
-        }
-
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.statements, ast.statements, includingPosition);
@@ -1332,11 +1265,6 @@ module TypeScript {
 
         constructor(nodeType: NodeType) {
             super(nodeType);
-        }
-
-        public addToControlFlow(context: ControlFlowContext): void {
-            super.addToControlFlow(context);
-            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.ContinueStatement));
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
@@ -1380,34 +1308,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public addToControlFlow(context: ControlFlowContext): void {
-            var loopHeader = context.current;
-            var loopStart = new BasicBlock();
-            var afterLoop = new BasicBlock();
-
-            loopHeader.addSuccessor(loopStart);
-            context.current = loopStart;
-            context.addContent(this.cond);
-            var condBlock = context.current;
-            var targetInfo: ITargetInfo = null;
-            if (this.body) {
-                context.current = new BasicBlock();
-                condBlock.addSuccessor(context.current);
-                context.pushStatement(this, loopStart, afterLoop);
-                context.walk(this.body, this);
-                targetInfo = context.popStatement();
-            }
-            if (!(context.noContinuation)) {
-                var loopEnd = context.current;
-                loopEnd.addSuccessor(loopStart);
-            }
-            context.current = afterLoop;
-            condBlock.addSuccessor(afterLoop);
-            // TODO: check for while (true) and then only continue if afterLoop has predecessors
-            context.noContinuation = false;
-            context.walker.options.goChildren = false;
-        }
-
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition) &&
@@ -1438,32 +1338,6 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
             emitter.emitComments(this, false);
-        }
-
-        public addToControlFlow(context: ControlFlowContext): void {
-            var loopHeader = context.current;
-            var loopStart = new BasicBlock();
-            var afterLoop = new BasicBlock();
-            loopHeader.addSuccessor(loopStart);
-            context.current = loopStart;
-            var targetInfo: ITargetInfo = null;
-            if (this.body) {
-                context.pushStatement(this, loopStart, afterLoop);
-                context.walk(this.body, this);
-                targetInfo = context.popStatement();
-            }
-            if (!(context.noContinuation)) {
-                var loopEnd = context.current;
-                loopEnd.addSuccessor(loopStart);
-                context.addContent(this.cond);
-                // TODO: check for while (true) 
-                context.current = afterLoop;
-                loopEnd.addSuccessor(afterLoop);
-            }
-            else {
-                context.addUnreachable(this.cond);
-            }
-            context.walker.options.goChildren = false;
         }
 
         public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
@@ -1507,52 +1381,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public addToControlFlow(context: ControlFlowContext): void {
-            this.cond.addToControlFlow(context);
-            var afterIf = new BasicBlock();
-            var beforeIf = context.current;
-            context.pushStatement(this, beforeIf, afterIf);
-            var hasContinuation = false;
-            context.current = new BasicBlock();
-            beforeIf.addSuccessor(context.current);
-            context.walk(this.thenBod, this);
-            if (!context.noContinuation) {
-                hasContinuation = true;
-                context.current.addSuccessor(afterIf);
-            }
-            if (this.elseBod) {
-                // current block will be thenBod
-                context.current = new BasicBlock();
-                context.noContinuation = false;
-                beforeIf.addSuccessor(context.current);
-                context.walk(this.elseBod, this);
-                if (!context.noContinuation) {
-                    hasContinuation = true;
-                    context.current.addSuccessor(afterIf);
-                }
-                else {
-                    // thenBod created continuation for if statement
-                    if (hasContinuation) {
-                        context.noContinuation = false;
-                    }
-                }
-            }
-            else {
-                beforeIf.addSuccessor(afterIf);
-                context.noContinuation = false;
-                hasContinuation = true;
-            }
-            var targetInfo = context.popStatement();
-            if (afterIf.predecessors.length > 0) {
-                context.noContinuation = false;
-                hasContinuation = true;
-            }
-            if (hasContinuation) {
-                context.current = afterIf;
-            }
-            context.walker.options.goChildren = false;
-        }
-
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition) &&
@@ -1583,11 +1411,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public addToControlFlow(context: ControlFlowContext): void {
-            super.addToControlFlow(context);
-            context.returnStmt();
-        }
-
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.returnExpression, ast.returnExpression, includingPosition);
@@ -1616,35 +1439,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public addToControlFlow(context: ControlFlowContext): void {
-            if (this.lval) {
-                context.addContent(this.lval);
-            }
-            if (this.obj) {
-                context.addContent(this.obj);
-            }
-
-            var loopHeader = context.current;
-            var loopStart = new BasicBlock();
-            var afterLoop = new BasicBlock();
-
-            loopHeader.addSuccessor(loopStart);
-            context.current = loopStart;
-            if (this.body) {
-                context.pushStatement(this, loopStart, afterLoop);
-                context.walk(this.body, this);
-                context.popStatement();
-            }
-            if (!(context.noContinuation)) {
-                var loopEnd = context.current;
-                loopEnd.addSuccessor(loopStart);
-            }
-            context.current = afterLoop;
-            context.noContinuation = false;
-            loopHeader.addSuccessor(afterLoop);
-            context.walker.options.goChildren = false;
         }
 
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
@@ -1687,63 +1481,6 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public addToControlFlow(context: ControlFlowContext): void {
-            if (this.init) {
-                context.addContent(this.init);
-            }
-            var loopHeader = context.current;
-            var loopStart = new BasicBlock();
-            var afterLoop = new BasicBlock();
-
-            loopHeader.addSuccessor(loopStart);
-            context.current = loopStart;
-            var condBlock: BasicBlock = null;
-            var continueTarget = loopStart;
-            var incrBB: BasicBlock = null;
-            if (this.incr) {
-                incrBB = new BasicBlock();
-                continueTarget = incrBB;
-            }
-            if (this.cond) {
-                condBlock = context.current;
-                context.addContent(this.cond);
-                context.current = new BasicBlock();
-                condBlock.addSuccessor(context.current);
-            }
-            var targetInfo: ITargetInfo = null;
-            if (this.body) {
-                context.pushStatement(this, continueTarget, afterLoop);
-                context.walk(this.body, this);
-                targetInfo = context.popStatement();
-            }
-            if (this.incr) {
-                if (context.noContinuation) {
-                    if (incrBB.predecessors.length === 0) {
-                        context.addUnreachable(this.incr);
-                    }
-                }
-                else {
-                    context.current.addSuccessor(incrBB);
-                    context.current = incrBB;
-                    context.addContent(this.incr);
-                }
-            }
-            var loopEnd = context.current;
-            if (!(context.noContinuation)) {
-                loopEnd.addSuccessor(loopStart);
-
-            }
-            if (condBlock) {
-                condBlock.addSuccessor(afterLoop);
-                context.noContinuation = false;
-            }
-            if (afterLoop.predecessors.length > 0) {
-                context.noContinuation = false;
-                context.current = afterLoop;
-            }
-            context.walker.options.goChildren = false;
         }
 
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
@@ -1816,34 +1553,6 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        // if there are break statements that match this switch, then just link cond block with block after switch
-        public addToControlFlow(context: ControlFlowContext) {
-            var condBlock = context.current;
-            context.addContent(this.val);
-            var execBlock = new BasicBlock();
-            var afterSwitch = new BasicBlock();
-
-            condBlock.addSuccessor(execBlock);
-            context.pushSwitch(execBlock);
-            context.current = execBlock;
-            context.pushStatement(this, execBlock, afterSwitch);
-            context.walk(this.caseList, this);
-            context.popSwitch();
-            var targetInfo = context.popStatement();
-            var hasCondContinuation = (this.defaultCase === null);
-            if (this.defaultCase === null) {
-                condBlock.addSuccessor(afterSwitch);
-            }
-            if (afterSwitch.predecessors.length > 0) {
-                context.noContinuation = false;
-                context.current = afterSwitch;
-            }
-            else {
-                context.noContinuation = true;
-            }
-            context.walker.options.goChildren = false;
-        }
-
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.caseList, ast.caseList, includingPosition) &&
@@ -1886,30 +1595,6 @@ module TypeScript {
             }
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        // TODO: more reasoning about unreachable cases (such as duplicate literals as case expressions)
-        // for now, assume all cases are reachable, regardless of whether some cases fall through
-        public addToControlFlow(context: ControlFlowContext) {
-            var execBlock = new BasicBlock();
-            var sw = context.currentSwitch[context.currentSwitch.length - 1];
-            // TODO: fall-through from previous (+ to end of switch)
-            if (this.expr) {
-                var exprBlock = new BasicBlock();
-                context.current = exprBlock;
-                sw.addSuccessor(exprBlock);
-                context.addContent(this.expr);
-                exprBlock.addSuccessor(execBlock);
-            }
-            else {
-                sw.addSuccessor(execBlock);
-            }
-            context.current = execBlock;
-            if (this.body) {
-                context.walk(this.body, this);
-            }
-            context.noContinuation = false;
-            context.walker.options.goChildren = false;
         }
 
         public structuralEquals(ast: CaseClause, includingPosition: boolean): boolean {
@@ -2012,20 +1697,6 @@ module TypeScript {
             emitter.emitJavascript(this.body, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public addToControlFlow(context: ControlFlowContext) {
-            if (this.param) {
-                context.addContent(this.param);
-                var bodBlock = new BasicBlock();
-                context.current.addSuccessor(bodBlock);
-                context.current = bodBlock;
-            }
-            if (this.body) {
-                context.walk(this.body, this);
-            }
-            context.noContinuation = false;
-            context.walker.options.goChildren = false;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
