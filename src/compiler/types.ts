@@ -122,16 +122,11 @@ module TypeScript {
 
         public typeFlags = TypeFlags.None;
 
-        public symbol: TypeSymbol;
-
         public instanceType: Type;
 
         // REVIEW: Prune
         public isClass() { return this.instanceType != null; }
         public isArray() { return this.elementType != null; }
-        public isClassInstance() {
-            return this.symbol && !this.elementType && (<TypeSymbol>this.symbol).type.isClass();
-        }
 
         public isString() { return hasFlag(this.primitiveTypeClass, Primitive.String); }
 
@@ -160,12 +155,6 @@ module TypeScript {
         public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, getPrettyTypeName?: boolean): MemberName {
             if (this.elementType) {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true), "", "[]");
-            }
-            else if (this.symbol && this.symbol.name && this.symbol.name != "_anonymous" &&
-                     ((hasFlag(this.typeFlags, TypeFlags.BuildingName)) ||
-                      (this.members && (!this.isClass())))) {
-                var tn = this.symbol.scopeRelativeName();
-                return MemberName.create(tn === "null" ? "any" : tn); // REVIEW: GROSS!!!
             }
             else {
                 if (this.members) {
@@ -224,26 +213,7 @@ module TypeScript {
             }
         }
 
-        public getDocComments(): Comment[]{
-            if (this.elementType || !this.symbol) {
-                return [];
-            }
-
-            if (this.isClassInstance() || this.isClass()) {
-                if (this.symbol.declAST.nodeType === NodeType.FunctionDeclaration) {
-                    // Its a constructor - use the class declaration instead
-                    return (<FunctionDeclaration>this.symbol.declAST).classDecl.getDocComments();
-                } else {
-                    // Its a class without constructor
-                    return this.symbol.getDocComments();
-                }
-            }
-
-            if (this.symbol.name && this.symbol.name != "_anonymous" &&
-                (this.members)) {
-                return this.symbol.getDocComments();
-            }
-
+        public getDocComments(): Comment[] {
             return [];
         }
     }
