@@ -105,11 +105,7 @@ module TypeScript {
         }
     }
 
-    var currentTypeID = -1;
-
     export class Type {
-        public typeID = currentTypeID++;
-
         public members: ScopedMembers;
         public ambientMembers: ScopedMembers;
 
@@ -120,22 +116,9 @@ module TypeScript {
         // REVIEW: for either of the below, why do we have lists of types and lists of type links?
         // interface can only extend
         public extendsList: Type[];
-        public extendsTypeLinks: TypeLink[];
 
         // class can also implement
         public implementsList: Type[];
-        public implementsTypeLinks: TypeLink[];
-
-        public passTypeCreated: number = CompilerDiagnostics.analysisPass;
-
-        public baseClass(): Type {
-            if (this.extendsList && (this.extendsList.length > 0)) {
-                return this.extendsList[0];
-            }
-            else {
-                return null;
-            }
-        }
 
         public elementType: Type;
 

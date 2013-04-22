@@ -129,24 +129,6 @@ module TypeScript {
             return builder;
         }
 
-        public fullName(scope?: SymbolScope): string {
-            var scopeSymbol = !scope ? null : scope.container;
-            var scopeRootPath: Symbol[] = !scopeSymbol ? [] : scopeSymbol.pathToRoot();
-            var dynamicModuleRoot: Symbol = null;
-            if (scopeRootPath.length > 0 && scopeRootPath[scopeRootPath.length - 1].declAST &&
-                scopeRootPath[scopeRootPath.length - 1].declAST.nodeType === NodeType.ModuleDeclaration &&
-                (<ModuleDeclaration>scopeRootPath[scopeRootPath.length - 1].declAST).isWholeFile()) {
-                dynamicModuleRoot = scopeRootPath[scopeRootPath.length - 1];
-            }
-            var builder = this.getPrettyName(scopeSymbol);
-            var ancestor = this.container;
-            while (ancestor && (ancestor.name != globalId) && ancestor != dynamicModuleRoot) {
-                builder = ancestor.getPrettyName(scopeSymbol) + "." + builder;
-                ancestor = ancestor.container;
-            }
-            return builder;
-        }
-
         public addRef(identifier: Identifier) {
             if (!this.refs) {
                 this.refs = [];
