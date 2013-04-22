@@ -31,7 +31,6 @@
 ///<reference path='symbols.ts' />
 ///<reference path='symbolScope.ts' />
 ///<reference path='typeCollection.ts' />
-///<reference path='typeFlow.ts' />
 ///<reference path='types.ts' />
 ///<reference path='pathUtils.ts' />
 ///<reference path='referenceResolution.ts' />
