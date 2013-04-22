@@ -314,11 +314,6 @@ module TypeScript {
         }
 
         public isModuleType() { return false; }
-        public hasMembers() { return this.members != null; }
-        public getAllEnclosedTypes(): ScopedMembers { return null; }
-        public getAllAmbientEnclosedTypes(): ScopedMembers { return null; }
-        public getPublicEnclosedTypes(): ScopedMembers { return null; }
-        public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
 
         public getDocComments(): Comment[]{
             if (this.elementType || !this.symbol) {
@@ -346,17 +341,7 @@ module TypeScript {
     }
 
     export class ModuleType extends Type {
-
-        constructor (public enclosedTypes: ScopedMembers, public ambientEnclosedTypes: ScopedMembers) {
-            super();
-        }
-
         public isModuleType() { return true; }
-        public hasMembers() { return this.members != null || this.enclosedTypes != null; }
-        public getAllEnclosedTypes() { return this.enclosedTypes; }
-        public getAllAmbientEnclosedTypes() { return this.ambientEnclosedTypes; }
-        public getPublicEnclosedTypes(): ScopedMembers { return null; }
-        public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
         public importedModules: ImportDeclaration[] = [];
 
         // Finds the dynamic module name of moduleType in the members
