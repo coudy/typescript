@@ -109,10 +109,6 @@ module TypeScript {
         public members: ScopedMembers;
         public ambientMembers: ScopedMembers;
 
-        public construct: SignatureGroup = null;
-        public call: SignatureGroup = null;
-        public index: SignatureGroup = null;
-
         // REVIEW: for either of the below, why do we have lists of types and lists of type links?
         // interface can only extend
         public extendsList: Type[];
@@ -155,15 +151,6 @@ module TypeScript {
         // REVIEW: No need for this to be a method
         public callCount() {
             var total = 0;
-            if (this.call) {
-                total += this.call.signatures.length;
-            }
-            if (this.construct) {
-                total += this.construct.signatures.length;
-            }
-            if (this.index) {
-                total += this.index.signatures.length;
-            }
             return total;
         }
 
@@ -179,21 +166,20 @@ module TypeScript {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
             }
             else if (this.symbol && this.symbol.name && this.symbol.name != "_anonymous" &&
-                     (((this.call === null) && (this.construct === null) && (this.index === null)) ||
-                      (hasFlag(this.typeFlags, TypeFlags.BuildingName)) ||
+                     ((hasFlag(this.typeFlags, TypeFlags.BuildingName)) ||
                       (this.members && (!this.isClass())))) {
                 var tn = this.symbol.scopeRelativeName(scope);
                 return MemberName.create(tn === "null" ? "any" : tn); // REVIEW: GROSS!!!
             }
             else {
-                if (this.members || this.call || this.construct) {
+                if (this.members) {
                     if (hasFlag(this.typeFlags, TypeFlags.BuildingName)) {
                         return MemberName.create("this");
                     }
                     this.typeFlags |= TypeFlags.BuildingName;
                     var builder = "";
                     var allMemberNames = new MemberNameArray();
-                    var curlies = isElementType || this.index != null;
+                    var curlies = isElementType;
                     var memCount = 0;
                     var delim = "; ";
                     if (this.members) {
@@ -217,19 +203,8 @@ module TypeScript {
                     var signatureCount = this.callCount();
                     var j: number;
                     var len = 0;
-                    var getPrettyFunctionOverload = getPrettyTypeName && !curlies && this.call && this.call.signatures.length > 1 && !this.members && !this.construct;
+                    var getPrettyFunctionOverload = getPrettyTypeName && !curlies && !this.members;
                     var shortform = !curlies && (signatureCount === 1 || getPrettyFunctionOverload) && topLevel;
-                    if (this.call) {
-                        allMemberNames.addAll(this.call.toStrings(prefix, shortform, scope, getPrettyFunctionOverload));
-                    }
-
-                    if (this.construct) {
-                        allMemberNames.addAll(this.construct.toStrings("new", shortform, scope));
-                    }
-
-                    if (this.index) {
-                        allMemberNames.addAll(this.index.toStrings("", shortform, scope));
-                    }
 
                     if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
                         allMemberNames.prefix = "{ ";
@@ -287,8 +262,7 @@ module TypeScript {
             }
 
             if (this.symbol.name && this.symbol.name != "_anonymous" &&
-                (((this.call === null) && (this.construct === null) && (this.index === null))
-                  || this.members)) {
+                (this.members)) {
                 return this.symbol.getDocComments();
             }
 
