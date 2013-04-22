@@ -58,7 +58,6 @@ module TypeScript {
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public trailingTriviaWidth = 0;
 
-        public type: Type = null;
         private _flags = ASTFlags.None;
 
         public typeCheckPhase = -1;
@@ -357,7 +356,6 @@ module TypeScript {
     }
 
     export class UnaryExpression extends Expression {
-        public targetType: Type = null; // Target type for an object literal (null if no target type)
         public castTerm: AST = null;
 
         constructor(nodeType: NodeType, public operand: AST) {
@@ -867,7 +865,6 @@ module TypeScript {
 
         public accessorSymbol: Symbol = null;
         public returnStatementsWithExpressions: ReturnStatement[];
-        public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public isDeclaration() { return true; }
 
         constructor(public name: Identifier,
