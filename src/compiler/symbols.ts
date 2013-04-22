@@ -53,10 +53,6 @@ module TypeScript {
             return hasFlag(this.flags, SymbolFlags.Property) && (!hasFlag(this.flags, SymbolFlags.ModuleMember));
         }
 
-        public getTypeName(scope: SymbolScope): string {
-            return this.getTypeNameEx(scope).toString();
-        }
-        
         public getTypeNameEx(scope: SymbolScope): MemberName {
             return MemberName.create(this.toString());
         }
