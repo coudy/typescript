@@ -856,7 +856,6 @@ module TypeScript {
         public variableArgList = false;
         public classDecl: NamedDeclaration = null;
 
-        public accessorSymbol: Symbol = null;
         public returnStatementsWithExpressions: ReturnStatement[];
         public isDeclaration() { return true; }
 

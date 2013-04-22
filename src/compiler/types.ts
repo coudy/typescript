@@ -167,23 +167,6 @@ module TypeScript {
                     var curlies = isElementType;
                     var memCount = 0;
                     var delim = "; ";
-                    if (this.members) {
-                        this.members.allMembers.map((key, s, unused) => {
-                            var sym = <Symbol>s;
-                            if (!hasFlag(sym.flags, SymbolFlags.BuiltIn)) {
-                                // Remove the delimiter character from the generated type name, since
-                                // our "allMemberNames" array takes care of storing delimiters
-                                var typeNameMember = sym.getTypeNameEx();
-                                if (typeNameMember.isArray() && (<MemberNameArray>typeNameMember).delim === delim) {
-                                    allMemberNames.addAll((<MemberNameArray>typeNameMember).entries);
-                                } else {
-                                    allMemberNames.add(typeNameMember);
-                                }
-                                memCount++;
-                                curlies = true;
-                            }
-                        }, null);
-                    }
 
                     var signatureCount = this.callCount();
                     var j: number;

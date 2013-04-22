@@ -112,7 +112,6 @@ module Services {
     export class NavigateToContext {
         public options = new TypeScript.AstWalkOptions();
         public fileName: string = "";
-        public containerSymbols: TypeScript.Symbol[] = [];
         public containerKinds: string[] = [];
         public containerASTs: TypeScript.AST[] = [];
         public path: TypeScript.AstPath = new TypeScript.AstPath();

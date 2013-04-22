@@ -17,7 +17,6 @@
 
 module Services {
     export interface ISymbolTree {
-        isField(sym: TypeScript.Symbol): boolean;
     }
 
     export interface ISymbolTreeHost {
@@ -25,27 +24,7 @@ module Services {
     }
 
     export class SymbolTree implements ISymbolTree {
-        private _allTypes: TypeScript.Symbol[];
-
         constructor (public host: ISymbolTreeHost) {
-            this._allTypes = null;
-        }
-
-        public getAllTypes(): TypeScript.Symbol[] {
-            if (this._allTypes === null) {
-                var result = new SymbolSet();
-                this._allTypes = result.getAll();
-            }
-            return this._allTypes;
-        }
-
-        public isField(sym: TypeScript.Symbol): boolean {
-            return sym != null &&
-                sym.kind() === TypeScript.SymbolKind.Field;
-        }
-
-        public isStatic(sym: TypeScript.Symbol): boolean {
-            return sym != null && sym.isStatic();
         }
     }
 }

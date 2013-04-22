@@ -277,7 +277,6 @@ module TypeScript {
         }
 
         private emitDeclarationComments(ast: AST, endLine?: boolean);
-        private emitDeclarationComments(symbol: Symbol, endLine?: boolean);
         private emitDeclarationComments(astOrSymbol, endLine = true) {
             if (!this.emitOptions.compilationSettings.emitComments) {
                 return;
