@@ -17,6 +17,4 @@ verify.quickInfoSymbolNameIs('Dictionary<V>');
 goTo.marker('2');
 edit.insert("class C2 extends Dictionary<string> { }");
 edit.moveLeft('ictionary<string> { }'.length);
-// Bug 664985: Expected second instance here to have the same symbol name
-// verify.quickInfoSymbolNameIs('Dictionary<V>');
-verify.quickInfoSymbolNameIs('Dictionary');
+verify.quickInfoSymbolNameIs('Dictionary<V>');
