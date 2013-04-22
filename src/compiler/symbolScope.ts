@@ -45,39 +45,4 @@ module TypeScript {
         Parameter,
         Variable,
     }
-
-    export class SymbolScope {
-        constructor (public container: Symbol) { }
-        public printLabel() { return "base"; }
-        public getAllSymbolNames(members: boolean): string[]{
-            return ["please", "implement", "in", "derived", "classes"];
-        }
-        public getAllTypeSymbolNames(members: boolean): string[]{
-            return ["please", "implement", "in", "derived", "classes"];
-        }
-        public getAllValueSymbolNames(members: boolean): string[]{
-            return ["please", "implement", "in", "derived", "classes"];
-        }
-
-        // find in this immediate scope
-        public findLocal(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
-        // find in value namespace 
-        public find(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
-        // find symbol that supplies an implementation
-        public findImplementation(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
-        // restrict the search to ambient values
-        public findAmbient(name: string, publicOnly: boolean, typespace: boolean): Symbol { return null; }
-        public print(outfile: ITextWriter) {
-            if (this.container) {
-                outfile.WriteLine(this.printLabel() + " scope with container: " + this.container.name + "...");
-            }
-            else {
-                outfile.WriteLine(this.printLabel() + " scope...");
-            }
-        }
-
-        public getTable(): IHashTable {
-            throw new Error("please implement in derived class");
-        }
-    }
 }

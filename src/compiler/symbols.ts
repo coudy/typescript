@@ -53,7 +53,7 @@ module TypeScript {
             return hasFlag(this.flags, SymbolFlags.Property) && (!hasFlag(this.flags, SymbolFlags.ModuleMember));
         }
 
-        public getTypeNameEx(scope: SymbolScope): MemberName {
+        public getTypeNameEx(): MemberName {
             return MemberName.create(this.toString());
         }
 
@@ -110,18 +110,8 @@ module TypeScript {
             return this.name;
         }
 
-        public scopeRelativeName(scope: SymbolScope): string {
-            if (scope === null) {
-                return this.getPrettyName(null) + this.getOptionalNameString();
-            }
-            var lca = this.findCommonAncestorPath(scope.container);
-            var builder = "";
-            for (var i = 0, len = lca.length; i < len; i++) {
-                var prettyName = lca[i].getPrettyName(i === len - 1 ? scope.container : lca[i + 1]);
-                builder = prettyName + "." + builder;
-            }
-            builder += this.getPrettyName(len === 0 ? scope.container : lca[0]) + this.getOptionalNameString();
-            return builder;
+        public scopeRelativeName(): string {
+            return this.getPrettyName(null) + this.getOptionalNameString();
         }
 
         public addRef(identifier: Identifier) {
@@ -236,8 +226,8 @@ module TypeScript {
         public getType() { return this.type; }
         public prettyName: string;
 
-        public getTypeNameEx(scope: SymbolScope) {
-            return this.type.getMemberTypeNameEx(this.name ? this.name + this.getOptionalNameString() : "", false, false, scope);
+        public getTypeNameEx() {
+            return this.type.getMemberTypeNameEx(this.name ? this.name + this.getOptionalNameString() : "", false, false);
         }
 
         // corresponding instance type if this is a class
@@ -342,11 +332,11 @@ module TypeScript {
             }
         }
 
-        public getTypeNameEx(scope: SymbolScope) {
-            return MemberName.create(this.getType().getScopedTypeNameEx(scope), this.name + (this.isOptional() ? "?" : "") + ": ", "");
+        public getTypeNameEx() {
+            return MemberName.create(this.getType().getScopedTypeNameEx(), this.name + (this.isOptional() ? "?" : "") + ": ", "");
         }
 
-        public toString() { return this.getTypeNameEx(null).toString(); }
+        public toString() { return this.getTypeNameEx().toString(); }
 
         public getParameterDocComments() {
             if (!this.paramDocComment) {

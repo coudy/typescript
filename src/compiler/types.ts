@@ -140,8 +140,8 @@ module TypeScript {
             return this.getMemberTypeName("", true, false, null);
         }
 
-        public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: boolean) {
-            return this.getMemberTypeNameEx("", true, false, scope, getPrettyTypeName);
+        public getScopedTypeNameEx(getPrettyTypeName?: boolean) {
+            return this.getMemberTypeNameEx("", true, false, getPrettyTypeName);
         }
 
         // REVIEW: No need for this to be a method
@@ -151,20 +151,20 @@ module TypeScript {
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeName(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope, getPrettyTypeName?: boolean): string {
-            var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, scope, getPrettyTypeName);
+        public getMemberTypeName(prefix: string, topLevel: boolean, isElementType: boolean, getPrettyTypeName?: boolean): string {
+            var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, getPrettyTypeName);
             return memberName.toString();
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, scope: SymbolScope, getPrettyTypeName?: boolean): MemberName {
+        public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, getPrettyTypeName?: boolean): MemberName {
             if (this.elementType) {
-                return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
+                return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true), "", "[]");
             }
             else if (this.symbol && this.symbol.name && this.symbol.name != "_anonymous" &&
                      ((hasFlag(this.typeFlags, TypeFlags.BuildingName)) ||
                       (this.members && (!this.isClass())))) {
-                var tn = this.symbol.scopeRelativeName(scope);
+                var tn = this.symbol.scopeRelativeName();
                 return MemberName.create(tn === "null" ? "any" : tn); // REVIEW: GROSS!!!
             }
             else {
@@ -184,7 +184,7 @@ module TypeScript {
                             if (!hasFlag(sym.flags, SymbolFlags.BuiltIn)) {
                                 // Remove the delimiter character from the generated type name, since
                                 // our "allMemberNames" array takes care of storing delimiters
-                                var typeNameMember = sym.getTypeNameEx(scope);
+                                var typeNameMember = sym.getTypeNameEx();
                                 if (typeNameMember.isArray() && (<MemberNameArray>typeNameMember).delim === delim) {
                                     allMemberNames.addAll((<MemberNameArray>typeNameMember).entries);
                                 } else {
