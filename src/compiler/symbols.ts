@@ -23,30 +23,6 @@ module TypeScript {
         Finished,
     }
 
-    // For lexically-scoped constructs
-    export function aLexicallyEnclosesB(a: Symbol, b: Symbol) {
-        if (a.declAST && b && b.declAST && a.declAST.nodeType === NodeType.FunctionDeclaration) {
-            return a.declAST.minChar <= b.declAST.minChar && a.declAST.limChar >= b.declAST.limChar;
-        }
-        else {
-            return false;
-        }
-    }
-
-    export function aEnclosesB(a: Symbol, b: Symbol) {
-        while (a.container) {
-            if (a === b || aLexicallyEnclosesB(a.container, b)) {
-                return true;
-            }
-            a = a.container;
-        }
-        return false;
-    }
-
-    export interface PhasedTypecheckObject {
-        typeCheckStatus: TypeCheckStatus;
-    }
-
     export class Symbol {
         public bound = false;
         public container: Symbol;

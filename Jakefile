@@ -103,7 +103,6 @@ var servicesSources = [
 	"compilerState.ts",
 	"symbolSet.ts",
 	"symbolTree.ts",
-	"overridesCollector.ts",
 	"languageService.ts",
 	"pullLanguageService.ts",
 	"shims.ts",
