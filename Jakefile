@@ -9,8 +9,6 @@ var servicesDirectory = "src/services/";
 var harnessDirectory = "src/harness/";
 var runnersDirectory = "tests/runners/";
 var libraryDirectory = "typings/";
-var genericLibraryDirectory = "typings/generic";
-var nongenericLibraryDirectory = "typings/non-generic";
 var builtDirectory = "built/";
 var builtLocalDirectory = "built/local/";
 var builtTestDirectory = "built/localtest/";
@@ -225,18 +223,7 @@ task("clean", function() {
 	jake.rmRf(builtDirectory);
 });
 
-// Copies generic lib.d.ts to built\bin
-desc("Copies generic lib.d.ts to built\bin for use by compiler");
-task("generic", function() {
-	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtLocalDirectory);
-});
 
-// Copies non-generic lib.d.ts to built\bin
-desc("Copies non-generic lib.d.ts to built\bin for use by compiler");
-task("nongeneric", function() {
-	jake.cpR(path.join(nongenericLibraryDirectory, "lib.d.ts"), builtLocalDirectory);
-});
-	
 // Makes a new LKG. This target does not build anything, but errors if not all the outputs are present in the built/local directory
 desc("Makes a new LKG out of the built js files");
 task("LKG", libraryTargets, function() {
@@ -272,7 +259,7 @@ desc("Builds the test infrastructure using the built compiler");
 task("tests", [run, serviceFile].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
-	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtTestDirectory);	
+	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);	
 });
 
 desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='.");

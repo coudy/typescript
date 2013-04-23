@@ -47,15 +47,14 @@ module ItemDetailPage {
             //document.querySelector(".win-contentTitle").innerText = topic.title;
             MSApp.execUnsafeLocalFunction(function() {
                 rootElem.innerHTML = toStaticHTML(bodyInnerText);
-                Array.prototype.forEach.call(rootElem.querySelectorAll('*[href]'), function(a) {
+                Array.prototype.forEach.call(rootElem.querySelectorAll('*[href]'), function(a: HTMLAnchorElement) {
                     a.addEventListener("click", function(ev) {
                         //console.log("Clicked: " + ev.target + ", " + ev.currentTarget.href);
                         ev.preventDefault();
-                        var target: HTMLAnchorElement = ev.currentTarget;
-                        var url = target.href;
+                        var url = a.href;
                         if (url.indexOf('ms-appx:') == 0) {
-                            var i = target.href.lastIndexOf('\/')
-                            var topicRef = decodeURIComponent(target.href.slice(i + 1)).replace(/_/g, " ");
+                            var i = a.href.lastIndexOf('\/')
+                            var topicRef = decodeURIComponent(a.href.slice(i + 1)).replace(/_/g, " ");
                             var topic = createTopicFromTitle(topicRef, null);
                             WinJS.Navigation.navigate("/html/itemDetailPage.html", { item: topic });
                         }
