@@ -1603,11 +1603,24 @@ module TypeScript {
             //else if () {} // class instance value
             // Otherwise, it's of type 'any'
             else {
-                context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
+                var defaultType = this.semanticInfoChain.anyTypeSymbol;
+
+                if (declSymbol.getIsVarArg() && this.cachedArrayInterfaceType) {
+                    defaultType = specializeToArrayType(this.cachedArrayInterfaceType, defaultType, this, context);
+                }
+
+                context.setTypeInContext(declSymbol, defaultType);
+
                 if (declParameterSymbol) {
-                    declParameterSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                    declParameterSymbol.setType(defaultType);
                 }
             }
+
+/*
+                                else if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray() && this.cachedArrayInterfaceType) {
+                        typeExprSymbol = specializeToArrayType(this.cachedArrayInterfaceType, typeExprSymbol, this, context);
+                    }
+            */
 
             if (!hadError) {
                 declSymbol.setResolved();
