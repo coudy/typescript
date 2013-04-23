@@ -1509,8 +1509,7 @@ module TypeScript {
 
             // REVIEW: simplify rules for indenting
             if (startLine &&
-                this.indenter.indentAmt > 0 &&
-                ast.nodeType !== NodeType.List) {
+                this.indenter.indentAmt > 0) {
 
                 if ((ast.nodeType !== NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VariableDeclarator) &&
