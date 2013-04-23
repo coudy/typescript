@@ -196,7 +196,7 @@ describe("Generic assignment compatibility - 2", function () {
 
         describe("Object literal with 1 number property", function () {
             // TODO: see 622966 for why indexerSigString is included here
-            var these = [emptyObj, singleNumObj1, emptySig, singleNumSig, indexerSigString];
+            var these = [emptyObj, singleNumObj1, emptySig, singleNumSig, indexerSigString, indexerSigNum];
             it("is assignment compatible with", function () {
                 singleNumObj1.assertAssignmentCompatibleWith(these);
             } );
@@ -206,7 +206,7 @@ describe("Generic assignment compatibility - 2", function () {
             } );
 
             // TODO: see 622966 for why indexerSigString is included here
-            var these2 = [emptyObj, singleNumObj2, emptySig, singleNumSig2, indexerSigString];
+            var these2 = [emptyObj, singleNumObj2, emptySig, singleNumSig2, indexerSigString, indexerSigNum];
             it("is assignment compatible with", function () {
                 singleNumObj2.assertAssignmentCompatibleWith(these2);
             } );
@@ -218,7 +218,7 @@ describe("Generic assignment compatibility - 2", function () {
 
         describe("Object literal with 1 string property", function () {
             // TODO: see 622966 for why indexerSigString is included here
-            var these = [emptyObj, singleStringObj1, emptySig, singleStringSig, indexerSigString];
+            var these = [emptyObj, singleStringObj1, emptySig, singleStringSig, indexerSigString, indexerSigNum];
             it("is assignment compatible with", function () {
                 singleStringObj1.assertAssignmentCompatibleWith(these);
             } );
@@ -228,7 +228,7 @@ describe("Generic assignment compatibility - 2", function () {
             } );
 
             // TODO: see 622966 for why indexerSigString is included here
-            var these2 = [emptyObj, singleStringObj2, emptySig, singleStringSig2, indexerSigString];
+            var these2 = [emptyObj, singleStringObj2, emptySig, singleStringSig2, indexerSigString, indexerSigNum];
             it("is assignment compatible with", function () {
                 singleStringObj2.assertAssignmentCompatibleWith(these2);
             } );
@@ -240,7 +240,7 @@ describe("Generic assignment compatibility - 2", function () {
 
         describe("Callable properties", function () {
             // TODO: see 622966 for why indexerSigString is included here
-            var these = [callObjString, callSigString, emptySig, emptyObj, indexerSigString];
+            var these = [callObjString, callSigString, emptySig, emptyObj, indexerSigString, indexerSigNum];
             //var these = [emptyObj, singleNumObj1, singleNumObj2, indexerNumSig, constructorNumSig];
             it("Properties assignment compatible types", function () {
                 callSigString.assertAssignmentCompatibleWith(these);
@@ -271,7 +271,7 @@ describe("Generic assignment compatibility - 2", function () {
         }
 
         describe("Classes with properties 1", function () {
-            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional];
+            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, indexerSigNum, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional];
 
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
             //these = these.concat([classWithPrivate]); // TODO: remove
@@ -284,7 +284,7 @@ describe("Generic assignment compatibility - 2", function () {
                 classWithPublic.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
             } );
 
-            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, classWithPublic, classWithTwoPublic, classWithPublicAndOptional, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional];
+            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigNum, indexerSigString, classWithPublic, classWithTwoPublic, classWithPublicAndOptional, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional];
             it("Class with public properties assignable to", function () {
                 classWithTwoPublic.assertAssignmentCompatibleWith(these2);
             } );
@@ -298,7 +298,7 @@ describe("Generic assignment compatibility - 2", function () {
                 classWithTwoPublic.assertNotAssignmentCompatibleWith(AnyObjectBut(these2_1));
             } );
 
-            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
+            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, indexerSigNum, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
 
             //// TODO: remove
             //assert.bug('Optional property incorrectly matches one of the same name for assignment compat purposes');
@@ -314,7 +314,7 @@ describe("Generic assignment compatibility - 2", function () {
                 classWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
             } );
 
-            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
+            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigNum, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
 
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
             //these4 = these4.concat([classWithPrivate, classWithTwoPrivate, classWithPublicPrivate]); // TODO: remove
@@ -328,7 +328,7 @@ describe("Generic assignment compatibility - 2", function () {
             } );
 
             // TODO: harness issue makes it claim class with private isn't assignable to itself
-            var these5 = [emptyObj, emptySig, indexerSigString]; // classWithPrivate
+            var these5 = [emptyObj, emptySig, indexerSigString, indexerSigNum]; // classWithPrivate
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
@@ -346,7 +346,7 @@ describe("Generic assignment compatibility - 2", function () {
                 classWithPrivate.assertNotAssignmentCompatibleWith(AnyObjectBut(these5));
             } );
 
-            var these6 = [emptyObj, emptySig, indexerSigString]; // classWithTwoPrivate TODO: see harness issue above
+            var these6 = [emptyObj, emptySig, indexerSigString, indexerSigNum]; // classWithTwoPrivate TODO: see harness issue above
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
@@ -361,7 +361,7 @@ describe("Generic assignment compatibility - 2", function () {
             } );
 
             // TODO: see harness issue above for why classWithPublicPrivate not included
-            var these7 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceWithOptional, interfaceOne, classWithPublic, classWithOptional];
+            var these7 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigNum, indexerSigString, interfaceWithOptional, interfaceOne, classWithPublic, classWithOptional];
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
@@ -377,7 +377,7 @@ describe("Generic assignment compatibility - 2", function () {
         } );
 
         describe("Interfaces", function () {
-            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceWithPublicAndOptional];
+            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigNum, indexerSigString, interfaceOne, interfaceWithOptional, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceWithPublicAndOptional];
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
@@ -391,7 +391,7 @@ describe("Generic assignment compatibility - 2", function () {
                  interfaceOne.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
              } );
 
-            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithTwoPublic, classWithPublicAndOptional];
+            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigNum, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithTwoPublic, classWithPublicAndOptional];
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
@@ -405,7 +405,7 @@ describe("Generic assignment compatibility - 2", function () {
                  interfaceTwo.assertNotAssignmentCompatibleWith(AnyObjectBut(these2));
              } );
 
-            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
+            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, indexerSigNum, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
@@ -419,7 +419,7 @@ describe("Generic assignment compatibility - 2", function () {
                  interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
              } );
 
-            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
+            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigNum, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
 
             //// TODO: remove
             //assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');

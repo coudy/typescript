@@ -1,4 +1,0 @@
-debugger;
-function foo() {
-    debugger;
-}
