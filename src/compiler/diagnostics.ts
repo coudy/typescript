@@ -67,45 +67,6 @@ module TypeScript {
         }
     }
 
-    export class LoggerAdapter implements ILogger {
-        private _information: boolean;
-        private _debug: boolean;
-        private _warning: boolean;
-        private _error: boolean;
-        private _fatal: boolean;
-
-        constructor (public logger: ILogger) { 
-            this._information = this.logger.information();
-            this._debug = this.logger.debug();
-            this._warning = this.logger.warning();
-            this._error = this.logger.error();
-            this._fatal = this.logger.fatal();
-        }
-
-
-        public information(): boolean { return this._information; }
-        public debug(): boolean { return this._debug; }
-        public warning(): boolean { return this._warning; }
-        public error(): boolean { return this._error; }
-        public fatal(): boolean { return this._fatal; }
-        public log(s: string): void {
-            this.logger.log(s);
-        }
-    }
-
-    export class BufferedLogger implements ILogger {
-        public logContents = [];
-
-        public information(): boolean { return false; }
-        public debug(): boolean { return false; }
-        public warning(): boolean { return false; }
-        public error(): boolean { return false; }
-        public fatal(): boolean { return false; }
-        public log(s: string): void {
-            this.logContents.push(s);
-        }
-    }
-
     export function timeFunction(logger: ILogger, funcDescription: string, func: () =>any): any {
         var start = (new Date()).getTime();
         var result = func();

@@ -54,23 +54,6 @@ module TypeScript {
         IsDynamic = 1 << 9,
     }
 
-    export enum SymbolFlags {
-        None = 0,
-        Exported = 1,
-        Private = 1 << 1,
-        Public = 1 << 2,
-        Ambient = 1 << 3,
-        Static = 1 << 4,
-        Property = 1 << 7,
-        ModuleMember = 1 << 8,
-        InterfaceMember = 1 << 9,
-        ClassMember = 1 << 10,
-        BuiltIn = 1 << 11,
-        Constant = 1 << 13,
-        Optional = 1 << 14,
-        Bound = 1 << 16,
-    }
-
     export enum VariableFlags {
         None = 0,
         Exported = 1,
@@ -100,29 +83,13 @@ module TypeScript {
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
         ClassMethod = 1 << 14,
-        ClassPropertyMethodExported = 1 << 15,
-    }
-
-    export enum SignatureFlags {
-        None = 0,
-        IsIndexer = 1,
-        IsStringIndexer = 1 << 1,
-        IsNumberIndexer = 1 << 2,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
     export function ToDeclFlags(varFlags: VariableFlags) : DeclFlags;
-    export function ToDeclFlags(symFlags: SymbolFlags): DeclFlags;
     export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;
-    export function ToDeclFlags(fncOrVarOrSymbolOrModuleFlags: any) {
-        return <DeclFlags>fncOrVarOrSymbolOrModuleFlags;
-    }
-
-    export enum TypeFlags {
-        None = 0,
-        HasImplementation = 1,
-        IsEnum = 1 << 3,
-        IsClass = 1 << 7,
+    export function ToDeclFlags(fncOrVarOrModuleFlags: any) {
+        return <DeclFlags>fncOrVarOrModuleFlags;
     }
 
     export enum TypeRelationshipFlags {
