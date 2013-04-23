@@ -7,7 +7,6 @@ var C = (function () {
         this.set = function () {
         };
     }
-    C.barBack = "";
     Object.defineProperty(C.prototype, "Foo", {
         get: function () {
             return this.fooBack;
@@ -28,6 +27,7 @@ var C = (function () {
         enumerable: true,
         configurable: true
     });
+    C.barBack = "";
     return C;
 })();
 var c = new C();

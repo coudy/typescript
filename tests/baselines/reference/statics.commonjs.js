@@ -10,12 +10,12 @@ var M;
                 return C.f(_this.x + C.y + v + _this.c1 + _this.c2 + C.pub);
             };
         }
-        C.priv = 2;
-        C.pub = 3;
-        C.y = C.priv;
         C.f = function f(n) {
             return "wow: " + (n + C.y + C.pub + C.priv);
         };
+        C.priv = 2;
+        C.pub = 3;
+        C.y = C.priv;
         return C;
     })();
     M.C = C;    

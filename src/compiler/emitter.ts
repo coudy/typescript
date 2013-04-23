@@ -1598,188 +1598,192 @@ module TypeScript {
         }
 
         public emitClass(classDecl: ClassDeclaration) {
-            if (!hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
-                var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.document.fileName);
-                this.pushDecl(pullDecl);
+            if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
+                return;
+            }
 
-                var svClassNode = this.thisClassNode;
-                this.thisClassNode = classDecl;
-                var className = classDecl.name.actualText;
-                this.emitComments(classDecl, true);
-                var temp = this.setContainer(EmitContainer.Class);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.document.fileName);
+            this.pushDecl(pullDecl);
+
+            var svClassNode = this.thisClassNode;
+            this.thisClassNode = classDecl;
+            var className = classDecl.name.actualText;
+            this.emitComments(classDecl, true);
+            var temp = this.setContainer(EmitContainer.Class);
+
+            this.recordSourceMappingStart(classDecl);
+            this.writeToOutput("var " + className);
+
+            //if (hasFlag(classDecl.getVarFlags(), VarFlags.Exported) && (temp === EmitContainer.Module || temp === EmitContainer.DynamicModule)) {
+            //    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
+            //    this.writeToOutput(" = " + modName + "." + className);
+            //}
+
+            var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
+            var baseNameDecl: AST = null;
+            var baseName: AST = null;
+            var varDecl: VariableDeclarator = null;
+
+            if (hasBaseClass) {
+                this.writeLineToOutput(" = (function (_super) {");
+            } else {
+                this.writeLineToOutput(" = (function () {");
+            }
+
+            this.recordSourceMappingNameStart(className);
+            this.indenter.increaseIndent();
+
+            if (hasBaseClass) {
+                baseNameDecl = classDecl.extendsList.members[0];
+                baseName = baseNameDecl.nodeType === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                this.emitIndent();
+                this.writeLineToOutput("__extends(" + className + ", _super);");
+            }
+
+            this.emitIndent();
+
+            var constrDecl = classDecl.constructorDecl;
+
+            // output constructor
+            if (constrDecl) {
+                // declared constructor
+                constrDecl.emit(this);
+            }
+            else {
+                var wroteProps = 0;
 
                 this.recordSourceMappingStart(classDecl);
-                this.writeToOutput("var " + className);
-
-                //if (hasFlag(classDecl.getVarFlags(), VarFlags.Exported) && (temp === EmitContainer.Module || temp === EmitContainer.DynamicModule)) {
-                //    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
-                //    this.writeToOutput(" = " + modName + "." + className);
-                //}
-
-                var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
-                var baseNameDecl: AST = null;
-                var baseName: AST = null;
-                var varDecl: VariableDeclarator = null;
-
-                if (hasBaseClass) {
-                    this.writeLineToOutput(" = (function (_super) {");
-                } else {
-                    this.writeLineToOutput(" = (function () {");
-                }
-
-                this.recordSourceMappingNameStart(className);
+                // default constructor
                 this.indenter.increaseIndent();
-
+                this.writeToOutput("function " + classDecl.name.actualText + "() {");
+                this.recordSourceMappingNameStart("constructor");
                 if (hasBaseClass) {
-                    baseNameDecl = classDecl.extendsList.members[0];
-                    baseName = baseNameDecl.nodeType === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                    this.writeLineToOutput("");
                     this.emitIndent();
-                    this.writeLineToOutput("__extends(" + className + ", _super);");
+                    this.writeLineToOutput("_super.apply(this, arguments);");
+                    wroteProps++;
                 }
 
-                this.emitIndent();
-
-                var constrDecl = classDecl.constructorDecl;
-
-                // output constructor
-                if (constrDecl) {
-                    // declared constructor
-                    constrDecl.emit(this);
+                /*
+                if (classDecl.getVarFlags() & VariableFlags.MustCaptureThis) {
+                    this.writeCaptureThisStatement(classDecl);
                 }
-                else {
-                    var wroteProps = 0;
+                */
 
-                    this.recordSourceMappingStart(classDecl);
-                    // default constructor
-                    this.indenter.increaseIndent();
-                    this.writeToOutput("function " + classDecl.name.actualText + "() {");
-                    this.recordSourceMappingNameStart("constructor");
-                    if (hasBaseClass) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
-                        this.writeLineToOutput("_super.apply(this, arguments);");
-                        wroteProps++;
-                    }
-
-                    /*
-                    if (classDecl.getVarFlags() & VariableFlags.MustCaptureThis) {
-                        this.writeCaptureThisStatement(classDecl);
-                    }
-                    */
-
-                    var members = this.thisClassNode.members.members
+                var members = this.thisClassNode.members.members
 
                     // output initialized properties
                     for (var i = 0; i < members.length; i++) {
-                        if (members[i].nodeType === NodeType.VariableDeclarator) {
-                            varDecl = <VariableDeclarator>members[i];
-                            if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
-                                this.writeLineToOutput("");
-                                this.emitIndent();
-                                this.emitVariableDeclarator(varDecl);
-                                wroteProps++;
-                            }
+                    if (members[i].nodeType === NodeType.VariableDeclarator) {
+                        varDecl = <VariableDeclarator>members[i];
+                        if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                            this.writeLineToOutput("");
+                            this.emitIndent();
+                            this.emitVariableDeclarator(varDecl);
+                            wroteProps++;
                         }
                     }
-                    if (wroteProps) {
-                        this.writeLineToOutput("");
-                        this.indenter.decreaseIndent();
-                        this.emitIndent();
-                        this.writeLineToOutput("}");
-                    }
-                    else {
-                        this.writeLineToOutput(" }");
-                        this.indenter.decreaseIndent();
-                    }
-                    this.recordSourceMappingNameEnd();
-                    this.recordSourceMappingEnd(classDecl);
                 }
-
-                var membersLen = classDecl.members.members.length;
-                for (var j = 0; j < membersLen; j++) {
-
-                    var memberDecl: AST = classDecl.members.members[j];
-
-                    if (memberDecl.nodeType === NodeType.FunctionDeclaration) {
-                        var fn = <FunctionDeclaration>memberDecl;
-
-                        if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
-                            if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {
-                                this.emitPrototypeMember(fn, className);
-                            }
-                            else { // static functions
-                                if (fn.isAccessor()) {
-                                    this.emitPropertyAccessor(fn, this.thisClassNode.name.actualText, false);
-                                }
-                                else {
-                                    this.emitIndent();
-                                    this.recordSourceMappingStart(fn)
-                                    this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                    this.emitInnerFunction(fn, (fn.name && !fn.name.isMissing()), true,
-                                    this.shouldCaptureThis(fn), null);
-                                    this.writeLineToOutput(";");
-                                }
-                            }
-                        }
-                    }
-                    else if (memberDecl.nodeType === NodeType.VariableDeclarator) {
-                        varDecl = <VariableDeclarator>memberDecl;
-                        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static)) {
-
-                            if (varDecl.init) {
-                                // EMITREVIEW
-                                this.emitIndent();
-                                this.recordSourceMappingStart(varDecl);
-                                this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
-                                varDecl.init.emit(this);
-                                // EMITREVIEW
-
-                                this.writeLineToOutput(";");
-                                this.recordSourceMappingEnd(varDecl);
-                            }
-                        }
-                    }
-                    else {
-                        throw Error("We want to catch this");
-                    }
-                }
-
-                this.emitIndent();
-                this.recordSourceMappingStart(classDecl.endingToken);
-                this.writeLineToOutput("return " + className + ";");
-                this.recordSourceMappingEnd(classDecl.endingToken);
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-                this.recordSourceMappingStart(classDecl.endingToken);
-                this.writeToOutput("}");
-                this.recordSourceMappingNameEnd();
-                this.recordSourceMappingEnd(classDecl.endingToken);
-                this.recordSourceMappingStart(classDecl);
-                this.writeToOutput(")(");
-                if (hasBaseClass) {
-                    this.resolvingContext.resolvingTypeReference = true;
-                    this.emitJavascript(baseName, false);
-                    this.resolvingContext.resolvingTypeReference = false;
-                }
-                this.writeToOutput(");");
-                this.recordSourceMappingEnd(classDecl);
-
-                if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
+                if (wroteProps) {
                     this.writeLineToOutput("");
+                    this.indenter.decreaseIndent();
                     this.emitIndent();
-                    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
-                    this.recordSourceMappingStart(classDecl);
-                    this.writeToOutput(modName + "." + className + " = " + className + ";");
-                    this.recordSourceMappingEnd(classDecl);
+                    this.writeLineToOutput("}");
                 }
-
-                this.emitIndent();
+                else {
+                    this.writeLineToOutput(" }");
+                    this.indenter.decreaseIndent();
+                }
+                this.recordSourceMappingNameEnd();
                 this.recordSourceMappingEnd(classDecl);
-                this.emitComments(classDecl, false);
-                this.setContainer(temp);
-                this.thisClassNode = svClassNode;
+            }
 
-                this.popDecl(pullDecl);
+            this.emitClassMembers(classDecl);
+
+            this.emitIndent();
+            this.recordSourceMappingStart(classDecl.endingToken);
+            this.writeLineToOutput("return " + className + ";");
+            this.recordSourceMappingEnd(classDecl.endingToken);
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.recordSourceMappingStart(classDecl.endingToken);
+            this.writeToOutput("}");
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(classDecl.endingToken);
+            this.recordSourceMappingStart(classDecl);
+            this.writeToOutput(")(");
+            if (hasBaseClass) {
+                this.resolvingContext.resolvingTypeReference = true;
+                this.emitJavascript(baseName, false);
+                this.resolvingContext.resolvingTypeReference = false;
+            }
+            this.writeToOutput(");");
+            this.recordSourceMappingEnd(classDecl);
+
+            if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
+                this.writeLineToOutput("");
+                this.emitIndent();
+                var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
+                this.recordSourceMappingStart(classDecl);
+                this.writeToOutput(modName + "." + className + " = " + className + ";");
+                this.recordSourceMappingEnd(classDecl);
+            }
+
+            this.emitIndent();
+            this.recordSourceMappingEnd(classDecl);
+            this.emitComments(classDecl, false);
+            this.setContainer(temp);
+            this.thisClassNode = svClassNode;
+
+            this.popDecl(pullDecl);
+        }
+
+        private emitClassMembers(classDecl: ClassDeclaration): void {
+            // First, emit all the functions.
+            for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
+                var memberDecl = classDecl.members.members[i];
+
+                if (memberDecl.nodeType === NodeType.FunctionDeclaration) {
+                    var fn = <FunctionDeclaration>memberDecl;
+
+                    if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
+                        if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {
+                            this.emitPrototypeMember(fn, classDecl.name.actualText);
+                        }
+                        else { // static functions
+                            if (fn.isAccessor()) {
+                                this.emitPropertyAccessor(fn, this.thisClassNode.name.actualText, false);
+                            }
+                            else {
+                                this.emitIndent();
+                                this.recordSourceMappingStart(fn)
+                                    this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
+                                this.emitInnerFunction(fn, (fn.name && !fn.name.isMissing()), true,
+                                    this.shouldCaptureThis(fn), null);
+                                this.writeLineToOutput(";");
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Now emit all the statics.
+            for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
+                var memberDecl = classDecl.members.members[i];
+
+                if (memberDecl.nodeType === NodeType.VariableDeclarator) {
+                    var varDecl = <VariableDeclarator>memberDecl;
+
+                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                        this.emitIndent();
+                        this.recordSourceMappingStart(varDecl);
+                        this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
+                        varDecl.init.emit(this);
+
+                        this.writeLineToOutput(";");
+                        this.recordSourceMappingEnd(varDecl);
+                    }
+                }
             }
         }
 

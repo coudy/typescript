@@ -113,10 +113,10 @@ var SuperChild = (function (_super) {
 })(SuperParent);
 var Statics = (function () {
     function Statics() { }
-    Statics.foo = 1;
     Statics.baz = function baz() {
         return "";
     };
+    Statics.foo = 1;
     return Statics;
 })();
 var stat = new Statics();
