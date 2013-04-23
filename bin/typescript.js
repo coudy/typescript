@@ -544,6 +544,7 @@ var TypeScript;
     TypeScript.HashTable = HashTable;    
 })(TypeScript || (TypeScript = {}));
 var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
@@ -903,7 +904,7 @@ var TypeScript;
             this.operand1 = operand1;
             this.operand2 = operand2;
         }
-        BinaryExpression.getTextForBinaryToken = function getTextForBinaryToken(nodeType) {
+        BinaryExpression.getTextForBinaryToken = function (nodeType) {
             switch (nodeType) {
                 case 25 /* CommaExpression */ :
                     return ",";
@@ -2014,7 +2015,7 @@ var TypeScript;
             }
             return this.docCommentText;
         };
-        Comment.consumeLeadingSpace = function consumeLeadingSpace(line, startIndex, maxSpacesToRemove) {
+        Comment.consumeLeadingSpace = function (line, startIndex, maxSpacesToRemove) {
             var endIndex = line.length;
             if (maxSpacesToRemove !== undefined) {
                 endIndex = TypeScript.min(startIndex + maxSpacesToRemove, endIndex);
@@ -2030,7 +2031,7 @@ var TypeScript;
             }
             return -1;
         };
-        Comment.isSpaceChar = function isSpaceChar(line, index) {
+        Comment.isSpaceChar = function (line, index) {
             var length = line.length;
             if (index < length) {
                 var charCode = line.charCodeAt(index);
@@ -2038,7 +2039,7 @@ var TypeScript;
             }
             return index === length;
         };
-        Comment.cleanDocCommentLine = function cleanDocCommentLine(line, jsDocStyleComment, jsDocLineSpaceToRemove) {
+        Comment.cleanDocCommentLine = function (line, jsDocStyleComment, jsDocLineSpaceToRemove) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
             if (nonSpaceIndex !== -1) {
                 var jsDocSpacesRemoved = nonSpaceIndex;
@@ -2059,7 +2060,7 @@ var TypeScript;
             }
             return null;
         };
-        Comment.cleanJSDocComment = function cleanJSDocComment(content, spacesToRemove) {
+        Comment.cleanJSDocComment = function (content, spacesToRemove) {
             var docCommentLines = [];
             content = content.replace("/**", "");
             if (content.length >= 2 && content.charAt(content.length - 1) === "/" && content.charAt(content.length - 2) === "*") {
@@ -2101,7 +2102,7 @@ var TypeScript;
             }
             return docCommentLines.join("\n");
         };
-        Comment.getDocCommentText = function getDocCommentText(comments) {
+        Comment.getDocCommentText = function (comments) {
             var docCommentText = [];
             for (var c = 0; c < comments.length; c++) {
                 var commentText = comments[c].getDocCommentTextValue();
@@ -2111,7 +2112,7 @@ var TypeScript;
             }
             return docCommentText.join("\n");
         };
-        Comment.getParameterDocCommentText = function getParameterDocCommentText(param, fncDocComments) {
+        Comment.getParameterDocCommentText = function (param, fncDocComments) {
             if (fncDocComments.length === 0 || !fncDocComments[0].isBlockComment) {
                 return "";
             }
@@ -2717,7 +2718,7 @@ var TypeScript;
             this.asts = [];
             this.top = -1;
         }
-        AstPath.reverseIndexOf = function reverseIndexOf(items, index) {
+        AstPath.reverseIndexOf = function (items, index) {
             return (items === null || items.length <= index) ? null : items[items.length - index - 1];
         };
         AstPath.prototype.clone = function () {
@@ -2964,25 +2965,25 @@ var TypeScript;
 (function (TypeScript) {
     var Base64Format = (function () {
         function Base64Format() { }
-        Base64Format.encodedValues = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-        Base64Format.encode = function encode(inValue) {
+        Base64Format.encode = function (inValue) {
             if (inValue < 64) {
                 return Base64Format.encodedValues.charAt(inValue);
             }
             throw TypeError(inValue + ": not a 64 based value");
         };
-        Base64Format.decodeChar = function decodeChar(inChar) {
+        Base64Format.decodeChar = function (inChar) {
             if (inChar.length === 1) {
                 return Base64Format.encodedValues.indexOf(inChar);
             } else {
                 throw TypeError('"' + inChar + '" must have length 1');
             }
         };
+        Base64Format.encodedValues = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
         return Base64Format;
     })();    
     var Base64VLQFormat = (function () {
         function Base64VLQFormat() { }
-        Base64VLQFormat.encode = function encode(inValue) {
+        Base64VLQFormat.encode = function (inValue) {
             if (inValue < 0) {
                 inValue = ((-inValue) << 1) + 1;
             } else {
@@ -2999,7 +3000,7 @@ var TypeScript;
             } while(inValue > 0);
             return encodedStr;
         };
-        Base64VLQFormat.decode = function decode(inString) {
+        Base64VLQFormat.decode = function (inString) {
             var result = 0;
             var negative = false;
             var shift = 0;
@@ -3170,8 +3171,7 @@ var TypeScript;
             }
             this.tsFileName = TypeScript.getRelativePathToFixedPath(fixedPath, tsFileName);
         }
-        SourceMapper.MapFileExtension = ".map";
-        SourceMapper.emitSourceMapping = function emitSourceMapping(allSourceMappers) {
+        SourceMapper.emitSourceMapping = function (allSourceMappers) {
             var sourceMapper = allSourceMappers[0];
             sourceMapper.jsFile.WriteLine("//@ sourceMappingURL=" + sourceMapper.jsFileName + SourceMapper.MapFileExtension);
             var sourceMapOut = sourceMapper.sourceMapOut;
@@ -3243,6 +3243,7 @@ var TypeScript;
             }));
             sourceMapOut.Close();
         };
+        SourceMapper.MapFileExtension = ".map";
         return SourceMapper;
     })();
     TypeScript.SourceMapper = SourceMapper;    
@@ -3305,9 +3306,6 @@ var TypeScript;
         function Indenter() {
             this.indentAmt = 0;
         }
-        Indenter.indentStep = 4;
-        Indenter.indentStepString = "    ";
-        Indenter.indentStrings = [];
         Indenter.prototype.increaseIndent = function () {
             this.indentAmt += Indenter.indentStep;
         };
@@ -3325,6 +3323,9 @@ var TypeScript;
             }
             return indentString;
         };
+        Indenter.indentStep = 4;
+        Indenter.indentStepString = "    ";
+        Indenter.indentStrings = [];
         return Indenter;
     })();
     TypeScript.Indenter = Indenter;    
@@ -4697,12 +4698,12 @@ var TypeScript;
                 this.indenter.decreaseIndent();
             }
         };
-        Emitter.throwEmitterError = function throwEmitterError(e) {
+        Emitter.throwEmitterError = function (e) {
             var error = new Error(e.message);
             error.isEmitterError = true;
             throw error;
         };
-        Emitter.handleEmitterError = function handleEmitterError(fileName, e) {
+        Emitter.handleEmitterError = function (fileName, e) {
             if ((e).isEmitterError === true) {
                 return [new TypeScript.Diagnostic(0, 0, fileName, e.message)];
             }
@@ -4735,7 +4736,7 @@ var TypeScript;
         MemberName.prototype.toString = function () {
             return MemberName.memberNameToString(this);
         };
-        MemberName.memberNameToString = function memberNameToString(memberName) {
+        MemberName.memberNameToString = function (memberName) {
             var result = memberName.prefix;
             if (memberName.isString()) {
                 result += (memberName).text;
@@ -4749,7 +4750,7 @@ var TypeScript;
             result += memberName.suffix;
             return result;
         };
-        MemberName.create = function create(arg1, arg2, arg3) {
+        MemberName.create = function (arg1, arg2, arg3) {
             if (typeof arg1 === "string") {
                 return new MemberNameString(arg1);
             } else {
@@ -5098,10 +5099,10 @@ var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
         function ArrayUtilities() { }
-        ArrayUtilities.isArray = function isArray(value) {
+        ArrayUtilities.isArray = function (value) {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         };
-        ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
+        ArrayUtilities.sequenceEquals = function (array1, array2, equals) {
             if (array1 === array2) {
                 return true;
             }
@@ -5118,7 +5119,7 @@ var TypeScript;
             }
             return true;
         };
-        ArrayUtilities.contains = function contains(array, value) {
+        ArrayUtilities.contains = function (array, value) {
             for (var i = 0; i < array.length; i++) {
                 if (array[i] === value) {
                     return true;
@@ -5126,7 +5127,7 @@ var TypeScript;
             }
             return false;
         };
-        ArrayUtilities.groupBy = function groupBy(array, func) {
+        ArrayUtilities.groupBy = function (array, func) {
             var result = {};
             for (var i = 0, n = array.length; i < n; i++) {
                 var v = array[i];
@@ -5137,7 +5138,7 @@ var TypeScript;
             }
             return result;
         };
-        ArrayUtilities.min = function min(array, func) {
+        ArrayUtilities.min = function (array, func) {
             var min = func(array[0]);
             for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
@@ -5147,7 +5148,7 @@ var TypeScript;
             }
             return min;
         };
-        ArrayUtilities.max = function max(array, func) {
+        ArrayUtilities.max = function (array, func) {
             var max = func(array[0]);
             for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
@@ -5157,13 +5158,13 @@ var TypeScript;
             }
             return max;
         };
-        ArrayUtilities.last = function last(array) {
+        ArrayUtilities.last = function (array) {
             if (array.length === 0) {
                 throw TypeScript.Errors.argumentOutOfRange('array');
             }
             return array[array.length - 1];
         };
-        ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
+        ArrayUtilities.firstOrDefault = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];
                 if (func(value)) {
@@ -5172,14 +5173,14 @@ var TypeScript;
             }
             return null;
         };
-        ArrayUtilities.sum = function sum(array, func) {
+        ArrayUtilities.sum = function (array, func) {
             var result = 0;
             for (var i = 0, n = array.length; i < n; i++) {
                 result += func(array[i]);
             }
             return result;
         };
-        ArrayUtilities.whereNotNull = function whereNotNull(array) {
+        ArrayUtilities.whereNotNull = function (array) {
             var result = [];
             for (var i = 0; i < array.length; i++) {
                 var value = array[i];
@@ -5189,14 +5190,14 @@ var TypeScript;
             }
             return result;
         };
-        ArrayUtilities.select = function select(values, func) {
+        ArrayUtilities.select = function (values, func) {
             var result = [];
             for (var i = 0; i < values.length; i++) {
                 result.push(func(values[i]));
             }
             return result;
         };
-        ArrayUtilities.where = function where(values, func) {
+        ArrayUtilities.where = function (values, func) {
             var result = [];
             for (var i = 0; i < values.length; i++) {
                 if (func(values[i])) {
@@ -5205,7 +5206,7 @@ var TypeScript;
             }
             return result;
         };
-        ArrayUtilities.any = function any(array, func) {
+        ArrayUtilities.any = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (func(array[i])) {
                     return true;
@@ -5213,7 +5214,7 @@ var TypeScript;
             }
             return false;
         };
-        ArrayUtilities.all = function all(array, func) {
+        ArrayUtilities.all = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (!func(array[i])) {
                     return false;
@@ -5221,7 +5222,7 @@ var TypeScript;
             }
             return true;
         };
-        ArrayUtilities.binarySearch = function binarySearch(array, value) {
+        ArrayUtilities.binarySearch = function (array, value) {
             var low = 0;
             var high = array.length - 1;
             while (low <= high) {
@@ -5237,20 +5238,20 @@ var TypeScript;
             }
             return ~low;
         };
-        ArrayUtilities.createArray = function createArray(length, defaultvalue) {
+        ArrayUtilities.createArray = function (length, defaultvalue) {
             var result = [];
             for (var i = 0; i < length; i++) {
                 result.push(defaultvalue);
             }
             return result;
         };
-        ArrayUtilities.grow = function grow(array, length, defaultValue) {
+        ArrayUtilities.grow = function (array, length, defaultValue) {
             var count = length - array.length;
             for (var i = 0; i < count; i++) {
                 array.push(defaultValue);
             }
         };
-        ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
+        ArrayUtilities.copy = function (sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
             for (var i = 0; i < length; i++) {
                 destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
             }
@@ -5272,17 +5273,17 @@ var TypeScript;
 (function (TypeScript) {
     var Contract = (function () {
         function Contract() { }
-        Contract.requires = function requires(expression) {
+        Contract.requires = function (expression) {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         };
-        Contract.throwIfFalse = function throwIfFalse(expression) {
+        Contract.throwIfFalse = function (expression) {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         };
-        Contract.throwIfNull = function throwIfNull(value) {
+        Contract.throwIfNull = function (value) {
             if (value === null) {
                 throw new Error("Contract violated. Null value.");
             }
@@ -5295,7 +5296,7 @@ var TypeScript;
 (function (TypeScript) {
     var Debug = (function () {
         function Debug() { }
-        Debug.assert = function assert(expression, message) {
+        Debug.assert = function (expression, message) {
             if (!expression) {
                 throw new Error("Debug Failure. False expression: " + (message ? message : ""));
             }
@@ -7024,22 +7025,22 @@ var TypeScript;
 (function (TypeScript) {
     var Errors = (function () {
         function Errors() { }
-        Errors.argument = function argument(argument, message) {
+        Errors.argument = function (argument, message) {
             return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
         };
-        Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+        Errors.argumentOutOfRange = function (argument) {
             return new Error("Argument out of range: " + argument + ".");
         };
-        Errors.argumentNull = function argumentNull(argument) {
+        Errors.argumentNull = function (argument) {
             return new Error("Argument null: " + argument + ".");
         };
-        Errors.abstract = function abstract() {
+        Errors.abstract = function () {
             return new Error("Operation not implemented properly by subclass.");
         };
-        Errors.notYetImplemented = function notYetImplemented() {
+        Errors.notYetImplemented = function () {
             return new Error("Not yet implemented.");
         };
-        Errors.invalidOperation = function invalidOperation(message) {
+        Errors.invalidOperation = function (message) {
             return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
         };
         return Errors;
@@ -7050,9 +7051,7 @@ var TypeScript;
 (function (TypeScript) {
     var Hash = (function () {
         function Hash() { }
-        Hash.FNV_BASE = 2166136261;
-        Hash.FNV_PRIME = 16777619;
-        Hash.computeFnv1aCharArrayHashCode = function computeFnv1aCharArrayHashCode(text, start, len) {
+        Hash.computeFnv1aCharArrayHashCode = function (text, start, len) {
             var hashCode = Hash.FNV_BASE;
             var end = start + len;
             for (var i = start; i < end; i++) {
@@ -7060,7 +7059,7 @@ var TypeScript;
             }
             return hashCode;
         };
-        Hash.computeSimple31BitCharArrayHashCode = function computeSimple31BitCharArrayHashCode(key, start, len) {
+        Hash.computeSimple31BitCharArrayHashCode = function (key, start, len) {
             var hash = 0;
             for (var i = 0; i < len; i++) {
                 var ch = key[start + i];
@@ -7068,7 +7067,7 @@ var TypeScript;
             }
             return hash & 0x7FFFFFFF;
         };
-        Hash.computeSimple31BitStringHashCode = function computeSimple31BitStringHashCode(key) {
+        Hash.computeSimple31BitStringHashCode = function (key) {
             var hash = 0;
             var start = 0;
             var len = key.length;
@@ -7078,7 +7077,7 @@ var TypeScript;
             }
             return hash & 0x7FFFFFFF;
         };
-        Hash.computeMurmur2CharArrayHashCode = function computeMurmur2CharArrayHashCode(key, start, len) {
+        Hash.computeMurmur2CharArrayHashCode = function (key, start, len) {
             var m = 0x5bd1e995;
             var r = 24;
             var numberOfCharsLeft = len;
@@ -7105,7 +7104,7 @@ var TypeScript;
             h ^= h >> 15;
             return h;
         };
-        Hash.computeMurmur2StringHashCode = function computeMurmur2StringHashCode(key) {
+        Hash.computeMurmur2StringHashCode = function (key) {
             var m = 0x5bd1e995;
             var r = 24;
             var start = 0;
@@ -7134,6 +7133,27 @@ var TypeScript;
             h ^= h >> 15;
             return h;
         };
+        Hash.getPrime = function (min) {
+            for (var i = 0; i < Hash.primes.length; i++) {
+                var num = Hash.primes[i];
+                if (num >= min) {
+                    return num;
+                }
+            }
+            throw TypeScript.Errors.notYetImplemented();
+        };
+        Hash.expandPrime = function (oldSize) {
+            var num = oldSize << 1;
+            if (num > 2146435069 && 2146435069 > oldSize) {
+                return 2146435069;
+            }
+            return Hash.getPrime(num);
+        };
+        Hash.combine = function (value, currentHash) {
+            return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
+        };
+        Hash.FNV_BASE = 2166136261;
+        Hash.FNV_PRIME = 16777619;
         Hash.primes = [
             3,
             7,
@@ -7208,25 +7228,6 @@ var TypeScript;
             5999471,
             7199369
         ];
-        Hash.getPrime = function getPrime(min) {
-            for (var i = 0; i < Hash.primes.length; i++) {
-                var num = Hash.primes[i];
-                if (num >= min) {
-                    return num;
-                }
-            }
-            throw TypeScript.Errors.notYetImplemented();
-        };
-        Hash.expandPrime = function expandPrime(oldSize) {
-            var num = oldSize << 1;
-            if (num > 2146435069 && 2146435069 > oldSize) {
-                return 2146435069;
-            }
-            return Hash.getPrime(num);
-        };
-        Hash.combine = function combine(value, currentHash) {
-            return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
-        };
         return Hash;
     })();
     TypeScript.Hash = Hash;    
@@ -7378,10 +7379,10 @@ var TypeScript;
 (function (TypeScript) {
     var IntegerUtilities = (function () {
         function IntegerUtilities() { }
-        IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
+        IntegerUtilities.integerDivide = function (numerator, denominator) {
             return (numerator / denominator) >> 0;
         };
-        IntegerUtilities.integerMultiplyLow32Bits = function integerMultiplyLow32Bits(n1, n2) {
+        IntegerUtilities.integerMultiplyLow32Bits = function (n1, n2) {
             var n1Low16 = n1 & 0x0000ffff;
             var n1High16 = n1 >>> 16;
             var n2Low16 = n2 & 0x0000ffff;
@@ -7389,7 +7390,7 @@ var TypeScript;
             var resultLow32 = (((n1 & 0xffff0000) * n2) >>> 0) + (((n1 & 0x0000ffff) * n2) >>> 0) >>> 0;
             return resultLow32;
         };
-        IntegerUtilities.integerMultiplyHigh32Bits = function integerMultiplyHigh32Bits(n1, n2) {
+        IntegerUtilities.integerMultiplyHigh32Bits = function (n1, n2) {
             var n1Low16 = n1 & 0x0000ffff;
             var n1High16 = n1 >>> 16;
             var n2Low16 = n2 & 0x0000ffff;
@@ -7405,10 +7406,10 @@ var TypeScript;
 (function (TypeScript) {
     var MathPrototype = (function () {
         function MathPrototype() { }
-        MathPrototype.max = function max(a, b) {
+        MathPrototype.max = function (a, b) {
             return a >= b ? a : b;
         };
-        MathPrototype.min = function min(a, b) {
+        MathPrototype.min = function (a, b) {
             return a <= b ? a : b;
         };
         return MathPrototype;
@@ -7477,7 +7478,7 @@ var TypeScript;
                     }
                 }
             };
-            StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+            StringTable.textCharArrayEquals = function (text, array, start, length) {
                 if (text.length !== length) {
                     return false;
                 }
@@ -7501,24 +7502,24 @@ var TypeScript;
 (function (TypeScript) {
     var StringUtilities = (function () {
         function StringUtilities() { }
-        StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
+        StringUtilities.fromCharCodeArray = function (array) {
             return String.fromCharCode.apply(null, array);
         };
-        StringUtilities.endsWith = function endsWith(string, value) {
+        StringUtilities.endsWith = function (string, value) {
             return string.substring(string.length - value.length, string.length) === value;
         };
-        StringUtilities.startsWith = function startsWith(string, value) {
+        StringUtilities.startsWith = function (string, value) {
             return string.substr(0, value.length) === value;
         };
-        StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
+        StringUtilities.copyTo = function (source, sourceIndex, destination, destinationIndex, count) {
             for (var i = 0; i < count; i++) {
                 destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
             }
         };
-        StringUtilities.repeat = function repeat(value, count) {
+        StringUtilities.repeat = function (value, count) {
             return Array(count + 1).join(value);
         };
-        StringUtilities.stringEquals = function stringEquals(val1, val2) {
+        StringUtilities.stringEquals = function (val1, val2) {
             return val1 === val2;
         };
         return StringUtilities;
@@ -7663,7 +7664,6 @@ var TypeScript;
             this._lineStarts = _lineStarts;
             this.length = length;
         }
-        LineMap.empty = new LineMap([0], 0);
         LineMap.prototype.toJSON = function (key) {
             return {
                 lineStarts: this._lineStarts,
@@ -7715,16 +7715,17 @@ var TypeScript;
             var lineNumber = this.getLineNumberFromPosition(position);
             return new TypeScript.LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         };
-        LineMap.fromSimpleText = function fromSimpleText(text) {
+        LineMap.fromSimpleText = function (text) {
             var lineStarts = TypeScript.TextUtilities.parseLineStarts(text);
             return new LineMap(lineStarts, text.length());
         };
-        LineMap.fromScriptSnapshot = function fromScriptSnapshot(scriptSnapshot) {
+        LineMap.fromScriptSnapshot = function (scriptSnapshot) {
             return new LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
         };
-        LineMap.fromString = function fromString(text) {
+        LineMap.fromString = function (text) {
             return LineMap.fromSimpleText(TypeScript.SimpleText.fromString(text));
         };
+        LineMap.empty = new LineMap([0], 0);
         return LineMap;
     })();
     TypeScript.LineMap = LineMap;    
@@ -8060,7 +8061,6 @@ var TypeScript;
             SimpleStringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
                 TypeScript.StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
             };
-            SimpleStringText.charArray = TypeScript.ArrayUtilities.createArray(1024, 0);
             SimpleStringText.prototype.substr = function (start, length, intern) {
                 if (intern) {
                     var array = length <= SimpleStringText.charArray.length ? SimpleStringText.charArray : TypeScript.ArrayUtilities.createArray(length, 0);
@@ -8078,6 +8078,7 @@ var TypeScript;
             SimpleStringText.prototype.lineMap = function () {
                 return TypeScript.LineMap.fromSimpleText(this);
             };
+            SimpleStringText.charArray = TypeScript.ArrayUtilities.createArray(1024, 0);
             return SimpleStringText;
         })();        
         var SimpleScriptSnapshotText = (function () {
@@ -8245,7 +8246,7 @@ var TypeScript;
             }
             return null;
         };
-        TextSpan.fromBounds = function fromBounds(start, end) {
+        TextSpan.fromBounds = function (start, end) {
             TypeScript.Contract.requires(start >= 0);
             TypeScript.Contract.requires(end - start >= 0);
             return new TextSpan(start, end - start);
@@ -8264,7 +8265,6 @@ var TypeScript;
             this._span = span;
             this._newLength = newLength;
         }
-        TextChangeRange.unchanged = new TextChangeRange(new TypeScript.TextSpan(0, 0), 0);
         TextChangeRange.prototype.span = function () {
             return this._span;
         };
@@ -8277,7 +8277,7 @@ var TypeScript;
         TextChangeRange.prototype.isUnchanged = function () {
             return this.span().isEmpty() && this.newLength() === 0;
         };
-        TextChangeRange.collapseChangesFromSingleVersion = function collapseChangesFromSingleVersion(changes) {
+        TextChangeRange.collapseChangesFromSingleVersion = function (changes) {
             var diff = 0;
             var start = 1073741823 /* Max31BitInteger */ ;
             var end = 0;
@@ -8298,7 +8298,7 @@ var TypeScript;
             var newLen = combined.length() + diff;
             return new TextChangeRange(combined, newLen);
         };
-        TextChangeRange.collapseChangesAcrossMultipleVersions = function collapseChangesAcrossMultipleVersions(changes) {
+        TextChangeRange.collapseChangesAcrossMultipleVersions = function (changes) {
             if (changes.length === 0) {
                 return TextChangeRange.unchanged;
             }
@@ -8323,6 +8323,7 @@ var TypeScript;
             }
             return new TextChangeRange(TypeScript.TextSpan.fromBounds(oldStartN, oldEndN), newEndN - oldStartN);
         };
+        TextChangeRange.unchanged = new TextChangeRange(new TypeScript.TextSpan(0, 0), 0);
         return TextChangeRange;
     })();
     TypeScript.TextChangeRange = TextChangeRange;    
@@ -9211,16 +9212,16 @@ var TypeScript;
 (function (TypeScript) {
     var CharacterInfo = (function () {
         function CharacterInfo() { }
-        CharacterInfo.isDecimalDigit = function isDecimalDigit(c) {
+        CharacterInfo.isDecimalDigit = function (c) {
             return c >= 48 /* _0 */  && c <= 57 /* _9 */ ;
         };
-        CharacterInfo.isHexDigit = function isHexDigit(c) {
+        CharacterInfo.isHexDigit = function (c) {
             return CharacterInfo.isDecimalDigit(c) || (c >= 65 /* A */  && c <= 70 /* F */ ) || (c >= 97 /* a */  && c <= 102 /* f */ );
         };
-        CharacterInfo.hexValue = function hexValue(c) {
+        CharacterInfo.hexValue = function (c) {
             return CharacterInfo.isDecimalDigit(c) ? (c - 48 /* _0 */ ) : (c >= 65 /* A */  && c <= 70 /* F */ ) ? c - 65 /* A */  + 10 : c - 97 /* a */  + 10;
         };
-        CharacterInfo.isWhitespace = function isWhitespace(ch) {
+        CharacterInfo.isWhitespace = function (ch) {
             switch (ch) {
                 case 32 /* space */ :
                 case 160 /* nonBreakingSpace */ :
@@ -9246,7 +9247,7 @@ var TypeScript;
             }
             return false;
         };
-        CharacterInfo.isLineTerminator = function isLineTerminator(ch) {
+        CharacterInfo.isLineTerminator = function (ch) {
             switch (ch) {
                 case 13 /* carriageReturn */ :
                 case 10 /* lineFeed */ :
@@ -9290,7 +9291,7 @@ var TypeScript;
         Diagnostic1.prototype.message = function () {
             return getDiagnosticMessage(this._diagnosticCode, this._arguments);
         };
-        Diagnostic1.equals = function equals(diagnostic1, diagnostic2) {
+        Diagnostic1.equals = function (diagnostic1, diagnostic2) {
             return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && TypeScript.ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
                 return v1 === v2;
             });
@@ -9503,7 +9504,7 @@ var TypeScript;
             this._element = element;
             this._fullStart = fullStart;
         }
-        PositionedElement.create = function create(parent, element, fullStart) {
+        PositionedElement.create = function (parent, element, fullStart) {
             if (element === null) {
                 return null;
             }
@@ -9721,11 +9722,7 @@ var TypeScript;
             this.text = text;
             this._languageVersion = languageVersion;
         }
-        Scanner.isKeywordStartCharacter = [];
-        Scanner.isIdentifierStartCharacter = [];
-        Scanner.isIdentifierPartCharacter = [];
-        Scanner.isNumericLiteralStart = [];
-        Scanner.initializeStaticData = function initializeStaticData() {
+        Scanner.initializeStaticData = function () {
             if (Scanner.isKeywordStartCharacter.length === 0) {
                 Scanner.isKeywordStartCharacter = TypeScript.ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
                 Scanner.isIdentifierStartCharacter = TypeScript.ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
@@ -9807,8 +9804,7 @@ var TypeScript;
                 }
             }
         };
-        Scanner.triviaWindow = TypeScript.ArrayUtilities.createArray(2048, 0);
-        Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
+        Scanner.scanTrivia = function (text, start, length, isTrailing) {
             var scanner = new Scanner(null, text.subText(new TypeScript.TextSpan(start, length)), 1 /* EcmaScript5 */ , Scanner.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         };
@@ -10568,6 +10564,11 @@ var TypeScript;
         Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
             return new TypeScript.SyntaxDiagnostic(this.fileName, start, end - start, 4 /* Unrecognized_escape_sequence */ , null);
         };
+        Scanner.isKeywordStartCharacter = [];
+        Scanner.isIdentifierStartCharacter = [];
+        Scanner.isIdentifierPartCharacter = [];
+        Scanner.isNumericLiteralStart = [];
+        Scanner.triviaWindow = TypeScript.ArrayUtilities.createArray(2048, 0);
         return Scanner;
     })();
     TypeScript.Scanner = Scanner;    
@@ -10576,7 +10577,7 @@ var TypeScript;
 (function (TypeScript) {
     var ScannerUtilities = (function () {
         function ScannerUtilities() { }
-        ScannerUtilities.identifierKind = function identifierKind(array, startIndex, length) {
+        ScannerUtilities.identifierKind = function (array, startIndex, length) {
             switch (length) {
                 case 2:
                     switch (array[startIndex]) {
@@ -11688,7 +11689,7 @@ var TypeScript;
         SyntaxDiagnostic.prototype.length = function () {
             return this._length;
         };
-        SyntaxDiagnostic.equals = function equals(diagnostic1, diagnostic2) {
+        SyntaxDiagnostic.equals = function (diagnostic1, diagnostic2) {
             return diagnostic1._start === diagnostic2._start && diagnostic1._length === diagnostic2._length && TypeScript.Diagnostic1.equals(diagnostic1, diagnostic2);
         };
         return SyntaxDiagnostic;
@@ -13712,10 +13713,10 @@ var TypeScript;
             }
             return new SourceUnitSyntax(moduleElements, endOfFileToken, this.parsedInStrictMode());
         };
-        SourceUnitSyntax.create = function create(endOfFileToken) {
+        SourceUnitSyntax.create = function (endOfFileToken) {
             return new SourceUnitSyntax(TypeScript.Syntax.emptyList, endOfFileToken, false);
         };
-        SourceUnitSyntax.create1 = function create1(endOfFileToken) {
+        SourceUnitSyntax.create1 = function (endOfFileToken) {
             return new SourceUnitSyntax(TypeScript.Syntax.emptyList, endOfFileToken, false);
         };
         SourceUnitSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -13800,7 +13801,7 @@ var TypeScript;
             }
             return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken, this.parsedInStrictMode());
         };
-        ExternalModuleReferenceSyntax.create1 = function create1(stringLiteral) {
+        ExternalModuleReferenceSyntax.create1 = function (stringLiteral) {
             return new ExternalModuleReferenceSyntax(TypeScript.Syntax.token(66 /* ModuleKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), stringLiteral, TypeScript.Syntax.token(73 /* CloseParenToken */ ), false);
         };
         ExternalModuleReferenceSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -13915,7 +13916,7 @@ var TypeScript;
             }
             return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, this.parsedInStrictMode());
         };
-        ImportDeclarationSyntax.create1 = function create1(identifier, moduleReference) {
+        ImportDeclarationSyntax.create1 = function (identifier, moduleReference) {
             return new ImportDeclarationSyntax(TypeScript.Syntax.token(49 /* ImportKeyword */ ), identifier, TypeScript.Syntax.token(107 /* EqualsToken */ ), moduleReference, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ImportDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -13986,7 +13987,7 @@ var TypeScript;
             }
             return new ExportAssignmentSyntax(exportKeyword, equalsToken, identifier, semicolonToken, this.parsedInStrictMode());
         };
-        ExportAssignmentSyntax.create1 = function create1(identifier) {
+        ExportAssignmentSyntax.create1 = function (identifier) {
             return new ExportAssignmentSyntax(TypeScript.Syntax.token(47 /* ExportKeyword */ ), TypeScript.Syntax.token(107 /* EqualsToken */ ), identifier, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ExportAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14066,10 +14067,10 @@ var TypeScript;
             }
             return new ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, this.parsedInStrictMode());
         };
-        ClassDeclarationSyntax.create = function create(classKeyword, identifier, openBraceToken, closeBraceToken) {
+        ClassDeclarationSyntax.create = function (classKeyword, identifier, openBraceToken, closeBraceToken) {
             return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, classKeyword, identifier, null, TypeScript.Syntax.emptyList, openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
         };
-        ClassDeclarationSyntax.create1 = function create1(identifier) {
+        ClassDeclarationSyntax.create1 = function (identifier) {
             return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(44 /* ClassKeyword */ ), identifier, null, TypeScript.Syntax.emptyList, TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         ClassDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14164,10 +14165,10 @@ var TypeScript;
             }
             return new InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, this.parsedInStrictMode());
         };
-        InterfaceDeclarationSyntax.create = function create(interfaceKeyword, identifier, body) {
+        InterfaceDeclarationSyntax.create = function (interfaceKeyword, identifier, body) {
             return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, interfaceKeyword, identifier, null, TypeScript.Syntax.emptyList, body, false);
         };
-        InterfaceDeclarationSyntax.create1 = function create1(identifier) {
+        InterfaceDeclarationSyntax.create1 = function (identifier) {
             return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(52 /* InterfaceKeyword */ ), identifier, null, TypeScript.Syntax.emptyList, ObjectTypeSyntax.create1(), false);
         };
         InterfaceDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14309,10 +14310,10 @@ var TypeScript;
             }
             return new ModuleDeclarationSyntax(modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, this.parsedInStrictMode());
         };
-        ModuleDeclarationSyntax.create = function create(moduleKeyword, openBraceToken, closeBraceToken) {
+        ModuleDeclarationSyntax.create = function (moduleKeyword, openBraceToken, closeBraceToken) {
             return new ModuleDeclarationSyntax(TypeScript.Syntax.emptyList, moduleKeyword, null, null, openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
         };
-        ModuleDeclarationSyntax.create1 = function create1() {
+        ModuleDeclarationSyntax.create1 = function () {
             return new ModuleDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(66 /* ModuleKeyword */ ), null, null, TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         ModuleDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14404,10 +14405,10 @@ var TypeScript;
             }
             return new FunctionDeclarationSyntax(modifiers, functionKeyword, identifier, callSignature, block, semicolonToken, this.parsedInStrictMode());
         };
-        FunctionDeclarationSyntax.create = function create(functionKeyword, identifier, callSignature) {
+        FunctionDeclarationSyntax.create = function (functionKeyword, identifier, callSignature) {
             return new FunctionDeclarationSyntax(TypeScript.Syntax.emptyList, functionKeyword, identifier, callSignature, null, null, false);
         };
-        FunctionDeclarationSyntax.create1 = function create1(identifier) {
+        FunctionDeclarationSyntax.create1 = function (identifier) {
             return new FunctionDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(27 /* FunctionKeyword */ ), identifier, CallSignatureSyntax.create1(), null, null, false);
         };
         FunctionDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14493,10 +14494,10 @@ var TypeScript;
             }
             return new VariableStatementSyntax(modifiers, variableDeclaration, semicolonToken, this.parsedInStrictMode());
         };
-        VariableStatementSyntax.create = function create(variableDeclaration, semicolonToken) {
+        VariableStatementSyntax.create = function (variableDeclaration, semicolonToken) {
             return new VariableStatementSyntax(TypeScript.Syntax.emptyList, variableDeclaration, semicolonToken, false);
         };
-        VariableStatementSyntax.create1 = function create1(variableDeclaration) {
+        VariableStatementSyntax.create1 = function (variableDeclaration) {
             return new VariableStatementSyntax(TypeScript.Syntax.emptyList, variableDeclaration, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         VariableStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14561,7 +14562,7 @@ var TypeScript;
             }
             return new VariableDeclarationSyntax(varKeyword, variableDeclarators, this.parsedInStrictMode());
         };
-        VariableDeclarationSyntax.create1 = function create1(variableDeclarators) {
+        VariableDeclarationSyntax.create1 = function (variableDeclarators) {
             return new VariableDeclarationSyntax(TypeScript.Syntax.token(40 /* VarKeyword */ ), variableDeclarators, false);
         };
         VariableDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14623,10 +14624,10 @@ var TypeScript;
             }
             return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause, this.parsedInStrictMode());
         };
-        VariableDeclaratorSyntax.create = function create(identifier) {
+        VariableDeclaratorSyntax.create = function (identifier) {
             return new VariableDeclaratorSyntax(identifier, null, null, false);
         };
-        VariableDeclaratorSyntax.create1 = function create1(identifier) {
+        VariableDeclaratorSyntax.create1 = function (identifier) {
             return new VariableDeclaratorSyntax(identifier, null, null, false);
         };
         VariableDeclaratorSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14688,7 +14689,7 @@ var TypeScript;
             }
             return new EqualsValueClauseSyntax(equalsToken, value, this.parsedInStrictMode());
         };
-        EqualsValueClauseSyntax.create1 = function create1(value) {
+        EqualsValueClauseSyntax.create1 = function (value) {
             return new EqualsValueClauseSyntax(TypeScript.Syntax.token(107 /* EqualsToken */ ), value, false);
         };
         EqualsValueClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14816,10 +14817,10 @@ var TypeScript;
             }
             return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken, this.parsedInStrictMode());
         };
-        ArrayLiteralExpressionSyntax.create = function create(openBracketToken, closeBracketToken) {
+        ArrayLiteralExpressionSyntax.create = function (openBracketToken, closeBracketToken) {
             return new ArrayLiteralExpressionSyntax(openBracketToken, TypeScript.Syntax.emptySeparatedList, closeBracketToken, false);
         };
-        ArrayLiteralExpressionSyntax.create1 = function create1() {
+        ArrayLiteralExpressionSyntax.create1 = function () {
             return new ArrayLiteralExpressionSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), false);
         };
         ArrayLiteralExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -14925,7 +14926,7 @@ var TypeScript;
             }
             return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken, this.parsedInStrictMode());
         };
-        ParenthesizedExpressionSyntax.create1 = function create1(expression) {
+        ParenthesizedExpressionSyntax.create1 = function (expression) {
             return new ParenthesizedExpressionSyntax(TypeScript.Syntax.token(72 /* OpenParenToken */ ), expression, TypeScript.Syntax.token(73 /* CloseParenToken */ ), false);
         };
         ParenthesizedExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15010,7 +15011,7 @@ var TypeScript;
             }
             return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body, this.parsedInStrictMode());
         };
-        SimpleArrowFunctionExpressionSyntax.create1 = function create1(identifier, body) {
+        SimpleArrowFunctionExpressionSyntax.create1 = function (identifier, body) {
             return new SimpleArrowFunctionExpressionSyntax(identifier, TypeScript.Syntax.token(85 /* EqualsGreaterThanToken */ ), body, false);
         };
         SimpleArrowFunctionExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15067,7 +15068,7 @@ var TypeScript;
             }
             return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, this.parsedInStrictMode());
         };
-        ParenthesizedArrowFunctionExpressionSyntax.create1 = function create1(body) {
+        ParenthesizedArrowFunctionExpressionSyntax.create1 = function (body) {
             return new ParenthesizedArrowFunctionExpressionSyntax(CallSignatureSyntax.create1(), TypeScript.Syntax.token(85 /* EqualsGreaterThanToken */ ), body, false);
         };
         ParenthesizedArrowFunctionExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15138,7 +15139,7 @@ var TypeScript;
             }
             return new QualifiedNameSyntax(left, dotToken, right, this.parsedInStrictMode());
         };
-        QualifiedNameSyntax.create1 = function create1(left, right) {
+        QualifiedNameSyntax.create1 = function (left, right) {
             return new QualifiedNameSyntax(left, TypeScript.Syntax.token(76 /* DotToken */ ), right, false);
         };
         QualifiedNameSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15197,10 +15198,10 @@ var TypeScript;
             }
             return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, this.parsedInStrictMode());
         };
-        TypeArgumentListSyntax.create = function create(lessThanToken, greaterThanToken) {
+        TypeArgumentListSyntax.create = function (lessThanToken, greaterThanToken) {
             return new TypeArgumentListSyntax(lessThanToken, TypeScript.Syntax.emptySeparatedList, greaterThanToken, false);
         };
-        TypeArgumentListSyntax.create1 = function create1() {
+        TypeArgumentListSyntax.create1 = function () {
             return new TypeArgumentListSyntax(TypeScript.Syntax.token(80 /* LessThanToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(81 /* GreaterThanToken */ ), false);
         };
         TypeArgumentListSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15277,10 +15278,10 @@ var TypeScript;
             }
             return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, this.parsedInStrictMode());
         };
-        ConstructorTypeSyntax.create = function create(newKeyword, parameterList, equalsGreaterThanToken, type) {
+        ConstructorTypeSyntax.create = function (newKeyword, parameterList, equalsGreaterThanToken, type) {
             return new ConstructorTypeSyntax(newKeyword, null, parameterList, equalsGreaterThanToken, type, false);
         };
-        ConstructorTypeSyntax.create1 = function create1(type) {
+        ConstructorTypeSyntax.create1 = function (type) {
             return new ConstructorTypeSyntax(TypeScript.Syntax.token(31 /* NewKeyword */ ), null, ParameterListSyntax.create1(), TypeScript.Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
         };
         ConstructorTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15357,10 +15358,10 @@ var TypeScript;
             }
             return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, this.parsedInStrictMode());
         };
-        FunctionTypeSyntax.create = function create(parameterList, equalsGreaterThanToken, type) {
+        FunctionTypeSyntax.create = function (parameterList, equalsGreaterThanToken, type) {
             return new FunctionTypeSyntax(null, parameterList, equalsGreaterThanToken, type, false);
         };
-        FunctionTypeSyntax.create1 = function create1(type) {
+        FunctionTypeSyntax.create1 = function (type) {
             return new FunctionTypeSyntax(null, ParameterListSyntax.create1(), TypeScript.Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
         };
         FunctionTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15431,10 +15432,10 @@ var TypeScript;
             }
             return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, this.parsedInStrictMode());
         };
-        ObjectTypeSyntax.create = function create(openBraceToken, closeBraceToken) {
+        ObjectTypeSyntax.create = function (openBraceToken, closeBraceToken) {
             return new ObjectTypeSyntax(openBraceToken, TypeScript.Syntax.emptySeparatedList, closeBraceToken, false);
         };
-        ObjectTypeSyntax.create1 = function create1() {
+        ObjectTypeSyntax.create1 = function () {
             return new ObjectTypeSyntax(TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         ObjectTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15505,7 +15506,7 @@ var TypeScript;
             }
             return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken, this.parsedInStrictMode());
         };
-        ArrayTypeSyntax.create1 = function create1(type) {
+        ArrayTypeSyntax.create1 = function (type) {
             return new ArrayTypeSyntax(type, TypeScript.Syntax.token(74 /* OpenBracketToken */ ), TypeScript.Syntax.token(75 /* CloseBracketToken */ ), false);
         };
         ArrayTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15570,7 +15571,7 @@ var TypeScript;
             }
             return new GenericTypeSyntax(name, typeArgumentList, this.parsedInStrictMode());
         };
-        GenericTypeSyntax.create1 = function create1(name) {
+        GenericTypeSyntax.create1 = function (name) {
             return new GenericTypeSyntax(name, TypeArgumentListSyntax.create1(), false);
         };
         GenericTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15623,7 +15624,7 @@ var TypeScript;
             }
             return new TypeAnnotationSyntax(colonToken, type, this.parsedInStrictMode());
         };
-        TypeAnnotationSyntax.create1 = function create1(type) {
+        TypeAnnotationSyntax.create1 = function (type) {
             return new TypeAnnotationSyntax(TypeScript.Syntax.token(106 /* ColonToken */ ), type, false);
         };
         TypeAnnotationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15685,10 +15686,10 @@ var TypeScript;
             }
             return new BlockSyntax(openBraceToken, statements, closeBraceToken, this.parsedInStrictMode());
         };
-        BlockSyntax.create = function create(openBraceToken, closeBraceToken) {
+        BlockSyntax.create = function (openBraceToken, closeBraceToken) {
             return new BlockSyntax(openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
         };
-        BlockSyntax.create1 = function create1() {
+        BlockSyntax.create1 = function () {
             return new BlockSyntax(TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         BlockSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15762,10 +15763,10 @@ var TypeScript;
             }
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, this.parsedInStrictMode());
         };
-        ParameterSyntax.create = function create(identifier) {
+        ParameterSyntax.create = function (identifier) {
             return new ParameterSyntax(null, null, identifier, null, null, null, false);
         };
-        ParameterSyntax.create1 = function create1(identifier) {
+        ParameterSyntax.create1 = function (identifier) {
             return new ParameterSyntax(null, null, identifier, null, null, null, false);
         };
         ParameterSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15854,7 +15855,7 @@ var TypeScript;
             }
             return new MemberAccessExpressionSyntax(expression, dotToken, name, this.parsedInStrictMode());
         };
-        MemberAccessExpressionSyntax.create1 = function create1(expression, name) {
+        MemberAccessExpressionSyntax.create1 = function (expression, name) {
             return new MemberAccessExpressionSyntax(expression, TypeScript.Syntax.token(76 /* DotToken */ ), name, false);
         };
         MemberAccessExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -15988,7 +15989,7 @@ var TypeScript;
             }
             return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken, this.parsedInStrictMode());
         };
-        ElementAccessExpressionSyntax.create1 = function create1(expression, argumentExpression) {
+        ElementAccessExpressionSyntax.create1 = function (expression, argumentExpression) {
             return new ElementAccessExpressionSyntax(expression, TypeScript.Syntax.token(74 /* OpenBracketToken */ ), argumentExpression, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), false);
         };
         ElementAccessExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16059,7 +16060,7 @@ var TypeScript;
             }
             return new InvocationExpressionSyntax(expression, argumentList, this.parsedInStrictMode());
         };
-        InvocationExpressionSyntax.create1 = function create1(expression) {
+        InvocationExpressionSyntax.create1 = function (expression) {
             return new InvocationExpressionSyntax(expression, ArgumentListSyntax.create1(), false);
         };
         InvocationExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16124,10 +16125,10 @@ var TypeScript;
             }
             return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, this.parsedInStrictMode());
         };
-        ArgumentListSyntax.create = function create(openParenToken, closeParenToken) {
+        ArgumentListSyntax.create = function (openParenToken, closeParenToken) {
             return new ArgumentListSyntax(null, openParenToken, TypeScript.Syntax.emptySeparatedList, closeParenToken, false);
         };
-        ArgumentListSyntax.create1 = function create1() {
+        ArgumentListSyntax.create1 = function () {
             return new ArgumentListSyntax(null, TypeScript.Syntax.token(72 /* OpenParenToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(73 /* CloseParenToken */ ), false);
         };
         ArgumentListSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16276,7 +16277,7 @@ var TypeScript;
             }
             return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse, this.parsedInStrictMode());
         };
-        ConditionalExpressionSyntax.create1 = function create1(condition, whenTrue, whenFalse) {
+        ConditionalExpressionSyntax.create1 = function (condition, whenTrue, whenFalse) {
             return new ConditionalExpressionSyntax(condition, TypeScript.Syntax.token(105 /* QuestionToken */ ), whenTrue, TypeScript.Syntax.token(106 /* ColonToken */ ), whenFalse, false);
         };
         ConditionalExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16350,7 +16351,7 @@ var TypeScript;
             }
             return new ConstructSignatureSyntax(newKeyword, callSignature, this.parsedInStrictMode());
         };
-        ConstructSignatureSyntax.create1 = function create1() {
+        ConstructSignatureSyntax.create1 = function () {
             return new ConstructSignatureSyntax(TypeScript.Syntax.token(31 /* NewKeyword */ ), CallSignatureSyntax.create1(), false);
         };
         ConstructSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16409,10 +16410,10 @@ var TypeScript;
             }
             return new MethodSignatureSyntax(propertyName, questionToken, callSignature, this.parsedInStrictMode());
         };
-        MethodSignatureSyntax.create = function create(propertyName, callSignature) {
+        MethodSignatureSyntax.create = function (propertyName, callSignature) {
             return new MethodSignatureSyntax(propertyName, null, callSignature, false);
         };
-        MethodSignatureSyntax.create1 = function create1(propertyName) {
+        MethodSignatureSyntax.create1 = function (propertyName) {
             return new MethodSignatureSyntax(propertyName, null, CallSignatureSyntax.create1(), false);
         };
         MethodSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16480,10 +16481,10 @@ var TypeScript;
             }
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, this.parsedInStrictMode());
         };
-        IndexSignatureSyntax.create = function create(openBracketToken, parameter, closeBracketToken) {
+        IndexSignatureSyntax.create = function (openBracketToken, parameter, closeBracketToken) {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null, false);
         };
-        IndexSignatureSyntax.create1 = function create1(parameter) {
+        IndexSignatureSyntax.create1 = function (parameter) {
             return new IndexSignatureSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), parameter, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), null, false);
         };
         IndexSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16548,10 +16549,10 @@ var TypeScript;
             }
             return new PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, this.parsedInStrictMode());
         };
-        PropertySignatureSyntax.create = function create(propertyName) {
+        PropertySignatureSyntax.create = function (propertyName) {
             return new PropertySignatureSyntax(propertyName, null, null, false);
         };
-        PropertySignatureSyntax.create1 = function create1(propertyName) {
+        PropertySignatureSyntax.create1 = function (propertyName) {
             return new PropertySignatureSyntax(propertyName, null, null, false);
         };
         PropertySignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16613,10 +16614,10 @@ var TypeScript;
             }
             return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, this.parsedInStrictMode());
         };
-        CallSignatureSyntax.create = function create(parameterList) {
+        CallSignatureSyntax.create = function (parameterList) {
             return new CallSignatureSyntax(null, parameterList, null, false);
         };
-        CallSignatureSyntax.create1 = function create1() {
+        CallSignatureSyntax.create1 = function () {
             return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, false);
         };
         CallSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16684,10 +16685,10 @@ var TypeScript;
             }
             return new ParameterListSyntax(openParenToken, parameters, closeParenToken, this.parsedInStrictMode());
         };
-        ParameterListSyntax.create = function create(openParenToken, closeParenToken) {
+        ParameterListSyntax.create = function (openParenToken, closeParenToken) {
             return new ParameterListSyntax(openParenToken, TypeScript.Syntax.emptySeparatedList, closeParenToken, false);
         };
-        ParameterListSyntax.create1 = function create1() {
+        ParameterListSyntax.create1 = function () {
             return new ParameterListSyntax(TypeScript.Syntax.token(72 /* OpenParenToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(73 /* CloseParenToken */ ), false);
         };
         ParameterListSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16752,10 +16753,10 @@ var TypeScript;
             }
             return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, this.parsedInStrictMode());
         };
-        TypeParameterListSyntax.create = function create(lessThanToken, greaterThanToken) {
+        TypeParameterListSyntax.create = function (lessThanToken, greaterThanToken) {
             return new TypeParameterListSyntax(lessThanToken, TypeScript.Syntax.emptySeparatedList, greaterThanToken, false);
         };
-        TypeParameterListSyntax.create1 = function create1() {
+        TypeParameterListSyntax.create1 = function () {
             return new TypeParameterListSyntax(TypeScript.Syntax.token(80 /* LessThanToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(81 /* GreaterThanToken */ ), false);
         };
         TypeParameterListSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16814,10 +16815,10 @@ var TypeScript;
             }
             return new TypeParameterSyntax(identifier, constraint, this.parsedInStrictMode());
         };
-        TypeParameterSyntax.create = function create(identifier) {
+        TypeParameterSyntax.create = function (identifier) {
             return new TypeParameterSyntax(identifier, null, false);
         };
-        TypeParameterSyntax.create1 = function create1(identifier) {
+        TypeParameterSyntax.create1 = function (identifier) {
             return new TypeParameterSyntax(identifier, null, false);
         };
         TypeParameterSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16870,7 +16871,7 @@ var TypeScript;
             }
             return new ConstraintSyntax(extendsKeyword, type, this.parsedInStrictMode());
         };
-        ConstraintSyntax.create1 = function create1(type) {
+        ConstraintSyntax.create1 = function (type) {
             return new ConstraintSyntax(TypeScript.Syntax.token(48 /* ExtendsKeyword */ ), type, false);
         };
         ConstraintSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16923,7 +16924,7 @@ var TypeScript;
             }
             return new ElseClauseSyntax(elseKeyword, statement, this.parsedInStrictMode());
         };
-        ElseClauseSyntax.create1 = function create1(statement) {
+        ElseClauseSyntax.create1 = function (statement) {
             return new ElseClauseSyntax(TypeScript.Syntax.token(23 /* ElseKeyword */ ), statement, false);
         };
         ElseClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -16997,10 +16998,10 @@ var TypeScript;
             }
             return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause, this.parsedInStrictMode());
         };
-        IfStatementSyntax.create = function create(ifKeyword, openParenToken, condition, closeParenToken, statement) {
+        IfStatementSyntax.create = function (ifKeyword, openParenToken, condition, closeParenToken, statement) {
             return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null, false);
         };
-        IfStatementSyntax.create1 = function create1(condition, statement) {
+        IfStatementSyntax.create1 = function (condition, statement) {
             return new IfStatementSyntax(TypeScript.Syntax.token(28 /* IfKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), condition, TypeScript.Syntax.token(73 /* CloseParenToken */ ), statement, null, false);
         };
         IfStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17080,7 +17081,7 @@ var TypeScript;
             }
             return new ExpressionStatementSyntax(expression, semicolonToken, this.parsedInStrictMode());
         };
-        ExpressionStatementSyntax.create1 = function create1(expression) {
+        ExpressionStatementSyntax.create1 = function (expression) {
             return new ExpressionStatementSyntax(expression, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ExpressionStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17145,10 +17146,10 @@ var TypeScript;
             }
             return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, this.parsedInStrictMode());
         };
-        ConstructorDeclarationSyntax.create = function create(constructorKeyword, parameterList) {
+        ConstructorDeclarationSyntax.create = function (constructorKeyword, parameterList) {
             return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null, false);
         };
-        ConstructorDeclarationSyntax.create1 = function create1() {
+        ConstructorDeclarationSyntax.create1 = function () {
             return new ConstructorDeclarationSyntax(TypeScript.Syntax.token(63 /* ConstructorKeyword */ ), ParameterListSyntax.create1(), null, null, false);
         };
         ConstructorDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17222,10 +17223,10 @@ var TypeScript;
             }
             return new MemberFunctionDeclarationSyntax(modifiers, propertyName, callSignature, block, semicolonToken, this.parsedInStrictMode());
         };
-        MemberFunctionDeclarationSyntax.create = function create(propertyName, callSignature) {
+        MemberFunctionDeclarationSyntax.create = function (propertyName, callSignature) {
             return new MemberFunctionDeclarationSyntax(TypeScript.Syntax.emptyList, propertyName, callSignature, null, null, false);
         };
-        MemberFunctionDeclarationSyntax.create1 = function create1(propertyName) {
+        MemberFunctionDeclarationSyntax.create1 = function (propertyName) {
             return new MemberFunctionDeclarationSyntax(TypeScript.Syntax.emptyList, propertyName, CallSignatureSyntax.create1(), null, null, false);
         };
         MemberFunctionDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17325,10 +17326,10 @@ var TypeScript;
             }
             return new GetMemberAccessorDeclarationSyntax(modifiers, getKeyword, propertyName, parameterList, typeAnnotation, block, this.parsedInStrictMode());
         };
-        GetMemberAccessorDeclarationSyntax.create = function create(getKeyword, propertyName, parameterList, block) {
+        GetMemberAccessorDeclarationSyntax.create = function (getKeyword, propertyName, parameterList, block) {
             return new GetMemberAccessorDeclarationSyntax(TypeScript.Syntax.emptyList, getKeyword, propertyName, parameterList, null, block, false);
         };
-        GetMemberAccessorDeclarationSyntax.create1 = function create1(propertyName) {
+        GetMemberAccessorDeclarationSyntax.create1 = function (propertyName) {
             return new GetMemberAccessorDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(65 /* GetKeyword */ ), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), false);
         };
         GetMemberAccessorDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17401,10 +17402,10 @@ var TypeScript;
             }
             return new SetMemberAccessorDeclarationSyntax(modifiers, setKeyword, propertyName, parameterList, block, this.parsedInStrictMode());
         };
-        SetMemberAccessorDeclarationSyntax.create = function create(setKeyword, propertyName, parameterList, block) {
+        SetMemberAccessorDeclarationSyntax.create = function (setKeyword, propertyName, parameterList, block) {
             return new SetMemberAccessorDeclarationSyntax(TypeScript.Syntax.emptyList, setKeyword, propertyName, parameterList, block, false);
         };
-        SetMemberAccessorDeclarationSyntax.create1 = function create1(propertyName) {
+        SetMemberAccessorDeclarationSyntax.create1 = function (propertyName) {
             return new SetMemberAccessorDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(68 /* SetKeyword */ ), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), false);
         };
         SetMemberAccessorDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17478,10 +17479,10 @@ var TypeScript;
             }
             return new MemberVariableDeclarationSyntax(modifiers, variableDeclarator, semicolonToken, this.parsedInStrictMode());
         };
-        MemberVariableDeclarationSyntax.create = function create(variableDeclarator, semicolonToken) {
+        MemberVariableDeclarationSyntax.create = function (variableDeclarator, semicolonToken) {
             return new MemberVariableDeclarationSyntax(TypeScript.Syntax.emptyList, variableDeclarator, semicolonToken, false);
         };
-        MemberVariableDeclarationSyntax.create1 = function create1(variableDeclarator) {
+        MemberVariableDeclarationSyntax.create1 = function (variableDeclarator) {
             return new MemberVariableDeclarationSyntax(TypeScript.Syntax.emptyList, variableDeclarator, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         MemberVariableDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17549,7 +17550,7 @@ var TypeScript;
             }
             return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken, this.parsedInStrictMode());
         };
-        ThrowStatementSyntax.create1 = function create1(expression) {
+        ThrowStatementSyntax.create1 = function (expression) {
             return new ThrowStatementSyntax(TypeScript.Syntax.token(36 /* ThrowKeyword */ ), expression, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ThrowStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17617,10 +17618,10 @@ var TypeScript;
             }
             return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken, this.parsedInStrictMode());
         };
-        ReturnStatementSyntax.create = function create(returnKeyword, semicolonToken) {
+        ReturnStatementSyntax.create = function (returnKeyword, semicolonToken) {
             return new ReturnStatementSyntax(returnKeyword, null, semicolonToken, false);
         };
-        ReturnStatementSyntax.create1 = function create1() {
+        ReturnStatementSyntax.create1 = function () {
             return new ReturnStatementSyntax(TypeScript.Syntax.token(33 /* ReturnKeyword */ ), null, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ReturnStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17688,10 +17689,10 @@ var TypeScript;
             }
             return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList, this.parsedInStrictMode());
         };
-        ObjectCreationExpressionSyntax.create = function create(newKeyword, expression) {
+        ObjectCreationExpressionSyntax.create = function (newKeyword, expression) {
             return new ObjectCreationExpressionSyntax(newKeyword, expression, null, false);
         };
-        ObjectCreationExpressionSyntax.create1 = function create1(expression) {
+        ObjectCreationExpressionSyntax.create1 = function (expression) {
             return new ObjectCreationExpressionSyntax(TypeScript.Syntax.token(31 /* NewKeyword */ ), expression, null, false);
         };
         ObjectCreationExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17774,10 +17775,10 @@ var TypeScript;
             }
             return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken, this.parsedInStrictMode());
         };
-        SwitchStatementSyntax.create = function create(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, closeBraceToken) {
+        SwitchStatementSyntax.create = function (switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, closeBraceToken) {
             return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
         };
-        SwitchStatementSyntax.create1 = function create1(expression) {
+        SwitchStatementSyntax.create1 = function (expression) {
             return new SwitchStatementSyntax(TypeScript.Syntax.token(34 /* SwitchKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), expression, TypeScript.Syntax.token(73 /* CloseParenToken */ ), TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         SwitchStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17880,10 +17881,10 @@ var TypeScript;
             }
             return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements, this.parsedInStrictMode());
         };
-        CaseSwitchClauseSyntax.create = function create(caseKeyword, expression, colonToken) {
+        CaseSwitchClauseSyntax.create = function (caseKeyword, expression, colonToken) {
             return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, TypeScript.Syntax.emptyList, false);
         };
-        CaseSwitchClauseSyntax.create1 = function create1(expression) {
+        CaseSwitchClauseSyntax.create1 = function (expression) {
             return new CaseSwitchClauseSyntax(TypeScript.Syntax.token(16 /* CaseKeyword */ ), expression, TypeScript.Syntax.token(106 /* ColonToken */ ), TypeScript.Syntax.emptyList, false);
         };
         CaseSwitchClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -17952,10 +17953,10 @@ var TypeScript;
             }
             return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements, this.parsedInStrictMode());
         };
-        DefaultSwitchClauseSyntax.create = function create(defaultKeyword, colonToken) {
+        DefaultSwitchClauseSyntax.create = function (defaultKeyword, colonToken) {
             return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, TypeScript.Syntax.emptyList, false);
         };
-        DefaultSwitchClauseSyntax.create1 = function create1() {
+        DefaultSwitchClauseSyntax.create1 = function () {
             return new DefaultSwitchClauseSyntax(TypeScript.Syntax.token(20 /* DefaultKeyword */ ), TypeScript.Syntax.token(106 /* ColonToken */ ), TypeScript.Syntax.emptyList, false);
         };
         DefaultSwitchClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18026,10 +18027,10 @@ var TypeScript;
             }
             return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken, this.parsedInStrictMode());
         };
-        BreakStatementSyntax.create = function create(breakKeyword, semicolonToken) {
+        BreakStatementSyntax.create = function (breakKeyword, semicolonToken) {
             return new BreakStatementSyntax(breakKeyword, null, semicolonToken, false);
         };
-        BreakStatementSyntax.create1 = function create1() {
+        BreakStatementSyntax.create1 = function () {
             return new BreakStatementSyntax(TypeScript.Syntax.token(15 /* BreakKeyword */ ), null, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         BreakStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18094,10 +18095,10 @@ var TypeScript;
             }
             return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken, this.parsedInStrictMode());
         };
-        ContinueStatementSyntax.create = function create(continueKeyword, semicolonToken) {
+        ContinueStatementSyntax.create = function (continueKeyword, semicolonToken) {
             return new ContinueStatementSyntax(continueKeyword, null, semicolonToken, false);
         };
-        ContinueStatementSyntax.create1 = function create1() {
+        ContinueStatementSyntax.create1 = function () {
             return new ContinueStatementSyntax(TypeScript.Syntax.token(18 /* ContinueKeyword */ ), null, TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         ContinueStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18217,10 +18218,10 @@ var TypeScript;
             }
             return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement, this.parsedInStrictMode());
         };
-        ForStatementSyntax.create = function create(forKeyword, openParenToken, firstSemicolonToken, secondSemicolonToken, closeParenToken, statement) {
+        ForStatementSyntax.create = function (forKeyword, openParenToken, firstSemicolonToken, secondSemicolonToken, closeParenToken, statement) {
             return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement, false);
         };
-        ForStatementSyntax.create1 = function create1(statement) {
+        ForStatementSyntax.create1 = function (statement) {
             return new ForStatementSyntax(TypeScript.Syntax.token(26 /* ForKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), null, null, TypeScript.Syntax.token(78 /* SemicolonToken */ ), null, TypeScript.Syntax.token(78 /* SemicolonToken */ ), null, TypeScript.Syntax.token(73 /* CloseParenToken */ ), statement, false);
         };
         ForStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18325,10 +18326,10 @@ var TypeScript;
             }
             return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement, this.parsedInStrictMode());
         };
-        ForInStatementSyntax.create = function create(forKeyword, openParenToken, inKeyword, expression, closeParenToken, statement) {
+        ForInStatementSyntax.create = function (forKeyword, openParenToken, inKeyword, expression, closeParenToken, statement) {
             return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement, false);
         };
-        ForInStatementSyntax.create1 = function create1(expression, statement) {
+        ForInStatementSyntax.create1 = function (expression, statement) {
             return new ForInStatementSyntax(TypeScript.Syntax.token(26 /* ForKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), null, null, TypeScript.Syntax.token(29 /* InKeyword */ ), expression, TypeScript.Syntax.token(73 /* CloseParenToken */ ), statement, false);
         };
         ForInStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18417,7 +18418,7 @@ var TypeScript;
             }
             return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement, this.parsedInStrictMode());
         };
-        WhileStatementSyntax.create1 = function create1(condition, statement) {
+        WhileStatementSyntax.create1 = function (condition, statement) {
             return new WhileStatementSyntax(TypeScript.Syntax.token(42 /* WhileKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), condition, TypeScript.Syntax.token(73 /* CloseParenToken */ ), statement, false);
         };
         WhileStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18500,7 +18501,7 @@ var TypeScript;
             }
             return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, this.parsedInStrictMode());
         };
-        WithStatementSyntax.create1 = function create1(condition, statement) {
+        WithStatementSyntax.create1 = function (condition, statement) {
             return new WithStatementSyntax(TypeScript.Syntax.token(43 /* WithKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), condition, TypeScript.Syntax.token(73 /* CloseParenToken */ ), statement, false);
         };
         WithStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18583,10 +18584,10 @@ var TypeScript;
             }
             return new EnumDeclarationSyntax(modifiers, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, this.parsedInStrictMode());
         };
-        EnumDeclarationSyntax.create = function create(enumKeyword, identifier, openBraceToken, closeBraceToken) {
+        EnumDeclarationSyntax.create = function (enumKeyword, identifier, openBraceToken, closeBraceToken) {
             return new EnumDeclarationSyntax(TypeScript.Syntax.emptyList, enumKeyword, identifier, openBraceToken, TypeScript.Syntax.emptySeparatedList, closeBraceToken, false);
         };
-        EnumDeclarationSyntax.create1 = function create1(identifier) {
+        EnumDeclarationSyntax.create1 = function (identifier) {
             return new EnumDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(46 /* EnumKeyword */ ), identifier, TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         EnumDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18657,10 +18658,10 @@ var TypeScript;
             }
             return new EnumElementSyntax(propertyName, equalsValueClause, this.parsedInStrictMode());
         };
-        EnumElementSyntax.create = function create(propertyName) {
+        EnumElementSyntax.create = function (propertyName) {
             return new EnumElementSyntax(propertyName, null, false);
         };
-        EnumElementSyntax.create1 = function create1(propertyName) {
+        EnumElementSyntax.create1 = function (propertyName) {
             return new EnumElementSyntax(propertyName, null, false);
         };
         EnumElementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18728,7 +18729,7 @@ var TypeScript;
             }
             return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, this.parsedInStrictMode());
         };
-        CastExpressionSyntax.create1 = function create1(type, expression) {
+        CastExpressionSyntax.create1 = function (type, expression) {
             return new CastExpressionSyntax(TypeScript.Syntax.token(80 /* LessThanToken */ ), type, TypeScript.Syntax.token(81 /* GreaterThanToken */ ), expression, false);
         };
         CastExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18796,10 +18797,10 @@ var TypeScript;
             }
             return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken, this.parsedInStrictMode());
         };
-        ObjectLiteralExpressionSyntax.create = function create(openBraceToken, closeBraceToken) {
+        ObjectLiteralExpressionSyntax.create = function (openBraceToken, closeBraceToken) {
             return new ObjectLiteralExpressionSyntax(openBraceToken, TypeScript.Syntax.emptySeparatedList, closeBraceToken, false);
         };
-        ObjectLiteralExpressionSyntax.create1 = function create1() {
+        ObjectLiteralExpressionSyntax.create1 = function () {
             return new ObjectLiteralExpressionSyntax(TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         ObjectLiteralExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18881,7 +18882,7 @@ var TypeScript;
             }
             return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, this.parsedInStrictMode());
         };
-        SimplePropertyAssignmentSyntax.create1 = function create1(propertyName, expression) {
+        SimplePropertyAssignmentSyntax.create1 = function (propertyName, expression) {
             return new SimplePropertyAssignmentSyntax(propertyName, TypeScript.Syntax.token(106 /* ColonToken */ ), expression, false);
         };
         SimplePropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -18942,7 +18943,7 @@ var TypeScript;
             }
             return new FunctionPropertyAssignmentSyntax(propertyName, callSignature, block, this.parsedInStrictMode());
         };
-        FunctionPropertyAssignmentSyntax.create1 = function create1(propertyName) {
+        FunctionPropertyAssignmentSyntax.create1 = function (propertyName) {
             return new FunctionPropertyAssignmentSyntax(propertyName, CallSignatureSyntax.create1(), BlockSyntax.create1(), false);
         };
         FunctionPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19032,10 +19033,10 @@ var TypeScript;
             }
             return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, this.parsedInStrictMode());
         };
-        GetAccessorPropertyAssignmentSyntax.create = function create(getKeyword, propertyName, openParenToken, closeParenToken, block) {
+        GetAccessorPropertyAssignmentSyntax.create = function (getKeyword, propertyName, openParenToken, closeParenToken, block) {
             return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, null, block, false);
         };
-        GetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName) {
+        GetAccessorPropertyAssignmentSyntax.create1 = function (propertyName) {
             return new GetAccessorPropertyAssignmentSyntax(TypeScript.Syntax.token(65 /* GetKeyword */ ), propertyName, TypeScript.Syntax.token(72 /* OpenParenToken */ ), TypeScript.Syntax.token(73 /* CloseParenToken */ ), null, BlockSyntax.create1(), false);
         };
         GetAccessorPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19114,7 +19115,7 @@ var TypeScript;
             }
             return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, this.parsedInStrictMode());
         };
-        SetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName, parameter) {
+        SetAccessorPropertyAssignmentSyntax.create1 = function (propertyName, parameter) {
             return new SetAccessorPropertyAssignmentSyntax(TypeScript.Syntax.token(68 /* SetKeyword */ ), propertyName, TypeScript.Syntax.token(72 /* OpenParenToken */ ), parameter, TypeScript.Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
         };
         SetAccessorPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19197,10 +19198,10 @@ var TypeScript;
             }
             return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, this.parsedInStrictMode());
         };
-        FunctionExpressionSyntax.create = function create(functionKeyword, callSignature, block) {
+        FunctionExpressionSyntax.create = function (functionKeyword, callSignature, block) {
             return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block, false);
         };
-        FunctionExpressionSyntax.create1 = function create1() {
+        FunctionExpressionSyntax.create1 = function () {
             return new FunctionExpressionSyntax(TypeScript.Syntax.token(27 /* FunctionKeyword */ ), null, CallSignatureSyntax.create1(), BlockSyntax.create1(), false);
         };
         FunctionExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19268,7 +19269,7 @@ var TypeScript;
             }
             return new EmptyStatementSyntax(semicolonToken, this.parsedInStrictMode());
         };
-        EmptyStatementSyntax.create1 = function create1() {
+        EmptyStatementSyntax.create1 = function () {
             return new EmptyStatementSyntax(TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         EmptyStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19330,10 +19331,10 @@ var TypeScript;
             }
             return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, this.parsedInStrictMode());
         };
-        TryStatementSyntax.create = function create(tryKeyword, block) {
+        TryStatementSyntax.create = function (tryKeyword, block) {
             return new TryStatementSyntax(tryKeyword, block, null, null, false);
         };
-        TryStatementSyntax.create1 = function create1() {
+        TryStatementSyntax.create1 = function () {
             return new TryStatementSyntax(TypeScript.Syntax.token(38 /* TryKeyword */ ), BlockSyntax.create1(), null, null, false);
         };
         TryStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19413,10 +19414,10 @@ var TypeScript;
             }
             return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, this.parsedInStrictMode());
         };
-        CatchClauseSyntax.create = function create(catchKeyword, openParenToken, identifier, closeParenToken, block) {
+        CatchClauseSyntax.create = function (catchKeyword, openParenToken, identifier, closeParenToken, block) {
             return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, null, closeParenToken, block, false);
         };
-        CatchClauseSyntax.create1 = function create1(identifier) {
+        CatchClauseSyntax.create1 = function (identifier) {
             return new CatchClauseSyntax(TypeScript.Syntax.token(17 /* CatchKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), identifier, null, TypeScript.Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
         };
         CatchClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19487,7 +19488,7 @@ var TypeScript;
             }
             return new FinallyClauseSyntax(finallyKeyword, block, this.parsedInStrictMode());
         };
-        FinallyClauseSyntax.create1 = function create1() {
+        FinallyClauseSyntax.create1 = function () {
             return new FinallyClauseSyntax(TypeScript.Syntax.token(25 /* FinallyKeyword */ ), BlockSyntax.create1(), false);
         };
         FinallyClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19552,7 +19553,7 @@ var TypeScript;
             }
             return new LabeledStatementSyntax(identifier, colonToken, statement, this.parsedInStrictMode());
         };
-        LabeledStatementSyntax.create1 = function create1(identifier, statement) {
+        LabeledStatementSyntax.create1 = function (identifier, statement) {
             return new LabeledStatementSyntax(identifier, TypeScript.Syntax.token(106 /* ColonToken */ ), statement, false);
         };
         LabeledStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19623,7 +19624,7 @@ var TypeScript;
             }
             return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken, this.parsedInStrictMode());
         };
-        DoStatementSyntax.create1 = function create1(statement, condition) {
+        DoStatementSyntax.create1 = function (statement, condition) {
             return new DoStatementSyntax(TypeScript.Syntax.token(22 /* DoKeyword */ ), statement, TypeScript.Syntax.token(42 /* WhileKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), condition, TypeScript.Syntax.token(73 /* CloseParenToken */ ), TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         DoStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19703,7 +19704,7 @@ var TypeScript;
             }
             return new TypeOfExpressionSyntax(typeOfKeyword, expression, this.parsedInStrictMode());
         };
-        TypeOfExpressionSyntax.create1 = function create1(expression) {
+        TypeOfExpressionSyntax.create1 = function (expression) {
             return new TypeOfExpressionSyntax(TypeScript.Syntax.token(39 /* TypeOfKeyword */ ), expression, false);
         };
         TypeOfExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19765,7 +19766,7 @@ var TypeScript;
             }
             return new DeleteExpressionSyntax(deleteKeyword, expression, this.parsedInStrictMode());
         };
-        DeleteExpressionSyntax.create1 = function create1(expression) {
+        DeleteExpressionSyntax.create1 = function (expression) {
             return new DeleteExpressionSyntax(TypeScript.Syntax.token(21 /* DeleteKeyword */ ), expression, false);
         };
         DeleteExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19827,7 +19828,7 @@ var TypeScript;
             }
             return new VoidExpressionSyntax(voidKeyword, expression, this.parsedInStrictMode());
         };
-        VoidExpressionSyntax.create1 = function create1(expression) {
+        VoidExpressionSyntax.create1 = function (expression) {
             return new VoidExpressionSyntax(TypeScript.Syntax.token(41 /* VoidKeyword */ ), expression, false);
         };
         VoidExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -19889,7 +19890,7 @@ var TypeScript;
             }
             return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, this.parsedInStrictMode());
         };
-        DebuggerStatementSyntax.create1 = function create1() {
+        DebuggerStatementSyntax.create1 = function () {
             return new DebuggerStatementSyntax(TypeScript.Syntax.token(19 /* DebuggerKeyword */ ), TypeScript.Syntax.token(78 /* SemicolonToken */ ), false);
         };
         DebuggerStatementSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -20319,7 +20320,7 @@ var TypeScript;
             var result = segments.join("");
             return TypeScript.Syntax.multiLineComment(result);
         };
-        SyntaxDedenter.dedentNode = function dedentNode(node, dedentFirstToken, dedentAmount, minimumIndent, options) {
+        SyntaxDedenter.dedentNode = function (node, dedentFirstToken, dedentAmount, minimumIndent, options) {
             var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
             var result = node.accept(dedenter);
             if (dedenter.isAborted()) {
@@ -20419,11 +20420,11 @@ var TypeScript;
             var newText = segments.join("");
             result.push(TypeScript.Syntax.multiLineComment(newText));
         };
-        SyntaxIndenter.indentNode = function indentNode(node, indentFirstToken, indentAmount, options) {
+        SyntaxIndenter.indentNode = function (node, indentFirstToken, indentAmount, options) {
             var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
             return node.accept(indenter);
         };
-        SyntaxIndenter.indentNodes = function indentNodes(nodes, indentFirstToken, indentAmount, options) {
+        SyntaxIndenter.indentNodes = function (nodes, indentFirstToken, indentAmount, options) {
             var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
             var result = TypeScript.ArrayUtilities.select(nodes, function (n) {
                 return n.accept(indenter);
@@ -22335,7 +22336,7 @@ var TypeScript;
 (function (TypeScript) {
     var SyntaxUtilities = (function () {
         function SyntaxUtilities() { }
-        SyntaxUtilities.isAngleBracket = function isAngleBracket(positionedElement) {
+        SyntaxUtilities.isAngleBracket = function (positionedElement) {
             var element = positionedElement.element();
             var parent = positionedElement.parentElement();
             if (parent !== null && (element.kind() === 80 /* LessThanToken */  || element.kind() === 81 /* GreaterThanToken */ )) {
@@ -23188,7 +23189,7 @@ var TypeScript;
             this._parentStack = [];
             this._parentStack.push(null);
         }
-        SyntaxInformationMap.create = function create(node, trackParents, trackPreviousToken) {
+        SyntaxInformationMap.create = function (node, trackParents, trackPreviousToken) {
             var map = new SyntaxInformationMap(trackParents, trackPreviousToken);
             map.visitNode(node);
             return map;
@@ -23266,7 +23267,7 @@ var TypeScript;
 
             this.tokenTable = TypeScript.Collections.createHashTable(TypeScript.Collections.DefaultHashTableCapacity, TypeScript.Collections.identityHashCode);
         }
-        SyntaxNodeInvariantsChecker.checkInvariants = function checkInvariants(node) {
+        SyntaxNodeInvariantsChecker.checkInvariants = function (node) {
             node.accept(new SyntaxNodeInvariantsChecker());
         };
         SyntaxNodeInvariantsChecker.prototype.visitToken = function (token) {
@@ -23548,7 +23549,7 @@ var TypeScript;
                 this._changeRange = IncrementalParserSource.extendToAffectedRange(textChangeRange, oldSourceUnit);
                 this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.languageVersion());
             }
-            IncrementalParserSource.extendToAffectedRange = function extendToAffectedRange(changeRange, sourceUnit) {
+            IncrementalParserSource.extendToAffectedRange = function (changeRange, sourceUnit) {
                 var maxLookahead = 1;
                 var start = changeRange.span().start();
                 for (var i = 0; start > 0 && i <= maxLookahead; i++) {
@@ -23920,7 +23921,7 @@ var TypeScript;
                     }
                 }
             };
-            ParserImpl.getPrecedence = function getPrecedence(expressionKind) {
+            ParserImpl.getPrecedence = function (expressionKind) {
                 switch (expressionKind) {
                     case 171 /* CommaExpression */ :
                         return 1 /* CommaExpressionPrecedence */ ;
@@ -24065,7 +24066,7 @@ var TypeScript;
                 sourceUnit = this.addSkippedTokensBeforeNode(sourceUnit, result.skippedTokens);
                 return sourceUnit;
             };
-            ParserImpl.updateStrictModeState = function updateStrictModeState(parser, items) {
+            ParserImpl.updateStrictModeState = function (parser, items) {
                 if (!parser.isInStrictMode) {
                     for (var i = 0; i < items.length; i++) {
                         var item = items[i];
@@ -24266,7 +24267,7 @@ var TypeScript;
                 }
                 return this.factory.enumElement(propertyName, equalsValueClause);
             };
-            ParserImpl.isModifier = function isModifier(token) {
+            ParserImpl.isModifier = function (token) {
                 switch (token.tokenKind) {
                     case 57 /* PublicKeyword */ :
                     case 55 /* PrivateKeyword */ :
@@ -24337,7 +24338,7 @@ var TypeScript;
             ParserImpl.prototype.isConstructorDeclaration = function () {
                 return this.currentToken().tokenKind === 63 /* ConstructorKeyword */ ;
             };
-            ParserImpl.isPublicOrPrivateKeyword = function isPublicOrPrivateKeyword(token) {
+            ParserImpl.isPublicOrPrivateKeyword = function (token) {
                 return token.tokenKind === 57 /* PublicKeyword */  || token.tokenKind === 55 /* PrivateKeyword */ ;
             };
             ParserImpl.prototype.isMemberAccessorDeclaration = function (inErrorRecovery) {
@@ -27399,6 +27400,45 @@ var TypeScript;
 (function (TypeScript) {
     var Unicode = (function () {
         function Unicode() { }
+        Unicode.lookupInUnicodeMap = function (code, map) {
+            if (code < map[0]) {
+                return false;
+            }
+            var lo = 0;
+            var hi = map.length;
+            var mid;
+            while (lo + 1 < hi) {
+                mid = lo + (hi - lo) / 2;
+                mid -= mid % 2;
+                if (map[mid] <= code && code <= map[mid + 1]) {
+                    return true;
+                }
+                if (code < map[mid]) {
+                    hi = mid;
+                } else {
+                    lo = mid + 2;
+                }
+            }
+            return false;
+        };
+        Unicode.isIdentifierStart = function (code, languageVersion) {
+            if (languageVersion === 0 /* EcmaScript3 */ ) {
+                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierStart);
+            } else if (languageVersion === 1 /* EcmaScript5 */ ) {
+                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierStart);
+            } else {
+                throw TypeScript.Errors.argumentOutOfRange("languageVersion");
+            }
+        };
+        Unicode.isIdentifierPart = function (code, languageVersion) {
+            if (languageVersion === 0 /* EcmaScript3 */ ) {
+                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierPart);
+            } else if (languageVersion === 1 /* EcmaScript5 */ ) {
+                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierPart);
+            } else {
+                throw TypeScript.Errors.argumentOutOfRange("languageVersion");
+            }
+        };
         Unicode.unicodeES3IdentifierStart = [
             170,
             170,
@@ -30199,45 +30239,6 @@ var TypeScript;
             65498,
             65500
         ];
-        Unicode.lookupInUnicodeMap = function lookupInUnicodeMap(code, map) {
-            if (code < map[0]) {
-                return false;
-            }
-            var lo = 0;
-            var hi = map.length;
-            var mid;
-            while (lo + 1 < hi) {
-                mid = lo + (hi - lo) / 2;
-                mid -= mid % 2;
-                if (map[mid] <= code && code <= map[mid + 1]) {
-                    return true;
-                }
-                if (code < map[mid]) {
-                    hi = mid;
-                } else {
-                    lo = mid + 2;
-                }
-            }
-            return false;
-        };
-        Unicode.isIdentifierStart = function isIdentifierStart(code, languageVersion) {
-            if (languageVersion === 0 /* EcmaScript3 */ ) {
-                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierStart);
-            } else if (languageVersion === 1 /* EcmaScript5 */ ) {
-                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierStart);
-            } else {
-                throw TypeScript.Errors.argumentOutOfRange("languageVersion");
-            }
-        };
-        Unicode.isIdentifierPart = function isIdentifierPart(code, languageVersion) {
-            if (languageVersion === 0 /* EcmaScript3 */ ) {
-                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierPart);
-            } else if (languageVersion === 1 /* EcmaScript5 */ ) {
-                return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierPart);
-            } else {
-                throw TypeScript.Errors.argumentOutOfRange("languageVersion");
-            }
-        };
         return Unicode;
     })();
     TypeScript.Unicode = Unicode;    
@@ -31066,7 +31067,7 @@ var TypeScript;
             }
             return nameEx;
         };
-        PullSymbol.getTypeParameterString = function getTypeParameterString(typars, scopeSymbol) {
+        PullSymbol.getTypeParameterString = function (typars, scopeSymbol) {
             var typarString = "";
             if (typars && typars.length) {
                 typarString = "<";
@@ -31080,7 +31081,7 @@ var TypeScript;
             }
             return typarString;
         };
-        PullSymbol.getIsExternallyVisible = function getIsExternallyVisible(symbol, fromIsExternallyVisibleSymbol, inIsExternallyVisibleSymbols) {
+        PullSymbol.getIsExternallyVisible = function (symbol, fromIsExternallyVisibleSymbol, inIsExternallyVisibleSymbols) {
             if (inIsExternallyVisibleSymbols) {
                 for (var i = 0; i < inIsExternallyVisibleSymbols.length; i++) {
                     if (inIsExternallyVisibleSymbols[i] === symbol) {
@@ -31336,13 +31337,13 @@ var TypeScript;
             }
             return this.stringConstantOverload;
         };
-        PullSignatureSymbol.getSignatureTypeMemberName = function getSignatureTypeMemberName(candidateSignature, signatures, scopeSymbol) {
+        PullSignatureSymbol.getSignatureTypeMemberName = function (candidateSignature, signatures, scopeSymbol) {
             var allMemberNames = new TypeScript.MemberNameArray();
             var signatureMemberName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, "", false, false, scopeSymbol, true, candidateSignature);
             allMemberNames.addAll(signatureMemberName);
             return allMemberNames;
         };
-        PullSignatureSymbol.getSignaturesTypeNameEx = function getSignaturesTypeNameEx(signatures, prefix, shortform, brackets, scopeSymbol, getPrettyTypeName, candidateSignature) {
+        PullSignatureSymbol.getSignaturesTypeNameEx = function (signatures, prefix, shortform, brackets, scopeSymbol, getPrettyTypeName, candidateSignature) {
             var result = [];
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
@@ -37880,7 +37881,6 @@ var TypeScript;
             this.resolver = null;
             this.context = new TypeScript.PullTypeResolutionContext();
         }
-        PullTypeChecker.globalPullTypeCheckPhase = 0;
         PullTypeChecker.prototype.setUnit = function (unitPath) {
             this.resolver = new TypeScript.PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
         };
@@ -39798,6 +39798,7 @@ var TypeScript;
                 }
             }
         };
+        PullTypeChecker.globalPullTypeCheckPhase = 0;
         return PullTypeChecker;
     })();
     TypeScript.PullTypeChecker = PullTypeChecker;    
@@ -39831,7 +39832,7 @@ var TypeScript;
             this.newSemanticInfo = newSemanticInfo;
             this.differences = [];
         }
-        PullDeclDiffer.diffDecls = function diffDecls(oldDecl, oldSemanticInfo, newDecl, newSemanticInfo) {
+        PullDeclDiffer.diffDecls = function (oldDecl, oldSemanticInfo, newDecl, newSemanticInfo) {
             var declDiffer = new PullDeclDiffer(oldSemanticInfo, newSemanticInfo);
             declDiffer.diff(oldDecl, newDecl);
             return declDiffer.differences;
@@ -39853,7 +39854,6 @@ var TypeScript;
                 this.differences.push(new PullDeclDiff(oldDecl, newDecl, 3 /* DeclChanged */ ));
             }
         };
-        PullDeclDiffer.emptyDeclArray = [];
         PullDeclDiffer.prototype.diff1 = function (oldDecl, newDecl, oldAST, newAST, oldNameToDecls, newNameToDecls) {
             var oldChildrenOfName;
             var newChildrenOfName;
@@ -39971,6 +39971,7 @@ var TypeScript;
         PullDeclDiffer.prototype.moduleDeclarationIsEquivalent = function (decl1, decl2) {
             return decl1.getModuleFlags() === decl2.getModuleFlags() && decl2.prettyName === decl2.prettyName && TypeScript.ArrayUtilities.sequenceEquals(decl1.amdDependencies, decl2.amdDependencies, TypeScript.StringUtilities.stringEquals);
         };
+        PullDeclDiffer.emptyDeclArray = [];
         return PullDeclDiffer;
     })();
     TypeScript.PullDeclDiffer = PullDeclDiffer;    
@@ -43559,7 +43560,7 @@ var TypeScript;
                 }
             }
         };
-        SyntaxPositionMap.create = function create(node) {
+        SyntaxPositionMap.create = function (node) {
             var map = new SyntaxPositionMap(node);
             return map;
         };
@@ -43590,8 +43591,7 @@ var TypeScript;
             this.isParsingAmbientModule = false;
             this.isParsingDeclareFile = TypeScript.isDTSFile(fileName);
         }
-        SyntaxTreeToAstVisitor.checkPositions = false;
-        SyntaxTreeToAstVisitor.visit = function visit(syntaxTree, fileName, compilationSettings) {
+        SyntaxTreeToAstVisitor.visit = function (syntaxTree, fileName, compilationSettings) {
             var map = SyntaxTreeToAstVisitor.checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
             var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap(), compilationSettings);
             return syntaxTree.sourceUnit().accept(visitor);
@@ -45854,6 +45854,7 @@ var TypeScript;
             this.setSpan(result, start, node);
             return result;
         };
+        SyntaxTreeToAstVisitor.checkPositions = false;
         return SyntaxTreeToAstVisitor;
     })();
     TypeScript.SyntaxTreeToAstVisitor = SyntaxTreeToAstVisitor;    
@@ -45897,7 +45898,7 @@ var TypeScript;
             var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
         };
-        Document.create = function create(fileName, scriptSnapshot, version, isOpen, referencedFiles, compilationSettings) {
+        Document.create = function (fileName, scriptSnapshot, version, isOpen, referencedFiles, compilationSettings) {
             var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
             var document = new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;
@@ -46034,7 +46035,7 @@ var TypeScript;
                 return this.outputScriptsToUTF8(this.getScripts());
             }
         };
-        TypeScriptCompiler.mapToDTSFileName = function mapToDTSFileName(fileName, wholeFileNameReplaced) {
+        TypeScriptCompiler.mapToDTSFileName = function (fileName, wholeFileNameReplaced) {
             return TypeScript.getDeclareFilePath(fileName);
         };
         TypeScriptCompiler.prototype.canEmitDeclarations = function (script) {
@@ -46088,7 +46089,7 @@ var TypeScript;
             }
             return [];
         };
-        TypeScriptCompiler.mapToFileNameExtension = function mapToFileNameExtension(extension, fileName, wholeFileNameReplaced) {
+        TypeScriptCompiler.mapToFileNameExtension = function (extension, fileName, wholeFileNameReplaced) {
             if (wholeFileNameReplaced) {
                 return fileName;
             } else {
@@ -46097,7 +46098,7 @@ var TypeScript;
                 return splitFname.join(".") + extension;
             }
         };
-        TypeScriptCompiler.mapToJSFileName = function mapToJSFileName(fileName, wholeFileNameReplaced) {
+        TypeScriptCompiler.mapToJSFileName = function (fileName, wholeFileNameReplaced) {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         };
         TypeScriptCompiler.prototype.emit = function (document, inputOutputMapper, emitter) {
