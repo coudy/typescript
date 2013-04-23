@@ -1205,7 +1205,7 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
-            emitter.writeToOutput("while(");
+            emitter.writeToOutput("while (");
             emitter.emitJavascript(this.cond, false);
             emitter.writeToOutput(")");
             emitter.emitStatements(this.body, false);
@@ -1335,7 +1335,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
-            emitter.writeToOutput("for(");
+            emitter.writeToOutput("for (");
             emitter.emitJavascript(this.lval, false);
             emitter.writeToOutput(" in ");
             emitter.emitJavascript(this.obj, false);
@@ -1367,7 +1367,7 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
-            emitter.writeToOutput("for(");
+            emitter.writeToOutput("for (");
             if (this.init) {
                 if (this.init.nodeType != NodeType.List) {
                     emitter.emitJavascript(this.init, false);
@@ -1438,7 +1438,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
-            emitter.writeToOutput("switch(");
+            emitter.writeToOutput("switch (");
             emitter.emitJavascript(this.val, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);

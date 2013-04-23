@@ -26,12 +26,12 @@ define(["require", "exports"], function(require, exports) {
             var chars = [
                 0x0054
             ];
-            for(var i in chars) {
+            for (var i in chars) {
                 fb.writeUtf8CodePoint(chars[i]);
             }
             fb.index = 0;
             var bytes = [];
-            for(var i = 0; i < 14; i++) {
+            for (var i = 0; i < 14; i++) {
                 bytes.push(fb.readByte());
             }
             var expected = [

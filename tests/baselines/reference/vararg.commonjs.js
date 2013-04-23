@@ -8,7 +8,7 @@ var M;
                 rest[_i] = arguments[_i + 1];
             }
             var sum = 0;
-            for(var i = 0; i < rest.length; i++) {
+            for (var i = 0; i < rest.length; i++) {
                 sum += rest[i];
             }
             result += (x + ": " + sum);
@@ -26,7 +26,7 @@ var M;
                 rest[_i] = arguments[_i + 0];
             }
             builder = "";
-            for(var i = 0; i < rest.length; i++) {
+            for (var i = 0; i < rest.length; i++) {
                 builder += rest[i];
             }
             return builder;

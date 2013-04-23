@@ -68,10 +68,10 @@ var z;
 function foo(a2) {
     var a = 10;
 }
-for(var i = 0, j = 0; i < 10; i++) {
+for (var i = 0, j = 0; i < 10; i++) {
     j++;
 }
-for(var k = 0; k < 30; k++) {
+for (var k = 0; k < 30; k++) {
     k++;
 }
 var b = 10;

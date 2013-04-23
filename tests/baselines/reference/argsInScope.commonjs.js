@@ -1,7 +1,7 @@
 var C = (function () {
     function C() { }
     C.prototype.P = function (ii, j, k) {
-        for(var i = 0; i < arguments.length; i++) {
+        for (var i = 0; i < arguments.length; i++) {
         }
     };
     return C;

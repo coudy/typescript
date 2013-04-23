@@ -36,7 +36,7 @@ var z4;
 function foo(a2) {
     var a = 10;
 }
-for(var i = 0; i < 30; i++) {
+for (var i = 0; i < 30; i++) {
     i++;
 }
 var b5 = 10;

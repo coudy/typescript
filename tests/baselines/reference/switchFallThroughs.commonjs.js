@@ -1,5 +1,5 @@
 function R1(index) {
-    switch(index) {
+    switch (index) {
         case 0:
         case 1:
         case 2:

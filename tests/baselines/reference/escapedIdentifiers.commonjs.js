@@ -73,26 +73,26 @@ constructorTestObject.arg2 = 'string';
 constructorTestObject.arg\u0033 = true;
 constructorTestObject.arg4 = 2;
 l\u0061bel1:
-while(false) {
-    while(false) {
+while (false) {
+    while (false) {
         continue label1;
     }
 }
 label2:
-while(false) {
-    while(false) {
+while (false) {
+    while (false) {
         continue label2;
     }
 }
 label3:
-while(false) {
-    while(false) {
+while (false) {
+    while (false) {
         continue label3;
     }
 }
 l\u0061bel4:
-while(false) {
-    while(false) {
+while (false) {
+    while (false) {
         continue label4;
     }
 }

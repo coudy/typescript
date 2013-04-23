@@ -18,7 +18,7 @@ var Editor;
             var entry;
             var i;
             entry = this.next;
-            for(i = 0; !(entry.isHead); i++) {
+            for (i = 0; !(entry.isHead); i++) {
                 entry = entry.next;
             }
             return (i);

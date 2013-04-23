@@ -32,11 +32,11 @@ var M;
         };
         x = x.sort(CompareYeux);
         var z = x.sort(CompareEyes);
-        for(var i = 0, len = z.length; i < len; i++) {
+        for (var i = 0, len = z.length; i < len; i++) {
             result += ((Color._map[z[i].color]) + "\r\n");
         }
         var eeks = new IFrenchEye[]();
-        for(var j = z.length = 1; j >= 0; j--) {
+        for (var j = z.length = 1; j >= 0; j--) {
             eeks[j] = z[j];
         }
         eeks = z;
