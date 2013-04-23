@@ -133,7 +133,7 @@ module TypeScript {
 
         private canEmitPrePostAstSignature(declFlags: DeclFlags, astWithPrePostCallback: AST, preCallback: boolean) {
             if (this.ignoreCallbackAst) {
-                CompilerDiagnostics.assert(this.ignoreCallbackAst != astWithPrePostCallback, "Ignore Callback AST mismatch");
+                CompilerDiagnostics.assert(this.ignoreCallbackAst !== astWithPrePostCallback, "Ignore Callback AST mismatch");
                 this.ignoreCallbackAst = null;
                 return false;
             } else if (preCallback &&
@@ -176,7 +176,7 @@ module TypeScript {
                     }
 
                     // Emit declare if not interface declaration && is not from module
-                    if (emitDeclare && typeString != "interface") {
+                    if (emitDeclare && typeString !== "interface") {
                         result += "declare ";
                     }
 
@@ -201,7 +201,7 @@ module TypeScript {
         }
 
         private popDeclarationContainer(ast: AST) {
-            CompilerDiagnostics.assert(ast != this.getAstDeclarationContainer(), 'Declaration container mismatch');
+            CompilerDiagnostics.assert(ast !== this.getAstDeclarationContainer(), 'Declaration container mismatch');
             this.declarationContainerStack.pop();
         }
 
@@ -213,7 +213,7 @@ module TypeScript {
                 this.declFile.WriteLine("{");
                 this.indenter.increaseIndent();
                 emitIndent = true;
-            } else if (memberName.prefix != "") {
+            } else if (memberName.prefix !== "") {
                 if (emitIndent) {
                     this.emitIndent();
                 }
@@ -312,7 +312,7 @@ module TypeScript {
                 return;
             }
             if (boundDecl.typeExpr || // Specified type expression
-                (boundDecl.init && type != this.semanticInfoChain.anyTypeSymbol)) { // Not infered any
+                (boundDecl.init && type !== this.semanticInfoChain.anyTypeSymbol)) { // Not infered any
                 this.declFile.Write(": ");
                 this.emitTypeSignature(type);
             }
@@ -418,7 +418,7 @@ module TypeScript {
                 var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
                 var firstSignatureDecl = firstSignature.getDeclarations()[0];
                 var firstFuncDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
-                if (firstFuncDecl != funcDecl) {
+                if (firstFuncDecl !== funcDecl) {
                     return false;
                 }
             }
@@ -438,7 +438,7 @@ module TypeScript {
                 var id = funcDecl.getNameText();
                 if (!isInterfaceMember) {
                     this.emitDeclFlags(ToDeclFlags(funcDecl.getFunctionFlags()), "function");
-                    if (id != "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
+                    if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
                         this.declFile.Write(id);
                     } else if (funcDecl.isConstructMember()) {
                         this.declFile.Write("new");
@@ -506,7 +506,7 @@ module TypeScript {
                 this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 var returnType = funcSignature.getReturnType();
                 if (funcDecl.returnTypeAnnotation ||
-                    (returnType && returnType != this.semanticInfoChain.anyTypeSymbol)) {
+                    (returnType && returnType !== this.semanticInfoChain.anyTypeSymbol)) {
                     this.declFile.Write(": ");
                     this.emitTypeSignature(returnType);
                 }
@@ -746,7 +746,7 @@ module TypeScript {
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
                         if (!this.emitOptions.outputMany) {
-                            CompilerDiagnostics.assert(this.singleDeclFile != this.declFile, "singleDeclFile cannot be null as we are going to revert back to it");
+                            CompilerDiagnostics.assert(this.singleDeclFile !== this.declFile, "singleDeclFile cannot be null as we are going to revert back to it");
                             CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
 
                             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit

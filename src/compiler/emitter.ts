@@ -52,7 +52,7 @@ module TypeScript {
         public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
             if (this.outputMany) {
                 var updatedFileName = fileName;
-                if (this.compilationSettings.outputOption != "") {
+                if (this.compilationSettings.outputOption !== "") {
                     // Replace the common directory path with the option specified
                     updatedFileName = fileName.replace(this.commonDirectoryPath, "");
                     updatedFileName = this.compilationSettings.outputOption + updatedFileName;
@@ -280,7 +280,7 @@ module TypeScript {
         public emitComments(ast: AST, pre: boolean) {
             var comments = pre ? ast.preComments : ast.postComments;
 
-            if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
+            if (this.emitOptions.compilationSettings.emitComments && comments && comments.length !== 0) {
                 for (var i = 0; i < comments.length; i++) {
                     this.emitCommentInPlace(comments[i]);
                 }
@@ -510,7 +510,7 @@ module TypeScript {
             var accessorSymbol = funcDecl.isAccessor() ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.document.fileName) : null;
             var container = accessorSymbol ? accessorSymbol.getContainer() : null;
             var containerKind = container ? container.getKind() : PullElementKind.None;
-            if (!(funcDecl.isAccessor() && containerKind != PullElementKind.Class && containerKind != PullElementKind.ConstructorType)) {
+            if (!(funcDecl.isAccessor() && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
                 this.writeToOutput("function ");
             }
             if (printName) {
@@ -586,7 +586,7 @@ module TypeScript {
                     argsLen = funcDecl.arguments.members.length;
                     for (var i = 0; i < argsLen; i++) {
                         arg = <Parameter>funcDecl.arguments.members[i];
-                        if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
+                        if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                             this.emitIndent();
                             this.recordSourceMappingStart(arg);
                             this.recordSourceMappingStart(arg.id);
@@ -776,11 +776,11 @@ module TypeScript {
                         // REVIEW: Note that modFilePath is normalized to forward slashes in Parser.parse, so the 
                         // first call to switchToForwardSlashes is technically a no-op, but it will prevent us from
                         // regressing if the parser changes
-                        if (switchToForwardSlashes(modFilePath) != switchToForwardSlashes(this.emittingFileName)) {
+                        if (switchToForwardSlashes(modFilePath) !== switchToForwardSlashes(this.emittingFileName)) {
                             this.emittingFileName = modFilePath;
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
                             this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
-                            if (prevSourceMapper != null) {
+                            if (prevSourceMapper !== null) {
                                 this.allSourceMappers = [];
                                 var sourceMapFile = this.emittingFileName + SourceMapper.MapFileExtension;
                                 var sourceMappingFile = this.createFile(sourceMapFile, false);
@@ -864,9 +864,9 @@ module TypeScript {
                     this.recordSourceMappingEnd(moduleDecl);
 
                     // close the module outfile, and restore the old one
-                    if (this.outfile != prevOutFile) {
+                    if (this.outfile !== prevOutFile) {
                         this.emitSourceMapsAndClose();
-                        if (prevSourceMapper != null) {
+                        if (prevSourceMapper !== null) {
                             this.allSourceMappers = prevAllSourceMappers;
                             this.sourceMapper = prevSourceMapper;
                             this.emitState.column = prevColumn;
@@ -888,7 +888,7 @@ module TypeScript {
                         this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
                     }
                     else if (isExported || temp === EmitContainer.Prog) {
-                        var dotMod = svModuleName != "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
+                        var dotMod = svModuleName !== "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
                         this.writeToOutput("}");
                         if (!isWholeFile) {
                             this.recordSourceMappingNameEnd();
@@ -896,7 +896,7 @@ module TypeScript {
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
                         this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
                     }
-                    else if (!isExported && temp != EmitContainer.Prog) {
+                    else if (!isExported && temp !== EmitContainer.Prog) {
                         this.writeToOutput("}");
                         if (!isWholeFile) {
                             this.recordSourceMappingNameEnd();
@@ -914,7 +914,7 @@ module TypeScript {
                     }
                     this.recordSourceMappingEnd(moduleDecl);
                     this.writeLineToOutput("");
-                    if (temp != EmitContainer.Prog && isExported) {
+                    if (temp !== EmitContainer.Prog && isExported) {
                         this.emitIndent();
                         this.recordSourceMappingStart(moduleDecl);
                         if (parentIsDynamic) {
@@ -960,7 +960,7 @@ module TypeScript {
             var funcName = funcDecl.getNameText();
 
             if ((this.emitState.inObjectLiteral || !funcDecl.isAccessor()) &&
-            ((temp != EmitContainer.Constructor) ||
+            ((temp !== EmitContainer.Constructor) ||
             ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
                 var tempLit = this.setInObjectLiteral(false);
                 hasSelfRef = this.shouldCaptureThis(funcDecl);
@@ -1090,7 +1090,7 @@ module TypeScript {
                 var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.getKind() : PullElementKind.None;
                 if (parentKind == PullElementKind.Class) {
                     // class
-                    if (this.emitState.container != EmitContainer.Args) {
+                    if (this.emitState.container !== EmitContainer.Args) {
                         if (varDecl.isStatic()) {
                             this.writeToOutput(parentSymbol.getName() + ".");
                         }
@@ -1119,14 +1119,14 @@ module TypeScript {
                 }
                 else {
                     // function, constructor, method etc.
-                    //if (tokenId != SyntaxKind.OpenParenToken) {
+                    //if (tokenId !== SyntaxKind.OpenParenToken) {
                         this.emitVarDeclVar();
                     //}
                 }
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
                 this.recordSourceMappingEnd(varDecl.id);
-                var hasInitializer = (varDecl.init != null);
+                var hasInitializer = (varDecl.init !== null);
                 if (hasInitializer) {
                     this.writeToOutputTrimmable(" = ");
 
@@ -1140,13 +1140,13 @@ module TypeScript {
 
                 if (parentKind == PullElementKind.Class) {
                     // class
-                    if (this.emitState.container != EmitContainer.Args) {
+                    if (this.emitState.container !== EmitContainer.Args) {
                         this.writeToOutput(";");
                     }
                 }
 
                 this.onEmitVar();
-                //if ((tokenId != SyntaxKind.OpenParenToken)) {
+                //if ((tokenId !== SyntaxKind.OpenParenToken)) {
                 //    if (this.varListCount() < 0) {
                 //        this.writeToOutput(", ");
                 //    }
@@ -1213,7 +1213,7 @@ module TypeScript {
                 var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
                     : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
                 var pullSymbolKind = pullSymbol.getKind();
-                if (addThis && (this.emitState.container != EmitContainer.Args) && pullSymbol) {
+                if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
                     if (pullSymbolContainer) {
                         var pullSymbolContainerKind = pullSymbolContainer.getKind();
@@ -1244,8 +1244,8 @@ module TypeScript {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
-                            //             pullSymbolKind != PullElementKind.Class && 
-                            //             pullSymbolKind != PullElementKind.ConstructorMethod && 
+                            //             pullSymbolKind !== PullElementKind.Class && 
+                            //             pullSymbolKind !== PullElementKind.ConstructorMethod && 
                             //             !pullSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
                             //         this.writeToOutput(pullSymbolContainer.getName() + ".");
                             // }
@@ -1308,8 +1308,8 @@ module TypeScript {
 
         public emitStatements(stmts: AST, emitEmptyBod: boolean) {
             if (stmts) {
-                if (stmts.nodeType != NodeType.Block) {
-                    var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
+                if (stmts.nodeType !== NodeType.Block) {
+                    var hasContents = (stmts && (stmts.nodeType !== NodeType.List || ((<ASTList>stmts).members.length > 0)));
                     if (emitEmptyBod || hasContents) {
                         var hasOnlyBlockStatement = ((stmts.nodeType === NodeType.Block) ||
                         ((stmts.nodeType === NodeType.List) && ((<ASTList>stmts).members.length === 1) && ((<ASTList>stmts).members[0].nodeType === NodeType.Block)));
@@ -1420,7 +1420,7 @@ module TypeScript {
                 var argsLen = constructorDecl.arguments.members.length;
                 for (var iArg = 0; iArg < argsLen; iArg++) {
                     var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
-                    if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
+                    if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                         this.emitIndent();
                         this.recordSourceMappingStart(arg);
                         this.recordSourceMappingStart(arg.id);
@@ -1454,7 +1454,7 @@ module TypeScript {
             if (ast === null) {
                 return;
             }
-            else if (ast.nodeType != NodeType.List) {
+            else if (ast.nodeType !== NodeType.List) {
                 this.emitPrologue(emitPrologue);
                 this.emitJavascript(ast, startLine);
             }
@@ -1503,12 +1503,12 @@ module TypeScript {
                         }
                     }
                     else if (startLine &&
-                             (emitNode.nodeType != NodeType.ModuleDeclaration) &&
-                             (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
+                             (emitNode.nodeType !== NodeType.ModuleDeclaration) &&
+                             (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                              (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0) &&
-                             (emitNode.nodeType != NodeType.FunctionDeclaration)) {
+                             (emitNode.nodeType !== NodeType.FunctionDeclaration)) {
                         this.writeLineToOutput("");
                     }
                 }
@@ -1533,12 +1533,12 @@ module TypeScript {
                 ast.nodeType !== NodeType.List &&
                 ast.nodeType !== NodeType.VariableDeclaration) {
 
-                if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
+                if ((ast.nodeType !== NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VariableDeclarator) &&
                     ((((<VariableDeclarator>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                     (((<VariableDeclarator>ast).init) === null)) && this.varListCount() >= 0) &&
-                    ((ast.nodeType != NodeType.FunctionDeclaration) ||
-                    (this.emitState.container != EmitContainer.Constructor))) {
+                    ((ast.nodeType !== NodeType.FunctionDeclaration) ||
+                    (this.emitState.container !== EmitContainer.Constructor))) {
 
                     this.emitIndent();
                 }

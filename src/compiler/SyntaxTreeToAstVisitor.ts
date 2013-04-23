@@ -143,7 +143,7 @@ module TypeScript {
 
             if (span.minChar !== -1) {
                 Debug.assert(span.limChar !== -1);
-                Debug.assert((<any>span).nodeType != undefined);
+                Debug.assert((<any>span).nodeType !== undefined);
 
                 // Have an existing span.  We need to adjust it so that it starts at the provided
                 // desiredMinChar.
@@ -500,7 +500,7 @@ module TypeScript {
             }
 
             var topLevelMod: ModuleDeclaration = null;
-            if (this.compilationSettings.moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
+            if (this.compilationSettings.moduleGenTarget !== ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName);
                 topLevelMod = new ModuleDeclaration(id, bod, null);

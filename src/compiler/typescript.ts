@@ -230,7 +230,7 @@ module TypeScript {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
-                if (!script.isDeclareFile && script.topLevelMod != null) {
+                if (!script.isDeclareFile && script.topLevelMod !== null) {
                     return true;
                 }
             }
@@ -257,7 +257,7 @@ module TypeScript {
                     } else {
                         var updatedPath = false;
                         for (var j = 0; j < commonComponentsLength && j < fileComponents.length; j++) {
-                            if (commonComponents[j] != fileComponents[j]) {
+                            if (commonComponents[j] !== fileComponents[j]) {
                                 // The new components = 0 ... j -1
                                 commonComponentsLength = j;
                                 updatedPath = true;
@@ -280,7 +280,7 @@ module TypeScript {
             }
 
             this.emitOptions.commonDirectoryPath = commonComponents.slice(0, commonComponentsLength).join("/") + "/";
-            if (this.emitOptions.compilationSettings.outputOption.charAt(this.emitOptions.compilationSettings.outputOption.length - 1) != "/") {
+            if (this.emitOptions.compilationSettings.outputOption.charAt(this.emitOptions.compilationSettings.outputOption.length - 1) !== "/") {
                 this.emitOptions.compilationSettings.outputOption += "/";
             }
 
@@ -931,7 +931,7 @@ module TypeScript {
                         for (var i = 0; i < declarationInitASTs.length; i++) {
 
                             assigningAST = declarationInitASTs[i];
-                            isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
+                            isTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
                             this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
                             varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
@@ -971,7 +971,7 @@ module TypeScript {
                         var isPropertyOrVar = symbol.getKind() == PullElementKind.Property || symbol.getKind() == PullElementKind.Variable;
                         var typeSymbol = symbol.getType();
                         if (isPropertyOrVar) {
-                            isPropertyOrVar = (typeSymbol.getKind() != PullElementKind.Interface && typeSymbol.getKind() != PullElementKind.ObjectType) || typeSymbol.getName() == "";
+                            isPropertyOrVar = (typeSymbol.getKind() !== PullElementKind.Interface && typeSymbol.getKind() !== PullElementKind.ObjectType) || typeSymbol.getName() == "";
                         }
 
                         if (!isPropertyOrVar) {
@@ -995,7 +995,7 @@ module TypeScript {
                             if (callResolutionResults.candidateSignature) {
                                 candidateSignature = callResolutionResults.candidateSignature;
                             }
-                            if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() != "") {
+                            if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() !== "") {
                                 symbol = callResolutionResults.targetSymbol;
                             }
                             foundAST = callExpression;
@@ -1004,7 +1004,7 @@ module TypeScript {
                 }
 
                 if (funcDecl) {
-                    if (symbol && symbol.getKind() != PullElementKind.Property) {
+                    if (symbol && symbol.getKind() !== PullElementKind.Property) {
                         var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain.getUnit(scriptName));
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
@@ -1061,7 +1061,7 @@ module TypeScript {
 
                     case NodeType.VariableDeclarator:
                         var assigningAST = <VariableDeclarator> current;
-                        isTypedAssignment = (assigningAST.typeExpr != null);
+                        isTypedAssignment = (assigningAST.typeExpr !== null);
 
                         this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
                         var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);

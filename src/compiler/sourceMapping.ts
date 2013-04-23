@@ -106,7 +106,7 @@ module TypeScript {
                 }
 
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
-                    if (recordedPosition != null &&
+                    if (recordedPosition !== null &&
                         recordedPosition.emittedColumn == mappedPosition.emittedColumn &&
                         recordedPosition.emittedLine == mappedPosition.emittedLine) {
                         // This position is already recorded

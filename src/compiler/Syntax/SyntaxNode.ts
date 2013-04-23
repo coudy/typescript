@@ -30,7 +30,7 @@ module TypeScript {
             for (var i = 0, n = this.childCount(); i < n; i++) {
                 var element = this.childAt(i);
 
-                if (element != null) {
+                if (element !== null) {
                     if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
                         return element.firstToken();
                     }
@@ -45,7 +45,7 @@ module TypeScript {
             for (var i = this.childCount() - 1; i >= 0; i--) {
                 var element = this.childAt(i);
 
-                if (element != null) {
+                if (element !== null) {
                     if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
                         return element.lastToken();
                     }

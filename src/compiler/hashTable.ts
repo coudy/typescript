@@ -179,7 +179,7 @@ module TypeScript {
 
         public lookup(key: string) {
             var data = this.primaryTable.lookup(key);
-            if (data != undefined) {
+            if (data !== undefined) {
                 return data;
             }
             else {
@@ -224,7 +224,7 @@ module TypeScript {
             var val: number = this.hashFn(key);
             val = val % this.size;
 
-            for (var current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current !== null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     return false;
                 }
@@ -241,7 +241,7 @@ module TypeScript {
             var result = null;
             var prevEntry: HashEntry = null;
 
-            for (var current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current !== null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     result = current.data;
                     this.itemCount--;
@@ -263,7 +263,7 @@ module TypeScript {
         public lookup(key) {
             var val: number = this.hashFn(key);
             val = val % this.size;
-            for (var current = this.table[val]; current != null ; current = current.next) {
+            for (var current = this.table[val]; current !== null ; current = current.next) {
                 if (this.equalsFn(key, current.key)) {
                     return (current.data);
                 }

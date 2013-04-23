@@ -788,7 +788,7 @@ module TypeScript {
         }
 
         public isMethod() {
-            return (this.getFunctionFlags() & FunctionFlags.Method) != FunctionFlags.None;
+            return (this.getFunctionFlags() & FunctionFlags.Method) !== FunctionFlags.None;
         }
 
         public isCallMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.CallMember); }
@@ -800,7 +800,7 @@ module TypeScript {
         public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }
         public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
 
-        public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) != FunctionFlags.None; }
+        public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) !== FunctionFlags.None; }
     }
 
     export class Script extends AST {
@@ -1275,7 +1275,7 @@ module TypeScript {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for (");
             if (this.init) {
-                if (this.init.nodeType != NodeType.List) {
+                if (this.init.nodeType !== NodeType.List) {
                     this.init.emit(emitter, false);
                 }
                 else {
@@ -1569,7 +1569,7 @@ module TypeScript {
 
         public isDocComment() {
             if (this.isBlockComment) {
-                return this.content.charAt(2) === "*" && this.content.charAt(3) != "/";
+                return this.content.charAt(2) === "*" && this.content.charAt(3) !== "/";
             }
 
             return false;
@@ -1585,7 +1585,7 @@ module TypeScript {
 
         static consumeLeadingSpace(line: string, startIndex: number, maxSpacesToRemove?: number) {
             var endIndex = line.length;
-            if (maxSpacesToRemove != undefined) {
+            if (maxSpacesToRemove !== undefined) {
                 endIndex = min(startIndex + maxSpacesToRemove, endIndex);
             }
 
@@ -1596,7 +1596,7 @@ module TypeScript {
                 }
             }
 
-            if (endIndex != line.length) {
+            if (endIndex !== line.length) {
                 return endIndex;
             }
 
@@ -1617,13 +1617,13 @@ module TypeScript {
 
         static cleanDocCommentLine(line: string, jsDocStyleComment: boolean, jsDocLineSpaceToRemove?: number) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
-            if (nonSpaceIndex != -1) {
+            if (nonSpaceIndex !== -1) {
                 var jsDocSpacesRemoved = nonSpaceIndex;
                 if (jsDocStyleComment && line.charAt(nonSpaceIndex) === '*') { // remove leading * in case of jsDocComment
                     var startIndex = nonSpaceIndex + 1;
                     nonSpaceIndex = Comment.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
 
-                    if (nonSpaceIndex != -1) {
+                    if (nonSpaceIndex !== -1) {
                         jsDocSpacesRemoved = nonSpaceIndex - startIndex;
                     } else {
                         return null;
@@ -1705,7 +1705,7 @@ module TypeScript {
             var docCommentText: string[] = [];
             for (var c = 0 ; c < comments.length; c++) {
                 var commentText = comments[c].getDocCommentTextValue();
-                if (commentText != "") {
+                if (commentText !== "") {
                     docCommentText.push(commentText);
                 }
             }
@@ -1782,7 +1782,7 @@ module TypeScript {
                     }
 
                     // Parameter name
-                    if (param != commentContents.substr(j, param.length) || !Comment.isSpaceChar(commentContents, j + param.length)) {
+                    if (param !== commentContents.substr(j, param.length) || !Comment.isSpaceChar(commentContents, j + param.length)) {
                         // this is not the parameter we are looking for
                         continue;
                     }
@@ -1799,13 +1799,13 @@ module TypeScript {
                     // Find alignement spaces to remove
                     var paramSpacesToRemove: number = undefined;
                     var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
-                    if (paramLineIndex != 0) {
+                    if (paramLineIndex !== 0) {
                         if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) === "\r") {
                             paramLineIndex++;
                         }
                     }
                     var startSpaceRemovalIndex = Comment.consumeLeadingSpace(commentContents, paramLineIndex);
-                    if (startSpaceRemovalIndex != j && commentContents.charAt(startSpaceRemovalIndex) === "*") {
+                    if (startSpaceRemovalIndex !== j && commentContents.charAt(startSpaceRemovalIndex) === "*") {
                         paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
                     }
 

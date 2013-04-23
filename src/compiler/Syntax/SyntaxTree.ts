@@ -161,7 +161,7 @@ module TypeScript {
                     var parameter = <ParameterSyntax>node.parameters.childAt(i);
 
                     if (parameter.dotDotDotToken) {
-                        if (parameterIndex != (parameterCount - 1)) {
+                        if (parameterIndex !== (parameterCount - 1)) {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
                                 DiagnosticCode.Rest_parameter_must_be_last_in_list);

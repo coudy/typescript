@@ -24,11 +24,11 @@ module TypeScript {
     }
 
     export function isSingleQuoted(str: string) {
-        return str.indexOf("'") != -1;
+        return str.indexOf("'") !== -1;
     }
 
     export function isQuoted(str: string) {
-        return str.indexOf("\"") != -1 || isSingleQuoted(str);
+        return str.indexOf("\"") !== -1 || isSingleQuoted(str);
     }
 
     export function quoteStr(str: string) {
@@ -37,7 +37,7 @@ module TypeScript {
 
     export function swapQuotes(str: string) {
 
-        if (str.indexOf("\"") != -1) {
+        if (str.indexOf("\"") !== -1) {
             str = str.replace("\"", "'");
             str = str.replace("\"", "'");
         }
@@ -111,17 +111,17 @@ module TypeScript {
         // Find the component that differs
         var joinStartIndex = 0;
         for (; joinStartIndex < modComponents.length && joinStartIndex < fixedModComponents.length ; joinStartIndex++) {
-            if (fixedModComponents[joinStartIndex] != modComponents[joinStartIndex]) {
+            if (fixedModComponents[joinStartIndex] !== modComponents[joinStartIndex]) {
                 break;
             }
         }
 
         // Get the relative path
-        if (joinStartIndex != 0) {
+        if (joinStartIndex !== 0) {
             var relativePath = "";
             var relativePathComponents = modComponents.slice(joinStartIndex, modComponents.length);
             for (; joinStartIndex < fixedModComponents.length; joinStartIndex++) {
-                if (fixedModComponents[joinStartIndex] != "") {
+                if (fixedModComponents[joinStartIndex] !== "") {
                     relativePath = relativePath + "../";
                 }
             }
@@ -153,7 +153,7 @@ module TypeScript {
         return path.charAt(0) == ".";
     }
     export function isRooted(path: string) {
-        return path.charAt(0) == "\\" || path.charAt(0) == "/" || (path.indexOf(":\\") != -1) || (path.indexOf(":/") != -1);
+        return path.charAt(0) == "\\" || path.charAt(0) == "/" || (path.indexOf(":\\") !== -1) || (path.indexOf(":/") !== -1);
     }
 
     export function getRootFilePath(outFname: string) {
@@ -161,7 +161,7 @@ module TypeScript {
             return outFname;
         }
         else {
-            var isPath = outFname.indexOf("/") != -1;
+            var isPath = outFname.indexOf("/") !== -1;
             return isPath ? filePath(outFname) : "";
         }
     }

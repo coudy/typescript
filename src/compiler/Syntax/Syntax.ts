@@ -257,10 +257,10 @@ module TypeScript.Syntax {
     export function nodeHasSkippedOrMissingTokens(node: SyntaxNode): boolean {
         for (var i = 0; i < node.childCount(); i++) {
             var child = node.childAt(i);
-            if (child != null && child.isToken()) {
+            if (child !== null && child.isToken()) {
                 var token = <ISyntaxToken>child;
                 // If a token is skipped, return true. Or if it is a missing token. The only empty token that is not missing is EOF
-                if (token.hasSkippedToken() || (token.width() == 0 && token.kind() != SyntaxKind.EndOfFileToken)) {
+                if (token.hasSkippedToken() || (token.width() == 0 && token.kind() !== SyntaxKind.EndOfFileToken)) {
                     return true;
                 }
             }

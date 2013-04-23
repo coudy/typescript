@@ -168,7 +168,7 @@ module TypeScript {
                     }
                 }
 
-                if (resolvedFile && resolvedFile.content != null) {
+                if (resolvedFile && resolvedFile.content !== null) {
                     // preprocess the file, to gather dependencies
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
