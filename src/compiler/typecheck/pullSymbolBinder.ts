@@ -150,7 +150,7 @@ module TypeScript {
         public symbolIsRedeclaration(sym: PullSymbol): boolean {
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) ||
-                    ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
+                    ((sym.getRebindingID() === this.bindingPhase) && (symID != this.startingSymbolForRebind));
         }
 
         //
@@ -188,7 +188,7 @@ module TypeScript {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
                 }
             }
-            else if (!isExported || moduleContainerDecl.getKind() == PullElementKind.DynamicModule) {
+            else if (!isExported || moduleContainerDecl.getKind() === PullElementKind.DynamicModule) {
                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
             }
 
@@ -233,7 +233,7 @@ module TypeScript {
                 if (parent) {
                     var linkKind = moduleContainerDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
-                    if (linkKind == SymbolLinkKind.PublicMember) {
+                    if (linkKind === SymbolLinkKind.PublicMember) {
                         parent.addMember(moduleContainerTypeSymbol, linkKind);
                     }
                     else {
@@ -247,7 +247,7 @@ module TypeScript {
                 var scriptName = moduleContainerDecl.getScriptName();
 
                 for (var i = 0; i < decls.length; i++) {
-                    if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[i].getScriptName() === scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
                         moduleContainerTypeSymbol.removeDeclaration(decls[i]);
                     }
                 }
@@ -319,7 +319,7 @@ module TypeScript {
                 var scriptName = importDeclaration.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         importSymbol.removeDeclaration(decls[j]);
                     }
                 }
@@ -393,7 +393,7 @@ module TypeScript {
                 if (parent) {
                     var linkKind = enumDeclaration.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
-                    if (linkKind == SymbolLinkKind.PublicMember) {
+                    if (linkKind === SymbolLinkKind.PublicMember) {
                         parent.addMember(enumSymbol, linkKind);
                     }
                     else {
@@ -407,7 +407,7 @@ module TypeScript {
                 var scriptName = enumDeclaration.getScriptName();
 
                 for (var i = 0; i < decls.length; i++) {
-                    if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[i].getScriptName() === scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
                         enumSymbol.removeDeclaration(decls[i]);
                     }
                 }
@@ -521,7 +521,7 @@ module TypeScript {
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
 
-                    if (classSymbol && classSymbol.getKind() == PullElementKind.Class) {
+                    if (classSymbol && classSymbol.getKind() === PullElementKind.Class) {
 
                         var declarations = classSymbol.getDeclarations();
 
@@ -561,7 +561,7 @@ module TypeScript {
                 var scriptName = classDecl.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         classSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -574,7 +574,7 @@ module TypeScript {
                 decls = constructorSymbol.getDeclarations();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         constructorSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -598,7 +598,7 @@ module TypeScript {
                         decls = specialization.getDeclarations();
 
                         for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                 specialization.removeDeclaration(decls[j]);
 
                                 cleanedPreviousDecls = true;
@@ -632,7 +632,7 @@ module TypeScript {
             if (parent && !parentHadSymbol) {
                 var linkKind = classDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
-                if (linkKind == SymbolLinkKind.PublicMember) {
+                if (linkKind === SymbolLinkKind.PublicMember) {
                     parent.addMember(classSymbol, linkKind);
                 }
                 else {
@@ -804,7 +804,7 @@ module TypeScript {
                 if (parent) {
                     var linkKind = interfaceDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
-                    if (linkKind == SymbolLinkKind.PublicMember) {
+                    if (linkKind === SymbolLinkKind.PublicMember) {
                         parent.addMember(interfaceSymbol, linkKind);
                     }
                     else {
@@ -818,7 +818,7 @@ module TypeScript {
                 var scriptName = interfaceDecl.getScriptName();
 
                 for (var i = 0; i < decls.length; i++) {
-                    if (decls[i].getScriptName() == scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[i].getScriptName() === scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
                         interfaceSymbol.removeDeclaration(decls[i]);
                     }
                 }
@@ -836,7 +836,7 @@ module TypeScript {
                         decls = specialization.getDeclarations();
 
                         for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                 specialization.removeDeclaration(decls[j]);
                             }
                         }
@@ -1098,7 +1098,7 @@ module TypeScript {
                 var scriptName = variableDeclaration.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         variableSymbol.removeDeclaration(decls[j]);
                     }
                 }
@@ -1109,7 +1109,7 @@ module TypeScript {
             var replaceProperty = false;
             var previousProperty: PullSymbol = null;
 
-            if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
+            if ((declFlags & PullElementFlags.ImplicitVariable) === 0) {
                 if (!variableSymbol) {
                     variableSymbol = new PullSymbol(declName, declKind);
                 }
@@ -1134,7 +1134,7 @@ module TypeScript {
                         members = parent.getMembers();
 
                         for (var i = 0; i < members.length; i++) {
-                            if ((members[i].getName() == declName) && (members[i].getKind() == PullElementKind.Class)) {
+                            if ((members[i].getName() === declName) && (members[i].getKind() === PullElementKind.Class)) {
                                 classTypeSymbol = <PullClassTypeSymbol>members[i];
                                 break;
                             }
@@ -1150,7 +1150,7 @@ module TypeScript {
                             if (childDecls.length) {
 
                                 for (var i = 0; i < childDecls.length; i++) {
-                                    if (childDecls[i].getValueDecl() == variableDeclaration) {
+                                    if (childDecls[i].getValueDecl() === variableDeclaration) {
                                         classTypeSymbol = <PullClassTypeSymbol>childDecls[i].getSymbol();
                                     }
                                 }
@@ -1209,7 +1209,7 @@ module TypeScript {
                         members = moduleParent.getMembers();
 
                         for (var i = 0; i < members.length; i++) {
-                            if ((members[i].getName() == declName) && (members[i].isContainer())) {
+                            if ((members[i].getName() === declName) && (members[i].isContainer())) {
                                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>members[i];
                                 break;
                             }
@@ -1225,7 +1225,7 @@ module TypeScript {
                             if (childDecls.length) {
 
                                 for (var i = 0; i < childDecls.length; i++) {
-                                    if (childDecls[i].getValueDecl() == variableDeclaration) {
+                                    if (childDecls[i].getValueDecl() === variableDeclaration) {
                                         moduleContainerTypeSymbol = <PullContainerTypeSymbol>childDecls[i].getSymbol();
                                     }
                                 }
@@ -1324,7 +1324,7 @@ module TypeScript {
             if (parent.isClass() && isStatic) {
 
                 for (var i = 0; i < this.staticClassMembers.length; i++) {
-                    if (this.staticClassMembers[i].getName() == declName) {
+                    if (this.staticClassMembers[i].getName() === declName) {
                         propertySymbol = this.staticClassMembers[i];
                         break;
                     }
@@ -1356,7 +1356,7 @@ module TypeScript {
                 var scriptName = propertyDeclaration.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         propertySymbol.removeDeclaration(decls[j]);
                     }
                 }
@@ -1418,7 +1418,7 @@ module TypeScript {
                     isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text, PullElementKind.Parameter);
 
-                    if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
+                    if (funcDecl.variableArgList && i === funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
                     }
 
@@ -1544,7 +1544,7 @@ module TypeScript {
                 var isGeneric = functionTypeSymbol.isGeneric();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         functionSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -1554,7 +1554,7 @@ module TypeScript {
                 decls = functionTypeSymbol.getDeclarations();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         functionTypeSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -1568,7 +1568,7 @@ module TypeScript {
                         decls = specializations[i].getDeclarations();
 
                         for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                 specializations[i].removeDeclaration(decls[j]);
                                 specializations[i].addDeclaration(functionDeclaration);
                                 specializations[i].invalidate();
@@ -1847,7 +1847,7 @@ module TypeScript {
             if (parent.isClass() && isStatic) {
 
                 for (var i = 0; i < this.staticClassMembers.length; i++) {
-                    if (this.staticClassMembers[i].getName() == methodName) {
+                    if (this.staticClassMembers[i].getName() === methodName) {
                         methodSymbol = this.staticClassMembers[i];
                         break;
                     }
@@ -1878,7 +1878,7 @@ module TypeScript {
                 var isGeneric = methodTypeSymbol.isGeneric();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         methodSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -1887,7 +1887,7 @@ module TypeScript {
 
                 decls = methodTypeSymbol.getDeclarations();
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         methodTypeSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -1901,7 +1901,7 @@ module TypeScript {
                         decls = specializations[i].getDeclarations();
 
                         for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                 specializations[i].removeDeclaration(decls[j]);
                                 specializations[i].addDeclaration(methodDeclaration);
                                 specializations[i].invalidate();
@@ -2085,7 +2085,7 @@ module TypeScript {
                     var isGeneric = constructorTypeSymbol.isGeneric();
 
                     for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             constructorSymbol.removeDeclaration(decls[j]);
 
                             cleanedPreviousDecls = true;
@@ -2095,7 +2095,7 @@ module TypeScript {
                     decls = constructorTypeSymbol.getDeclarations();
 
                     for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             constructorTypeSymbol.removeDeclaration(decls[j]);
 
                             cleanedPreviousDecls = true;
@@ -2109,7 +2109,7 @@ module TypeScript {
                             decls = specializations[i].getDeclarations();
 
                             for (var j = 0; j < decls.length; j++) {
-                                if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                                if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                                     specializations[i].removeDeclaration(decls[j]);
                                     specializations[i].addDeclaration(constructorDeclaration);
                                     specializations[i].invalidate();
@@ -2397,7 +2397,7 @@ module TypeScript {
                 for (var m = 0; m < this.staticClassMembers.length; m++) {
                     candidate = this.staticClassMembers[m];
 
-                    if (candidate.getName() == funcName) {
+                    if (candidate.getName() === funcName) {
                         accessorSymbol = <PullAccessorSymbol>candidate;
                         hadOtherAccessor = accessorSymbol.isAccessor();
                         break;
@@ -2436,7 +2436,7 @@ module TypeScript {
                 var scriptName = getAccessorDeclaration.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         accessorSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -2447,7 +2447,7 @@ module TypeScript {
                     decls = getterSymbol.getDeclarations();
 
                     for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             getterSymbol.removeDeclaration(decls[j]);
 
                             cleanedPreviousDecls = true;
@@ -2580,7 +2580,7 @@ module TypeScript {
                 for (var m = 0; m < this.staticClassMembers.length; m++) {
                     candidate = this.staticClassMembers[m];
 
-                    if (candidate.getName() == funcName) {
+                    if (candidate.getName() === funcName) {
                         accessorSymbol = <PullAccessorSymbol>candidate;
                         hadOtherAccessor = accessorSymbol.isAccessor();
                         break;
@@ -2619,7 +2619,7 @@ module TypeScript {
                 var scriptName = setAccessorDeclaration.getScriptName();
 
                 for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                    if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         accessorSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
@@ -2630,7 +2630,7 @@ module TypeScript {
                     decls = setterSymbol.getDeclarations();
 
                     for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             setterSymbol.removeDeclaration(decls[j]);
 
                             cleanedPreviousDecls = true;

@@ -62,7 +62,7 @@ module TypeScript {
         }
 
         public widenType(type: PullTypeSymbol) {
-            if (type == this.semanticInfoChain.undefinedTypeSymbol || type == this.semanticInfoChain.nullTypeSymbol) {
+            if (type === this.semanticInfoChain.undefinedTypeSymbol || type === this.semanticInfoChain.nullTypeSymbol) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 

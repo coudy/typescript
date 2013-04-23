@@ -58,7 +58,7 @@ module TypeScript {
             var fixedPath = jsFileName.substring(0, removalIndex);
 
             if (emitFullPathOfSourceMap) {
-                if (jsFileName.indexOf("://") == -1) {
+                if (jsFileName.indexOf("://") === -1) {
                     jsFileName = "file:///" + jsFileName;
                 }
                 this.jsFileName = jsFileName;
@@ -107,8 +107,8 @@ module TypeScript {
 
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
                     if (recordedPosition !== null &&
-                        recordedPosition.emittedColumn == mappedPosition.emittedColumn &&
-                        recordedPosition.emittedLine == mappedPosition.emittedLine) {
+                        recordedPosition.emittedColumn === mappedPosition.emittedColumn &&
+                        recordedPosition.emittedLine === mappedPosition.emittedLine) {
                         // This position is already recorded
                         return;
                     }

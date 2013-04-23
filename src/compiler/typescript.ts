@@ -755,7 +755,7 @@ module TypeScript {
                 return null;
             }
             var enlosingDecl = this.pullTypeChecker.resolver.getEnclosingDecl(decl);
-            if (ast.nodeType == NodeType.Member) {
+            if (ast.nodeType === NodeType.Member) {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
             var resolutionContext = new PullTypeResolutionContext();
@@ -889,7 +889,7 @@ module TypeScript {
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
                     var callExpression: CallExpression = null;
-                    if ((foundAST.nodeType == NodeType.SuperExpression || foundAST.nodeType == NodeType.ThisExpression || foundAST.nodeType == NodeType.Name) &&
+                    if ((foundAST.nodeType === NodeType.SuperExpression || foundAST.nodeType === NodeType.ThisExpression || foundAST.nodeType === NodeType.Name) &&
                     resultASTs.length > 1) {
                         for (var i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.MemberAccessExpression &&
@@ -968,17 +968,17 @@ module TypeScript {
 
                     symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
-                        var isPropertyOrVar = symbol.getKind() == PullElementKind.Property || symbol.getKind() == PullElementKind.Variable;
+                        var isPropertyOrVar = symbol.getKind() === PullElementKind.Property || symbol.getKind() === PullElementKind.Variable;
                         var typeSymbol = symbol.getType();
                         if (isPropertyOrVar) {
-                            isPropertyOrVar = (typeSymbol.getKind() !== PullElementKind.Interface && typeSymbol.getKind() !== PullElementKind.ObjectType) || typeSymbol.getName() == "";
+                            isPropertyOrVar = (typeSymbol.getKind() !== PullElementKind.Interface && typeSymbol.getKind() !== PullElementKind.ObjectType) || typeSymbol.getName() === "";
                         }
 
                         if (!isPropertyOrVar) {
-                            isConstructorCall = foundAST.nodeType == NodeType.SuperExpression || callExpression.nodeType === NodeType.ObjectCreationExpression;
+                            isConstructorCall = foundAST.nodeType === NodeType.SuperExpression || callExpression.nodeType === NodeType.ObjectCreationExpression;
 
-                            if (foundAST.nodeType == NodeType.SuperExpression) {
-                                if (symbol.getKind() == PullElementKind.Class) {
+                            if (foundAST.nodeType === NodeType.SuperExpression) {
+                                if (symbol.getKind() === PullElementKind.Class) {
                                     callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
                                 }
                             } else {
@@ -1010,7 +1010,7 @@ module TypeScript {
                         callSignatures = signatureInfo.allSignatures;
                     }
                 } else if (!callSignatures && symbol &&
-                (symbol.getKind() === PullElementKind.Method || symbol.getKind() == PullElementKind.Function)) {
+                (symbol.getKind() === PullElementKind.Method || symbol.getKind() === PullElementKind.Function)) {
                     var typeSym = symbol.getType()
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();

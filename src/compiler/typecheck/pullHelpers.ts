@@ -47,7 +47,7 @@ module TypeScript {
                 linkKind = SymbolLinkKind.SetterFunction;
             }
 
-            var accessorSymbolLinks = getterOrSetterSymbol.findIncomingLinks((psl) => psl.kind == linkKind);
+            var accessorSymbolLinks = getterOrSetterSymbol.findIncomingLinks((psl) => psl.kind === linkKind);
             if (accessorSymbolLinks.length) {
                 return <PullAccessorSymbol>accessorSymbolLinks[0].start;
             }

@@ -88,7 +88,7 @@ module TypeScript {
             //      name -> [newDeclChild1,      ...,           newDeclChild_j]
             //
             //
-            // i.e. n > j, n == j, n < j.
+            // i.e. n > j, n === j, n < j.
             //
             // For the first case, we we check all the child decls from 0 to j in the old list and 
             // the new list.  Anything past j is a decl we've removed.

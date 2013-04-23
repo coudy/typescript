@@ -618,7 +618,7 @@ module TypeScript {
                 emitter.writeToOutput("var " + this.id.actualText + " = ");
                 emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
-                var aliasAST = this.alias.nodeType == NodeType.TypeRef ? (<TypeReference>this.alias).term : this.alias;
+                var aliasAST = this.alias.nodeType === NodeType.TypeRef ? (<TypeReference>this.alias).term : this.alias;
 
                 emitter.emitJavascript(aliasAST, false);
                 emitter.writeToOutput(";");

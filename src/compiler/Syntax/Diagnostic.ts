@@ -96,9 +96,9 @@ module TypeScript {
         } );
 
         var message: string;
-        if (diagnostic.category == DiagnosticCategory.Error) {
+        if (diagnostic.category === DiagnosticCategory.Error) {
             message = getDiagnosticMessage(DiagnosticCode.error_TS_0__1, [diagnostic.code, diagnosticMessage]);
-        } else if (diagnostic.category == DiagnosticCategory.Warning) {
+        } else if (diagnostic.category === DiagnosticCategory.Warning) {
             message = getDiagnosticMessage(DiagnosticCode.warning_TS_0__1, [diagnostic.code, diagnosticMessage]);
         } else {
             message = diagnosticMessage;

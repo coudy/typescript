@@ -185,7 +185,7 @@ module TypeScript {
                         normalizedPath = isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
-                        if (resolvedFilePath == normalizedPath) {
+                        if (resolvedFilePath === normalizedPath) {
                             resolutionDispatcher.postResolutionError(normalizedPath, fileReference, "Incorrect reference: File contains reference to itself.");
                             continue;
                         }

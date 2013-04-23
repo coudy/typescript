@@ -78,7 +78,7 @@ module TypeScript {
                     result = result | ((byte & 31) << shift); // 11111
                 }
 
-                shift += (i == 0) ? 4 : 5;
+                shift += (i === 0) ? 4 : 5;
 
                 if ((byte & 32) === 32) {
                     // Continue

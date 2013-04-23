@@ -90,11 +90,11 @@ module TypeScript {
         /// Vn.
         /// </summary>
         public static collapseChangesAcrossMultipleVersions(changes: TextChangeRange[]): TextChangeRange {
-            if (changes.length == 0) {
+            if (changes.length === 0) {
                 return TextChangeRange.unchanged;
             }
 
-            if (changes.length == 1) {
+            if (changes.length === 1) {
                 return changes[0];
             }
 

@@ -69,7 +69,7 @@ module TypeScript {
             var path: string = normalizePath(match[3]);
             var adjustedPath = normalizePath(path);
     
-            var isResident = match.length >= 7 && match[6] == "true";
+            var isResident = match.length >= 7 && match[6] === "true";
             if (isResident) {
                 CompilerDiagnostics.debugPrint(path + " is resident");
             }
@@ -181,7 +181,7 @@ module TypeScript {
                     var isNoDefaultLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
                     var isNoDefaultLibMatch: any = isNoDefaultLibRegex.exec(triviaText);
                     if (isNoDefaultLibMatch) {
-                        noDefaultLib = (isNoDefaultLibMatch[3] == "true");
+                        noDefaultLib = (isNoDefaultLibMatch[3] === "true");
                     }
                 }
             }

@@ -85,12 +85,12 @@ module TypeScript {
         public getValueDecl() { return this.synthesizedValDecl; }
 
         public isEqual(other: PullDecl) {
-            return  (this.declName == other.declName) &&
-                    (this.declType == other.declType) &&
-                    (this.declFlags == other.declFlags) &&
-                    (this.scriptName == other.scriptName) &&
-                    (this.span.start() == other.span.start()) &&
-                    (this.span.end() == other.span.end());
+            return  (this.declName === other.declName) &&
+                    (this.declType === other.declType) &&
+                    (this.declFlags === other.declFlags) &&
+                    (this.scriptName === other.scriptName) &&
+                    (this.span.start() === other.span.start()) &&
+                    (this.span.end() === other.span.end());
         }
 
         public getParentDecl(): PullDecl {
@@ -248,7 +248,7 @@ module TypeScript {
         }
 
         public addDecl(decl: PullDecl) {
-            if (decl.getName() == this.name) {
+            if (decl.getName() === this.name) {
                 this._decls[this._decls.length] = decl;
             }
         }

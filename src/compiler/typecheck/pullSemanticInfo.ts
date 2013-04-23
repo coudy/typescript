@@ -218,7 +218,7 @@ module TypeScript {
         public getUnit(compilationUnitPath: string) {
             // PULLTODO: Replace this with a hash so we don't have a linear walk going on here.
             for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].getPath() == compilationUnitPath) {
+                if (this.units[i].getPath() === compilationUnitPath) {
                     return this.units[i];
                 }
             }
@@ -229,7 +229,7 @@ module TypeScript {
         // PULLTODO: compilationUnitPath is only really there for debug purposes
         public updateUnit(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
             for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].getPath() == oldUnit.getPath()) {
+                if (this.units[i].getPath() === oldUnit.getPath()) {
                     this.units[i] = newUnit;
                     this.unitCache[oldUnit.getPath()] = newUnit;
                     return;
@@ -290,7 +290,7 @@ module TypeScript {
                 decls = [];
 
                 for (var j = 0; j < declsToSearch.length; j++) {
-                    var kind = (i == declPath.length - 1) ? declKind : PullElementKind.SomeType;
+                    var kind = (i === declPath.length - 1) ? declKind : PullElementKind.SomeType;
                     foundDecls = declsToSearch[j].searchChildDecls(path, (kind & PullElementKind.SomeType) !== 0);
 
                     for (var k = 0; k < foundDecls.length; k++) {

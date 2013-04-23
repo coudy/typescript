@@ -194,8 +194,8 @@ module TypeScript {
 
         public isMemberOfMemberAccessExpression() {
             if (this.count() > 1 &&
-                this.parent().nodeType == NodeType.MemberAccessExpression &&
-                (<BinaryExpression>this.parent()).operand2 == this.asts[this.top]) {
+                this.parent().nodeType === NodeType.MemberAccessExpression &&
+                (<BinaryExpression>this.parent()).operand2 === this.asts[this.top]) {
                 return true;
             }
 

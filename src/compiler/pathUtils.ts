@@ -55,14 +55,14 @@ module TypeScript {
 
     export function trimModName(modName: string) {
         // in case's it's a declare file...
-        if (modName.length > 5 && modName.substring(modName.length - 5, modName.length) == ".d.ts") {
+        if (modName.length > 5 && modName.substring(modName.length - 5, modName.length) === ".d.ts") {
             return modName.substring(0, modName.length - 5);
         }
-        if (modName.length > 3 && modName.substring(modName.length - 3, modName.length) == ".ts") {
+        if (modName.length > 3 && modName.substring(modName.length - 3, modName.length) === ".ts") {
             return modName.substring(0, modName.length - 3);
         }
         // in case's it's a .js file
-        if (modName.length > 3 && modName.substring(modName.length - 3, modName.length) == ".js") {
+        if (modName.length > 3 && modName.substring(modName.length - 3, modName.length) === ".js") {
             return modName.substring(0, modName.length - 3);
         }
 
@@ -77,7 +77,7 @@ module TypeScript {
         var invariantFname = fname.toLocaleUpperCase();
         var invariantExt = ext.toLocaleUpperCase();
         var extLength = invariantExt.length;
-        return invariantFname.length > extLength && invariantFname.substring(invariantFname.length - extLength, invariantFname.length) == invariantExt;
+        return invariantFname.length > extLength && invariantFname.substring(invariantFname.length - extLength, invariantFname.length) === invariantExt;
     }
 
     export function isJSFile(fname: string) {
@@ -135,7 +135,7 @@ module TypeScript {
     export function quoteBaseName(modPath: string) {
         var modName = trimModName(stripQuotes(modPath));
         var path = getRootFilePath(modName);
-        if (path == "") {
+        if (path === "") {
             return modPath;
         }
         else {
@@ -150,14 +150,14 @@ module TypeScript {
     }
 
     export function isRelative(path: string) {
-        return path.charAt(0) == ".";
+        return path.charAt(0) === ".";
     }
     export function isRooted(path: string) {
-        return path.charAt(0) == "\\" || path.charAt(0) == "/" || (path.indexOf(":\\") !== -1) || (path.indexOf(":/") !== -1);
+        return path.charAt(0) === "\\" || path.charAt(0) === "/" || (path.indexOf(":\\") !== -1) || (path.indexOf(":/") !== -1);
     }
 
     export function getRootFilePath(outFname: string) {
-        if (outFname == "") {
+        if (outFname === "") {
             return outFname;
         }
         else {
