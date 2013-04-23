@@ -26,10 +26,6 @@ module TypeScript {
         public watch = false;
         public exec = false;
         public resolve = true;
-        public controlFlow = false;
-        public printControlFlow = false;
-        public controlFlowUseDef = false;
-        public errorOnWith = true;
         public canCallDefinitionSignature = false;
         public disallowBool = false;
 
@@ -37,7 +33,6 @@ module TypeScript {
 
         public codeGenTarget = LanguageVersion.EcmaScript3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
-        public optimizeModuleCodeGen = true;
 
         // --out option passed. 
         // Default is the "" which leads to multiple files generated next to the.ts files
@@ -50,8 +45,6 @@ module TypeScript {
         public gatherDiagnostics = false;
 
         public updateTC = false;
-
-        public parseOnly = false;
     }
 
     ///

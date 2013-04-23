@@ -760,8 +760,6 @@ module Harness {
         export function makeDefaultCompilerForTest() {
             var compiler = new TypeScript.TypeScriptCompiler();
             compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
-            compiler.settings.controlFlow = true;
-            compiler.settings.controlFlowUseDef = true;
             compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             var diagnostic = compiler.parseEmitOption(stdout);
             if (diagnostic) {

@@ -184,7 +184,7 @@ class BatchCompiler {
             }
         }
 
-        if (anySyntacticErrors || this.compilationSettings.parseOnly) {
+        if (anySyntacticErrors) {
             return true;
         }
 
@@ -404,40 +404,6 @@ class BatchCompiler {
             }
         }, 'c');
 
-        opts.flag('cflow', {
-            usage: 'Control flow',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.controlFlow = true;
-            }
-        });
-
-        opts.flag('cflowp', {
-            usage: 'Print control flow',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.controlFlow = true;
-                this.compilationSettings.printControlFlow = true;
-            }
-        });
-
-        opts.flag('cflowu', {
-            usage: 'Print Use Def control flow',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.controlFlow = true;
-                this.compilationSettings.controlFlowUseDef = true;
-            }
-        });
-
-        opts.flag('noerroronwith', {
-            usage: 'Allow with statements',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.errorOnWith = false;
-            }
-        });
-
         opts.flag('noresolve', {
             usage: 'Skip resolution and preprocessing',
             experimental: true,
@@ -462,14 +428,6 @@ class BatchCompiler {
             }
         });
 
-        opts.flag('nooptimizemodules', {
-            usage: 'Do not optimize module codegen',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.optimizeModuleCodeGen = false;
-            }
-        });
-
         opts.flag('nolib', {
             usage: 'Do not include a default lib.d.ts with global declarations',
             set: () => {
@@ -490,14 +448,6 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.updateTC = true;
-            }
-        });
-
-        opts.flag('parseonly', {
-            usage: 'Parse the source and then exit',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.parseOnly = true;
             }
         });
 
