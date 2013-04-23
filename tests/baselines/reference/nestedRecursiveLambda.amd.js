@@ -15,10 +15,8 @@ void (function (r) {
         return r;
     });
 });
-[
-    (function (r) {
-        return (function (r) {
-            return r;
-        });
-    })
-];
+[(function (r) {
+    return (function (r) {
+        return r;
+    });
+})];

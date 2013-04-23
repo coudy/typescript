@@ -89,9 +89,7 @@ var f = (function () {
                 3,
                 4
             ],
-            [
-                null
-            ]
+            [null]
         ][0][0]));
         var t1 = [
             {

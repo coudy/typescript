@@ -1280,7 +1280,7 @@ module TypeScript {
                 }
                 else {
                     emitter.setInVarBlock((<ASTList>this.init).members.length);
-                    emitter.emitCommaSeparatedList(this.init);
+                    emitter.emitCommaSeparatedList(<ASTList>this.init);
                 }
             }
 

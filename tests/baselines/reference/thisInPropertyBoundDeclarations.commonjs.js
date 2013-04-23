@@ -1,9 +1,8 @@
 var Bug = (function () {
     function Bug() { }
-    Bug.func = [
-        function (that, name) {
-            that.foo(name);
-        }    ];
+    Bug.func = [function (that, name) {
+        that.foo(name);
+    }];
     Bug.prototype.foo = function (name) {
         this.name = name;
     };

@@ -127,12 +127,8 @@ function fnOpt2(id, children, expectedPath, isRoot) {
 fnOpt1(1, [
     2,
     3
-], [
-    1
-], true);
+], [1], true);
 fnOpt2(1, [
     2,
     3
-], [
-    1
-], true);
+], [1], true);

@@ -1,7 +1,5 @@
-var va = [
-    (function () {
-    })()
-];
+var va = [(function () {
+})()];
 (function () {
 })();
 function foo(s) {

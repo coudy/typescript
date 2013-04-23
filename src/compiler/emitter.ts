@@ -310,8 +310,7 @@ module TypeScript {
 
                 this.indenter.increaseIndent();
                 var inObjectLiteral = this.setInObjectLiteral(true);
-                var separator = useNewLines ? "," : ", ";
-                this.emitList(content, separator, useNewLines, false, false);
+                this.emitCommaSeparatedList(content, useNewLines);
                 this.setInObjectLiteral(inObjectLiteral);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
@@ -323,16 +322,20 @@ module TypeScript {
             var useNewLines = this.useNewLinesInLiteral();
 
             this.writeToOutput("[");
-            if (content && content.members.length > 0) {
-                if (useNewLines) {
-                    this.writeLineToOutput("");
+            if (content) {
+                if (content.members.length === 1) {
+                    content.members[0].emit(this, false);
                 }
+                else if (content.members.length > 0) {
+                    if (useNewLines) {
+                        this.writeLineToOutput("");
+                    }
 
-                this.indenter.increaseIndent();
-                var separator = useNewLines ? "," : ", ";
-                this.emitList(content, separator, useNewLines, false, false);
-                this.indenter.decreaseIndent();
-                this.emitIndent();
+                    this.indenter.increaseIndent();
+                    this.emitCommaSeparatedList(content, useNewLines);
+                    this.indenter.decreaseIndent();
+                    this.emitIndent();
+                }
             }
             this.writeToOutput("]");
         }
@@ -936,7 +939,7 @@ module TypeScript {
             var temp = this.setInObjectLiteral(false);
             this.emitJavascript(operand1, false);
             this.writeToOutput("[");
-            this.emitCommaSeparatedList(operand2);
+            operand2.emit(this, false);
             this.writeToOutput("]");
             this.setInObjectLiteral(temp);
         }
@@ -1450,25 +1453,24 @@ module TypeScript {
             }
         }
 
-        public emitCommaSeparatedList(ast: AST): void {
-            if (ast === null) {
+        public emitCommaSeparatedList(list: ASTList, startLine: boolean = false): void {
+            if (list === null) {
                 return;
             }
-            else if (ast.nodeType !== NodeType.List) {
-                ast.emit(this, false);
-            }
             else {
-                var list = <ASTList>ast;
                 // this.emitComments(ast, true);
                     // this.emitComments(ast, false);
 
-                var len = list.members.length;
-                for (var i = 0; i < len; i++) {
+                for (var i = 0, n = list.members.length; i < n; i++) {
                     var emitNode = list.members[i];
-                    emitNode.emit(this, false);
+                    this.emitJavascript(emitNode, startLine);
 
-                    if (i < (len - 1)) {
-                        this.writeToOutput(", ");
+                    if (i < (n - 1)) {
+                        this.writeToOutput(startLine ? "," : ", ");
+                    }
+
+                    if (startLine) {
+                        this.writeLineToOutput("");
                     }
                 }
             }

@@ -22,9 +22,7 @@ exports.tests = (function () {
     testRunner.addTest(new TestCase("Check UTF8 encoding", function () {
         var fb;
         fb.writeUtf8Bom();
-        var chars = [
-            0x0054
-        ];
+        var chars = [0x0054];
         for (var i in chars) {
             fb.writeUtf8CodePoint(chars[i]);
         }
@@ -33,9 +31,7 @@ exports.tests = (function () {
         for (var i = 0; i < 14; i++) {
             bytes.push(fb.readByte());
         }
-        var expected = [
-            0xEF
-        ];
+        var expected = [0xEF];
         return TestRunner.arrayCompare(bytes, expected);
     }));
     return testRunner;
