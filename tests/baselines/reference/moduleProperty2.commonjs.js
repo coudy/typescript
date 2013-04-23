@@ -3,6 +3,7 @@ var M;
     function f() {
         var x;
     }
+
     var y;
     M.z;
     var test1 = x;

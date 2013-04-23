@@ -22,8 +22,10 @@ define(["require", "exports"], function(require, exports) {
             return C5;
         })();        
     })(M1 || (M1 = {}));
+
     (function (M2) {
-                var C1 = (function () {
+        
+        var C1 = (function () {
             function C1() { }
             return C1;
         })();        
@@ -37,6 +39,7 @@ define(["require", "exports"], function(require, exports) {
         })();        
     })(exports.M2 || (exports.M2 = {}));
     var M2 = exports.M2;
+
     var C1 = (function () {
         function C1() { }
         return C1;

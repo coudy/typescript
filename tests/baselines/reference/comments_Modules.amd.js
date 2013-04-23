@@ -7,6 +7,7 @@ var m1;
     function foo() {
         return m1.b;
     }
+
     /** m2 comments*/
     (function (m2) {
         /** class comment;*/
@@ -20,26 +21,31 @@ var m1;
         m2.i = new c();
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
+
     /** exported function*/
     function fooExport() {
         return foo();
     }
     m1.fooExport = fooExport;
+
     // shouldn't appear
     function foo2Export(/**hm*/ a) {
     }
     m1.foo2Export = foo2Export;
+
     /** foo3Export
     * comment
     */
     function foo3Export() {
     }
     m1.foo3Export = foo3Export;
+
     /** foo4Export
     * comment
     */
     function foo4Export() {
     }
+
 })(m1 || (m1 = {}));
 m1.fooExport();
 var myvar = new m1.m2.c();
@@ -55,6 +61,7 @@ var m2;
         m3.c = c;        
     })(m2.m3 || (m2.m3 = {}));
     var m3 = m2.m3;
+
 })(m2 || (m2 = {}));
 new m2.m3.c();
 var m3;
@@ -70,8 +77,10 @@ var m3;
             m5.c = c;            
         })(m4.m5 || (m4.m5 = {}));
         var m5 = m4.m5;
+
     })(m3.m4 || (m3.m4 = {}));
     var m4 = m3.m4;
+
 })(m3 || (m3 = {}));
 new m3.m4.m5.c();
 var m4;
@@ -88,10 +97,13 @@ var m4;
                 m7.c = c;                
             })(m6.m7 || (m6.m7 = {}));
             var m7 = m6.m7;
+
         })(m5.m6 || (m5.m6 = {}));
         var m6 = m5.m6;
+
     })(m4.m5 || (m4.m5 = {}));
     var m5 = m4.m5;
+
 })(m4 || (m4 = {}));
 new m4.m5.m6.m7.c();
 var m5;
@@ -109,10 +121,13 @@ var m5;
                 m8.c = c;                
             })(m7.m8 || (m7.m8 = {}));
             var m8 = m7.m8;
+
         })(m6.m7 || (m6.m7 = {}));
         var m7 = m6.m7;
+
     })(m5.m6 || (m5.m6 = {}));
     var m6 = m5.m6;
+
 })(m5 || (m5 = {}));
 new m5.m6.m7.m8.c();
 var m6;
@@ -127,8 +142,10 @@ var m6;
             m8.c = c;            
         })(m7.m8 || (m7.m8 = {}));
         var m8 = m7.m8;
+
     })(m6.m7 || (m6.m7 = {}));
     var m7 = m6.m7;
+
 })(m6 || (m6 = {}));
 new m6.m7.m8.c();
 var m7;
@@ -155,8 +172,10 @@ var m7;
             m9.e = e;            
         })(m8.m9 || (m8.m9 = {}));
         var m9 = m8.m9;
+
     })(m7.m8 || (m7.m8 = {}));
     var m8 = m7.m8;
+
 })(m7 || (m7 = {}));
 new m7.m8.m9.c();
 ////[0.d.ts]

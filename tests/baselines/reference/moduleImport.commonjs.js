@@ -8,10 +8,13 @@ var A;
                     XYZ.pong(x - 1);
             }
             C.ping = ping;
+
         })(B.C || (B.C = {}));
         var C = B.C;
+
     })(A.B || (A.B = {}));
     var B = A.B;
+
 })(A || (A = {}));
 var X;
 (function (X) {
@@ -21,4 +24,5 @@ var X;
             ABC.ping(x - 1);
     }
     X.pong = pong;
+
 })(X || (X = {}));

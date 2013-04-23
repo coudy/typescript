@@ -35,6 +35,7 @@ var editor2;
         })();
         Foo.Bar = Bar;        
     })(Foo || (Foo = {}));
+
     var Bug2 = (function () {
         function Bug2(p1, p2) {
         }

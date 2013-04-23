@@ -48,6 +48,7 @@ var m2;
     function foo(n) {
     }
     m2.foo = foo;
+
 })(m2 || (m2 = {}));
 m2.foo(function () {
     var b = 30;

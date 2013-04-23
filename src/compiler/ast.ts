@@ -162,7 +162,7 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             emitter.recordSourceMappingStart(this);
-            emitter.emitList(this, false);
+            emitter.emitStatementList(this);
             emitter.recordSourceMappingEnd(this);
         }
 
@@ -1070,7 +1070,7 @@ module TypeScript {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
             if (this.statements) {
-                emitter.emitList(this.statements, false);
+                emitter.emitStatementList(this.statements);
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();

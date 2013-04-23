@@ -7,4 +7,5 @@ define(["require", "exports"], function(require, exports) {
     })();    
     function bar(s) {
     }
+
 })

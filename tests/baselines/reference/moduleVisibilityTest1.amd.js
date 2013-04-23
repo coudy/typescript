@@ -4,13 +4,16 @@ var OuterMod;
         return -1;
     }
     OuterMod.someExportedOuterFunc = someExportedOuterFunc;
+
     (function (OuterInnerMod) {
         function someExportedOuterInnerFunc() {
             return "foo";
         }
         OuterInnerMod.someExportedOuterInnerFunc = someExportedOuterInnerFunc;
+
     })(OuterMod.OuterInnerMod || (OuterMod.OuterInnerMod = {}));
     var OuterInnerMod = OuterMod.OuterInnerMod;
+
 })(OuterMod || (OuterMod = {}));
 var OuterInnerAlias = OuterMod.OuterInnerMod;
 var M;
@@ -20,8 +23,10 @@ var M;
             return -2;
         }
         InnerMod.someExportedInnerFunc = someExportedInnerFunc;
+
     })(M.InnerMod || (M.InnerMod = {}));
     var InnerMod = M.InnerMod;
+
     (function (E) {
         E._map = [];
         E._map[0] = "A";
@@ -32,6 +37,7 @@ var M;
         E.C = 2;
     })(M.E || (M.E = {}));
     var E = M.E;
+
     M.x = 5;
     
     var y = M.x + M.x;
@@ -68,6 +74,7 @@ var M;
     function someModuleFunction() {
         return 5;
     }
+
 })(M || (M = {}));
 var M;
 (function (M) {

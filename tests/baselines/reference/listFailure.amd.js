@@ -16,14 +16,17 @@ var Editor;
         return entry;
     }
     Editor.ListRemoveEntry = ListRemoveEntry;
+
     function ListMakeHead() {
         return null;
     }
     Editor.ListMakeHead = ListMakeHead;
+
     function ListMakeEntry(data) {
         return null;
     }
     Editor.ListMakeEntry = ListMakeEntry;
+
     var List = (function () {
         function List() { }
         List.prototype.add = function (data) {

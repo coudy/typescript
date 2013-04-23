@@ -5,8 +5,10 @@ var c;
             var ma = c.a;
         })(a.b || (a.b = {}));
         var b = a.b;
+
     })(c.a || (c.a = {}));
     var a = c.a;
+
 })(c || (c = {}));
 var mImport;
 (function (mImport) {
@@ -19,8 +21,10 @@ var m0;
 (function (m0) {
     function f1() {
     }
+
     function f2(ns) {
     }
+
     var c1 = (function () {
         function c1() { }
         return c1;
@@ -37,9 +41,11 @@ var m1;
     function f1() {
     }
     m1.f1 = f1;
+
     function f2(ns) {
     }
     m1.f2 = f2;
+
     var c1 = (function () {
         function c1(n, n2, n3, n4) {
             this.n = n;
@@ -68,10 +74,12 @@ var m;
         m2.b;
     })(m.m2 || (m.m2 = {}));
     var m2 = m.m2;
+
     (function (m3) {
         m3.c;
     })(m.m3 || (m.m3 = {}));
     var m3 = m.m3;
+
 })(m || (m = {}));
 var m;
 (function (m) {
@@ -80,8 +88,10 @@ var m;
             m5.c;
         })(m25.m5 || (m25.m5 = {}));
         var m5 = m25.m5;
+
     })(m.m25 || (m.m25 = {}));
     var m25 = m.m25;
+
 })(m || (m = {}));
 var m13;
 (function (m13) {
@@ -91,14 +101,18 @@ var m13;
                 m3.c;
             })(m2.m3 || (m2.m3 = {}));
             var m3 = m2.m3;
+
         })(m4.m2 || (m4.m2 = {}));
         var m2 = m4.m2;
+
         function f() {
             return 20;
         }
         m4.f = f;
+
     })(m13.m4 || (m13.m4 = {}));
     var m4 = m13.m4;
+
 })(m13 || (m13 = {}));
 var exportTests;
 (function (exportTests) {

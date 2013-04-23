@@ -839,7 +839,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitList(moduleDecl.members, false);
+                this.emitStatementList(moduleDecl.members);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -1427,6 +1427,32 @@ module TypeScript {
             }
         }
         
+        public emitStatementList(list: ASTList) {
+            if (list === null) {
+                return;
+            }
+
+            this.emitComments(list, true);
+
+            for (var i = 0, n = list.members.length; i < n; i++) {
+                var emitNode = list.members[i];
+
+                if (emitNode.nodeType === NodeType.FunctionDeclaration &&
+                    hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Signature)) {
+                    continue;
+                }
+
+                if (emitNode.nodeType === NodeType.InterfaceDeclaration) {
+                    continue;
+                }
+
+                this.emitJavascript(emitNode, true);
+                this.writeLineToOutput("");
+            }
+
+            this.emitComments(list, false);
+        }
+
         public emitList(list: ASTList, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (list === null) {
                 return;

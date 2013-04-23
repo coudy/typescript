@@ -94,6 +94,7 @@ define(["require", "exports"], function(require, exports) {
         })();        
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
+
     var m2;
     (function (m2) {
         var m2_C1_public = (function () {
@@ -189,6 +190,7 @@ define(["require", "exports"], function(require, exports) {
             return m2_C4_private;
         })();        
     })(m2 || (m2 = {}));
+
     var C5_private = (function () {
         function C5_private() { }
         C5_private.prototype.f = function () {

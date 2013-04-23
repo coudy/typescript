@@ -10,6 +10,7 @@ var M;
     function f(y) {
     }
     M.f = f;
+
     var a;
     f({
         x: a

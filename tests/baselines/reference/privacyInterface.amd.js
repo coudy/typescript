@@ -13,6 +13,7 @@ define(["require", "exports"], function(require, exports) {
         })();        
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
+
     var m2;
     (function (m2) {
         var C1_public = (function () {
@@ -27,6 +28,7 @@ define(["require", "exports"], function(require, exports) {
             return C2_private;
         })();        
     })(m2 || (m2 = {}));
+
     var C5_public = (function () {
         function C5_public() { }
         C5_public.prototype.f1 = function () {
@@ -38,4 +40,6 @@ define(["require", "exports"], function(require, exports) {
         function C6_private() { }
         return C6_private;
     })();    
-        })
+    
+    
+})

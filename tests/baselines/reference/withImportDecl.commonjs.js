@@ -23,12 +23,16 @@ function simpleFunction() {
         n: 2
     };
 }
+
 var m1;
 (function (m1) {
     function foo() {
         return "Hello";
     }
     m1.foo = foo;
+
 })(m1 || (m1 = {}));
+
+
 var m3 = require("m1");
 var b = new m3.A();

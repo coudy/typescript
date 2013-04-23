@@ -4,6 +4,7 @@ var M;
     function f() {
         var inner = outer;
     }
+
     var C = (function () {
         function C() {
             var inner = outer;
@@ -14,4 +15,5 @@ var M;
     (function (X) {
         var inner = outer;
     })(X || (X = {}));
+
 })(M || (M = {}));

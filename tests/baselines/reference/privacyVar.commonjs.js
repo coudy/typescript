@@ -51,6 +51,7 @@
     m1.m1_v24_public = new C2_private();
 })(exports.m1 || (exports.m1 = {}));
 var m1 = exports.m1;
+
 var m2;
 (function (m2) {
     var m2_C1_public = (function () {
@@ -104,6 +105,7 @@ var m2;
     var m2_v23_private = new m2_C2_private();
     m2.m2_v24_public = new m2_C2_private();
 })(m2 || (m2 = {}));
+
 var glo_C1_public = (function () {
     function glo_C1_public() { }
     glo_C1_public.prototype.f1 = function () {

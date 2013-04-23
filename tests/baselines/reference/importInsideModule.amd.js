@@ -9,4 +9,5 @@ define(["require", "exports", "importInsideModule_file1"], function(require, exp
         var a = foo.x;
     })(exports.myModule || (exports.myModule = {}));
     var myModule = exports.myModule;
+
 })

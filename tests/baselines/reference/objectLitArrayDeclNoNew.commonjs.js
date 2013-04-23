@@ -17,4 +17,5 @@ var Test;
         };
     }
     Test.bug = bug;
+
 })(Test || (Test = {}));

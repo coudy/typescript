@@ -16,4 +16,5 @@ var consumer;
         var p2 = new provider.UsefulClass();
         return p2;
     }
+
 })(consumer || (consumer = {}));

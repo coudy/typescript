@@ -35,6 +35,7 @@ var Gar;
             return Helper;
         })();        
     })(Foo || (Foo = {}));
+
     var Foo;
     (function (Foo) {
         var Helper = (function () {
@@ -42,4 +43,5 @@ var Gar;
             return Helper;
         })();        
     })(Foo || (Foo = {}));
+
 })(Gar || (Gar = {}));

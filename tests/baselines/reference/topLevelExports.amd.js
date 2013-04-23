@@ -3,5 +3,6 @@ define(["require", "exports"], function(require, exports) {
     function log(n) {
         return n;
     }
+
     void log(foo).toString();
 })
