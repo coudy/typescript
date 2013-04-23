@@ -24,8 +24,8 @@ HSRC=$(BASE)src\harness
 
 RSRC=$(BASE)tests\runners
 
-STRC_LOCAL=$(HOST) $(BUILT_LOCAL)\tsc.js -cflowu 
-STRC_LKG=$(HOST) $(BIN)\tsc.js -cflowu 
+STRC_LOCAL=$(HOST) $(BUILT_LOCAL)\tsc.js  
+STRC_LKG=$(HOST) $(BIN)\tsc.js  
 
 COMPILER_SOURCES_BASE= \
   $(CSRC)\diagnostics.ts \
