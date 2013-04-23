@@ -420,7 +420,7 @@ module TypeScript {
         public removeSymbolFromCache(symbol: PullSymbol) {
 
             var path = [symbol.getName()];
-            var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
+            var kind = (symbol.getKind() & PullElementKind.SomeType) !== 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
 
             var kindID = this.getDeclPathCacheID(path, kind);
             var symID = this.getDeclPathCacheID(path, symbol.getKind());
