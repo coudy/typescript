@@ -324,7 +324,7 @@ module TypeScript {
             this.writeToOutput("[");
             if (content) {
                 if (content.members.length === 1) {
-                    content.members[0].emit(this, false);
+                    content.members[0].emit(this);
                 }
                 else if (content.members.length > 0) {
                     if (useNewLines) {
@@ -939,7 +939,7 @@ module TypeScript {
             var temp = this.setInObjectLiteral(false);
             this.emitJavascript(operand1, false);
             this.writeToOutput("[");
-            operand2.emit(this, false);
+            operand2.emit(this);
             this.writeToOutput("]");
             this.setInObjectLiteral(temp);
         }
@@ -1038,7 +1038,7 @@ module TypeScript {
             }
         }
 
-        public emitVariableDeclaration(declaration: VariableDeclaration, startLine: boolean) {
+        public emitVariableDeclaration(declaration: VariableDeclaration) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
@@ -1066,7 +1066,7 @@ module TypeScript {
                         }
                     }
 
-                    this.emitJavascript(declarator, (startLine && i === 0) || inClass);
+                    this.emitJavascript(declarator, false /*(startLine && i === 0) || inClass*/);
                 }
             }
 
@@ -1523,7 +1523,7 @@ module TypeScript {
                 }
             }
 
-            ast.emit(this, startLine);
+            ast.emit(this);
         }
 
         public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: boolean) {
@@ -1837,7 +1837,7 @@ module TypeScript {
 
         public emitBlockOrStatement(node: AST): void {
             if (node.nodeType === NodeType.Block) {
-                node.emit(this, true);
+                node.emit(this);
             }
             else {
                 this.writeLineToOutput("");

@@ -96,15 +96,15 @@ module TypeScript {
             return false;
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            this.emitWorker(emitter, startLine);
+            this.emitWorker(emitter);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             throw new Error("please implement in derived class");
         }
 
@@ -160,7 +160,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.recordSourceMappingStart(this);
             emitter.emitList(this, false, false);
             emitter.recordSourceMappingEnd(this);
@@ -205,7 +205,7 @@ module TypeScript {
 
         public isMissing() { return false; }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.emitName(this, true);
         }
 
@@ -226,7 +226,7 @@ module TypeScript {
             return true;
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             // Emit nothing for a missing ID
         }
     }
@@ -236,7 +236,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             switch (this.nodeType) {
                 case NodeType.NullLiteral:
                     emitter.writeToOutput("null");
@@ -262,7 +262,7 @@ module TypeScript {
             super(NodeType.ThisExpression);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             if (emitter.thisFunctionDeclaration && (hasFlag(emitter.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
                 emitter.writeToOutput("_this");
             }
@@ -281,7 +281,7 @@ module TypeScript {
             super(NodeType.SuperExpression);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.emitSuperReference();
         }
 
@@ -295,9 +295,9 @@ module TypeScript {
             super(NodeType.ParenthesizedExpression);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("(");
-            this.expression.emit(emitter, false);
+            this.expression.emit(emitter);
             emitter.writeToOutput(")");
         }
 
@@ -314,18 +314,18 @@ module TypeScript {
             super(nodeType);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             switch (this.nodeType) {
                 case NodeType.PostIncrementExpression:
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     emitter.writeToOutput("++");
                     break;
                 case NodeType.LogicalNotExpression:
                     emitter.writeToOutput("!");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.PostDecrementExpression:
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     emitter.writeToOutput("--");
                     break;
                 case NodeType.ObjectLiteralExpression:
@@ -336,44 +336,44 @@ module TypeScript {
                     break;
                 case NodeType.BitwiseNotExpression:
                     emitter.writeToOutput("~");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.NegateExpression:
                     emitter.writeToOutput("-");
                     if (this.operand.nodeType === NodeType.NegateExpression || this.operand.nodeType === NodeType.PreDecrementExpression) {
                         emitter.writeToOutput(" ");
                     }
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.PlusExpression:
                     emitter.writeToOutput("+");
                     if (this.operand.nodeType === NodeType.PlusExpression || this.operand.nodeType === NodeType.PreIncrementExpression) {
                         emitter.writeToOutput(" ");
                     }
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.PreIncrementExpression:
                     emitter.writeToOutput("++");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.PreDecrementExpression:
                     emitter.writeToOutput("--");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.TypeOfExpression:
                     emitter.writeToOutput("typeof ");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.DeleteExpression:
                     emitter.writeToOutput("delete ");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.VoidExpression:
                     emitter.writeToOutput("void ");
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 case NodeType.CastExpression:
-                    this.operand.emit(emitter, false);
+                    this.operand.emit(emitter);
                     break;
                 default:
                     throw new Error("please implement in derived class");
@@ -395,7 +395,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             if (this.nodeType === NodeType.ObjectCreationExpression) {
                 emitter.emitNew(this.target, this.arguments);
             }
@@ -462,11 +462,11 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             switch (this.nodeType) {
                 case NodeType.MemberAccessExpression:
                     if (!emitter.tryEmitConstant(this)) {
-                        this.operand1.emit(emitter, false);
+                        this.operand1.emit(emitter);
                         emitter.writeToOutput(".");
                         emitter.emitName(<Identifier>this.operand2, false);
                     }
@@ -484,27 +484,27 @@ module TypeScript {
                         else {
                             emitter.writeToOutput("set ");
                         }
-                        this.operand1.emit(emitter, false);
+                        this.operand1.emit(emitter);
                     }
                     else {
-                        this.operand1.emit(emitter, false);
+                        this.operand1.emit(emitter);
                         emitter.writeToOutputTrimmable(": ");
                     }
-                    this.operand2.emit(emitter, false);
+                    this.operand2.emit(emitter);
                     break;
                 case NodeType.CommaExpression:
-                    this.operand1.emit(emitter, false);
+                    this.operand1.emit(emitter);
                     if (emitter.emitState.inObjectLiteral) {
                         emitter.writeLineToOutput(", ");
                     }
                     else {
                         emitter.writeToOutput(", ");
                     }
-                    this.operand2.emit(emitter, false);
+                    this.operand2.emit(emitter);
                     break;
                 default:
                     {
-                        this.operand1.emit(emitter, false);
+                        this.operand1.emit(emitter);
                         var binOp = BinaryExpression.getTextForBinaryToken(this.nodeType);
                         if (binOp === "instanceof") {
                             emitter.writeToOutput(" instanceof ");
@@ -515,7 +515,7 @@ module TypeScript {
                         else {
                             emitter.writeToOutputTrimmable(" " + binOp + " ");
                         }
-                        this.operand2.emit(emitter, false);
+                        this.operand2.emit(emitter);
                     }
             }
         }
@@ -534,12 +534,12 @@ module TypeScript {
             super(NodeType.ConditionalExpression);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
-            this.operand1.emit(emitter, false);
+        public emitWorker(emitter: Emitter) {
+            this.operand1.emit(emitter);
             emitter.writeToOutput(" ? ");
-            this.operand2.emit(emitter, false);
+            this.operand2.emit(emitter);
             emitter.writeToOutput(" : ");
-            this.operand3.emit(emitter, false);
+            this.operand3.emit(emitter);
         }
 
         public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
@@ -555,7 +555,7 @@ module TypeScript {
             super(NodeType.NumericLiteral);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(this.text);
         }
 
@@ -571,7 +571,7 @@ module TypeScript {
             super(NodeType.RegularExpressionLiteral);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(this.text);
         }
 
@@ -586,7 +586,7 @@ module TypeScript {
             super(NodeType.StringLiteral);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(this.text);
         }
 
@@ -606,7 +606,7 @@ module TypeScript {
 
         public isDeclaration() { return true; }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             // REVIEW: Only modules may be aliased for now, though there's no real
             // restriction on what the type symbol may be
             if (emitter.importStatementShouldBeEmitted(this)) {
@@ -709,7 +709,7 @@ module TypeScript {
 
         public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.emitVariableDeclarator(this);
         }
     }
@@ -723,7 +723,7 @@ module TypeScript {
 
         public isOptionalArg() { return this.isOptional || this.init; }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(this.id.actualText);
         }
 
@@ -774,7 +774,7 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.emitFunction(this);
         }
 
@@ -817,7 +817,7 @@ module TypeScript {
             super(NodeType.Script);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             if (!this.isDeclareFile) {
                 emitter.emitList(this.moduleElements, false, false, true, this.requiresExtendsBlock);
             }
@@ -894,7 +894,7 @@ module TypeScript {
             return false;
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             if (this.shouldEmit()) {
                 emitter.emitComments(this, true);
                 emitter.emitModule(this);
@@ -945,7 +945,7 @@ module TypeScript {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             emitter.emitClass(this);
         }
     }
@@ -959,7 +959,7 @@ module TypeScript {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
         }
     }
 
@@ -980,9 +980,9 @@ module TypeScript {
             super(NodeType.ThrowStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("throw ");
-            this.expression.emit(emitter, false);
+            this.expression.emit(emitter);
             emitter.writeToOutput(";");
         }
 
@@ -997,8 +997,8 @@ module TypeScript {
             super(NodeType.ExpressionStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
-            this.expression.emit(emitter, startLine);
+        public emitWorker(emitter: Emitter) {
+            this.expression.emit(emitter);
             emitter.writeToOutput(";");
         }
 
@@ -1013,13 +1013,12 @@ module TypeScript {
             super(NodeType.LabeledStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.recordSourceMappingStart(this.identifier);
             emitter.writeToOutput(this.identifier.actualText);
             emitter.recordSourceMappingEnd(this.identifier);
             emitter.writeLineToOutput(":");
-
-            this.statement.emit(emitter, true);
+            emitter.emitJavascript(this.statement, true);
         }
 
         public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
@@ -1034,8 +1033,8 @@ module TypeScript {
             super(NodeType.VariableDeclaration);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitVariableDeclaration(this, startLine);
+        public emit(emitter: Emitter) {
+            emitter.emitVariableDeclaration(this);
         }
 
         public structuralEquals(ast: VariableDeclaration, includingPosition: boolean): boolean {
@@ -1049,9 +1048,9 @@ module TypeScript {
             super(NodeType.VariableStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
-            this.declaration.emit(emitter, false);
+            this.declaration.emit(emitter);
 
             // If it was an ambient declarator without an initializer, then we won't emit anything.
             var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
@@ -1075,7 +1074,7 @@ module TypeScript {
             super(NodeType.Block);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
             var temp = emitter.setInObjectLiteral(false);
@@ -1103,7 +1102,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             if (this.nodeType === NodeType.BreakStatement) {
                 emitter.writeToOutput("break");
             }
@@ -1127,10 +1126,10 @@ module TypeScript {
             super(NodeType.WhileStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("while (");
-            this.cond.emit(emitter, false);
+            this.cond.emit(emitter);
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
             emitter.setInObjectLiteral(temp);
@@ -1150,7 +1149,7 @@ module TypeScript {
             super(NodeType.DoStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
             emitter.emitBlockOrStatement(this.body);
@@ -1158,7 +1157,7 @@ module TypeScript {
             emitter.writeToOutput(" while");
             emitter.recordSourceMappingEnd(this.whileSpan);
             emitter.writeToOutput('(');
-            this.cond.emit(emitter, false);
+            this.cond.emit(emitter);
             emitter.writeToOutput(")");
             emitter.setInObjectLiteral(temp);
             emitter.writeToOutput(";");
@@ -1180,11 +1179,11 @@ module TypeScript {
             super(NodeType.IfStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("if (");
-            this.cond.emit(emitter, false);
+            this.cond.emit(emitter);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
 
@@ -1193,7 +1192,7 @@ module TypeScript {
             if (this.elseBod) {
                 if (this.elseBod.nodeType === NodeType.IfStatement) {
                     emitter.writeToOutput(" else ");
-                    this.elseBod.emit(emitter, /*startLine:*/ false);
+                    this.elseBod.emit(emitter);
                 }
                 else {
                     emitter.writeToOutput(" else");
@@ -1216,11 +1215,11 @@ module TypeScript {
             super(NodeType.ReturnStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
-                this.returnExpression.emit(emitter, false);
+                this.returnExpression.emit(emitter);
                 emitter.writeToOutput(";");
             }
             else {
@@ -1242,13 +1241,13 @@ module TypeScript {
 
         public statement: ASTSpan = new ASTSpan();
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("for (");
-            this.lval.emit(emitter, false);
+            this.lval.emit(emitter);
             emitter.writeToOutput(" in ");
-            this.obj.emit(emitter, false);
+            this.obj.emit(emitter);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitBlockOrStatement(this.body);
@@ -1271,12 +1270,12 @@ module TypeScript {
             super(NodeType.ForStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for (");
             if (this.init) {
                 if (this.init.nodeType !== NodeType.List) {
-                    this.init.emit(emitter, false);
+                    this.init.emit(emitter);
                 }
                 else {
                     emitter.setInVarBlock((<ASTList>this.init).members.length);
@@ -1307,10 +1306,10 @@ module TypeScript {
             super(NodeType.WithStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("with (");
             if (this.expr) {
-                this.expr.emit(emitter, false);
+                this.expr.emit(emitter);
             }
 
             emitter.writeToOutput(")");
@@ -1333,11 +1332,11 @@ module TypeScript {
             super(NodeType.SwitchStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("switch (");
-            this.val.emit(emitter, false);
+            this.val.emit(emitter);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
             emitter.writeLineToOutput(" {");
@@ -1369,10 +1368,10 @@ module TypeScript {
             super(NodeType.CaseClause);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             if (this.expr) {
                 emitter.writeToOutput("case ");
-                this.expr.emit(emitter, false);
+                this.expr.emit(emitter);
             }
             else {
                 emitter.writeToOutput("default");
@@ -1383,14 +1382,14 @@ module TypeScript {
 
             if (this.body.members.length === 1 && this.body.members[0].nodeType === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                this.body.members[0].emit(emitter, true);
+                this.body.members[0].emit(emitter);
                 emitter.writeLineToOutput("");
             }
             else {
                 // No curly braces. Format in the expected way
                 emitter.writeLineToOutput("");
                 emitter.indenter.increaseIndent();
-                this.body.emit(emitter, true);
+                this.body.emit(emitter);
                 emitter.indenter.decreaseIndent();
             }
         }
@@ -1419,7 +1418,7 @@ module TypeScript {
             super(NodeType.GenericType);
         }
 
-        public emit(emitter: Emitter, startLine: boolean): void {
+        public emit(emitter: Emitter): void {
             emitter.emitJavascript(this.name, false);
         }
 
@@ -1435,7 +1434,7 @@ module TypeScript {
             super(NodeType.TypeRef);
         }
 
-        public emit(emitter: Emitter, startLine: boolean) {
+        public emit(emitter: Emitter) {
             throw new Error("should not emit a type ref");
         }
 
@@ -1451,7 +1450,7 @@ module TypeScript {
             super(NodeType.TryStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("try ");
             emitter.emitJavascript(this.tryBody, false);
             emitter.emitJavascript(this.catchClause, false);
@@ -1477,11 +1476,11 @@ module TypeScript {
 
         public statement: ASTSpan = new ASTSpan();
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(" ");
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("catch (");
-            this.param.id.emit(emitter, false);
+            this.param.id.emit(emitter);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascript(this.body, false);
@@ -1499,7 +1498,7 @@ module TypeScript {
             super(NodeType.DebuggerStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("debugger;");
         }
     }
@@ -1509,7 +1508,7 @@ module TypeScript {
             super(NodeType.OmittedExpression);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1522,7 +1521,7 @@ module TypeScript {
             super(NodeType.EmptyStatement);
         }
 
-        public emitWorker(emitter: Emitter, startLine: boolean) {
+        public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(";");
         }
 
