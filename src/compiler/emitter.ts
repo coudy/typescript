@@ -353,7 +353,7 @@ module TypeScript {
                 this.emitJavascript(target, false);
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
-                this.emitList(args, ", ", false, false, false);
+                this.emitCommaSeparatedList(args);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -469,7 +469,7 @@ module TypeScript {
                         this.writeToOutput(", ");
                     }
                 }
-                this.emitList(args, ", ", false, false, false);
+                this.emitCommaSeparatedList(args);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -936,7 +936,7 @@ module TypeScript {
             var temp = this.setInObjectLiteral(false);
             this.emitJavascript(operand1, false);
             this.writeToOutput("[");
-            this.emitList(operand2, ", ", false, false, false);
+            this.emitCommaSeparatedList(operand2);
             this.writeToOutput("]");
             this.setInObjectLiteral(temp);
         }
@@ -1449,6 +1449,30 @@ module TypeScript {
                 }
             }
         }
+
+        public emitCommaSeparatedList(ast: AST): void {
+            if (ast === null) {
+                return;
+            }
+            else if (ast.nodeType !== NodeType.List) {
+                ast.emit(this, false);
+            }
+            else {
+                var list = <ASTList>ast;
+                // this.emitComments(ast, true);
+                    // this.emitComments(ast, false);
+
+                var len = list.members.length;
+                for (var i = 0; i < len; i++) {
+                    var emitNode = list.members[i];
+                    emitNode.emit(this, false);
+
+                    if (i < (len - 1)) {
+                        this.writeToOutput(", ");
+                    }
+                }
+            }
+        }
         
         public emitList(ast: AST, delimiter: string, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (ast === null) {
@@ -1838,7 +1862,7 @@ module TypeScript {
                     this.emitThis();
                     if (callEx.arguments && callEx.arguments.members.length > 0) {
                         this.writeToOutput(", ");
-                        this.emitList(callEx.arguments, ", ", false, false, false);
+                        this.emitCommaSeparatedList(callEx.arguments);
                     }
                     this.writeToOutput(")");
                     return true;
