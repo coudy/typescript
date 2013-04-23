@@ -33,11 +33,9 @@ class CompilerBaselineRunner extends RunnerBase {
                     case 'amd':
                         x.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
                         break;
+                    default:
                     case 'commonjs':
                         x.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-                        break;
-                    default:
-                        x.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
                         break;
                 }
             }

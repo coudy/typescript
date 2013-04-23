@@ -106,6 +106,5 @@ module TypeScript {
     export enum ModuleGenTarget {
         Synchronous = 0,
         Asynchronous = 1,
-        Local = 1 << 1,
     }
 }

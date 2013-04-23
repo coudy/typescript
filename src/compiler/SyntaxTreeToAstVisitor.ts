@@ -500,7 +500,7 @@ module TypeScript {
             }
 
             var topLevelMod: ModuleDeclaration = null;
-            if (this.compilationSettings.moduleGenTarget !== ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
+            if (this.hasTopLevelImportOrExport(node)) {
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName);
                 topLevelMod = new ModuleDeclaration(id, bod, null);
