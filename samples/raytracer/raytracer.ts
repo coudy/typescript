@@ -265,7 +265,7 @@ function defaultScene(): Scene {
 }
 
 function exec() {
-    var canv = document.createElement("canvas");
+    var canv = <HTMLCanvasElement>document.createElement("canvas");
     canv.width = 256;
     canv.height = 256;
     document.body.appendChild(canv);
