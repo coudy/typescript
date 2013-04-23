@@ -12,9 +12,11 @@ module TypeScript {
 
         private declName: string;
 
+        private declDisplayName: string;
+
         private symbol: PullSymbol = null;
 
-        private declGroups: any = {};
+        private declGroups: { [s: string]: PullDeclGroup; } = new BlockIntrinsics();
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
@@ -45,18 +47,27 @@ module TypeScript {
         // edits and updates we don't leak the val decl or symbol
         private synthesizedValDecl: PullDecl = null;
 
-        constructor(declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+        constructor(declName: string, displayName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.declName = declName;
             this.declType = declType;
             this.declFlags = declFlags;
             this.span = span;
             this.scriptName = scriptName;
+
+            if (displayName !== this.declName) {
+                this.declDisplayName = displayName;
+            }
         }
 
         public getDeclID() { return this.declID; }
 
+        /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
+         * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
+         */
         public getName() { return this.declName; }
         public getKind() { return this.declType }
+
+        public getDisplayName() { return this.declDisplayName === undefined ? this.declName : this.declDisplayName; }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
         public getSymbol(): PullSymbol { return this.symbol; }
@@ -205,7 +216,7 @@ module TypeScript {
         public getTypeParameters() { return this.typeParameters; }
 
         public addVariableDeclToGroup(decl: PullDecl) {
-            var declGroup = <PullDeclGroup>this.declGroups[decl.getName()];
+            var declGroup = this.declGroups[decl.getName()];
             if (declGroup) {
                 declGroup.addDecl(decl);
             }
@@ -220,7 +231,9 @@ module TypeScript {
             var declGroups: PullDecl[][] = [];
 
             for (var declName in this.declGroups) {
-                declGroups[declGroups.length] = (<PullDeclGroup>this.declGroups[declName]).getDecls();
+                if (this.declGroups[declName]) {
+                    declGroups[declGroups.length] = this.declGroups[declName].getDecls();
+                }
             }
 
             return declGroups;
@@ -231,7 +244,7 @@ module TypeScript {
         private functionExpressionName: string;
 
         constructor(expressionName: string, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
-            super("", PullElementKind.FunctionExpression, declFlags, span, scriptName);
+            super("", "", PullElementKind.FunctionExpression, declFlags, span, scriptName);
             this.functionExpressionName = expressionName;
         }
 

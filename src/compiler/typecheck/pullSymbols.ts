@@ -83,7 +83,14 @@ module TypeScript {
         public isAlias() { return false; }
         public isContainer() { return false; }
 
+        /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
+         * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
+         */
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) { return this.name; }
+        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+            // Get the actual name associated with a declaration for this symbol
+            return this.getDeclarations()[0].getDisplayName();
+        }
 
         public getKind() { return this.declKind; }
         public setKind(declType: PullElementKind) { this.declKind = declType; }
@@ -397,9 +404,9 @@ module TypeScript {
         }
 
         private getPrettyNameInScope(scopeSymbol?: PullSymbol) {
-            var scopedName = this.getName(scopeSymbol);
+            var scopedName = this.getDisplayName(scopeSymbol);
             if (this.getKind() === PullElementKind.DynamicModule) {
-                if (!isQuoted(scopedName) && scopedName === this.getName()) {
+                if (!isQuoted(scopedName) && scopedName === this.getDisplayName()) {
                     return "";
                 }
             }
@@ -411,7 +418,7 @@ module TypeScript {
             if (this.getKind() === PullElementKind.DynamicModule) {
                 return this.getPrettyNameInScope(scopeSymbol);
             } else {
-                return this.getName(scopeSymbol, true);
+                return this.getDisplayName(scopeSymbol, true);
             }
         }
 
@@ -443,7 +450,7 @@ module TypeScript {
             for (var i = 1; i < path.length; i++) {
                 var kind = path[i].getKind();
                 if (kind === PullElementKind.Container) {
-                    fullName = path[i].getName() + "." + fullName;
+                    fullName = path[i].getDisplayName() + "." + fullName;
                 } else if (kind === PullElementKind.DynamicModule) {
                     var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
                     if (scopedName) {
@@ -454,7 +461,7 @@ module TypeScript {
                     break;
                 }
             }
-            fullName = fullName + this.getName(scopeSymbol, useConstraintInName);
+            fullName = fullName + this.getDisplayName(scopeSymbol, useConstraintInName);
             return fullName;
         }
 
@@ -837,7 +844,7 @@ module TypeScript {
             
             super.invalidate();
         }
-
+        
         public isStringConstantOverloadSignature() {
             if (this.stringConstantOverload === undefined) {
                 var params = this.getParameters();
@@ -1101,7 +1108,7 @@ module TypeScript {
 
             if (!this.memberLinks) {
                 this.memberLinks = [];
-            }            
+            }
 
             if (!this.memberCache || !this.memberNameCache) {
                 this.populateMemberCache();
@@ -1197,7 +1204,7 @@ module TypeScript {
         public isGeneric(): boolean {
             return (this.typeParameterLinks && this.typeParameterLinks.length != 0) ||
                 this.hasGenericSignature ||
-                this.hasGenericMember || 
+                this.hasGenericMember ||
                 (this.typeArguments && this.typeArguments.length);
         }
 
@@ -1409,7 +1416,7 @@ module TypeScript {
                     members[members.length] = this.callSignatureLinks[i].end;
                 }
             }
-            
+
             var extendedTypes = this.getExtendedTypes();
 
             for (var i = 0; i < extendedTypes.length; i++) {
@@ -1424,7 +1431,7 @@ module TypeScript {
 
         public hasOwnConstructSignatures() { return !!this.constructSignatureLinks; }
 
-        public getConstructSignatures(): PullSignatureSymbol[]{
+        public getConstructSignatures(): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.constructSignatureLinks) {
@@ -1446,7 +1453,7 @@ module TypeScript {
 
         public hasOwnIndexSignatures() { return !!this.indexSignatureLinks; }
 
-        public getIndexSignatures(): PullSignatureSymbol[]{
+        public getIndexSignatures(): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.indexSignatureLinks) {
@@ -2057,6 +2064,10 @@ module TypeScript {
             return this.delegateType.getName(scopeSymbol, useConstraintInName);
         }
 
+        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
+            return this.delegateType.getDisplayName(scopeSymbol, useConstraintInName);
+        }
+
         public toString() {
             return this.delegateType.toString();
         }
@@ -2165,6 +2176,16 @@ module TypeScript {
                 }
             }
             return super.getName();
+        }
+
+        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
+            if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
+                var symbol = this.getAliasedSymbol(scopeSymbol);
+                if (symbol) {
+                    return symbol.getDisplayName();
+                }
+            }
+            return super.getDisplayName();
         }
     }
 
@@ -2389,7 +2410,7 @@ module TypeScript {
         public isGeneric() { return true; }
 
         public fullName(scopeSymbol?: PullSymbol) {
-            var name = this.getName(scopeSymbol);
+            var name = this.getDisplayName(scopeSymbol);
             var container = this.getContainer();
             if (container) {
                 var containerName = container.fullName(scopeSymbol);
@@ -2415,6 +2436,25 @@ module TypeScript {
 
             this.isPrinting = false;
         
+            return name;
+        }
+
+        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+
+            var name = super.getDisplayName(scopeSymbol, useConstraintInName);
+
+            if (this.isPrinting) {
+                return name;
+            }
+
+            this.isPrinting = true;
+
+            if (useConstraintInName && this.constraintLink) {
+                name += " extends " + this.constraintLink.end.toString();
+            }
+
+            this.isPrinting = false;
+            
             return name;
         }
 
@@ -3230,7 +3270,7 @@ module TypeScript {
         var newParameterElementType: PullTypeSymbol;
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
-        var localTypeParameters: any = {};
+        var localTypeParameters: any = new BlockIntrinsics();
         var localSkipMap: any = {};
 
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing

@@ -379,7 +379,7 @@ module Services {
                     for (var i = 0; i < funcContainerList.length; i++) {
                         var funcContainer = funcContainerList[i].start;
                         var funcDocComments = this.getDocCommentArray(funcContainer);
-                        var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getName(), funcDocComments);
+                        var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getDisplayName(), funcDocComments);
                         if (paramComment != "") {
                             parameterComments.push(paramComment);
                         }

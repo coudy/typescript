@@ -180,7 +180,7 @@ module TypeScript {
 
         public addPrimitive(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new PullDecl(name, PullElementKind.Primitive, PullElementFlags.None, span, "");
+            var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
 
             symbol.addDeclaration(decl);
@@ -195,7 +195,7 @@ module TypeScript {
 
         constructor() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new PullDecl("", PullElementKind.Global, PullElementFlags.None, span, "");
+            var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "");
             var globalInfo = this.units[0];
             globalInfo.addTopLevelDecl(globalDecl);
 

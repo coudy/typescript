@@ -95,7 +95,7 @@ module Services {
 
         private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
             var result: ReferenceEntry[] = [];
-            var symbolName = symbol.getName();
+            var symbolName = symbol.getDisplayName();
             
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
             if (possiblePositions && possiblePositions.length > 0) {
@@ -128,7 +128,7 @@ module Services {
 
             var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
-            var symbolName = symbol.getName();
+            var symbolName = symbol.getDisplayName();
 
             var position = text.indexOf(symbolName);
             while (position >= 0) {
@@ -216,7 +216,7 @@ module Services {
         private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: boolean, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol): FormalSignatureInfo {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
-            result.name = symbol.getName();
+            result.name = symbol.getDisplayName();
             result.docComment = this.compilerState.getDocComments(symbol); 
             result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
             result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
@@ -234,7 +234,7 @@ module Services {
                         var signatureParameterInfo = new FormalParameterInfo();
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
                         signatureParameterInfo.isOptional = p.getIsOptional();
-                        signatureParameterInfo.name = p.getName();
+                        signatureParameterInfo.name = p.getDisplayName();
                         signatureParameterInfo.docComment = this.compilerState.getDocComments(p);
                         signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
@@ -297,10 +297,10 @@ module Services {
                 return result;
             }
 
-            var symbolName = symbolInfo.symbol.getName();
+            var symbolName = symbolInfo.symbol.getDisplayName();
             var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind(), symbolInfo.symbol);//this.getSymbolElementKind(sym),
             var container = symbolInfo.symbol.getContainer();
-            var containerName = container ? container.getName() : "<global>";//this.getSymbolContainerName(sym)
+            var containerName = container ? container.getDisplayName() : "<global>";//this.getSymbolContainerName(sym)
             var containerKind = "";//this.getSymbolContainerKind(sym)
 
             var entries: DefinitionInfo[] = [];
@@ -442,7 +442,7 @@ module Services {
                     return "[]";
             }
 
-            return declaration.getName();
+            return declaration.getDisplayName();
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
@@ -726,7 +726,7 @@ module Services {
 
             symbolInfo.symbols.forEach((symbol) => {
                 var entry = new CompletionEntry();
-                entry.name = symbol.getName();
+                entry.name = symbol.getDisplayName();
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 entry.kind = this.mapPullElementKind(symbol.getKind(), symbol, true);
                 entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
@@ -750,13 +750,13 @@ module Services {
             var existingMemberSymbols = existingMembers.symbols;
             var existingMemberNames: { [s: string]: boolean; } = {};
             for (var i = 0, n = existingMemberSymbols.length; i < n; i++) {
-                existingMemberNames[existingMemberSymbols[i].getName()]= true;
+                existingMemberNames[existingMemberSymbols[i].getDisplayName()]= true;
             }
 
             var filteredMembers: TypeScript.PullSymbol[] = [];
             for (var j = 0, m = contextualMemberSymbols.length; j < m; j++) {
                 var contextualMemberSymbol = contextualMemberSymbols[j];
-                if (!existingMemberNames[contextualMemberSymbol.getName()]) {
+                if (!existingMemberNames[contextualMemberSymbol.getDisplayName()]) {
                     filteredMembers.push(contextualMemberSymbol);
                 }
             }

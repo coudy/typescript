@@ -627,7 +627,12 @@ module TypeScript {
                 }
                 // Constructor types have a "prototype" property
                 else if (lhsType.isConstructor()) {
-                    var prototypeSymbol = new PullSymbol("prototype", PullElementKind.Property);
+                    var prototypeStr = "prototype";
+                    var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
+                    var parentDecl = lhsType.getDeclarations()[0];
+                    var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.getKind(), parentDecl.getFlags(), parentDecl.getSpan(), parentDecl.getScriptName());
+                    prototypeDecl.setParentDecl(parentDecl);
+                    prototypeSymbol.addDeclaration(prototypeDecl);
                     // prototypeSymbol.setType(lhsType);
                     members.push(prototypeSymbol);
                 }
@@ -1131,7 +1136,7 @@ module TypeScript {
                     }
                     else {
                         importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(),
-                            getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_external_module__0_, [modPath])));
+                            getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_external_module__0_, [text])));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
@@ -1416,7 +1421,11 @@ module TypeScript {
             }
 
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
-                typeDeclSymbol = new PullStringConstantTypeSymbol((<StringLiteral>typeRef.term).text);
+                var stringConstantAST = <StringLiteral>typeRef.term;
+                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text);
+                typeDeclSymbol.addDeclaration(new PullDecl(stringConstantAST.text, stringConstantAST.text,
+                    typeDeclSymbol.getKind(), null,
+                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName()));
             }
 
             if (!typeDeclSymbol) {
@@ -2374,7 +2383,7 @@ module TypeScript {
 
             if (!nameSymbol) {
                 var diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [id]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2419,7 +2428,7 @@ module TypeScript {
 
             if (!lhsType) {
                 diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [rhsName]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2523,7 +2532,7 @@ module TypeScript {
 
                 if (!nameSymbol) {
                     diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [rhsName, lhsType.getName()]), enclosingDecl);
+                        getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -2601,7 +2610,7 @@ module TypeScript {
 
                 if (!typeNameSymbol) {
                     diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [id]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -2760,7 +2769,7 @@ module TypeScript {
 
             if (!lhsType) {
                 diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [rhsName]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2792,7 +2801,7 @@ module TypeScript {
 
             if (!childTypeSymbol) {
                 diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
-                    getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [rhsName, lhsType.getName()]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -3074,7 +3083,7 @@ module TypeScript {
 
             span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
-            var objectLitDecl = new PullDecl("", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
+            var objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
 
             if (enclosingDecl) {
                 objectLitDecl.setParentDecl(enclosingDecl);
@@ -3126,7 +3135,7 @@ module TypeScript {
                     // PULLTODO: Collect these at decl collection time, add them to the var decl
                     span = TextSpan.fromBounds(binex.minChar, binex.limChar);
 
-                    var decl = new PullDecl(text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
+                    var decl = new PullDecl(text, text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 
                     objectLitDecl.addChildDecl(decl);
                     decl.setParentDecl(objectLitDecl);

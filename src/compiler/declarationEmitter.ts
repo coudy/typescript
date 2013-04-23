@@ -329,10 +329,10 @@ module TypeScript {
                         this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), "var");
                         this.varListCount = -this.varListCount;
                     }
-                    this.declFile.Write(varDecl.id.text);
+                    this.declFile.Write(varDecl.id.actualText);
                 } else {
                     this.emitIndent();
-                    this.declFile.Write(varDecl.id.text);
+                    this.declFile.Write(varDecl.id.actualText);
                     if (hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName)) {
                         this.declFile.Write("?");
                     }
@@ -374,7 +374,7 @@ module TypeScript {
 
         private emitArgDecl(argDecl: Parameter, funcDecl: FunctionDeclaration) {
             this.emitDeclarationComments(argDecl, false);
-            this.declFile.Write(argDecl.id.text);
+            this.declFile.Write(argDecl.id.actualText);
             if (argDecl.isOptionalArg()) {
                 this.declFile.Write("?");
             }
@@ -562,7 +562,7 @@ module TypeScript {
 
             this.emitAccessorDeclarationComments(funcDecl);
             this.emitDeclFlags(ToDeclFlags(funcDecl.getFunctionFlags()), "var");
-            this.declFile.Write(funcDecl.name.text);
+            this.declFile.Write(funcDecl.name.actualText);
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 this.declFile.Write(" : ");
                 var type = accessorSymbol.getType();
@@ -582,7 +582,7 @@ module TypeScript {
                     if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
                         this.emitDeclarationComments(argDecl);
                         this.emitDeclFlags(ToDeclFlags(argDecl.getVarFlags()), "var");
-                        this.declFile.Write(argDecl.id.text);
+                        this.declFile.Write(argDecl.id.actualText);
 
                         if (this.canEmitTypeAnnotationSignature(ToDeclFlags(argDecl.getVarFlags()))) {
                             this.emitTypeOfBoundDecl(argDecl);
@@ -599,7 +599,7 @@ module TypeScript {
             }
 
             if (pre) {
-                var className = classDecl.name.text;
+                var className = classDecl.name.actualText;
                 this.emitDeclarationComments(classDecl);
                 this.emitDeclFlags(ToDeclFlags(classDecl.getVarFlags()), "class");
                 this.declFile.Write(className);
@@ -658,7 +658,7 @@ module TypeScript {
             }
 
             if (pre) {
-                var interfaceName = interfaceDecl.name.text;
+                var interfaceName = interfaceDecl.name.actualText;
                 this.emitDeclarationComments(interfaceDecl);
                 this.emitDeclFlags(ToDeclFlags(interfaceDecl.getVarFlags()), "interface");
                 this.declFile.Write(interfaceName);
@@ -687,7 +687,7 @@ module TypeScript {
                     this.emitIndent();
                     this.declFile.Write("import ");
 
-                    this.declFile.Write(importDecl.id.text + " = ");
+                    this.declFile.Write(importDecl.id.actualText + " = ");
                     if (importDecl.isDynamicImport) {
                         this.declFile.WriteLine("module (" + importDecl.getAliasName() + ");");
                     } else {
@@ -706,7 +706,7 @@ module TypeScript {
 
             this.emitDeclarationComments(moduleDecl);
             this.emitDeclFlags(ToDeclFlags(moduleDecl.getModuleFlags()), "enum");
-            this.declFile.WriteLine(moduleDecl.name.text + " {");
+            this.declFile.WriteLine(moduleDecl.name.actualText + " {");
 
             this.indenter.increaseIndent();
             var membersLen = moduleDecl.members.members.length;
@@ -716,7 +716,7 @@ module TypeScript {
                     var variableStatement = <VariableStatement>memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
-                    this.declFile.WriteLine((<VariableDeclarator>variableStatement.declaration.declarators.members[0]).id.text + ",");
+                    this.declFile.WriteLine((<VariableDeclarator>variableStatement.declaration.declarators.members[0]).id.actualText + ",");
                 }
             }
             this.indenter.decreaseIndent();
@@ -784,7 +784,7 @@ module TypeScript {
                 } else {
                     this.dottedModuleEmit = this.getDeclFlagsString(ToDeclFlags(moduleDecl.getModuleFlags()), "module");
                 }
-                this.dottedModuleEmit += moduleDecl.name.text;
+                this.dottedModuleEmit += moduleDecl.name.actualText;
 
                 var isCurrentModuleDotted = (moduleDecl.members.members.length === 1 &&
                     moduleDecl.members.members[0].nodeType === NodeType.ModuleDeclaration &&

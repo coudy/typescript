@@ -66,6 +66,9 @@ module TypeScript {
         private isParsingDeclareFile: boolean;
         private isParsingAmbientModule = false;
 
+        private static protoString = "__proto__";
+        private static protoSubstitutionString = "#__proto__";
+
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
                     private lineMap: LineMap,
@@ -202,6 +205,9 @@ module TypeScript {
             else {
                 result = new Identifier(token.text());
                 result.text = useValueText ? token.valueText() : result.text;
+                if (result.text == SyntaxTreeToAstVisitor.protoString) {
+                    result.text = SyntaxTreeToAstVisitor.protoSubstitutionString;
+                }
             }
 
             if (isOptional) {
