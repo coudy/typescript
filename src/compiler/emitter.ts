@@ -1481,6 +1481,16 @@ module TypeScript {
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
                     }
+
+                    if (emitNode.nodeType === NodeType.FunctionDeclaration &&
+                        hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Signature)) {
+                        continue;
+                    }
+
+                    if (emitNode.nodeType === NodeType.InterfaceDeclaration) {
+                        continue;
+                    }
+
                     this.emitJavascript(emitNode, true);
 
                     if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
@@ -1507,13 +1517,10 @@ module TypeScript {
                 return;
             }
 
-            // REVIEW: simplify rules for indenting
             if (startLine &&
                 this.indenter.indentAmt > 0) {
 
-                if (ast.nodeType !== NodeType.InterfaceDeclaration) {
-                    this.emitIndent();
-                }
+                this.emitIndent();
             }
 
             ast.emit(this);

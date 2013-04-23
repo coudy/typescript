@@ -19,7 +19,7 @@ var m0;
 (function (m0) {
     function f1() {
     }
-            function f2(ns) {
+    function f2(ns) {
     }
     var c1 = (function () {
         function c1() { }
@@ -37,7 +37,7 @@ var m1;
     function f1() {
     }
     m1.f1 = f1;
-            function f2(ns) {
+    function f2(ns) {
     }
     m1.f2 = f2;
     var c1 = (function () {

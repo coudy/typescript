@@ -1,5 +1,5 @@
 function outer() {
-            function inner(a) {
+    function inner(a) {
         return a;
     }
     return inner(0);
