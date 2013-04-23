@@ -30,13 +30,11 @@ module TypeScript {
     export class EmitState {
         public column: number;
         public line: number;
-        public inObjectLiteral: boolean;
         public container: EmitContainer;
 
         constructor() {
             this.column = 0;
             this.line = 0;
-            this.inObjectLiteral = false;
             this.container = EmitContainer.Prog;
         }
     }
@@ -209,12 +207,6 @@ module TypeScript {
             this.varListCountStack[this.varListCountStack.length - 1] = count;
         }
 
-        public setInObjectLiteral(val: boolean): boolean {
-            var temp = this.emitState.inObjectLiteral;
-            this.emitState.inObjectLiteral = val;
-            return temp;
-        }
-
         public setContainer(c: number): number {
             var temp = this.emitState.container;
             this.emitState.container = c;
@@ -309,9 +301,7 @@ module TypeScript {
                 }
 
                 this.indenter.increaseIndent();
-                var inObjectLiteral = this.setInObjectLiteral(true);
                 this.emitCommaSeparatedList(content, useNewLines);
-                this.setInObjectLiteral(inObjectLiteral);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }
@@ -937,12 +927,10 @@ module TypeScript {
         }
 
         public emitIndex(operand1: AST, operand2: AST) {
-            var temp = this.setInObjectLiteral(false);
             operand1.emit(this);
             this.writeToOutput("[");
             operand2.emit(this);
             this.writeToOutput("]");
-            this.setInObjectLiteral(temp);
         }
 
         public emitFunction(funcDecl: FunctionDeclaration) {
@@ -960,17 +948,13 @@ module TypeScript {
                 temp = this.setContainer(EmitContainer.Function);
             }
 
-            var hasSelfRef = false;
             var funcName = funcDecl.getNameText();
 
-            if ((this.emitState.inObjectLiteral || !funcDecl.isAccessor()) &&
-            ((temp !== EmitContainer.Constructor) ||
-            ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
-                var tempLit = this.setInObjectLiteral(false);
-                hasSelfRef = this.shouldCaptureThis(funcDecl);
+            if (((temp !== EmitContainer.Constructor) ||
+                ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
+                var hasSelfRef = this.shouldCaptureThis(funcDecl);
                 this.recordSourceMappingStart(funcDecl);
                 this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false, hasSelfRef, this.thisClassNode);
-                this.setInObjectLiteral(tempLit);
             }
             this.setContainer(temp);
             this.thisFunctionDeclaration = tempFnc;
@@ -1051,7 +1035,6 @@ module TypeScript {
             this.emitComments(declaration, true);
             this.recordSourceMappingStart(declaration);
             this.setInVarBlock(declaration.declarators.members.length);
-            var temp = this.setInObjectLiteral(false);
 
             var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
@@ -1071,7 +1054,6 @@ module TypeScript {
                 }
             }
 
-            this.setInObjectLiteral(temp);
             this.recordSourceMappingEnd(declaration);
             this.emitComments(declaration, false);
         }

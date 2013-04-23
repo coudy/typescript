@@ -494,12 +494,7 @@ module TypeScript {
                     break;
                 case NodeType.CommaExpression:
                     this.operand1.emit(emitter);
-                    if (emitter.emitState.inObjectLiteral) {
-                        emitter.writeLineToOutput(", ");
-                    }
-                    else {
-                        emitter.writeToOutput(", ");
-                    }
+                    emitter.writeToOutput(", ");
                     this.operand2.emit(emitter);
                     break;
                 default:
@@ -1049,7 +1044,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             this.declaration.emit(emitter);
 
             // If it was an ambient declarator without an initializer, then we won't emit anything.
@@ -1058,8 +1052,6 @@ module TypeScript {
             if (!isAmbientWithoutInit) {
                 emitter.writeToOutput(";");
             }
-
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
@@ -1077,14 +1069,12 @@ module TypeScript {
         public emitWorker(emitter: Emitter) {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
-            var temp = emitter.setInObjectLiteral(false);
             if (this.statements) {
                 emitter.emitList(this.statements, false);
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
@@ -1127,12 +1117,10 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("while (");
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
@@ -1150,7 +1138,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
             emitter.emitBlockOrStatement(this.body);
             emitter.recordSourceMappingStart(this.whileSpan);
@@ -1159,7 +1146,6 @@ module TypeScript {
             emitter.writeToOutput('(');
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
-            emitter.setInObjectLiteral(temp);
             emitter.writeToOutput(";");
         }
 
@@ -1180,7 +1166,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("if (");
             this.cond.emit(emitter);
@@ -1199,7 +1184,6 @@ module TypeScript {
                     emitter.emitBlockOrStatement(this.elseBod);
                 }
             }
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
@@ -1216,7 +1200,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 this.returnExpression.emit(emitter);
@@ -1225,7 +1208,6 @@ module TypeScript {
             else {
                 emitter.writeToOutput("return;");
             }
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
@@ -1242,7 +1224,6 @@ module TypeScript {
         public statement: ASTSpan = new ASTSpan();
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("for (");
             this.lval.emit(emitter);
@@ -1251,7 +1232,6 @@ module TypeScript {
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitBlockOrStatement(this.body);
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
@@ -1271,7 +1251,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for (");
             if (this.init) {
                 if (this.init.nodeType !== NodeType.List) {
@@ -1289,7 +1268,6 @@ module TypeScript {
             emitter.emitJavascript(this.incr, false);
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
@@ -1333,7 +1311,6 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("switch (");
             this.val.emit(emitter);
@@ -1349,7 +1326,6 @@ module TypeScript {
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
-            emitter.setInObjectLiteral(temp);
         }
 
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
