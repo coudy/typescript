@@ -1,3 +1,2 @@
-if (!module.exports) {
+if (!module.exports)
     module.exports = "";
-}

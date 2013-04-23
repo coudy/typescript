@@ -1132,7 +1132,7 @@ module TypeScript {
             emitter.writeToOutput("while (");
             this.cond.emit(emitter, false);
             emitter.writeToOutput(")");
-            emitter.emitStatements(this.body, false);
+            emitter.emitBlockOrStatement(this.body);
             emitter.setInObjectLiteral(temp);
         }
 
@@ -1153,7 +1153,7 @@ module TypeScript {
         public emitWorker(emitter: Emitter, startLine: boolean) {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
-            emitter.emitStatements(this.body, true);
+            emitter.emitBlockOrStatement(this.body);
             emitter.recordSourceMappingStart(this.whileSpan);
             emitter.writeToOutput(" while");
             emitter.recordSourceMappingEnd(this.whileSpan);
@@ -1187,7 +1187,9 @@ module TypeScript {
             this.cond.emit(emitter, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitStatements(this.thenBod, true);
+
+            emitter.emitBlockOrStatement(this.thenBod);
+
             if (this.elseBod) {
                 if (this.elseBod.nodeType === NodeType.IfStatement) {
                     emitter.writeToOutput(" else ");
@@ -1195,7 +1197,7 @@ module TypeScript {
                 }
                 else {
                     emitter.writeToOutput(" else");
-                    emitter.emitStatements(this.elseBod, true);
+                    emitter.emitBlockOrStatement(this.elseBod);
                 }
             }
             emitter.setInObjectLiteral(temp);
@@ -1249,7 +1251,7 @@ module TypeScript {
             this.obj.emit(emitter, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitStatements(this.body, true);
+            emitter.emitBlockOrStatement(this.body);
             emitter.setInObjectLiteral(temp);
         }
 
@@ -1287,7 +1289,7 @@ module TypeScript {
             emitter.writeToOutput("; ");
             emitter.emitJavascript(this.incr, false);
             emitter.writeToOutput(")");
-            emitter.emitStatements(this.body, true);
+            emitter.emitBlockOrStatement(this.body);
             emitter.setInObjectLiteral(temp);
         }
 
@@ -1312,7 +1314,7 @@ module TypeScript {
             }
 
             emitter.writeToOutput(")");
-            emitter.emitStatements(this.body, true);
+            emitter.emitBlockOrStatement(this.body);
         }
 
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
@@ -1378,15 +1380,17 @@ module TypeScript {
             emitter.recordSourceMappingStart(this.colonSpan);
             emitter.writeToOutput(":");
             emitter.recordSourceMappingEnd(this.colonSpan);
+
             if (this.body.members.length === 1 && this.body.members[0].nodeType === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                emitter.emitStatements(this.body, false);
+                this.body.members[0].emit(emitter, true);
+                emitter.writeLineToOutput("");
             }
             else {
                 // No curly braces. Format in the expected way
                 emitter.writeLineToOutput("");
                 emitter.indenter.increaseIndent();
-                emitter.emitJavascript(this.body, true);
+                this.body.emit(emitter, true);
                 emitter.indenter.decreaseIndent();
             }
         }

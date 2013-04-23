@@ -1531,7 +1531,6 @@ module TypeScript {
             if (startLine &&
                 this.indenter.indentAmt > 0 &&
                 ast.nodeType !== NodeType.List &&
-                ast.nodeType !== NodeType.Block &&
                 ast.nodeType !== NodeType.VariableDeclaration) {
 
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
@@ -1854,6 +1853,18 @@ module TypeScript {
             }
             else {
                 this.writeToOutput("this");
+            }
+        }
+
+        public emitBlockOrStatement(node: AST): void {
+            if (node.nodeType === NodeType.Block) {
+                node.emit(this, true);
+            }
+            else {
+                this.writeLineToOutput("");
+                this.indenter.increaseIndent();
+                this.emitJavascript(node, true);
+                this.indenter.decreaseIndent();
             }
         }
 

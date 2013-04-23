@@ -2,7 +2,7 @@ var Outer;
 (function (Outer) {
     var non_export_var;
     module;
- {
+     {
         var non_export_var = 0;
         Outer.export_var = 1;
         function NonExportFunc() {
