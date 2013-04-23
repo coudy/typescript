@@ -1532,8 +1532,7 @@ module TypeScript {
                 this.indenter.indentAmt > 0 &&
                 ast.nodeType !== NodeType.List &&
                 ast.nodeType !== NodeType.Block &&
-                ast.nodeType !== NodeType.VariableDeclaration &&
-                ast.nodeType !== NodeType.VariableStatement) {
+                ast.nodeType !== NodeType.VariableDeclaration) {
 
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VariableDeclarator) &&

@@ -33,7 +33,7 @@ var M;
     })(M.E || (M.E = {}));
     var E = M.E;
     M.x = 5;
-
+    
     var y = M.x + M.x;
     var B = (function () {
         function B() {
