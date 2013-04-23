@@ -430,13 +430,13 @@ module TypeScript {
 
         export function walkTryStatementChildren(preAst: TryStatement, parent: AST, walker: IAstWalker): void {
             if (preAst.tryBody) {
-                preAst.tryBody = walker.walk(preAst.tryBody, preAst);
+                preAst.tryBody = <Block>walker.walk(preAst.tryBody, preAst);
             }
             if (preAst.catchClause) {
                 preAst.catchClause = <CatchClause>walker.walk(preAst.catchClause, preAst);
             }
             if (preAst.finallyBody) {
-                preAst.finallyBody = walker.walk(preAst.finallyBody, preAst);
+                preAst.finallyBody = <Block>walker.walk(preAst.finallyBody, preAst);
             }
         }
 
@@ -446,7 +446,7 @@ module TypeScript {
             }
 
             if (preAst.body) {
-                preAst.body = walker.walk(preAst.body, preAst);
+                preAst.body = <Block>walker.walk(preAst.body, preAst);
             }
         }
 

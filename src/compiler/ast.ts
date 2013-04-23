@@ -1443,7 +1443,7 @@ module TypeScript {
     }
 
     export class TryStatement extends Statement {
-        constructor(public tryBody: AST, public catchClause: CatchClause, public finallyBody: AST) {
+        constructor(public tryBody: Block, public catchClause: CatchClause, public finallyBody: Block) {
             super(NodeType.TryStatement);
         }
 
@@ -1467,7 +1467,7 @@ module TypeScript {
     }
 
     export class CatchClause extends AST {
-        constructor(public param: VariableDeclarator, public body: AST) {
+        constructor(public param: VariableDeclarator, public body: Block) {
             super(NodeType.CatchClause);
         }
 

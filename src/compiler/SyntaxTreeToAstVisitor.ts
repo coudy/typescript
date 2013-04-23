@@ -2880,7 +2880,7 @@ module TypeScript {
                     catchClause = node.catchClause.accept(this);
                 }
 
-                var finallyBody: AST = null;
+                var finallyBody: Block = null;
                 if (node.finallyClause !== null) {
                     finallyBody = node.finallyClause.accept(this);
                 }
