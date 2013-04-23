@@ -302,7 +302,7 @@ module TypeScript.Syntax {
         var positionedToken = sourceUnit.findToken(position);
         var fullStart = positionedToken.fullStart();
 
-        var lastTriviaBeforeToken: ISyntaxTrivia;
+        var lastTriviaBeforeToken: ISyntaxTrivia = null;
 
         if (positionedToken.kind() === SyntaxKind.EndOfFileToken) {
             // Check if the trivia is leading on the EndOfFile token
@@ -313,10 +313,12 @@ module TypeScript.Syntax {
             // Or trailing on the previous token
             else {
                 positionedToken = positionedToken.previousToken();
-                fullStart = positionedToken.fullStart();
-                if (positionedToken && positionedToken.token().hasTrailingTrivia()) {
-                    lastTriviaBeforeToken = positionedToken.token().trailingTrivia().last();
-                    fullStart += positionedToken.token().fullWidth() - lastTriviaBeforeToken.fullWidth();
+                if (positionedToken) {
+                    fullStart = positionedToken.fullStart();
+                    if (positionedToken && positionedToken.token().hasTrailingTrivia()) {
+                        lastTriviaBeforeToken = positionedToken.token().trailingTrivia().last();
+                        fullStart += positionedToken.token().fullWidth() - lastTriviaBeforeToken.fullWidth();
+                    }
                 }
             }
         }

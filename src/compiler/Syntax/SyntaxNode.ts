@@ -289,7 +289,7 @@ module TypeScript {
             // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
 
             // if position is after the end of the token, then this token is the token on the left.
-            if (position >= positionedToken.end()) {
+            if (positionedToken.token().width() > 0 && position >= positionedToken.end()) {
                 return positionedToken;
             }
 
