@@ -162,7 +162,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.recordSourceMappingStart(this);
-            emitter.emitList(this, null, false, false);
+            emitter.emitList(this, false, false);
             emitter.recordSourceMappingEnd(this);
         }
 
@@ -819,7 +819,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, startLine: boolean) {
             if (!this.isDeclareFile) {
-                emitter.emitList(this.moduleElements, null, false, false, true, this.requiresExtendsBlock);
+                emitter.emitList(this.moduleElements, false, false, true, this.requiresExtendsBlock);
             }
         }
     }
@@ -1080,7 +1080,7 @@ module TypeScript {
             emitter.indenter.increaseIndent();
             var temp = emitter.setInObjectLiteral(false);
             if (this.statements) {
-                emitter.emitList(this.statements, null, false, false);
+                emitter.emitList(this.statements, false, false);
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();

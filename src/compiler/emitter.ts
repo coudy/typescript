@@ -663,7 +663,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitList(funcDecl.block.statements, null, false, classPropertiesMustComeAfterSuperCall);
+            this.emitList(funcDecl.block.statements, false, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -848,7 +848,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitList(moduleDecl.members, null, false, false);
+                this.emitList(moduleDecl.members, false, false);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -1444,24 +1444,18 @@ module TypeScript {
             }
         }
         
-        public emitList(ast: AST, delimiter: string, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
-            if (ast === null) {
+        public emitList(list: ASTList, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
+            if (list === null) {
                 return;
             }
-            else if (ast.nodeType !== NodeType.List) {
-                this.emitPrologue(emitPrologue);
-                this.emitJavascript(ast, true);
-            }
             else {
-                var list = <ASTList>ast;
-                this.emitComments(ast, true);
+                this.emitComments(list, true);
                 if (list.members.length === 0) {
-                    this.emitComments(ast, false);
+                    this.emitComments(list, false);
                     return;
                 }
 
-                var len = list.members.length;
-                for (var i = 0; i < len; i++) {
+                for (var i = 0, n = list.members.length; i < n; i++) {
                     if (emitPrologue) {
                         // If the list has Strict mode flags, emit prologue after first statement
                         // otherwise emit before first statement
@@ -1488,10 +1482,7 @@ module TypeScript {
                     }
                     this.emitJavascript(emitNode, true);
 
-                    if (delimiter && (i < (len - 1))) {
-                        this.writeLineToOutput(delimiter);
-                    }
-                    else if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
+                    if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
@@ -1505,7 +1496,7 @@ module TypeScript {
                     this.emitConstructorPropertyAssignments();
                 }
 
-                this.emitComments(ast, false);
+                this.emitComments(list, false);
             }
         }
 
