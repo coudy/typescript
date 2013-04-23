@@ -497,10 +497,15 @@ module TypeScript {
             // now resolve the actual symbol, but supress the errors since we've already surfaced them above
             var prevSupressErrors = this.context.suppressErrors;
             this.context.suppressErrors = true;
+            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
+
+            if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
+                this.checkForResolutionError(varTypeSymbol, decl);
+            }
+
             this.context.suppressErrors = prevSupressErrors;
 
-            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var declSymbol = decl.getSymbol();
 
             // Check if variable satisfies type privacy

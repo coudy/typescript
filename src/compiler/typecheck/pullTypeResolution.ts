@@ -1616,18 +1616,10 @@ module TypeScript {
                 }
             }
 
-/*
-                                else if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray() && this.cachedArrayInterfaceType) {
-                        typeExprSymbol = specializeToArrayType(this.cachedArrayInterfaceType, typeExprSymbol, this, context);
-                    }
-            */
+            declSymbol.setResolved();
 
-            if (!hadError) {
-                declSymbol.setResolved();
-
-                if (declParameterSymbol) {
-                    declParameterSymbol.setResolved();
-                }
+            if (declParameterSymbol) {
+                declParameterSymbol.setResolved();
             }
 
             return declSymbol;
@@ -3305,26 +3297,123 @@ module TypeScript {
 
         public resolveIndexExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
-            var previousResolutionSymbol = this.getSymbolForAST(expressionAST, context);
+            var callEx: BinaryExpression = <BinaryExpression>expressionAST;
+
+            var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
 
             if (previousResolutionSymbol) {
-                return <PullTypeSymbol>previousResolutionSymbol;
+                //CompilerDiagnostics.Alert("Call get hit");
+                return previousResolutionSymbol;
             }
 
-            var indexType = this.resolveStatementOrExpression((<BinaryExpression>expressionAST).operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var diagnostic: PullDiagnostic;
+            var returnType: PullTypeSymbol = null;
 
-            if (indexType.isError()) {
-                return indexType;
+            // resolve the target
+            var targetSymbol = this.resolveStatementOrExpression(callEx.operand1, isTypedAssignment, enclosingDecl, context);
+
+            var targetTypeSymbol = targetSymbol.getType();
+
+            if (this.isAnyOrEquivalent(targetTypeSymbol)) {
+                this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
+                return targetTypeSymbol;
             }
 
-            var elementType = indexType.getElementType();
+            var elementType = targetTypeSymbol.getElementType();
 
-            if (elementType) {
-                this.setSymbolForAST(expressionAST, elementType, context);
+            var indexType = this.resolveStatementOrExpression(callEx.operand2, isTypedAssignment, enclosingDecl, context).getType();
+
+            var isNumberIndex = indexType == this.semanticInfoChain.numberTypeSymbol ||
+                                indexType.getKind() == PullElementKind.Enum;
+
+            if (elementType && isNumberIndex) {
+                this.setSymbolForAST(callEx, elementType, context);
                 return elementType;
             }
+            
+            // if the index expression is a string literal or a numberic literal and the object expression has
+            // a property with that name,  the property access is the type of that property
+            if (callEx.operand2.nodeType == NodeType.StringLiteral || callEx.operand2.nodeType == NodeType.NumericLiteral) {
 
-            return this.semanticInfoChain.anyTypeSymbol;
+                var memberName = callEx.operand2.nodeType == NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).text :
+                    quoteStr((<NumberLiteral>callEx.operand2).value.toString());
+
+                var member = targetTypeSymbol.findMember(memberName);
+
+                if (member) {
+                    this.setSymbolForAST(callEx, member.getType(), context);
+                    return member.getType();
+                }
+            }            
+
+            var signatures = targetTypeSymbol.getIndexSignatures();
+
+            var stringSignature: PullSignatureSymbol = null;
+            var numberSignature: PullSignatureSymbol = null;
+            var signature: PullSignatureSymbol = null;
+            var paramSymbols: PullSymbol[];
+            var paramType: PullTypeSymbol;
+
+            for (var i = 0; i < signatures.length; i++) {
+                
+                if (stringSignature && numberSignature) {
+                    break;
+                }
+                
+                signature = signatures[i];
+
+                paramSymbols = signature.getParameters();
+
+                if (paramSymbols.length) {
+                    paramType = paramSymbols[0].getType();
+
+                    if (paramType == this.semanticInfoChain.stringTypeSymbol) {
+                        stringSignature = signatures[i];
+                        continue;
+                    }
+                    else if (paramType == this.semanticInfoChain.numberTypeSymbol || paramType.getKind() == PullElementKind.Enum) {
+                        numberSignature = signatures[i];
+                        continue;
+                    }
+                }
+            }
+
+            // otherwise, if the object expression has a numeric index signature and the index expression is
+            // of type Any, the Number primitive type or an enum type, the property access is of the type of that index
+            // signature
+            if (numberSignature && (isNumberIndex || indexType == this.semanticInfoChain.anyTypeSymbol)) {
+                returnType = numberSignature.getReturnType();
+
+                this.setSymbolForAST(callEx, returnType, context);
+            }
+
+            // otherwise, if the object expression has a string index signature and the index expression is
+            // of type Any, the String or Number primitive type or an enum type, the property access of the type of
+            // that index signature
+
+            else if (stringSignature && (isNumberIndex || indexType == this.semanticInfoChain.anyTypeSymbol || indexType == this.semanticInfoChain.stringTypeSymbol)) {
+                returnType = stringSignature.getReturnType();
+
+                this.setSymbolForAST(callEx, returnType, context);
+            }
+
+            // otherwise, if indexExpr is of type Any, the String or Number primitive type or an enum type,
+            // the property access is of type Any
+            else if (isNumberIndex || indexType == this.semanticInfoChain.anyTypeSymbol || indexType == this.semanticInfoChain.stringTypeSymbol) {
+                returnType = this.semanticInfoChain.anyTypeSymbol;
+
+                this.setSymbolForAST(callEx, returnType, context);
+            }
+
+            // otherwise, the property acess is invalid and a compile-time error occurs
+            else {
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.getUnitPath(),
+                    getDiagnosticMessage(DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)]), enclosingDecl);
+
+                returnType = this.getNewErrorTypeSymbol(diagnostic);
+            }
+            
+            return returnType;
         }
 
         public resolveBitwiseOperator(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5000,16 +5089,87 @@ module TypeScript {
             comparisonInfo: TypeComparisonInfo): boolean {
 
             var targetIndexSigs = target.getIndexSignatures();
+            
             if (targetIndexSigs.length) {
                 var sourceIndexSigs = source.getIndexSignatures();
+                
                 var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : targetIndexSigs;
                 var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : sourceIndexSigs;
+                
+                var sourceStringSig: PullSignatureSymbol = null;
+                var sourceNumberSig: PullSignatureSymbol = null;
+                
+                var targetStringSig: PullSignatureSymbol = null;
+                var targetNumberSig: PullSignatureSymbol = null;
+                
+                var params: PullSymbol[];                
 
+                for (var i = 0; i < targetIndex.length; i++) {
+                    if (targetStringSig && targetNumberSig) {
+                        break;
+                    }
+
+                    params = targetIndex[i].getParameters();
+
+                    if (params.length) {
+                        if (!targetStringSig && params[0].getType() == this.semanticInfoChain.stringTypeSymbol) {
+                            targetStringSig = targetIndex[i];
+                            continue;
+                        }
+                        else if (!targetNumberSig && params[0].getType() == this.semanticInfoChain.numberTypeSymbol) {
+                            targetNumberSig = targetIndex[i];
+                            continue;
+                        }
+                    }
+                }
+
+                for (var i = 0; i < sourceIndex.length; i++) {
+                    if (sourceStringSig && sourceNumberSig) {
+                        break;
+                    }
+
+                    params = sourceIndex[i].getParameters();
+
+                    if (params.length) {
+                        if (!sourceStringSig && params[0].getType() == this.semanticInfoChain.stringTypeSymbol) {
+                            sourceStringSig = sourceIndex[i];
+                            continue;
+                        }
+                        else if (!sourceNumberSig && params[0].getType() == this.semanticInfoChain.numberTypeSymbol) {
+                            sourceNumberSig = sourceIndex[i];
+                            continue;
+                        }
+                    }
+                }
+
+                var comparable = true;
                 var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
                 if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
                     comparisonInfoSignatuesTypeCheck = new TypeComparisonInfo(comparisonInfo);
                 }
-                if (!this.signatureGroupIsRelatableToTarget(sourceIndex, targetIndex, assignableTo, comparisonCache, context, comparisonInfoSignatuesTypeCheck)) {
+
+                if (targetStringSig) {
+                    if (sourceStringSig) {
+                        comparable = this.signatureIsAssignableToTarget(sourceStringSig, targetStringSig, context, comparisonInfoSignatuesTypeCheck);
+                    }
+                    else {
+                        comparable = false;
+                    }
+                }
+
+                if (comparable && targetNumberSig) {
+                    if (sourceNumberSig) {
+                        comparable = this.signatureIsAssignableToTarget(sourceNumberSig, targetNumberSig, context, comparisonInfoSignatuesTypeCheck);
+                    }
+                    else if (sourceStringSig) {
+                        comparable = this.signatureIsAssignableToTarget(sourceStringSig, targetNumberSig, context, comparisonInfoSignatuesTypeCheck);
+                    }
+                    else {
+                        comparable = false;
+                    }
+                }
+
+                if (!comparable) {
                     if (comparisonInfo) {
                         var message: string;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {

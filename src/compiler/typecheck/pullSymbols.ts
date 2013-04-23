@@ -299,6 +299,7 @@ module TypeScript {
         public setUnresolved() {
             this.hasBeenResolved = false;
             this.isBound = false;
+            this.inResolution = false;
         }
 
         public invalidate() {
