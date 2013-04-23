@@ -16,11 +16,8 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-
-    // We need to catch both left and right quotes
-    // (depending on your editor's font, this may not be clear...)    
     export function stripQuotes(str: string) {
-        return str.replace("\"", "").replace("'", "").replace("'", "").replace("\"", "")
+        return str.replace(/"/g, "").replace(/'/g, "");
     }
 
     export function isSingleQuoted(str: string) {
