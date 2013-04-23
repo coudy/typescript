@@ -10,5 +10,5 @@
 ////object./**/
 
 goTo.marker();
-verify.memberListContains("bar");
-verify.memberListContains("foo");
+verify.memberListContains("bar", 'any');
+verify.memberListContains("foo", '(bar: any): any');
