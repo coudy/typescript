@@ -15,7 +15,6 @@
 
 ///<reference path='typescriptServices.ts' />
 
-
 module Services {
 
     export interface IScriptSnapshotShim {
@@ -230,7 +229,10 @@ module Services {
         logger.log(actionDescription + " completed in " + (end - start) + " msec");
         if (typeof (result) === "string") {
             var str = <string>result;
-            logger.log("  result.length=" + str.length + ", result=\"" + TypeScript.stringToLiteral(str, 128) + (str.length > 128 ? "..." : "") + "\"");
+            if (str.length > 128) {
+                str = str.substring(0, 128) + "...";
+            }
+            logger.log("  result.length=" + str.length + ", result='" + JSON.stringify(str) + "'");
         }
         return result;
     }

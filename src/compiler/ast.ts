@@ -786,7 +786,6 @@ module TypeScript {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
         public returnTypeAnnotation: AST = null;
-        public symbols: IHashTable;
         public variableArgList = false;
         public classDecl: NamedDeclaration = null;
 

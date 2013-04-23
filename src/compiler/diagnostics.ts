@@ -67,61 +67,11 @@ module TypeScript {
         }
     }
 
-    export function timeFunction(logger: ILogger, funcDescription: string, func: () =>any): any {
+    export function timeFunction(logger: ILogger, funcDescription: string, func: () => any): any {
         var start = (new Date()).getTime();
         var result = func();
         var end = (new Date()).getTime();
         logger.log(funcDescription + " completed in " + (end - start) + " msec");
-        return result;
-    }
-
-    // TODO: Just use JSON.stringify here.
-    export function stringToLiteral(value: string, length: number): string {
-        var result = "";
-
-        var addChar = (index: number) => {
-            var ch = value.charCodeAt(index);
-            switch (ch) {
-                case 0x09: // tab
-                    result += "\\t";
-                    break;
-                case 0x0a: // line feed
-                    result += "\\n";
-                    break;
-                case 0x0b: // vertical tab
-                    result += "\\v";
-                    break;
-                case 0x0c: // form feed
-                    result += "\\f";
-                    break;
-                case 0x0d: // carriage return
-                    result += "\\r";
-                    break;
-                case 0x22:  // double quote
-                    result += "\\\"";
-                    break;
-                case 0x27: // single quote
-                    result += "\\\'";
-                    break;
-                case 0x5c: // Backslash
-                    result += "\\";
-                    break;
-                default:
-                    result += value.charAt(index);
-            }
-        }
-
-        var tooLong = (value.length > length);
-        if (tooLong) {
-            var mid = length >> 1;
-            for (var i = 0; i < mid; i++) addChar(i);
-            result += "(...)";
-            for (var i = value.length - mid; i < value.length; i++) addChar(i);
-        }
-        else {
-            length = value.length;
-            for (var i = 0; i < length; i++) addChar(i);
-        }
         return result;
     }
 }

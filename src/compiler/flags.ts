@@ -94,7 +94,6 @@ module TypeScript {
 
     export enum TypeRelationshipFlags {
         SuccessfulComparison = 0,
-        SourceIsNullTargetIsVoidOrUndefined = 1,
         RequiredPropertyIsMissing = 1 << 1,
         IncompatibleSignatures = 1 << 2,
         SourceSignatureHasTooManyParameters = 3,

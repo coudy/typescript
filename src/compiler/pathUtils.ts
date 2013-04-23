@@ -49,14 +49,6 @@ module TypeScript {
         return str;
     }
 
-    export function changeToSingleQuote(str: string) {
-        if (str.indexOf("\"") != -1) {
-            str = str.replace("\"", "'");
-            str = str.replace("\"", "'");
-        }
-        return str;
-    }
-
     export function switchToForwardSlashes(path: string) {
         return path.replace(/\\/g, "/");
     }
@@ -153,10 +145,6 @@ module TypeScript {
         }
     }
 
-    export function changePathToTS(modPath: string) {
-        return trimModName(stripQuotes(modPath)) + ".ts";
-    }
-
     export function changePathToDTS(modPath: string) {
         return trimModName(stripQuotes(modPath)) + ".d.ts";
     }
@@ -189,19 +177,6 @@ module TypeScript {
         return path.join("/") + "/";
     }
 
-    export function normalizeURL(url: string): string {
-        var hostDomainAndPortRegex = /^(https?:\/\/[\-\w\.]+(:\d+)?\/)(.*)$/i;
-        var matches = hostDomainAndPortRegex.exec(url);
-        if (matches) {
-            var hostDomainAndPort = matches[1];
-            var actualPath = matches[3];
-            return hostDomainAndPort + normalizePath(actualPath);
-        }
-        return normalizePath(url);
-    }
-
-    export var pathNormalizeRegExp = /\//g;
-
     export function normalizePath(path: string): string {
         path = switchToForwardSlashes(path);
         var startedWithSep = path.charAt(0) === "/";
@@ -217,9 +192,5 @@ module TypeScript {
             }
         }
         return (startedWithSep ? "/" : "") + parts.join("/");
-    }
-
-    export function normalizeImportPath(path: string): string {
-        return normalizePath(path);
     }
 }
