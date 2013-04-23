@@ -664,7 +664,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitList(funcDecl.block.statements, false, classPropertiesMustComeAfterSuperCall);
+            this.emitList(funcDecl.block.statements, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -849,7 +849,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitList(moduleDecl.members, false, false);
+                this.emitList(moduleDecl.members, false);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -1445,7 +1445,7 @@ module TypeScript {
             }
         }
         
-        public emitList(list: ASTList, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
+        public emitList(list: ASTList, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (list === null) {
                 return;
             }
@@ -1478,7 +1478,7 @@ module TypeScript {
                         (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
                         (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
 
-                    if (onlyStatics ? !isStaticDecl : isStaticDecl) {
+                    if (isStaticDecl) {
                         continue;
                     }
 
