@@ -1512,9 +1512,6 @@ module TypeScript {
                 this.indenter.indentAmt > 0) {
 
                 if ((ast.nodeType !== NodeType.InterfaceDeclaration) &&
-                    (!((ast.nodeType === NodeType.VariableDeclarator) &&
-                    ((((<VariableDeclarator>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                    (((<VariableDeclarator>ast).init) === null)) && this.varListCount() >= 0) &&
                     ((ast.nodeType !== NodeType.FunctionDeclaration) ||
                     (this.emitState.container !== EmitContainer.Constructor))) {
 
