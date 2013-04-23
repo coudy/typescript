@@ -1309,38 +1309,6 @@ module TypeScript {
             this.emitComments(name, false);
         }
 
-        public emitStatements(stmts: AST, emitEmptyBod: boolean) {
-            if (stmts) {
-                if (stmts.nodeType !== NodeType.Block) {
-                    var hasContents = (stmts && (stmts.nodeType !== NodeType.List || ((<ASTList>stmts).members.length > 0)));
-                    if (emitEmptyBod || hasContents) {
-                        var hasOnlyBlockStatement = ((stmts.nodeType === NodeType.Block) ||
-                        ((stmts.nodeType === NodeType.List) && ((<ASTList>stmts).members.length === 1) && ((<ASTList>stmts).members[0].nodeType === NodeType.Block)));
-
-                        this.recordSourceMappingStart(stmts);
-                        if (!hasOnlyBlockStatement) {
-                            this.writeLineToOutput(" {");
-                            this.indenter.increaseIndent();
-                        }
-                        this.emitList(stmts, null, false, false);
-                        if (!hasOnlyBlockStatement) {
-                            this.writeLineToOutput("");
-                            this.indenter.decreaseIndent();
-                            this.emitIndent();
-                            this.writeToOutput("}");
-                        }
-                        this.recordSourceMappingEnd(stmts);
-                    }
-                }
-                else {
-                    this.emitJavascript(stmts, true);
-                }
-            }
-            else if (emitEmptyBod) {
-                this.writeToOutput("{ }");
-            }
-        }
-
         public recordSourceMappingNameStart(name: string) {
             if (this.sourceMapper) {
                 var finalName = name;
