@@ -311,7 +311,7 @@ module TypeScript {
                 this.indenter.increaseIndent();
                 var inObjectLiteral = this.setInObjectLiteral(true);
                 var separator = useNewLines ? "," : ", ";
-                this.emitJavascriptList(content, separator, useNewLines, false, false);
+                this.emitList(content, separator, useNewLines, false, false);
                 this.setInObjectLiteral(inObjectLiteral);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
@@ -330,7 +330,7 @@ module TypeScript {
 
                 this.indenter.increaseIndent();
                 var separator = useNewLines ? "," : ", ";
-                this.emitJavascriptList(content, separator, useNewLines, false, false);
+                this.emitList(content, separator, useNewLines, false, false);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }
@@ -353,7 +353,7 @@ module TypeScript {
                 this.emitJavascript(target, false);
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
-                this.emitJavascriptList(args, ", ", false, false, false);
+                this.emitList(args, ", ", false, false, false);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -469,7 +469,7 @@ module TypeScript {
                         this.writeToOutput(", ");
                     }
                 }
-                this.emitJavascriptList(args, ", ", false, false, false);
+                this.emitList(args, ", ", false, false, false);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -652,7 +652,7 @@ module TypeScript {
                         var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
-                            this.emitJavascriptVariableDeclarator(varDecl);
+                            this.emitVariableDeclarator(varDecl);
                             this.writeLineToOutput("");
                         }
                     }
@@ -660,7 +660,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitJavascriptList(funcDecl.block.statements, null, true, false, classPropertiesMustComeAfterSuperCall);
+            this.emitList(funcDecl.block.statements, null, true, false, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -691,7 +691,7 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
-        public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
+        public getModuleImportAndDependencyList(moduleDecl: ModuleDeclaration) {
             var importList = "";
             var dependencyList = "";
 
@@ -741,7 +741,7 @@ module TypeScript {
             return false;
         }
 
-        public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
+        public emitModule(moduleDecl: ModuleDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
             this.pushDecl(pullDecl);
 
@@ -800,7 +800,7 @@ module TypeScript {
                         var dependencyList = "[\"require\", \"exports\"";
                         var importList = "require, exports";
 
-                        var importAndDependencyList = this.getModuleImportAndDepencyList(moduleDecl);
+                        var importAndDependencyList = this.getModuleImportAndDependencyList(moduleDecl);
                         importList += importAndDependencyList.importList;
                         dependencyList += importAndDependencyList.dependencyList + "]";
 
@@ -845,7 +845,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitJavascriptList(moduleDecl.members, null, true, false, false);
+                this.emitList(moduleDecl.members, null, true, false, false);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -936,18 +936,12 @@ module TypeScript {
             var temp = this.setInObjectLiteral(false);
             this.emitJavascript(operand1, false);
             this.writeToOutput("[");
-            this.emitJavascriptList(operand2, ", ", false, false, false);
+            this.emitList(operand2, ", ", false, false, false);
             this.writeToOutput("]");
             this.setInObjectLiteral(temp);
         }
 
-        public emitStringLiteral(text: string) {
-            // should preserve escape etc.
-            // TODO: simplify object literal simple name
-            this.writeToOutput(text);
-        }
-
-        public emitJavascriptFunction(funcDecl: FunctionDeclaration) {
+        public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
@@ -1041,7 +1035,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptVariableDeclaration(declaration: VariableDeclaration, startLine: boolean) {
+        public emitVariableDeclaration(declaration: VariableDeclaration, startLine: boolean) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
@@ -1078,7 +1072,7 @@ module TypeScript {
             this.emitComments(declaration, false);
         }
 
-        public emitJavascriptVariableDeclarator(varDecl: VariableDeclarator) {
+        public emitVariableDeclarator(varDecl: VariableDeclarator) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
             this.pushDecl(pullDecl);
             if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
@@ -1211,7 +1205,7 @@ module TypeScript {
             return false;
         }
 
-        public emitJavascriptName(name: Identifier, addThis: boolean) {
+        public emitName(name: Identifier, addThis: boolean) {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
@@ -1312,7 +1306,7 @@ module TypeScript {
             this.emitComments(name, false);
         }
 
-        public emitJavascriptStatements(stmts: AST, emitEmptyBod: boolean) {
+        public emitStatements(stmts: AST, emitEmptyBod: boolean) {
             if (stmts) {
                 if (stmts.nodeType != NodeType.Block) {
                     var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
@@ -1325,7 +1319,7 @@ module TypeScript {
                             this.writeLineToOutput(" {");
                             this.indenter.increaseIndent();
                         }
-                        this.emitJavascriptList(stmts, null, true, false, false);
+                        this.emitList(stmts, null, true, false, false);
                         if (!hasOnlyBlockStatement) {
                             this.writeLineToOutput("");
                             this.indenter.decreaseIndent();
@@ -1449,14 +1443,14 @@ module TypeScript {
                     var varDecl = <VariableDeclarator>this.thisClassNode.members.members[iMember];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
-                        this.emitJavascriptVariableDeclarator(varDecl);
+                        this.emitVariableDeclarator(varDecl);
                         this.writeLineToOutput("");
                     }
                 }
             }
         }
         
-        public emitJavascriptList(ast: AST, delimiter: string, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
+        public emitList(ast: AST, delimiter: string, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (ast === null) {
                 return;
             }
@@ -1626,7 +1620,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptClass(classDecl: ClassDeclaration) {
+        public emitClass(classDecl: ClassDeclaration) {
             if (!hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
                 var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.document.fileName);
                 this.pushDecl(pullDecl);
@@ -1706,7 +1700,7 @@ module TypeScript {
                             if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
-                                this.emitJavascriptVariableDeclarator(varDecl);
+                                this.emitVariableDeclarator(varDecl);
                                 wroteProps++;
                             }
                         }
@@ -1846,7 +1840,7 @@ module TypeScript {
                     this.emitThis();
                     if (callEx.arguments && callEx.arguments.members.length > 0) {
                         this.writeToOutput(", ");
-                        this.emitJavascriptList(callEx.arguments, ", ", false, false, false);
+                        this.emitList(callEx.arguments, ", ", false, false, false);
                     }
                     this.writeToOutput(")");
                     return true;

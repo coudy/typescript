@@ -154,7 +154,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.recordSourceMappingStart(this);
-            emitter.emitJavascriptList(this, null, startLine, false, false);
+            emitter.emitList(this, null, startLine, false, false);
             emitter.recordSourceMappingEnd(this);
         }
 
@@ -198,7 +198,7 @@ module TypeScript {
         public isMissing() { return false; }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitJavascriptName(this, true);
+            emitter.emitName(this, true);
         }
 
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
@@ -493,7 +493,7 @@ module TypeScript {
                     if (!emitter.tryEmitConstant(this)) {
                         emitter.emitJavascript(this.operand1, false);
                         emitter.writeToOutput(".");
-                        emitter.emitJavascriptName(<Identifier>this.operand2, false);
+                        emitter.emitName(<Identifier>this.operand2, false);
                     }
                     break;
                 case NodeType.ElementAccessExpression:
@@ -630,7 +630,7 @@ module TypeScript {
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.emitStringLiteral(this.text);
+            emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
@@ -755,7 +755,7 @@ module TypeScript {
         public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitJavascriptVariableDeclarator(this);
+            emitter.emitVariableDeclarator(this);
         }
     }
 
@@ -824,7 +824,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitJavascriptFunction(this);
+            emitter.emitFunction(this);
         }
 
         public getNameText() {
@@ -868,7 +868,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, startLine: boolean) {
             if (!this.isDeclareFile) {
-                emitter.emitJavascriptList(this.moduleElements, null, true, false, false, true, this.requiresExtendsBlock);
+                emitter.emitList(this.moduleElements, null, true, false, false, true, this.requiresExtendsBlock);
             }
         }
     }
@@ -946,7 +946,7 @@ module TypeScript {
         public emit(emitter: Emitter, startLine: boolean) {
             if (this.shouldEmit()) {
                 emitter.emitComments(this, true);
-                emitter.emitJavascriptModule(this);
+                emitter.emitModule(this);
                 emitter.emitComments(this, false);
             }
         }
@@ -995,7 +995,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitJavascriptClass(this);
+            emitter.emitClass(this);
         }
     }
 
@@ -1097,7 +1097,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
-            emitter.emitJavascriptVariableDeclaration(this, startLine);
+            emitter.emitVariableDeclaration(this, startLine);
         }
 
         public structuralEquals(ast: VariableDeclaration, includingPosition: boolean): boolean {
@@ -1148,7 +1148,7 @@ module TypeScript {
             emitter.indenter.increaseIndent();
             var temp = emitter.setInObjectLiteral(false);
             if (this.statements) {
-                emitter.emitJavascriptList(this.statements, null, true, false, false);
+                emitter.emitList(this.statements, null, true, false, false);
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
@@ -1208,7 +1208,7 @@ module TypeScript {
             emitter.writeToOutput("while(");
             emitter.emitJavascript(this.cond, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, false);
+            emitter.emitStatements(this.body, false);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
@@ -1233,7 +1233,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
-            emitter.emitJavascriptStatements(this.body, true);
+            emitter.emitStatements(this.body, true);
             emitter.recordSourceMappingStart(this.whileSpan);
             emitter.writeToOutput(" while");
             emitter.recordSourceMappingEnd(this.whileSpan);
@@ -1271,7 +1271,7 @@ module TypeScript {
             emitter.emitJavascript(this.cond, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitJavascriptStatements(this.thenBod, true);
+            emitter.emitStatements(this.thenBod, true);
             if (this.elseBod) {
                 if (this.elseBod.nodeType === NodeType.IfStatement) {
                     emitter.writeToOutput(" else ");
@@ -1279,7 +1279,7 @@ module TypeScript {
                 }
                 else {
                     emitter.writeToOutput(" else");
-                    emitter.emitJavascriptStatements(this.elseBod, true);
+                    emitter.emitStatements(this.elseBod, true);
                 }
             }
             emitter.setInObjectLiteral(temp);
@@ -1341,7 +1341,7 @@ module TypeScript {
             emitter.emitJavascript(this.obj, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitJavascriptStatements(this.body, true);
+            emitter.emitStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
@@ -1374,7 +1374,7 @@ module TypeScript {
                 }
                 else {
                     emitter.setInVarBlock((<ASTList>this.init).members.length);
-                    emitter.emitJavascriptList(this.init, null, false, false, false);
+                    emitter.emitList(this.init, null, false, false, false);
                 }
             }
 
@@ -1383,7 +1383,7 @@ module TypeScript {
             emitter.writeToOutput("; ");
             emitter.emitJavascript(this.incr, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true);
+            emitter.emitStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
@@ -1412,7 +1412,7 @@ module TypeScript {
             }
 
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true);
+            emitter.emitStatements(this.body, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
@@ -1488,7 +1488,7 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this.colonSpan);
             if (this.body.members.length === 1 && this.body.members[0].nodeType === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                emitter.emitJavascriptStatements(this.body, false);
+                emitter.emitStatements(this.body, false);
             }
             else {
                 // No curly braces. Format in the expected way
