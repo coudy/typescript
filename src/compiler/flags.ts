@@ -29,9 +29,6 @@ module TypeScript {
         None = 0,
         StrictMode = 1 << 1, // node is in the strict mode environment
         OptionalName = 1 << 2,
-        // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
-        //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
-        //         Once we have a better way to associate information with nodes, this flag should not be used.
         TypeReference = 1 << 3,
         EnumInitializer = 1 << 4,
     }
@@ -69,12 +66,9 @@ module TypeScript {
         InterfaceMember = 1 << 9,
         ClassMember = 1 << 10,
         BuiltIn = 1 << 11,
-        TypeSetDuringScopeAssignment = 1 << 12,
         Constant = 1 << 13,
         Optional = 1 << 14,
-        RecursivelyReferenced = 1 << 15,
         Bound = 1 << 16,
-        CompilerGenerated = 1 << 17,
     }
 
     export enum VariableFlags {
@@ -127,9 +121,7 @@ module TypeScript {
     export enum TypeFlags {
         None = 0,
         HasImplementation = 1,
-        HasSelfReference = 1 << 1,
         IsEnum = 1 << 3,
-        BuildingName = 1 << 4,
         IsClass = 1 << 7,
     }
 

@@ -16,18 +16,6 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-
-    export enum Primitive {
-        None = 0,
-        Void = 1,
-        Double = 2,
-        String = 4,
-        Boolean = 8,
-        Any = 16,
-        Null = 32,
-        Undefined = 64,
-    }
-
     export class MemberName {
         public prefix: string = "";
         public suffix: string = "";
@@ -103,106 +91,5 @@ module TypeScript {
         constructor() {
             super();
         }
-    }
-
-    export class Type {
-        public members: ScopedMembers;
-        public ambientMembers: ScopedMembers;
-
-        // REVIEW: for either of the below, why do we have lists of types and lists of type links?
-        // interface can only extend
-        public extendsList: Type[];
-
-        // class can also implement
-        public implementsList: Type[];
-
-        public elementType: Type;
-
-        public primitiveTypeClass: number = Primitive.None;
-
-        public typeFlags = TypeFlags.None;
-
-        public instanceType: Type;
-
-        // REVIEW: Prune
-        public isClass() { return this.instanceType != null; }
-        public isArray() { return this.elementType != null; }
-
-        public isString() { return hasFlag(this.primitiveTypeClass, Primitive.String); }
-
-        // REVIEW: No need for this to be a method
-        public getTypeName(): string {
-            return this.getMemberTypeName("", true, false, null);
-        }
-
-        public getScopedTypeNameEx(getPrettyTypeName?: boolean) {
-            return this.getMemberTypeNameEx("", true, false, getPrettyTypeName);
-        }
-
-        // REVIEW: No need for this to be a method
-        public callCount() {
-            var total = 0;
-            return total;
-        }
-
-        // REVIEW: No need for this to be a method
-        public getMemberTypeName(prefix: string, topLevel: boolean, isElementType: boolean, getPrettyTypeName?: boolean): string {
-            var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, getPrettyTypeName);
-            return memberName.toString();
-        }
-
-        // REVIEW: No need for this to be a method
-        public getMemberTypeNameEx(prefix: string, topLevel: boolean, isElementType: boolean, getPrettyTypeName?: boolean): MemberName {
-            if (this.elementType) {
-                return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true), "", "[]");
-            }
-            else {
-                if (this.members) {
-                    if (hasFlag(this.typeFlags, TypeFlags.BuildingName)) {
-                        return MemberName.create("this");
-                    }
-                    this.typeFlags |= TypeFlags.BuildingName;
-                    var builder = "";
-                    var allMemberNames = new MemberNameArray();
-                    var curlies = isElementType;
-                    var memCount = 0;
-                    var delim = "; ";
-
-                    var signatureCount = this.callCount();
-                    var j: number;
-                    var len = 0;
-                    var getPrettyFunctionOverload = getPrettyTypeName && !curlies && !this.members;
-                    var shortform = !curlies && (signatureCount === 1 || getPrettyFunctionOverload) && topLevel;
-
-                    if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
-                        allMemberNames.prefix = "{ ";
-                        allMemberNames.suffix = "}";
-                        allMemberNames.delim = delim;
-                    } else if (allMemberNames.entries.length > 1) {
-                        allMemberNames.delim = delim;
-                    }
-
-                    this.typeFlags &= (~TypeFlags.BuildingName);
-                    if ((signatureCount === 0) && (memCount === 0)) {
-                        return MemberName.create("{}");
-                    }
-                    else {
-                        return allMemberNames;
-                    }
-                }
-                else {
-                    return MemberName.create("{}");
-                }
-            }
-        }
-
-        public getDocComments(): Comment[] {
-            return [];
-        }
-    }
-
-    export class TypeLink {
-        public type: Type = null;
-        public ast: AST = null;
     }
 }

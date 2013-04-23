@@ -25,9 +25,6 @@
 ///<reference path='sourceMapping.ts' />
 ///<reference path='emitter.ts' />
 ///<reference path='printContext.ts' />
-///<reference path='symbols.ts' />
-///<reference path='symbolScope.ts' />
-///<reference path='typeCollection.ts' />
 ///<reference path='types.ts' />
 ///<reference path='pathUtils.ts' />
 ///<reference path='referenceResolution.ts' />
