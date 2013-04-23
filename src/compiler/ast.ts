@@ -1419,7 +1419,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter): void {
-            emitter.emitJavascript(this.name, false);
+            this.name.emit(emitter);
         }
 
         public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
@@ -1452,12 +1452,12 @@ module TypeScript {
 
         public emitWorker(emitter: Emitter) {
             emitter.writeToOutput("try ");
-            emitter.emitJavascript(this.tryBody, false);
+            this.tryBody.emit(emitter);
             emitter.emitJavascript(this.catchClause, false);
 
             if (this.finallyBody) {
                 emitter.writeToOutput(" finally");
-                emitter.emitJavascript(this.finallyBody, false);
+                this.finallyBody.emit(emitter);
             }
         }
 
@@ -1483,7 +1483,7 @@ module TypeScript {
             this.param.id.emit(emitter);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitJavascript(this.body, false);
+            this.body.emit(emitter);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {

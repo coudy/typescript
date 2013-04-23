@@ -348,12 +348,12 @@ module TypeScript {
                     this.writeToOutput("Array()");
                 }
                 else {
-                    this.emitJavascript(typeRef.term, false);
+                    typeRef.term.emit(this);
                     this.writeToOutput("()");
                 }
             }
             else {
-                this.emitJavascript(target, false);
+                target.emit(this);
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
                 this.emitCommaSeparatedList(args);
@@ -545,7 +545,8 @@ module TypeScript {
                     if (arg.init) {
                         defaultArgs.push(arg);
                     }
-                    this.emitJavascript(arg, false);
+                    arg.emit(this);
+
                     if (i < (printLen - 1)) {
                         this.writeToOutput(", ");
                     }
@@ -937,7 +938,7 @@ module TypeScript {
 
         public emitIndex(operand1: AST, operand2: AST) {
             var temp = this.setInObjectLiteral(false);
-            this.emitJavascript(operand1, false);
+            operand1.emit(this);
             this.writeToOutput("[");
             operand2.emit(this);
             this.writeToOutput("]");
@@ -1066,7 +1067,7 @@ module TypeScript {
                         }
                     }
 
-                    this.emitJavascript(declarator, false /*(startLine && i === 0) || inClass*/);
+                    declaration.emit(this);
                 }
             }
 
@@ -1137,7 +1138,7 @@ module TypeScript {
                     // initializer.  We don't want our current list of variables to affect how we
                     // emit nested variable lists.
                     this.varListCountStack.push(0);
-                    this.emitJavascript(varDecl.init, false);
+                    varDecl.init.emit(this);
                     this.varListCountStack.pop();
                 }
 
@@ -1590,7 +1591,7 @@ module TypeScript {
                     this.writeToOutput(className + ".prototype." + varDecl.id.actualText);
                     this.recordSourceMappingEnd(varDecl.id);
                     this.writeToOutput(" = ");
-                    this.emitJavascript(varDecl.init, false);
+                    varDecl.init.emit(this);
                     this.recordSourceMappingEnd(varDecl);
                     this.writeLineToOutput(";");
                 }
@@ -1644,8 +1645,7 @@ module TypeScript {
                 // output constructor
                 if (constrDecl) {
                     // declared constructor
-                    this.emitJavascript(classDecl.constructorDecl, false);
-
+                    constrDecl.emit(this);
                 }
                 else {
                     var wroteProps = 0;
@@ -1732,7 +1732,7 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(varDecl);
                                 this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
-                                this.emitJavascript(varDecl.init, false);
+                                varDecl.init.emit(this);
                                 // EMITREVIEW
 
                                 this.writeLineToOutput(";");
@@ -1812,7 +1812,7 @@ module TypeScript {
             if (callEx.target.nodeType === NodeType.MemberAccessExpression) {
                 var dotNode = <BinaryExpression>callEx.target;
                 if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
-                    this.emitJavascript(dotNode, false);
+                    dotNode.emit(this);
                     this.writeToOutput(".call(");
                     this.emitThis();
                     if (callEx.arguments && callEx.arguments.members.length > 0) {
