@@ -9,7 +9,7 @@ var TestCase = (function () {
 exports.TestCase = TestCase;
 var TestRunner = (function () {
     function TestRunner() { }
-    TestRunner.arrayCompare = function arrayCompare(arg1, arg2) {
+    TestRunner.arrayCompare = function (arg1, arg2) {
         return false;
     };
     TestRunner.prototype.addTest = function (test) {

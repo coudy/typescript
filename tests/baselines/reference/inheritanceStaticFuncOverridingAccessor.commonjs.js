@@ -23,7 +23,7 @@ var b = (function (_super) {
         _super.apply(this, arguments);
 
     }
-    b.x = function x() {
+    b.x = function () {
         return "20";
     };
     return b;

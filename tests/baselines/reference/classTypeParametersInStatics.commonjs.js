@@ -5,19 +5,19 @@ var Editor;
             this.isHead = isHead;
             this.data = data;
         }
-        List.MakeHead = function MakeHead() {
+        List.MakeHead = function () {
             var entry = new List(true, null);
             entry.prev = entry;
             entry.next = entry;
             return entry;
         };
-        List.MakeHead2 = function MakeHead2() {
+        List.MakeHead2 = function () {
             var entry = new List(true, null);
             entry.prev = entry;
             entry.next = entry;
             return entry;
         };
-        List.MakeHead3 = function MakeHead3() {
+        List.MakeHead3 = function () {
             var entry = new List(true, null);
             entry.prev = entry;
             entry.next = entry;

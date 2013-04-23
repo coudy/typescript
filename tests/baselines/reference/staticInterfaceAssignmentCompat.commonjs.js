@@ -1,6 +1,6 @@
 var Shape = (function () {
     function Shape() { }
-    Shape.create = function create() {
+    Shape.create = function () {
         return new Shape();
     };
     return Shape;

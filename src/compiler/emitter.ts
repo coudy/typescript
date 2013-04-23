@@ -1566,34 +1566,16 @@ module TypeScript {
             this.recordSourceMappingEnd(funcDecl);
         }
 
-        public emitPrototypeMember(member: AST, className: string) {
-            if (member.nodeType === NodeType.FunctionDeclaration) {
-                var funcDecl = <FunctionDeclaration>member;
-                if (funcDecl.isAccessor()) {
-                    this.emitPropertyAccessor(funcDecl, className, true);
-                }
-                else {
-                    this.emitIndent();
-                    this.recordSourceMappingStart(funcDecl);
-                    this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                    this.emitInnerFunction(funcDecl, false, true, this.shouldCaptureThis(funcDecl), null);
-                    this.writeLineToOutput(";");
-                }
+        public emitPrototypeMember(funcDecl: FunctionDeclaration, className: string) {
+            if (funcDecl.isAccessor()) {
+                this.emitPropertyAccessor(funcDecl, className, true);
             }
-            else if (member.nodeType === NodeType.VariableDeclarator) {
-                var varDecl = <VariableDeclarator>member;
-
-                if (varDecl.init) {
-                    this.emitIndent();
-                    this.recordSourceMappingStart(varDecl);
-                    this.recordSourceMappingStart(varDecl.id);
-                    this.writeToOutput(className + ".prototype." + varDecl.id.actualText);
-                    this.recordSourceMappingEnd(varDecl.id);
-                    this.writeToOutput(" = ");
-                    varDecl.init.emit(this);
-                    this.recordSourceMappingEnd(varDecl);
-                    this.writeLineToOutput(";");
-                }
+            else {
+                this.emitIndent();
+                this.recordSourceMappingStart(funcDecl);
+                this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
+                this.emitInnerFunction(funcDecl, /*printName:*/ false, true, this.shouldCaptureThis(funcDecl), null);
+                this.writeLineToOutput(";");
             }
         }
 
@@ -1758,8 +1740,7 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(fn)
                                     this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                this.emitInnerFunction(fn, (fn.name && !fn.name.isMissing()), true,
-                                    this.shouldCaptureThis(fn), null);
+                                this.emitInnerFunction(fn, /*printName:*/ false, true, this.shouldCaptureThis(fn), null);
                                 this.writeLineToOutput(";");
                             }
                         }

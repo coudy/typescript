@@ -41,9 +41,9 @@ var C = (function () {
         enumerable: true,
         configurable: true
     });
-    C.tF = function tF() {
+    C.tF = function () {
     };
-    C.tsF = function tsF(param) {
+    C.tsF = function (param) {
     };
     Object.defineProperty(C, "tsF", {
         set: function (param) {
@@ -51,7 +51,7 @@ var C = (function () {
         enumerable: true,
         configurable: true
     });
-    C.tgF = function tgF() {
+    C.tgF = function () {
     };
     Object.defineProperty(C, "tgF", {
         get: function () {
@@ -106,9 +106,9 @@ var M;
             enumerable: true,
             configurable: true
         });
-        C.tF = function tF() {
+        C.tF = function () {
         };
-        C.tsF = function tsF(param) {
+        C.tsF = function (param) {
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
@@ -116,7 +116,7 @@ var M;
             enumerable: true,
             configurable: true
         });
-        C.tgF = function tgF() {
+        C.tgF = function () {
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
@@ -205,9 +205,9 @@ var M;
             enumerable: true,
             configurable: true
         });
-        eC.tF = function tF() {
+        eC.tF = function () {
         };
-        eC.tsF = function tsF(param) {
+        eC.tsF = function (param) {
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
@@ -215,7 +215,7 @@ var M;
             enumerable: true,
             configurable: true
         });
-        eC.tgF = function tgF() {
+        eC.tgF = function () {
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {
@@ -312,9 +312,9 @@ var eC = (function () {
         enumerable: true,
         configurable: true
     });
-    eC.tF = function tF() {
+    eC.tF = function () {
     };
-    eC.tsF = function tsF(param) {
+    eC.tsF = function (param) {
     };
     Object.defineProperty(eC, "tsF", {
         set: function (param) {
@@ -322,7 +322,7 @@ var eC = (function () {
         enumerable: true,
         configurable: true
     });
-    eC.tgF = function tgF() {
+    eC.tgF = function () {
     };
     Object.defineProperty(eC, "tgF", {
         get: function () {
@@ -377,9 +377,9 @@ exports.eC = eC;
             enumerable: true,
             configurable: true
         });
-        C.tF = function tF() {
+        C.tF = function () {
         };
-        C.tsF = function tsF(param) {
+        C.tsF = function (param) {
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
@@ -387,7 +387,7 @@ exports.eC = eC;
             enumerable: true,
             configurable: true
         });
-        C.tgF = function tgF() {
+        C.tgF = function () {
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
@@ -476,9 +476,9 @@ exports.eC = eC;
             enumerable: true,
             configurable: true
         });
-        eC.tF = function tF() {
+        eC.tF = function () {
         };
-        eC.tsF = function tsF(param) {
+        eC.tsF = function (param) {
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
@@ -486,7 +486,7 @@ exports.eC = eC;
             enumerable: true,
             configurable: true
         });
-        eC.tgF = function tgF() {
+        eC.tgF = function () {
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {

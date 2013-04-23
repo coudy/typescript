@@ -16,19 +16,19 @@ var Vector = (function () {
         this.y = y;
         this.z = z;
     }
-    Vector.norm = function norm(v) {
+    Vector.norm = function (v) {
         return null;
     };
-    Vector.minus = function minus(v1, v2) {
+    Vector.minus = function (v1, v2) {
         return null;
     };
-    Vector.times = function times(v1, v2) {
+    Vector.times = function (v1, v2) {
         return null;
     };
-    Vector.cross = function cross(v1, v2) {
+    Vector.cross = function (v1, v2) {
         return null;
     };
-    Vector.dot = function dot(v1, v2) {
+    Vector.dot = function (v1, v2) {
         return null;
     };
     return Vector;

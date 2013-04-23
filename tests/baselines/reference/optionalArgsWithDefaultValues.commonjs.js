@@ -8,7 +8,7 @@ var CCC = (function () {
         if (typeof y === "undefined") { y = false; }
         if (typeof z === "undefined") { z = 0; }
     };
-    CCC.foo2 = function foo2(x, y, z) {
+    CCC.foo2 = function (x, y, z) {
         if (typeof y === "undefined") { y = false; }
         if (typeof z === "undefined") { z = 0; }
     };

@@ -10,7 +10,7 @@ var M;
                 return C.f(_this.x + C.y + v + _this.c1 + _this.c2 + C.pub);
             };
         }
-        C.f = function f(n) {
+        C.f = function (n) {
             return "wow: " + (n + C.y + C.pub + C.priv);
         };
         C.priv = 2;

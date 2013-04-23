@@ -5,7 +5,7 @@ var Editor;
             this.isHead = isHead;
             this.data = data;
         }
-        List.MakeHead = function MakeHead() {
+        List.MakeHead = function () {
             var entry = new List(true, null);
             entry.prev = entry;
             entry.next = entry;

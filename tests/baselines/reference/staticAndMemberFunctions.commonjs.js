@@ -1,6 +1,6 @@
 var T = (function () {
     function T() { }
-    T.x = function x() {
+    T.x = function () {
     };
     T.prototype.y = function () {
     };

@@ -42,9 +42,9 @@ define(["require", "exports"], function(require, exports) {
             enumerable: true,
             configurable: true
         });
-        C.tF = function tF() {
+        C.tF = function () {
         };
-        C.tsF = function tsF(param) {
+        C.tsF = function (param) {
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
@@ -52,7 +52,7 @@ define(["require", "exports"], function(require, exports) {
             enumerable: true,
             configurable: true
         });
-        C.tgF = function tgF() {
+        C.tgF = function () {
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
@@ -107,9 +107,9 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            C.tF = function tF() {
+            C.tF = function () {
             };
-            C.tsF = function tsF(param) {
+            C.tsF = function (param) {
             };
             Object.defineProperty(C, "tsF", {
                 set: function (param) {
@@ -117,7 +117,7 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            C.tgF = function tgF() {
+            C.tgF = function () {
             };
             Object.defineProperty(C, "tgF", {
                 get: function () {
@@ -206,9 +206,9 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            eC.tF = function tF() {
+            eC.tF = function () {
             };
-            eC.tsF = function tsF(param) {
+            eC.tsF = function (param) {
             };
             Object.defineProperty(eC, "tsF", {
                 set: function (param) {
@@ -216,7 +216,7 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            eC.tgF = function tgF() {
+            eC.tgF = function () {
             };
             Object.defineProperty(eC, "tgF", {
                 get: function () {
@@ -313,9 +313,9 @@ define(["require", "exports"], function(require, exports) {
             enumerable: true,
             configurable: true
         });
-        eC.tF = function tF() {
+        eC.tF = function () {
         };
-        eC.tsF = function tsF(param) {
+        eC.tsF = function (param) {
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
@@ -323,7 +323,7 @@ define(["require", "exports"], function(require, exports) {
             enumerable: true,
             configurable: true
         });
-        eC.tgF = function tgF() {
+        eC.tgF = function () {
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {
@@ -378,9 +378,9 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            C.tF = function tF() {
+            C.tF = function () {
             };
-            C.tsF = function tsF(param) {
+            C.tsF = function (param) {
             };
             Object.defineProperty(C, "tsF", {
                 set: function (param) {
@@ -388,7 +388,7 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            C.tgF = function tgF() {
+            C.tgF = function () {
             };
             Object.defineProperty(C, "tgF", {
                 get: function () {
@@ -477,9 +477,9 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            eC.tF = function tF() {
+            eC.tF = function () {
             };
-            eC.tsF = function tsF(param) {
+            eC.tsF = function (param) {
             };
             Object.defineProperty(eC, "tsF", {
                 set: function (param) {
@@ -487,7 +487,7 @@ define(["require", "exports"], function(require, exports) {
                 enumerable: true,
                 configurable: true
             });
-            eC.tgF = function tgF() {
+            eC.tgF = function () {
             };
             Object.defineProperty(eC, "tgF", {
                 get: function () {

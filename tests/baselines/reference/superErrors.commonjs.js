@@ -58,7 +58,7 @@ var RegisteredUser = (function (_super) {
             };
         })();
     };
-    RegisteredUser.staticFunction = function staticFunction() {
+    RegisteredUser.staticFunction = function () {
         var s = _super.prototype;
         var x = function () {
             return _super.prototype;

@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var a = (function () {
     function a() { }
-    a.x = function x() {
+    a.x = function () {
         return "20";
     };
     return a;

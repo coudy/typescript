@@ -36,7 +36,7 @@ var c1 = (function () {
         configurable: true
     });
     c1.s2 = /** static sum with property*/
-    function s2(/** number to add*/ b) {
+    function (/** number to add*/ b) {
         return c1.s1 + b;
     };
     Object.defineProperty(c1, "s3", {
@@ -77,7 +77,7 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.nc_s2 = function nc_s2(b) {
+    c1.nc_s2 = function (b) {
         return c1.nc_s1 + b;
     };
     Object.defineProperty(c1, "nc_s3", {
@@ -123,7 +123,7 @@ var c1 = (function () {
         configurable: true
     });
     c1.a_s2 = // static sum with property
-    function a_s2(b) {
+    function (b) {
         return c1.a_s1 + b;
     };
     Object.defineProperty(c1, "a_s3", {
@@ -171,7 +171,7 @@ var c1 = (function () {
         configurable: true
     });
     c1.b_s2 = /** static sum with property */
-    function b_s2(b) {
+    function (b) {
         return c1.b_s1 + b;
     };
     Object.defineProperty(c1, "b_s3", {

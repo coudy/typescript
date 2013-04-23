@@ -1,6 +1,6 @@
 var Foo = (function () {
     function Foo() { }
-    Foo.bar = function bar() {
+    Foo.bar = function () {
         return "x";
     };
     return Foo;
