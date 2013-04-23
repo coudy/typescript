@@ -30,10 +30,10 @@ var RegisteredUser = (function (_super) {
     function RegisteredUser() {
         _super.call(this);
         this.name = "Frank";
-function inner() {
+        function inner() {
             _super.prototype.sayHello.call(_this);
         }
-function inner2() {
+        function inner2() {
             var x = function () {
                 return _super.prototype.sayHello.call(_this);
             };

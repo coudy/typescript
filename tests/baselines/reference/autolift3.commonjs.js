@@ -1,6 +1,6 @@
 var B = (function () {
     function B() {
-function foo() {
+        function foo() {
         }
         foo();
         var a = 0;

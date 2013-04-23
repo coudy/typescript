@@ -44,7 +44,7 @@ var M;
     var C = (function () {
         function C() {
             this.someProp = 1;
-function someInnerFunc() {
+            function someInnerFunc() {
                 return 2;
             }
             var someInnerVar = 3;

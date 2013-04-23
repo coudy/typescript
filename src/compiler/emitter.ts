@@ -1511,10 +1511,7 @@ module TypeScript {
             if (startLine &&
                 this.indenter.indentAmt > 0) {
 
-                if ((ast.nodeType !== NodeType.InterfaceDeclaration) &&
-                    ((ast.nodeType !== NodeType.FunctionDeclaration) ||
-                    (this.emitState.container !== EmitContainer.Constructor))) {
-
+                if (ast.nodeType !== NodeType.InterfaceDeclaration) {
                     this.emitIndent();
                 }
             }
