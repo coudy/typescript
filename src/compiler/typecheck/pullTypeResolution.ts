@@ -3384,6 +3384,10 @@ module TypeScript {
             if (numberSignature && (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol)) {
                 returnType = numberSignature.getReturnType();
 
+                if (!returnType) {
+                    returnType = this.semanticInfoChain.anyTypeSymbol;
+                }
+
                 this.setSymbolForAST(callEx, returnType, context);
             }
 
@@ -3393,6 +3397,10 @@ module TypeScript {
 
             else if (stringSignature && (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol || indexType === this.semanticInfoChain.stringTypeSymbol)) {
                 returnType = stringSignature.getReturnType();
+
+                if (!returnType) {
+                    returnType = this.semanticInfoChain.anyTypeSymbol;
+                }
 
                 this.setSymbolForAST(callEx, returnType, context);
             }
