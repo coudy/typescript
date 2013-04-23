@@ -663,7 +663,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitList(funcDecl.block.statements, null, true, false, classPropertiesMustComeAfterSuperCall);
+            this.emitList(funcDecl.block.statements, null, false, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -848,7 +848,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitList(moduleDecl.members, null, true, false, false);
+                this.emitList(moduleDecl.members, null, false, false);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -1322,7 +1322,7 @@ module TypeScript {
                             this.writeLineToOutput(" {");
                             this.indenter.increaseIndent();
                         }
-                        this.emitList(stmts, null, true, false, false);
+                        this.emitList(stmts, null, false, false);
                         if (!hasOnlyBlockStatement) {
                             this.writeLineToOutput("");
                             this.indenter.decreaseIndent();
@@ -1476,13 +1476,13 @@ module TypeScript {
             }
         }
         
-        public emitList(ast: AST, delimiter: string, startLine: boolean, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
+        public emitList(ast: AST, delimiter: string, onlyStatics: boolean, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
             if (ast === null) {
                 return;
             }
             else if (ast.nodeType !== NodeType.List) {
                 this.emitPrologue(emitPrologue);
-                this.emitJavascript(ast, startLine);
+                this.emitJavascript(ast, true);
             }
             else {
                 var list = <ASTList>ast;
@@ -1518,18 +1518,12 @@ module TypeScript {
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
                     }
-                    this.emitJavascript(emitNode, startLine);
+                    this.emitJavascript(emitNode, true);
 
                     if (delimiter && (i < (len - 1))) {
-                        if (startLine) {
-                            this.writeLineToOutput(delimiter);
-                        }
-                        else {
-                            this.writeToOutput(delimiter);
-                        }
+                        this.writeLineToOutput(delimiter);
                     }
-                    else if (startLine &&
-                             (emitNode.nodeType !== NodeType.ModuleDeclaration) &&
+                    else if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
