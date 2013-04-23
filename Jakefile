@@ -22,7 +22,6 @@ var compilerSources = [
 	"flags.ts",
 	"nodeTypes.ts",
 	"hashTable.ts",
-	"printContext.ts",
 	"ast.ts",
 	"astWalker.ts",
 	"astWalkerCallback.ts",

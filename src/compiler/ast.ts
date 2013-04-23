@@ -100,11 +100,6 @@ module TypeScript {
             throw new Error("please implement in derived class");
         }
 
-        public print(context: PrintContext) {
-            context.startLine();
-            context.writeLine(this.printLabel());
-        }
-
         public printLabel() {
             return "";
             /*
