@@ -1662,7 +1662,7 @@ module TypeScript {
                 !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
 
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,
-                    getDiagnosticMessage(DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_, [binex.printLabel(), leftType.toString(), rightType.toString()]), enclosingDecl);
+                    getDiagnosticMessage(DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_, [BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()]), enclosingDecl);
             }
             return type;
         }

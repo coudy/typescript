@@ -100,22 +100,6 @@ module TypeScript {
             throw new Error("please implement in derived class");
         }
 
-        public printLabel() {
-            return "";
-            /*
-            if (nodeTypeTable[this.nodeType] !== undefined) {
-                return nodeTypeTable[this.nodeType];
-            }
-            else {
-                return (<any>NodeType)._map[this.nodeType];
-            }
-            */
-        }
-
-        public treeViewLabel(): string {
-            return (<any>NodeType)._map[this.nodeType];
-        }
-
         public getDocComments(): Comment[] {
             if (!this.isDeclaration() || !this.preComments || this.preComments.length === 0) {
                 return [];
@@ -212,19 +196,6 @@ module TypeScript {
         }
 
         public isMissing() { return false; }
-
-        public treeViewLabel() {
-            return "id: " + this.actualText;
-        }
-
-        public printLabel() {
-            if (this.actualText) {
-                return "id: " + this.actualText;
-            }
-            else {
-                return "name node";
-            }
-        }
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptName(this, true);
@@ -470,11 +441,7 @@ module TypeScript {
             super(nodeType);
         }
 
-        public printLabel(): string {
-            return BinaryExpression.getTextForBinaryToken(this.nodeType);
-        }
-
-        private static getTextForBinaryToken(nodeType: NodeType): string {
+        public static getTextForBinaryToken(nodeType: NodeType): string {
             switch (nodeType) {
                 case NodeType.CommaExpression: return ",";
                 case NodeType.AssignmentExpression: return "=";
@@ -621,20 +588,12 @@ module TypeScript {
             super(NodeType.NumericLiteral);
         }
 
-        public treeViewLabel() {
-            return "num: " + this.printLabel();
-        }
-
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public printLabel(): string {
-            return this.text;
         }
 
         public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
@@ -674,14 +633,6 @@ module TypeScript {
             emitter.emitStringLiteral(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
-        }
-
-        public treeViewLabel() {
-            return "st: " + this.text;
-        }
-
-        public printLabel() {
-            return this.text;
         }
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
@@ -785,10 +736,6 @@ module TypeScript {
 
         public isProperty() { return hasFlag(this.getVarFlags(), VariableFlags.Property); }
 
-        public printLabel() {
-            return this.treeViewLabel();
-        }
-
         public structuralEquals(ast: BoundDecl, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._varFlags === ast._varFlags &&
@@ -810,10 +757,6 @@ module TypeScript {
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitJavascriptVariableDeclarator(this);
         }
-
-        public treeViewLabel() {
-            return "var " + this.id.actualText;
-        }
     }
 
     export class Parameter extends BoundDecl {
@@ -824,10 +767,6 @@ module TypeScript {
         public isOptional = false;
 
         public isOptionalArg() { return this.isOptional || this.init; }
-
-        public treeViewLabel() {
-            return "arg: " + this.id.actualText;
-        }
 
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
@@ -911,15 +850,6 @@ module TypeScript {
         public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }
         public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
 
-        public treeViewLabel() {
-            if (this.name === null) {
-                return "funcExpr";
-            }
-            else {
-                return "func: " + this.name.actualText
-            }
-        }
-
         public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) != FunctionFlags.None; }
     }
 
@@ -935,10 +865,6 @@ module TypeScript {
 
         constructor() {
             super(NodeType.Script);
-        }
-
-        public treeViewLabel() {
-            return "Script";
         }
 
         public emit(emitter: Emitter, startLine: boolean) {
