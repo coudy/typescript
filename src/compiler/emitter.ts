@@ -30,14 +30,12 @@ module TypeScript {
     export class EmitState {
         public column: number;
         public line: number;
-        public pretty: boolean;
         public inObjectLiteral: boolean;
         public container: EmitContainer;
 
         constructor() {
             this.column = 0;
             this.line = 0;
-            this.pretty = false;
             this.inObjectLiteral = false;
             this.container = EmitContainer.Prog;
         }
@@ -102,8 +100,7 @@ module TypeScript {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
         public thisClassNode: TypeDeclaration = null;
-        public thisFnc: FunctionDeclaration = null;
-        public moduleDeclList: ModuleDeclaration[] = [];
+        public thisFunctionDeclaration: FunctionDeclaration = null;
         public moduleName = "";
         public emitState = new EmitState();
         public indenter = new Indenter();
@@ -764,7 +761,6 @@ module TypeScript {
                 var temp = this.setContainer(EmitContainer.Module);
                 var svModuleName = this.moduleName;
                 var isExported = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported);
-                this.moduleDeclList[this.moduleDeclList.length] = moduleDecl;
                 var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
                 this.moduleName = moduleDecl.name.actualText;
 
@@ -932,7 +928,6 @@ module TypeScript {
 
                 this.setContainer(temp);
                 this.moduleName = svModuleName;
-                this.moduleDeclList.length--;
             }
             this.popDecl(pullDecl);
         }
@@ -957,8 +952,8 @@ module TypeScript {
                 return;
             }
             var temp: number;
-            var tempFnc = this.thisFnc;
-            this.thisFnc = funcDecl;
+            var tempFnc = this.thisFunctionDeclaration;
+            this.thisFunctionDeclaration = funcDecl;
 
             if (funcDecl.isConstructor) {
                 temp = this.setContainer(EmitContainer.Constructor);
@@ -980,7 +975,7 @@ module TypeScript {
                 this.setInObjectLiteral(tempLit);
             }
             this.setContainer(temp);
-            this.thisFnc = tempFnc;
+            this.thisFunctionDeclaration = tempFnc;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
@@ -1861,7 +1856,7 @@ module TypeScript {
         }
 
         public emitThis() {
-            if (this.thisFnc && !this.thisFnc.isMethod() && (!this.thisFnc.isConstructor)) {
+            if (this.thisFunctionDeclaration && !this.thisFunctionDeclaration.isMethod() && (!this.thisFunctionDeclaration.isConstructor)) {
                 this.writeToOutput("_this");
             }
             else {

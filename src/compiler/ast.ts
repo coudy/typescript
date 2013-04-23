@@ -265,7 +265,7 @@ module TypeScript {
         public emit(emitter: Emitter, startLine: boolean) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
+            if (emitter.thisFunctionDeclaration && (hasFlag(emitter.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
                 emitter.writeToOutput("_this");
             }
             else {

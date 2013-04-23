@@ -660,7 +660,6 @@ module TypeScript {
             } );
         }
 
-        // returns 'true' if diffs were detected
         private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
             this.timeFunction("pullUpdateScript: ", () => {
 
