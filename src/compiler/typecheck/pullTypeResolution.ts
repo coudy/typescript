@@ -3629,6 +3629,13 @@ module TypeScript {
             var targetTypeSymbol = targetSymbol.getType();
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
+
+                if (callEx.typeArguments) {
+                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null), enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);
+                }
+
                 this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
                 return targetTypeSymbol;
             }
@@ -3806,6 +3813,12 @@ module TypeScript {
                         }
                     }
                 }
+            }
+
+            if (!signature.isGeneric() && callEx.typeArguments) {
+                context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments, null),
+                    enclosingDecl);
             }
 
             var returnType = signature.getReturnType();

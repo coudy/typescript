@@ -1173,7 +1173,16 @@ module TypeScript {
             message: "Instance member cannot be accessed off a class.",
             code: 2157
         },
-
+        Untyped_function_calls_may_not_accept_type_arguments: {
+            category: DiagnosticCategory.Error,
+            message: "Untyped function calls may not accept type arguments.",
+            code: 2158
+        },
+        Non_generic_functions_may_not_accept_type_arguments: {
+            category: DiagnosticCategory.Error,
+            message: "Non-generic functions may not accept type arguments.",
+            code: 2159
+        },
 
 
 

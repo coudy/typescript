@@ -227,7 +227,8 @@ module TypeScript {
         _this__cannot_be_referenced_in_constructor_arguments,
         Static_member_cannot_be_accessed_off_an_instance_variable,
         Instance_member_cannot_be_accessed_off_a_class,
-
+        Untyped_function_calls_may_not_accept_type_arguments,
+        Non_generic_functions_may_not_accept_type_arguments,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,
