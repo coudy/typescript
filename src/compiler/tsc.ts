@@ -347,14 +347,6 @@ class BatchCompiler {
             }
         });
 
-        opts.option('style', {
-            usage: 'Select style checking options (examples --style requireSemi:off or --style "eqeqeq;bitwise:off")',
-            experimental: true,
-            set: (str) => {
-                this.compilationSettings.setStyleOptions(str);
-            }
-        });
-
         opts.flag('sourcemap', {
             usage: 'Generates corresponding .map file',
             set: () => {
