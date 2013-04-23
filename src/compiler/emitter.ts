@@ -1067,7 +1067,7 @@ module TypeScript {
                         }
                     }
 
-                    declaration.emit(this);
+                    declarator.emit(this);
                 }
             }
 
