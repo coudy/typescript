@@ -181,7 +181,7 @@ describe("Generic assignment compatibility - 2", function () {
         var callSigNum = typeFactory.get('var obj: { <number>(a:number):number;}', 'obj');
 
         var indexerSigNum = typeFactory.get('var aa:{[index:number]:number;};', 'aa');
-        var indexerSigString = typeFactory.get('var aa:{[index:string]:string;};', 'aa'); // basically 'any'
+        var indexerSigString = typeFactory.get('var aa:{[index:string]:any;};', 'aa'); // basically 'any'
 
         var constructorSigNum = typeFactory.get('var aa:{ new <number>(param: number); };', 'aa');
         var constructorSigString = typeFactory.get('var aa:{ new <string>(param: string); };', 'aa');

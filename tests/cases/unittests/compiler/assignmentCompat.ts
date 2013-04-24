@@ -181,7 +181,7 @@ describe("Assignment compatibility", function() {
         var callSigNum = typeFactory.get('var obj: { (a:number):number;}', 'obj');
 
         var indexerSigNum = typeFactory.get('var aa:{[index:number]:number;};', 'aa');
-        var indexerSigString = typeFactory.get('var aa:{[index:string]:string;};', 'aa'); // basically 'any'
+        var indexerSigString = typeFactory.get('var aa:{[index:string]:any;};', 'aa'); // basically 'any'
 
         var constructorSigNum = typeFactory.get('var aa:{ new (param: number); };', 'aa');
         var constructorSigString = typeFactory.get('var aa:{ new (param: string); };', 'aa');

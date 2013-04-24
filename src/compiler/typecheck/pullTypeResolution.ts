@@ -4916,6 +4916,7 @@ module TypeScript {
         public sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
             comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             var targetProps = target.getAllMembers(PullElementKind.SomeValue, true);
+
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
 
                 var targetProp = targetProps[itargetProp];
@@ -5216,6 +5217,19 @@ module TypeScript {
                     return false;
                 }
             }
+
+            // if the target has a string signature, the source's members must be comparable with it's return type
+            if (targetStringSig && source.hasMembers()) {
+                var targetReturnType = targetStringSig.getReturnType();
+                var sourceMembers = source.getMembers();
+
+                for (var i = 0; i < sourceMembers.length; i++) {
+                    if (!this.sourceIsRelatableToTarget(sourceMembers[i].getType(), targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
