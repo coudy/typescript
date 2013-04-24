@@ -5763,7 +5763,6 @@ var TypeScript;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     TypeScript.diagnosticMessages = {
@@ -7341,7 +7340,6 @@ var TypeScript;
     })();
     TypeScript.Diagnostic = Diagnostic;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var IntegerUtilities = (function () {
@@ -7503,8 +7501,6 @@ var TypeScript;
     (function (Clock) {
         Clock.now;
         Clock.resolution;
-        
-        
         if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
             global['WScript'].InitializeProjection();
             Clock.now = function () {
@@ -7629,9 +7625,6 @@ var TypeScript;
     })(TypeScript.CharacterCodes || (TypeScript.CharacterCodes = {}));
     var CharacterCodes = TypeScript.CharacterCodes;
 })(TypeScript || (TypeScript = {}));
-
-
-
 var TypeScript;
 (function (TypeScript) {
     var LineMap = (function () {
@@ -9420,12 +9413,6 @@ var TypeScript;
     })(TypeScript.Indentation || (TypeScript.Indentation = {}));
     var Indentation = TypeScript.Indentation;
 })(TypeScript || (TypeScript = {}));
-
-
-
-
-
-
 var TypeScript;
 (function (TypeScript) {
     (function (LanguageVersion) {
@@ -27375,7 +27362,6 @@ var TypeScript;
     })();
     TypeScript.Unicode = Unicode;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var DataMap = (function () {
