@@ -7,7 +7,6 @@
     function foo() {
         return m1.b;
     }
-
     /** m2 comments*/
     (function (m2) {
         /** class comment;*/
@@ -42,7 +41,6 @@ var myvar = new m1.m2.c();
     function foo() {
         return m4.b;
     }
-
     /** m2 comments
     */
     (function (m2) {

@@ -21,10 +21,8 @@ var m0;
 (function (m0) {
     function f1() {
     }
-
     function f2(ns) {
     }
-
     var c1 = (function () {
         function c1() { }
         return c1;

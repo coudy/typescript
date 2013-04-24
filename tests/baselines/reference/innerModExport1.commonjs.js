@@ -8,7 +8,6 @@ var Outer;
         function NonExportFunc() {
             return 0;
         }
-
         function ExportFunc() {
             return 0;
         }

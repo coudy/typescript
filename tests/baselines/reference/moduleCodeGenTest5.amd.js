@@ -7,7 +7,6 @@ define(["require", "exports"], function(require, exports) {
 
     function f2() {
     }
-
     var C1 = (function () {
         function C1() {
             this.p1 = 0;

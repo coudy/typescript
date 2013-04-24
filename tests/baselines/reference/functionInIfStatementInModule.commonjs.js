@@ -3,6 +3,5 @@ var Midori;
     if (false) {
         function Foo(src) {
         }
-
     }
 })(Midori || (Midori = {}));

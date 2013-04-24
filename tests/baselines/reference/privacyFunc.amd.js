@@ -110,14 +110,12 @@ var m1;
     })();    
     function f1_public(m1_f1_arg) {
     }
-
     function f2_public(m1_f2_arg) {
     }
     m1.f2_public = f2_public;
 
     function f3_public(m1_f3_arg) {
     }
-
     function f4_public(m1_f4_arg) {
     }
     m1.f4_public = f4_public;
@@ -125,7 +123,6 @@ var m1;
     function f5_public() {
         return new C1_public();
     }
-
     function f6_public() {
         return new C1_public();
     }
@@ -134,7 +131,6 @@ var m1;
     function f7_public() {
         return new C2_private();
     }
-
     function f8_public() {
         return new C2_private();
     }
@@ -143,7 +139,6 @@ var m1;
     function f9_private() {
         return new C1_public();
     }
-
     function f10_public() {
         return new C1_public();
     }
@@ -152,7 +147,6 @@ var m1;
     function f11_private() {
         return new C2_private();
     }
-
     function f12_public() {
         return new C2_private();
     }

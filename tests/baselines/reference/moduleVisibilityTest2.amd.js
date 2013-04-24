@@ -74,7 +74,6 @@ var M;
     function someModuleFunction() {
         return 5;
     }
-
 })(M || (M = {}));
 var M;
 (function (M) {

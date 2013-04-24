@@ -18,5 +18,4 @@ var C;
     function hello() {
         return null;
     }
-
 })(C || (C = {}));

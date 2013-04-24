@@ -6,7 +6,6 @@ exports.f1 = f1;
 
 function f2() {
 }
-
 var C1 = (function () {
     function C1() {
         this.p1 = 0;

@@ -36,7 +36,6 @@ function simpleFunction() {
         n: 2
     };
 }
-
 function exportedFunction() {
     return simpleFunction();
 }

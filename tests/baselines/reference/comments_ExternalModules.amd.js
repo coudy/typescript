@@ -8,7 +8,6 @@ define(["require", "exports"], function(require, exports) {
         function foo() {
             return m1.b;
         }
-
         /** m2 comments*/
         (function (m2) {
             /** class comment;*/
@@ -43,7 +42,6 @@ define(["require", "exports"], function(require, exports) {
         function foo() {
             return m4.b;
         }
-
         /** m2 comments
         */
         (function (m2) {

@@ -3,7 +3,6 @@ var M;
     function f(p) {
         return f;
     }
-
     ;
     var i;
     f(i);

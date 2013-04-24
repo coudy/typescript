@@ -4,6 +4,5 @@ with (ooo.eee.oo.ah_ah.ting.tang.walla.walla) {
     bang = true;
     function bar() {
     }
-
     bar();
 }

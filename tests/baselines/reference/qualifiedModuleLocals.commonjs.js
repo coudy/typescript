@@ -2,7 +2,6 @@ var A;
 (function (A) {
     function b() {
     }
-
     function a() {
         A.b();
     }

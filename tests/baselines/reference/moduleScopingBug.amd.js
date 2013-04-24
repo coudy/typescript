@@ -4,7 +4,6 @@ var M;
     function f() {
         var inner = outer;
     }
-
     var C = (function () {
         function C() {
             var inner = outer;

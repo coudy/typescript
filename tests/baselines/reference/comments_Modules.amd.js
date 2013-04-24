@@ -7,7 +7,6 @@ var m1;
     function foo() {
         return m1.b;
     }
-
     /** m2 comments*/
     (function (m2) {
         /** class comment;*/
@@ -45,7 +44,6 @@ var m1;
     */
     function foo4Export() {
     }
-
 })(m1 || (m1 = {}));
 m1.fooExport();
 var myvar = new m1.m2.c();

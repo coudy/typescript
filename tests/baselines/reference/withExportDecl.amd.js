@@ -37,7 +37,6 @@ define(["require", "exports"], function(require, exports) {
             n: 2
         };
     }
-
     function exportedFunction() {
         return simpleFunction();
     }

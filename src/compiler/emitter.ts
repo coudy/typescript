@@ -674,14 +674,6 @@ module TypeScript {
 
             this.emitComments(funcDecl, false);
 
-            if (!isMember &&
-                !funcDecl.isAccessor() &&
-                !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) &&
-                (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isConstructor)) {
-
-                this.writeLineToOutput("");
-            }
-
             this.popDecl(pullDecl);
         }
 
@@ -962,6 +954,7 @@ module TypeScript {
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
+                        this.writeLineToOutput("");
                         if (funcDecl.isAccessor()) {
                             this.emitPropertyAccessor(funcDecl, this.thisClassNode.name.actualText, false);
                         }
@@ -974,11 +967,11 @@ module TypeScript {
                     }
                 }
                 else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Exported)) {
+                    this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
                     this.recordSourceMappingStart(funcDecl);
-                    this.writeLineToOutput(modName + "." + funcName +
-                    " = " + funcName + ";");
+                    this.writeLineToOutput(modName + "." + funcName + " = " + funcName + ";");
                     this.recordSourceMappingEnd(funcDecl);
                 }
             }
@@ -1086,10 +1079,10 @@ module TypeScript {
                     }
                 }
                 else if (parentKind === PullElementKind.Enum ||
-                         parentKind === PullElementKind.DynamicModule ||
-                         associatedParentSymbolKind === PullElementKind.Container ||
-                         associatedParentSymbolKind === PullElementKind.DynamicModule ||
-                         associatedParentSymbolKind === PullElementKind.Enum) {
+                    parentKind === PullElementKind.DynamicModule ||
+                    associatedParentSymbolKind === PullElementKind.Container ||
+                    associatedParentSymbolKind === PullElementKind.DynamicModule ||
+                    associatedParentSymbolKind === PullElementKind.Enum) {
                     // module
                     if (!varDecl.isExported() && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
@@ -1104,11 +1097,9 @@ module TypeScript {
                     }
                 }
                 else {
-                    // function, constructor, method etc.
-                    //if (tokenId !== SyntaxKind.OpenParenToken) {
-                        this.emitVarDeclVar();
-                    //}
+                    this.emitVarDeclVar();
                 }
+
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
                 this.recordSourceMappingEnd(varDecl.id);
@@ -1132,11 +1123,7 @@ module TypeScript {
                 }
 
                 this.onEmitVar();
-                //if ((tokenId !== SyntaxKind.OpenParenToken)) {
-                //    if (this.varListCount() < 0) {
-                //        this.writeToOutput(", ");
-                //    }
-                //}
+
                 this.recordSourceMappingEnd(varDecl);
                 this.emitComments(varDecl, false);
             }
@@ -1505,8 +1492,7 @@ module TypeScript {
                              (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                             (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0) &&
-                             (emitNode.nodeType !== NodeType.FunctionDeclaration)) {
+                             (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0)) {
                         this.writeLineToOutput("");
                     }
                 }
@@ -1604,11 +1590,6 @@ module TypeScript {
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput("var " + className);
 
-            //if (hasFlag(classDecl.getVarFlags(), VarFlags.Exported) && (temp === EmitContainer.Module || temp === EmitContainer.DynamicModule)) {
-            //    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
-            //    this.writeToOutput(" = " + modName + "." + className);
-            //}
-
             var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
             var baseNameDecl: AST = null;
             var baseName: AST = null;
@@ -1638,6 +1619,7 @@ module TypeScript {
             if (constrDecl) {
                 // declared constructor
                 constrDecl.emit(this);
+                this.writeLineToOutput("");
             }
             else {
                 var wroteProps = 0;

@@ -15,5 +15,4 @@ var Bugs;
             length: 10
         }));
     }
-
 })(Bugs || (Bugs = {}));

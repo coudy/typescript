@@ -15,17 +15,14 @@ define(["require", "exports"], function(require, exports) {
             }
             return new Foo.C();
         }
-
         function Baz() {
             var c = Baz();
             return Bar();
         }
-
         function Gar() {
             var c = Baz();
             return;
         }
-
     })(exports.Foo || (exports.Foo = {}));
     var Foo = exports.Foo;
 

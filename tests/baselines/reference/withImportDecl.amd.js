@@ -24,7 +24,6 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
             n: 2
         };
     }
-
     var m1;
     (function (m1) {
         function foo() {

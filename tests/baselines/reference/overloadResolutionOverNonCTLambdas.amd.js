@@ -15,7 +15,6 @@ var Bugs;
         });
         return result;
     }
-
 })(Bugs || (Bugs = {}));
 function bug3(f) {
     return f("s");
