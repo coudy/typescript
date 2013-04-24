@@ -553,15 +553,8 @@ module TypeScript {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
-            var hasNonObjectBaseType = funcDecl.isConstructor && this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
-            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
-
-            if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
-                this.emitConstructorPropertyAssignments();
-            }
-
             if (funcDecl.isConstructor) {
-                this.emitList(funcDecl.block.statements, classPropertiesMustComeAfterSuperCall);
+                this.emitConstructorStatements(funcDecl);
             }
             else {
                 this.emitModuleElements(funcDecl.block.statements);
@@ -1460,21 +1453,26 @@ module TypeScript {
             this.emitComments(list, false);
         }
 
-        public emitList(list: ASTList, emitClassPropertiesAfterSuperCall: boolean) {
+        public emitConstructorStatements(funcDecl: FunctionDeclaration) {
+            var list = funcDecl.block.statements;
+
             if (list === null) {
                 return;
             }
             else {
                 this.emitComments(list, true);
-                if (list.members.length === 0) {
-                    this.emitComments(list, false);
-                    return;
+
+                var hasNonObjectBaseType = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
+                var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
+
+                if (!classPropertiesMustComeAfterSuperCall) {
+                    this.emitConstructorPropertyAssignments();
                 }
 
                 for (var i = 0, n = list.members.length; i < n; i++) {
                     // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                     // call which, in these cases, must be the first statement in the constructor body
-                    if (i === 1 && emitClassPropertiesAfterSuperCall) {
+                    if (i === 1 && classPropertiesMustComeAfterSuperCall) {
                         this.emitConstructorPropertyAssignments();
                     }
 
@@ -1503,7 +1501,7 @@ module TypeScript {
                     }
                 }
 
-                if (i === 1 && emitClassPropertiesAfterSuperCall) {
+                if (i === 1 && classPropertiesMustComeAfterSuperCall) {
                     this.emitConstructorPropertyAssignments();
                 }
 
