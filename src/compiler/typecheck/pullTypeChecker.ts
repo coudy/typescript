@@ -437,6 +437,10 @@ module TypeScript {
 
             if (boundDeclAST.typeExpr) {
                 typeExprSymbol = this.typeCheckAST(boundDeclAST.typeExpr, typeCheckContext);
+
+                if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized()) {
+                    typeExprSymbol = this.resolver.specializeTypeToAny(typeExprSymbol, enclosingDecl, this.context);
+                }
             }
 
             // if there's a type expr and an initializer, resolve the initializer
