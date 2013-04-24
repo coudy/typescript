@@ -311,7 +311,7 @@ class BatchCompiler {
                 snapshot = TypeScript.ScriptSnapshot.fromString(text);
                 compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, /*version:*/ 0, /*isOpen:*/ true, null);
                 // resolve the file to simulate an IDE-driven pull
-                compiler.pullResolveFile(lastTypecheckedFileName);
+                //compiler.pullResolveFile(lastTypecheckedFileName);
                 semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }

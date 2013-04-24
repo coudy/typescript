@@ -1648,8 +1648,14 @@ module TypeScript {
                         getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_type_parameter_constraint, null), enclosingDecl, true);
                 }
                 else if (constraintTypeSymbol.isPrimitive()) {
-                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath,
-                        getDiagnosticMessage(DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null), enclosingDecl, true);
+                    if (constraintTypeSymbol.isError()) {
+                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath,
+                            (<PullErrorTypeSymbol>constraintTypeSymbol).getDiagnostic().message(), enclosingDecl, true);
+                    }
+                    else {
+                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null), enclosingDecl, true);
+                    }
                 }
                 else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
