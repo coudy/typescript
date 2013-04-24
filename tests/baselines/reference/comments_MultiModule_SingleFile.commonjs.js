@@ -14,6 +14,7 @@ var multiM;
     })();
     multiM.d = d;    
 })(multiM || (multiM = {}));
+
 /// this is multi module 2
 var multiM;
 (function (multiM) {
@@ -30,6 +31,7 @@ var multiM;
     })();
     multiM.e = e;    
 })(multiM || (multiM = {}));
+
 new multiM.b();
 new multiM.c();
 ////[0.d.ts]

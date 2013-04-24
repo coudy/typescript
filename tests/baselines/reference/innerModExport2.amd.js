@@ -22,4 +22,5 @@ var Outer;
     Outer.outerFuncExport = outerFuncExport;
 
 })(Outer || (Outer = {}));
+
 Outer.NonExportFunc();

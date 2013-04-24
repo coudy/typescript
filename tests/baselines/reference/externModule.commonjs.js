@@ -1,3 +1,4 @@
+
 var d = new XDate();
 d.getDay();
 d = new XDate(1978, 2);

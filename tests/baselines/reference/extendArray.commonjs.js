@@ -4,6 +4,7 @@ var a = [
 ];
 a.forEach(function (v, i, a) {
 });
+
 var arr = (Array).prototype;
 arr.collect = function (fn) {
     var res = [];

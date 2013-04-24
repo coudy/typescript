@@ -35,6 +35,7 @@ var M;
     })();
     M.C = C;    
 })(M || (M = {}));
+
 var x = new M.C();
 var result = "";
 result += x.f(x, 3, 3);

@@ -14,6 +14,7 @@ var A;
     var B = A.B;
 
 })(A || (A = {}));
+
 var D;
 (function (D) {
     var inner = A.B.C;
@@ -28,5 +29,6 @@ var D;
     var E = D.E;
 
 })(D || (D = {}));
+
 var c;
 c = new D.inner.Class1();

@@ -471,22 +471,6 @@ module TypeScript {
             return false;
         }
 
-        private hasUseStrictDirective(list: ISyntaxList): boolean {
-            // Check if all the items are directive prologue elements.
-            for (var i = 0; i < list.childCount(); i++) {
-                var item = list.childAt(i);
-                if (!SyntaxFacts.isDirectivePrologueElement(item)) {
-                    return false;
-                }
-
-                if (SyntaxFacts.isUseStrictDirective(item)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public visitSourceUnit(node: SourceUnitSyntax): Script {
             this.assertElementAtPosition(node);
 
@@ -494,10 +478,6 @@ module TypeScript {
             var members;
 
             var bod = this.visitSyntaxList(node.moduleElements);
-
-            if (this.hasUseStrictDirective(node.moduleElements)) {
-                bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
-            }
 
             var topLevelMod: ModuleDeclaration = null;
             if (this.hasTopLevelImportOrExport(node)) {
@@ -829,11 +809,6 @@ module TypeScript {
                     : null;
 
                 var block = node.block ? node.block.accept(this) : null;
-                if (node.block) {
-                    if (this.hasUseStrictDirective(node.block.statements)) {
-                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
-                    }
-                }
 
                 this.movePast(node.semicolonToken);
 
@@ -2109,11 +2084,6 @@ module TypeScript {
                 var parameters = node.parameterList.accept(this);
 
                 var block = node.block ? node.block.accept(this) : null;
-                if (node.block) {
-                    if (this.hasUseStrictDirective(node.block.statements)) {
-                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
-                    }
-                }
 
                 this.movePast(node.semicolonToken);
 
@@ -2822,11 +2792,6 @@ module TypeScript {
                     : null;
 
                 var block = node.block ? node.block.accept(this) : null;
-                if (node.block) {
-                    if (this.hasUseStrictDirective(node.block.statements)) {
-                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
-                    }
-                }
 
                 result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 

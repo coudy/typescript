@@ -48,4 +48,5 @@ var M;
     M.test = test;
 
 })(M || (M = {}));
+
 M.test();

@@ -19,6 +19,7 @@ var foo;
     var bar = foo.bar;
 
 })(foo || (foo = {}));
+
 var provide = foo;
 var booz = foo.bar.baz;
 var beez = foo.bar;

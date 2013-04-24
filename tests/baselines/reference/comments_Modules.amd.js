@@ -45,6 +45,7 @@ var m1;
     function foo4Export() {
     }
 })(m1 || (m1 = {}));
+
 m1.fooExport();
 var myvar = new m1.m2.c();
 var m2;
@@ -61,6 +62,7 @@ var m2;
     var m3 = m2.m3;
 
 })(m2 || (m2 = {}));
+
 new m2.m3.c();
 var m3;
 (function (m3) {
@@ -80,6 +82,7 @@ var m3;
     var m4 = m3.m4;
 
 })(m3 || (m3 = {}));
+
 new m3.m4.m5.c();
 var m4;
 (function (m4) {
@@ -103,6 +106,7 @@ var m4;
     var m5 = m4.m5;
 
 })(m4 || (m4 = {}));
+
 new m4.m5.m6.m7.c();
 var m5;
 (function (m5) {
@@ -127,6 +131,7 @@ var m5;
     var m6 = m5.m6;
 
 })(m5 || (m5 = {}));
+
 new m5.m6.m7.m8.c();
 var m6;
 (function (m6) {
@@ -145,6 +150,7 @@ var m6;
     var m7 = m6.m7;
 
 })(m6 || (m6 = {}));
+
 new m6.m7.m8.c();
 var m7;
 (function (m7) {
@@ -175,6 +181,7 @@ var m7;
     var m8 = m7.m8;
 
 })(m7 || (m7 = {}));
+
 new m7.m8.m9.c();
 ////[0.d.ts]
 /** Module comment*/

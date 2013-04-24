@@ -1,3 +1,5 @@
+
+
 var c;
 (function (c) {
     (function (a) {
@@ -10,6 +12,7 @@ var c;
     var a = c.a;
 
 })(c || (c = {}));
+
 var mImport;
 (function (mImport) {
     var d = a;
@@ -17,6 +20,7 @@ var mImport;
     var d1 = a;
     var e1 = b.a;
 })(mImport || (mImport = {}));
+
 var m0;
 (function (m0) {
     function f1() {
@@ -34,6 +38,7 @@ var m0;
     var m6 = c.a;
     var m7 = c.a.b;
 })(m0 || (m0 = {}));
+
 var m1;
 (function (m1) {
     function f1() {
@@ -65,6 +70,7 @@ var m1;
     var m6 = c.a;
     var m7 = c.a.b;
 })(m1 || (m1 = {}));
+
 var m;
 (function (m) {
     (function (m2) {
@@ -79,6 +85,7 @@ var m;
     var m3 = m.m3;
 
 })(m || (m = {}));
+
 var m;
 (function (m) {
     (function (m25) {
@@ -91,6 +98,7 @@ var m;
     var m25 = m.m25;
 
 })(m || (m = {}));
+
 var m13;
 (function (m13) {
     (function (m4) {
@@ -112,6 +120,12 @@ var m13;
     var m4 = m13.m4;
 
 })(m13 || (m13 = {}));
+
+
+
+
+
+
 var exportTests;
 (function (exportTests) {
     var C1_public = (function () {
@@ -165,6 +179,8 @@ var exportTests;
     })();
     exportTests.C3_public = C3_public;    
 })(exportTests || (exportTests = {}));
+
+
 function foo() {
     return mAmbient.foo();
 }

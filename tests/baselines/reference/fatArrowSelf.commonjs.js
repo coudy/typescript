@@ -8,6 +8,7 @@ var Events;
     })();
     Events.EventEmitter = EventEmitter;    
 })(Events || (Events = {}));
+
 var Consumer;
 (function (Consumer) {
     var EventEmitterConsummer = (function () {

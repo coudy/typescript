@@ -1,3 +1,4 @@
+
 var p;
 var p2 = p.then(function (s) {
     return 34;

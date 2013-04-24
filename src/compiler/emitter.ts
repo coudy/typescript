@@ -831,7 +831,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitStatementList(moduleDecl.members);
+                this.emitModuleElements(moduleDecl.members);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -1413,8 +1413,21 @@ module TypeScript {
                 }
             }
         }
+
+        private neverEmit(node: AST): boolean {
+            if (node.nodeType === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>node).getFunctionFlags(), FunctionFlags.Signature)) {
+                return true;
+            }
+
+            if (node.nodeType === NodeType.InterfaceDeclaration) {
+                return true;
+            }
+
+            return false;
+        }
         
-        public emitStatementList(list: ASTList) {
+        public emitModuleElements(list: ASTList) {
             if (list === null) {
                 return;
             }
@@ -1422,25 +1435,62 @@ module TypeScript {
             this.emitComments(list, true);
 
             for (var i = 0, n = list.members.length; i < n; i++) {
-                var emitNode = list.members[i];
+                var node = list.members[i];
 
-                if (emitNode.nodeType === NodeType.FunctionDeclaration &&
-                    hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Signature)) {
+                if (this.neverEmit(node)) {
                     continue;
                 }
 
-                if (emitNode.nodeType === NodeType.InterfaceDeclaration) {
-                    continue;
-                }
-
-                this.emitJavascript(emitNode, true);
+                this.emitJavascript(node, true);
                 this.writeLineToOutput("");
             }
 
             this.emitComments(list, false);
         }
 
-        public emitList(list: ASTList, emitClassPropertiesAfterSuperCall: boolean, emitPrologue = false, requiresExtendsBlock?: boolean) {
+        private isDirectivePrologueElement(node: AST) {
+            if (node.nodeType === NodeType.ExpressionStatement) {
+                var exprStatement = <ExpressionStatement>node;
+                return exprStatement.expression.nodeType === NodeType.StringLiteral;
+            }
+
+            return false;
+        }
+
+        public emitScriptElements(list: ASTList, requiresExtendsBlock: boolean) {
+            this.emitComments(list, true);
+
+            // First, emit all the prologue elements.
+            for (var i = 0, n = list.members.length; i < n; i++) {
+                var node = list.members[i];
+
+                if (!this.isDirectivePrologueElement(node)) {
+                    break;
+                }
+
+                this.emitJavascript(node, true);
+                this.writeLineToOutput("");
+            }
+
+            // Now emit __extends or a _this capture if necessary.
+            this.emitPrologue(requiresExtendsBlock);
+            
+                // Now emit the rest of the script elements
+            for (; i < n; i++) {
+                var node = list.members[i];
+
+                if (this.neverEmit(node)) {
+                    continue;
+                }
+
+                this.emitJavascript(node, true);
+                this.writeLineToOutput("");
+            }
+
+            this.emitComments(list, false);
+        }
+
+        public emitList(list: ASTList, emitClassPropertiesAfterSuperCall: boolean) {
             if (list === null) {
                 return;
             }
@@ -1452,15 +1502,6 @@ module TypeScript {
                 }
 
                 for (var i = 0, n = list.members.length; i < n; i++) {
-                    if (emitPrologue) {
-                        // If the list has Strict mode flags, emit prologue after first statement
-                        // otherwise emit before first statement
-                        if (i === 1 || !hasFlag(list.getFlags(), ASTFlags.StrictMode)) {
-                            this.emitPrologue(requiresExtendsBlock);
-                            emitPrologue = false;
-                        }
-                    }
-
                     // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                     // call which, in these cases, must be the first statement in the constructor body
                     if (i === 1 && emitClassPropertiesAfterSuperCall) {
@@ -1477,12 +1518,7 @@ module TypeScript {
                         continue;
                     }
 
-                    if (emitNode.nodeType === NodeType.FunctionDeclaration &&
-                        hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Signature)) {
-                        continue;
-                    }
-
-                    if (emitNode.nodeType === NodeType.InterfaceDeclaration) {
+                    if (this.neverEmit(emitNode)) {
                         continue;
                     }
 
@@ -1758,9 +1794,9 @@ module TypeScript {
             }
         }
 
-        public emitPrologue(reqInherits: boolean) {
+        public emitPrologue(requiresExtendsBlock: boolean) {
             if (!this.extendsPrologueEmitted) {
-                if (reqInherits) {
+                if (requiresExtendsBlock) {
                     this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];");

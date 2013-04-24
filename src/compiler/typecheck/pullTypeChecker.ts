@@ -1368,7 +1368,7 @@ module TypeScript {
 
         private getFirstStatementFromFunctionDeclAST(funcDeclAST: FunctionDeclaration): AST {
             if (funcDeclAST.block && funcDeclAST.block.statements && funcDeclAST.block.statements.members) {
-                return hasFlag(funcDeclAST.block.getFlags(), ASTFlags.StrictMode) ? funcDeclAST.block.statements.members[1] : funcDeclAST.block.statements.members[0];
+                return funcDeclAST.block.statements.members[0];
             }
 
             return null;

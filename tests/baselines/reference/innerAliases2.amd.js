@@ -8,6 +8,7 @@ var _provider;
     })();
     _provider.UsefulClass = UsefulClass;    
 })(_provider || (_provider = {}));
+
 var consumer;
 (function (consumer) {
     var provider = _provider;

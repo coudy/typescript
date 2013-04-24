@@ -1,3 +1,4 @@
+
 var o = {
     name: ko.observable("Bob"),
     age: ko.observable(37)

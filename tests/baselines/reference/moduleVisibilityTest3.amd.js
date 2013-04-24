@@ -5,6 +5,7 @@ var _modes;
         return Mode;
     })();    
 })(_modes || (_modes = {}));
+
 var editor;
 (function (editor) {
     var modes = _modes;

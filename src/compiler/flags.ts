@@ -27,7 +27,6 @@ module TypeScript {
 
     export enum ASTFlags {
         None = 0,
-        StrictMode = 1 << 1, // node is in the strict mode environment
         OptionalName = 1 << 2,
         TypeReference = 1 << 3,
         EnumInitializer = 1 << 4,

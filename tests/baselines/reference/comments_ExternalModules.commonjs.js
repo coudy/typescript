@@ -67,6 +67,7 @@ var m4 = exports.m4;
 
 m4.fooExport();
 var myvar2 = new m4.m2.c();
+
 ////[comments_ExternalModules_1.js]
 /**This is on import declaration*/
 var extMod = require("./comments_ExternalModules_0");
@@ -74,6 +75,7 @@ extMod.m1.fooExport();
 exports.newVar = new extMod.m1.m2.c();
 extMod.m4.fooExport();
 exports.newVar2 = new extMod.m4.m2.c();
+
 ////[comments_ExternalModules_0.d.ts]
 /** Module comment*/
 export declare module m1 {

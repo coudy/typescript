@@ -10,6 +10,7 @@ var c;
     var a = c.a;
 
 })(c || (c = {}));
+
 var m0;
 (function (m0) {
     var m8 = c.a.b.ma;

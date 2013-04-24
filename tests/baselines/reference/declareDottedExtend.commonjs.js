@@ -4,6 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+
 var ab = A.B;
 var D = (function (_super) {
     __extends(D, _super);

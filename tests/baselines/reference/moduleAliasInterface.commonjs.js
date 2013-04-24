@@ -6,6 +6,7 @@ var _modes;
     })();
     _modes.Mode = Mode;    
 })(_modes || (_modes = {}));
+
 var editor;
 (function (editor) {
     var modes = _modes;
@@ -18,6 +19,7 @@ var editor;
         return Bug;
     })();    
 })(editor || (editor = {}));
+
 var modesOuter = _modes;
 var editor2;
 (function (editor2) {
@@ -42,6 +44,7 @@ var editor2;
         return Bug2;
     })();    
 })(editor2 || (editor2 = {}));
+
 var A1;
 (function (A1) {
     var A1C1 = (function () {
@@ -50,6 +53,7 @@ var A1;
     })();
     A1.A1C1 = A1C1;    
 })(A1 || (A1 = {}));
+
 var B1;
 (function (B1) {
     var A1Alias1 = A1;
