@@ -1184,7 +1184,11 @@ module TypeScript {
             code: 2159
         },
 
-
+        A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
+            category: DiagnosticCategory.Error,
+            message: "A generic type may not reference itself with its own type parameters",
+            code: 2160
+        },
 
 
         Type__0__is_missing_property__1__from_type__2_: {

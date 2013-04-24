@@ -66,7 +66,7 @@ module TypeScript {
         Rest_parameter_cannot_have_initializer,
         Modifiers_cannot_appear_here,
         Accessors_are_only_available_when_targeting_EcmaScript5_and_higher,
-
+        A_generic_type_may_not_reference_itself_with_its_own_type_parameters,
 
 
 

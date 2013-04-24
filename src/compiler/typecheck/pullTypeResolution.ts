@@ -161,7 +161,7 @@ module TypeScript {
             return this.cachedArrayInterfaceType;
         }
 
-        private getNewErrorTypeSymbol(diagnostic: PullDiagnostic): PullErrorTypeSymbol {
+        public getNewErrorTypeSymbol(diagnostic: PullDiagnostic): PullErrorTypeSymbol {
             return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol);
         }
 

@@ -2660,6 +2660,25 @@ module TypeScript {
         return newArrayType;
     }
 
+    export function typeWrapsTypeParameter(type: PullTypeSymbol, typeParameter: PullTypeParameterSymbol) {
+
+        if (type.isTypeParameter()) {
+            return type == typeParameter;
+        }
+
+        var typeArguments = type.getTypeArguments();
+
+        if (typeArguments) {
+            for (var i = 0; i < typeArguments.length; i++) {
+                if (typeWrapsTypeParameter(typeArguments[i], typeParameter)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     export var nSpecializationsCreated = 0;
 
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
@@ -2753,9 +2772,23 @@ module TypeScript {
         else {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
             var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
+            var diagnostic: PullDiagnostic;
+            var declAST: AST;
 
             for (var i = 0; i < typesToReplace.length; i++) {
-                substitution = context.findSpecializationForType(typesToReplace[i]);
+
+                if (!typesToReplace[i].isTypeParameter() && typeWrapsTypeParameter(typesToReplace[i], typeParameters[i])) {
+                    declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
+                    if (declAST) {
+                        diagnostic = context.postError(declAST.minChar, declAST.getLength(), resolver.getUnitPath(), getDiagnosticMessage(DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null), enclosingDecl, true);
+                        return resolver.getNewErrorTypeSymbol(diagnostic);
+                    }
+                    else {
+                        return resolver.semanticInfoChain.anyTypeSymbol;
+                    }
+                }
+
+                substitution = specializeType(typesToReplace[i], null, resolver, enclosingDecl, context, ast);
 
                 typeArguments[i] = substitution != null ? substitution : typesToReplace[i];
             }
@@ -3100,7 +3133,7 @@ module TypeScript {
 
                     context.pushTypeSpecializationCache(typeReplacementMap);
 
-                    newFieldType = specializeType(fieldType, typeArguments, resolver, newTypeDecl, context, ast);
+                    newFieldType = specializeType(fieldType, !fieldType.getIsSpecialized() ? typeArguments : null, resolver, newTypeDecl, context, ast);
 
                     resolver.setUnitPath(unitPath);
 
