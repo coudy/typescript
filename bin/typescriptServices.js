@@ -111,6 +111,7 @@ var TypeScript;
     (function (ASTFlags) {
         ASTFlags._map = [];
         ASTFlags.None = 0;
+        ASTFlags.SingleLine = 1 << 1;
         ASTFlags.OptionalName = 1 << 2;
         ASTFlags.TypeReference = 1 << 3;
         ASTFlags.EnumInitializer = 1 << 4;
@@ -902,10 +903,10 @@ var TypeScript;
                     emitter.writeToOutput("--");
                     break;
                 case 22 /* ObjectLiteralExpression */:
-                    emitter.emitObjectLiteral(this.operand);
+                    emitter.emitObjectLiteral(this);
                     break;
                 case 21 /* ArrayLiteralExpression */:
-                    emitter.emitArrayLiteral(this.operand);
+                    emitter.emitArrayLiteral(this);
                     break;
                 case 72 /* BitwiseNotExpression */:
                     emitter.writeToOutput("~");
@@ -3542,42 +3543,39 @@ var TypeScript;
                 }
             }
         };
-        Emitter.prototype.useNewLinesInLiteral = function () {
-            var useNewLines = true;
-            for (var i = this.varListCountStack.length - 1; i >= 0; i--) {
-                if (this.varListCountStack[i] < -1 || this.varListCountStack[i] > 1) {
-                    return false;
+        Emitter.prototype.emitObjectLiteral = function (objectLiteral) {
+            var useNewLines = !TypeScript.hasFlag(objectLiteral.getFlags(), 2 /* SingleLine */);
+            this.writeToOutput("{");
+            var list = objectLiteral.operand;
+            if (list.members.length > 0) {
+                if (useNewLines) {
+                    this.writeLineToOutput("");
+                } else {
+                    this.writeToOutput(" ");
+                }
+                this.indenter.increaseIndent();
+                this.emitCommaSeparatedList(list, useNewLines);
+                this.indenter.decreaseIndent();
+                if (useNewLines) {
+                    this.emitIndent();
+                } else {
+                    this.writeToOutput(" ");
                 }
             }
-            return true;
+            this.writeToOutput("}");
         };
-        Emitter.prototype.emitObjectLiteral = function (content) {
-            var useNewLines = this.useNewLinesInLiteral();
-            this.writeToOutput("{");
-            if (content && content.members.length > 0) {
+        Emitter.prototype.emitArrayLiteral = function (arrayLiteral) {
+            var useNewLines = !TypeScript.hasFlag(arrayLiteral.getFlags(), 2 /* SingleLine */);
+            this.writeToOutput("[");
+            var list = arrayLiteral.operand;
+            if (list.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
                 }
                 this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(content, useNewLines);
+                this.emitCommaSeparatedList(list, useNewLines);
                 this.indenter.decreaseIndent();
-                this.emitIndent();
-            }
-            this.writeToOutput("}");
-        };
-        Emitter.prototype.emitArrayLiteral = function (content) {
-            var useNewLines = this.useNewLinesInLiteral();
-            this.writeToOutput("[");
-            if (content) {
-                if (content.members.length === 1) {
-                    content.members[0].emit(this);
-                } else if (content.members.length > 0) {
-                    if (useNewLines) {
-                        this.writeLineToOutput("");
-                    }
-                    this.indenter.increaseIndent();
-                    this.emitCommaSeparatedList(content, useNewLines);
-                    this.indenter.decreaseIndent();
+                if (useNewLines) {
                     this.emitIndent();
                 }
             }
@@ -44359,7 +44357,7 @@ var TypeScript;
             mapDecl.setVarFlags(mapDecl.getVarFlags() | 1 /* Exported */);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | 2 /* Private */);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | 2048 /* ClassProperty */);
-            mapDecl.init = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, null);
+            mapDecl.init = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, new TypeScript.ASTList());
             members.append(statement);
             var lastValue = null;
             var memberNames = [];
@@ -44586,6 +44584,9 @@ var TypeScript;
             this.setSpan(result, start, node);
             return result;
         };
+        SyntaxTreeToAstVisitor.prototype.isOnSingleLine = function (start, end) {
+            return this.lineMap.getLineNumberFromPosition(start) === this.lineMap.getLineNumberFromPosition(end);
+        };
         SyntaxTreeToAstVisitor.prototype.visitArrayLiteralExpression = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
@@ -44593,10 +44594,16 @@ var TypeScript;
             if (result) {
                 this.movePast(node);
             } else {
+                var openStart = this.position + node.openBracketToken.leadingTriviaWidth();
                 this.movePast(node.openBracketToken);
                 var expressions = this.visitSeparatedSyntaxList(node.expressions);
+                var closeStart = this.position + node.closeBracketToken.leadingTriviaWidth();
                 this.movePast(node.closeBracketToken);
+                TypeScript.Debug.assert(expressions !== null);
                 result = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, expressions);
+                if (this.isOnSingleLine(openStart, closeStart)) {
+                    result.setFlags(result.getFlags() | 2 /* SingleLine */);
+                }
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -45716,10 +45723,15 @@ var TypeScript;
             if (result) {
                 this.movePast(node);
             } else {
+                var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
                 this.movePast(node.openBraceToken);
                 var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
+                var closeStart = this.position + node.closeBraceToken.leadingTriviaWidth();
                 this.movePast(node.closeBraceToken);
                 result = new TypeScript.UnaryExpression(22 /* ObjectLiteralExpression */, propertyAssignments);
+                if (this.isOnSingleLine(openStart, closeStart)) {
+                    result.setFlags(result.getFlags() | 2 /* SingleLine */);
+                }
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
