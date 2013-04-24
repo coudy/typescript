@@ -97,7 +97,7 @@ module TypeScript {
     export class Emitter {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
-        public thisClassNode: TypeDeclaration = null;
+        public thisClassNode: ClassDeclaration = null;
         public thisFunctionDeclaration: FunctionDeclaration = null;
         public moduleName = "";
         public emitState = new EmitState();
@@ -557,47 +557,10 @@ module TypeScript {
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
 
             if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
-                if (funcDecl.arguments) {
-                    argsLen = funcDecl.arguments.members.length;
-                    for (var i = 0; i < argsLen; i++) {
-                        var arg = <Parameter>funcDecl.arguments.members[i];
-                        if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
-                            this.emitIndent();
-                            this.recordSourceMappingStart(arg);
-                            this.recordSourceMappingStart(arg.id);
-                            this.writeToOutput("this." + arg.id.actualText);
-                            this.recordSourceMappingEnd(arg.id);
-                            this.writeToOutput(" = ");
-                            this.recordSourceMappingStart(arg.id);
-                            this.writeToOutput(arg.id.actualText);
-                            this.recordSourceMappingEnd(arg.id);
-                            this.writeLineToOutput(";");
-                            this.recordSourceMappingEnd(arg);
-                        }
-                    }
-                }
+                this.emitConstructorPropertyAssignments();
             }
 
             if (funcDecl.isConstructor) {
-                // this.emitConstructorStatements();
-                //// if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
-                if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
-
-                    var nProps = this.thisClassNode.members.members.length;
-
-                    for (var i = 0; i < nProps; i++) {
-                        if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
-                            var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
-                            if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
-                                this.emitIndent();
-                                this.emitVariableDeclarator(varDecl);
-                                this.writeLineToOutput("");
-                            }
-                        }
-                    }
-                    //this.writeLineToOutput("");
-                }
-
                 this.emitList(funcDecl.block.statements, classPropertiesMustComeAfterSuperCall);
             }
             else {
@@ -1364,12 +1327,11 @@ module TypeScript {
 
         private emitConstructorPropertyAssignments(): void {
             // emit any parameter properties first
-            var constructorDecl = (<ClassDeclaration>this.thisClassNode).constructorDecl;
+            var constructorDecl = this.thisClassNode.constructorDecl;
 
             if (constructorDecl && constructorDecl.arguments) {
-                var argsLen = constructorDecl.arguments.members.length;
-                for (var iArg = 0; iArg < argsLen; iArg++) {
-                    var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
+                for (var i = 0, n = constructorDecl.arguments.members.length; i < n; i++) {
+                    var arg = <BoundDecl>constructorDecl.arguments.members[i];
                     if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                         this.emitIndent();
                         this.recordSourceMappingStart(arg);
@@ -1386,11 +1348,9 @@ module TypeScript {
                 }
             }
 
-            var nProps = this.thisClassNode.members.members.length;
-
-            for (var iMember = 0; iMember < nProps; iMember++) {
-                if (this.thisClassNode.members.members[iMember].nodeType === NodeType.VariableDeclarator) {
-                    var varDecl = <VariableDeclarator>this.thisClassNode.members.members[iMember];
+            for (var i = 0, n = this.thisClassNode.members.members.length; i < n; i++) {
+                if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
+                    var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
                         this.emitVariableDeclarator(varDecl);
