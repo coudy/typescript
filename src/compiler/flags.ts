@@ -81,7 +81,6 @@ module TypeScript {
         IsFatArrowFunction = 1 << 11,
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
-        ClassMethod = 1 << 14,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;

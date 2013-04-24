@@ -952,8 +952,7 @@ module TypeScript {
         else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
             return createFunctionTypeDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method) ||
-                 hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
+        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
             return createMemberFunctionDeclaration(funcDecl, context);
         }
         else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction))) {

@@ -2096,9 +2096,6 @@ module TypeScript {
                 if (node.semicolonToken) {
                     result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
                 }
-
-                // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.ClassMethod);
             }
 
             this.setAST(node, result);

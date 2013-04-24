@@ -487,8 +487,7 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
             this.pushDecl(pullDecl);
 
-            var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod);
-            var hasNonObjectBaseType = isClassConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
+            var hasNonObjectBaseType = funcDecl.isConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
@@ -636,8 +635,8 @@ module TypeScript {
                 this.writeLineToOutput("}");
             }
 
-            // if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
-            if (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod) && !classPropertiesMustComeAfterSuperCall) {
+            //// if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
+            if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
 
                 var nProps = this.thisClassNode.members.members.length;
 
