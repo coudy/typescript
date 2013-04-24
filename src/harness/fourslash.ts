@@ -569,6 +569,7 @@ module FourSlash {
             this.currentCaretPosition = offset;
 
             this.fixCaretPosition();
+            this.checkSyntacticErrors();
         }
 
         public deleteCharBehindMarker(count = 1) {
@@ -593,13 +594,12 @@ module FourSlash {
             this.currentCaretPosition = offset;
 
             this.fixCaretPosition();
+
+            this.checkSyntacticErrors();
         }
 
         // Enters lines of text at the current caret position
         public type(text: string) {
-            // TODO: Maybe we should do this up here, too?
-            // this.checkSyntacticErrors();
-
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             for (var i = 0; i < text.length; i++) {
@@ -621,7 +621,6 @@ module FourSlash {
 
             this.fixCaretPosition();
 
-            // TODO: We should actually do this.
             this.checkSyntacticErrors();
         }
 
