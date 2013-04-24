@@ -814,7 +814,7 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             if (!this.isDeclareFile) {
-                emitter.emitScriptElements(this.moduleElements, this.requiresExtendsBlock);
+                emitter.emitScriptElements(this, this.requiresExtendsBlock);
             }
         }
     }

@@ -1448,6 +1448,13 @@ module TypeScript {
                             declKind === PullElementKind.Script) {
 
                             decl.setFlags(decl.getFlags() | PullElementFlags.MustCaptureThis);
+
+                            // If we're accessing 'this' in a class, then the class constructor 
+                            // needs to be marked as capturing 'this'.
+                            if (declKind === PullElementKind.Class) {
+                                decl.getChildDecls().filter(d => d.getKind() === PullElementKind.ConstructorMethod)
+                                    .map(d => d.setFlags(d.getFlags() | PullElementFlags.MustCaptureThis));
+                            }
                             break;
                         }
                     }

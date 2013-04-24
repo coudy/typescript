@@ -548,7 +548,7 @@ module TypeScript {
 
             this.emitDefaultValueAssignments(funcDecl);
 
-            if (funcDecl.isConstructor && this.shouldCaptureThis(funcDecl.classDecl)) {
+            if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
@@ -575,10 +575,6 @@ module TypeScript {
                         }
                     }
                 }
-            }
-
-            if (this.shouldCaptureThis(funcDecl)) {
-                this.writeCaptureThisStatement(funcDecl);
             }
 
             if (funcDecl.variableArgList) {
@@ -725,7 +721,7 @@ module TypeScript {
         }
 
         public shouldCaptureThis(ast: AST) {
-            if (ast === null) {
+            if (ast.nodeType === NodeType.Script) {
                 var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecls()[0];
                 return (scriptDecl.getFlags() & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
@@ -1467,7 +1463,8 @@ module TypeScript {
             return false;
         }
 
-        public emitScriptElements(list: ASTList, requiresExtendsBlock: boolean) {
+        public emitScriptElements(script: Script, requiresExtendsBlock: boolean) {
+            var list = script.moduleElements;
             this.emitComments(list, true);
 
             // First, emit all the prologue elements.
@@ -1483,7 +1480,7 @@ module TypeScript {
             }
 
             // Now emit __extends or a _this capture if necessary.
-            this.emitPrologue(requiresExtendsBlock);
+            this.emitPrologue(script, requiresExtendsBlock);
             
                 // Now emit the rest of the script elements
             for (; i < n; i++) {
@@ -1682,12 +1679,6 @@ module TypeScript {
                     wroteProps++;
                 }
 
-                /*
-                if (classDecl.getVarFlags() & VariableFlags.MustCaptureThis) {
-                    this.writeCaptureThisStatement(classDecl);
-                }
-                */
-
                 var members = this.thisClassNode.members.members
 
                     // output initialized properties
@@ -1804,7 +1795,7 @@ module TypeScript {
             }
         }
 
-        public emitPrologue(requiresExtendsBlock: boolean) {
+        public emitPrologue(script: Script, requiresExtendsBlock: boolean) {
             if (!this.extendsPrologueEmitted) {
                 if (requiresExtendsBlock) {
                     this.extendsPrologueEmitted = true;
@@ -1818,7 +1809,7 @@ module TypeScript {
             }
 
             if (!this.globalThisCapturePrologueEmitted) {
-                if (this.shouldCaptureThis(null)) {
+                if (this.shouldCaptureThis(script)) {
                     this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
