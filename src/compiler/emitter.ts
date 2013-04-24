@@ -115,9 +115,9 @@ module TypeScript {
         public document: Document = null;
 
         constructor(public emittingFileName: string,
-                    public outfile: ITextWriter,
-                    public emitOptions: EmitOptions,
-                    private semanticInfoChain: SemanticInfoChain) {
+            public outfile: ITextWriter,
+            public emitOptions: EmitOptions,
+            private semanticInfoChain: SemanticInfoChain) {
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
@@ -354,15 +354,15 @@ module TypeScript {
 
         public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
             CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
-            boundDeclInfo.boundDecl.init.nodeType === NodeType.Name,
-            "The init expression of bound declaration when emitting as constant has to be indentifier");
+                boundDeclInfo.boundDecl.init.nodeType === NodeType.Name,
+                "The init expression of bound declaration when emitting as constant has to be indentifier");
 
             var init = boundDeclInfo.boundDecl.init;
             var ident = <Identifier>init;
 
             this.setTypeCheckerUnit(this.document.fileName);
             var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
-                                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext);
+                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -387,7 +387,7 @@ module TypeScript {
                 else if (init.nodeType === NodeType.LeftShiftExpression) {
                     var binop = <BinaryExpression>init;
                     if (binop.operand1.nodeType === NodeType.NumericLiteral &&
-                    binop.operand2.nodeType === NodeType.NumericLiteral) {
+                        binop.operand2.nodeType === NodeType.NumericLiteral) {
                         return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
                     }
                 }
@@ -547,6 +547,7 @@ module TypeScript {
             this.indenter.increaseIndent();
 
             this.emitDefaultValueAssignments(funcDecl);
+            this.emitRestParameterInitializer(funcDecl);
 
             if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
@@ -575,43 +576,6 @@ module TypeScript {
                         }
                     }
                 }
-            }
-
-            if (funcDecl.variableArgList) {
-                argsLen = funcDecl.arguments.members.length;
-                var lastArg = <Parameter>funcDecl.arguments.members[argsLen - 1];
-                this.emitIndent();
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("var ");
-                this.recordSourceMappingStart(lastArg.id);
-                this.writeToOutput(lastArg.id.actualText);
-                this.recordSourceMappingEnd(lastArg.id);
-                this.writeLineToOutput(" = [];");
-                this.recordSourceMappingEnd(lastArg);
-                this.emitIndent();
-                this.writeToOutput("for (")
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("var _i = 0;");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeToOutput(" ");
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("_i < (arguments.length - " + (argsLen - 1) + ")");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeToOutput("; ");
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("_i++");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeLineToOutput(") {");
-                this.indenter.increaseIndent();
-                this.emitIndent();
-
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput(lastArg.id.actualText + "[_i] = arguments[_i + " + (argsLen - 1) + "];");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeLineToOutput("");
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-                this.writeLineToOutput("}");
             }
 
             if (funcDecl.isConstructor) {
@@ -681,6 +645,45 @@ module TypeScript {
                     this.writeLineToOutput("; }");
                     this.recordSourceMappingEnd(arg);
                 }
+            }
+        }
+
+        private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void  {
+            if (funcDecl.variableArgList) {
+                var n = funcDecl.arguments.members.length;
+                var lastArg = <Parameter>funcDecl.arguments.members[n - 1];
+                this.emitIndent();
+                this.recordSourceMappingStart(lastArg);
+                this.writeToOutput("var ");
+                this.recordSourceMappingStart(lastArg.id);
+                this.writeToOutput(lastArg.id.actualText);
+                this.recordSourceMappingEnd(lastArg.id);
+                this.writeLineToOutput(" = [];");
+                this.recordSourceMappingEnd(lastArg);
+                this.emitIndent();
+                this.writeToOutput("for (")
+                this.recordSourceMappingStart(lastArg);
+                this.writeToOutput("var _i = 0;");
+                this.recordSourceMappingEnd(lastArg);
+                this.writeToOutput(" ");
+                this.recordSourceMappingStart(lastArg);
+                this.writeToOutput("_i < (arguments.length - " + (n - 1) + ")");
+                this.recordSourceMappingEnd(lastArg);
+                this.writeToOutput("; ");
+                this.recordSourceMappingStart(lastArg);
+                this.writeToOutput("_i++");
+                this.recordSourceMappingEnd(lastArg);
+                this.writeLineToOutput(") {");
+                this.indenter.increaseIndent();
+                this.emitIndent();
+
+                this.recordSourceMappingStart(lastArg);
+                this.writeToOutput(lastArg.id.actualText + "[_i] = arguments[_i + " + (n - 1) + "];");
+                this.recordSourceMappingEnd(lastArg);
+                this.writeLineToOutput("");
+                this.indenter.decreaseIndent();
+                this.emitIndent();
+                this.writeLineToOutput("}");
             }
         }
 
