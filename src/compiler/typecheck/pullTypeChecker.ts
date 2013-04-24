@@ -1254,20 +1254,18 @@ module TypeScript {
 
             // PULLTODO: Contextually type the members
             if (memberDecls) {
-                var binex: BinaryExpression;
-                var text: string;
                 var member: PullSymbol = null;
 
                 for (var i = 0; i < memberDecls.members.length; i++) {
-                    binex = <BinaryExpression>memberDecls.members[i];
+                    var binex = <BinaryExpression>memberDecls.members[i];
 
                     if (contextualType) {
+                        var text: string;
                         if (binex.operand1.nodeType === NodeType.Name) {
                             text = (<Identifier>binex.operand1).text;
                         }
                         else if (binex.operand1.nodeType === NodeType.StringLiteral) {
                             text = (<StringLiteral>binex.operand1).text;
-                            text = text.substring(1, text.length - 1);
                         }
 
                         member = contextualType.findMember(text);

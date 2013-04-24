@@ -405,7 +405,7 @@ module TypeScript {
                     result = new LiteralExpression(NodeType.NullLiteral);
                 }
                 else if (token.kind() === SyntaxKind.StringLiteral) {
-                    result = new StringLiteral(token.text());
+                    result = new StringLiteral(token.text(), token.valueText());
                 }
                 else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
                     result = new RegexLiteral(token.text());
@@ -909,7 +909,7 @@ module TypeScript {
                                 new BinaryExpression(NodeType.ElementAccessExpression,
                                     new Identifier("_map"),
                                     memberValue),
-                                new StringLiteral('"' + memberName.actualText + '"'));
+                                new StringLiteral('"' + memberName.actualText + '"', memberName.actualText));
                         map.setFlags(map.getFlags() | ASTFlags.EnumInitializer);
                         members.append(new ExpressionStatement(map));
                         this.setSpanExplicit(map, memberStart, this.position);

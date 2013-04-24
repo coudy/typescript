@@ -581,17 +581,17 @@ module TypeScript {
     }
 
     export class StringLiteral extends Expression {
-        constructor(public text: string) {
+        constructor(public actualText: string, public text: string) {
             super(NodeType.StringLiteral);
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this.text);
+            emitter.writeToOutput(this.actualText);
         }
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.text === ast.text;
+                   this.actualText === ast.actualText;
         }
     }
 

@@ -1124,7 +1124,7 @@ module TypeScript {
                     aliasedType = this.resolveTypeReference(new TypeReference(importStatementAST.alias, 0), enclosingDecl, context);
                 }
                 else { // dynamic module name (string literal)
-                    var modPath = (<StringLiteral>importStatementAST.alias).text;
+                    var modPath = (<StringLiteral>importStatementAST.alias).actualText;
                     var declPath = this.getPathToDecl(enclosingDecl);
 
                     importStatementAST.isDynamicImport = true;
@@ -1422,8 +1422,8 @@ module TypeScript {
 
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>typeRef.term;
-                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text);
-                typeDeclSymbol.addDeclaration(new PullDecl(stringConstantAST.text, stringConstantAST.text,
+                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
+                typeDeclSymbol.addDeclaration(new PullDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.getKind(), null,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName()));
             }
@@ -3108,9 +3108,6 @@ module TypeScript {
 
             if (memberDecls) {
                 var binex: BinaryExpression;
-                var id: AST;
-                var text: string;
-                var idText: string;
                 var memberSymbol: PullSymbol;
                 var memberExprType: PullSymbol;
                 var assigningSymbol: PullSymbol = null;
@@ -3119,14 +3116,17 @@ module TypeScript {
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
                     binex = <BinaryExpression>memberDecls.members[i];
 
-                    id = binex.operand1;
+                    var id = binex.operand1;
+                    var text: string;
+                    var actualText: string;
 
                     if (id.nodeType === NodeType.Name) {
+                        actualText = (<Identifier>id).actualText;
                         text = (<Identifier>id).text;
                     }
                     else if (id.nodeType === NodeType.StringLiteral) {
-                        idText = (<StringLiteral>id).text;
-                        text = idText.substring(1, idText.length - 1);
+                        actualText = (<StringLiteral>id).actualText;
+                        text = (<StringLiteral>id).text;
                     }
                     else {
                         return this.semanticInfoChain.anyTypeSymbol;
@@ -3135,7 +3135,7 @@ module TypeScript {
                     // PULLTODO: Collect these at decl collection time, add them to the var decl
                     span = TextSpan.fromBounds(binex.minChar, binex.limChar);
 
-                    var decl = new PullDecl(text, text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
+                    var decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 
                     objectLitDecl.addChildDecl(decl);
                     decl.setParentDecl(objectLitDecl);
@@ -3350,7 +3350,7 @@ module TypeScript {
             // a property with that name,  the property access is the type of that property
             if (callEx.operand2.nodeType === NodeType.StringLiteral || callEx.operand2.nodeType === NodeType.NumericLiteral) {
 
-                var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).text :
+                var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).actualText :
                     quoteStr((<NumberLiteral>callEx.operand2).value.toString());
 
                 var member = targetTypeSymbol.findMember(memberName);
@@ -4446,11 +4446,11 @@ module TypeScript {
             }
 
             if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).text) === stripQuotes(t1.getName()));
+                return (val.nodeType === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).actualText) === stripQuotes(t1.getName()));
             }
 
             if (val && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).text) === stripQuotes(t2.getName()));
+                return (val.nodeType === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).actualText) === stripQuotes(t2.getName()));
             }
 
             if (t1.isPrimitive() || t2.isPrimitive()) {
@@ -4780,7 +4780,7 @@ module TypeScript {
                     return comparisonInfo &&
                         comparisonInfo.stringConstantVal &&
                         (comparisonInfo.stringConstantVal.nodeType === NodeType.StringLiteral) &&
-                        (stripQuotes((<StringLiteral>comparisonInfo.stringConstantVal).text) === stripQuotes(target.getName()));
+                        (stripQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripQuotes(target.getName()));
                 }
             }
             else {
@@ -5736,14 +5736,14 @@ module TypeScript {
                     else if (PType.isPrimitive() &&
                         (<PullPrimitiveTypeSymbol>PType).isStringConstant() &&
                         args.members[i].nodeType === NodeType.StringLiteral &&
-                        stripQuotes((<StringLiteral>args.members[i]).text) === stripQuotes((<PullStringConstantTypeSymbol>PType).getName()))
+                        stripQuotes((<StringLiteral>args.members[i]).actualText) === stripQuotes((<PullStringConstantTypeSymbol>PType).getName()))
                     {
                         break;
                     }
                     else if (QType.isPrimitive() &&
                         (<PullPrimitiveTypeSymbol>QType).isStringConstant() &&
                         args.members[i].nodeType === NodeType.StringLiteral &&
-                        stripQuotes((<StringLiteral>args.members[i]).text) === stripQuotes((<PullStringConstantTypeSymbol>QType).getName()))
+                        stripQuotes((<StringLiteral>args.members[i]).actualText) === stripQuotes((<PullStringConstantTypeSymbol>QType).getName()))
                     {
                         best = Q;
                     }
