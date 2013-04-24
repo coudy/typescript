@@ -954,7 +954,7 @@ module TypeScript {
                 this.writeToOutput(" = ");
                 this.emitJavascript(varDecl.init, false);
                 this.recordSourceMappingEnd(varDecl);
-                this.writeToOutput(";");
+                //this.writeToOutput(";");
                 this.emitComments(varDecl, false);
             }
         }
