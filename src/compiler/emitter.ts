@@ -1633,8 +1633,8 @@ module TypeScript {
 
                 var members = this.thisClassNode.members.members
 
-                    // output initialized properties
-                    for (var i = 0; i < members.length; i++) {
+                // output initialized properties
+                for (var i = 0; i < members.length; i++) {
                     if (members[i].nodeType === NodeType.VariableDeclarator) {
                         varDecl = <VariableDeclarator>members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
@@ -1645,6 +1645,7 @@ module TypeScript {
                         }
                     }
                 }
+
                 if (wroteProps) {
                     this.writeLineToOutput("");
                     this.indenter.decreaseIndent();
