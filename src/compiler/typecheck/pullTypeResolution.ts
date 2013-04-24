@@ -3717,14 +3717,15 @@ module TypeScript {
 
                                 for (var j = 0; j < typeParameters.length; j++) {
                                     typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
-
+                                }
+                                for (var j = 0; j < typeParameters.length; j++) {
                                     typeConstraint = typeParameters[j].getConstraint();
 
                                     // test specialization type for assignment compatibility with the constraint
                                     if (typeConstraint) {
                                         if (typeConstraint.isTypeParameter()) {
                                             context.pushTypeSpecializationCache(typeReplacementMap);
-                                            typeConstraint = specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                            typeConstraint = specializeType(typeConstraint, null, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
                                             context.popTypeSpecializationCache();
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
@@ -3988,7 +3989,8 @@ module TypeScript {
 
                                     for (var j = 0; j < typeParameters.length; j++) {
                                         typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
-
+                                    }
+                                    for (var j = 0; j < typeParameters.length; j++) {
                                         typeConstraint = typeParameters[j].getConstraint();
 
                                         // test specialization type for assignment compatibility with the constraint
@@ -3996,7 +3998,7 @@ module TypeScript {
 
                                             if (typeConstraint.isTypeParameter()) {
                                                 context.pushTypeSpecializationCache(typeReplacementMap);
-                                                typeConstraint = specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                                typeConstraint = specializeType(typeConstraint, null, this, enclosingDecl, context);
                                                 context.popTypeSpecializationCache();
                                             }
 
