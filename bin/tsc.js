@@ -43738,7 +43738,6 @@ var TypeScript;
     }
     TypeScript.timeFunction = timeFunction;
 })(TypeScript || (TypeScript = {}));
-
 var IOUtils;
 (function (IOUtils) {
     function createDirectoryStructure(ioHost, dirName) {
