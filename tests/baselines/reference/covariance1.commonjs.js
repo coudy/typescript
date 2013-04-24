@@ -11,11 +11,7 @@ var M;
     }
     M.f = f;
     var a;
-    f({
-        x: a
-    });
+    f({ x: a });
     var b;
-    f({
-        x: b
-    });
+    f({ x: b });
 })(M || (M = {}));

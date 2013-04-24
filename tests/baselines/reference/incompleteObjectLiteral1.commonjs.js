@@ -1,4 +1,2 @@
-var tt = {
-    aa: 
-};
+var tt = { aa:  };
 var x = tt;

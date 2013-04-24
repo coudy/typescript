@@ -37,14 +37,11 @@ var bar = C.Bar;
 C.Bar = "barv";
 var baz = c.Baz;
 c.Baz = "bazv";
-var o = {
-    get Foo() {
+var o = { get Foo() {
         return 0;
-    },
-    set Foo(val) {
+    }, set Foo(val) {
         val;
-    }
-};
+    } };
 var ofg = o.Foo;
 o.Foo = 0;
 var i = function (n) {

@@ -4,15 +4,11 @@ define(["require", "exports"], function(require, exports) {
         }
         Bug.prototype.ok = function () {
             this.values = {};
-            this.values['comments'] = {
-                italic: true
-            };
+            this.values['comments'] = { italic: true };
         };
         Bug.prototype.shouldBeOK = function () {
             this.values = {
-                comments: {
-                    italic: true
-                }
+                comments: { italic: true }
             };
         };
         return Bug;

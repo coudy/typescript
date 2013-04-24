@@ -16,9 +16,7 @@ var C3 = (function () {
 })();
 var Test = (function () {
     function Test() {
-        this.pt = {
-            item: 1
-        };
+        this.pt = { item: 1 };
     }
     return Test;
 })();

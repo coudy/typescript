@@ -16,7 +16,7 @@ void (function (r) {
     });
 });
 [(function (r) {
-    return (function (r) {
-        return r;
-    });
-})];
+        return (function (r) {
+            return r;
+        });
+    })];

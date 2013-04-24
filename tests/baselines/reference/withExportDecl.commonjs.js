@@ -5,25 +5,11 @@ var varWithSimpleType;
 var varWithArrayType;
 var varWithInitialValue = 30;
 exports.exportedVarWithInitialValue = 70;
-var withComplicatedValue = {
-    x: 30,
-    y: 70,
-    desc: "position"
-};
-exports.exportedWithComplicatedValue = {
-    x: 30,
-    y: 70,
-    desc: "position"
-};
-var arrayVar = [
-    'a',
-    'b'
-];
+var withComplicatedValue = { x: 30, y: 70, desc: "position" };
+exports.exportedWithComplicatedValue = { x: 30, y: 70, desc: "position" };
+var arrayVar = ['a', 'b'];
 exports.exportedArrayVar;
-exportedArrayVar.push({
-    x: 30,
-    y: 'hello world'
-});
+exportedArrayVar.push({ x: 30, y: 'hello world' });
 function simpleFunction() {
     return {
         x: "Hello",

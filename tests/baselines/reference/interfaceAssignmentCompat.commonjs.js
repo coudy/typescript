@@ -21,15 +21,9 @@ var M;
     function test() {
         var x = [];
         var result = "";
-        x[0] = {
-            color: Color.Brown
-        };
-        x[1] = {
-            color: Color.Blue
-        };
-        x[2] = {
-            color: Color.Green
-        };
+        x[0] = { color: Color.Brown };
+        x[1] = { color: Color.Blue };
+        x[2] = { color: Color.Green };
         x = x.sort(CompareYeux);
         var z = x.sort(CompareEyes);
         for (var i = 0, len = z.length; i < len; i++) {

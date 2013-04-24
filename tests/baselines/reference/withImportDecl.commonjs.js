@@ -3,15 +3,8 @@ var anotherVar;
 var varWithSimpleType;
 var varWithArrayType;
 var varWithInitialValue = 30;
-var withComplicatedValue = {
-    x: 30,
-    y: 70,
-    desc: "position"
-};
-var arrayVar = [
-    'a',
-    'b'
-];
+var withComplicatedValue = { x: 30, y: 70, desc: "position" };
+var arrayVar = ['a', 'b'];
 function simpleFunction() {
     return {
         x: "Hello",

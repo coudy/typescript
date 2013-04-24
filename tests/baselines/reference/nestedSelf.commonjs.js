@@ -6,11 +6,7 @@ var M;
         }
         C.prototype.foo = function () {
             var _this = this;
-            [
-                1,
-                2,
-                3
-            ].map(function (x) {
+            [1, 2, 3].map(function (x) {
                 return _this.n * x;
             });
         };

@@ -329,10 +329,10 @@ module TypeScript {
                     emitter.writeToOutput("--");
                     break;
                 case NodeType.ObjectLiteralExpression:
-                    emitter.emitObjectLiteral(<ASTList>this.operand);
+                    emitter.emitObjectLiteral(this);
                     break;
                 case NodeType.ArrayLiteralExpression:
-                    emitter.emitArrayLiteral(<ASTList>this.operand);
+                    emitter.emitArrayLiteral(this);
                     break;
                 case NodeType.BitwiseNotExpression:
                     emitter.writeToOutput("~");

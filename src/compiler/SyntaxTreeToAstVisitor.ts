@@ -863,7 +863,7 @@ module TypeScript {
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.ClassProperty);
 
-            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, null);
+            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, new ASTList());
             members.append(statement);
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
@@ -1165,6 +1165,10 @@ module TypeScript {
             return result;
         }
 
+        private isOnSingleLine(start: number, end: number): boolean {
+            return this.lineMap.getLineNumberFromPosition(start) === this.lineMap.getLineNumberFromPosition(end);
+        }
+
         public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
@@ -1174,11 +1178,20 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
+                var openStart = this.position + node.openBracketToken.leadingTriviaWidth();
                 this.movePast(node.openBracketToken);
+
                 var expressions = this.visitSeparatedSyntaxList(node.expressions);
+
+                var closeStart = this.position + node.closeBracketToken.leadingTriviaWidth();
                 this.movePast(node.closeBracketToken);
 
+                Debug.assert(expressions !== null);
                 result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
+
+                if (this.isOnSingleLine(openStart, closeStart)) {
+                    result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+                }
             }
 
             this.setAST(node, result);
@@ -2627,11 +2640,19 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
+                var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
                 this.movePast(node.openBraceToken);
+
                 var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
+
+                var closeStart = this.position + node.closeBraceToken.leadingTriviaWidth();
                 this.movePast(node.closeBraceToken);
 
                 result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments);
+
+                if (this.isOnSingleLine(openStart, closeStart)) {
+                    result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+                }
             }
 
             this.setAST(node, result);

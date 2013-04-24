@@ -279,51 +279,46 @@ module TypeScript {
             }
         }
 
-        private useNewLinesInLiteral(): boolean {
-            var useNewLines = true;
-            for (var i = this.varListCountStack.length - 1; i >= 0; i--) {
-                // If we're in any var decl, not in the last position, then don't emit newlines.
-                if (this.varListCountStack[i] < -1 || this.varListCountStack[i] > 1) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public emitObjectLiteral(content: ASTList) {
-            var useNewLines = this.useNewLinesInLiteral();
+        public emitObjectLiteral(objectLiteral: UnaryExpression) {
+            var useNewLines = !hasFlag(objectLiteral.getFlags(), ASTFlags.SingleLine);
 
             this.writeToOutput("{");
-            if (content && content.members.length > 0) {
+            var list = <ASTList>objectLiteral.operand;
+            if (list.members.length > 0) {
+                if (useNewLines) {
+                    this.writeLineToOutput("");
+                }
+                else {
+                    this.writeToOutput(" ");
+                }
+
+                this.indenter.increaseIndent();
+                this.emitCommaSeparatedList(list, useNewLines);
+                this.indenter.decreaseIndent();
+                if (useNewLines) {
+                    this.emitIndent();
+                }
+                else {
+                    this.writeToOutput(" ");
+                }
+            }
+            this.writeToOutput("}");
+        }
+
+        public emitArrayLiteral(arrayLiteral: UnaryExpression) {
+            var useNewLines = !hasFlag(arrayLiteral.getFlags(), ASTFlags.SingleLine);
+
+            this.writeToOutput("[");
+            var list = <ASTList>arrayLiteral.operand;
+            if (list.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
                 }
 
                 this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(content, useNewLines);
+                this.emitCommaSeparatedList(list, useNewLines);
                 this.indenter.decreaseIndent();
-                this.emitIndent();
-            }
-            this.writeToOutput("}");
-        }
-
-        public emitArrayLiteral(content: ASTList) {
-            var useNewLines = this.useNewLinesInLiteral();
-
-            this.writeToOutput("[");
-            if (content) {
-                if (content.members.length === 1) {
-                    content.members[0].emit(this);
-                }
-                else if (content.members.length > 0) {
-                    if (useNewLines) {
-                        this.writeLineToOutput("");
-                    }
-
-                    this.indenter.increaseIndent();
-                    this.emitCommaSeparatedList(content, useNewLines);
-                    this.indenter.decreaseIndent();
+                if (useNewLines) {
                     this.emitIndent();
                 }
             }
@@ -954,7 +949,6 @@ module TypeScript {
                 this.writeToOutput(" = ");
                 this.emitJavascript(varDecl.init, false);
                 this.recordSourceMappingEnd(varDecl);
-                //this.writeToOutput(";");
                 this.emitComments(varDecl, false);
             }
         }

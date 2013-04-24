@@ -20,10 +20,7 @@ var a = (function () {
     });
     Object.defineProperty(a, "p2", {
         get: function () {
-            return {
-                x: 30,
-                y: 40
-            };
+            return { x: 30, y: 40 };
         },
         enumerable: true,
         configurable: true
