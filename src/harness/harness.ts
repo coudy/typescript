@@ -1248,7 +1248,7 @@ module Harness {
                         var lineCol = { line: -1, character: -1 };
                         document.lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
 
-                        errorTarget.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character  + "): ");
+                        errorTarget.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): ");
                     }
 
                     errorTarget.WriteLine(diagnostic.message());

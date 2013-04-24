@@ -22,7 +22,7 @@ describe('Testing function signatures inside classes', function () {
     it('Regression test - was previously giving runtime error', function () {
         var code = "class A { a(completed: () => any): void; }";
         Harness.Compiler.compileString(code, 'fnsig-inside-classes', function (result) {
-            assert.compilerWarning(result, 1, 10, 'error TS1041: Function implementation expected.');
+            assert.compilerWarning(result, 1, 11, 'error TS1041: Function implementation expected.');
             assert.equal(result.errors.length, 1);
         });
     });

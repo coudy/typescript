@@ -27,7 +27,7 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
             assert.arrayLengthIs(result.errors, 2);
-            assert.compilerWarning(result, 1, 67, "error TS2095: Could not find symbol 'v'.");
+            assert.compilerWarning(result, 1, 68, "error TS2095: Could not find symbol 'v'.");
         });
     });
 
@@ -61,7 +61,7 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
         code += '}';
         Harness.Compiler.compileString(code, 'declarations', function (result) {
             assert.arrayLengthIs(result.errors, 1);
-            assert.compilerWarning(result, 1, 48, "error TS2141: Class 'D' cannot extend class 'C':\r\n\tProperty 'v' defined as public in type 'D' is defined as private in type 'C'.");
+            assert.compilerWarning(result, 1, 49, "error TS2141: Class 'D' cannot extend class 'C':\r\n\tProperty 'v' defined as public in type 'D' is defined as private in type 'C'.");
         } );
     } );
 
@@ -76,8 +76,8 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
             assert.arrayLengthIs(result.errors, 4);
-            assert.compilerWarning(result, 1, 82, "error TS2095: Could not find symbol 'v'.");
-            assert.compilerWarning(result, 1, 111, "error TS2095: Could not find symbol 's'.");
+            assert.compilerWarning(result, 1, 83, "error TS2095: Could not find symbol 'v'.");
+            assert.compilerWarning(result, 1, 112, "error TS2095: Could not find symbol 's'.");
         });
     });
 
@@ -92,8 +92,8 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
             assert.arrayLengthIs(result.errors, 4);
-            assert.compilerWarning(result, 1, 82, "error TS2095: Could not find symbol 'v'.");
-            assert.compilerWarning(result, 1, 111, "error TS2095: Could not find symbol 's'.");
+            assert.compilerWarning(result, 1, 83, "error TS2095: Could not find symbol 'v'.");
+            assert.compilerWarning(result, 1, 112, "error TS2095: Could not find symbol 's'.");
         });
     });
     
@@ -108,8 +108,8 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
             assert.arrayLengthIs(result.errors, 4);
-            assert.compilerWarning(result, 1, 82, "error TS2095: Could not find symbol 'v'.");
-            assert.compilerWarning(result, 1, 111, "error TS2095: Could not find symbol 's'.");
+            assert.compilerWarning(result, 1, 83, "error TS2095: Could not find symbol 'v'.");
+            assert.compilerWarning(result, 1, 112, "error TS2095: Could not find symbol 's'.");
         });
     });
 });
