@@ -30,7 +30,6 @@ var Peer;
 })(Peer || (Peer = {}));
 var Everest;
 (function (Everest) {
-    
     (function (K2) {
         var v1;
         var v2 = v1;

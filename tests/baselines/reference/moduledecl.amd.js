@@ -1,5 +1,3 @@
-
-
 var c;
 (function (c) {
     (function (a) {
@@ -103,11 +101,6 @@ var m13;
     })(m13.m4 || (m13.m4 = {}));
     var m4 = m13.m4;
 })(m13 || (m13 = {}));
-
-
-
-
-
 var exportTests;
 (function (exportTests) {
     var C1_public = (function () {
@@ -164,7 +157,6 @@ var exportTests;
     })();
     exportTests.C3_public = C3_public;
 })(exportTests || (exportTests = {}));
-
 function foo() {
     return mAmbient.foo();
 }

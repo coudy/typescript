@@ -10,4 +10,3 @@ define(["require", "exports"], function(require, exports) {
         var absoluteWorkspacePath = configuration.workspace.toAbsolutePath(configuration.server);
     }
 })
-////[server.js]

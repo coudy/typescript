@@ -29,8 +29,6 @@
         m1_M2_private.v1 = c1;
         m1_M2_private.v2;
     })(m1_M2_private || (m1_M2_private = {}));
-    
-    
     var m1_im1_private = m1_M1_public;
     m1.m1_im1_private_v1_public = m1_im1_private.c1;
     m1.m1_im1_private_v2_public = new m1_im1_private.c1();
@@ -105,8 +103,6 @@ var m2;
         m2_M2_private.v1 = c1;
         m2_M2_private.v2;
     })(m2_M2_private || (m2_M2_private = {}));
-    
-    
     var m1_im1_private = m2_M1_public;
     m2.m1_im1_private_v1_public = m1_im1_private.c1;
     m2.m1_im1_private_v2_public = new m1_im1_private.c1();
@@ -163,7 +159,6 @@ var m2;
     glo_M1_public.v2;
 })(exports.glo_M1_public || (exports.glo_M1_public = {}));
 var glo_M1_public = exports.glo_M1_public;
-
 (function (glo_M3_private) {
     var c1 = (function () {
         function c1() {
@@ -179,7 +174,6 @@ var glo_M1_public = exports.glo_M1_public;
     glo_M3_private.v2;
 })(exports.glo_M3_private || (exports.glo_M3_private = {}));
 var glo_M3_private = exports.glo_M3_private;
-
 var glo_im1_private = glo_M1_public;
 exports.glo_im1_private_v1_public = glo_im1_private.c1;
 exports.glo_im1_private_v2_public = new glo_im1_private.c1();
@@ -218,10 +212,6 @@ var glo_im4_private_v3_private = glo_im4_private.f1;
 var glo_im4_private_v4_private = glo_im4_private.f1();
 var glo_im1_public = glo_M1_public;
 var glo_im2_public = glo_M3_private;
-
-
-
-
 
 
 var m2;

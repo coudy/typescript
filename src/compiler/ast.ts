@@ -869,7 +869,11 @@ module TypeScript {
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
-        private shouldEmit(): boolean {
+        public shouldEmit(): boolean {
+            if (hasFlag(this.getModuleFlags(), ModuleFlags.Ambient)) {
+                return false;
+            }
+
             for (var i = 0, n = this.members.members.length; i < n; i++) {
                 var member = this.members.members[i];
 

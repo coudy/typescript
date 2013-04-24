@@ -43,5 +43,3 @@ var C6_private = (function () {
     }
     return C6_private;
 })();
-
-

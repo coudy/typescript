@@ -28,7 +28,6 @@ var m1;
     }
     m1.foo = foo;
 })(m1 || (m1 = {}));
-
 (function (m3) {
     function foo() {
         return m1.foo();

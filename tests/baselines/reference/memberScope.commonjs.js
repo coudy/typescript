@@ -6,6 +6,5 @@ var Salt;
         return Pepper;
     })();
     Salt.Pepper = Pepper;
-    
     var z = Basil.Pepper;
 })(Salt || (Salt = {}));
