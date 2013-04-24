@@ -1367,6 +1367,9 @@ var TypeScript;
             return TypeScript.hasFlag(this.getModuleFlags(), 256 /* IsWholeFile */);
         };
         ModuleDeclaration.prototype.shouldEmit = function () {
+            if (TypeScript.hasFlag(this.getModuleFlags(), 8 /* Ambient */)) {
+                return false;
+            }
             for (var i = 0, n = this.members.members.length; i < n; i++) {
                 var member = this.members.members[i];
                 if (member.nodeType === 15 /* ModuleDeclaration */) {
@@ -3329,6 +3332,7 @@ var TypeScript;
             this.declStack = [];
             this.resolvingContext = new TypeScript.PullTypeResolutionContext();
             this.document = null;
+            this.justWroteNewLine = false;
             this.pullTypeChecker = new TypeScript.PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
         Emitter.prototype.pushDecl = function (decl) {
@@ -3369,6 +3373,7 @@ var TypeScript;
             this.sourceMapper = mapper;
         };
         Emitter.prototype.writeToOutput = function (s) {
+            this.justWroteNewLine = false;
             this.outfile.Write(s);
             this.emitState.column += s.length;
         };
@@ -3379,6 +3384,13 @@ var TypeScript;
             this.writeToOutput(s);
         };
         Emitter.prototype.writeLineToOutput = function (s) {
+            if (s === "") {
+                if (this.justWroteNewLine) {
+                }
+                this.justWroteNewLine = true;
+            } else {
+                this.justWroteNewLine = false;
+            }
             if (this.emitOptions.compilationSettings.minWhitespace) {
                 this.writeToOutput(s);
                 var c = s.charCodeAt(s.length - 1);
@@ -3799,154 +3811,152 @@ var TypeScript;
             if (TypeScript.isTSFile(modName)) {
                 moduleDecl.name.setText(modName.substring(0, modName.length - 3));
             }
-            if (!TypeScript.hasFlag(moduleDecl.getModuleFlags(), 8 /* Ambient */)) {
-                var isDynamicMod = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 512 /* IsDynamic */);
-                var prevOutFile = this.outfile;
-                var prevOutFileName = this.emittingFileName;
-                var prevAllSourceMappers = this.allSourceMappers;
-                var prevSourceMapper = this.sourceMapper;
-                var prevColumn = this.emitState.column;
-                var prevLine = this.emitState.line;
-                var temp = this.setContainer(1 /* Module */);
-                var svModuleName = this.moduleName;
-                var isExported = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 1 /* Exported */);
-                var isWholeFile = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 256 /* IsWholeFile */);
-                this.moduleName = moduleDecl.name.actualText;
-                if (isDynamicMod) {
-                    var tsModFileName = TypeScript.stripQuotes(moduleDecl.name.actualText);
-                    var modFilePath = TypeScript.trimModName(tsModFileName) + ".js";
-                    modFilePath = this.emitOptions.mapOutputFileName(modFilePath, TypeScript.TypeScriptCompiler.mapToJSFileName);
-                    if (this.emitOptions.ioHost) {
-                        if (TypeScript.switchToForwardSlashes(modFilePath) !== TypeScript.switchToForwardSlashes(this.emittingFileName)) {
-                            this.emittingFileName = modFilePath;
-                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
-                            if (prevSourceMapper !== null) {
-                                this.allSourceMappers = [];
-                                var sourceMapFile = this.emittingFileName + TypeScript.SourceMapper.MapFileExtension;
-                                var sourceMappingFile = this.createFile(sourceMapFile, false);
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.emitOptions.compilationSettings.emitFullSourceMapPath));
-                                this.emitState.column = 0;
-                                this.emitState.line = 0;
-                            }
-                        } else {
-                            TypeScript.CompilerDiagnostics.assert(this.emitOptions.outputMany, "Cannot have dynamic modules compiling into single file");
+            var isDynamicMod = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 512 /* IsDynamic */);
+            var prevOutFile = this.outfile;
+            var prevOutFileName = this.emittingFileName;
+            var prevAllSourceMappers = this.allSourceMappers;
+            var prevSourceMapper = this.sourceMapper;
+            var prevColumn = this.emitState.column;
+            var prevLine = this.emitState.line;
+            var temp = this.setContainer(1 /* Module */);
+            var svModuleName = this.moduleName;
+            var isExported = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 1 /* Exported */);
+            var isWholeFile = TypeScript.hasFlag(moduleDecl.getModuleFlags(), 256 /* IsWholeFile */);
+            this.moduleName = moduleDecl.name.actualText;
+            if (isDynamicMod) {
+                var tsModFileName = TypeScript.stripQuotes(moduleDecl.name.actualText);
+                var modFilePath = TypeScript.trimModName(tsModFileName) + ".js";
+                modFilePath = this.emitOptions.mapOutputFileName(modFilePath, TypeScript.TypeScriptCompiler.mapToJSFileName);
+                if (this.emitOptions.ioHost) {
+                    if (TypeScript.switchToForwardSlashes(modFilePath) !== TypeScript.switchToForwardSlashes(this.emittingFileName)) {
+                        this.emittingFileName = modFilePath;
+                        var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
+                        this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
+                        if (prevSourceMapper !== null) {
+                            this.allSourceMappers = [];
+                            var sourceMapFile = this.emittingFileName + TypeScript.SourceMapper.MapFileExtension;
+                            var sourceMappingFile = this.createFile(sourceMapFile, false);
+                            this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.emitOptions.compilationSettings.emitFullSourceMapPath));
+                            this.emitState.column = 0;
+                            this.emitState.line = 0;
                         }
-                    }
-                    this.setContainer(2 /* DynamicModule */);
-                    this.recordSourceMappingStart(moduleDecl);
-                    if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                        var dependencyList = "[\"require\", \"exports\"";
-                        var importList = "require, exports";
-                        var importAndDependencyList = this.getModuleImportAndDependencyList(moduleDecl);
-                        importList += importAndDependencyList.importList;
-                        dependencyList += importAndDependencyList.dependencyList + "]";
-                        this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
                     } else {
+                        TypeScript.CompilerDiagnostics.assert(this.emitOptions.outputMany, "Cannot have dynamic modules compiling into single file");
                     }
+                }
+                this.setContainer(2 /* DynamicModule */);
+                this.recordSourceMappingStart(moduleDecl);
+                if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                    var dependencyList = "[\"require\", \"exports\"";
+                    var importList = "require, exports";
+                    var importAndDependencyList = this.getModuleImportAndDependencyList(moduleDecl);
+                    importList += importAndDependencyList.importList;
+                    dependencyList += importAndDependencyList.dependencyList + "]";
+                    this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
                 } else {
-                    if (!isExported) {
-                        this.recordSourceMappingStart(moduleDecl);
-                        this.writeToOutput("var ");
-                        this.recordSourceMappingStart(moduleDecl.name);
-                        this.writeToOutput(this.moduleName);
-                        this.recordSourceMappingEnd(moduleDecl.name);
-                        this.writeLineToOutput(";");
-                        this.recordSourceMappingEnd(moduleDecl);
-                        this.emitIndent();
-                    }
-                    this.writeToOutput("(");
+                }
+            } else {
+                if (!isExported) {
                     this.recordSourceMappingStart(moduleDecl);
-                    this.writeToOutput("function (");
+                    this.writeToOutput("var ");
                     this.recordSourceMappingStart(moduleDecl.name);
                     this.writeToOutput(this.moduleName);
                     this.recordSourceMappingEnd(moduleDecl.name);
-                    this.writeLineToOutput(") {");
+                    this.writeLineToOutput(";");
+                    this.recordSourceMappingEnd(moduleDecl);
+                    this.emitIndent();
+                }
+                this.writeToOutput("(");
+                this.recordSourceMappingStart(moduleDecl);
+                this.writeToOutput("function (");
+                this.recordSourceMappingStart(moduleDecl.name);
+                this.writeToOutput(this.moduleName);
+                this.recordSourceMappingEnd(moduleDecl.name);
+                this.writeLineToOutput(") {");
+            }
+            if (!isWholeFile) {
+                this.recordSourceMappingNameStart(this.moduleName);
+            }
+            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                this.indenter.increaseIndent();
+            }
+            if (this.shouldCaptureThis(moduleDecl)) {
+                this.writeCaptureThisStatement(moduleDecl);
+            }
+            this.emitModuleElements(moduleDecl.members);
+            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                this.indenter.decreaseIndent();
+            }
+            this.emitIndent();
+            if (isDynamicMod) {
+                if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                    this.writeToOutput("})");
                 }
                 if (!isWholeFile) {
-                    this.recordSourceMappingNameStart(this.moduleName);
+                    this.recordSourceMappingNameEnd();
                 }
-                if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                    this.indenter.increaseIndent();
-                }
-                if (this.shouldCaptureThis(moduleDecl)) {
-                    this.writeCaptureThisStatement(moduleDecl);
-                }
-                this.emitModuleElements(moduleDecl.members);
-                if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                    this.indenter.decreaseIndent();
-                }
-                this.emitIndent();
-                if (isDynamicMod) {
-                    if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                        this.writeToOutput("})");
+                this.recordSourceMappingEnd(moduleDecl);
+                if (this.outfile !== prevOutFile) {
+                    this.emitSourceMapsAndClose();
+                    if (prevSourceMapper !== null) {
+                        this.allSourceMappers = prevAllSourceMappers;
+                        this.sourceMapper = prevSourceMapper;
+                        this.emitState.column = prevColumn;
+                        this.emitState.line = prevLine;
                     }
+                    this.outfile = prevOutFile;
+                    this.emittingFileName = prevOutFileName;
+                }
+            } else {
+                var parentIsDynamic = temp === 2 /* DynamicModule */;
+                this.recordSourceMappingStart(moduleDecl.endingToken);
+                if (temp === 0 /* Prog */ && isExported) {
+                    this.writeToOutput("}");
                     if (!isWholeFile) {
                         this.recordSourceMappingNameEnd();
                     }
-                    this.recordSourceMappingEnd(moduleDecl);
-                    if (this.outfile !== prevOutFile) {
-                        this.emitSourceMapsAndClose();
-                        if (prevSourceMapper !== null) {
-                            this.allSourceMappers = prevAllSourceMappers;
-                            this.sourceMapper = prevSourceMapper;
-                            this.emitState.column = prevColumn;
-                            this.emitState.line = prevLine;
-                        }
-                        this.outfile = prevOutFile;
-                        this.emittingFileName = prevOutFileName;
+                    this.recordSourceMappingEnd(moduleDecl.endingToken);
+                    this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
+                } else if (isExported || temp === 0 /* Prog */) {
+                    var dotMod = svModuleName !== "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
+                    this.writeToOutput("}");
+                    if (!isWholeFile) {
+                        this.recordSourceMappingNameEnd();
                     }
+                    this.recordSourceMappingEnd(moduleDecl.endingToken);
+                    this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
+                } else if (!isExported && temp !== 0 /* Prog */) {
+                    this.writeToOutput("}");
+                    if (!isWholeFile) {
+                        this.recordSourceMappingNameEnd();
+                    }
+                    this.recordSourceMappingEnd(moduleDecl.endingToken);
+                    this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
                 } else {
-                    var parentIsDynamic = temp === 2 /* DynamicModule */;
-                    this.recordSourceMappingStart(moduleDecl.endingToken);
-                    if (temp === 0 /* Prog */ && isExported) {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
-                    } else if (isExported || temp === 0 /* Prog */) {
-                        var dotMod = svModuleName !== "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
-                    } else if (!isExported && temp !== 0 /* Prog */) {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
+                    this.writeToOutput("}");
+                    if (!isWholeFile) {
+                        this.recordSourceMappingNameEnd();
+                    }
+                    this.recordSourceMappingEnd(moduleDecl.endingToken);
+                    this.writeToOutput(")();");
+                }
+                this.recordSourceMappingEnd(moduleDecl);
+                if (temp !== 0 /* Prog */ && isExported) {
+                    this.recordSourceMappingStart(moduleDecl);
+                    if (parentIsDynamic) {
+                        this.writeLineToOutput("");
+                        this.emitIndent();
+                        this.writeToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
                     } else {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")();");
+                        this.writeLineToOutput("");
+                        this.emitIndent();
+                        this.writeToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
                     }
                     this.recordSourceMappingEnd(moduleDecl);
-                    if (temp !== 0 /* Prog */ && isExported) {
-                        this.recordSourceMappingStart(moduleDecl);
-                        if (parentIsDynamic) {
-                            this.writeLineToOutput("");
-                            this.emitIndent();
-                            this.writeToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
-                        } else {
-                            this.writeLineToOutput("");
-                            this.emitIndent();
-                            this.writeToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
-                        }
-                        this.recordSourceMappingEnd(moduleDecl);
-                    }
                 }
-                this.setContainer(temp);
-                this.moduleName = svModuleName;
             }
+            this.setContainer(temp);
+            this.moduleName = svModuleName;
             this.popDecl(pullDecl);
         };
         Emitter.prototype.emitIndex = function (operand1, operand2) {
@@ -4333,6 +4343,12 @@ var TypeScript;
                 var varDecl = variableStatement.declaration.declarators.members[0];
                 var isAmbientWithoutInit = TypeScript.hasFlag(varDecl.getVarFlags(), 8 /* Ambient */) && varDecl.init === null;
                 if (isAmbientWithoutInit) {
+                    return true;
+                }
+            }
+            if (node.nodeType === 15 /* ModuleDeclaration */) {
+                var moduleDeclaration = node;
+                if (!moduleDeclaration.shouldEmit()) {
                     return true;
                 }
             }
