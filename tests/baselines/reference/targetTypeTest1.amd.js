@@ -1,4 +1,3 @@
-
 function Point(x, y) {
     this.x = x;
     this.y = y;
@@ -22,7 +21,6 @@ Point.prototype = {
 z = function (a) {
     a;
 };
-
 function C(a, b) {
     this.a = a;
     this.b = b;

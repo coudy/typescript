@@ -168,7 +168,6 @@ module TypeScript {
         }
 
         public writeToOutput(s: string) {
-            this.justWroteNewLine = false;
             this.outfile.Write(s);
             // TODO: check s for newline
             this.emitState.column += s.length;
@@ -181,19 +180,7 @@ module TypeScript {
             this.writeToOutput(s);
         }
 
-        private justWroteNewLine = false;
-
         public writeLineToOutput(s: string) {
-            if (s === "") {
-                if (this.justWroteNewLine) {
-                    //Debug.assert(false);
-                }
-                this.justWroteNewLine = true;
-            }
-            else {
-                this.justWroteNewLine = false;
-            }
-
             if (this.emitOptions.compilationSettings.minWhitespace) {
                 this.writeToOutput(s);
                 var c = s.charCodeAt(s.length - 1);
@@ -1385,13 +1372,17 @@ module TypeScript {
         }
 
         private neverEmit(node: AST): boolean {
-            if (node.nodeType === NodeType.FunctionDeclaration &&
-                hasFlag((<FunctionDeclaration>node).getFunctionFlags(), FunctionFlags.Signature)) {
+            if (node.nodeType === NodeType.InterfaceDeclaration) {
                 return true;
             }
 
-            if (node.nodeType === NodeType.InterfaceDeclaration) {
-                return true;
+            if (node.nodeType === NodeType.FunctionDeclaration) {
+                var functionDeclaration = <FunctionDeclaration>node;
+
+                if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Signature) ||
+                    hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Ambient)) {
+                    return true;
+                }
             }
 
             if (node.nodeType === NodeType.VariableStatement) {
@@ -1406,6 +1397,14 @@ module TypeScript {
             if (node.nodeType === NodeType.ModuleDeclaration) {
                 var moduleDeclaration = <ModuleDeclaration>node;
                 if (!moduleDeclaration.shouldEmit()) {
+                    return true;
+                }
+            }
+
+            if (node.nodeType === NodeType.ClassDeclaration) {
+                var classDeclaration = <ClassDeclaration>node;
+
+                if (hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient)) {
                     return true;
                 }
             }
@@ -1582,10 +1581,6 @@ module TypeScript {
         }
 
         public emitClass(classDecl: ClassDeclaration) {
-            if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
-                return;
-            }
-
             var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.document.fileName);
             this.pushDecl(pullDecl);
 

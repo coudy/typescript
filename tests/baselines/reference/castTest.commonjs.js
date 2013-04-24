@@ -6,7 +6,6 @@ var b = true;
 var s = "";
 var ar = null;
 var f = null;
-
 var p_cast = ({
     x: 0,
     y: 0,
