@@ -1371,47 +1371,6 @@ module TypeScript {
             }
         }
 
-        private neverEmit(node: AST): boolean {
-            if (node.nodeType === NodeType.InterfaceDeclaration) {
-                return true;
-            }
-
-            if (node.nodeType === NodeType.FunctionDeclaration) {
-                var functionDeclaration = <FunctionDeclaration>node;
-
-                if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Signature) ||
-                    hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Ambient)) {
-                    return true;
-                }
-            }
-
-            if (node.nodeType === NodeType.VariableStatement) {
-                var variableStatement = <VariableStatement>node;
-                var varDecl = <VariableDeclarator>variableStatement.declaration.declarators.members[0];
-                var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
-                if (isAmbientWithoutInit) {
-                    return true;
-                }
-            }
-
-            if (node.nodeType === NodeType.ModuleDeclaration) {
-                var moduleDeclaration = <ModuleDeclaration>node;
-                if (!moduleDeclaration.shouldEmit()) {
-                    return true;
-                }
-            }
-
-            if (node.nodeType === NodeType.ClassDeclaration) {
-                var classDeclaration = <ClassDeclaration>node;
-
-                if (hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        
         public emitModuleElements(list: ASTList) {
             if (list === null) {
                 return;
@@ -1422,12 +1381,10 @@ module TypeScript {
             for (var i = 0, n = list.members.length; i < n; i++) {
                 var node = list.members[i];
 
-                if (this.neverEmit(node)) {
-                    continue;
+                if (node.shouldEmit()) {
+                    this.emitJavascript(node, true);
+                    this.writeLineToOutput("");
                 }
-
-                this.emitJavascript(node, true);
-                this.writeLineToOutput("");
             }
 
             this.emitComments(list, false);
@@ -1465,12 +1422,10 @@ module TypeScript {
             for (; i < n; i++) {
                 var node = list.members[i];
 
-                if (this.neverEmit(node)) {
-                    continue;
+                if (node.shouldEmit()) {
+                    this.emitJavascript(node, true);
+                    this.writeLineToOutput("");
                 }
-
-                this.emitJavascript(node, true);
-                this.writeLineToOutput("");
             }
 
             this.emitComments(list, false);
@@ -1495,14 +1450,12 @@ module TypeScript {
                     this.emitParameterPropertyAndMemberVariableAssignments();
                 }
 
-                var emitNode = list.members[i];
+                var node = list.members[i];
 
-                if (this.neverEmit(emitNode)) {
-                    continue;
+                if (node.shouldEmit()) {
+                    this.emitJavascript(node, true);
+                    this.writeLineToOutput("");
                 }
-
-                this.emitJavascript(emitNode, true);
-                this.writeLineToOutput("");
             }
 
             if (i === propertyAssignmentIndex) {

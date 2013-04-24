@@ -74,6 +74,10 @@ module TypeScript {
         constructor(public nodeType: NodeType) {
         }
 
+        public shouldEmit(): boolean {
+            return true;
+        }
+
         public isExpression() { return false; }
         public isStatementOrExpression() { return false; }
 
@@ -769,6 +773,11 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
+        public shouldEmit(): boolean {
+            return !hasFlag(this.getFunctionFlags(), FunctionFlags.Signature) &&
+                   !hasFlag(this.getFunctionFlags(), FunctionFlags.Ambient);
+        }
+
         public emit(emitter: Emitter) {
             emitter.emitFunction(this);
         }
@@ -944,7 +953,11 @@ module TypeScript {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public emit(emitter: Emitter) {
+        public shouldEmit(): boolean {
+            return !hasFlag(this.getVarFlags(), VariableFlags.Ambient);
+        }
+
+        public emit(emitter: Emitter): void {
             emitter.emitClass(this);
         }
     }
@@ -958,7 +971,8 @@ module TypeScript {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
-        public emit(emitter: Emitter) {
+        public shouldEmit(): boolean {
+            return false;
         }
     }
 
@@ -1045,6 +1059,11 @@ module TypeScript {
     export class VariableStatement extends Statement {
         constructor(public declaration: VariableDeclaration) {
             super(NodeType.VariableStatement);
+        }
+
+        public shouldEmit(): boolean {
+            var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
+            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }
 
         public emitWorker(emitter: Emitter) {
