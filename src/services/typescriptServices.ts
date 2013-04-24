@@ -19,6 +19,7 @@
 ///<reference path='classifier.ts' />
 ///<reference path='CompilerState.ts' />
 ///<reference path='languageService.ts' />
+///<reference path='KeywordCompletions.ts' />
 ///<reference path='pullLanguageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />

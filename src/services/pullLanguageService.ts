@@ -692,6 +692,8 @@ module Services {
             }
             // Handle object literal diffrentlly
             else if (this.isInObjectExpressionContext(path)) {
+                completions.isMemberCompletion = true;
+
                 // Get the object literal node
                 while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
                     path.pop();
@@ -704,7 +706,6 @@ module Services {
                     var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
 
                     // Add filtterd items to the completion list
-                    completions.isMemberCompletion = true;
                     completions.entries = this.getCompletionEntriesFromSymbols({
                         symbols: this.filterContextualMembersList(contextualMembers.symbols, existingMembers),
                         enclosingScopeSymbol: contextualMembers.enclosingScopeSymbol
@@ -716,6 +717,11 @@ module Services {
                 completions.isMemberCompletion = false;
                 var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
                 completions.entries = this.getCompletionEntriesFromSymbols(symbols);
+            }
+
+            // Add keywords if this is not a member completion list
+            if (!completions.isMemberCompletion) {
+                completions.entries = completions.entries.concat(KeywordCompletions.getKeywordCompltions());
             }
 
             return completions;
@@ -908,6 +914,8 @@ module Services {
                         return ScriptElementKind.indexSignatureElement;
                     case TypeScript.PullElementKind.TypeParameter:
                         return ScriptElementKind.typeParameterElement;
+                    case TypeScript.PullElementKind.Primitive:
+                        return ScriptElementKind.primitiveType;
                 }
             } else {
                 switch (kind) {
@@ -954,6 +962,8 @@ module Services {
                         return ScriptElementKind.memberVariableElement;
                     case TypeScript.PullElementKind.TypeParameter:
                         return ScriptElementKind.typeParameterElement;
+                    case TypeScript.PullElementKind.Primitive:
+                        return ScriptElementKind.primitiveType;
                 }
             }
 
