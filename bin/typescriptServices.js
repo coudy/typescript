@@ -1625,11 +1625,7 @@ var TypeScript;
         }
         VariableStatement.prototype.emitWorker = function (emitter) {
             this.declaration.emit(emitter);
-            var varDecl = this.declaration.declarators.members[0];
-            var isAmbientWithoutInit = TypeScript.hasFlag(varDecl.getVarFlags(), 8 /* Ambient */) && varDecl.init === null;
-            if (!isAmbientWithoutInit) {
-                emitter.writeToOutput(";");
-            }
+            emitter.writeToOutput(";");
         };
         VariableStatement.prototype.structuralEquals = function (ast, includingPosition) {
             return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.declaration, ast.declaration, includingPosition);
@@ -4042,8 +4038,7 @@ var TypeScript;
                 this.emitIndent();
                 if (isDynamicMod) {
                     if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                        this.writeLineToOutput("})");
-                    } else {
+                        this.writeToOutput("})");
                     }
                     if (!isWholeFile) {
                         this.recordSourceMappingNameEnd();
@@ -4094,14 +4089,16 @@ var TypeScript;
                         this.writeToOutput(")();");
                     }
                     this.recordSourceMappingEnd(moduleDecl);
-                    this.writeLineToOutput("");
                     if (temp !== 0 /* Prog */ && isExported) {
-                        this.emitIndent();
                         this.recordSourceMappingStart(moduleDecl);
                         if (parentIsDynamic) {
-                            this.writeLineToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
+                            this.writeLineToOutput("");
+                            this.emitIndent();
+                            this.writeToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
                         } else {
-                            this.writeLineToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
+                            this.writeLineToOutput("");
+                            this.emitIndent();
+                            this.writeToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
                         }
                         this.recordSourceMappingEnd(moduleDecl);
                     }
@@ -4145,7 +4142,7 @@ var TypeScript;
                         } else {
                             this.emitIndent();
                             this.recordSourceMappingStart(funcDecl);
-                            this.writeLineToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
+                            this.writeToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
                             this.recordSourceMappingEnd(funcDecl);
                         }
                     }
@@ -4154,7 +4151,7 @@ var TypeScript;
                     this.emitIndent();
                     var modName = this.emitState.container === 1 /* Module */ ? this.moduleName : "exports";
                     this.recordSourceMappingStart(funcDecl);
-                    this.writeLineToOutput(modName + "." + funcName + " = " + funcName + ";");
+                    this.writeToOutput(modName + "." + funcName + " = " + funcName + ";");
                     this.recordSourceMappingEnd(funcDecl);
                 }
             }
@@ -4169,7 +4166,6 @@ var TypeScript;
                 this.writeToOutput(" = ");
                 this.emitJavascript(varDecl.init, false);
                 this.recordSourceMappingEnd(varDecl);
-                this.writeToOutput(";");
                 this.emitComments(varDecl, false);
             }
         };
@@ -4439,7 +4435,7 @@ var TypeScript;
                 Emitter.throwEmitterError(e);
             }
         };
-        Emitter.prototype.emitConstructorPropertyAssignments = function () {
+        Emitter.prototype.emitParameterPropertyAndMemberVariableAssignments = function () {
             var constructorDecl = this.thisClassNode.constructorDecl;
             if (constructorDecl && constructorDecl.arguments) {
                 for (var i = 0, n = constructorDecl.arguments.members.length; i < n; i++) {
@@ -4493,6 +4489,14 @@ var TypeScript;
             }
             if (node.nodeType === 14 /* InterfaceDeclaration */) {
                 return true;
+            }
+            if (node.nodeType === 97 /* VariableStatement */) {
+                var variableStatement = node;
+                var varDecl = variableStatement.declaration.declarators.members[0];
+                var isAmbientWithoutInit = TypeScript.hasFlag(varDecl.getVarFlags(), 8 /* Ambient */) && varDecl.init === null;
+                if (isAmbientWithoutInit) {
+                    return true;
+                }
             }
             return false;
         };
@@ -4550,7 +4554,7 @@ var TypeScript;
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
             for (var i = 0, n = list.members.length; i < n; i++) {
                 if (i === propertyAssignmentIndex) {
-                    this.emitConstructorPropertyAssignments();
+                    this.emitParameterPropertyAndMemberVariableAssignments();
                 }
                 var emitNode = list.members[i];
                 if (this.neverEmit(emitNode)) {
@@ -4560,7 +4564,7 @@ var TypeScript;
                 this.writeLineToOutput("");
             }
             if (i === propertyAssignmentIndex) {
-                this.emitConstructorPropertyAssignments();
+                this.emitParameterPropertyAndMemberVariableAssignments();
             }
             this.emitComments(list, false);
         };
@@ -4655,38 +4659,18 @@ var TypeScript;
                 constrDecl.emit(this);
                 this.writeLineToOutput("");
             } else {
-                var wroteProps = 0;
                 this.recordSourceMappingStart(classDecl);
                 this.indenter.increaseIndent();
-                this.writeToOutput("function " + classDecl.name.actualText + "() {");
+                this.writeLineToOutput("function " + classDecl.name.actualText + "() {");
                 this.recordSourceMappingNameStart("constructor");
                 if (hasBaseClass) {
-                    this.writeLineToOutput("");
                     this.emitIndent();
                     this.writeLineToOutput("_super.apply(this, arguments);");
-                    wroteProps++;
                 }
-                var members = this.thisClassNode.members.members;
-                for (var i = 0; i < members.length; i++) {
-                    if (members[i].nodeType === 17 /* VariableDeclarator */) {
-                        varDecl = members[i];
-                        if (!TypeScript.hasFlag(varDecl.getVarFlags(), 16 /* Static */) && varDecl.init) {
-                            this.writeLineToOutput("");
-                            this.emitIndent();
-                            this.emitVariableDeclarator(varDecl);
-                            wroteProps++;
-                        }
-                    }
-                }
-                if (wroteProps) {
-                    this.writeLineToOutput("");
-                    this.indenter.decreaseIndent();
-                    this.emitIndent();
-                    this.writeLineToOutput("}");
-                } else {
-                    this.writeLineToOutput(" }");
-                    this.indenter.decreaseIndent();
-                }
+                this.emitParameterPropertyAndMemberVariableAssignments();
+                this.indenter.decreaseIndent();
+                this.emitIndent();
+                this.writeLineToOutput("}");
                 this.recordSourceMappingNameEnd();
                 this.recordSourceMappingEnd(classDecl);
             }
@@ -35077,7 +35061,11 @@ var TypeScript;
                 if (!constraintTypeSymbol) {
                     context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(141 /* Unable_to_resolve_type_parameter_constraint */, null), enclosingDecl, true);
                 } else if (constraintTypeSymbol.isPrimitive()) {
-                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(142 /* Type_parameter_constraint_cannot_be_a_primitive_type */, null), enclosingDecl, true);
+                    if (constraintTypeSymbol.isError()) {
+                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, (constraintTypeSymbol).getDiagnostic().message(), enclosingDecl, true);
+                    } else {
+                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(142 /* Type_parameter_constraint_cannot_be_a_primitive_type */, null), enclosingDecl, true);
+                    }
                 } else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
                 }
@@ -37564,6 +37552,15 @@ var TypeScript;
                     return false;
                 }
             }
+            if (targetStringSig && source.hasMembers()) {
+                var targetReturnType = targetStringSig.getReturnType();
+                var sourceMembers = source.getMembers();
+                for (var i = 0; i < sourceMembers.length; i++) {
+                    if (!this.sourceIsRelatableToTarget(sourceMembers[i].getType(), targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
+                        return false;
+                    }
+                }
+            }
             return true;
         };
         PullTypeResolver.prototype.signatureGroupIsRelatableToTarget = function (sourceSG, targetSG, assignableTo, comparisonCache, context, comparisonInfo) {
@@ -38531,6 +38528,9 @@ var TypeScript;
             var typeExprSymbol = null;
             if (boundDeclAST.typeExpr) {
                 typeExprSymbol = this.typeCheckAST(boundDeclAST.typeExpr, typeCheckContext);
+                if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized()) {
+                    typeExprSymbol = this.resolver.specializeTypeToAny(typeExprSymbol, enclosingDecl, this.context);
+                }
             }
             if (boundDeclAST.init) {
                 if (typeExprSymbol) {
