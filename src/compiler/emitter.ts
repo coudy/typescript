@@ -1478,7 +1478,7 @@ module TypeScript {
                     (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
                     (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
 
-                    if (isStaticDecl) {
+                if (isStaticDecl) {
                     continue;
                 }
 
@@ -1487,14 +1487,7 @@ module TypeScript {
                 }
 
                 this.emitJavascript(emitNode, true);
-
-                if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
-                    (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
-                    (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
-                    ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                    (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0)) {
-                    this.writeLineToOutput("");
-                }
+                this.writeLineToOutput("");
             }
 
             if (i === propertyAssignmentIndex) {
