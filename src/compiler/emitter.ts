@@ -431,7 +431,7 @@ module TypeScript {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
                     comment += propertyName.actualText;
-                    comment += " */ ";
+                    comment += " */";
                     this.writeToOutput(comment);
                     return true;
                 }
