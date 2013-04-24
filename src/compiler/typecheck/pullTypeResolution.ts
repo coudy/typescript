@@ -3634,6 +3634,7 @@ module TypeScript {
 
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
+            var targetAST = this.getLastIdentifierInTarget(callEx);
 
             // don't be fooled
             //if (target === this.semanticInfoChain.anyTypeSymbol) {
@@ -3646,7 +3647,7 @@ module TypeScript {
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
 
                 if (callEx.typeArguments) {
-                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                         getDiagnosticMessage(DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
@@ -3665,7 +3666,7 @@ module TypeScript {
                     targetTypeSymbol = targetSymbol.getType();
                 }
                 else {
-                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                         getDiagnosticMessage(DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class, null), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
@@ -3744,7 +3745,7 @@ module TypeScript {
                                             context.popTypeSpecializationCache();
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(),
+                                            context.postError(targetAST.minChar, targetAST.getLength(), this.getUnitPath(),
                                                 getDiagnosticMessage(DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
                                         }
                                     }
@@ -3798,7 +3799,7 @@ module TypeScript {
 
             var errorCondition: PullSymbol = null;
             if (!signature) {
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                     getDiagnosticMessage(DiagnosticCode.Could_not_select_overload_for__call__expression, null), enclosingDecl);
 
                 // Remember the error state
@@ -3833,7 +3834,7 @@ module TypeScript {
             }
 
             if (!signature.isGeneric() && callEx.typeArguments) {
-                context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                     getDiagnosticMessage(DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments, null),
                     enclosingDecl);
             }
@@ -3923,6 +3924,8 @@ module TypeScript {
             var diagnostic: PullDiagnostic;
 
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
+
+            var targetAST = this.getLastIdentifierInTarget(callEx);
 
             // PULLREVIEW: In the case of a generic instantiation of a class type,
             // we'll have gotten a 'GenericType' node, which will be resolved as the class type and not
@@ -4018,7 +4021,7 @@ module TypeScript {
                                             }
 
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(),
+                                                context.postError(targetAST.minChar, targetAST.getLength(), this.getUnitPath(),
                                                     getDiagnosticMessage(DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
                                             }
 
@@ -4068,7 +4071,7 @@ module TypeScript {
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
-                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                         getDiagnosticMessage(DiagnosticCode.Could_not_select_overload_for__new__expression, null), enclosingDecl);
 
                     // Remember the error
@@ -4115,7 +4118,7 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                        diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                             getDiagnosticMessage(DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null), enclosingDecl);
                         return this.getNewErrorTypeSymbol(diagnostic);
                     }
@@ -4202,7 +4205,7 @@ module TypeScript {
                 return returnType;
             }
 
-            diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+            diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
                 getDiagnosticMessage(DiagnosticCode.Invalid__new__expression, null), enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
@@ -5385,7 +5388,7 @@ module TypeScript {
                 var callEx = <CallExpression>application;
 
                 args = callEx.arguments;
-                target = callEx.target;
+                target = this.getLastIdentifierInTarget(callEx);
 
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
@@ -5433,17 +5436,18 @@ module TypeScript {
                 else {
                     if (comparisonInfo.message) {
                         //this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
-                        context.postError(application.minChar, application.getLength(), this.unitPath,
+                        context.postError(target.minChar, target.getLength(), this.unitPath,
                             getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0, [comparisonInfo.message]), enclosingDecl, true);
                     }
                     else {
-                        context.postError(application.minChar, application.getLength(), this.unitPath,
+                        context.postError(target.minChar, target.getLength(), this.unitPath,
                             getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null), enclosingDecl, true);
                         //this.checker.errorReporter.simpleError(target, emsg);
                     }
                 }
             }
             else {
+
                 if (exactCandidates.length > 1) {
                     var applicableSigs: PullApplicableSignature[] = [];
                     for (var i = 0; i < exactCandidates.length; i++) {
@@ -5463,6 +5467,10 @@ module TypeScript {
 
             this.resolutionDataCache.returnResolutionData(rd);
             return candidate;
+        }
+
+        private getLastIdentifierInTarget(callEx: CallExpression): AST {
+            return (callEx.target.nodeType === NodeType.MemberAccessExpression) ? (<BinaryExpression>callEx.target).operand2 : callEx.target;
         }
 
         public getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], args: ASTList, exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
