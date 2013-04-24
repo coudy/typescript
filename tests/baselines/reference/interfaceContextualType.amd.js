@@ -15,5 +15,5 @@ define(["require", "exports"], function(require, exports) {
             };
         };
         return Bug;
-    })();    
+    })();
 })

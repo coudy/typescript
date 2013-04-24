@@ -10,7 +10,7 @@ var Foo;
         function Object() { }
         return Object;
     })();
-    Foo.Object = Object;    
+    Foo.Object = Object;
 })(Foo || (Foo = {}));
 
 var Bar = (function (_super) {

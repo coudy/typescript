@@ -11,7 +11,7 @@ var B;
         function B() { }
         return B;
     })();
-    B.B = B;    
+    B.B = B;
 })(B || (B = {}));
 
 var C;

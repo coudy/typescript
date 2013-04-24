@@ -24,7 +24,7 @@ var M;
         }
         return C;
     })();
-    M.C = C;    
+    M.C = C;
     M.V = 0;
 })(M || (M = {}));
 

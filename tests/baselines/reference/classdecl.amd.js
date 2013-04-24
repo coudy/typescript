@@ -56,11 +56,11 @@ var m1;
         function b() { }
         return b;
     })();
-    m1.b = b;    
+    m1.b = b;
     var d = (function () {
         function d() { }
         return d;
-    })();    
+    })();
 })(m1 || (m1 = {}));
 
 var m2;
@@ -74,12 +74,12 @@ var m2;
             }
             return c;
         })(b);
-        m3.c = c;        
+        m3.c = c;
         var ib2 = (function () {
             function ib2() { }
             return ib2;
         })();
-        m3.ib2 = ib2;        
+        m3.ib2 = ib2;
     })(m2.m3 || (m2.m3 = {}));
     var m3 = m2.m3;
 

@@ -14,7 +14,7 @@
             function c() { }
             return c;
         })();
-        m2.c = c;        
+        m2.c = c;
         ;
         /** i*/
         m2.i = new c();
@@ -49,7 +49,7 @@ var myvar = new m1.m2.c();
             function c() { }
             return c;
         })();
-        m2.c = c;        
+        m2.c = c;
         ;
         /** i */
         m2.i = new c();

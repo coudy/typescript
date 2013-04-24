@@ -9,7 +9,7 @@ var M;
         function C() { }
         return C;
     })();
-    M.C = C;    
+    M.C = C;
     var a = new C[]();
     a.length;
     a.push(new C());

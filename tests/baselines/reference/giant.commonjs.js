@@ -125,7 +125,7 @@ var M;
             configurable: true
         });
         return C;
-    })();    
+    })();
     var M;
     (function (M) {
         var V;
@@ -135,7 +135,7 @@ var M;
         var C = (function () {
             function C() { }
             return C;
-        })();        
+        })();
         ;
         ;
         
@@ -150,7 +150,7 @@ var M;
             function eC() { }
             return eC;
         })();
-        M.eC = eC;        
+        M.eC = eC;
         ;
         ;
         
@@ -232,7 +232,7 @@ var M;
         });
         return eC;
     })();
-    M.eC = eC;    
+    M.eC = eC;
     (function (eM) {
         var V;
         function F() {
@@ -241,7 +241,7 @@ var M;
         var C = (function () {
             function C() { }
             return C;
-        })();        
+        })();
         ;
         ;
         
@@ -256,7 +256,7 @@ var M;
             function eC() { }
             return eC;
         })();
-        eM.eC = eC;        
+        eM.eC = eC;
         ;
         ;
         
@@ -413,7 +413,7 @@ exports.eC = eC;
             configurable: true
         });
         return C;
-    })();    
+    })();
     var M;
     (function (M) {
         var V;
@@ -423,7 +423,7 @@ exports.eC = eC;
         var C = (function () {
             function C() { }
             return C;
-        })();        
+        })();
         ;
         ;
         
@@ -438,7 +438,7 @@ exports.eC = eC;
             function eC() { }
             return eC;
         })();
-        M.eC = eC;        
+        M.eC = eC;
         ;
         ;
         
@@ -520,7 +520,7 @@ exports.eC = eC;
         });
         return eC;
     })();
-    eM.eC = eC;    
+    eM.eC = eC;
     (function (eM) {
         var V;
         function F() {
@@ -529,7 +529,7 @@ exports.eC = eC;
         var C = (function () {
             function C() { }
             return C;
-        })();        
+        })();
         ;
         ;
         
@@ -544,7 +544,7 @@ exports.eC = eC;
             function eC() { }
             return eC;
         })();
-        eM.eC = eC;        
+        eM.eC = eC;
         ;
         ;
         

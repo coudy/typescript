@@ -14,5 +14,5 @@ var M;
         }
         return C;
     })(M.I);
-    M.C = C;    
+    M.C = C;
 })(M || (M = {}));

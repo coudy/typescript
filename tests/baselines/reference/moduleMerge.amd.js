@@ -6,7 +6,7 @@ var A;
             return "from private B";
         };
         return B;
-    })();    
+    })();
 })(A || (A = {}));
 
 var A;
@@ -18,5 +18,5 @@ var A;
         };
         return B;
     })();
-    A.B = B;    
+    A.B = B;
 })(A || (A = {}));

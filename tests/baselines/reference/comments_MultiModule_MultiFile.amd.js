@@ -7,7 +7,7 @@ var multiM;
         function b() { }
         return b;
     })();
-    multiM.b = b;    
+    multiM.b = b;
 })(multiM || (multiM = {}));
 
 /** thi is multi module 2*/
@@ -18,13 +18,13 @@ var multiM;
         function c() { }
         return c;
     })();
-    multiM.c = c;    
+    multiM.c = c;
     // class e comment
     var e = (function () {
         function e() { }
         return e;
     })();
-    multiM.e = e;    
+    multiM.e = e;
 })(multiM || (multiM = {}));
 
 new multiM.b();
@@ -38,13 +38,13 @@ var multiM;
         function d() { }
         return d;
     })();
-    multiM.d = d;    
+    multiM.d = d;
     /// class f comment
     var f = (function () {
         function f() { }
         return f;
     })();
-    multiM.f = f;    
+    multiM.f = f;
 })(multiM || (multiM = {}));
 
 new multiM.d();

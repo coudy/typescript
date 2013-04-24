@@ -9,7 +9,7 @@ var M;
             var inner = outer;
         }
         return C;
-    })();    
+    })();
     var X;
     (function (X) {
         var inner = outer;

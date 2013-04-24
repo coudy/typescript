@@ -6,7 +6,7 @@ define(["require", "exports"], function(require, exports) {
                     function Rue() { }
                     return Rue;
                 })();
-                Street.Rue = Rue;                
+                Street.Rue = Rue;
             })(Strasse.Street || (Strasse.Street = {}));
             var Street = Strasse.Street;
 

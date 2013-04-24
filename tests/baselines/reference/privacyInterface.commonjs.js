@@ -5,11 +5,11 @@
         };
         return C1_public;
     })();
-    m1.C1_public = C1_public;    
+    m1.C1_public = C1_public;
     var C2_private = (function () {
         function C2_private() { }
         return C2_private;
-    })();    
+    })();
 })(exports.m1 || (exports.m1 = {}));
 var m1 = exports.m1;
 
@@ -21,11 +21,11 @@ var m2;
         };
         return C1_public;
     })();
-    m2.C1_public = C1_public;    
+    m2.C1_public = C1_public;
     var C2_private = (function () {
         function C2_private() { }
         return C2_private;
-    })();    
+    })();
 })(m2 || (m2 = {}));
 
 var C5_public = (function () {

@@ -3,5 +3,5 @@ define(["require", "exports"], function(require, exports) {
         function C1() { }
         return C1;
     })();
-    exports.C1 = C1;    
+    exports.C1 = C1;
 })

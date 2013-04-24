@@ -13,7 +13,7 @@ var TypeScript2;
         }
         return MemberName;
     })();
-    TypeScript2.MemberName = MemberName;    
+    TypeScript2.MemberName = MemberName;
     var MemberNameArray = (function (_super) {
         __extends(MemberNameArray, _super);
         function MemberNameArray() {
@@ -22,5 +22,5 @@ var TypeScript2;
         }
         return MemberNameArray;
     })(MemberName);
-    TypeScript2.MemberNameArray = MemberNameArray;    
+    TypeScript2.MemberNameArray = MemberNameArray;
 })(TypeScript2 || (TypeScript2 = {}));

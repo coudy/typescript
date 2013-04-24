@@ -15,7 +15,7 @@ define(["require", "exports"], function(require, exports) {
                 function c() { }
                 return c;
             })();
-            m2.c = c;            
+            m2.c = c;
             ;
             /** i*/
             m2.i = new c();
@@ -50,7 +50,7 @@ define(["require", "exports"], function(require, exports) {
                 function c() { }
                 return c;
             })();
-            m2.c = c;            
+            m2.c = c;
             ;
             /** i */
             m2.i = new c();

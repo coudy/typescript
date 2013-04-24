@@ -7,7 +7,7 @@ define(["require", "exports"], function(require, exports) {
         }
         return TestCase;
     })();
-    exports.TestCase = TestCase;    
+    exports.TestCase = TestCase;
     var TestRunner = (function () {
         function TestRunner() { }
         TestRunner.arrayCompare = function (arg1, arg2) {
@@ -17,7 +17,7 @@ define(["require", "exports"], function(require, exports) {
         };
         return TestRunner;
     })();
-    exports.TestRunner = TestRunner;    
+    exports.TestRunner = TestRunner;
     exports.tests = (function () {
         var testRunner = new TestRunner();
         testRunner.addTest(new TestCase("Check UTF8 encoding", function () {

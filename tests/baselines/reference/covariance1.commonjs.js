@@ -6,7 +6,7 @@ var M;
         }
         return XX;
     })();
-    M.XX = XX;    
+    M.XX = XX;
     function f(y) {
     }
     M.f = f;

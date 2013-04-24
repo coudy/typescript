@@ -77,7 +77,7 @@ var Base4;
             return "hello";
         };
         return Sub4;
-    })();    
+    })();
     var SubSub4 = (function (_super) {
         __extends(SubSub4, _super);
         function SubSub4() {
@@ -89,7 +89,7 @@ var Base4;
         };
         return SubSub4;
     })(Sub4);
-    Base4.SubSub4 = SubSub4;    
+    Base4.SubSub4 = SubSub4;
     var Sub4E = (function () {
         function Sub4E() { }
         Sub4E.prototype.x = function () {
@@ -97,5 +97,5 @@ var Base4;
         };
         return Sub4E;
     })();
-    Base4.Sub4E = Sub4E;    
+    Base4.Sub4E = Sub4E;
 })(Base4 || (Base4 = {}));

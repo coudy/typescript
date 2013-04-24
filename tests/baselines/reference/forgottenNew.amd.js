@@ -4,7 +4,7 @@ var Tools;
         function NullLogger() { }
         return NullLogger;
     })();
-    Tools.NullLogger = NullLogger;    
+    Tools.NullLogger = NullLogger;
 })(Tools || (Tools = {}));
 
 var logger = Tools.NullLogger();

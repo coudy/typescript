@@ -4,14 +4,14 @@ var foo;
         function Provide() { }
         return Provide;
     })();
-    foo.Provide = Provide;    
+    foo.Provide = Provide;
     (function (bar) {
         (function (baz) {
             var boo = (function () {
                 function boo() { }
                 return boo;
             })();
-            baz.boo = boo;            
+            baz.boo = boo;
         })(bar.baz || (bar.baz = {}));
         var baz = bar.baz;
 

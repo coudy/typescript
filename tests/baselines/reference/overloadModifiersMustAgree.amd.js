@@ -4,7 +4,7 @@ define(["require", "exports"], function(require, exports) {
         baz.prototype.foo = function (bar) {
         };
         return baz;
-    })();    
+    })();
     function bar(s) {
     }
 })

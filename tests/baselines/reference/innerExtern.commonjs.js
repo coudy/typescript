@@ -8,7 +8,7 @@ var A;
             }
             return C;
         })();
-        B.C = C;        
+        B.C = C;
     })(A.B || (A.B = {}));
     var B = A.B;
 

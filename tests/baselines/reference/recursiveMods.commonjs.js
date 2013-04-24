@@ -3,7 +3,7 @@
         function C() { }
         return C;
     })();
-    Foo.C = C;    
+    Foo.C = C;
 })(exports.Foo || (exports.Foo = {}));
 var Foo = exports.Foo;
 

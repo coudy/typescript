@@ -3,7 +3,7 @@ var M;
     var Foo = (function () {
         function Foo() { }
         return Foo;
-    })();    
+    })();
     var Gar = (function () {
         function Gar() {
             this.x = 10;
@@ -13,5 +13,5 @@ var M;
             this.fa = new Array(this.x * this.y);
         };
         return Gar;
-    })();    
+    })();
 })(M || (M = {}));

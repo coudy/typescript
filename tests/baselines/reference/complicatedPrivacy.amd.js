@@ -25,7 +25,7 @@ var m1;
             };
             return C2;
         })();
-        m2.C2 = C2;        
+        m2.C2 = C2;
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
 
@@ -55,12 +55,12 @@ var m1;
     var C1 = (function () {
         function C1() { }
         return C1;
-    })();    
+    })();
     var C5 = (function () {
         function C5() { }
         return C5;
     })();
-    m1.C5 = C5;    
+    m1.C5 = C5;
     m1.v2;
 })(m1 || (m1 = {}));
 
@@ -78,13 +78,13 @@ var m2;
             };
             return c_pr;
         })();
-        m3.c_pr = c_pr;        
+        m3.c_pr = c_pr;
         var m4;
         (function (m4) {
             var C = (function () {
                 function C() { }
                 return C;
-            })();            
+            })();
             var m5;
             (function (m5) {
                 (function (m6) {

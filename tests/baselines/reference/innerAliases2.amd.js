@@ -6,7 +6,7 @@ var _provider;
         };
         return UsefulClass;
     })();
-    _provider.UsefulClass = UsefulClass;    
+    _provider.UsefulClass = UsefulClass;
 })(_provider || (_provider = {}));
 
 var consumer;

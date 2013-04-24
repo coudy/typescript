@@ -4,7 +4,7 @@ var M;
         function C() { }
         return C;
     })();
-    M.C = C;    
+    M.C = C;
 })(M || (M = {}));
 
 var x = new M.C();

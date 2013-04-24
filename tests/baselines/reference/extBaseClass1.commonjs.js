@@ -12,7 +12,7 @@ var M;
         }
         return B;
     })();
-    M.B = B;    
+    M.B = B;
     var C = (function (_super) {
         __extends(C, _super);
         function C() {
@@ -21,7 +21,7 @@ var M;
         }
         return C;
     })(B);
-    M.C = C;    
+    M.C = C;
 })(M || (M = {}));
 
 var M;
@@ -34,7 +34,7 @@ var M;
         }
         return C2;
     })(M.B);
-    M.C2 = C2;    
+    M.C2 = C2;
 })(M || (M = {}));
 
 var N;
@@ -47,5 +47,5 @@ var N;
         }
         return C3;
     })(M.B);
-    N.C3 = C3;    
+    N.C3 = C3;
 })(N || (N = {}));

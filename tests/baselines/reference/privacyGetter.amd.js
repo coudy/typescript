@@ -6,11 +6,11 @@ define(["require", "exports"], function(require, exports) {
             };
             return C1_public;
         })();
-        m1.C1_public = C1_public;        
+        m1.C1_public = C1_public;
         var C2_private = (function () {
             function C2_private() { }
             return C2_private;
-        })();        
+        })();
         var C3_public = (function () {
             function C3_public() { }
             Object.defineProperty(C3_public.prototype, "p1_private", {
@@ -51,7 +51,7 @@ define(["require", "exports"], function(require, exports) {
             });
             return C3_public;
         })();
-        m1.C3_public = C3_public;        
+        m1.C3_public = C3_public;
         var C4_private = (function () {
             function C4_private() { }
             Object.defineProperty(C4_private.prototype, "p1_private", {
@@ -91,7 +91,7 @@ define(["require", "exports"], function(require, exports) {
                 configurable: true
             });
             return C4_private;
-        })();        
+        })();
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
 
@@ -103,11 +103,11 @@ define(["require", "exports"], function(require, exports) {
             };
             return m2_C1_public;
         })();
-        m2.m2_C1_public = m2_C1_public;        
+        m2.m2_C1_public = m2_C1_public;
         var m2_C2_private = (function () {
             function m2_C2_private() { }
             return m2_C2_private;
-        })();        
+        })();
         var m2_C3_public = (function () {
             function m2_C3_public() { }
             Object.defineProperty(m2_C3_public.prototype, "p1_private", {
@@ -148,7 +148,7 @@ define(["require", "exports"], function(require, exports) {
             });
             return m2_C3_public;
         })();
-        m2.m2_C3_public = m2_C3_public;        
+        m2.m2_C3_public = m2_C3_public;
         var m2_C4_private = (function () {
             function m2_C4_private() { }
             Object.defineProperty(m2_C4_private.prototype, "p1_private", {
@@ -188,7 +188,7 @@ define(["require", "exports"], function(require, exports) {
                 configurable: true
             });
             return m2_C4_private;
-        })();        
+        })();
     })(m2 || (m2 = {}));
 
     var C5_private = (function () {
@@ -196,12 +196,12 @@ define(["require", "exports"], function(require, exports) {
         C5_private.prototype.f = function () {
         };
         return C5_private;
-    })();    
+    })();
     var C6_public = (function () {
         function C6_public() { }
         return C6_public;
     })();
-    exports.C6_public = C6_public;    
+    exports.C6_public = C6_public;
     var C7_public = (function () {
         function C7_public() { }
         Object.defineProperty(C7_public.prototype, "p1_private", {
@@ -242,7 +242,7 @@ define(["require", "exports"], function(require, exports) {
         });
         return C7_public;
     })();
-    exports.C7_public = C7_public;    
+    exports.C7_public = C7_public;
     var C8_private = (function () {
         function C8_private() { }
         Object.defineProperty(C8_private.prototype, "p1_private", {
@@ -282,5 +282,5 @@ define(["require", "exports"], function(require, exports) {
             configurable: true
         });
         return C8_private;
-    })();    
+    })();
 })

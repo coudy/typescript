@@ -85,7 +85,7 @@ var Editor;
         };
         return List;
     })();
-    Editor.List = List;    
+    Editor.List = List;
     var ListFactory = (function () {
         function ListFactory() { }
         ListFactory.prototype.MakeHead = function () {
@@ -113,5 +113,5 @@ var Editor;
         };
         return ListFactory;
     })();
-    Editor.ListFactory = ListFactory;    
+    Editor.ListFactory = ListFactory;
 })(Editor || (Editor = {}));

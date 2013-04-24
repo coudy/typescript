@@ -15,7 +15,7 @@ define(["require", "exports"], function(require, exports) {
         };
         return C1;
     })();
-    exports.C1 = C1;    
+    exports.C1 = C1;
     var C2 = (function () {
         function C2() {
             this.p1 = 0;
@@ -23,7 +23,7 @@ define(["require", "exports"], function(require, exports) {
         C2.prototype.p2 = function () {
         };
         return C2;
-    })();    
+    })();
     (function (E1) {
         E1._map = [];
         E1.A = 0;

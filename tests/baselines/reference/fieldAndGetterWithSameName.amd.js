@@ -10,5 +10,5 @@ define(["require", "exports"], function(require, exports) {
         });
         return C;
     })();
-    exports.C = C;    
+    exports.C = C;
 })

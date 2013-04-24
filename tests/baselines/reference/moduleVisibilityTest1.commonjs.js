@@ -47,7 +47,7 @@ var M;
             this.b = 0;
         }
         return B;
-    })();    
+    })();
     var C = (function () {
         function C() {
             this.someProp = 1;
@@ -70,7 +70,7 @@ var M;
         };
         return C;
     })();
-    M.C = C;    
+    M.C = C;
     var someModuleVar = 4;
     function someModuleFunction() {
         return 5;

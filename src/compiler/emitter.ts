@@ -1679,7 +1679,6 @@ module TypeScript {
                 this.recordSourceMappingEnd(classDecl);
             }
 
-            this.emitIndent();
             this.recordSourceMappingEnd(classDecl);
             this.emitComments(classDecl, false);
             this.setContainer(temp);

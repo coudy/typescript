@@ -5,7 +5,7 @@ var Shapes;
         function Point() { }
         return Point;
     })();
-    Shapes.Point = Point;    
+    Shapes.Point = Point;
 })(Shapes || (Shapes = {}));
 
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
@@ -15,5 +15,5 @@ var Shapes;
         function Point() { }
         return Point;
     })();
-    Shapes.Point = Point;    
+    Shapes.Point = Point;
 })(Shapes || (Shapes = {}));

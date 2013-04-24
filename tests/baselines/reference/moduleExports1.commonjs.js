@@ -5,7 +5,7 @@
                 function Rue() { }
                 return Rue;
             })();
-            Street.Rue = Rue;            
+            Street.Rue = Rue;
         })(Strasse.Street || (Strasse.Street = {}));
         var Street = Strasse.Street;
 

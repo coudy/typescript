@@ -17,7 +17,7 @@ var Foo;
     var Helper = (function () {
         function Helper() { }
         return Helper;
-    })();    
+    })();
 })(Foo || (Foo = {}));
 
 var Foo;
@@ -25,7 +25,7 @@ var Foo;
     var Helper = (function () {
         function Helper() { }
         return Helper;
-    })();    
+    })();
 })(Foo || (Foo = {}));
 
 var Gar;
@@ -35,7 +35,7 @@ var Gar;
         var Helper = (function () {
             function Helper() { }
             return Helper;
-        })();        
+        })();
     })(Foo || (Foo = {}));
 
     var Foo;
@@ -43,7 +43,7 @@ var Gar;
         var Helper = (function () {
             function Helper() { }
             return Helper;
-        })();        
+        })();
     })(Foo || (Foo = {}));
 
 })(Gar || (Gar = {}));

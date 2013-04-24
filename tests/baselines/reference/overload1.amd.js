@@ -10,7 +10,7 @@ var O;
         function A() { }
         return A;
     })();
-    O.A = A;    
+    O.A = A;
     var B = (function (_super) {
         __extends(B, _super);
         function B() {
@@ -19,7 +19,7 @@ var O;
         }
         return B;
     })(A);
-    O.B = B;    
+    O.B = B;
     var C = (function (_super) {
         __extends(C, _super);
         function C() {
@@ -28,7 +28,7 @@ var O;
         }
         return C;
     })(B);
-    O.C = C;    
+    O.C = C;
 })(O || (O = {}));
 
 

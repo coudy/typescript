@@ -18,7 +18,7 @@ var M;
         C.y = C.priv;
         return C;
     })();
-    M.C = C;    
+    M.C = C;
     var c = C.y;
     function f() {
         var result = "";

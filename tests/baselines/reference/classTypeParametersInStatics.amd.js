@@ -25,5 +25,5 @@ var Editor;
         };
         return List;
     })();
-    Editor.List = List;    
+    Editor.List = List;
 })(Editor || (Editor = {}));

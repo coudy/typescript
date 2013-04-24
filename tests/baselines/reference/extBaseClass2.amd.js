@@ -14,7 +14,7 @@ var N;
         }
         return C4;
     })(M.B);
-    N.C4 = C4;    
+    N.C4 = C4;
 })(N || (N = {}));
 
 var M;
@@ -27,5 +27,5 @@ var M;
         }
         return C5;
     })(B);
-    M.C5 = C5;    
+    M.C5 = C5;
 })(M || (M = {}));

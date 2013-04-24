@@ -4,7 +4,7 @@ var Salt;
         function Pepper() { }
         return Pepper;
     })();
-    Salt.Pepper = Pepper;    
+    Salt.Pepper = Pepper;
     
     var z = Basil.Pepper;
 })(Salt || (Salt = {}));

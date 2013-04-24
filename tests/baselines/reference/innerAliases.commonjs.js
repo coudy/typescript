@@ -6,7 +6,7 @@ var A;
                 function Class1() { }
                 return Class1;
             })();
-            C.Class1 = Class1;            
+            C.Class1 = Class1;
         })(B.C || (B.C = {}));
         var C = B.C;
 
@@ -24,7 +24,7 @@ var D;
             function Class2() { }
             return Class2;
         })();
-        E.Class2 = Class2;        
+        E.Class2 = Class2;
     })(D.E || (D.E = {}));
     var E = D.E;
 

@@ -14,7 +14,7 @@ var m1;
             function c() { }
             return c;
         })();
-        m2.c = c;        
+        m2.c = c;
         ;
         /** i*/
         m2.i = new c();
@@ -57,7 +57,7 @@ var m2;
             function c() { }
             return c;
         })();
-        m3.c = c;        
+        m3.c = c;
     })(m2.m3 || (m2.m3 = {}));
     var m3 = m2.m3;
 
@@ -74,7 +74,7 @@ var m3;
                 function c() { }
                 return c;
             })();
-            m5.c = c;            
+            m5.c = c;
         })(m4.m5 || (m4.m5 = {}));
         var m5 = m4.m5;
 
@@ -95,7 +95,7 @@ var m4;
                     function c() { }
                     return c;
                 })();
-                m7.c = c;                
+                m7.c = c;
             })(m6.m7 || (m6.m7 = {}));
             var m7 = m6.m7;
 
@@ -120,7 +120,7 @@ var m5;
                     function c() { }
                     return c;
                 })();
-                m8.c = c;                
+                m8.c = c;
             })(m7.m8 || (m7.m8 = {}));
             var m8 = m7.m8;
 
@@ -142,7 +142,7 @@ var m6;
                 function c() { }
                 return c;
             })();
-            m8.c = c;            
+            m8.c = c;
         })(m7.m8 || (m7.m8 = {}));
         var m8 = m7.m8;
 
@@ -162,18 +162,18 @@ var m7;
                 function c() { }
                 return c;
             })();
-            m9.c = c;            
+            m9.c = c;
             /** class d */
             var d = (function () {
                 function d() { }
                 return d;
-            })();            
+            })();
             // class e
             var e = (function () {
                 function e() { }
                 return e;
             })();
-            m9.e = e;            
+            m9.e = e;
         })(m8.m9 || (m8.m9 = {}));
         var m9 = m8.m9;
 

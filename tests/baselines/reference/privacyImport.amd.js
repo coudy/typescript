@@ -5,7 +5,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
                 function c1() { }
                 return c1;
             })();
-            m1_M1_public.c1 = c1;            
+            m1_M1_public.c1 = c1;
             function f1() {
                 return new c1();
             }
@@ -22,7 +22,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
                 function c1() { }
                 return c1;
             })();
-            m1_M2_private.c1 = c1;            
+            m1_M2_private.c1 = c1;
             function f1() {
                 return new c1();
             }
@@ -84,7 +84,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
                 function c1() { }
                 return c1;
             })();
-            m2_M1_public.c1 = c1;            
+            m2_M1_public.c1 = c1;
             function f1() {
                 return new c1();
             }
@@ -101,7 +101,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
                 function c1() { }
                 return c1;
             })();
-            m2_M2_private.c1 = c1;            
+            m2_M2_private.c1 = c1;
             function f1() {
                 return new c1();
             }
@@ -160,7 +160,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
             function c1() { }
             return c1;
         })();
-        glo_M1_public.c1 = c1;        
+        glo_M1_public.c1 = c1;
         function f1() {
             return new c1();
         }
@@ -177,7 +177,7 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
             function c1() { }
             return c1;
         })();
-        glo_M3_private.c1 = c1;        
+        glo_M3_private.c1 = c1;
         function f1() {
             return new c1();
         }

@@ -3,7 +3,7 @@ var Bugs;
     var A = (function () {
         function A() { }
         return A;
-    })();    
+    })();
     function bug2(message) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {

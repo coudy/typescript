@@ -3,7 +3,7 @@ define(["require", "exports"], function(require, exports) {
         function Foo() { }
         return Foo;
     })();
-    exports.Foo = Foo;    
+    exports.Foo = Foo;
     exports.foo = new Foo();
     function test(foo) {
         return true;

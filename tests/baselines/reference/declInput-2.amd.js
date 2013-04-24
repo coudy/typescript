@@ -3,12 +3,12 @@ var M;
     var C = (function () {
         function C() { }
         return C;
-    })();    
+    })();
     var E = (function () {
         function E() { }
         return E;
     })();
-    M.E = E;    
+    M.E = E;
     var D = (function () {
         function D() { }
         D.prototype.m232 = function () {
@@ -29,7 +29,7 @@ var M;
         };
         return D;
     })();
-    M.D = D;    
+    M.D = D;
 })(M || (M = {}));
 
 ////[0.d.ts]

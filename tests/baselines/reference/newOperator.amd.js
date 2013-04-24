@@ -16,7 +16,7 @@ var M;
         function T() { }
         return T;
     })();
-    M.T = T;    
+    M.T = T;
 })(M || (M = {}));
 
 var S = (function () {

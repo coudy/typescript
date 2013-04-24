@@ -14,5 +14,5 @@ var Test;
         };
         return Bug;
     })();
-    Test.Bug = Bug;    
+    Test.Bug = Bug;
 })(Test || (Test = {}));

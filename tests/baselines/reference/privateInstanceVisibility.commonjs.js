@@ -10,7 +10,7 @@ var Test;
         };
         return Example;
     })();
-    Test.Example = Example;    
+    Test.Example = Example;
 })(Test || (Test = {}));
 
 var C = (function () {

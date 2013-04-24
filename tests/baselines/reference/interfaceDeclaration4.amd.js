@@ -4,7 +4,7 @@ var Foo;
         function C1() { }
         return C1;
     })();
-    Foo.C1 = C1;    
+    Foo.C1 = C1;
 })(Foo || (Foo = {}));
 
 var C1 = (function () {

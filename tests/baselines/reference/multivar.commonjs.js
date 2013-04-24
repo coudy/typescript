@@ -11,14 +11,14 @@ var m2;
             this.b = b;
         }
         return C;
-    })();    
+    })();
     var C2 = (function () {
         function C2(b) {
             this.b = b;
         }
         return C2;
     })();
-    m2.C2 = C2;    
+    m2.C2 = C2;
     var m;
     
     var b2;
