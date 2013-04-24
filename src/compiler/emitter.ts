@@ -1474,14 +1474,6 @@ module TypeScript {
 
                 var emitNode = list.members[i];
 
-                var isStaticDecl =
-                    (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
-                    (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
-
-                if (isStaticDecl) {
-                    continue;
-                }
-
                 if (this.neverEmit(emitNode)) {
                     continue;
                 }
