@@ -635,25 +635,30 @@ module TypeScript {
                 this.writeLineToOutput("}");
             }
 
-            //// if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
-            if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
+            if (funcDecl.isConstructor) {
+                //// if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
+                if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
 
-                var nProps = this.thisClassNode.members.members.length;
+                    var nProps = this.thisClassNode.members.members.length;
 
-                for (var i = 0; i < nProps; i++) {
-                    if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
-                        var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
-                        if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
-                            this.emitIndent();
-                            this.emitVariableDeclarator(varDecl);
-                            this.writeLineToOutput("");
+                    for (var i = 0; i < nProps; i++) {
+                        if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
+                            var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
+                            if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                                this.emitIndent();
+                                this.emitVariableDeclarator(varDecl);
+                                this.writeLineToOutput("");
+                            }
                         }
                     }
+                    //this.writeLineToOutput("");
                 }
-                //this.writeLineToOutput("");
-            }
 
-            this.emitList(funcDecl.block.statements, classPropertiesMustComeAfterSuperCall);
+                this.emitList(funcDecl.block.statements, classPropertiesMustComeAfterSuperCall);
+            }
+            else {
+                this.emitModuleElements(funcDecl.block.statements);
+            }
 
             this.indenter.decreaseIndent();
             this.emitIndent();
