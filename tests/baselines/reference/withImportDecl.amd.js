@@ -30,7 +30,6 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
             return "Hello";
         }
         m1.foo = foo;
-
     })(m1 || (m1 = {}));
 
     

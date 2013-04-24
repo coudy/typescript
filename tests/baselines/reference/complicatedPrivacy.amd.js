@@ -4,11 +4,9 @@ var m1;
         function f1(c1) {
         }
         m2.f1 = f1;
-
         function f2(c2) {
         }
         m2.f2 = f2;
-
         var C2 = (function () {
             function C2() { }
             Object.defineProperty(C2.prototype, "p1", {
@@ -32,20 +30,16 @@ var m1;
     function f2(arg1) {
     }
     m1.f2 = f2;
-
     function f3() {
         return null;
     }
     m1.f3 = f3;
-
     function f4(arg1) {
     }
     m1.f4 = f4;
-
     function f5(arg2) {
     }
     m1.f5 = f5;
-
     var m3;
     (function (m3) {
         function f2(f1) {

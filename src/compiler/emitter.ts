@@ -926,7 +926,7 @@ module TypeScript {
                         else {
                             this.emitIndent();
                             this.recordSourceMappingStart(funcDecl);
-                            this.writeLineToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
+                            this.writeToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
                             this.recordSourceMappingEnd(funcDecl);
                         }
                     }
@@ -936,7 +936,7 @@ module TypeScript {
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
                     this.recordSourceMappingStart(funcDecl);
-                    this.writeLineToOutput(modName + "." + funcName + " = " + funcName + ";");
+                    this.writeToOutput(modName + "." + funcName + " = " + funcName + ";");
                     this.recordSourceMappingEnd(funcDecl);
                 }
             }

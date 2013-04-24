@@ -29,7 +29,6 @@ var M;
         return result;
     }
     M.f = f;
-
 })(M || (M = {}));
 
 M.f();

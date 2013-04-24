@@ -41,14 +41,12 @@ define(["require", "exports"], function(require, exports) {
         return simpleFunction();
     }
     exports.exportedFunction = exportedFunction;
-
     var m1;
     (function (m1) {
         function foo() {
             return "Hello";
         }
         m1.foo = foo;
-
     })(m1 || (m1 = {}));
 
     
@@ -57,7 +55,6 @@ define(["require", "exports"], function(require, exports) {
             return m1.foo();
         }
         m3.foo = foo;
-
     })(exports.m3 || (exports.m3 = {}));
     var m3 = exports.m3;
 

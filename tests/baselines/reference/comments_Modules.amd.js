@@ -26,19 +26,16 @@ var m1;
         return foo();
     }
     m1.fooExport = fooExport;
-
     // shouldn't appear
     function foo2Export(/**hm*/ a) {
     }
     m1.foo2Export = foo2Export;
-
     /** foo3Export
     * comment
     */
     function foo3Export() {
     }
     m1.foo3Export = foo3Export;
-
     /** foo4Export
     * comment
     */

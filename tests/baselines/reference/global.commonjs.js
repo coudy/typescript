@@ -4,7 +4,6 @@ var M;
         return x + y;
     }
     M.f = f;
-
 })(M || (M = {}));
 
 var x = 10;

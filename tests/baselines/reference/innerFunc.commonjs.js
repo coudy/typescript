@@ -14,5 +14,4 @@ var M;
         return oxygen();
     }
     M.tungsten = tungsten;
-
 })(M || (M = {}));

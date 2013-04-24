@@ -113,13 +113,11 @@ var m1;
     function f2_public(m1_f2_arg) {
     }
     m1.f2_public = f2_public;
-
     function f3_public(m1_f3_arg) {
     }
     function f4_public(m1_f4_arg) {
     }
     m1.f4_public = f4_public;
-
     function f5_public() {
         return new C1_public();
     }
@@ -127,7 +125,6 @@ var m1;
         return new C1_public();
     }
     m1.f6_public = f6_public;
-
     function f7_public() {
         return new C2_private();
     }
@@ -135,7 +132,6 @@ var m1;
         return new C2_private();
     }
     m1.f8_public = f8_public;
-
     function f9_private() {
         return new C1_public();
     }
@@ -143,7 +139,6 @@ var m1;
         return new C1_public();
     }
     m1.f10_public = f10_public;
-
     function f11_private() {
         return new C2_private();
     }
@@ -151,7 +146,6 @@ var m1;
         return new C2_private();
     }
     m1.f12_public = f12_public;
-
 })(m1 || (m1 = {}));
 
 var C6_public = (function () {

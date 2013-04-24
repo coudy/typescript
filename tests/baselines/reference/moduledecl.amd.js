@@ -44,11 +44,9 @@ var m1;
     function f1() {
     }
     m1.f1 = f1;
-
     function f2(ns) {
     }
     m1.f2 = f2;
-
     var c1 = (function () {
         function c1(n, n2, n3, n4) {
             this.n = n;
@@ -115,7 +113,6 @@ var m13;
             return 20;
         }
         m4.f = f;
-
     })(m13.m4 || (m13.m4 = {}));
     var m4 = m13.m4;
 

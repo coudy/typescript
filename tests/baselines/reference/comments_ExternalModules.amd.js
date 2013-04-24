@@ -27,7 +27,6 @@ define(["require", "exports"], function(require, exports) {
             return foo();
         }
         m1.fooExport = fooExport;
-
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
 
@@ -62,7 +61,6 @@ define(["require", "exports"], function(require, exports) {
             return foo();
         }
         m4.fooExport = fooExport;
-
     })(exports.m4 || (exports.m4 = {}));
     var m4 = exports.m4;
 

@@ -3,5 +3,4 @@ define(["require", "exports"], function(require, exports) {
     function a() {
     }
     exports.a = a;
-
 })

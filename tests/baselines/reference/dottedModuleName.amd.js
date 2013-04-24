@@ -5,7 +5,6 @@ var M;
             2 * x;
         }
         N.f = f;
-
         (function (X) {
             (function (Y) {
                 (function (Z) {

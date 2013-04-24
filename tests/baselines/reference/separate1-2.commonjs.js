@@ -3,5 +3,4 @@ var X;
     function f() {
     }
     X.f = f;
-
 })(X || (X = {}));

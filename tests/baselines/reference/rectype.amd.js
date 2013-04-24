@@ -4,7 +4,6 @@ var M;
         return f;
     }
     M.f = f;
-
     ;
     var i;
     f(i);

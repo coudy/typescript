@@ -29,7 +29,6 @@ var m1;
         return "Hello";
     }
     m1.foo = foo;
-
 })(m1 || (m1 = {}));
 
 

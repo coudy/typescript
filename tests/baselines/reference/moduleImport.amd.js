@@ -8,7 +8,6 @@ var A;
                     XYZ.pong(x - 1);
             }
             C.ping = ping;
-
         })(B.C || (B.C = {}));
         var C = B.C;
 
@@ -25,5 +24,4 @@ var X;
             ABC.ping(x - 1);
     }
     X.pong = pong;
-
 })(X || (X = {}));
