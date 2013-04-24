@@ -1459,54 +1459,49 @@ module TypeScript {
             if (list === null) {
                 return;
             }
-            else {
-                this.emitComments(list, true);
 
-                var hasNonObjectBaseType = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
-                var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
+            this.emitComments(list, true);
 
-                if (!classPropertiesMustComeAfterSuperCall) {
+            var emitPropertyAssignmentsAfterSuperCall = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
+            var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
+
+            for (var i = 0, n = list.members.length; i < n; i++) {
+                // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
+                // call which, in these cases, must be the first statement in the constructor body
+                if (i === propertyAssignmentIndex) {
                     this.emitConstructorPropertyAssignments();
                 }
 
-                for (var i = 0, n = list.members.length; i < n; i++) {
-                    // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
-                    // call which, in these cases, must be the first statement in the constructor body
-                    if (i === 1 && classPropertiesMustComeAfterSuperCall) {
-                        this.emitConstructorPropertyAssignments();
-                    }
+                var emitNode = list.members[i];
 
-                    var emitNode = list.members[i];
-
-                    var isStaticDecl =
-                        (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
-                        (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
+                var isStaticDecl =
+                    (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
+                    (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
 
                     if (isStaticDecl) {
-                        continue;
-                    }
-
-                    if (this.neverEmit(emitNode)) {
-                        continue;
-                    }
-
-                    this.emitJavascript(emitNode, true);
-
-                    if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
-                             (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
-                             (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
-                             ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                             (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0)) {
-                        this.writeLineToOutput("");
-                    }
+                    continue;
                 }
 
-                if (i === 1 && classPropertiesMustComeAfterSuperCall) {
-                    this.emitConstructorPropertyAssignments();
+                if (this.neverEmit(emitNode)) {
+                    continue;
                 }
 
-                this.emitComments(list, false);
+                this.emitJavascript(emitNode, true);
+
+                if ((emitNode.nodeType !== NodeType.ModuleDeclaration) &&
+                    (emitNode.nodeType !== NodeType.InterfaceDeclaration) &&
+                    (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
+                    ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
+                    (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0)) {
+                    this.writeLineToOutput("");
+                }
             }
+
+            if (i === propertyAssignmentIndex) {
+                this.emitConstructorPropertyAssignments();
+            }
+
+            this.emitComments(list, false);
         }
 
         // tokenId is the id the preceding token
