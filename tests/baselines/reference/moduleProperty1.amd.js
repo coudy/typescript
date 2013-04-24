@@ -4,7 +4,6 @@ var M;
     var y = x;
     M.z = y;
 })(M || (M = {}));
-
 var M2;
 (function (M2) {
     var x = 10;

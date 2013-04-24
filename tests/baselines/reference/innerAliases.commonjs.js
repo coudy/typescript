@@ -9,12 +9,9 @@ var A;
             C.Class1 = Class1;
         })(B.C || (B.C = {}));
         var C = B.C;
-
     })(A.B || (A.B = {}));
     var B = A.B;
-
 })(A || (A = {}));
-
 var D;
 (function (D) {
     var inner = A.B.C;
@@ -27,8 +24,6 @@ var D;
         E.Class2 = Class2;
     })(D.E || (D.E = {}));
     var E = D.E;
-
 })(D || (D = {}));
-
 var c;
 c = new D.inner.Class1();

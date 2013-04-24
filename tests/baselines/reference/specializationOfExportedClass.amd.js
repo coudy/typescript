@@ -6,5 +6,4 @@ var M;
     })();
     M.C = C;
 })(M || (M = {}));
-
 var x = new M.C();

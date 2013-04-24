@@ -6,7 +6,6 @@
     Foo.C = C;
 })(exports.Foo || (exports.Foo = {}));
 var Foo = exports.Foo;
-
 (function (Foo) {
     function Bar() {
         if (true) {
@@ -24,4 +23,3 @@ var Foo = exports.Foo;
     }
 })(exports.Foo || (exports.Foo = {}));
 var Foo = exports.Foo;
-

@@ -8,7 +8,6 @@ var M;
     var test1 = x;
     var test2 = y;
 })(M || (M = {}));
-
 var N;
 (function (N) {
     var test3 = M.y;

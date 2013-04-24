@@ -21,7 +21,6 @@ define(["require", "exports"], function(require, exports) {
             m2.i = new c();
         })(m1.m2 || (m1.m2 = {}));
         var m2 = m1.m2;
-
         /** exported function*/
         function fooExport() {
             return foo();
@@ -29,7 +28,6 @@ define(["require", "exports"], function(require, exports) {
         m1.fooExport = fooExport;
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
-
     m1.fooExport();
     var myvar = new m1.m2.c();
     /** Module comment */
@@ -55,7 +53,6 @@ define(["require", "exports"], function(require, exports) {
             m2.i = new c();
         })(m4.m2 || (m4.m2 = {}));
         var m2 = m4.m2;
-
         /** exported function */
         function fooExport() {
             return foo();
@@ -63,11 +60,9 @@ define(["require", "exports"], function(require, exports) {
         m4.fooExport = fooExport;
     })(exports.m4 || (exports.m4 = {}));
     var m4 = exports.m4;
-
     m4.fooExport();
     var myvar2 = new m4.m2.c();
 })
-
 ////[comments_ExternalModules_1.js]
 define(["require", "exports", "comments_ExternalModules_0"], function(require, exports, __extMod__) {
     /**This is on import declaration*/
@@ -77,7 +72,6 @@ define(["require", "exports", "comments_ExternalModules_0"], function(require, e
     extMod.m4.fooExport();
     exports.newVar2 = new extMod.m4.m2.c();
 })
-
 ////[comments_ExternalModules_0.d.ts]
 /** Module comment*/
 export declare module m1 {

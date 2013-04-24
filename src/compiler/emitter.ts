@@ -806,10 +806,9 @@ module TypeScript {
                 // epilogue
                 if (isDynamicMod) {
                     if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                        this.writeLineToOutput("})");
+                        this.writeToOutput("})");
                     }
-                    else { // Node
-                    }
+
                     if (!isWholeFile) {
                         this.recordSourceMappingNameEnd();
                     }
@@ -864,15 +863,18 @@ module TypeScript {
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
                         this.writeToOutput(")();");
                     }
+
                     this.recordSourceMappingEnd(moduleDecl);
-                    this.writeLineToOutput("");
                     if (temp !== EmitContainer.Prog && isExported) {
-                        this.emitIndent();
                         this.recordSourceMappingStart(moduleDecl);
                         if (parentIsDynamic) {
-                            this.writeLineToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
+                            this.writeLineToOutput("");
+                            this.emitIndent();
+                            this.writeToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
                         } else {
-                            this.writeLineToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
+                            this.writeLineToOutput("");
+                            this.emitIndent();
+                            this.writeToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
                         }
                         this.recordSourceMappingEnd(moduleDecl);
                     }

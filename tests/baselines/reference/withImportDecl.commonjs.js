@@ -31,6 +31,5 @@ var m1;
     m1.foo = foo;
 })(m1 || (m1 = {}));
 
-
 var m3 = require("m1");
 var b = new m3.A();

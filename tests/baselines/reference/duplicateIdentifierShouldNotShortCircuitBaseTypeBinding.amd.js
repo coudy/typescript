@@ -7,7 +7,6 @@ var Shapes;
     })();
     Shapes.Point = Point;
 })(Shapes || (Shapes = {}));
-
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
 var Shapes;
 (function (Shapes) {

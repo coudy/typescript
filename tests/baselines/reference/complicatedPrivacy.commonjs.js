@@ -26,7 +26,6 @@ var m1;
         m2.C2 = C2;
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
-
     function f2(arg1) {
     }
     m1.f2 = f2;
@@ -45,7 +44,6 @@ var m1;
         function f2(f1) {
         }
     })(m3 || (m3 = {}));
-
     var C1 = (function () {
         function C1() { }
         return C1;
@@ -57,7 +55,6 @@ var m1;
     m1.C5 = C5;
     m1.v2;
 })(m1 || (m1 = {}));
-
 var C2 = (function () {
     function C2() { }
     return C2;
@@ -87,13 +84,8 @@ var m2;
                     }
                 })(m5.m6 || (m5.m6 = {}));
                 var m6 = m5.m6;
-
             })(m5 || (m5 = {}));
-
         })(m4 || (m4 = {}));
-
     })(m2.m3 || (m2.m3 = {}));
     var m3 = m2.m3;
-
 })(m2 || (m2 = {}));
-

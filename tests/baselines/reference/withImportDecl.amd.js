@@ -31,7 +31,6 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
         }
         m1.foo = foo;
     })(m1 || (m1 = {}));
-
     
     var m3 = __m3__;
     var b = new m3.A();

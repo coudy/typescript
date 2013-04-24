@@ -51,7 +51,6 @@ var m1;
     var m1_v23_private = new C2_private();
     m1.m1_v24_public = new C2_private();
 })(m1 || (m1 = {}));
-
 var glo_C1_public = (function () {
     function glo_C1_public() { }
     glo_C1_public.prototype.f1 = function () {

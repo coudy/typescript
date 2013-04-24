@@ -147,7 +147,6 @@
     m1.f12_public = f12_public;
 })(exports.m1 || (exports.m1 = {}));
 var m1 = exports.m1;
-
 var m2;
 (function (m2) {
     var m2_C1_public = (function () {
@@ -297,7 +296,6 @@ var m2;
     }
     m2.f12_public = f12_public;
 })(m2 || (m2 = {}));
-
 var C5_private = (function () {
     function C5_private() { }
     C5_private.prototype.f = function () {

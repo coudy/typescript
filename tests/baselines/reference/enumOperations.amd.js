@@ -3,7 +3,6 @@ var Enum;
     Enum._map = [];
     Enum.None = 0;
 })(Enum || (Enum = {}));
-
 var enumType = Enum.None;
 var numberType = 0;
 var anyType = 0;

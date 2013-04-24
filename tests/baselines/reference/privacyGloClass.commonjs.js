@@ -104,7 +104,6 @@ var m1;
     })(m1_c_private);
     m1.m1_C12_public = m1_C12_public;
 })(m1 || (m1 = {}));
-
 var glo_c_public = (function () {
     function glo_c_public() { }
     glo_c_public.prototype.f1 = function () {

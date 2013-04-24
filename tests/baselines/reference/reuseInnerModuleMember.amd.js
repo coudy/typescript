@@ -6,5 +6,4 @@ define(["require", "exports"], function(require, exports) {
     (function (bar) {
         var x;
     })(bar || (bar = {}));
-
 })

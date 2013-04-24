@@ -49,7 +49,6 @@ var m2;
     }
     m2.foo = foo;
 })(m2 || (m2 = {}));
-
 m2.foo(function () {
     var b = 30;
     return b;
