@@ -468,8 +468,7 @@ module TypeScript {
             }
         }
 
-        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, isMember: boolean,
-                                 hasSelfRef: boolean, classDecl: TypeDeclaration) {
+        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, isMember: boolean) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
@@ -486,9 +485,6 @@ module TypeScript {
 
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
             this.pushDecl(pullDecl);
-
-            var hasNonObjectBaseType = funcDecl.isConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
-            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
@@ -520,8 +516,6 @@ module TypeScript {
 
             this.writeToOutput("(");
             var argsLen = 0;
-            var arg: Parameter;
-            var defaultArgs: Parameter[] = [];
             if (funcDecl.arguments) {
                 var tempContainer = this.setContainer(EmitContainer.Args);
                 argsLen = funcDecl.arguments.members.length;
@@ -530,10 +524,7 @@ module TypeScript {
                     printLen--;
                 }
                 for (var i = 0; i < printLen; i++) {
-                    arg = <Parameter>funcDecl.arguments.members[i];
-                    if (arg.init) {
-                        defaultArgs.push(arg);
-                    }
+                    var arg = <Parameter>funcDecl.arguments.members[i];
                     arg.emit(this);
 
                     if (i < (printLen - 1)) {
@@ -555,30 +546,20 @@ module TypeScript {
             }
             this.indenter.increaseIndent();
 
-            // set default args first
-            for (var i = 0; i < defaultArgs.length; i++) {
-                arg = defaultArgs[i];
-                this.emitIndent();
-                this.recordSourceMappingStart(arg);
-                this.writeToOutput("if (typeof " + arg.id.actualText + " === \"undefined\") { ");//
-                this.recordSourceMappingStart(arg.id);
-                this.writeToOutput(arg.id.actualText);
-                this.recordSourceMappingEnd(arg.id);
-                this.writeToOutput(" = ");
-                this.emitJavascript(arg.init, false);
-                this.writeLineToOutput("; }")
-                this.recordSourceMappingEnd(arg);
-            }
+            this.emitDefaultValueAssignments(funcDecl);
 
             if (funcDecl.isConstructor && this.shouldCaptureThis(funcDecl.classDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
+            var hasNonObjectBaseType = funcDecl.isConstructor && this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
+            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
+
             if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
                 if (funcDecl.arguments) {
                     argsLen = funcDecl.arguments.members.length;
                     for (var i = 0; i < argsLen; i++) {
-                        arg = <Parameter>funcDecl.arguments.members[i];
+                        var arg = <Parameter>funcDecl.arguments.members[i];
                         if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                             this.emitIndent();
                             this.recordSourceMappingStart(arg);
@@ -595,9 +576,11 @@ module TypeScript {
                     }
                 }
             }
-            if (hasSelfRef) {
+
+            if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
+
             if (funcDecl.variableArgList) {
                 argsLen = funcDecl.arguments.members.length;
                 var lastArg = <Parameter>funcDecl.arguments.members[argsLen - 1];
@@ -636,6 +619,7 @@ module TypeScript {
             }
 
             if (funcDecl.isConstructor) {
+                // this.emitConstructorStatements();
                 //// if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
                 if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
 
@@ -679,6 +663,29 @@ module TypeScript {
             this.emitComments(funcDecl, false);
 
             this.popDecl(pullDecl);
+        }
+
+        private emitDefaultValueAssignments(funcDecl: FunctionDeclaration): void {
+            var n = funcDecl.arguments.members.length;
+            if (funcDecl.variableArgList) {
+                n--;
+            }
+
+            for (var i = 0; i < n; i++) {
+                var arg = <Parameter>funcDecl.arguments.members[i];
+                if (arg.init) {
+                    this.emitIndent();
+                    this.recordSourceMappingStart(arg);
+                    this.writeToOutput("if (typeof " + arg.id.actualText + " === \"undefined\") { ");//
+                    this.recordSourceMappingStart(arg.id);
+                    this.writeToOutput(arg.id.actualText);
+                    this.recordSourceMappingEnd(arg.id);
+                    this.writeToOutput(" = ");
+                    this.emitJavascript(arg.init, false);
+                    this.writeLineToOutput("; }");
+                    this.recordSourceMappingEnd(arg);
+                }
+            }
         }
 
         public getModuleImportAndDependencyList(moduleDecl: ModuleDeclaration) {
@@ -948,9 +955,8 @@ module TypeScript {
 
             if (((temp !== EmitContainer.Constructor) ||
                 ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
-                var hasSelfRef = this.shouldCaptureThis(funcDecl);
                 this.recordSourceMappingStart(funcDecl);
-                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false, hasSelfRef, this.thisClassNode);
+                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false);
             }
             this.setContainer(temp);
             this.thisFunctionDeclaration = tempFnc;
@@ -1578,7 +1584,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.getter);
                 this.writeToOutput("get: ");
-                this.emitInnerFunction(accessors.getter, false, isProto, this.shouldCaptureThis(accessors.getter), null);
+                this.emitInnerFunction(accessors.getter, false, isProto);
                 this.writeLineToOutput(",");
             }
 
@@ -1586,7 +1592,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.setter);
                 this.writeToOutput("set: ");
-                this.emitInnerFunction(accessors.setter, false, isProto, this.shouldCaptureThis(accessors.setter), null);
+                this.emitInnerFunction(accessors.setter, false, isProto);
                 this.writeLineToOutput(",");
             }
 
@@ -1608,7 +1614,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
                 this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                this.emitInnerFunction(funcDecl, /*printName:*/ false, true, this.shouldCaptureThis(funcDecl), null);
+                this.emitInnerFunction(funcDecl, /*printName:*/ false, true);
                 this.writeLineToOutput(";");
             }
         }
@@ -1770,7 +1776,7 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(fn)
                                     this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                this.emitInnerFunction(fn, /*printName:*/ false, true, this.shouldCaptureThis(fn), null);
+                                this.emitInnerFunction(fn, /*printName:*/ false, true);
                                 this.writeLineToOutput(";");
                             }
                         }
