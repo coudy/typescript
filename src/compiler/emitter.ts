@@ -468,7 +468,7 @@ module TypeScript {
             }
         }
 
-        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, isMember: boolean) {
+        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
@@ -956,7 +956,7 @@ module TypeScript {
             if (((temp !== EmitContainer.Constructor) ||
                 ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
                 this.recordSourceMappingStart(funcDecl);
-                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false);
+                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()));
             }
             this.setContainer(temp);
             this.thisFunctionDeclaration = tempFnc;
@@ -1584,7 +1584,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.getter);
                 this.writeToOutput("get: ");
-                this.emitInnerFunction(accessors.getter, false, isProto);
+                this.emitInnerFunction(accessors.getter, false);
                 this.writeLineToOutput(",");
             }
 
@@ -1592,7 +1592,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.setter);
                 this.writeToOutput("set: ");
-                this.emitInnerFunction(accessors.setter, false, isProto);
+                this.emitInnerFunction(accessors.setter, false);
                 this.writeLineToOutput(",");
             }
 
@@ -1614,7 +1614,7 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
                 this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                this.emitInnerFunction(funcDecl, /*printName:*/ false, true);
+                this.emitInnerFunction(funcDecl, /*printName:*/ false);
                 this.writeLineToOutput(";");
             }
         }
@@ -1776,7 +1776,7 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(fn)
                                     this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                this.emitInnerFunction(fn, /*printName:*/ false, true);
+                                this.emitInnerFunction(fn, /*printName:*/ false);
                                 this.writeLineToOutput(";");
                             }
                         }
