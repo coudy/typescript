@@ -211,12 +211,6 @@ module Services {
         public openParenMinChar: number;
         public closeParenLimChar: number;
         public currentParameter: number; // Index of active parameter in "parameters" array
-        public parameters: ActualParameterInfo[] = [];
-    }
-
-    export class ActualParameterInfo {
-        public minChar: number;
-        public limChar: number;
     }
 
     export class CompletionInfo {

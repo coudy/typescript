@@ -25,8 +25,6 @@ goTo.marker('incompleteCalls3');
 verify.currentSignatureParamterCountIs(2);
 verify.currentSignatureHelpReturnTypeIs("string");
 
-//Bug 00000: list offsets are not accurate
-//verify.currentParameterHelpArgumentNameIs("s");
-//verify.currentParameterHelpType("string");  
-verify.currentParameterHelpArgumentNameIs("n");
+verify.currentParameterHelpArgumentNameIs("s");
+verify.currentParameterHelpType("string");  
 

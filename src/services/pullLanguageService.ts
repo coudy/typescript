@@ -252,23 +252,19 @@ module Services {
                 return null;
 
             var result = new ActualSignatureInfo();
-            result.currentParameter = -1;
             result.openParenMinChar = ast.arguments.minChar;
-            result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar);
-            ast.arguments.members.forEach((arg, index) => {
-                var parameter = new ActualParameterInfo();
-                parameter.minChar = arg.minChar;
-                parameter.limChar = Math.max(arg.minChar, arg.limChar);
-                result.parameters.push(parameter);
-            });
+            result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar + ast.arguments.trailingTriviaWidth);
 
-            result.parameters.forEach((parameter, index) => {
-                var minChar = (index == 0 ? result.openParenMinChar : result.parameters[index - 1].limChar + 1);
-                var limChar = (index == result.parameters.length - 1 ? result.closeParenLimChar : result.parameters[index + 1].minChar);
-                if (caretPosition >= minChar && (atEOF ? caretPosition <= limChar : caretPosition < limChar)) {
-                    result.currentParameter = index;
+            if (caretPosition < result.openParenMinChar || caretPosition > result.closeParenLimChar) {
+                result.currentParameter = -1;
+            } else {
+                result.currentParameter = 0;
+                for (var index = 0; index < ast.arguments.members.length; index++) {
+                    if (caretPosition > ast.arguments.members[index].limChar + ast.arguments.members[index].trailingTriviaWidth) {
+                        result.currentParameter++;
+                    }
                 }
-            });
+            }
             return result;
         }
 
