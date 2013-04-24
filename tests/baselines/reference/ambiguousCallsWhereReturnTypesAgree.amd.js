@@ -1,5 +1,6 @@
 var TestClass = (function () {
-    function TestClass() { }
+    function TestClass() {
+    }
     TestClass.prototype.bar = function (x) {
     };
     TestClass.prototype.foo = function (x) {
@@ -8,7 +9,8 @@ var TestClass = (function () {
     return TestClass;
 })();
 var TestClass2 = (function () {
-    function TestClass2() { }
+    function TestClass2() {
+    }
     TestClass2.prototype.bar = function (x) {
         return 0;
     };

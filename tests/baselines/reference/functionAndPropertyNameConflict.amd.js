@@ -1,5 +1,6 @@
 var C65 = (function () {
-    function C65() { }
+    function C65() {
+    }
     C65.prototype.aaaaa = function () {
     };
     Object.defineProperty(C65.prototype, "aaaaa", {

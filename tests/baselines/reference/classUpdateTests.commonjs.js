@@ -29,14 +29,14 @@ var C = (function () {
     return C;
 })();
 var D = (function () {
-    function D() { }
+    function D() {
+    }
     return D;
 })();
 var E = (function (_super) {
     __extends(E, _super);
     function E() {
         _super.apply(this, arguments);
-
         this.p1 = 0;
     }
     return E;

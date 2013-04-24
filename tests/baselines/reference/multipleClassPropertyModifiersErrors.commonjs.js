@@ -1,4 +1,5 @@
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     return C;
 })();

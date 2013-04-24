@@ -1,14 +1,16 @@
 var m1;
 (function (m1) {
     var C1_public = (function () {
-        function C1_public() { }
+        function C1_public() {
+        }
         C1_public.prototype.f1 = function () {
         };
         return C1_public;
     })();
     m1.C1_public = C1_public;
     var C2_private = (function () {
-        function C2_private() { }
+        function C2_private() {
+        }
         return C2_private;
     })();
     var C3_public = (function () {
@@ -52,7 +54,8 @@ var m1;
     m1.m1_v24_public = new C2_private();
 })(m1 || (m1 = {}));
 var glo_C1_public = (function () {
-    function glo_C1_public() { }
+    function glo_C1_public() {
+    }
     glo_C1_public.prototype.f1 = function () {
     };
     return glo_C1_public;

@@ -214,7 +214,8 @@ var i1_s_ncprop = c1.nc_s3;
 c1.nc_s3 = i1_s_ncprop;
 var i1_c = c1;
 var cProperties = (function () {
-    function cProperties() { }
+    function cProperties() {
+    }
     Object.defineProperty(cProperties.prototype, "p1", {
         get: /** getter only property*/
         function () {

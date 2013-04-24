@@ -11,7 +11,8 @@ var Y = (function () {
     return Y;
 })();
 var Z = (function () {
-    function Z() { }
+    function Z() {
+    }
     return Z;
 })();
 var c1 = new X(3);

@@ -1,5 +1,6 @@
 var test = (function () {
-    function test() { }
+    function test() {
+    }
     Object.defineProperty(test.prototype, "p2", {
         get: function () {
         },

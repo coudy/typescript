@@ -1320,7 +1320,7 @@ module TypeScript {
             }
         }
 
-        private emitConstructorPropertyAssignments(): void {
+        private emitParameterPropertyAndMemberVariableAssignments(): void {
             // emit any parameter properties first
             var constructorDecl = this.thisClassNode.constructorDecl;
 
@@ -1480,7 +1480,7 @@ module TypeScript {
                 // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                 // call which, in these cases, must be the first statement in the constructor body
                 if (i === propertyAssignmentIndex) {
-                    this.emitConstructorPropertyAssignments();
+                    this.emitParameterPropertyAndMemberVariableAssignments();
                 }
 
                 var emitNode = list.members[i];
@@ -1494,7 +1494,7 @@ module TypeScript {
             }
 
             if (i === propertyAssignmentIndex) {
-                this.emitConstructorPropertyAssignments();
+                this.emitParameterPropertyAndMemberVariableAssignments();
             }
 
             this.emitComments(list, false);
@@ -1617,45 +1617,22 @@ module TypeScript {
                 this.writeLineToOutput("");
             }
             else {
-                var wroteProps = 0;
-
                 this.recordSourceMappingStart(classDecl);
                 // default constructor
                 this.indenter.increaseIndent();
-                this.writeToOutput("function " + classDecl.name.actualText + "() {");
+                this.writeLineToOutput("function " + classDecl.name.actualText + "() {");
                 this.recordSourceMappingNameStart("constructor");
                 if (hasBaseClass) {
-                    this.writeLineToOutput("");
                     this.emitIndent();
                     this.writeLineToOutput("_super.apply(this, arguments);");
-                    wroteProps++;
                 }
 
-                var members = this.thisClassNode.members.members
+                this.emitParameterPropertyAndMemberVariableAssignments();
 
-                // output initialized properties
-                for (var i = 0; i < members.length; i++) {
-                    if (members[i].nodeType === NodeType.VariableDeclarator) {
-                        varDecl = <VariableDeclarator>members[i];
-                        if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
-                            this.writeLineToOutput("");
-                            this.emitIndent();
-                            this.emitVariableDeclarator(varDecl);
-                            wroteProps++;
-                        }
-                    }
-                }
+                this.indenter.decreaseIndent();
+                this.emitIndent();
+                this.writeLineToOutput("}");
 
-                if (wroteProps) {
-                    this.writeLineToOutput("");
-                    this.indenter.decreaseIndent();
-                    this.emitIndent();
-                    this.writeLineToOutput("}");
-                }
-                else {
-                    this.writeLineToOutput(" }");
-                    this.indenter.decreaseIndent();
-                }
                 this.recordSourceMappingNameEnd();
                 this.recordSourceMappingEnd(classDecl);
             }

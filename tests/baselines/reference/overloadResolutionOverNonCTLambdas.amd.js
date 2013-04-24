@@ -1,7 +1,8 @@
 var Bugs;
 (function (Bugs) {
     var A = (function () {
-        function A() { }
+        function A() {
+        }
         return A;
     })();
     function bug2(message) {

@@ -1,5 +1,6 @@
 var c = (function () {
-    function c() { }
+    function c() {
+    }
     c.prototype.n = function () {
         var _this = this;
         var k = function () {

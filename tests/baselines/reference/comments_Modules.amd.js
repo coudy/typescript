@@ -11,7 +11,8 @@ var m1;
     (function (m2) {
         /** class comment;*/
         var c = (function () {
-            function c() { }
+            function c() {
+            }
             return c;
         })();
         m2.c = c;
@@ -49,7 +50,8 @@ var m2;
     (function (m3) {
         /** Exported class comment*/
         var c = (function () {
-            function c() { }
+            function c() {
+            }
             return c;
         })();
         m3.c = c;
@@ -64,7 +66,8 @@ var m3;
         (function (m5) {
             /** Exported class comment*/
             var c = (function () {
-                function c() { }
+                function c() {
+                }
                 return c;
             })();
             m5.c = c;
@@ -82,7 +85,8 @@ var m4;
             (function (m7) {
                 /** Exported class comment*/
                 var c = (function () {
-                    function c() { }
+                    function c() {
+                    }
                     return c;
                 })();
                 m7.c = c;
@@ -103,7 +107,8 @@ var m5;
             (function (m8) {
                 /** Exported class comment*/
                 var c = (function () {
-                    function c() { }
+                    function c() {
+                    }
                     return c;
                 })();
                 m8.c = c;
@@ -121,7 +126,8 @@ var m6;
         (function (m8) {
             /** Exported class comment*/
             var c = (function () {
-                function c() { }
+                function c() {
+                }
                 return c;
             })();
             m8.c = c;
@@ -138,18 +144,21 @@ var m7;
         (function (m9) {
             /** Exported class comment*/
             var c = (function () {
-                function c() { }
+                function c() {
+                }
                 return c;
             })();
             m9.c = c;
             /** class d */
             var d = (function () {
-                function d() { }
+                function d() {
+                }
                 return d;
             })();
             // class e
             var e = (function () {
-                function e() { }
+                function e() {
+                }
                 return e;
             })();
             m9.e = e;

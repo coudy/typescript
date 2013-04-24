@@ -87,7 +87,8 @@ var Editor;
     })();
     Editor.List = List;
     var ListFactory = (function () {
-        function ListFactory() { }
+        function ListFactory() {
+        }
         ListFactory.prototype.MakeHead = function () {
             var entry = new List(true, null);
             entry.prev = entry;

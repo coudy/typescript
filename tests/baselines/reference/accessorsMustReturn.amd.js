@@ -1,5 +1,6 @@
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     Object.defineProperty(C.prototype, "yo", {
         get: function () {
         },

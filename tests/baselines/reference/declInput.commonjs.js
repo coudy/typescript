@@ -1,5 +1,6 @@
 var bar = (function () {
-    function bar() { }
+    function bar() {
+    }
     bar.prototype.f = function () {
         return '';
     };

@@ -18,7 +18,6 @@ var derived = (function (_super) {
     __extends(derived, _super);
     function derived() {
         _super.apply(this, arguments);
-
     }
     return derived;
 })(base);

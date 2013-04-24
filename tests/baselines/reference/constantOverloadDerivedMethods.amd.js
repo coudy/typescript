@@ -1,5 +1,6 @@
 var D = (function () {
-    function D() { }
+    function D() {
+    }
     D.prototype.createElement = function (tagName) {
         return null;
     };

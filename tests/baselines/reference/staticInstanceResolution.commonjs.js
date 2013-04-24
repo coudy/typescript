@@ -1,5 +1,6 @@
 var Comment = (function () {
-    function Comment() { }
+    function Comment() {
+    }
     Comment.prototype.getDocCommentText = function () {
     };
     Comment.getDocCommentText = function (comments) {

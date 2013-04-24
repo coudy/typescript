@@ -129,7 +129,8 @@ function jsDocParamTest(/** this is inline comment for a */ a, /** this is inlin
 }
 /**/
 var NoQuickInfoClass = (function () {
-    function NoQuickInfoClass() { }
+    function NoQuickInfoClass() {
+    }
     return NoQuickInfoClass;
 })();
 ////[0.d.ts]

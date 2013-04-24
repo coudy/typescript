@@ -6,14 +6,14 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var A = (function () {
-    function A() { }
+    function A() {
+    }
     return A;
 })();
 var B = (function (_super) {
     __extends(B, _super);
     function B() {
         _super.apply(this, arguments);
-
     }
     return B;
 })(A);

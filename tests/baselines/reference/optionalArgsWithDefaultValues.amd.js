@@ -3,7 +3,8 @@ function foo(x, y, z) {
     if (typeof z === "undefined") { z = 0; }
 }
 var CCC = (function () {
-    function CCC() { }
+    function CCC() {
+    }
     CCC.prototype.foo = function (x, y, z) {
         if (typeof y === "undefined") { y = false; }
         if (typeof z === "undefined") { z = 0; }

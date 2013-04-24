@@ -8,7 +8,8 @@ var m1;
         }
         m2.f2 = f2;
         var C2 = (function () {
-            function C2() { }
+            function C2() {
+            }
             Object.defineProperty(C2.prototype, "p1", {
                 get: function (arg) {
                     return new C1();
@@ -45,25 +46,29 @@ var m1;
         }
     })(m3 || (m3 = {}));
     var C1 = (function () {
-        function C1() { }
+        function C1() {
+        }
         return C1;
     })();
     var C5 = (function () {
-        function C5() { }
+        function C5() {
+        }
         return C5;
     })();
     m1.C5 = C5;
     m1.v2;
 })(m1 || (m1 = {}));
 var C2 = (function () {
-    function C2() { }
+    function C2() {
+    }
     return C2;
 })();
 var m2;
 (function (m2) {
     (function (m3) {
         var c_pr = (function () {
-            function c_pr() { }
+            function c_pr() {
+            }
             c_pr.prototype.f1 = function () {
                 return "Hello";
             };
@@ -73,7 +78,8 @@ var m2;
         var m4;
         (function (m4) {
             var C = (function () {
-                function C() { }
+                function C() {
+                }
                 return C;
             })();
             var m5;

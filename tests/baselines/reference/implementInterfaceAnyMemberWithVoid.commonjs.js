@@ -1,5 +1,6 @@
 var Bug = (function () {
-    function Bug() { }
+    function Bug() {
+    }
     Bug.prototype.foo = function (value) {
     };
     return Bug;

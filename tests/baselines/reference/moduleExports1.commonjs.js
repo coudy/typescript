@@ -2,7 +2,8 @@
     (function (Strasse) {
         (function (Street) {
             var Rue = (function () {
-                function Rue() { }
+                function Rue() {
+                }
                 return Rue;
             })();
             Street.Rue = Rue;

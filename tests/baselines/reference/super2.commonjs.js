@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Base5 = (function () {
-    function Base5() { }
+    function Base5() {
+    }
     Base5.prototype.x = function () {
         return "BaseX";
     };
@@ -18,7 +19,6 @@ var Sub5 = (function (_super) {
     __extends(Sub5, _super);
     function Sub5() {
         _super.apply(this, arguments);
-
     }
     Sub5.prototype.x = function () {
         return "SubX";
@@ -29,7 +29,6 @@ var SubSub5 = (function (_super) {
     __extends(SubSub5, _super);
     function SubSub5() {
         _super.apply(this, arguments);
-
     }
     SubSub5.prototype.x = function () {
         return _super.prototype.x.call(this);
@@ -40,7 +39,8 @@ var SubSub5 = (function (_super) {
     return SubSub5;
 })(Sub5);
 var Base6 = (function () {
-    function Base6() { }
+    function Base6() {
+    }
     Base6.prototype.x = function () {
         return "BaseX";
     };
@@ -50,7 +50,6 @@ var Sub6 = (function (_super) {
     __extends(Sub6, _super);
     function Sub6() {
         _super.apply(this, arguments);
-
     }
     Sub6.prototype.y = function () {
         return "SubY";
@@ -61,7 +60,6 @@ var SubSub6 = (function (_super) {
     __extends(SubSub6, _super);
     function SubSub6() {
         _super.apply(this, arguments);
-
     }
     SubSub6.prototype.y = function () {
         return _super.prototype.y.call(this);

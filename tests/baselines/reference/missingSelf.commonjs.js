@@ -1,5 +1,6 @@
 var CalcButton = (function () {
-    function CalcButton() { }
+    function CalcButton() {
+    }
     CalcButton.prototype.a = function () {
         this.onClick();
     };
@@ -8,7 +9,8 @@ var CalcButton = (function () {
     return CalcButton;
 })();
 var CalcButton2 = (function () {
-    function CalcButton2() { }
+    function CalcButton2() {
+    }
     CalcButton2.prototype.b = function () {
         var _this = this;
         function () {

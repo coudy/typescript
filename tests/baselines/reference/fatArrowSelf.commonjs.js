@@ -1,7 +1,8 @@
 var Events;
 (function (Events) {
     var EventEmitter = (function () {
-        function EventEmitter() { }
+        function EventEmitter() {
+        }
         EventEmitter.prototype.addListener = function (type, listener) {
         };
         return EventEmitter;

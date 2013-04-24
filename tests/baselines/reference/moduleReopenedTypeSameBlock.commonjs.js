@@ -1,7 +1,8 @@
 var M;
 (function (M) {
     var C1 = (function () {
-        function C1() { }
+        function C1() {
+        }
         return C1;
     })();
     M.C1 = C1;
@@ -9,7 +10,8 @@ var M;
 var M;
 (function (M) {
     var C2 = (function () {
-        function C2() { }
+        function C2() {
+        }
         C2.prototype.f = function () {
             return null;
         };

@@ -1,5 +1,6 @@
 var Foo = (function () {
-    function Foo() { }
+    function Foo() {
+    }
     Foo.prototype.clone = function () {
         return null;
     };

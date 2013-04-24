@@ -1,16 +1,19 @@
 var M;
 (function (M) {
     var C = (function () {
-        function C() { }
+        function C() {
+        }
         return C;
     })();
     var E = (function () {
-        function E() { }
+        function E() {
+        }
         return E;
     })();
     M.E = E;
     var D = (function () {
-        function D() { }
+        function D() {
+        }
         D.prototype.m232 = function () {
             return null;
         };

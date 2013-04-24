@@ -1,5 +1,6 @@
 var f = (function () {
-    function f() { }
+    function f() {
+    }
     Object.defineProperty(f.prototype, "x", {
         set: function (value) {
             return null;

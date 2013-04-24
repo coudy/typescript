@@ -15,7 +15,8 @@ function foo() {
     }
 }
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.foo = function () {
         try  {
             var x = 1;

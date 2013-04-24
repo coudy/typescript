@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var a = (function () {
-    function a() { }
+    function a() {
+    }
     Object.defineProperty(a, "x", {
         get: function () {
             return null;
@@ -22,7 +23,6 @@ var b = (function (_super) {
     __extends(b, _super);
     function b() {
         _super.apply(this, arguments);
-
     }
     return b;
 })(a);

@@ -6,7 +6,8 @@ var Foo = (function () {
 })();
 var f = new Foo();
 var Foo2 = (function () {
-    function Foo2() { }
+    function Foo2() {
+    }
     return Foo2;
 })();
 var x = 1;

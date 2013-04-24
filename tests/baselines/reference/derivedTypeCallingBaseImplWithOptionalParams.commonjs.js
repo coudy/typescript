@@ -1,5 +1,6 @@
 var MyClass = (function () {
-    function MyClass() { }
+    function MyClass() {
+    }
     MyClass.prototype.myMethod = function (myList) {
     };
     return MyClass;

@@ -1,23 +1,27 @@
 var C1 = (function () {
-    function C1() { }
+    function C1() {
+    }
     C1.prototype.p1 = function () {
         return "s";
     };
     return C1;
 })();
 var C2 = (function () {
-    function C2() { }
+    function C2() {
+    }
     C2.prototype.p1 = function (n) {
         return 0;
     };
     return C2;
 })();
 var C3 = (function () {
-    function C3() { }
+    function C3() {
+    }
     return C3;
 })();
 var C4 = (function () {
-    function C4() { }
+    function C4() {
+    }
     return C4;
 })();
 function if1(a) {

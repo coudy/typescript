@@ -1,7 +1,8 @@
 var M;
 (function (M) {
     var C = (function () {
-        function C() { }
+        function C() {
+        }
         C.prototype.salt = function () {
         };
         return C;

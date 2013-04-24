@@ -13,13 +13,15 @@ new String();
 var M;
 (function (M) {
     var T = (function () {
-        function T() { }
+        function T() {
+        }
         return T;
     })();
     M.T = T;
 })(M || (M = {}));
 var S = (function () {
-    function S() { }
+    function S() {
+    }
     Object.defineProperty(S.prototype, "xs", {
         get: function () {
             return new M.T[]();

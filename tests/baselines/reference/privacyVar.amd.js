@@ -1,14 +1,16 @@
 define(["require", "exports"], function(require, exports) {
     (function (m1) {
         var C1_public = (function () {
-            function C1_public() { }
+            function C1_public() {
+            }
             C1_public.prototype.f1 = function () {
             };
             return C1_public;
         })();
         m1.C1_public = C1_public;
         var C2_private = (function () {
-            function C2_private() { }
+            function C2_private() {
+            }
             return C2_private;
         })();
         var C3_public = (function () {
@@ -55,14 +57,16 @@ define(["require", "exports"], function(require, exports) {
     var m2;
     (function (m2) {
         var m2_C1_public = (function () {
-            function m2_C1_public() { }
+            function m2_C1_public() {
+            }
             m2_C1_public.prototype.f1 = function () {
             };
             return m2_C1_public;
         })();
         m2.m2_C1_public = m2_C1_public;
         var m2_C2_private = (function () {
-            function m2_C2_private() { }
+            function m2_C2_private() {
+            }
             return m2_C2_private;
         })();
         var m2_C3_public = (function () {
@@ -106,14 +110,16 @@ define(["require", "exports"], function(require, exports) {
         m2.m2_v24_public = new m2_C2_private();
     })(m2 || (m2 = {}));
     var glo_C1_public = (function () {
-        function glo_C1_public() { }
+        function glo_C1_public() {
+        }
         glo_C1_public.prototype.f1 = function () {
         };
         return glo_C1_public;
     })();
     exports.glo_C1_public = glo_C1_public;
     var glo_C2_private = (function () {
-        function glo_C2_private() { }
+        function glo_C2_private() {
+        }
         return glo_C2_private;
     })();
     var glo_C3_public = (function () {

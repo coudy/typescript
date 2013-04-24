@@ -1,5 +1,6 @@
 var A = (function () {
-    function A() { }
+    function A() {
+    }
     return A;
 })();
 var a = new A();

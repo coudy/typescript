@@ -1,5 +1,6 @@
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.P = function (ii, j, k) {
         for (var i = 0; i < arguments.length; i++) {
         }

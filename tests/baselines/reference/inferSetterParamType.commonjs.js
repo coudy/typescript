@@ -1,5 +1,6 @@
 var Foo = (function () {
-    function Foo() { }
+    function Foo() {
+    }
     Object.defineProperty(Foo.prototype, "bar", {
         get: function () {
             return 0;
@@ -12,7 +13,8 @@ var Foo = (function () {
     return Foo;
 })();
 var Foo2 = (function () {
-    function Foo2() { }
+    function Foo2() {
+    }
     Object.defineProperty(Foo2.prototype, "bar", {
         get: function () {
             return 0;

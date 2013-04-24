@@ -1,5 +1,6 @@
 var AAA = (function () {
-    function AAA() { }
+    function AAA() {
+    }
     return AAA;
 })();
 var x;

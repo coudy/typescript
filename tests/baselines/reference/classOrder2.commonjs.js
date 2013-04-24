@@ -8,7 +8,6 @@ var A = (function (_super) {
     __extends(A, _super);
     function A() {
         _super.apply(this, arguments);
-
     }
     A.prototype.foo = function () {
         this.bar();
@@ -16,7 +15,8 @@ var A = (function (_super) {
     return A;
 })(B);
 var B = (function () {
-    function B() { }
+    function B() {
+    }
     B.prototype.bar = function () {
     };
     return B;

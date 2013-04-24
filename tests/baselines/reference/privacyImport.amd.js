@@ -2,7 +2,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     (function (m1) {
         (function (m1_M1_public) {
             var c1 = (function () {
-                function c1() { }
+                function c1() {
+                }
                 return c1;
             })();
             m1_M1_public.c1 = c1;
@@ -17,7 +18,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_M2_private;
         (function (m1_M2_private) {
             var c1 = (function () {
-                function c1() { }
+                function c1() {
+                }
                 return c1;
             })();
             m1_M2_private.c1 = c1;
@@ -76,7 +78,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     (function (m2) {
         (function (m2_M1_public) {
             var c1 = (function () {
-                function c1() { }
+                function c1() {
+                }
                 return c1;
             })();
             m2_M1_public.c1 = c1;
@@ -91,7 +94,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m2_M2_private;
         (function (m2_M2_private) {
             var c1 = (function () {
-                function c1() { }
+                function c1() {
+                }
                 return c1;
             })();
             m2_M2_private.c1 = c1;
@@ -147,7 +151,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     })(m2 || (m2 = {}));
     (function (glo_M1_public) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         glo_M1_public.c1 = c1;
@@ -162,7 +167,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
     
     (function (glo_M3_private) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         glo_M3_private.c1 = c1;

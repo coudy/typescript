@@ -1,17 +1,21 @@
 var X = (function () {
-    function X() { }
+    function X() {
+    }
     return X;
 })();
 var Y = (function () {
-    function Y() { }
+    function Y() {
+    }
     return Y;
 })();
 var X_1 = (function () {
-    function X_1() { }
+    function X_1() {
+    }
     return X_1;
 })();
 var Y_1 = (function () {
-    function Y_1() { }
+    function Y_1() {
+    }
     return Y_1;
 })();
 function foo(arg) {

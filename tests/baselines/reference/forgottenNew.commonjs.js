@@ -1,7 +1,8 @@
 var Tools;
 (function (Tools) {
     var NullLogger = (function () {
-        function NullLogger() { }
+        function NullLogger() {
+        }
         return NullLogger;
     })();
     Tools.NullLogger = NullLogger;

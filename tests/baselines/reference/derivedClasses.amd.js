@@ -8,7 +8,6 @@ var Red = (function (_super) {
     __extends(Red, _super);
     function Red() {
         _super.apply(this, arguments);
-
     }
     Red.prototype.shade = function () {
         var _this = this;
@@ -20,7 +19,8 @@ var Red = (function (_super) {
     return Red;
 })(Color);
 var Color = (function () {
-    function Color() { }
+    function Color() {
+    }
     Color.prototype.shade = function () {
         return "some shade";
     };
@@ -33,7 +33,6 @@ var Blue = (function (_super) {
     __extends(Blue, _super);
     function Blue() {
         _super.apply(this, arguments);
-
     }
     Blue.prototype.shade = function () {
         var _this = this;

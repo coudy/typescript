@@ -1,18 +1,21 @@
 var m1;
 (function (m1) {
     var C1_public = (function () {
-        function C1_public() { }
+        function C1_public() {
+        }
         C1_public.prototype.f1 = function () {
         };
         return C1_public;
     })();
     m1.C1_public = C1_public;
     var C2_private = (function () {
-        function C2_private() { }
+        function C2_private() {
+        }
         return C2_private;
     })();
     var C3_public = (function () {
-        function C3_public() { }
+        function C3_public() {
+        }
         Object.defineProperty(C3_public.prototype, "p1_private", {
             get: function () {
                 return new C1_public();
@@ -53,7 +56,8 @@ var m1;
     })();
     m1.C3_public = C3_public;
     var C4_private = (function () {
-        function C4_private() { }
+        function C4_private() {
+        }
         Object.defineProperty(C4_private.prototype, "p1_private", {
             get: function () {
                 return new C1_public();
@@ -94,11 +98,13 @@ var m1;
     })();
 })(m1 || (m1 = {}));
 var C6_public = (function () {
-    function C6_public() { }
+    function C6_public() {
+    }
     return C6_public;
 })();
 var C7_public = (function () {
-    function C7_public() { }
+    function C7_public() {
+    }
     Object.defineProperty(C7_public.prototype, "p1_private", {
         get: function () {
             return new C6_public();

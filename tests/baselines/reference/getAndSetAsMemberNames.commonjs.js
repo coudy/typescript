@@ -5,11 +5,13 @@ var C1 = (function () {
     return C1;
 })();
 var C2 = (function () {
-    function C2() { }
+    function C2() {
+    }
     return C2;
 })();
 var C3 = (function () {
-    function C3() { }
+    function C3() {
+    }
     C3.prototype.set = function (x) {
         return x + 1;
     };

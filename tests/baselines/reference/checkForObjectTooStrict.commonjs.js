@@ -7,7 +7,8 @@ var __extends = this.__extends || function (d, b) {
 var Foo;
 (function (Foo) {
     var Object = (function () {
-        function Object() { }
+        function Object() {
+        }
         return Object;
     })();
     Foo.Object = Object;

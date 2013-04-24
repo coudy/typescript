@@ -1,14 +1,16 @@
 var m1;
 (function (m1) {
     var C1_public = (function () {
-        function C1_public() { }
+        function C1_public() {
+        }
         C1_public.prototype.f1 = function () {
         };
         return C1_public;
     })();
     m1.C1_public = C1_public;
     var C2_private = (function () {
-        function C2_private() { }
+        function C2_private() {
+        }
         return C2_private;
     })();
     var C3_public = (function () {
@@ -148,7 +150,8 @@ var m1;
     m1.f12_public = f12_public;
 })(m1 || (m1 = {}));
 var C6_public = (function () {
-    function C6_public() { }
+    function C6_public() {
+    }
     return C6_public;
 })();
 var C7_public = (function () {

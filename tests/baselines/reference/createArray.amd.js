@@ -1,6 +1,7 @@
 var na = new number[]();
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     return C;
 })();
 new C[]();

@@ -1,7 +1,8 @@
 var _modes;
 (function (_modes) {
     var Mode = (function () {
-        function Mode() { }
+        function Mode() {
+        }
         return Mode;
     })();
     _modes.Mode = Mode;
@@ -30,7 +31,8 @@ var editor2;
     var Foo;
     (function (Foo) {
         var Bar = (function () {
-            function Bar() { }
+            function Bar() {
+            }
             return Bar;
         })();
         Foo.Bar = Bar;
@@ -44,7 +46,8 @@ var editor2;
 var A1;
 (function (A1) {
     var A1C1 = (function () {
-        function A1C1() { }
+        function A1C1() {
+        }
         return A1C1;
     })();
     A1.A1C1 = A1C1;

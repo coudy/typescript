@@ -11,7 +11,8 @@
     (function (m2) {
         /** class comment;*/
         var c = (function () {
-            function c() { }
+            function c() {
+            }
             return c;
         })();
         m2.c = c;
@@ -43,7 +44,8 @@ var myvar = new m1.m2.c();
     (function (m2) {
         /** class comment; */
         var c = (function () {
-            function c() { }
+            function c() {
+            }
             return c;
         })();
         m2.c = c;

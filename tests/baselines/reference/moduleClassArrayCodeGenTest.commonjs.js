@@ -1,12 +1,14 @@
 var M;
 (function (M) {
     var A = (function () {
-        function A() { }
+        function A() {
+        }
         return A;
     })();
     M.A = A;
     var B = (function () {
-        function B() { }
+        function B() {
+        }
         return B;
     })();
 })(M || (M = {}));

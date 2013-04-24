@@ -1,5 +1,6 @@
 var Accessor = (function () {
-    function Accessor() { }
+    function Accessor() {
+    }
     return Accessor;
 })();
 function attr(nameOrMap, value) {

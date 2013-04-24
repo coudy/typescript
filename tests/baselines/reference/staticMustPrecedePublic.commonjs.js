@@ -1,4 +1,5 @@
 var Outer = (function () {
-    function Outer() { }
+    function Outer() {
+    }
     return Outer;
 })();

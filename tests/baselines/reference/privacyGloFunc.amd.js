@@ -1,14 +1,16 @@
 define(["require", "exports"], function(require, exports) {
     (function (m1) {
         var C1_public = (function () {
-            function C1_public() { }
+            function C1_public() {
+            }
             C1_public.prototype.f1 = function () {
             };
             return C1_public;
         })();
         m1.C1_public = C1_public;
         var C2_private = (function () {
-            function C2_private() { }
+            function C2_private() {
+            }
             return C2_private;
         })();
         var C3_public = (function () {
@@ -151,14 +153,16 @@ define(["require", "exports"], function(require, exports) {
     var m2;
     (function (m2) {
         var m2_C1_public = (function () {
-            function m2_C1_public() { }
+            function m2_C1_public() {
+            }
             m2_C1_public.prototype.f = function () {
             };
             return m2_C1_public;
         })();
         m2.m2_C1_public = m2_C1_public;
         var m2_C2_private = (function () {
-            function m2_C2_private() { }
+            function m2_C2_private() {
+            }
             return m2_C2_private;
         })();
         var m2_C3_public = (function () {
@@ -298,13 +302,15 @@ define(["require", "exports"], function(require, exports) {
         m2.f12_public = f12_public;
     })(m2 || (m2 = {}));
     var C5_private = (function () {
-        function C5_private() { }
+        function C5_private() {
+        }
         C5_private.prototype.f = function () {
         };
         return C5_private;
     })();
     var C6_public = (function () {
-        function C6_public() { }
+        function C6_public() {
+        }
         return C6_public;
     })();
     exports.C6_public = C6_public;

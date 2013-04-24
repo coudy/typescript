@@ -1,5 +1,6 @@
 var A = (function () {
-    function A() { }
+    function A() {
+    }
     A.prototype.compareTo = function (other) {
         return 1;
     };

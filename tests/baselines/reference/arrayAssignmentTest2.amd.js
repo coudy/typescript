@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var C1 = (function () {
-    function C1() { }
+    function C1() {
+    }
     C1.prototype.IM1 = function () {
         return null;
     };
@@ -18,7 +19,6 @@ var C2 = (function (_super) {
     __extends(C2, _super);
     function C2() {
         _super.apply(this, arguments);
-
     }
     C2.prototype.C2M1 = function () {
         return null;
@@ -26,7 +26,8 @@ var C2 = (function (_super) {
     return C2;
 })(C1);
 var C3 = (function () {
-    function C3() { }
+    function C3() {
+    }
     C3.prototype.CM3M1 = function () {
         return 3;
     };

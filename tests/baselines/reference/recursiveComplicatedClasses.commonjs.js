@@ -14,7 +14,8 @@ function aEnclosesB(a) {
     return true;
 }
 var Symbol = (function () {
-    function Symbol() { }
+    function Symbol() {
+    }
     Symbol.prototype.visible = function () {
         var b;
         return aEnclosesB(b);
@@ -25,7 +26,6 @@ var InferenceSymbol = (function (_super) {
     __extends(InferenceSymbol, _super);
     function InferenceSymbol() {
         _super.apply(this, arguments);
-
     }
     return InferenceSymbol;
 })(Symbol);
@@ -33,7 +33,6 @@ var ParameterSymbol = (function (_super) {
     __extends(ParameterSymbol, _super);
     function ParameterSymbol() {
         _super.apply(this, arguments);
-
     }
     return ParameterSymbol;
 })(InferenceSymbol);
@@ -41,7 +40,6 @@ var TypeSymbol = (function (_super) {
     __extends(TypeSymbol, _super);
     function TypeSymbol() {
         _super.apply(this, arguments);
-
     }
     return TypeSymbol;
 })(InferenceSymbol);

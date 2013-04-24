@@ -8,7 +8,8 @@ var Foo = (function () {
     return Foo;
 })();
 var Foo2 = (function () {
-    function Foo2() { }
+    function Foo2() {
+    }
     Foo2.Foo2 = function () {
         return 0;
     };

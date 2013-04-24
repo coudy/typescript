@@ -23,7 +23,8 @@ var i1_i;
 var i2_i;
 var i3_i;
 var c = (function () {
-    function c() { }
+    function c() {
+    }
     c.prototype.prop1 = function (aorb) {
         return 10;
     };

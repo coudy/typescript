@@ -1,5 +1,6 @@
 var C234 = (function () {
-    function C234() { }
+    function C234() {
+    }
     Object.defineProperty(C234.prototype, "p1", {
         set: function (arg1) {
             if (true) {

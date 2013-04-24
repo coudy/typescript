@@ -6,11 +6,13 @@ var x3 = i;
 var x4 = i2;
 var x5 = i2;
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     return C;
 })();
 var D = (function () {
-    function D() { }
+    function D() {
+    }
     return D;
 })();
 var x6 = new C();

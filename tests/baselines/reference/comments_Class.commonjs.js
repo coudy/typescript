@@ -1,6 +1,7 @@
 /** This is class c2 without constuctor*/
 var c2 = (function () {
-    function c2() { }
+    function c2() {
+    }
     return c2;
 })();
 var i2 = new c2();
@@ -24,7 +25,8 @@ var i4 = new c4();
 var i4_c = c4;
 /** Class with statics*/
 var c5 = (function () {
-    function c5() { }
+    function c5() {
+    }
     return c5;
 })();
 var i5 = new c5();

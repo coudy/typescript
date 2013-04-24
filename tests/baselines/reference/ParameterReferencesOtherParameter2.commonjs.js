@@ -1,5 +1,6 @@
 var Model = (function () {
-    function Model() { }
+    function Model() {
+    }
     return Model;
 })();
 var UI = (function () {

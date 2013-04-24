@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Base1 = (function () {
-    function Base1() { }
+    function Base1() {
+    }
     Base1.prototype.foo = function () {
         return "base";
     };
@@ -15,7 +16,6 @@ var Sub1 = (function (_super) {
     __extends(Sub1, _super);
     function Sub1() {
         _super.apply(this, arguments);
-
     }
     Sub1.prototype.bar = function () {
         return "base";
@@ -26,7 +26,6 @@ var SubSub1 = (function (_super) {
     __extends(SubSub1, _super);
     function SubSub1() {
         _super.apply(this, arguments);
-
     }
     SubSub1.prototype.bar = function () {
         return _super.prototype.super.foo;
@@ -34,7 +33,8 @@ var SubSub1 = (function (_super) {
     return SubSub1;
 })(Sub1);
 var Base2 = (function () {
-    function Base2() { }
+    function Base2() {
+    }
     Base2.prototype.foo = function () {
         return "base";
     };
@@ -44,7 +44,6 @@ var SubE2 = (function (_super) {
     __extends(SubE2, _super);
     function SubE2() {
         _super.apply(this, arguments);
-
     }
     SubE2.prototype.bar = function () {
         return _super.prototype.prototype.foo = null;
@@ -52,7 +51,8 @@ var SubE2 = (function (_super) {
     return SubE2;
 })(Base2);
 var Base3 = (function () {
-    function Base3() { }
+    function Base3() {
+    }
     Base3.prototype.foo = function () {
         return "base";
     };
@@ -62,7 +62,6 @@ var SubE3 = (function (_super) {
     __extends(SubE3, _super);
     function SubE3() {
         _super.apply(this, arguments);
-
     }
     SubE3.prototype.bar = function () {
         return _super.prototype.bar.call(this);
@@ -72,7 +71,8 @@ var SubE3 = (function (_super) {
 var Base4;
 (function (Base4) {
     var Sub4 = (function () {
-        function Sub4() { }
+        function Sub4() {
+        }
         Sub4.prototype.x = function () {
             return "hello";
         };
@@ -82,7 +82,6 @@ var Base4;
         __extends(SubSub4, _super);
         function SubSub4() {
             _super.apply(this, arguments);
-
         }
         SubSub4.prototype.x = function () {
             return _super.prototype.x.call(this);
@@ -91,7 +90,8 @@ var Base4;
     })(Sub4);
     Base4.SubSub4 = SubSub4;
     var Sub4E = (function () {
-        function Sub4E() { }
+        function Sub4E() {
+        }
         Sub4E.prototype.x = function () {
             return _super.prototype.x.call(this);
         };

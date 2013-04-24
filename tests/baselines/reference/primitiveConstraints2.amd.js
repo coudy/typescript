@@ -1,5 +1,6 @@
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.bar2 = function (x, y) {
         return null;
     };

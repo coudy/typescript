@@ -1,7 +1,8 @@
 define(["require", "exports"], function(require, exports) {
     (function (Foo) {
         var C = (function () {
-            function C() { }
+            function C() {
+            }
             return C;
         })();
         Foo.C = C;

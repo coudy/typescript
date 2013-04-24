@@ -23,7 +23,8 @@ var s = "yo";
 var b = true;
 var n3 = 5 || {};
 var baz = (function () {
-    function baz() { }
+    function baz() {
+    }
     baz.prototype.bar = function () {
     };
     return baz;
@@ -32,7 +33,6 @@ var foo = (function (_super) {
     __extends(foo, _super);
     function foo() {
         _super.apply(this, arguments);
-
     }
     foo.prototype.bar = function () {
         return undefined;

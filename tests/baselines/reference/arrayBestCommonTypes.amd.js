@@ -5,23 +5,25 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var base = (function () {
-    function base() { }
+    function base() {
+    }
     return base;
 })();
 var base2 = (function () {
-    function base2() { }
+    function base2() {
+    }
     return base2;
 })();
 var derived = (function (_super) {
     __extends(derived, _super);
     function derived() {
         _super.apply(this, arguments);
-
     }
     return derived;
 })(base);
 var f = (function () {
-    function f() { }
+    function f() {
+    }
     f.prototype.voidIfAny = function (x, y) {
         if (typeof y === "undefined") { y = false; }
         return null;

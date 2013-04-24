@@ -26,7 +26,8 @@ string;
  {
 }
 var E = (function () {
-    function E() { }
+    function E() {
+    }
     Object.defineProperty(E.prototype, "Baz", {
         get: function () {
             return 0;

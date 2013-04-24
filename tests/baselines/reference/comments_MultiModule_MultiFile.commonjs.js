@@ -4,7 +4,8 @@ var multiM;
 (function (multiM) {
     /// class b comment
     var b = (function () {
-        function b() { }
+        function b() {
+        }
         return b;
     })();
     multiM.b = b;
@@ -14,13 +15,15 @@ var multiM;
 (function (multiM) {
     /** class c comment*/
     var c = (function () {
-        function c() { }
+        function c() {
+        }
         return c;
     })();
     multiM.c = c;
     // class e comment
     var e = (function () {
-        function e() { }
+        function e() {
+        }
         return e;
     })();
     multiM.e = e;
@@ -33,13 +36,15 @@ var multiM;
 (function (multiM) {
     /** class d comment*/
     var d = (function () {
-        function d() { }
+        function d() {
+        }
         return d;
     })();
     multiM.d = d;
     /// class f comment
     var f = (function () {
-        function f() { }
+        function f() {
+        }
         return f;
     })();
     multiM.f = f;

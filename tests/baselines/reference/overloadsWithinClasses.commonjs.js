@@ -1,5 +1,6 @@
 var foo = (function () {
-    function foo() { }
+    function foo() {
+    }
     foo.fnOverload = function () {
     };
     foo.fnOverload = function (foo) {
@@ -7,13 +8,15 @@ var foo = (function () {
     return foo;
 })();
 var bar = (function () {
-    function bar() { }
+    function bar() {
+    }
     bar.fnOverload = function (foo) {
     };
     return bar;
 })();
 var X = (function () {
-    function X() { }
+    function X() {
+    }
     X.prototype.attr = function (first, second) {
     };
     return X;

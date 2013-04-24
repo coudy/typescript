@@ -17,11 +17,13 @@ moduleType\u0031.baz1 = 3;
 moduleType2.baz2 = 3;
 moduleType\u0032.baz2 = 3;
 var classType1 = (function () {
-    function classType1() { }
+    function classType1() {
+    }
     return classType1;
 })();
 var classType\u0032 = (function () {
-    function classType\u0032() { }
+    function classType\u0032() {
+    }
     return classType\u0032;
 })();
 var classType1Object1 = new classType1();
@@ -49,7 +51,8 @@ var interfaceType2Object2 = {
 };
 interfaceType2Object2.bar2 = 2;
 var testClass = (function () {
-    function testClass() { }
+    function testClass() {
+    }
     testClass.prototype.func = function (arg1, arg\u0032, arg\u0033, arg4) {
         arg\u0031 = 1;
         arg2 = 'string';

@@ -3,7 +3,8 @@ var A;
     (function (B) {
         (function (C) {
             var Class1 = (function () {
-                function Class1() { }
+                function Class1() {
+                }
                 return Class1;
             })();
             C.Class1 = Class1;
@@ -18,7 +19,8 @@ var D;
     var c1 = new inner.Class1();
     (function (E) {
         var Class2 = (function () {
-            function Class2() { }
+            function Class2() {
+            }
             return Class2;
         })();
         E.Class2 = Class2;

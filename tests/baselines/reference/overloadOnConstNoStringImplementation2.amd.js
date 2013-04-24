@@ -1,5 +1,6 @@
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.x1 = function (a, callback) {
         callback('hi');
         callback('bye');

@@ -1,5 +1,6 @@
 var foo = (function () {
-    function foo() { }
+    function foo() {
+    }
     Object.defineProperty(foo.prototype, "bar", {
         set: function (param) {
         },

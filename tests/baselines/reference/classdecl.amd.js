@@ -46,19 +46,20 @@ var b = (function (_super) {
     __extends(b, _super);
     function b() {
         _super.apply(this, arguments);
-
     }
     return b;
 })(a);
 var m1;
 (function (m1) {
     var b = (function () {
-        function b() { }
+        function b() {
+        }
         return b;
     })();
     m1.b = b;
     var d = (function () {
-        function d() { }
+        function d() {
+        }
         return d;
     })();
 })(m1 || (m1 = {}));
@@ -69,13 +70,13 @@ var m2;
             __extends(c, _super);
             function c() {
                 _super.apply(this, arguments);
-
             }
             return c;
         })(b);
         m3.c = c;
         var ib2 = (function () {
-            function ib2() { }
+            function ib2() {
+            }
             return ib2;
         })();
         m3.ib2 = ib2;
@@ -86,24 +87,26 @@ var c = (function (_super) {
     __extends(c, _super);
     function c() {
         _super.apply(this, arguments);
-
     }
     return c;
 })(m1.b);
 var ib2 = (function () {
-    function ib2() { }
+    function ib2() {
+    }
     return ib2;
 })();
 
 var d = (function () {
-    function d() { }
+    function d() {
+    }
     d.prototype.foo = function (ns) {
         return ns.toString();
     };
     return d;
 })();
 var e = (function () {
-    function e() { }
+    function e() {
+    }
     e.prototype.foo = function (ns) {
         return ns.toString();
     };

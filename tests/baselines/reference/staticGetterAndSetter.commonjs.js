@@ -1,5 +1,6 @@
 var Foo = (function () {
-    function Foo() { }
+    function Foo() {
+    }
     Object.defineProperty(Foo, "Foo", {
         get: function () {
             return 0;

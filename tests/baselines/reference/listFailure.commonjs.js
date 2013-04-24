@@ -25,7 +25,8 @@ var Editor;
     }
     Editor.ListMakeEntry = ListMakeEntry;
     var List = (function () {
-        function List() { }
+        function List() {
+        }
         List.prototype.add = function (data) {
             this.next = ListMakeEntry(data);
             return this.next;
@@ -36,7 +37,8 @@ var Editor;
         return List;
     })();
     var Line = (function () {
-        function Line() { }
+        function Line() {
+        }
         return Line;
     })();
     Editor.Line = Line;

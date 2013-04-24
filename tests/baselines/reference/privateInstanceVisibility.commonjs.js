@@ -1,7 +1,8 @@
 var Test;
 (function (Test) {
     var Example = (function () {
-        function Example() { }
+        function Example() {
+        }
         Example.prototype.doSomething = function () {
             var that = this;
             function innerFunction() {
@@ -13,7 +14,8 @@ var Test;
     Test.Example = Example;
 })(Test || (Test = {}));
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.getX = function () {
         return this.x;
     };

@@ -1,7 +1,8 @@
 var M;
 (function (M) {
     var Foo = (function () {
-        function Foo() { }
+        function Foo() {
+        }
         return Foo;
     })();
     var Gar = (function () {

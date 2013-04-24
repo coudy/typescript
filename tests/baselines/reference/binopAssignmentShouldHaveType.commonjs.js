@@ -2,7 +2,8 @@
 var Test;
 (function (Test) {
     var Bug = (function () {
-        function Bug() { }
+        function Bug() {
+        }
         Bug.prototype.getName = function () {
             return "name";
         };

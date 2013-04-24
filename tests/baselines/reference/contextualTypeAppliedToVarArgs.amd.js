@@ -3,7 +3,8 @@ function delegate(instance, method, data) {
     };
 }
 var Foo = (function () {
-    function Foo() { }
+    function Foo() {
+    }
     Foo.prototype.Bar = function () {
         delegate(this, function (source, args2) {
             var a = source.node;

@@ -1,7 +1,8 @@
 var mod1;
 (function (mod1) {
     var C = (function () {
-        function C() { }
+        function C() {
+        }
         C.prototype.moo = function () {
         };
         return C;

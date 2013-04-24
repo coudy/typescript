@@ -6,7 +6,8 @@ var why = f();
 var w;
 w = f();
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     C.prototype.g = function () {
     };
     return C;

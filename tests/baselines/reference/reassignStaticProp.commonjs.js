@@ -1,5 +1,6 @@
 var foo = (function () {
-    function foo() { }
+    function foo() {
+    }
     foo.bar = 1;
     return foo;
 })();

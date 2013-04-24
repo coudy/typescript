@@ -1,5 +1,6 @@
 var C3 = (function () {
-    function C3() { }
+    function C3() {
+    }
     C3.prototype.CM3M1 = function () {
         return 3;
     };

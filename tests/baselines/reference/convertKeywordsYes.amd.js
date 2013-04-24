@@ -51,7 +51,8 @@ var big = {
     static: 0
 };
 var bigClass = (function () {
-    function bigClass() { }
+    function bigClass() {
+    }
     return bigClass;
 })();
 var bigEnum;

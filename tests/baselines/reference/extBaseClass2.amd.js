@@ -10,7 +10,6 @@ var N;
         __extends(C4, _super);
         function C4() {
             _super.apply(this, arguments);
-
         }
         return C4;
     })(M.B);
@@ -22,7 +21,6 @@ var M;
         __extends(C5, _super);
         function C5() {
             _super.apply(this, arguments);
-
         }
         return C5;
     })(B);

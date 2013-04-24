@@ -9,7 +9,8 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.TestCase = TestCase;
     var TestRunner = (function () {
-        function TestRunner() { }
+        function TestRunner() {
+        }
         TestRunner.arrayCompare = function (arg1, arg2) {
             return false;
         };

@@ -113,7 +113,8 @@ var SuperChild = (function (_super) {
     return SuperChild;
 })(SuperParent);
 var Statics = (function () {
-    function Statics() { }
+    function Statics() {
+    }
     Statics.baz = function () {
         return "";
     };
@@ -150,7 +151,6 @@ var ChildClassWithoutConstructor = (function (_super) {
     __extends(ChildClassWithoutConstructor, _super);
     function ChildClassWithoutConstructor() {
         _super.apply(this, arguments);
-
     }
     return ChildClassWithoutConstructor;
 })(BaseClassWithConstructor);

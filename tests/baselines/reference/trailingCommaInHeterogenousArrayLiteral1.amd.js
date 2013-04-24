@@ -1,5 +1,6 @@
 var arrTest = (function () {
-    function arrTest() { }
+    function arrTest() {
+    }
     arrTest.prototype.test = function (arg1) {
     };
     arrTest.prototype.callTest = function () {

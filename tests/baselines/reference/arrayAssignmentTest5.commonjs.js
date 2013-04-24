@@ -1,7 +1,8 @@
 var Test;
 (function (Test) {
     var Bug = (function () {
-        function Bug() { }
+        function Bug() {
+        }
         Bug.prototype.onEnter = function (line, state, offset) {
             var lineTokens = this.tokenize(line, state, true);
             var tokens = lineTokens.tokens;

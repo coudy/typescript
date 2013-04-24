@@ -1,5 +1,6 @@
 var Object = (function () {
-    function Object() { }
+    function Object() {
+    }
     return Object;
 })();
 var obj;

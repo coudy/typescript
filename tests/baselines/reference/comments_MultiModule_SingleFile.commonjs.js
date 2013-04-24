@@ -3,13 +3,15 @@ var multiM;
 (function (multiM) {
     /** class b*/
     var b = (function () {
-        function b() { }
+        function b() {
+        }
         return b;
     })();
     multiM.b = b;
     // class d
     var d = (function () {
-        function d() { }
+        function d() {
+        }
         return d;
     })();
     multiM.d = d;
@@ -19,13 +21,15 @@ var multiM;
 (function (multiM) {
     /** class c comment*/
     var c = (function () {
-        function c() { }
+        function c() {
+        }
         return c;
     })();
     multiM.c = c;
     /// class e
     var e = (function () {
-        function e() { }
+        function e() {
+        }
         return e;
     })();
     multiM.e = e;

@@ -1,5 +1,6 @@
 var Bar = (function () {
-    function Bar() { }
+    function Bar() {
+    }
     Bar.prototype.clone = function () {
         return new Bar(0);
     };

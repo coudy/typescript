@@ -1,5 +1,6 @@
 var C1 = (function () {
-    function C1() { }
+    function C1() {
+    }
     Object.defineProperty(C1.prototype, "getset1", {
         get: function () {
             return 1;
@@ -10,7 +11,8 @@ var C1 = (function () {
     return C1;
 })();
 var C2 = (function () {
-    function C2() { }
+    function C2() {
+    }
     Object.defineProperty(C2.prototype, "getset1", {
         set: function (baz) {
         },
@@ -20,7 +22,8 @@ var C2 = (function () {
     return C2;
 })();
 var C3 = (function () {
-    function C3() { }
+    function C3() {
+    }
     Object.defineProperty(C3.prototype, "getset1", {
         get: function () {
             return 1;
@@ -33,7 +36,8 @@ var C3 = (function () {
     return C3;
 })();
 var C4 = (function () {
-    function C4() { }
+    function C4() {
+    }
     Object.defineProperty(C4.prototype, "getset1", {
         get: function () {
             var x;
@@ -45,7 +49,8 @@ var C4 = (function () {
     return C4;
 })();
 var C5 = (function () {
-    function C5() { }
+    function C5() {
+    }
     Object.defineProperty(C5.prototype, "getset1", {
         set: function (baz) {
         },
@@ -55,7 +60,8 @@ var C5 = (function () {
     return C5;
 })();
 var C6 = (function () {
-    function C6() { }
+    function C6() {
+    }
     Object.defineProperty(C6.prototype, "getset1", {
         get: function () {
             var x;

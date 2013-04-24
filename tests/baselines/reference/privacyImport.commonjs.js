@@ -1,7 +1,8 @@
 (function (m1) {
     (function (m1_M1_public) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         m1_M1_public.c1 = c1;
@@ -16,7 +17,8 @@
     var m1_M2_private;
     (function (m1_M2_private) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         m1_M2_private.c1 = c1;
@@ -75,7 +77,8 @@ var m2;
 (function (m2) {
     (function (m2_M1_public) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         m2_M1_public.c1 = c1;
@@ -90,7 +93,8 @@ var m2;
     var m2_M2_private;
     (function (m2_M2_private) {
         var c1 = (function () {
-            function c1() { }
+            function c1() {
+            }
             return c1;
         })();
         m2_M2_private.c1 = c1;
@@ -146,7 +150,8 @@ var m2;
 })(m2 || (m2 = {}));
 (function (glo_M1_public) {
     var c1 = (function () {
-        function c1() { }
+        function c1() {
+        }
         return c1;
     })();
     glo_M1_public.c1 = c1;
@@ -161,7 +166,8 @@ var glo_M1_public = exports.glo_M1_public;
 
 (function (glo_M3_private) {
     var c1 = (function () {
-        function c1() { }
+        function c1() {
+        }
         return c1;
     })();
     glo_M3_private.c1 = c1;

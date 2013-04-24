@@ -6,6 +6,7 @@ with (ooo.eee.oo.ah_ah.ting.tang.walla.walla) {
     bar();
 }
 var C = (function () {
-    function C() { }
+    function C() {
+    }
     return C;
 })();

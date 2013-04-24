@@ -1,5 +1,6 @@
 var a = (function () {
-    function a() { }
+    function a() {
+    }
     a.prototype.b = function () {
     };
     a.prototype.b = function () {

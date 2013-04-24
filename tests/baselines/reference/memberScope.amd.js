@@ -1,7 +1,8 @@
 var Salt;
 (function (Salt) {
     var Pepper = (function () {
-        function Pepper() { }
+        function Pepper() {
+        }
         return Pepper;
     })();
     Salt.Pepper = Pepper;

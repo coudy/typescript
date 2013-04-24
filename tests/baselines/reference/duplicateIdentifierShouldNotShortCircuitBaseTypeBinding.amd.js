@@ -2,7 +2,8 @@
 var Shapes;
 (function (Shapes) {
     var Point = (function () {
-        function Point() { }
+        function Point() {
+        }
         return Point;
     })();
     Shapes.Point = Point;
@@ -11,7 +12,8 @@ var Shapes;
 var Shapes;
 (function (Shapes) {
     var Point = (function () {
-        function Point() { }
+        function Point() {
+        }
         return Point;
     })();
     Shapes.Point = Point;

@@ -1,7 +1,8 @@
 var M;
 (function (M) {
     var C = (function () {
-        function C() { }
+        function C() {
+        }
         C.prototype.f = function (x) {
             var rest = [];
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
