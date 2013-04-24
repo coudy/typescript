@@ -3691,6 +3691,7 @@ module TypeScript {
                 var specializedSignature: PullSignatureSymbol;
                 var typeParameters: PullTypeParameterSymbol[];
                 var typeConstraint: PullTypeSymbol = null;
+                var prevSpecializingToAny = context.specializingToAny;
 
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
@@ -3734,12 +3735,12 @@ module TypeScript {
                                 }
                             }
                             else {
-                                for (j = 0; j < typeParameters.length; j++) {
-                                    inferredTypeArgs[inferredTypeArgs.length] = this.semanticInfoChain.anyTypeSymbol;
-                                }
+                                context.specializingToAny = true;
                             }
 
                             specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
+
+                            context.specializingToAny = prevSpecializingToAny;
 
                             if (specializedSignature) {
                                 resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -3962,6 +3963,7 @@ module TypeScript {
                     var specializedSignature: PullSignatureSymbol;
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
+                    var prevSpecializingToAny = context.specializingToAny;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
                         if (constructSignatures[i].isGeneric()) {
@@ -4007,12 +4009,12 @@ module TypeScript {
                                     }
                                 }
                                 else {
-                                    for (j = 0; j < typeParameters.length; j++) {
-                                        inferredTypeArgs[inferredTypeArgs.length] = this.semanticInfoChain.anyTypeSymbol;
-                                    }
+                                    context.specializingToAny = true;
                                 }
 
                                 specializedSignature = specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
+
+                                context.specializingToAny = prevSpecializingToAny;
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -5892,10 +5894,14 @@ module TypeScript {
 
             var resultTypes: PullTypeSymbol[] = [];
 
-            var len = typeParameters.length < inferenceResults.results.length ? typeParameters.length : inferenceResults.results.length;
-
-            for (var i = 0; i < len; i++) {
-                resultTypes[resultTypes.length] = inferenceResults.results[i].type;
+            // match inferred types in-order to type parameters
+            for (var i = 0; i < typeParameters.length; i++) {
+                for (var j = 0; j < inferenceResults.results.length; j++) {
+                    if (inferenceResults.results[j].param == typeParameters[i]) {
+                        resultTypes[resultTypes.length] = inferenceResults.results[j].type;
+                        break;
+                    }
+                }
             }
 
             if (!args.members.length && !resultTypes.length && typeParameters.length) {
@@ -5939,19 +5945,13 @@ module TypeScript {
                     typeArguments = expressionType.getTypeParameters();
                 }
 
-                var hadRelation = false;
-
                 if (typeParameters && typeArguments && typeParameters.length === typeArguments.length) {
                     for (var i = 0; i < typeParameters.length; i++) {
                         if (typeArguments[i] != typeParameters[i]) {
-                            this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], shouldFix, argContext, enclosingDecl, context);
-                            hadRelation = true;
+                            // relate and fix
+                            this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], true, argContext, enclosingDecl, context);
                         }
                     }
-                }
-
-                if (hadRelation) {
-                    return;
                 }
             }
 

@@ -106,6 +106,14 @@ module TypeScript {
                 if (!bestCommonType) {
                     unfit = true;
                 }
+                else {
+                    // is there already a substitution for this type?
+                    for (var i = 0; i < results.length; i++) {
+                        if (results[i].type == info.typeParameter) {
+                            results[i].type = bestCommonType;
+                        }
+                    }
+                }
 
                 results[results.length] = { param: info.typeParameter, type: bestCommonType };
             }

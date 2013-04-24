@@ -84,7 +84,7 @@
 goTo.marker('a1');
 verify.quickInfoIs('Foo<any>');
 goTo.marker('a2');
-verify.quickInfoIs('Foo<any>');
+verify.quickInfoIs('Foo<Foo<number>>');
 goTo.marker('a3');
 verify.quickInfoIs('IG<any>');
 // BUG 668243
@@ -106,7 +106,7 @@ verify.quickInfoIs('C<any>');
 //goTo.marker('b1');
 //verify.quickInfoIs('any');
 goTo.marker('b2');
-verify.quickInfoIs('Foo<any>'); 
+verify.quickInfoIs('Foo<number>'); 
 goTo.marker('b3');
 verify.quickInfoIs('IG<number>');
 // BUG 668243

@@ -2719,6 +2719,11 @@ module TypeScript {
 
         var typeParameters = typeToSpecialize.getTypeParameters();
 
+        // if we don't have the complete list of types to specialize to, we'll need to reconstruct the specialization signature
+        if (!context.specializingToAny && searchForExistingSpecialization && (typeParameters.length > typeArguments.length)) {
+            searchForExistingSpecialization = false;
+        }
+
         var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
         var newType: PullTypeSymbol = null;
@@ -2859,55 +2864,56 @@ module TypeScript {
         for (var i = 0; i < callSignatures.length; i++) {
             signature = callSignatures[i];
 
-            if (signature.currentlyBeingSpecialized()) {
-                newType.addCallSignature(signature);
-                continue;
+            if (!signature.currentlyBeingSpecialized()) {
+
+                context.pushTypeSpecializationCache(typeReplacementMap);
+
+                decl = signature.getDeclarations()[0];
+                unitPath = resolver.getUnitPath();
+                resolver.setUnitPath(decl.getScriptName());
+
+                newSignature = new PullSignatureSymbol(signature.getKind());
+
+                newSignature.mimicSignature(signature);
+                declAST = resolver.semanticInfoChain.getASTForDecl(decl);
+
+                prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+                decl.setSpecializingSignatureSymbol(newSignature);
+                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
+
+                parameters = signature.getParameters();
+                newParameters = newSignature.getParameters();
+
+                for (var p = 0; p < parameters.length; p++) {
+                    newParameters[p].setType(parameters[p].getType());
+                }
+                newSignature.setResolved();
+
+                resolver.setUnitPath(unitPath);
+
+                returnType = newSignature.getReturnType();
+
+                if (!returnType) {
+                    newSignature.setReturnType(signature.getReturnType());
+                }
+
+                signature.setIsBeingSpecialized();
+                newSignature.addDeclaration(decl);
+                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+                signature.setIsSpecialized();
+
+                context.popTypeSpecializationCache();
+
+                if (!newSignature) {
+                    context.inSpecialization = prevInSpecialization;
+                    Debug.assert(false, "returning from call");
+                    return resolver.semanticInfoChain.anyTypeSymbol;
+                }
             }
-
-            context.pushTypeSpecializationCache(typeReplacementMap);
-
-            decl = signature.getDeclarations()[0];
-            unitPath = resolver.getUnitPath();
-            resolver.setUnitPath(decl.getScriptName());
-
-            newSignature = new PullSignatureSymbol(signature.getKind());
-
-            newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
-
-            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
-            decl.setSpecializingSignatureSymbol(newSignature);
-            resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
-
-            parameters = signature.getParameters();
-            newParameters = newSignature.getParameters();
-
-            for (var p = 0; p < parameters.length; p++) {
-                newParameters[p].setType(parameters[p].getType());
-            }
-            newSignature.setResolved();
-
-            resolver.setUnitPath(unitPath);
-
-            returnType = newSignature.getReturnType();
-
-            if (!returnType) {
-                newSignature.setReturnType(signature.getReturnType());
-            }
-
-            signature.setIsBeingSpecialized();
-            newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
-            signature.setIsSpecialized();
-
-            context.popTypeSpecializationCache();
-
-            if (!newSignature) {
-                context.inSpecialization = prevInSpecialization;
-                Debug.assert(false, "returning from call");
-                return resolver.semanticInfoChain.anyTypeSymbol;
-            }            
+            else {
+                newSignature = signature;
+            }          
 
             newType.addCallSignature(newSignature);
 
@@ -2920,52 +2926,58 @@ module TypeScript {
         for (var i = 0; i < constructSignatures.length; i++) {
             signature = constructSignatures[i];
 
-            context.pushTypeSpecializationCache(typeReplacementMap);
+            if (!signature.currentlyBeingSpecialized()) {
 
-            decl = signature.getDeclarations()[0];
-            unitPath = resolver.getUnitPath();
-            resolver.setUnitPath(decl.getScriptName());
+                context.pushTypeSpecializationCache(typeReplacementMap);
 
-            newSignature = new PullSignatureSymbol(signature.getKind());
+                decl = signature.getDeclarations()[0];
+                unitPath = resolver.getUnitPath();
+                resolver.setUnitPath(decl.getScriptName());
 
-            newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
+                newSignature = new PullSignatureSymbol(signature.getKind());
 
-            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
-            decl.setSpecializingSignatureSymbol(newSignature);
-            resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
+                newSignature.mimicSignature(signature);
+                declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-            parameters = signature.getParameters();
-            newParameters = newSignature.getParameters();
+                prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+                decl.setSpecializingSignatureSymbol(newSignature);
+                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
-            // we need to clone the parameter types, but the return type
-            // was set during resolution
-            for (var p = 0; p < parameters.length; p++) {
-                newParameters[p].setType(parameters[p].getType());
+                parameters = signature.getParameters();
+                newParameters = newSignature.getParameters();
+
+                // we need to clone the parameter types, but the return type
+                // was set during resolution
+                for (var p = 0; p < parameters.length; p++) {
+                    newParameters[p].setType(parameters[p].getType());
+                }
+                newSignature.setResolved();
+
+                resolver.setUnitPath(unitPath);
+
+                returnType = newSignature.getReturnType();
+
+                if (!returnType) {
+                    newSignature.setReturnType(signature.getReturnType());
+                }
+
+                signature.setIsBeingSpecialized();
+                newSignature.addDeclaration(decl);
+                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+                signature.setIsSpecialized();
+
+                context.popTypeSpecializationCache();
+
+                if (!newSignature) {
+                    context.inSpecialization = prevInSpecialization;
+                    Debug.assert(false, "returning from construct");
+                    return resolver.semanticInfoChain.anyTypeSymbol;
+                }
             }
-            newSignature.setResolved();
-
-            resolver.setUnitPath(unitPath);
-
-            returnType = newSignature.getReturnType();
-
-            if (!returnType) {
-                newSignature.setReturnType(signature.getReturnType());
-            }            
-
-            signature.setIsBeingSpecialized();
-            newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
-            signature.setIsSpecialized();
-
-            context.popTypeSpecializationCache();
-
-            if (!newSignature) {
-                context.inSpecialization = prevInSpecialization;
-                Debug.assert(false, "returning from construct");
-                return resolver.semanticInfoChain.anyTypeSymbol;
-            }
+            else {
+                newSignature = signature;
+            }   
 
             newType.addConstructSignature(newSignature);
 
@@ -2978,52 +2990,58 @@ module TypeScript {
         for (var i = 0; i < indexSignatures.length; i++) {
             signature = indexSignatures[i];
 
-            context.pushTypeSpecializationCache(typeReplacementMap);
+            if (!signature.currentlyBeingSpecialized()) {                
 
-            decl = signature.getDeclarations()[0];
-            unitPath = resolver.getUnitPath();
-            resolver.setUnitPath(decl.getScriptName());
+                context.pushTypeSpecializationCache(typeReplacementMap);
 
-            newSignature = new PullSignatureSymbol(signature.getKind());
+                decl = signature.getDeclarations()[0];
+                unitPath = resolver.getUnitPath();
+                resolver.setUnitPath(decl.getScriptName());
 
-            newSignature.mimicSignature(signature);
-            declAST = resolver.semanticInfoChain.getASTForDecl(decl);
+                newSignature = new PullSignatureSymbol(signature.getKind());
 
-            prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
-            decl.setSpecializingSignatureSymbol(newSignature);
-            resolver.resolveAST(declAST, false, newTypeDecl, context);
-            decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
+                newSignature.mimicSignature(signature);
+                declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-            parameters = signature.getParameters();
-            newParameters = newSignature.getParameters();
+                prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
+                decl.setSpecializingSignatureSymbol(newSignature);
+                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
-            // we need to clone the parameter types, but the return type
-            // was set during resolution
-            for (var p = 0; p < parameters.length; p++) {
-                newParameters[p].setType(parameters[p].getType());
+                parameters = signature.getParameters();
+                newParameters = newSignature.getParameters();
+
+                // we need to clone the parameter types, but the return type
+                // was set during resolution
+                for (var p = 0; p < parameters.length; p++) {
+                    newParameters[p].setType(parameters[p].getType());
+                }
+                newSignature.setResolved();
+
+                resolver.setUnitPath(unitPath);
+
+                returnType = newSignature.getReturnType();
+
+                if (!returnType) {
+                    newSignature.setReturnType(signature.getReturnType());
+                }
+
+                signature.setIsBeingSpecialized();
+                newSignature.addDeclaration(decl);
+                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+                signature.setIsSpecialized();
+
+                context.popTypeSpecializationCache();
+
+                if (!newSignature) {
+                    context.inSpecialization = prevInSpecialization;
+                    Debug.assert(false, "returning from index");
+                    return resolver.semanticInfoChain.anyTypeSymbol;
+                }
             }
-            newSignature.setResolved();
-
-            resolver.setUnitPath(unitPath);
-
-            returnType = newSignature.getReturnType();
-
-            if (!returnType) {
-                newSignature.setReturnType(signature.getReturnType());
-            }            
-
-            signature.setIsBeingSpecialized();
-            newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
-            signature.setIsSpecialized();
-
-            context.popTypeSpecializationCache();
-
-            if (!newSignature) {
-                context.inSpecialization = prevInSpecialization;
-                Debug.assert(false, "returning from index");
-                return resolver.semanticInfoChain.anyTypeSymbol;
-            }
+            else {
+                newSignature = signature;
+            }   
             
             newType.addIndexSignature(newSignature);
 
@@ -3110,7 +3128,7 @@ module TypeScript {
 
             for (var i = 0; i < constructorDecls.length; i++) {
                 newConstructorMethod.addDeclaration(constructorDecls[i]);
-                newConstructorType.addDeclaration(constructorDecls[i]);
+                //newConstructorType.addDeclaration(constructorDecls[i]);
             }
 
             (<PullClassTypeSymbol>newType).setConstructorMethod(newConstructorMethod);
