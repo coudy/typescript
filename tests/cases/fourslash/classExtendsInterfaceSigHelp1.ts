@@ -14,5 +14,5 @@
 ////i.foo(/**/
 
 goTo.marker();
-verify.currentSignatureHelpCountIs(2);
+verify.signatureHelpCountIs(2);
 verify.currentParameterHelpType('string');

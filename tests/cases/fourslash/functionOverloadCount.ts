@@ -12,4 +12,4 @@
 ////i.attr(/*1*/
 
 goTo.marker('1');
-verify.currentSignatureHelpCountIs(3);
+verify.signatureHelpCountIs(3);

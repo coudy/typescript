@@ -7,7 +7,7 @@
 ////var x = new ConstructorCall(/*constructorCall1*/1,/*constructorCall2*/2);
 
 goTo.marker('constructorCall1');
-verify.currentSignatureHelpCountIs(1);
+verify.signatureHelpCountIs(1);
 verify.currentSignatureHelpReturnTypeIs("ConstructorCall");
 verify.currentParameterHelpArgumentNameIs("str");
 verify.currentParameterHelpType("string");

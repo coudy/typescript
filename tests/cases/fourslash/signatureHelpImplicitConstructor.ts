@@ -5,6 +5,6 @@
 ////var implicitConstructor = new ImplicitConstructor(/**/);
 
 goTo.marker();
-verify.currentSignatureHelpCountIs(1);
+verify.signatureHelpCountIs(1);
 verify.currentSignatureHelpReturnTypeIs("ImplicitConstructor");
 verify.currentSignatureParamterCountIs(0);

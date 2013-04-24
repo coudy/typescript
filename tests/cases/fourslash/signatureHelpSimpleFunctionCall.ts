@@ -8,7 +8,7 @@
 
 
 goTo.marker('functionCall1');
-verify.currentSignatureHelpCountIs(1);
+verify.signatureHelpCountIs(1);
 verify.currentSignatureHelpReturnTypeIs("void");
 verify.currentParameterHelpArgumentNameIs("str");
 verify.currentParameterHelpType("string");

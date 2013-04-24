@@ -6,4 +6,4 @@
 ////});
 
 goTo.marker();
-verify.currentSignatureHelpCountIs(0);
+verify.not.signatureHelpPresent();

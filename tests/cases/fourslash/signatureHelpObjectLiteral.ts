@@ -4,7 +4,12 @@
 ////objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");
 
 goTo.marker('objectLiteral1');
+verify.signatureHelpFunctionNameIs('f');
+verify.signatureHelpCountIs(1);
+
+verify.currentSignatureParamterCountIs(2);
 verify.currentSignatureHelpReturnTypeIs("string");
+
 verify.currentParameterHelpArgumentNameIs("a");
 verify.currentParameterHelpType("number");
 goTo.marker('objectLiteral2');

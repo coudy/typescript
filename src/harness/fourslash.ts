@@ -384,7 +384,11 @@ module FourSlash {
                 }
             }
         }
-        
+
+        public verifySignatureHelpFunctionName(expected: string) {
+            assert.equal(this.getFormalParameter().name, expected);
+        }
+
         public verifyCurrentParameterIsVariable(isVariable: boolean) {
             assert.equal(isVariable, this.getActiveParameter().isVariable);
         }
@@ -415,7 +419,7 @@ module FourSlash {
             assert.equal(actualDocComment, docComment);
         }
 
-        public verifyCurrentSignatureHelpCount(expected: number) {
+        public verifySignatureHelpCount(expected: number) {
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actual = help && help.formal ? help.formal.signatureGroup.length : 0;
             assert.equal(actual, expected);
@@ -432,6 +436,11 @@ module FourSlash {
                     throw new Error("Expected no signature help, but got '" + JSON2.stringify(actual) + "'");
                 }
             }
+        }
+
+        private getFormalParameter() {
+            var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+            return help.formal;
         }
 
         private getActiveSignatureHelp() {

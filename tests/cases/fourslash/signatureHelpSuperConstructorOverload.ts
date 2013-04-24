@@ -18,7 +18,7 @@
 ////}
 
 goTo.marker('superOverload1');
-verify.currentSignatureHelpCountIs(2);
+verify.signatureHelpCountIs(2);
 verify.currentSignatureHelpReturnTypeIs("SuperOverloadlBase");
 verify.currentSignatureParamterCountIs(0);
 goTo.marker('superOverload2');

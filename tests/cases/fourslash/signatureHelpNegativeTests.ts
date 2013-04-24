@@ -8,7 +8,11 @@ goTo.marker('insideComment');
 verify.not.signatureHelpPresent();
 
 
-////cl/*invalidContext*/ass InvalidSignatureHelpLocation { } 
+////cl/*invalidContext*/ass InvalidSignatureHelpLocation { }
+////InvalidSignatureHelpLocation(/*invalidContext2*/);
 
 goTo.marker('invalidContext');
+verify.not.signatureHelpPresent();
+
+goTo.marker('invalidContext2');
 verify.not.signatureHelpPresent();

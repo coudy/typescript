@@ -216,8 +216,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCurrentSignatureHelpDocComment(docComment);
         }
 
-        public currentSignatureHelpCountIs(expected: number) {
-            FourSlash.currentTestState.verifyCurrentSignatureHelpCount(expected);
+        public signatureHelpCountIs(expected: number) {
+            FourSlash.currentTestState.verifySignatureHelpCount(expected);
         }
 
         public currentParameterHelpType(expected: string) {
@@ -226,6 +226,10 @@ module FourSlashInterface {
 
         public currentSignatureParamterCountIs(expected: number) {
             FourSlash.currentTestState.verifyCurrentSignatureHelpParameterCount(expected);
+        }
+
+        public signatureHelpFunctionNameIs(expected: string) {
+            FourSlash.currentTestState.verifySignatureHelpFunctionName(expected);
         }
 
         public numberOfErrorsInCurrentFile(expected: number) {

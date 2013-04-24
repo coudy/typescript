@@ -9,5 +9,5 @@
 ////x1(''/**/);
 
 goTo.marker();
-verify.currentSignatureHelpCountIs(3);
+verify.signatureHelpCountIs(3);
 verify.currentParameterHelpType("string");
