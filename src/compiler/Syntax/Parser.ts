@@ -4974,8 +4974,8 @@ module TypeScript.Parser {
             Debug.assert(skippedTokens.length === 0);
             Debug.assert(skippedTokens !== items);
 
-            var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
+            var allowAutomaticSemicolonInsertion = separatorKind === SyntaxKind.SemicolonToken;
 
             var inErrorRecovery = false;
             var listWasTerminated = false;
@@ -5085,35 +5085,6 @@ module TypeScript.Parser {
             this.returnZeroOrOneLengthArray(items);
 
             return { skippedTokens: skippedTokens, list: result };
-        }
-
-        private allowsAutomaticSemicolonInsertion(currentListType: ListParsingState): boolean {
-            switch (currentListType) {
-                case ListParsingState.ObjectType_TypeMembers:
-                    return true;
-
-                case ListParsingState.HeritageClause_TypeNameList:
-                case ListParsingState.EnumDeclaration_EnumElements:
-                case ListParsingState.ArgumentList_AssignmentExpressions:
-                case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                case ListParsingState.ParameterList_Parameters:
-                case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                case ListParsingState.TypeArgumentList_Types:
-                case ListParsingState.TypeParameterList_TypeParameters:
-                    return false;
-
-                case ListParsingState.SourceUnit_ModuleElements:
-                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
-                case ListParsingState.ClassDeclaration_ClassElements:
-                case ListParsingState.ModuleDeclaration_ModuleElements:
-                case ListParsingState.SwitchStatement_SwitchClauses:
-                case ListParsingState.SwitchClause_Statements:
-                case ListParsingState.Block_Statements:
-                default:
-                    throw Errors.notYetImplemented();
-            }
         }
 
         private separatorKind(currentListType: ListParsingState): SyntaxKind {
@@ -5443,7 +5414,7 @@ module TypeScript.Parser {
                     return this.isTypeMember(inErrorRecovery);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
-                    return this.isExpression();
+                    return this.isExpectedArgumentList_AssignmentExpression();
 
                 case ListParsingState.HeritageClause_TypeNameList:
                     return this.isHeritageClauseTypeName();
@@ -5466,6 +5437,21 @@ module TypeScript.Parser {
                 default:
                     throw Errors.invalidOperation();
             }
+        }
+
+        private isExpectedArgumentList_AssignmentExpression(): boolean {
+            if (this.isExpression()) {
+                return true;
+            }
+
+            // If we're on a comma then the user has written something like "Foo(a,," or "Foo(,".
+            // Instead of skipping the comma, create an empty expression to go before the comma 
+            // so that the tree is more well formed and doesn't have skipped tokens.
+            if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
+                return true;
+            }
+
+            return false;
         }
 
         private parseExpectedListItem(currentListType: ListParsingState): ISyntaxNodeOrToken {

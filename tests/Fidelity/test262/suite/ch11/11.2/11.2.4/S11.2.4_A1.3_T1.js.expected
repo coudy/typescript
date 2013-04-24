@@ -8,10 +8,7 @@
         {
             "_position": 350,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "expression"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "sourceUnit": {
@@ -197,24 +194,21 @@
                             {
                                 "kind": "CommaToken",
                                 "width": 1,
-                                "fullWidth": 2,
                                 "text": ",",
                                 "value": ",",
-                                "valueText": ",",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingSkippedText": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "SkippedTokenTrivia",
-                                        "skippedToken": {
-                                            "kind": "CommaToken",
-                                            "width": 1,
-                                            "text": ",",
-                                            "value": ",",
-                                            "valueText": ","
-                                        }
-                                    }
-                                ]
+                                "valueText": ","
+                            },
+                            {
+                                "kind": "IdentifierName",
+                                "width": 0,
+                                "text": ""
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "text": ",",
+                                "value": ",",
+                                "valueText": ","
                             },
                             {
                                 "kind": "NumericLiteral",
