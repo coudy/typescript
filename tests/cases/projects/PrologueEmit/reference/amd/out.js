@@ -11,7 +11,8 @@ var __extends = this.__extends || function (d, b) {
 var m;
 (function (m) {
     var base = (function () {
-        function base() { }
+        function base() {
+        }
         return base;
     })();
     m.base = base;
@@ -19,7 +20,6 @@ var m;
         __extends(child, _super);
         function child() {
             _super.apply(this, arguments);
-
         }
         return child;
     })(base);
