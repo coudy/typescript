@@ -67,7 +67,9 @@ module TypeScript {
         public getName() { return this.declName; }
         public getKind() { return this.declType }
 
-        public getDisplayName() { return this.declDisplayName === undefined ? this.declName : this.declDisplayName; }
+        public getDisplayName() {
+            return this.declDisplayName === undefined ? this.declName : this.declDisplayName;
+        }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
         public getSymbol(): PullSymbol { return this.symbol; }
