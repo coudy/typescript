@@ -2991,10 +2991,7 @@ var TypeScript;
                 shift += (i === 0) ? 4 : 5;
                 if ((byte & 32) === 32) {
                 } else {
-                    return {
-                        value: negative ? -(result) : result,
-                        rest: inString.substr(i + 1)
-                    };
+                    return { value: negative ? -(result) : result, rest: inString.substr(i + 1) };
                 }
             }
             throw new Error('Base64 value "' + inString + '" finished with a continuation bit');
@@ -3019,7 +3016,15 @@ var JSON2 = {};
             return this.valueOf();
         };
     }
-    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"': '\\"', '\\': '\\\\'    }, rep;
+    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
+        '\b': '\\b',
+        '\t': '\\t',
+        '\n': '\\n',
+        '\f': '\\f',
+        '\r': '\\r',
+        '"': '\\"',
+        '\\': '\\\\'
+    }, rep;
     function quote(string) {
         escapable.lastIndex = 0;
         return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
@@ -3100,9 +3105,7 @@ var JSON2 = {};
             if (replacer && typeof replacer !== 'function' && (typeof replacer !== 'object' || typeof replacer.length !== 'number')) {
                 throw new Error('JSON.stringify');
             }
-            return str('', {
-                '': value
-            });
+            return str('', { '': value });
         };
     }
 })());
@@ -3527,10 +3530,7 @@ var TypeScript;
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
                     if (ast && ast.nodeType === 17 /* VariableDeclarator */) {
-                        return {
-                            boundDecl: ast,
-                            pullDecl: pullDecl
-                        };
+                        return { boundDecl: ast, pullDecl: pullDecl };
                     }
                 }
             }
@@ -3565,10 +3565,7 @@ var TypeScript;
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
                     if (ast && ast.nodeType === 17 /* VariableDeclarator */) {
-                        return {
-                            boundDecl: ast,
-                            pullDecl: pullDecl
-                        };
+                        return { boundDecl: ast, pullDecl: pullDecl };
                     }
                 }
             }
@@ -4238,10 +4235,7 @@ var TypeScript;
         };
         Emitter.prototype.recordSourceMappingStart = function (ast) {
             if (this.sourceMapper && TypeScript.isValidAstNode(ast)) {
-                var lineCol = {
-                    line: -1,
-                    character: -1
-                };
+                var lineCol = { line: -1, character: -1 };
                 var sourceMapping = new TypeScript.SourceMapping();
                 sourceMapping.start.emittedColumn = this.emitState.column;
                 sourceMapping.start.emittedLine = this.emitState.line;
@@ -4955,10 +4949,7 @@ var TypeScript;
             this.visited = {};
         }
         CodeResolver.prototype.resolveCode = function (referencePath, parentPath, performSearch, resolutionDispatcher) {
-            var resolvedFile = {
-                content: null,
-                path: referencePath
-            };
+            var resolvedFile = { content: null, path: referencePath };
             var ioHost = this.environment.ioHost;
             var isRelativePath = TypeScript.isRelative(referencePath);
             var isRootedPath = isRelativePath ? false : TypeScript.isRooted(referencePath);
@@ -7633,10 +7624,7 @@ var TypeScript;
             this.length = length;
         }
         LineMap.prototype.toJSON = function (key) {
-            return {
-                lineStarts: this._lineStarts,
-                length: this.length
-            };
+            return { lineStarts: this._lineStarts, length: this.length };
         };
         LineMap.prototype.equals = function (other) {
             return this.length === other.length && TypeScript.ArrayUtilities.sequenceEquals(this.lineStarts(), other.lineStarts(), function (v1, v2) {
@@ -8390,10 +8378,7 @@ var TypeScript;
     var scannerDiagnostics = [];
     function processImports(lineMap, scanner, token, importedFiles) {
         var position = 0;
-        var lineChar = {
-            line: -1,
-            character: -1
-        };
+        var lineChar = { line: -1, character: -1 };
         while (token.tokenKind !== 10 /* EndOfFileToken */) {
             if (token.tokenKind === 49 /* ImportKeyword */) {
                 var importStart = position + token.leadingTriviaWidth();
@@ -8431,10 +8416,7 @@ var TypeScript;
     function processTripleSlashDirectives(lineMap, firstToken, settings, referencedFiles) {
         var leadingTrivia = firstToken.leadingTrivia();
         var position = 0;
-        var lineChar = {
-            line: -1,
-            character: -1
-        };
+        var lineChar = { line: -1, character: -1 };
         var noDefaultLib = false;
         for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
@@ -8457,9 +8439,7 @@ var TypeScript;
             }
             position += trivia.fullWidth();
         }
-        return {
-            noDefaultLib: noDefaultLib
-        };
+        return { noDefaultLib: noDefaultLib };
     }
     function preProcessFile(fileName, sourceText, settings, readImportFiles) {
         if (typeof settings === "undefined") { settings = new CompilationSettings(); }
@@ -8474,12 +8454,7 @@ var TypeScript;
         var referencedFiles = [];
         var properties = processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
         scannerDiagnostics.length = 0;
-        return {
-            settings: settings,
-            referencedFiles: referencedFiles,
-            importedFiles: importedFiles,
-            isLibFile: properties.noDefaultLib
-        };
+        return { settings: settings, referencedFiles: referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib };
     }
     TypeScript.preProcessFile = preProcessFile;
 })(TypeScript || (TypeScript = {}));
@@ -9309,15 +9284,9 @@ var TypeScript;
         });
         var message;
         if (diagnostic.category === 1 /* Error */) {
-            message = getDiagnosticMessage(0 /* error_TS_0__1 */, [
-                diagnostic.code,
-                diagnosticMessage
-            ]);
+            message = getDiagnosticMessage(0 /* error_TS_0__1 */, [diagnostic.code, diagnosticMessage]);
         } else if (diagnostic.category === 0 /* Warning */) {
-            message = getDiagnosticMessage(1 /* warning_TS_0__1 */, [
-                diagnostic.code,
-                diagnosticMessage
-            ]);
+            message = getDiagnosticMessage(1 /* warning_TS_0__1 */, [diagnostic.code, diagnosticMessage]);
         } else {
             message = diagnosticMessage;
         }
@@ -9460,9 +9429,7 @@ var TypeScript;
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
         ParseOptions.prototype.toJSON = function (key) {
-            return {
-                allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion
-            };
+            return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion };
         };
         ParseOptions.prototype.allowAutomaticSemicolonInsertion = function () {
             return this._allowAutomaticSemicolonInsertion;
@@ -11128,10 +11095,7 @@ var TypeScript;
                 if (index === 0) {
                     array.unshift.apply(array, this.elements);
                 } else {
-                    array.splice.apply(array, [
-                        index,
-                        0
-                    ].concat(this.elements));
+                    array.splice.apply(array, [index, 0].concat(this.elements));
                 }
             };
             return NormalSeparatedSyntaxList;
@@ -11297,9 +11261,7 @@ var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
         function emptySourceUnit() {
-            return TypeScript.Syntax.normalModeFactory.sourceUnit(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(10 /* EndOfFileToken */, {
-                text: ""
-            }));
+            return TypeScript.Syntax.normalModeFactory.sourceUnit(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(10 /* EndOfFileToken */, { text: "" }));
         }
         Syntax.emptySourceUnit = emptySourceUnit;
         function getStandaloneExpression(positionedToken) {
@@ -11478,15 +11440,11 @@ var TypeScript;
         }
         Syntax.falseExpression = falseExpression;
         function numericLiteralExpression(text) {
-            return TypeScript.Syntax.token(13 /* NumericLiteral */, {
-                text: text
-            });
+            return TypeScript.Syntax.token(13 /* NumericLiteral */, { text: text });
         }
         Syntax.numericLiteralExpression = numericLiteralExpression;
         function stringLiteralExpression(text) {
-            return TypeScript.Syntax.token(14 /* StringLiteral */, {
-                text: text
-            });
+            return TypeScript.Syntax.token(14 /* StringLiteral */, { text: text });
         }
         Syntax.stringLiteralExpression = stringLiteralExpression;
         function isSuperInvocationExpression(node) {
@@ -13380,10 +13338,7 @@ var TypeScript;
                 if (index === 0) {
                     array.unshift.apply(array, this.nodeOrTokens);
                 } else {
-                    array.splice.apply(array, [
-                        index,
-                        0
-                    ].concat(this.nodeOrTokens));
+                    array.splice.apply(array, [index, 0].concat(this.nodeOrTokens));
                 }
             };
             return NormalSyntaxList;
@@ -25254,32 +25209,17 @@ var TypeScript;
                     if (storage[0] === 81 /* GreaterThanToken */) {
                         if (storage[1] === 81 /* GreaterThanToken */) {
                             if (storage[2] === 107 /* EqualsToken */) {
-                                return {
-                                    tokenCount: 4,
-                                    syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */
-                                };
+                                return { tokenCount: 4, syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ };
                             } else {
-                                return {
-                                    tokenCount: 3,
-                                    syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */
-                                };
+                                return { tokenCount: 3, syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ };
                             }
                         } else if (storage[1] === 107 /* EqualsToken */) {
-                            return {
-                                tokenCount: 3,
-                                syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */
-                            };
+                            return { tokenCount: 3, syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ };
                         } else {
-                            return {
-                                tokenCount: 2,
-                                syntaxKind: 96 /* GreaterThanGreaterThanToken */
-                            };
+                            return { tokenCount: 2, syntaxKind: 96 /* GreaterThanGreaterThanToken */ };
                         }
                     } else if (storage[0] === 107 /* EqualsToken */) {
-                        return {
-                            tokenCount: 2,
-                            syntaxKind: 83 /* GreaterThanEqualsToken */
-                        };
+                        return { tokenCount: 2, syntaxKind: 83 /* GreaterThanEqualsToken */ };
                     }
                 }
                 return null;
@@ -26037,10 +25977,7 @@ var TypeScript;
                 }
                 var result = TypeScript.Syntax.list(items);
                 this.returnZeroOrOneLengthArray(items);
-                return {
-                    skippedTokens: skippedTokens,
-                    list: result
-                };
+                return { skippedTokens: skippedTokens, list: result };
             };
             ParserImpl.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
                 var items = this.getArray();
@@ -26088,10 +26025,7 @@ var TypeScript;
                 }
                 var result = TypeScript.Syntax.separatedList(items);
                 this.returnZeroOrOneLengthArray(items);
-                return {
-                    skippedTokens: skippedTokens,
-                    list: result
-                };
+                return { skippedTokens: skippedTokens, list: result };
             };
             ParserImpl.prototype.allowsAutomaticSemicolonInsertion = function (currentListType) {
                 switch (currentListType) {
@@ -26922,10 +26856,7 @@ var TypeScript;
                     }
                     if (seenStaticModifier) {
                         var previousToken = list.childAt(i - 1);
-                        this.pushDiagnostic1(modifierFullStart, modifier, 33 /* _0__modifier_must_precede__1__modifier */, [
-                            modifier.text(),
-                            previousToken.text()
-                        ]);
+                        this.pushDiagnostic1(modifierFullStart, modifier, 33 /* _0__modifier_must_precede__1__modifier */, [modifier.text(), previousToken.text()]);
                         return true;
                     }
                     seenAccessibilityModifier = true;
@@ -27084,10 +27015,7 @@ var TypeScript;
                         return;
                     }
                     if (seenDeclareModifier) {
-                        this.pushDiagnostic1(modifierFullStart, modifier, 33 /* _0__modifier_must_precede__1__modifier */, [
-                            TypeScript.SyntaxFacts.getText(47 /* ExportKeyword */),
-                            TypeScript.SyntaxFacts.getText(64 /* DeclareKeyword */)
-                        ]);
+                        this.pushDiagnostic1(modifierFullStart, modifier, 33 /* _0__modifier_must_precede__1__modifier */, [TypeScript.SyntaxFacts.getText(47 /* ExportKeyword */), TypeScript.SyntaxFacts.getText(64 /* DeclareKeyword */)]);
                         return;
                     }
                     seenExportModifier = true;
@@ -27423,2806 +27351,10 @@ var TypeScript;
                 throw TypeScript.Errors.argumentOutOfRange("languageVersion");
             }
         };
-        Unicode.unicodeES3IdentifierStart = [
-            170,
-            170,
-            181,
-            181,
-            186,
-            186,
-            192,
-            214,
-            216,
-            246,
-            248,
-            543,
-            546,
-            563,
-            592,
-            685,
-            688,
-            696,
-            699,
-            705,
-            720,
-            721,
-            736,
-            740,
-            750,
-            750,
-            890,
-            890,
-            902,
-            902,
-            904,
-            906,
-            908,
-            908,
-            910,
-            929,
-            931,
-            974,
-            976,
-            983,
-            986,
-            1011,
-            1024,
-            1153,
-            1164,
-            1220,
-            1223,
-            1224,
-            1227,
-            1228,
-            1232,
-            1269,
-            1272,
-            1273,
-            1329,
-            1366,
-            1369,
-            1369,
-            1377,
-            1415,
-            1488,
-            1514,
-            1520,
-            1522,
-            1569,
-            1594,
-            1600,
-            1610,
-            1649,
-            1747,
-            1749,
-            1749,
-            1765,
-            1766,
-            1786,
-            1788,
-            1808,
-            1808,
-            1810,
-            1836,
-            1920,
-            1957,
-            2309,
-            2361,
-            2365,
-            2365,
-            2384,
-            2384,
-            2392,
-            2401,
-            2437,
-            2444,
-            2447,
-            2448,
-            2451,
-            2472,
-            2474,
-            2480,
-            2482,
-            2482,
-            2486,
-            2489,
-            2524,
-            2525,
-            2527,
-            2529,
-            2544,
-            2545,
-            2565,
-            2570,
-            2575,
-            2576,
-            2579,
-            2600,
-            2602,
-            2608,
-            2610,
-            2611,
-            2613,
-            2614,
-            2616,
-            2617,
-            2649,
-            2652,
-            2654,
-            2654,
-            2674,
-            2676,
-            2693,
-            2699,
-            2701,
-            2701,
-            2703,
-            2705,
-            2707,
-            2728,
-            2730,
-            2736,
-            2738,
-            2739,
-            2741,
-            2745,
-            2749,
-            2749,
-            2768,
-            2768,
-            2784,
-            2784,
-            2821,
-            2828,
-            2831,
-            2832,
-            2835,
-            2856,
-            2858,
-            2864,
-            2866,
-            2867,
-            2870,
-            2873,
-            2877,
-            2877,
-            2908,
-            2909,
-            2911,
-            2913,
-            2949,
-            2954,
-            2958,
-            2960,
-            2962,
-            2965,
-            2969,
-            2970,
-            2972,
-            2972,
-            2974,
-            2975,
-            2979,
-            2980,
-            2984,
-            2986,
-            2990,
-            2997,
-            2999,
-            3001,
-            3077,
-            3084,
-            3086,
-            3088,
-            3090,
-            3112,
-            3114,
-            3123,
-            3125,
-            3129,
-            3168,
-            3169,
-            3205,
-            3212,
-            3214,
-            3216,
-            3218,
-            3240,
-            3242,
-            3251,
-            3253,
-            3257,
-            3294,
-            3294,
-            3296,
-            3297,
-            3333,
-            3340,
-            3342,
-            3344,
-            3346,
-            3368,
-            3370,
-            3385,
-            3424,
-            3425,
-            3461,
-            3478,
-            3482,
-            3505,
-            3507,
-            3515,
-            3517,
-            3517,
-            3520,
-            3526,
-            3585,
-            3632,
-            3634,
-            3635,
-            3648,
-            3654,
-            3713,
-            3714,
-            3716,
-            3716,
-            3719,
-            3720,
-            3722,
-            3722,
-            3725,
-            3725,
-            3732,
-            3735,
-            3737,
-            3743,
-            3745,
-            3747,
-            3749,
-            3749,
-            3751,
-            3751,
-            3754,
-            3755,
-            3757,
-            3760,
-            3762,
-            3763,
-            3773,
-            3773,
-            3776,
-            3780,
-            3782,
-            3782,
-            3804,
-            3805,
-            3840,
-            3840,
-            3904,
-            3911,
-            3913,
-            3946,
-            3976,
-            3979,
-            4096,
-            4129,
-            4131,
-            4135,
-            4137,
-            4138,
-            4176,
-            4181,
-            4256,
-            4293,
-            4304,
-            4342,
-            4352,
-            4441,
-            4447,
-            4514,
-            4520,
-            4601,
-            4608,
-            4614,
-            4616,
-            4678,
-            4680,
-            4680,
-            4682,
-            4685,
-            4688,
-            4694,
-            4696,
-            4696,
-            4698,
-            4701,
-            4704,
-            4742,
-            4744,
-            4744,
-            4746,
-            4749,
-            4752,
-            4782,
-            4784,
-            4784,
-            4786,
-            4789,
-            4792,
-            4798,
-            4800,
-            4800,
-            4802,
-            4805,
-            4808,
-            4814,
-            4816,
-            4822,
-            4824,
-            4846,
-            4848,
-            4878,
-            4880,
-            4880,
-            4882,
-            4885,
-            4888,
-            4894,
-            4896,
-            4934,
-            4936,
-            4954,
-            5024,
-            5108,
-            5121,
-            5740,
-            5743,
-            5750,
-            5761,
-            5786,
-            5792,
-            5866,
-            6016,
-            6067,
-            6176,
-            6263,
-            6272,
-            6312,
-            7680,
-            7835,
-            7840,
-            7929,
-            7936,
-            7957,
-            7960,
-            7965,
-            7968,
-            8005,
-            8008,
-            8013,
-            8016,
-            8023,
-            8025,
-            8025,
-            8027,
-            8027,
-            8029,
-            8029,
-            8031,
-            8061,
-            8064,
-            8116,
-            8118,
-            8124,
-            8126,
-            8126,
-            8130,
-            8132,
-            8134,
-            8140,
-            8144,
-            8147,
-            8150,
-            8155,
-            8160,
-            8172,
-            8178,
-            8180,
-            8182,
-            8188,
-            8319,
-            8319,
-            8450,
-            8450,
-            8455,
-            8455,
-            8458,
-            8467,
-            8469,
-            8469,
-            8473,
-            8477,
-            8484,
-            8484,
-            8486,
-            8486,
-            8488,
-            8488,
-            8490,
-            8493,
-            8495,
-            8497,
-            8499,
-            8505,
-            8544,
-            8579,
-            12293,
-            12295,
-            12321,
-            12329,
-            12337,
-            12341,
-            12344,
-            12346,
-            12353,
-            12436,
-            12445,
-            12446,
-            12449,
-            12538,
-            12540,
-            12542,
-            12549,
-            12588,
-            12593,
-            12686,
-            12704,
-            12727,
-            13312,
-            19893,
-            19968,
-            40869,
-            40960,
-            42124,
-            44032,
-            55203,
-            63744,
-            64045,
-            64256,
-            64262,
-            64275,
-            64279,
-            64285,
-            64285,
-            64287,
-            64296,
-            64298,
-            64310,
-            64312,
-            64316,
-            64318,
-            64318,
-            64320,
-            64321,
-            64323,
-            64324,
-            64326,
-            64433,
-            64467,
-            64829,
-            64848,
-            64911,
-            64914,
-            64967,
-            65008,
-            65019,
-            65136,
-            65138,
-            65140,
-            65140,
-            65142,
-            65276,
-            65313,
-            65338,
-            65345,
-            65370,
-            65382,
-            65470,
-            65474,
-            65479,
-            65482,
-            65487,
-            65490,
-            65495,
-            65498,
-            65500
-        ];
-        Unicode.unicodeES3IdentifierPart = [
-            170,
-            170,
-            181,
-            181,
-            186,
-            186,
-            192,
-            214,
-            216,
-            246,
-            248,
-            543,
-            546,
-            563,
-            592,
-            685,
-            688,
-            696,
-            699,
-            705,
-            720,
-            721,
-            736,
-            740,
-            750,
-            750,
-            768,
-            846,
-            864,
-            866,
-            890,
-            890,
-            902,
-            902,
-            904,
-            906,
-            908,
-            908,
-            910,
-            929,
-            931,
-            974,
-            976,
-            983,
-            986,
-            1011,
-            1024,
-            1153,
-            1155,
-            1158,
-            1164,
-            1220,
-            1223,
-            1224,
-            1227,
-            1228,
-            1232,
-            1269,
-            1272,
-            1273,
-            1329,
-            1366,
-            1369,
-            1369,
-            1377,
-            1415,
-            1425,
-            1441,
-            1443,
-            1465,
-            1467,
-            1469,
-            1471,
-            1471,
-            1473,
-            1474,
-            1476,
-            1476,
-            1488,
-            1514,
-            1520,
-            1522,
-            1569,
-            1594,
-            1600,
-            1621,
-            1632,
-            1641,
-            1648,
-            1747,
-            1749,
-            1756,
-            1759,
-            1768,
-            1770,
-            1773,
-            1776,
-            1788,
-            1808,
-            1836,
-            1840,
-            1866,
-            1920,
-            1968,
-            2305,
-            2307,
-            2309,
-            2361,
-            2364,
-            2381,
-            2384,
-            2388,
-            2392,
-            2403,
-            2406,
-            2415,
-            2433,
-            2435,
-            2437,
-            2444,
-            2447,
-            2448,
-            2451,
-            2472,
-            2474,
-            2480,
-            2482,
-            2482,
-            2486,
-            2489,
-            2492,
-            2492,
-            2494,
-            2500,
-            2503,
-            2504,
-            2507,
-            2509,
-            2519,
-            2519,
-            2524,
-            2525,
-            2527,
-            2531,
-            2534,
-            2545,
-            2562,
-            2562,
-            2565,
-            2570,
-            2575,
-            2576,
-            2579,
-            2600,
-            2602,
-            2608,
-            2610,
-            2611,
-            2613,
-            2614,
-            2616,
-            2617,
-            2620,
-            2620,
-            2622,
-            2626,
-            2631,
-            2632,
-            2635,
-            2637,
-            2649,
-            2652,
-            2654,
-            2654,
-            2662,
-            2676,
-            2689,
-            2691,
-            2693,
-            2699,
-            2701,
-            2701,
-            2703,
-            2705,
-            2707,
-            2728,
-            2730,
-            2736,
-            2738,
-            2739,
-            2741,
-            2745,
-            2748,
-            2757,
-            2759,
-            2761,
-            2763,
-            2765,
-            2768,
-            2768,
-            2784,
-            2784,
-            2790,
-            2799,
-            2817,
-            2819,
-            2821,
-            2828,
-            2831,
-            2832,
-            2835,
-            2856,
-            2858,
-            2864,
-            2866,
-            2867,
-            2870,
-            2873,
-            2876,
-            2883,
-            2887,
-            2888,
-            2891,
-            2893,
-            2902,
-            2903,
-            2908,
-            2909,
-            2911,
-            2913,
-            2918,
-            2927,
-            2946,
-            2947,
-            2949,
-            2954,
-            2958,
-            2960,
-            2962,
-            2965,
-            2969,
-            2970,
-            2972,
-            2972,
-            2974,
-            2975,
-            2979,
-            2980,
-            2984,
-            2986,
-            2990,
-            2997,
-            2999,
-            3001,
-            3006,
-            3010,
-            3014,
-            3016,
-            3018,
-            3021,
-            3031,
-            3031,
-            3047,
-            3055,
-            3073,
-            3075,
-            3077,
-            3084,
-            3086,
-            3088,
-            3090,
-            3112,
-            3114,
-            3123,
-            3125,
-            3129,
-            3134,
-            3140,
-            3142,
-            3144,
-            3146,
-            3149,
-            3157,
-            3158,
-            3168,
-            3169,
-            3174,
-            3183,
-            3202,
-            3203,
-            3205,
-            3212,
-            3214,
-            3216,
-            3218,
-            3240,
-            3242,
-            3251,
-            3253,
-            3257,
-            3262,
-            3268,
-            3270,
-            3272,
-            3274,
-            3277,
-            3285,
-            3286,
-            3294,
-            3294,
-            3296,
-            3297,
-            3302,
-            3311,
-            3330,
-            3331,
-            3333,
-            3340,
-            3342,
-            3344,
-            3346,
-            3368,
-            3370,
-            3385,
-            3390,
-            3395,
-            3398,
-            3400,
-            3402,
-            3405,
-            3415,
-            3415,
-            3424,
-            3425,
-            3430,
-            3439,
-            3458,
-            3459,
-            3461,
-            3478,
-            3482,
-            3505,
-            3507,
-            3515,
-            3517,
-            3517,
-            3520,
-            3526,
-            3530,
-            3530,
-            3535,
-            3540,
-            3542,
-            3542,
-            3544,
-            3551,
-            3570,
-            3571,
-            3585,
-            3642,
-            3648,
-            3662,
-            3664,
-            3673,
-            3713,
-            3714,
-            3716,
-            3716,
-            3719,
-            3720,
-            3722,
-            3722,
-            3725,
-            3725,
-            3732,
-            3735,
-            3737,
-            3743,
-            3745,
-            3747,
-            3749,
-            3749,
-            3751,
-            3751,
-            3754,
-            3755,
-            3757,
-            3769,
-            3771,
-            3773,
-            3776,
-            3780,
-            3782,
-            3782,
-            3784,
-            3789,
-            3792,
-            3801,
-            3804,
-            3805,
-            3840,
-            3840,
-            3864,
-            3865,
-            3872,
-            3881,
-            3893,
-            3893,
-            3895,
-            3895,
-            3897,
-            3897,
-            3902,
-            3911,
-            3913,
-            3946,
-            3953,
-            3972,
-            3974,
-            3979,
-            3984,
-            3991,
-            3993,
-            4028,
-            4038,
-            4038,
-            4096,
-            4129,
-            4131,
-            4135,
-            4137,
-            4138,
-            4140,
-            4146,
-            4150,
-            4153,
-            4160,
-            4169,
-            4176,
-            4185,
-            4256,
-            4293,
-            4304,
-            4342,
-            4352,
-            4441,
-            4447,
-            4514,
-            4520,
-            4601,
-            4608,
-            4614,
-            4616,
-            4678,
-            4680,
-            4680,
-            4682,
-            4685,
-            4688,
-            4694,
-            4696,
-            4696,
-            4698,
-            4701,
-            4704,
-            4742,
-            4744,
-            4744,
-            4746,
-            4749,
-            4752,
-            4782,
-            4784,
-            4784,
-            4786,
-            4789,
-            4792,
-            4798,
-            4800,
-            4800,
-            4802,
-            4805,
-            4808,
-            4814,
-            4816,
-            4822,
-            4824,
-            4846,
-            4848,
-            4878,
-            4880,
-            4880,
-            4882,
-            4885,
-            4888,
-            4894,
-            4896,
-            4934,
-            4936,
-            4954,
-            4969,
-            4977,
-            5024,
-            5108,
-            5121,
-            5740,
-            5743,
-            5750,
-            5761,
-            5786,
-            5792,
-            5866,
-            6016,
-            6099,
-            6112,
-            6121,
-            6160,
-            6169,
-            6176,
-            6263,
-            6272,
-            6313,
-            7680,
-            7835,
-            7840,
-            7929,
-            7936,
-            7957,
-            7960,
-            7965,
-            7968,
-            8005,
-            8008,
-            8013,
-            8016,
-            8023,
-            8025,
-            8025,
-            8027,
-            8027,
-            8029,
-            8029,
-            8031,
-            8061,
-            8064,
-            8116,
-            8118,
-            8124,
-            8126,
-            8126,
-            8130,
-            8132,
-            8134,
-            8140,
-            8144,
-            8147,
-            8150,
-            8155,
-            8160,
-            8172,
-            8178,
-            8180,
-            8182,
-            8188,
-            8255,
-            8256,
-            8319,
-            8319,
-            8400,
-            8412,
-            8417,
-            8417,
-            8450,
-            8450,
-            8455,
-            8455,
-            8458,
-            8467,
-            8469,
-            8469,
-            8473,
-            8477,
-            8484,
-            8484,
-            8486,
-            8486,
-            8488,
-            8488,
-            8490,
-            8493,
-            8495,
-            8497,
-            8499,
-            8505,
-            8544,
-            8579,
-            12293,
-            12295,
-            12321,
-            12335,
-            12337,
-            12341,
-            12344,
-            12346,
-            12353,
-            12436,
-            12441,
-            12442,
-            12445,
-            12446,
-            12449,
-            12542,
-            12549,
-            12588,
-            12593,
-            12686,
-            12704,
-            12727,
-            13312,
-            19893,
-            19968,
-            40869,
-            40960,
-            42124,
-            44032,
-            55203,
-            63744,
-            64045,
-            64256,
-            64262,
-            64275,
-            64279,
-            64285,
-            64296,
-            64298,
-            64310,
-            64312,
-            64316,
-            64318,
-            64318,
-            64320,
-            64321,
-            64323,
-            64324,
-            64326,
-            64433,
-            64467,
-            64829,
-            64848,
-            64911,
-            64914,
-            64967,
-            65008,
-            65019,
-            65056,
-            65059,
-            65075,
-            65076,
-            65101,
-            65103,
-            65136,
-            65138,
-            65140,
-            65140,
-            65142,
-            65276,
-            65296,
-            65305,
-            65313,
-            65338,
-            65343,
-            65343,
-            65345,
-            65370,
-            65381,
-            65470,
-            65474,
-            65479,
-            65482,
-            65487,
-            65490,
-            65495,
-            65498,
-            65500
-        ];
-        Unicode.unicodeES5IdentifierStart = [
-            170,
-            170,
-            181,
-            181,
-            186,
-            186,
-            192,
-            214,
-            216,
-            246,
-            248,
-            705,
-            710,
-            721,
-            736,
-            740,
-            748,
-            748,
-            750,
-            750,
-            880,
-            884,
-            886,
-            887,
-            890,
-            893,
-            902,
-            902,
-            904,
-            906,
-            908,
-            908,
-            910,
-            929,
-            931,
-            1013,
-            1015,
-            1153,
-            1162,
-            1319,
-            1329,
-            1366,
-            1369,
-            1369,
-            1377,
-            1415,
-            1488,
-            1514,
-            1520,
-            1522,
-            1568,
-            1610,
-            1646,
-            1647,
-            1649,
-            1747,
-            1749,
-            1749,
-            1765,
-            1766,
-            1774,
-            1775,
-            1786,
-            1788,
-            1791,
-            1791,
-            1808,
-            1808,
-            1810,
-            1839,
-            1869,
-            1957,
-            1969,
-            1969,
-            1994,
-            2026,
-            2036,
-            2037,
-            2042,
-            2042,
-            2048,
-            2069,
-            2074,
-            2074,
-            2084,
-            2084,
-            2088,
-            2088,
-            2112,
-            2136,
-            2208,
-            2208,
-            2210,
-            2220,
-            2308,
-            2361,
-            2365,
-            2365,
-            2384,
-            2384,
-            2392,
-            2401,
-            2417,
-            2423,
-            2425,
-            2431,
-            2437,
-            2444,
-            2447,
-            2448,
-            2451,
-            2472,
-            2474,
-            2480,
-            2482,
-            2482,
-            2486,
-            2489,
-            2493,
-            2493,
-            2510,
-            2510,
-            2524,
-            2525,
-            2527,
-            2529,
-            2544,
-            2545,
-            2565,
-            2570,
-            2575,
-            2576,
-            2579,
-            2600,
-            2602,
-            2608,
-            2610,
-            2611,
-            2613,
-            2614,
-            2616,
-            2617,
-            2649,
-            2652,
-            2654,
-            2654,
-            2674,
-            2676,
-            2693,
-            2701,
-            2703,
-            2705,
-            2707,
-            2728,
-            2730,
-            2736,
-            2738,
-            2739,
-            2741,
-            2745,
-            2749,
-            2749,
-            2768,
-            2768,
-            2784,
-            2785,
-            2821,
-            2828,
-            2831,
-            2832,
-            2835,
-            2856,
-            2858,
-            2864,
-            2866,
-            2867,
-            2869,
-            2873,
-            2877,
-            2877,
-            2908,
-            2909,
-            2911,
-            2913,
-            2929,
-            2929,
-            2947,
-            2947,
-            2949,
-            2954,
-            2958,
-            2960,
-            2962,
-            2965,
-            2969,
-            2970,
-            2972,
-            2972,
-            2974,
-            2975,
-            2979,
-            2980,
-            2984,
-            2986,
-            2990,
-            3001,
-            3024,
-            3024,
-            3077,
-            3084,
-            3086,
-            3088,
-            3090,
-            3112,
-            3114,
-            3123,
-            3125,
-            3129,
-            3133,
-            3133,
-            3160,
-            3161,
-            3168,
-            3169,
-            3205,
-            3212,
-            3214,
-            3216,
-            3218,
-            3240,
-            3242,
-            3251,
-            3253,
-            3257,
-            3261,
-            3261,
-            3294,
-            3294,
-            3296,
-            3297,
-            3313,
-            3314,
-            3333,
-            3340,
-            3342,
-            3344,
-            3346,
-            3386,
-            3389,
-            3389,
-            3406,
-            3406,
-            3424,
-            3425,
-            3450,
-            3455,
-            3461,
-            3478,
-            3482,
-            3505,
-            3507,
-            3515,
-            3517,
-            3517,
-            3520,
-            3526,
-            3585,
-            3632,
-            3634,
-            3635,
-            3648,
-            3654,
-            3713,
-            3714,
-            3716,
-            3716,
-            3719,
-            3720,
-            3722,
-            3722,
-            3725,
-            3725,
-            3732,
-            3735,
-            3737,
-            3743,
-            3745,
-            3747,
-            3749,
-            3749,
-            3751,
-            3751,
-            3754,
-            3755,
-            3757,
-            3760,
-            3762,
-            3763,
-            3773,
-            3773,
-            3776,
-            3780,
-            3782,
-            3782,
-            3804,
-            3807,
-            3840,
-            3840,
-            3904,
-            3911,
-            3913,
-            3948,
-            3976,
-            3980,
-            4096,
-            4138,
-            4159,
-            4159,
-            4176,
-            4181,
-            4186,
-            4189,
-            4193,
-            4193,
-            4197,
-            4198,
-            4206,
-            4208,
-            4213,
-            4225,
-            4238,
-            4238,
-            4256,
-            4293,
-            4295,
-            4295,
-            4301,
-            4301,
-            4304,
-            4346,
-            4348,
-            4680,
-            4682,
-            4685,
-            4688,
-            4694,
-            4696,
-            4696,
-            4698,
-            4701,
-            4704,
-            4744,
-            4746,
-            4749,
-            4752,
-            4784,
-            4786,
-            4789,
-            4792,
-            4798,
-            4800,
-            4800,
-            4802,
-            4805,
-            4808,
-            4822,
-            4824,
-            4880,
-            4882,
-            4885,
-            4888,
-            4954,
-            4992,
-            5007,
-            5024,
-            5108,
-            5121,
-            5740,
-            5743,
-            5759,
-            5761,
-            5786,
-            5792,
-            5866,
-            5870,
-            5872,
-            5888,
-            5900,
-            5902,
-            5905,
-            5920,
-            5937,
-            5952,
-            5969,
-            5984,
-            5996,
-            5998,
-            6000,
-            6016,
-            6067,
-            6103,
-            6103,
-            6108,
-            6108,
-            6176,
-            6263,
-            6272,
-            6312,
-            6314,
-            6314,
-            6320,
-            6389,
-            6400,
-            6428,
-            6480,
-            6509,
-            6512,
-            6516,
-            6528,
-            6571,
-            6593,
-            6599,
-            6656,
-            6678,
-            6688,
-            6740,
-            6823,
-            6823,
-            6917,
-            6963,
-            6981,
-            6987,
-            7043,
-            7072,
-            7086,
-            7087,
-            7098,
-            7141,
-            7168,
-            7203,
-            7245,
-            7247,
-            7258,
-            7293,
-            7401,
-            7404,
-            7406,
-            7409,
-            7413,
-            7414,
-            7424,
-            7615,
-            7680,
-            7957,
-            7960,
-            7965,
-            7968,
-            8005,
-            8008,
-            8013,
-            8016,
-            8023,
-            8025,
-            8025,
-            8027,
-            8027,
-            8029,
-            8029,
-            8031,
-            8061,
-            8064,
-            8116,
-            8118,
-            8124,
-            8126,
-            8126,
-            8130,
-            8132,
-            8134,
-            8140,
-            8144,
-            8147,
-            8150,
-            8155,
-            8160,
-            8172,
-            8178,
-            8180,
-            8182,
-            8188,
-            8305,
-            8305,
-            8319,
-            8319,
-            8336,
-            8348,
-            8450,
-            8450,
-            8455,
-            8455,
-            8458,
-            8467,
-            8469,
-            8469,
-            8473,
-            8477,
-            8484,
-            8484,
-            8486,
-            8486,
-            8488,
-            8488,
-            8490,
-            8493,
-            8495,
-            8505,
-            8508,
-            8511,
-            8517,
-            8521,
-            8526,
-            8526,
-            8544,
-            8584,
-            11264,
-            11310,
-            11312,
-            11358,
-            11360,
-            11492,
-            11499,
-            11502,
-            11506,
-            11507,
-            11520,
-            11557,
-            11559,
-            11559,
-            11565,
-            11565,
-            11568,
-            11623,
-            11631,
-            11631,
-            11648,
-            11670,
-            11680,
-            11686,
-            11688,
-            11694,
-            11696,
-            11702,
-            11704,
-            11710,
-            11712,
-            11718,
-            11720,
-            11726,
-            11728,
-            11734,
-            11736,
-            11742,
-            11823,
-            11823,
-            12293,
-            12295,
-            12321,
-            12329,
-            12337,
-            12341,
-            12344,
-            12348,
-            12353,
-            12438,
-            12445,
-            12447,
-            12449,
-            12538,
-            12540,
-            12543,
-            12549,
-            12589,
-            12593,
-            12686,
-            12704,
-            12730,
-            12784,
-            12799,
-            13312,
-            19893,
-            19968,
-            40908,
-            40960,
-            42124,
-            42192,
-            42237,
-            42240,
-            42508,
-            42512,
-            42527,
-            42538,
-            42539,
-            42560,
-            42606,
-            42623,
-            42647,
-            42656,
-            42735,
-            42775,
-            42783,
-            42786,
-            42888,
-            42891,
-            42894,
-            42896,
-            42899,
-            42912,
-            42922,
-            43000,
-            43009,
-            43011,
-            43013,
-            43015,
-            43018,
-            43020,
-            43042,
-            43072,
-            43123,
-            43138,
-            43187,
-            43250,
-            43255,
-            43259,
-            43259,
-            43274,
-            43301,
-            43312,
-            43334,
-            43360,
-            43388,
-            43396,
-            43442,
-            43471,
-            43471,
-            43520,
-            43560,
-            43584,
-            43586,
-            43588,
-            43595,
-            43616,
-            43638,
-            43642,
-            43642,
-            43648,
-            43695,
-            43697,
-            43697,
-            43701,
-            43702,
-            43705,
-            43709,
-            43712,
-            43712,
-            43714,
-            43714,
-            43739,
-            43741,
-            43744,
-            43754,
-            43762,
-            43764,
-            43777,
-            43782,
-            43785,
-            43790,
-            43793,
-            43798,
-            43808,
-            43814,
-            43816,
-            43822,
-            43968,
-            44002,
-            44032,
-            55203,
-            55216,
-            55238,
-            55243,
-            55291,
-            63744,
-            64109,
-            64112,
-            64217,
-            64256,
-            64262,
-            64275,
-            64279,
-            64285,
-            64285,
-            64287,
-            64296,
-            64298,
-            64310,
-            64312,
-            64316,
-            64318,
-            64318,
-            64320,
-            64321,
-            64323,
-            64324,
-            64326,
-            64433,
-            64467,
-            64829,
-            64848,
-            64911,
-            64914,
-            64967,
-            65008,
-            65019,
-            65136,
-            65140,
-            65142,
-            65276,
-            65313,
-            65338,
-            65345,
-            65370,
-            65382,
-            65470,
-            65474,
-            65479,
-            65482,
-            65487,
-            65490,
-            65495,
-            65498,
-            65500
-        ];
-        Unicode.unicodeES5IdentifierPart = [
-            170,
-            170,
-            181,
-            181,
-            186,
-            186,
-            192,
-            214,
-            216,
-            246,
-            248,
-            705,
-            710,
-            721,
-            736,
-            740,
-            748,
-            748,
-            750,
-            750,
-            768,
-            884,
-            886,
-            887,
-            890,
-            893,
-            902,
-            902,
-            904,
-            906,
-            908,
-            908,
-            910,
-            929,
-            931,
-            1013,
-            1015,
-            1153,
-            1155,
-            1159,
-            1162,
-            1319,
-            1329,
-            1366,
-            1369,
-            1369,
-            1377,
-            1415,
-            1425,
-            1469,
-            1471,
-            1471,
-            1473,
-            1474,
-            1476,
-            1477,
-            1479,
-            1479,
-            1488,
-            1514,
-            1520,
-            1522,
-            1552,
-            1562,
-            1568,
-            1641,
-            1646,
-            1747,
-            1749,
-            1756,
-            1759,
-            1768,
-            1770,
-            1788,
-            1791,
-            1791,
-            1808,
-            1866,
-            1869,
-            1969,
-            1984,
-            2037,
-            2042,
-            2042,
-            2048,
-            2093,
-            2112,
-            2139,
-            2208,
-            2208,
-            2210,
-            2220,
-            2276,
-            2302,
-            2304,
-            2403,
-            2406,
-            2415,
-            2417,
-            2423,
-            2425,
-            2431,
-            2433,
-            2435,
-            2437,
-            2444,
-            2447,
-            2448,
-            2451,
-            2472,
-            2474,
-            2480,
-            2482,
-            2482,
-            2486,
-            2489,
-            2492,
-            2500,
-            2503,
-            2504,
-            2507,
-            2510,
-            2519,
-            2519,
-            2524,
-            2525,
-            2527,
-            2531,
-            2534,
-            2545,
-            2561,
-            2563,
-            2565,
-            2570,
-            2575,
-            2576,
-            2579,
-            2600,
-            2602,
-            2608,
-            2610,
-            2611,
-            2613,
-            2614,
-            2616,
-            2617,
-            2620,
-            2620,
-            2622,
-            2626,
-            2631,
-            2632,
-            2635,
-            2637,
-            2641,
-            2641,
-            2649,
-            2652,
-            2654,
-            2654,
-            2662,
-            2677,
-            2689,
-            2691,
-            2693,
-            2701,
-            2703,
-            2705,
-            2707,
-            2728,
-            2730,
-            2736,
-            2738,
-            2739,
-            2741,
-            2745,
-            2748,
-            2757,
-            2759,
-            2761,
-            2763,
-            2765,
-            2768,
-            2768,
-            2784,
-            2787,
-            2790,
-            2799,
-            2817,
-            2819,
-            2821,
-            2828,
-            2831,
-            2832,
-            2835,
-            2856,
-            2858,
-            2864,
-            2866,
-            2867,
-            2869,
-            2873,
-            2876,
-            2884,
-            2887,
-            2888,
-            2891,
-            2893,
-            2902,
-            2903,
-            2908,
-            2909,
-            2911,
-            2915,
-            2918,
-            2927,
-            2929,
-            2929,
-            2946,
-            2947,
-            2949,
-            2954,
-            2958,
-            2960,
-            2962,
-            2965,
-            2969,
-            2970,
-            2972,
-            2972,
-            2974,
-            2975,
-            2979,
-            2980,
-            2984,
-            2986,
-            2990,
-            3001,
-            3006,
-            3010,
-            3014,
-            3016,
-            3018,
-            3021,
-            3024,
-            3024,
-            3031,
-            3031,
-            3046,
-            3055,
-            3073,
-            3075,
-            3077,
-            3084,
-            3086,
-            3088,
-            3090,
-            3112,
-            3114,
-            3123,
-            3125,
-            3129,
-            3133,
-            3140,
-            3142,
-            3144,
-            3146,
-            3149,
-            3157,
-            3158,
-            3160,
-            3161,
-            3168,
-            3171,
-            3174,
-            3183,
-            3202,
-            3203,
-            3205,
-            3212,
-            3214,
-            3216,
-            3218,
-            3240,
-            3242,
-            3251,
-            3253,
-            3257,
-            3260,
-            3268,
-            3270,
-            3272,
-            3274,
-            3277,
-            3285,
-            3286,
-            3294,
-            3294,
-            3296,
-            3299,
-            3302,
-            3311,
-            3313,
-            3314,
-            3330,
-            3331,
-            3333,
-            3340,
-            3342,
-            3344,
-            3346,
-            3386,
-            3389,
-            3396,
-            3398,
-            3400,
-            3402,
-            3406,
-            3415,
-            3415,
-            3424,
-            3427,
-            3430,
-            3439,
-            3450,
-            3455,
-            3458,
-            3459,
-            3461,
-            3478,
-            3482,
-            3505,
-            3507,
-            3515,
-            3517,
-            3517,
-            3520,
-            3526,
-            3530,
-            3530,
-            3535,
-            3540,
-            3542,
-            3542,
-            3544,
-            3551,
-            3570,
-            3571,
-            3585,
-            3642,
-            3648,
-            3662,
-            3664,
-            3673,
-            3713,
-            3714,
-            3716,
-            3716,
-            3719,
-            3720,
-            3722,
-            3722,
-            3725,
-            3725,
-            3732,
-            3735,
-            3737,
-            3743,
-            3745,
-            3747,
-            3749,
-            3749,
-            3751,
-            3751,
-            3754,
-            3755,
-            3757,
-            3769,
-            3771,
-            3773,
-            3776,
-            3780,
-            3782,
-            3782,
-            3784,
-            3789,
-            3792,
-            3801,
-            3804,
-            3807,
-            3840,
-            3840,
-            3864,
-            3865,
-            3872,
-            3881,
-            3893,
-            3893,
-            3895,
-            3895,
-            3897,
-            3897,
-            3902,
-            3911,
-            3913,
-            3948,
-            3953,
-            3972,
-            3974,
-            3991,
-            3993,
-            4028,
-            4038,
-            4038,
-            4096,
-            4169,
-            4176,
-            4253,
-            4256,
-            4293,
-            4295,
-            4295,
-            4301,
-            4301,
-            4304,
-            4346,
-            4348,
-            4680,
-            4682,
-            4685,
-            4688,
-            4694,
-            4696,
-            4696,
-            4698,
-            4701,
-            4704,
-            4744,
-            4746,
-            4749,
-            4752,
-            4784,
-            4786,
-            4789,
-            4792,
-            4798,
-            4800,
-            4800,
-            4802,
-            4805,
-            4808,
-            4822,
-            4824,
-            4880,
-            4882,
-            4885,
-            4888,
-            4954,
-            4957,
-            4959,
-            4992,
-            5007,
-            5024,
-            5108,
-            5121,
-            5740,
-            5743,
-            5759,
-            5761,
-            5786,
-            5792,
-            5866,
-            5870,
-            5872,
-            5888,
-            5900,
-            5902,
-            5908,
-            5920,
-            5940,
-            5952,
-            5971,
-            5984,
-            5996,
-            5998,
-            6000,
-            6002,
-            6003,
-            6016,
-            6099,
-            6103,
-            6103,
-            6108,
-            6109,
-            6112,
-            6121,
-            6155,
-            6157,
-            6160,
-            6169,
-            6176,
-            6263,
-            6272,
-            6314,
-            6320,
-            6389,
-            6400,
-            6428,
-            6432,
-            6443,
-            6448,
-            6459,
-            6470,
-            6509,
-            6512,
-            6516,
-            6528,
-            6571,
-            6576,
-            6601,
-            6608,
-            6617,
-            6656,
-            6683,
-            6688,
-            6750,
-            6752,
-            6780,
-            6783,
-            6793,
-            6800,
-            6809,
-            6823,
-            6823,
-            6912,
-            6987,
-            6992,
-            7001,
-            7019,
-            7027,
-            7040,
-            7155,
-            7168,
-            7223,
-            7232,
-            7241,
-            7245,
-            7293,
-            7376,
-            7378,
-            7380,
-            7414,
-            7424,
-            7654,
-            7676,
-            7957,
-            7960,
-            7965,
-            7968,
-            8005,
-            8008,
-            8013,
-            8016,
-            8023,
-            8025,
-            8025,
-            8027,
-            8027,
-            8029,
-            8029,
-            8031,
-            8061,
-            8064,
-            8116,
-            8118,
-            8124,
-            8126,
-            8126,
-            8130,
-            8132,
-            8134,
-            8140,
-            8144,
-            8147,
-            8150,
-            8155,
-            8160,
-            8172,
-            8178,
-            8180,
-            8182,
-            8188,
-            8204,
-            8205,
-            8255,
-            8256,
-            8276,
-            8276,
-            8305,
-            8305,
-            8319,
-            8319,
-            8336,
-            8348,
-            8400,
-            8412,
-            8417,
-            8417,
-            8421,
-            8432,
-            8450,
-            8450,
-            8455,
-            8455,
-            8458,
-            8467,
-            8469,
-            8469,
-            8473,
-            8477,
-            8484,
-            8484,
-            8486,
-            8486,
-            8488,
-            8488,
-            8490,
-            8493,
-            8495,
-            8505,
-            8508,
-            8511,
-            8517,
-            8521,
-            8526,
-            8526,
-            8544,
-            8584,
-            11264,
-            11310,
-            11312,
-            11358,
-            11360,
-            11492,
-            11499,
-            11507,
-            11520,
-            11557,
-            11559,
-            11559,
-            11565,
-            11565,
-            11568,
-            11623,
-            11631,
-            11631,
-            11647,
-            11670,
-            11680,
-            11686,
-            11688,
-            11694,
-            11696,
-            11702,
-            11704,
-            11710,
-            11712,
-            11718,
-            11720,
-            11726,
-            11728,
-            11734,
-            11736,
-            11742,
-            11744,
-            11775,
-            11823,
-            11823,
-            12293,
-            12295,
-            12321,
-            12335,
-            12337,
-            12341,
-            12344,
-            12348,
-            12353,
-            12438,
-            12441,
-            12442,
-            12445,
-            12447,
-            12449,
-            12538,
-            12540,
-            12543,
-            12549,
-            12589,
-            12593,
-            12686,
-            12704,
-            12730,
-            12784,
-            12799,
-            13312,
-            19893,
-            19968,
-            40908,
-            40960,
-            42124,
-            42192,
-            42237,
-            42240,
-            42508,
-            42512,
-            42539,
-            42560,
-            42607,
-            42612,
-            42621,
-            42623,
-            42647,
-            42655,
-            42737,
-            42775,
-            42783,
-            42786,
-            42888,
-            42891,
-            42894,
-            42896,
-            42899,
-            42912,
-            42922,
-            43000,
-            43047,
-            43072,
-            43123,
-            43136,
-            43204,
-            43216,
-            43225,
-            43232,
-            43255,
-            43259,
-            43259,
-            43264,
-            43309,
-            43312,
-            43347,
-            43360,
-            43388,
-            43392,
-            43456,
-            43471,
-            43481,
-            43520,
-            43574,
-            43584,
-            43597,
-            43600,
-            43609,
-            43616,
-            43638,
-            43642,
-            43643,
-            43648,
-            43714,
-            43739,
-            43741,
-            43744,
-            43759,
-            43762,
-            43766,
-            43777,
-            43782,
-            43785,
-            43790,
-            43793,
-            43798,
-            43808,
-            43814,
-            43816,
-            43822,
-            43968,
-            44010,
-            44012,
-            44013,
-            44016,
-            44025,
-            44032,
-            55203,
-            55216,
-            55238,
-            55243,
-            55291,
-            63744,
-            64109,
-            64112,
-            64217,
-            64256,
-            64262,
-            64275,
-            64279,
-            64285,
-            64296,
-            64298,
-            64310,
-            64312,
-            64316,
-            64318,
-            64318,
-            64320,
-            64321,
-            64323,
-            64324,
-            64326,
-            64433,
-            64467,
-            64829,
-            64848,
-            64911,
-            64914,
-            64967,
-            65008,
-            65019,
-            65024,
-            65039,
-            65056,
-            65062,
-            65075,
-            65076,
-            65101,
-            65103,
-            65136,
-            65140,
-            65142,
-            65276,
-            65296,
-            65305,
-            65313,
-            65338,
-            65343,
-            65343,
-            65345,
-            65370,
-            65382,
-            65470,
-            65474,
-            65479,
-            65482,
-            65487,
-            65490,
-            65495,
-            65498,
-            65500
-        ];
+        Unicode.unicodeES3IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1610, 1649, 1747, 1749, 1749, 1765, 1766, 1786, 1788, 1808, 1808, 1810, 1836, 1920, 1957, 2309, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2784, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3294, 3294, 3296, 3297, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3424, 3425, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3805, 3840, 3840, 3904, 3911, 3913, 3946, 3976, 3979, 4096, 4129, 4131, 4135, 4137, 4138, 4176, 4181, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6067, 6176, 6263, 6272, 6312, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8319, 8319, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12346, 12353, 12436, 12445, 12446, 12449, 12538, 12540, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65138, 65140, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500];
+        Unicode.unicodeES3IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 543, 546, 563, 592, 685, 688, 696, 699, 705, 720, 721, 736, 740, 750, 750, 768, 846, 864, 866, 890, 890, 902, 902, 904, 906, 908, 908, 910, 929, 931, 974, 976, 983, 986, 1011, 1024, 1153, 1155, 1158, 1164, 1220, 1223, 1224, 1227, 1228, 1232, 1269, 1272, 1273, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1441, 1443, 1465, 1467, 1469, 1471, 1471, 1473, 1474, 1476, 1476, 1488, 1514, 1520, 1522, 1569, 1594, 1600, 1621, 1632, 1641, 1648, 1747, 1749, 1756, 1759, 1768, 1770, 1773, 1776, 1788, 1808, 1836, 1840, 1866, 1920, 1968, 2305, 2307, 2309, 2361, 2364, 2381, 2384, 2388, 2392, 2403, 2406, 2415, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2492, 2494, 2500, 2503, 2504, 2507, 2509, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2562, 2562, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2649, 2652, 2654, 2654, 2662, 2676, 2689, 2691, 2693, 2699, 2701, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2784, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2870, 2873, 2876, 2883, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2913, 2918, 2927, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 2997, 2999, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3031, 3031, 3047, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3134, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3168, 3169, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3262, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3297, 3302, 3311, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3368, 3370, 3385, 3390, 3395, 3398, 3400, 3402, 3405, 3415, 3415, 3424, 3425, 3430, 3439, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3805, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3946, 3953, 3972, 3974, 3979, 3984, 3991, 3993, 4028, 4038, 4038, 4096, 4129, 4131, 4135, 4137, 4138, 4140, 4146, 4150, 4153, 4160, 4169, 4176, 4185, 4256, 4293, 4304, 4342, 4352, 4441, 4447, 4514, 4520, 4601, 4608, 4614, 4616, 4678, 4680, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4742, 4744, 4744, 4746, 4749, 4752, 4782, 4784, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4814, 4816, 4822, 4824, 4846, 4848, 4878, 4880, 4880, 4882, 4885, 4888, 4894, 4896, 4934, 4936, 4954, 4969, 4977, 5024, 5108, 5121, 5740, 5743, 5750, 5761, 5786, 5792, 5866, 6016, 6099, 6112, 6121, 6160, 6169, 6176, 6263, 6272, 6313, 7680, 7835, 7840, 7929, 7936, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8255, 8256, 8319, 8319, 8400, 8412, 8417, 8417, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8497, 8499, 8505, 8544, 8579, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12346, 12353, 12436, 12441, 12442, 12445, 12446, 12449, 12542, 12549, 12588, 12593, 12686, 12704, 12727, 13312, 19893, 19968, 40869, 40960, 42124, 44032, 55203, 63744, 64045, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65056, 65059, 65075, 65076, 65101, 65103, 65136, 65138, 65140, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65381, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500];
+        Unicode.unicodeES5IdentifierStart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 880, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1488, 1514, 1520, 1522, 1568, 1610, 1646, 1647, 1649, 1747, 1749, 1749, 1765, 1766, 1774, 1775, 1786, 1788, 1791, 1791, 1808, 1808, 1810, 1839, 1869, 1957, 1969, 1969, 1994, 2026, 2036, 2037, 2042, 2042, 2048, 2069, 2074, 2074, 2084, 2084, 2088, 2088, 2112, 2136, 2208, 2208, 2210, 2220, 2308, 2361, 2365, 2365, 2384, 2384, 2392, 2401, 2417, 2423, 2425, 2431, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2493, 2493, 2510, 2510, 2524, 2525, 2527, 2529, 2544, 2545, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2649, 2652, 2654, 2654, 2674, 2676, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2749, 2749, 2768, 2768, 2784, 2785, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2877, 2877, 2908, 2909, 2911, 2913, 2929, 2929, 2947, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3024, 3024, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3133, 3160, 3161, 3168, 3169, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3261, 3261, 3294, 3294, 3296, 3297, 3313, 3314, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3389, 3406, 3406, 3424, 3425, 3450, 3455, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3585, 3632, 3634, 3635, 3648, 3654, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3760, 3762, 3763, 3773, 3773, 3776, 3780, 3782, 3782, 3804, 3807, 3840, 3840, 3904, 3911, 3913, 3948, 3976, 3980, 4096, 4138, 4159, 4159, 4176, 4181, 4186, 4189, 4193, 4193, 4197, 4198, 4206, 4208, 4213, 4225, 4238, 4238, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5905, 5920, 5937, 5952, 5969, 5984, 5996, 5998, 6000, 6016, 6067, 6103, 6103, 6108, 6108, 6176, 6263, 6272, 6312, 6314, 6314, 6320, 6389, 6400, 6428, 6480, 6509, 6512, 6516, 6528, 6571, 6593, 6599, 6656, 6678, 6688, 6740, 6823, 6823, 6917, 6963, 6981, 6987, 7043, 7072, 7086, 7087, 7098, 7141, 7168, 7203, 7245, 7247, 7258, 7293, 7401, 7404, 7406, 7409, 7413, 7414, 7424, 7615, 7680, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8305, 8305, 8319, 8319, 8336, 8348, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11502, 11506, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11648, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11823, 11823, 12293, 12295, 12321, 12329, 12337, 12341, 12344, 12348, 12353, 12438, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42527, 42538, 42539, 42560, 42606, 42623, 42647, 42656, 42735, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43009, 43011, 43013, 43015, 43018, 43020, 43042, 43072, 43123, 43138, 43187, 43250, 43255, 43259, 43259, 43274, 43301, 43312, 43334, 43360, 43388, 43396, 43442, 43471, 43471, 43520, 43560, 43584, 43586, 43588, 43595, 43616, 43638, 43642, 43642, 43648, 43695, 43697, 43697, 43701, 43702, 43705, 43709, 43712, 43712, 43714, 43714, 43739, 43741, 43744, 43754, 43762, 43764, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44002, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64285, 64287, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65136, 65140, 65142, 65276, 65313, 65338, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500];
+        Unicode.unicodeES5IdentifierPart = [170, 170, 181, 181, 186, 186, 192, 214, 216, 246, 248, 705, 710, 721, 736, 740, 748, 748, 750, 750, 768, 884, 886, 887, 890, 893, 902, 902, 904, 906, 908, 908, 910, 929, 931, 1013, 1015, 1153, 1155, 1159, 1162, 1319, 1329, 1366, 1369, 1369, 1377, 1415, 1425, 1469, 1471, 1471, 1473, 1474, 1476, 1477, 1479, 1479, 1488, 1514, 1520, 1522, 1552, 1562, 1568, 1641, 1646, 1747, 1749, 1756, 1759, 1768, 1770, 1788, 1791, 1791, 1808, 1866, 1869, 1969, 1984, 2037, 2042, 2042, 2048, 2093, 2112, 2139, 2208, 2208, 2210, 2220, 2276, 2302, 2304, 2403, 2406, 2415, 2417, 2423, 2425, 2431, 2433, 2435, 2437, 2444, 2447, 2448, 2451, 2472, 2474, 2480, 2482, 2482, 2486, 2489, 2492, 2500, 2503, 2504, 2507, 2510, 2519, 2519, 2524, 2525, 2527, 2531, 2534, 2545, 2561, 2563, 2565, 2570, 2575, 2576, 2579, 2600, 2602, 2608, 2610, 2611, 2613, 2614, 2616, 2617, 2620, 2620, 2622, 2626, 2631, 2632, 2635, 2637, 2641, 2641, 2649, 2652, 2654, 2654, 2662, 2677, 2689, 2691, 2693, 2701, 2703, 2705, 2707, 2728, 2730, 2736, 2738, 2739, 2741, 2745, 2748, 2757, 2759, 2761, 2763, 2765, 2768, 2768, 2784, 2787, 2790, 2799, 2817, 2819, 2821, 2828, 2831, 2832, 2835, 2856, 2858, 2864, 2866, 2867, 2869, 2873, 2876, 2884, 2887, 2888, 2891, 2893, 2902, 2903, 2908, 2909, 2911, 2915, 2918, 2927, 2929, 2929, 2946, 2947, 2949, 2954, 2958, 2960, 2962, 2965, 2969, 2970, 2972, 2972, 2974, 2975, 2979, 2980, 2984, 2986, 2990, 3001, 3006, 3010, 3014, 3016, 3018, 3021, 3024, 3024, 3031, 3031, 3046, 3055, 3073, 3075, 3077, 3084, 3086, 3088, 3090, 3112, 3114, 3123, 3125, 3129, 3133, 3140, 3142, 3144, 3146, 3149, 3157, 3158, 3160, 3161, 3168, 3171, 3174, 3183, 3202, 3203, 3205, 3212, 3214, 3216, 3218, 3240, 3242, 3251, 3253, 3257, 3260, 3268, 3270, 3272, 3274, 3277, 3285, 3286, 3294, 3294, 3296, 3299, 3302, 3311, 3313, 3314, 3330, 3331, 3333, 3340, 3342, 3344, 3346, 3386, 3389, 3396, 3398, 3400, 3402, 3406, 3415, 3415, 3424, 3427, 3430, 3439, 3450, 3455, 3458, 3459, 3461, 3478, 3482, 3505, 3507, 3515, 3517, 3517, 3520, 3526, 3530, 3530, 3535, 3540, 3542, 3542, 3544, 3551, 3570, 3571, 3585, 3642, 3648, 3662, 3664, 3673, 3713, 3714, 3716, 3716, 3719, 3720, 3722, 3722, 3725, 3725, 3732, 3735, 3737, 3743, 3745, 3747, 3749, 3749, 3751, 3751, 3754, 3755, 3757, 3769, 3771, 3773, 3776, 3780, 3782, 3782, 3784, 3789, 3792, 3801, 3804, 3807, 3840, 3840, 3864, 3865, 3872, 3881, 3893, 3893, 3895, 3895, 3897, 3897, 3902, 3911, 3913, 3948, 3953, 3972, 3974, 3991, 3993, 4028, 4038, 4038, 4096, 4169, 4176, 4253, 4256, 4293, 4295, 4295, 4301, 4301, 4304, 4346, 4348, 4680, 4682, 4685, 4688, 4694, 4696, 4696, 4698, 4701, 4704, 4744, 4746, 4749, 4752, 4784, 4786, 4789, 4792, 4798, 4800, 4800, 4802, 4805, 4808, 4822, 4824, 4880, 4882, 4885, 4888, 4954, 4957, 4959, 4992, 5007, 5024, 5108, 5121, 5740, 5743, 5759, 5761, 5786, 5792, 5866, 5870, 5872, 5888, 5900, 5902, 5908, 5920, 5940, 5952, 5971, 5984, 5996, 5998, 6000, 6002, 6003, 6016, 6099, 6103, 6103, 6108, 6109, 6112, 6121, 6155, 6157, 6160, 6169, 6176, 6263, 6272, 6314, 6320, 6389, 6400, 6428, 6432, 6443, 6448, 6459, 6470, 6509, 6512, 6516, 6528, 6571, 6576, 6601, 6608, 6617, 6656, 6683, 6688, 6750, 6752, 6780, 6783, 6793, 6800, 6809, 6823, 6823, 6912, 6987, 6992, 7001, 7019, 7027, 7040, 7155, 7168, 7223, 7232, 7241, 7245, 7293, 7376, 7378, 7380, 7414, 7424, 7654, 7676, 7957, 7960, 7965, 7968, 8005, 8008, 8013, 8016, 8023, 8025, 8025, 8027, 8027, 8029, 8029, 8031, 8061, 8064, 8116, 8118, 8124, 8126, 8126, 8130, 8132, 8134, 8140, 8144, 8147, 8150, 8155, 8160, 8172, 8178, 8180, 8182, 8188, 8204, 8205, 8255, 8256, 8276, 8276, 8305, 8305, 8319, 8319, 8336, 8348, 8400, 8412, 8417, 8417, 8421, 8432, 8450, 8450, 8455, 8455, 8458, 8467, 8469, 8469, 8473, 8477, 8484, 8484, 8486, 8486, 8488, 8488, 8490, 8493, 8495, 8505, 8508, 8511, 8517, 8521, 8526, 8526, 8544, 8584, 11264, 11310, 11312, 11358, 11360, 11492, 11499, 11507, 11520, 11557, 11559, 11559, 11565, 11565, 11568, 11623, 11631, 11631, 11647, 11670, 11680, 11686, 11688, 11694, 11696, 11702, 11704, 11710, 11712, 11718, 11720, 11726, 11728, 11734, 11736, 11742, 11744, 11775, 11823, 11823, 12293, 12295, 12321, 12335, 12337, 12341, 12344, 12348, 12353, 12438, 12441, 12442, 12445, 12447, 12449, 12538, 12540, 12543, 12549, 12589, 12593, 12686, 12704, 12730, 12784, 12799, 13312, 19893, 19968, 40908, 40960, 42124, 42192, 42237, 42240, 42508, 42512, 42539, 42560, 42607, 42612, 42621, 42623, 42647, 42655, 42737, 42775, 42783, 42786, 42888, 42891, 42894, 42896, 42899, 42912, 42922, 43000, 43047, 43072, 43123, 43136, 43204, 43216, 43225, 43232, 43255, 43259, 43259, 43264, 43309, 43312, 43347, 43360, 43388, 43392, 43456, 43471, 43481, 43520, 43574, 43584, 43597, 43600, 43609, 43616, 43638, 43642, 43643, 43648, 43714, 43739, 43741, 43744, 43759, 43762, 43766, 43777, 43782, 43785, 43790, 43793, 43798, 43808, 43814, 43816, 43822, 43968, 44010, 44012, 44013, 44016, 44025, 44032, 55203, 55216, 55238, 55243, 55291, 63744, 64109, 64112, 64217, 64256, 64262, 64275, 64279, 64285, 64296, 64298, 64310, 64312, 64316, 64318, 64318, 64320, 64321, 64323, 64324, 64326, 64433, 64467, 64829, 64848, 64911, 64914, 64967, 65008, 65019, 65024, 65039, 65056, 65062, 65075, 65076, 65101, 65103, 65136, 65140, 65142, 65276, 65296, 65305, 65313, 65338, 65343, 65343, 65345, 65370, 65382, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500];
         return Unicode;
     })();
     TypeScript.Unicode = Unicode;
@@ -33421,15 +30553,9 @@ var TypeScript;
                         }
                     }
                 }
-                results[results.length] = {
-                    param: info.typeParameter,
-                    type: bestCommonType
-                };
+                results[results.length] = { param: info.typeParameter, type: bestCommonType };
             }
-            return {
-                results: results,
-                unfit: unfit
-            };
+            return { results: results, unfit: unfit };
         };
         return ArgumentInferenceContext;
     })();
@@ -34714,10 +31840,7 @@ var TypeScript;
                         break;
                     case 93 /* ReturnStatement */:
                         var returnStatement = ast;
-                        returnStatements[returnStatements.length] = {
-                            returnStatement: returnStatement,
-                            enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1]
-                        };
+                        returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] };
                         go = false;
                         break;
                     case 101 /* CatchClause */:
@@ -35294,10 +32417,7 @@ var TypeScript;
                     nameSymbol = this.cachedObjectInterfaceType.findMember(rhsName);
                 }
                 if (!nameSymbol) {
-                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [
-                        rhsName,
-                        lhsType.getName()
-                    ]), enclosingDecl);
+                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [rhsName, lhsType.getName()]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -35404,10 +32524,7 @@ var TypeScript;
             }
             var typeParameters = genericTypeSymbol.getTypeParameters();
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                diagnostic = context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(152 /* Generic_type__0__requires_1_type_argument_s_ */, [
-                    genericTypeSymbol.toString(),
-                    genericTypeSymbol.getTypeParameters().length
-                ]), enclosingDecl);
+                diagnostic = context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(152 /* Generic_type__0__requires_1_type_argument_s_ */, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
             var specializedSymbol = TypeScript.specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
@@ -35427,11 +32544,7 @@ var TypeScript;
                         return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [
-                            typeArg.toString(true),
-                            typeConstraint.toString(true),
-                            typeParameters[iArg].toString(true)
-                        ]), enclosingDecl, true);
+                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]), enclosingDecl, true);
                     }
                 }
             }
@@ -35479,10 +32592,7 @@ var TypeScript;
                 }
             }
             if (!childTypeSymbol) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [
-                    rhsName,
-                    lhsType.getName()
-                ]), enclosingDecl);
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [rhsName, lhsType.getName()]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
             if (!childTypeSymbol.isResolved()) {
@@ -35887,10 +32997,7 @@ var TypeScript;
                 returnType = this.semanticInfoChain.anyTypeSymbol;
                 this.setSymbolForAST(callEx, returnType, context);
             } else {
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(70 /* Value_of_type__0__is_not_indexable_by_type__1_ */, [
-                    targetTypeSymbol.toString(false),
-                    indexType.toString(false)
-                ]), enclosingDecl);
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(70 /* Value_of_type__0__is_not_indexable_by_type__1_ */, [targetTypeSymbol.toString(false), indexType.toString(false)]), enclosingDecl);
                 returnType = this.getNewErrorTypeSymbol(diagnostic);
             }
             return returnType;
@@ -36012,10 +33119,7 @@ var TypeScript;
                     return bct;
                 }
             }
-            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(153 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [
-                leftType.toString(false),
-                rightType.toString(false)
-            ]), enclosingDecl);
+            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(153 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [leftType.toString(false), rightType.toString(false)]), enclosingDecl);
             return this.getNewErrorTypeSymbol(diagnostic);
         };
         PullTypeResolver.prototype.resolveParenthesizedExpression = function (ast, enclosingDecl, context) {
@@ -36103,11 +33207,7 @@ var TypeScript;
                                             context.popTypeSpecializationCache();
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [
-                                                inferredTypeArgs[j].toString(true),
-                                                typeConstraint.toString(true),
-                                                typeParameters[j].toString(true)
-                                            ]), enclosingDecl, true);
+                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
                                         }
                                     }
                                 }
@@ -36287,11 +33387,7 @@ var TypeScript;
                                                 context.popTypeSpecializationCache();
                                             }
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [
-                                                    inferredTypeArgs[j].toString(true),
-                                                    typeConstraint.toString(true),
-                                                    typeParameters[j].toString(true)
-                                                ]), enclosingDecl, true);
+                                                context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
                                             }
                                         }
                                     }
@@ -36930,11 +34026,7 @@ var TypeScript;
                             if (!(targetProp.getIsOptional())) {
                                 if (comparisonInfo) {
                                     comparisonInfo.flags |= 2 /* RequiredPropertyIsMissing */;
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(219 /* Type__0__is_missing_property__1__from_type__2_ */, [
-                                        source.toString(),
-                                        targetProp.getScopedNameEx().toString(),
-                                        target.toString()
-                                    ]));
+                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(219 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
                                 }
                                 return false;
                             }
@@ -36954,17 +34046,9 @@ var TypeScript;
             if (targetPropIsPrivate != sourcePropIsPrivate) {
                 if (comparisonInfo) {
                     if (targetPropIsPrivate) {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(223 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [
-                            targetProp.getScopedNameEx().toString(),
-                            source.toString(),
-                            target.toString()
-                        ]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(223 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
                     } else {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(222 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [
-                            targetProp.getScopedNameEx().toString(),
-                            source.toString(),
-                            target.toString()
-                        ]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(222 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
                     }
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
                 }
@@ -36974,11 +34058,7 @@ var TypeScript;
                 var sourceDecl = sourceProp.getDeclarations()[0];
                 if (!targetDecl.isEqual(sourceDecl)) {
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(224 /* Types__0__and__1__define_property__2__as_private */, [
-                        source.toString(),
-                        target.toString(),
-                        targetProp.getScopedNameEx().toString()
-                    ]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(224 /* Types__0__and__1__define_property__2__as_private */, [source.toString(), target.toString(), targetProp.getScopedNameEx().toString()]));
                     return false;
                 }
             }
@@ -36999,18 +34079,9 @@ var TypeScript;
                     comparisonInfo.flags |= 32 /* IncompatiblePropertyTypes */;
                     var message;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = TypeScript.getDiagnosticMessage(221 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [
-                            targetProp.getScopedNameEx().toString(),
-                            source.toString(),
-                            target.toString(),
-                            comparisonInfoPropertyTypeCheck.message
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(221 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(220 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [
-                            targetProp.getScopedNameEx().toString(),
-                            source.toString(),
-                            target.toString()
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(220 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
                     }
                     comparisonInfo.addMessage(message);
                 }
@@ -37031,24 +34102,14 @@ var TypeScript;
                         var message;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(226 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [
-                                    source.toString(),
-                                    target.toString(),
-                                    comparisonInfoSignatuesTypeCheck.message
-                                ]);
+                                message = TypeScript.getDiagnosticMessage(226 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(225 /* Call_signatures_of_types__0__and__1__are_incompatible */, [
-                                    source.toString(),
-                                    target.toString()
-                                ]);
+                                message = TypeScript.getDiagnosticMessage(225 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(227 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [
-                                hasSig,
-                                lacksSig
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(227 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -37071,24 +34132,14 @@ var TypeScript;
                         var message;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(229 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [
-                                    source.toString(),
-                                    target.toString(),
-                                    comparisonInfoSignatuesTypeCheck.message
-                                ]);
+                                message = TypeScript.getDiagnosticMessage(229 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(228 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [
-                                    source.toString(),
-                                    target.toString()
-                                ]);
+                                message = TypeScript.getDiagnosticMessage(228 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(230 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [
-                                hasSig,
-                                lacksSig
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(230 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -37164,16 +34215,9 @@ var TypeScript;
                     if (comparisonInfo) {
                         var message;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = TypeScript.getDiagnosticMessage(232 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [
-                                source.toString(),
-                                target.toString(),
-                                comparisonInfoSignatuesTypeCheck.message
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(232 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(231 /* Index_signatures_of_types__0__and__1__are_incompatible */, [
-                                source.toString(),
-                                target.toString()
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(231 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -37342,10 +34386,7 @@ var TypeScript;
                 if (exactCandidates.length > 1) {
                     var applicableSigs = [];
                     for (var i = 0; i < exactCandidates.length; i++) {
-                        applicableSigs[i] = {
-                            signature: exactCandidates[i],
-                            hadProvisionalErrors: false
-                        };
+                        applicableSigs[i] = { signature: exactCandidates[i], hadProvisionalErrors: false };
                     }
                     candidateInfo = this.findMostApplicableSignature(applicableSigs, args, enclosingDecl, context);
                     candidate = candidateInfo.sig;
@@ -37455,11 +34496,7 @@ var TypeScript;
                             argSym = this.resolveFunctionExpression(args.members[j], true, enclosingDecl, context);
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [
-                                        memberType.toString(),
-                                        (j + 1),
-                                        argSym.getTypeName()
-                                    ]));
+                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
                                 miss = true;
                             }
@@ -37478,11 +34515,7 @@ var TypeScript;
                         argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [
-                                    memberType.toString(),
-                                    (j + 1),
-                                    argSym.getTypeName()
-                                ]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             miss = true;
                         }
@@ -37500,11 +34533,7 @@ var TypeScript;
                         argSym = this.resolveArrayLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [
-                                    memberType.toString(),
-                                    (j + 1),
-                                    argSym.getTypeName()
-                                ]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }
@@ -37517,10 +34546,7 @@ var TypeScript;
                     }
                 }
                 if (j === args.members.length) {
-                    applicableSigs[applicableSigs.length] = {
-                        signature: candidateSignatures[i],
-                        hadProvisionalErrors: hadProvisionalErrors
-                    };
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors };
                 }
                 hadProvisionalErrors = false;
             }
@@ -37528,10 +34554,7 @@ var TypeScript;
         };
         PullTypeResolver.prototype.findMostApplicableSignature = function (signatures, args, enclosingDecl, context) {
             if (signatures.length === 1) {
-                return {
-                    sig: signatures[0].signature,
-                    ambiguous: false
-                };
+                return { sig: signatures[0].signature, ambiguous: false };
             }
             var best = signatures[0];
             var Q = null;
@@ -37592,10 +34615,7 @@ var TypeScript;
                     ambiguous = false;
                 }
             }
-            return {
-                sig: best.signature,
-                ambiguous: ambiguous
-            };
+            return { sig: best.signature, ambiguous: ambiguous };
         };
         PullTypeResolver.prototype.canApplyContextualTypeToFunction = function (candidateType, funcDecl, beStringent) {
             if (funcDecl.isMethod() || beStringent && funcDecl.returnTypeAnnotation) {
@@ -37842,23 +34862,13 @@ var TypeScript;
         }
         TypeComparisonInfo.prototype.addMessage = function (message) {
             if (!this.onlyCaptureFirstError && this.message) {
-                this.message = TypeScript.getDiagnosticMessage(2 /* _0__NL__1_TB__2 */, [
-                    this.message,
-                    this.indent,
-                    message
-                ]);
+                this.message = TypeScript.getDiagnosticMessage(2 /* _0__NL__1_TB__2 */, [this.message, this.indent, message]);
             } else {
-                this.message = TypeScript.getDiagnosticMessage(3 /* _0_TB__1 */, [
-                    this.indent,
-                    message
-                ]);
+                this.message = TypeScript.getDiagnosticMessage(3 /* _0_TB__1 */, [this.indent, message]);
             }
         };
         TypeComparisonInfo.prototype.setMessage = function (message) {
-            this.message = TypeScript.getDiagnosticMessage(3 /* _0_TB__1 */, [
-                this.indent,
-                message
-            ]);
+            this.message = TypeScript.getDiagnosticMessage(3 /* _0_TB__1 */, [this.indent, message]);
         };
         return TypeComparisonInfo;
     })();
@@ -37956,11 +34966,7 @@ var TypeScript;
                         continue;
                     }
                     if (!this.resolver.typesAreIdentical(symbol.getType(), firstSymbol.getType())) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(193 /* Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ */, [
-                            symbol.getName(),
-                            firstSymbol.getType().toString(),
-                            symbol.getType().toString()
-                        ]), enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(193 /* Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ */, [symbol.getName(), firstSymbol.getType().toString(), symbol.getType().toString()]), enclosingDecl);
                     }
                 }
             }
@@ -38192,16 +35198,9 @@ var TypeScript;
                     if (!isAssignable) {
                         var message;
                         if (comparisonInfo.message) {
-                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [
-                                initTypeSymbol.toString(),
-                                typeExprSymbol.toString(),
-                                comparisonInfo.message
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [initTypeSymbol.toString(), typeExprSymbol.toString(), comparisonInfo.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [
-                                initTypeSymbol.toString(),
-                                typeExprSymbol.toString()
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
                         }
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
@@ -38473,11 +35472,7 @@ var TypeScript;
                     errorCode = 238 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
                 }
             }
-            var message = TypeScript.getDiagnosticMessage(errorCode, [
-                typeSymbol.toString(),
-                typeMember.getScopedNameEx().toString(),
-                extendedType.toString()
-            ]);
+            var message = TypeScript.getDiagnosticMessage(errorCode, [typeSymbol.toString(), typeMember.getScopedNameEx().toString(), extendedType.toString()]);
             comparisonInfo.addMessage(message);
             return false;
         };
@@ -38528,18 +35523,9 @@ var TypeScript;
                             if (!this.resolver.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
                                 var propMessage;
                                 if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = TypeScript.getDiagnosticMessage(240 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [
-                                        extendedConstructorTypeProp.getScopedNameEx().toString(),
-                                        typeSymbol.toString(),
-                                        extendedType.toString(),
-                                        comparisonInfoForPropTypeCheck.message
-                                    ]);
+                                    propMessage = TypeScript.getDiagnosticMessage(240 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
                                 } else {
-                                    propMessage = TypeScript.getDiagnosticMessage(239 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [
-                                        extendedConstructorTypeProp.getScopedNameEx().toString(),
-                                        typeSymbol.toString(),
-                                        extendedType.toString()
-                                    ]);
+                                    propMessage = TypeScript.getDiagnosticMessage(239 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
                                 }
                                 comparisonInfo.addMessage(propMessage);
                                 foundError = true;
@@ -38560,11 +35546,7 @@ var TypeScript;
                         errorCode = 202 /* Interface__0__cannot_extend_interface__1__NL__2 */;
                     }
                 }
-                var message = TypeScript.getDiagnosticMessage(errorCode, [
-                    typeSymbol.getScopedName(),
-                    extendedType.getScopedName(),
-                    comparisonInfo.message
-                ]);
+                var message = TypeScript.getDiagnosticMessage(errorCode, [typeSymbol.getScopedName(), extendedType.getScopedName(), comparisonInfo.message]);
                 this.postError(typeDecl.name.minChar, typeDecl.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
         };
@@ -38583,11 +35565,7 @@ var TypeScript;
             }
             if (foundError) {
                 var errorCode = implementedType.isClass() ? 197 /* Class__0__declares_class__1__but_does_not_implement_it__NL__2 */ : 196 /* Class__0__declares_interface__1__but_does_not_implement_it__NL__2 */;
-                var message = TypeScript.getDiagnosticMessage(errorCode, [
-                    classSymbol.getScopedName(),
-                    implementedType.getScopedName(),
-                    comparisonInfo.message
-                ]);
+                var message = TypeScript.getDiagnosticMessage(errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message]);
                 this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
         };
@@ -38682,16 +35660,9 @@ var TypeScript;
             if (!isAssignable) {
                 var message;
                 if (comparisonInfo.message) {
-                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [
-                        source.toString(),
-                        target.toString(),
-                        comparisonInfo.message
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [source.toString(), target.toString(), comparisonInfo.message]);
                 } else {
-                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [
-                        source.toString(),
-                        target.toString()
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [source.toString(), target.toString()]);
                 }
                 var enclosingDecl = typeCheckContext.getEnclosingDecl();
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
@@ -38994,16 +35965,9 @@ var TypeScript;
             if (!isAssignable) {
                 var message;
                 if (comparisonInfo.message) {
-                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [
-                        exprType.toString(),
-                        returnType.toString(),
-                        comparisonInfo.message
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [exprType.toString(), returnType.toString(), comparisonInfo.message]);
                 } else {
-                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [
-                        exprType.toString(),
-                        returnType.toString()
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [exprType.toString(), returnType.toString()]);
                 }
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
@@ -39018,11 +35982,7 @@ var TypeScript;
             var rightType = this.typeCheckAST(binex.operand2, typeCheckContext);
             var comparisonInfo = new TypeComparisonInfo();
             if (!this.resolver.sourceIsAssignableToTarget(leftType, rightType, this.context, comparisonInfo) && !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(71 /* Operator__0__cannot_be_applied_to_types__1__and__2_ */, [
-                    TypeScript.BinaryExpression.getTextForBinaryToken(binex.nodeType),
-                    leftType.toString(),
-                    rightType.toString()
-                ]), enclosingDecl);
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(71 /* Operator__0__cannot_be_applied_to_types__1__and__2_ */, [TypeScript.BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()]), enclosingDecl);
             }
             return type;
         };
@@ -39345,16 +36305,9 @@ var TypeScript;
                     if (!isAssignable) {
                         var message;
                         if (comparisonInfo.message) {
-                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [
-                                returnType.toString(),
-                                sigReturnType.toString(),
-                                comparisonInfo.message
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [
-                                returnType.toString(),
-                                sigReturnType.toString()
-                            ]);
+                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [returnType.toString(), sigReturnType.toString()]);
                         }
                         this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
@@ -39382,10 +36335,7 @@ var TypeScript;
                     var containingClass = typeCheckContext.getEnclosingClassDecl();
                     if (!containingClass || containingClass.getSymbol() !== expressionType) {
                         var name = memberAccessExpression.operand2;
-                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(169 /* _0_1__is_inaccessible */, [
-                            expressionType.toString(false),
-                            name.actualText
-                        ]), enclosingDecl);
+                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(169 /* _0_1__is_inaccessible */, [expressionType.toString(false), name.actualText]), enclosingDecl);
                     }
                 }
             }
@@ -39475,40 +36425,22 @@ var TypeScript;
                 }
                 if (declAST.nodeType === 13 /* ClassDeclaration */) {
                     if (isExtendedType) {
-                        message = TypeScript.getDiagnosticMessage(83 /* Exported_class__0__extends_class_from_inaccessible_module__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(83 /* Exported_class__0__extends_class_from_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(84 /* Exported_class__0__implements_interface_from_inaccessible_module__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(84 /* Exported_class__0__implements_interface_from_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(85 /* Exported_interface__0__extends_interface_from_inaccessible_module__1_ */, [
-                        declSymbol.getName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(85 /* Exported_interface__0__extends_interface_from_inaccessible_module__1_ */, [declSymbol.getName(), typeSymbolName]);
                 }
             } else {
                 if (declAST.nodeType === 13 /* ClassDeclaration */) {
                     if (isExtendedType) {
-                        message = TypeScript.getDiagnosticMessage(80 /* Exported_class__0__extends_private_class__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(80 /* Exported_class__0__extends_private_class__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(81 /* Exported_class__0__implements_private_interface__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(81 /* Exported_class__0__implements_private_interface__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(82 /* Exported_interface__0__extends_private_interface__1_ */, [
-                        declSymbol.getName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(82 /* Exported_interface__0__extends_private_interface__1_ */, [declSymbol.getName(), typeSymbolName]);
                 }
             }
             this.context.postError(baseAst.minChar, baseAst.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
@@ -39530,51 +36462,27 @@ var TypeScript;
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
                 if (decl.getFlags() & 16 /* Static */) {
-                    message = TypeScript.getDiagnosticMessage(90 /* Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [
-                        declSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(90 /* Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
-                        message = TypeScript.getDiagnosticMessage(91 /* Public_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(91 /* Public_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(92 /* Property__0__of__exported_interface_is_using_inaccessible_module__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(92 /* Property__0__of__exported_interface_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(93 /* Exported_variable__0__is_using_inaccessible_module__1_ */, [
-                        declSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(93 /* Exported_variable__0__is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                 }
             } else {
                 if (decl.getFlags() & 16 /* Static */) {
-                    message = TypeScript.getDiagnosticMessage(86 /* Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [
-                        declSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(86 /* Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
-                        message = TypeScript.getDiagnosticMessage(87 /* Public_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(87 /* Public_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(88 /* Property__0__of__exported_interface_has_or_is_using_private_type__1_ */, [
-                            declSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(88 /* Property__0__of__exported_interface_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(89 /* Exported_variable__0__has_or_is_using_private_type__1_ */, [
-                        declSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(89 /* Exported_variable__0__has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
                 }
             }
             this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
@@ -39636,105 +36544,51 @@ var TypeScript;
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
                 if (declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(103 /* Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(103 /* Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (isSetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(104 /* Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(104 /* Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(105 /* Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(105 /* Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(106 /* Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(106 /* Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(107 /* Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(107 /* Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(108 /* Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(108 /* Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(109 /* Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(109 /* Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(110 /* Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(110 /* Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else if (!isGetter) {
-                    message = TypeScript.getDiagnosticMessage(111 /* Parameter__0__of_exported_function_is_using_inaccessible_module__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(111 /* Parameter__0__of_exported_function_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 }
             } else {
                 if (declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(94 /* Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(94 /* Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (isSetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(95 /* Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(95 /* Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(96 /* Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(96 /* Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(97 /* Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(97 /* Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(98 /* Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(98 /* Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(99 /* Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(99 /* Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(100 /* Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(100 /* Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(101 /* Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ */, [
-                            paramSymbol.getScopedName(),
-                            typeSymbolName
-                        ]);
+                        message = TypeScript.getDiagnosticMessage(101 /* Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                     }
                 } else if (!isGetter && !declAST.isIndexerMember()) {
-                    message = TypeScript.getDiagnosticMessage(102 /* Parameter__0__of_exported_function_has_or_is_using_private_type__1_ */, [
-                        paramSymbol.getScopedName(),
-                        typeSymbolName
-                    ]);
+                    message = TypeScript.getDiagnosticMessage(102 /* Parameter__0__of_exported_function_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
                 }
             }
             if (message) {
@@ -46830,10 +43684,7 @@ var TypeScript;
         };
         TypeScriptCompiler.prototype.reportDiagnostic = function (error, textWriter) {
             if (error.fileName()) {
-                var lineCol = {
-                    line: -1,
-                    character: -1
-                };
+                var lineCol = { line: -1, character: -1 };
                 var lineMap = this.getDocument(error.fileName()).lineMap;
                 lineMap.fillLineAndCharacterFromPosition(error.start(), lineCol);
                 textWriter.Write(error.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character + "): ");
