@@ -19,7 +19,6 @@ Point.prototype = {
         return new Point(this.x + dx, this.y + dy);
     }
 };
-
 z = function (a) {
     a;
 };

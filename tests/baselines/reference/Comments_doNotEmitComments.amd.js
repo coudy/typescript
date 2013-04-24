@@ -39,7 +39,6 @@ var m1;
     m1.b = b;
     
 })(m1 || (m1 = {}));
-
 ////[0.d.ts]
 declare var myVariable: number;
 declare function foo(p: number): void;

@@ -1388,6 +1388,15 @@ module TypeScript {
                 return true;
             }
 
+            if (node.nodeType === NodeType.VariableStatement) {
+                var variableStatement = <VariableStatement>node;
+                var varDecl = <VariableDeclarator>variableStatement.declaration.declarators.members[0];
+                var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
+                if (isAmbientWithoutInit) {
+                    return true;
+                }
+            }
+
             return false;
         }
         

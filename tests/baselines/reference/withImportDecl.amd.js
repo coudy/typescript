@@ -9,10 +9,6 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
         y: 70,
         desc: "position"
     };
-    
-    
-    
-    
     var arrayVar = [
         'a',
         'b'

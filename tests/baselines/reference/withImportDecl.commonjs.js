@@ -8,10 +8,6 @@ var withComplicatedValue = {
     y: 70,
     desc: "position"
 };
-
-
-
-
 var arrayVar = [
     'a',
     'b'
