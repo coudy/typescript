@@ -1240,22 +1240,36 @@ module Harness {
                 } );
             }
 
-            var errs = (typeof errAggregator == "undefined") ? stderr : errAggregator;
+            var errorTarget = (typeof errAggregator == "undefined") ? stderr : errAggregator;
+            var errorReporter = {
+                addDiagnostic: (diagnostic: TypeScript.IDiagnostic) => {
+                    if (diagnostic.fileName()) {
+                        var document = compiler.getDocument(diagnostic.fileName());
+                        var lineCol = { line: -1, character: -1 };
+                        document.lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
+
+                        errorTarget.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character  + "): ");
+                    }
+
+                    errorTarget.WriteLine(diagnostic.message());
+                }
+            };
+
             us.forEach(u => {
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(u);
-                compiler.reportDiagnostics(syntacticDiagnostics, errs);
+                compiler.reportDiagnostics(syntacticDiagnostics, errorReporter);
 
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(u);
-                compiler.reportDiagnostics(semanticDiagnostics, errs);
+                compiler.reportDiagnostics(semanticDiagnostics, errorReporter);
             } );
 
             var emitDiagnostics = emitAll(stdout);
-            compiler.reportDiagnostics(emitDiagnostics, errs);
+            compiler.reportDiagnostics(emitDiagnostics, errorReporter);
 
             var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
-            compiler.reportDiagnostics(emitDeclarationsDiagnostics, errs);
+            compiler.reportDiagnostics(emitDeclarationsDiagnostics, errorReporter);
 
-            return errs.lines;
+            return errorTarget.lines;
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {

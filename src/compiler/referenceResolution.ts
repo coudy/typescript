@@ -74,10 +74,22 @@ module TypeScript {
         constructor (public compilationSettings: CompilationSettings, public ioHost: IFileSystemObject) { }
         public code: SourceUnit[] = [];
         public inputFileNameToOutputFileName = new StringHashTable();
+        public getSourceUnit(path: string): SourceUnit {
+            var normalizedPath = switchToForwardSlashes(path.toUpperCase());
+            for (var i = 0, n = this.code.length; i < n; i++) {
+                var sourceUnit = this.code[i];
+                var soruceUnitNormalizedPath = switchToForwardSlashes(sourceUnit.path.toUpperCase());
+                if (normalizedPath === soruceUnitNormalizedPath) {
+                    return sourceUnit;
+                }
+            }
+
+            return null;
+        }
     }
 
     export interface IResolutionDispatcher {
-        postResolutionError(errorFile: string, fileReference: IFileReference, errorMessage: string): void;
+        errorReporter: TypeScript.IDignosticsReporter;
         postResolution(path: string, source: IScriptSnapshot): void;
     }
 
@@ -186,14 +198,17 @@ module TypeScript {
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.postResolutionError(normalizedPath, fileReference, "Incorrect reference: File contains reference to itself.");
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, normalizedPath,
+                                getDiagnosticMessage(DiagnosticCode.A_file_cannot_have_a_reference_itself, null)));
+
                             continue;
                         }
 
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, resolvedFilePath,
+                                getDiagnosticMessage(DiagnosticCode.Cannot_resolve_referenced_file___0_, [fileReference.path])));
                         }
                     }
                     
@@ -204,7 +219,8 @@ module TypeScript {
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileImport.position, fileImport.length, resolvedFilePath,
+                                getDiagnosticMessage(DiagnosticCode.Cannot_resolve_imported_file___0_, [fileImport.path])));
                         }
                     }
 

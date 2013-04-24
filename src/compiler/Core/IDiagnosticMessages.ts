@@ -258,5 +258,15 @@ module TypeScript {
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: DiagnosticInfo;
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: DiagnosticInfo;
 
+
+        //Batch compiler diagnostics
+        Current_host_does_not_support__w_atch_option: DiagnosticInfo;
+        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation: DiagnosticInfo;
+        Module_code_generation__0__not_supported___Using_default__1__code_generation: DiagnosticInfo;
+        Could_not_find_file___0_: DiagnosticInfo;
+        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: DiagnosticInfo;
+        A_file_cannot_have_a_reference_itself: DiagnosticInfo;
+        Cannot_resolve_referenced_file___0_: DiagnosticInfo;
+        Cannot_resolve_imported_file___0_: DiagnosticInfo;
     }
 }

@@ -1301,6 +1301,52 @@ module TypeScript {
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
+
+
+
+
+
+        // Batch compiler errors start 500
+        Current_host_does_not_support__w_atch_option: {
+            category: DiagnosticCategory.Error,
+            message: "Current host does not support -w[atch] option.",
+            code: 5001
+        },
+        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation: {
+            category: DiagnosticCategory.Warning,
+            message: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
+            code: 5002
+        },
+        Module_code_generation__0__not_supported___Using_default__1__code_generation: {
+            category: DiagnosticCategory.Warning,
+            message: "Module code generation '{0}' not supported.  Using default '{1}' code generation.",
+            code: 5003
+        },
+        Could_not_find_file___0_: {
+            category: DiagnosticCategory.Error,
+            message: "Could not find file: '{0}'.",
+            code: 5004
+        },
+        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: {
+            category: DiagnosticCategory.Error,
+            message: "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.",
+            code: 5005
+        },
+        A_file_cannot_have_a_reference_itself: {
+            category: DiagnosticCategory.Error,
+            message: "A file cannot have a reference itself.",
+            code: 5006
+        },
+        Cannot_resolve_referenced_file___0_: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot resolve referenced file: '{0}'.",
+            code: 5007
+        },
+        Cannot_resolve_imported_file___0_: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot resolve imported file: '{0}'.",
+            code: 5008
+        },
     };
 
     var seenCodes = [];

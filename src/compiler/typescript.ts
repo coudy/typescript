@@ -1337,21 +1337,9 @@ module TypeScript {
             return unit.getTopLevelDecls();
         }
 
-        private reportDiagnostic(error: IDiagnostic, textWriter: ITextWriter) {
-            if (error.fileName()) {
-                var lineCol = { line: -1, character: -1 };
-                var lineMap = this.getDocument(error.fileName()).lineMap;
-                lineMap.fillLineAndCharacterFromPosition(error.start(), lineCol);
-
-                textWriter.Write(error.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character + "): ");
-            }
-
-            textWriter.WriteLine(error.message());
-        }
-
-        public reportDiagnostics(errors: IDiagnostic[], textWriter: ITextWriter): void {
+        public reportDiagnostics(errors: IDiagnostic[], errorReporter: TypeScript.IDignosticsReporter): void {
             for (var i = 0; i < errors.length; i++) {
-                this.reportDiagnostic(errors[i], textWriter);
+                errorReporter.addDiagnostic(errors[i]);
             }
         }
     }

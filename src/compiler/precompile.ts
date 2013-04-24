@@ -170,6 +170,8 @@ module TypeScript {
 
                 if (referencedCode) {
                     lineMap.fillLineAndCharacterFromPosition(position, lineChar);
+                    referencedCode.position = position;
+                    referencedCode.length = trivia.fullWidth();
                     referencedCode.line = lineChar.line;
                     referencedCode.character = lineChar.character;
 

@@ -32,24 +32,35 @@ class DiagnosticsLogger implements TypeScript.ILogger {
     }
 }
 
-class ErrorReporter implements ITextWriter {
+class ErrorReporter implements TypeScript.IDignosticsReporter {
+    private compilationEnvironment: TypeScript.CompilationEnvironment
     public hasErrors: boolean;
 
-    constructor(public ioHost: IIO) {
+    constructor(public ioHost: IIO, compilationEnvironment: TypeScript.CompilationEnvironment) {
         this.hasErrors = false;
+        this.setCompilationEnvironment(compilationEnvironment);
     }
 
-    public Write(s: string) {
+    public addDiagnostic(diagnostic: TypeScript.IDiagnostic) {
         this.hasErrors = true;
-        this.ioHost.stderr.Write(s);
+
+        if (diagnostic.fileName()) {
+            var soruceUnit = this.compilationEnvironment.getSourceUnit(diagnostic.fileName());
+            if (!soruceUnit) {
+                soruceUnit = new TypeScript.SourceUnit(diagnostic.fileName(), this.ioHost.readFile(diagnostic.fileName()));
+            }
+            var lineMap = new TypeScript.LineMap(soruceUnit.getLineStartPositions(), soruceUnit.getLength());
+            var lineCol = { line: -1, character: -1 };
+            lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
+
+            this.ioHost.stderr.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character+1) + "): ");
+        }
+
+        this.ioHost.stderr.WriteLine(diagnostic.message());
     }
 
-    public WriteLine(s: string) {
-        this.hasErrors = true;
-        this.ioHost.stderr.WriteLine(s);
-    }
-
-    public Close() {
+    public setCompilationEnvironment(compilationEnvironment: TypeScript.CompilationEnvironment): void {
+        this.compilationEnvironment = compilationEnvironment;
     }
 
     public reset() {
@@ -62,7 +73,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
     public pathMap: any = {};
     public resolvedPaths: any = {};
 
-    constructor(public compilationSettings: TypeScript.CompilationSettings, public errorReporter: (err:string)=>void) { 
+    constructor(public compilationSettings: TypeScript.CompilationSettings, public errorReporter: ErrorReporter) { 
     }
 
     public getPathIdentifier(path: string) {
@@ -81,15 +92,10 @@ class CommandLineHost implements TypeScript.IResolverHost {
         var nCode = preEnv.code.length;
         var path = "";
 
-        var postResolutionError = 
-            (errorFile: string, errorMessage: string) => {
-                this.errorReporter(errorFile + (errorMessage === "" ? "" : ": " + errorMessage));
-            }
+        this.errorReporter.setCompilationEnvironment(resolvedEnv);
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: (errorFile, fileReference, errorMessage) => {
-                this.errorReporter(errorFile + "(" + (fileReference.line + 1) + "," + (fileReference.character + 1) + ") " + (errorMessage === "" ? "" : ": " + errorMessage));
-            },
+            errorReporter: this.errorReporter,
             postResolution: (path: string, code: TypeScript.IScriptSnapshot) => {
                 var pathId = this.getPathIdentifier(path);
                 if (!this.resolvedPaths[pathId]) {
@@ -121,22 +127,24 @@ class BatchCompiler {
     constructor(public ioHost: IIO) {
         this.compilationSettings = new TypeScript.CompilationSettings();
         this.compilationEnvironment = new TypeScript.CompilationEnvironment(this.compilationSettings, this.ioHost);
-        this.errorReporter = new ErrorReporter(this.ioHost);
+        this.errorReporter = new ErrorReporter(this.ioHost, this.compilationEnvironment);
     }
 
     public resolve() {
         var resolver = new TypeScript.CodeResolver(this.compilationEnvironment);
-        var commandLineHost = new CommandLineHost(this.compilationSettings, (err) => this.errorReporter.WriteLine(err));
+        var commandLineHost = new CommandLineHost(this.compilationSettings, this.errorReporter);
         var ret = commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
 
         for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
             if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
                 var path = this.compilationEnvironment.code[i].path;
                 if (!TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
-                    this.errorReporter.WriteLine("Unknown extension for file: \"" + path + "\". Only .ts and .d.ts extensions are allowed.");
+                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
+                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed, [path])));
                 }
                 else {
-                    this.errorReporter.WriteLine("Error reading file \"" + path + "\": File not found");
+                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
+                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_find_file___0_, [path])));
                 }
             }
         }
@@ -464,7 +472,8 @@ class BatchCompiler {
                     this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 }
                 else {
-                    this.errorReporter.WriteLine("ECMAScript target version '" + type + "' not supported.  Using default 'ES3' code generation");
+                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
+                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation, [type, "ES3"])));
                 }
             }
         });
@@ -482,7 +491,8 @@ class BatchCompiler {
                     this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
                 }
                 else {
-                    this.errorReporter.WriteLine("Module code generation '" + type + "' not supported.  Using default 'commonjs' code generation");
+                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
+                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation, [type, "commonjs"])));
                 }
             }
         });
@@ -586,7 +596,8 @@ class BatchCompiler {
 
     private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
-            this.errorReporter.WriteLine("Error: Current host does not support -w[atch] option");
+            this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
+                TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Current_host_does_not_support__w_atch_option, null)));
             return;
         }
 

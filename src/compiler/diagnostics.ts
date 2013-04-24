@@ -48,6 +48,10 @@ module TypeScript {
 
     }
 
+    export interface IDignosticsReporter {
+        addDiagnostic(diagnostic: TypeScript.IDiagnostic): void;
+    }
+
     export interface ILogger {
         information(): boolean;
         debug(): boolean;

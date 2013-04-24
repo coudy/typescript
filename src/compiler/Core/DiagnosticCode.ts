@@ -253,5 +253,16 @@ module TypeScript {
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property,
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible,
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3,
+
+
+        //Batch compiler diagnostics
+        Current_host_does_not_support__w_atch_option,
+        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation,
+        Module_code_generation__0__not_supported___Using_default__1__code_generation,
+        Could_not_find_file___0_,
+        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed,
+        A_file_cannot_have_a_reference_itself,
+        Cannot_resolve_referenced_file___0_,
+        Cannot_resolve_imported_file___0_,
     }
 }
