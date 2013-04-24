@@ -281,7 +281,7 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public findTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
+        public findCompleteTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
             var positionedToken = this.findToken(position, includeSkippedTokens);
 
             // Position better fall within this token.

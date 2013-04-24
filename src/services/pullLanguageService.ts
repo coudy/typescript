@@ -789,7 +789,7 @@ module Services {
         }
 
         private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
-            var positionedToken = sourceUnit.findTokenOnLeft(position, /*includeSkippedTokens*/true);
+            var positionedToken = sourceUnit.findCompleteTokenOnLeft(position, /*includeSkippedTokens*/true);
 
             if (positionedToken && position === positionedToken.end() && positionedToken.kind() == TypeScript.SyntaxKind.EndOfFileToken) {
                 // EndOfFile token is not intresting, get the one before it
