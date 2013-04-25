@@ -78,11 +78,9 @@ module Services {
         }
 
         public getHashCode(): number {
-            return TypeScript.combineHashes(
+            return TypeScript.Hash.combine(
                     TypeScript.Hash.computeSimple31BitStringHashCode(this.fileName),
-                    TypeScript.combineHashes(
-                        TypeScript.numberHashFn(this.ast.minChar),
-                        TypeScript.numberHashFn(this.ast.limChar)));
+                    TypeScript.Hash.combine(this.ast.minChar, this.ast.limChar));
         }
 
         public equals(other: ReferenceEntry): boolean {

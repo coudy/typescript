@@ -1,13 +1,13 @@
 /// <reference path='..\..\src\Services\es5compat.ts' />
 
-///<reference path='..\..\src\Compiler\Syntax\References.ts' />
-///<reference path='..\..\src\Compiler\Syntax\Emitter.ts' />
-///<reference path='..\..\src\Compiler\Syntax\PrettyPrinter.ts' />
+///<reference path='..\..\src\compiler\syntax\references.ts' />
+///<reference path='..\..\src\compiler\syntax\emitter.ts' />
+///<reference path='..\..\src\compiler\syntax\prettyPrinter.ts' />
 ///<reference path='Test262.ts' />
 ///<reference path='incremental\IncrementalParserTests.ts' />
-///<reference path='..\..\src\Compiler\Core\Environment.ts' />
-///<reference path='..\..\src\Harness\Diff.ts' />
-///<reference path='..\..\src\Compiler\SyntaxTreeToAstVisitor.ts' />
+///<reference path='..\..\src\compiler\core\environment.ts' />
+///<reference path='..\..\src\harness\diff.ts' />
+///<reference path='..\..\src\compiler\syntaxTreeToAstVisitor.ts' />
 
 var timer = new TypeScript.Timer();
 
