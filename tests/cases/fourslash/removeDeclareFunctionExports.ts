@@ -9,5 +9,4 @@
 ////}
 
 goTo.bof();
-// Bug 673512: Function signature export checking missed when removing 'declare' from module
-// edit.deleteAtCaret('declare '.length);
+edit.deleteAtCaret('declare '.length);

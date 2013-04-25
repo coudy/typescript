@@ -10,5 +10,4 @@
 //// 
 
 goTo.marker();
-// Bug 672454: Cannot call method 'isResolved' of null when trying to get quickInfo on unparseable code
-// verify.quickInfoSymbolNameIs('any');
+verify.quickInfoSymbolNameIs('x');
