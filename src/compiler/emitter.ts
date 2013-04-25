@@ -463,7 +463,7 @@ module TypeScript {
             }
         }
 
-        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean) {
+        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, includePreComments = true) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
@@ -485,7 +485,10 @@ module TypeScript {
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
             var shouldParenthesize = false;// hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
 
-            this.emitComments(funcDecl, true);
+            if (includePreComments) {
+                this.emitComments(funcDecl, true);
+            }
+
             if (shouldParenthesize) {
                 this.writeToOutput("(");
             }
@@ -1531,8 +1534,9 @@ module TypeScript {
             else {
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
+                this.emitComments(funcDecl, true);
                 this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                this.emitInnerFunction(funcDecl, /*printName:*/ false);
+                this.emitInnerFunction(funcDecl, /*printName:*/ false, /*includePreComments:*/ false);
                 this.writeLineToOutput(";");
             }
         }

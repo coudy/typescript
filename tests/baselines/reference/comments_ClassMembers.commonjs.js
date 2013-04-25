@@ -3,8 +3,8 @@ var c1 = (function () {
     /** Constructor method*/
     function c1() {
     }
-    c1.prototype.p2 = /** sum with property*/
-    function (/** number to add*/ b) {
+    /** sum with property*/
+    c1.prototype.p2 = function (/** number to add*/ b) {
         return this.p1 + b;
     };
     Object.defineProperty(c1.prototype, "p3", {
@@ -19,8 +19,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.prototype.pp2 = /** sum with property*/
-    function (/** number to add*/ b) {
+    /** sum with property*/
+    c1.prototype.pp2 = function (/** number to add*/ b) {
         return this.p1 + b;
     };
     Object.defineProperty(c1.prototype, "pp3", {
@@ -90,8 +90,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.prototype.a_p2 = // sum with property
-    function (b) {
+    // sum with property
+    c1.prototype.a_p2 = function (b) {
         return this.a_p1 + b;
     };
     Object.defineProperty(c1.prototype, "a_p3", {
@@ -106,8 +106,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.prototype.a_pp2 = // sum with property
-    function (b) {
+    // sum with property
+    c1.prototype.a_pp2 = function (b) {
         return this.a_p1 + b;
     };
     Object.defineProperty(c1.prototype, "a_pp3", {
@@ -138,8 +138,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.prototype.b_p2 = /** sum with property */
-    function (b) {
+    /** sum with property */
+    c1.prototype.b_p2 = function (b) {
         return this.b_p1 + b;
     };
     Object.defineProperty(c1.prototype, "b_p3", {
@@ -154,8 +154,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.prototype.b_pp2 = /** sum with property */
-    function (b) {
+    /** sum with property */
+    c1.prototype.b_pp2 = function (b) {
         return this.b_p1 + b;
     };
     Object.defineProperty(c1.prototype, "b_pp3", {

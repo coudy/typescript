@@ -37,8 +37,8 @@ var c = (function () {
     c.prototype.prop4 = function (aorb) {
         return 10;
     };
-    c.prototype.prop5 = /** Prop5 implementaion*/
-    function (aorb) {
+    /** Prop5 implementaion*/
+    c.prototype.prop5 = function (aorb) {
         return 10;
     };
     return c;

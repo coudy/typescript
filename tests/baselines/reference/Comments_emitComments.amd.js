@@ -14,8 +14,8 @@ var c = (function () {
         /** property comment */
         this.b = 10;
     }
-    c.prototype.myFoo = /** function comment */
-    function () {
+    /** function comment */
+    c.prototype.myFoo = function () {
         return this.b;
     };
     Object.defineProperty(c.prototype, "prop1", {
@@ -30,8 +30,8 @@ var c = (function () {
         enumerable: true,
         configurable: true
     });
-    c.prototype.foo1 = /** overload implementation signature*/
-    function (aOrb) {
+    /** overload implementation signature*/
+    c.prototype.foo1 = function (aOrb) {
         return aOrb.toString();
     };
     return c;
