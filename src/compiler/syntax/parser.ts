@@ -2114,7 +2114,8 @@ module TypeScript.Parser {
             return this.isConstructorDeclaration() ||
                    this.isMemberFunctionDeclaration(inErrorRecovery) ||
                    this.isMemberAccessorDeclaration(inErrorRecovery) ||
-                   this.isMemberVariableDeclaration(inErrorRecovery);
+                   this.isMemberVariableDeclaration(inErrorRecovery) ||
+                   this.isIndexSignature();
         }
 
         private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
@@ -2310,6 +2311,9 @@ module TypeScript.Parser {
             }
             else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
                 return this.parseMemberVariableDeclaration();
+            }
+            else if (this.isIndexSignature()) {
+                return this.parseIndexSignature();
             }
             else {
                 throw Errors.invalidOperation();

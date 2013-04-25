@@ -481,7 +481,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'IndexSignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: ['ITypeMemberSyntax'],
+        interfaces: ['ITypeMemberSyntax', 'IClassElementSyntax'],
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'parameter', type: 'ParameterSyntax' },
@@ -2060,7 +2060,7 @@ function generateNode(definition: ITypeDefinition): string {
 }
 
 function generateNodes(): string {
-    var result = "///<reference path='References.ts' />\r\n\r\n"
+    var result = "///<reference path='references.ts' />\r\n\r\n"
 
     result += "module TypeScript {\r\n";
 
@@ -2089,7 +2089,7 @@ function isNodeOrToken(child: IMemberDefinition) {
 }
 
 function generateRewriter(): string {
-    var result = "///<reference path='References.ts' />\r\n\r\n";
+    var result = "///<reference path='references.ts' />\r\n\r\n";
 
     result += "module TypeScript {\r\n" +
 "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" +
@@ -2465,7 +2465,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 
 function generateTokens(): string {
     var result = 
-        "///<reference path='References.ts' />\r\n" +
+        "///<reference path='references.ts' />\r\n" +
         "\r\n" +
         "module TypeScript.Syntax {\r\n";
 
@@ -2572,7 +2572,7 @@ function generateWalker(): string {
     var result = "";
 
     result +=
-"///<reference path='References.ts' />\r\n"+
+"///<reference path='references.ts' />\r\n"+
 "\r\n" +
 "module TypeScript {\r\n" +
 "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" +
@@ -2729,7 +2729,7 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
 }
 
 function generateScannerUtilities(): string {
-    var result = "///<reference path='References.ts' />\r\n" +
+    var result = "///<reference path='references.ts' />\r\n" +
         "\r\n" +
         "module TypeScript {\r\n" +
         "    export class ScannerUtilities {\r\n";
@@ -2776,7 +2776,7 @@ function generateVisitor(): string {
     var definition: ITypeDefinition;
     var result = "";
 
-    result += "///<reference path='References.ts' />\r\n\r\n";
+    result += "///<reference path='references.ts' />\r\n\r\n";
 
     result += "module TypeScript {\r\n";
     result += "    export interface ISyntaxVisitor {\r\n";
@@ -2820,7 +2820,7 @@ function generateVisitor(): string {
 }
 
 function generateFactory(): string {
-    var result = "///<reference path='References.ts' />\r\n";
+    var result = "///<reference path='references.ts' />\r\n";
 
     result += "\r\nmodule TypeScript.Syntax {\r\n";
     result += "    export interface IFactory {\r\n";

@@ -3261,7 +3261,7 @@ module TypeScript {
     }
     }
 
-    export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
+    export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax, IClassElementSyntax {
 
         constructor(public openBracketToken: ISyntaxToken,
                     public parameter: ParameterSyntax,
@@ -3295,6 +3295,10 @@ module TypeScript {
     }
 
     public isTypeMember(): boolean {
+        return true;
+    }
+
+    public isClassElement(): boolean {
         return true;
     }
 

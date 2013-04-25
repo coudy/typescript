@@ -1,12 +1,12 @@
-
 var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
-        function ArrayUtilities() { }
-        ArrayUtilities.isArray = function isArray(value) {
+        function ArrayUtilities() {
+        }
+        ArrayUtilities.isArray = function (value) {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         };
-        ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
+        ArrayUtilities.sequenceEquals = function (array1, array2, equals) {
             if (array1 === array2) {
                 return true;
             }
@@ -16,24 +16,24 @@ var TypeScript;
             if (array1.length !== array2.length) {
                 return false;
             }
-            for(var i = 0, n = array1.length; i < n; i++) {
+            for (var i = 0, n = array1.length; i < n; i++) {
                 if (!equals(array1[i], array2[i])) {
                     return false;
                 }
             }
             return true;
         };
-        ArrayUtilities.contains = function contains(array, value) {
-            for(var i = 0; i < array.length; i++) {
+        ArrayUtilities.contains = function (array, value) {
+            for (var i = 0; i < array.length; i++) {
                 if (array[i] === value) {
                     return true;
                 }
             }
             return false;
         };
-        ArrayUtilities.groupBy = function groupBy(array, func) {
+        ArrayUtilities.groupBy = function (array, func) {
             var result = {};
-            for(var i = 0, n = array.length; i < n; i++) {
+            for (var i = 0, n = array.length; i < n; i++) {
                 var v = array[i];
                 var k = func(v);
                 var list = result[k] || [];
@@ -42,9 +42,9 @@ var TypeScript;
             }
             return result;
         };
-        ArrayUtilities.min = function min(array, func) {
+        ArrayUtilities.min = function (array, func) {
             var min = func(array[0]);
-            for(var i = 1; i < array.length; i++) {
+            for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
                 if (next < min) {
                     min = next;
@@ -52,9 +52,9 @@ var TypeScript;
             }
             return min;
         };
-        ArrayUtilities.max = function max(array, func) {
+        ArrayUtilities.max = function (array, func) {
             var max = func(array[0]);
-            for(var i = 1; i < array.length; i++) {
+            for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
                 if (next > max) {
                     max = next;
@@ -62,14 +62,14 @@ var TypeScript;
             }
             return max;
         };
-        ArrayUtilities.last = function last(array) {
+        ArrayUtilities.last = function (array) {
             if (array.length === 0) {
                 throw TypeScript.Errors.argumentOutOfRange('array');
             }
             return array[array.length - 1];
         };
-        ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
-            for(var i = 0, n = array.length; i < n; i++) {
+        ArrayUtilities.firstOrDefault = function (array, func) {
+            for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];
                 if (func(value)) {
                     return value;
@@ -77,16 +77,16 @@ var TypeScript;
             }
             return null;
         };
-        ArrayUtilities.sum = function sum(array, func) {
+        ArrayUtilities.sum = function (array, func) {
             var result = 0;
-            for(var i = 0, n = array.length; i < n; i++) {
+            for (var i = 0, n = array.length; i < n; i++) {
                 result += func(array[i]);
             }
             return result;
         };
-        ArrayUtilities.whereNotNull = function whereNotNull(array) {
+        ArrayUtilities.whereNotNull = function (array) {
             var result = [];
-            for(var i = 0; i < array.length; i++) {
+            for (var i = 0; i < array.length; i++) {
                 var value = array[i];
                 if (value !== null) {
                     result.push(value);
@@ -94,42 +94,42 @@ var TypeScript;
             }
             return result;
         };
-        ArrayUtilities.select = function select(values, func) {
+        ArrayUtilities.select = function (values, func) {
             var result = [];
-            for(var i = 0; i < values.length; i++) {
+            for (var i = 0; i < values.length; i++) {
                 result.push(func(values[i]));
             }
             return result;
         };
-        ArrayUtilities.where = function where(values, func) {
+        ArrayUtilities.where = function (values, func) {
             var result = [];
-            for(var i = 0; i < values.length; i++) {
+            for (var i = 0; i < values.length; i++) {
                 if (func(values[i])) {
                     result.push(values[i]);
                 }
             }
             return result;
         };
-        ArrayUtilities.any = function any(array, func) {
-            for(var i = 0, n = array.length; i < n; i++) {
+        ArrayUtilities.any = function (array, func) {
+            for (var i = 0, n = array.length; i < n; i++) {
                 if (func(array[i])) {
                     return true;
                 }
             }
             return false;
         };
-        ArrayUtilities.all = function all(array, func) {
-            for(var i = 0, n = array.length; i < n; i++) {
+        ArrayUtilities.all = function (array, func) {
+            for (var i = 0, n = array.length; i < n; i++) {
                 if (!func(array[i])) {
                     return false;
                 }
             }
             return true;
         };
-        ArrayUtilities.binarySearch = function binarySearch(array, value) {
+        ArrayUtilities.binarySearch = function (array, value) {
             var low = 0;
             var high = array.length - 1;
-            while(low <= high) {
+            while (low <= high) {
                 var middle = low + ((high - low) >> 1);
                 var midValue = array[middle];
                 if (midValue === value) {
@@ -142,27 +142,27 @@ var TypeScript;
             }
             return ~low;
         };
-        ArrayUtilities.createArray = function createArray(length, defaultvalue) {
+        ArrayUtilities.createArray = function (length, defaultvalue) {
             var result = [];
-            for(var i = 0; i < length; i++) {
+            for (var i = 0; i < length; i++) {
                 result.push(defaultvalue);
             }
             return result;
         };
-        ArrayUtilities.grow = function grow(array, length, defaultValue) {
+        ArrayUtilities.grow = function (array, length, defaultValue) {
             var count = length - array.length;
-            for(var i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 array.push(defaultValue);
             }
         };
-        ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
-            for(var i = 0; i < length; i++) {
+        ArrayUtilities.copy = function (sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
+            for (var i = 0; i < length; i++) {
                 destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
             }
         };
         return ArrayUtilities;
     })();
-    TypeScript.ArrayUtilities = ArrayUtilities;    
+    TypeScript.ArrayUtilities = ArrayUtilities;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -176,38 +176,40 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Contract = (function () {
-        function Contract() { }
-        Contract.requires = function requires(expression) {
+        function Contract() {
+        }
+        Contract.requires = function (expression) {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         };
-        Contract.throwIfFalse = function throwIfFalse(expression) {
+        Contract.throwIfFalse = function (expression) {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         };
-        Contract.throwIfNull = function throwIfNull(value) {
+        Contract.throwIfNull = function (value) {
             if (value === null) {
                 throw new Error("Contract violated. Null value.");
             }
         };
         return Contract;
     })();
-    TypeScript.Contract = Contract;    
+    TypeScript.Contract = Contract;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     var Debug = (function () {
-        function Debug() { }
-        Debug.assert = function assert(expression, message) {
+        function Debug() {
+        }
+        Debug.assert = function (expression, message) {
             if (!expression) {
                 throw new Error("Debug Failure. False expression: " + (message ? message : ""));
             }
         };
         return Debug;
     })();
-    TypeScript.Debug = Debug;    
+    TypeScript.Debug = Debug;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -348,206 +350,206 @@ var TypeScript;
         DiagnosticCode.Modifiers_cannot_appear_here = 59;
         DiagnosticCode._map[60] = "Accessors_are_only_available_when_targeting_EcmaScript5_and_higher";
         DiagnosticCode.Accessors_are_only_available_when_targeting_EcmaScript5_and_higher = 60;
-        DiagnosticCode._map[61] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 61;
-        DiagnosticCode._map[62] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 62;
-        DiagnosticCode._map[63] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 63;
-        DiagnosticCode._map[64] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 64;
-        DiagnosticCode._map[65] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 65;
-        DiagnosticCode._map[66] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 66;
-        DiagnosticCode._map[67] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 67;
-        DiagnosticCode._map[68] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 68;
-        DiagnosticCode._map[69] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 69;
-        DiagnosticCode._map[70] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 70;
-        DiagnosticCode._map[71] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 71;
-        DiagnosticCode._map[72] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 72;
-        DiagnosticCode._map[73] = "Cannot_convert__0__to__1__NL__2";
-        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 73;
-        DiagnosticCode._map[74] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 74;
-        DiagnosticCode._map[75] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 75;
-        DiagnosticCode._map[76] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 76;
-        DiagnosticCode._map[77] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 77;
-        DiagnosticCode._map[78] = "Accessor_cannot_have_type_parameters";
-        DiagnosticCode.Accessor_cannot_have_type_parameters = 78;
-        DiagnosticCode._map[79] = "Exported_class__0__extends_private_class__1_";
-        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 79;
-        DiagnosticCode._map[80] = "Exported_class__0__implements_private_interface__1_";
-        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 80;
-        DiagnosticCode._map[81] = "Exported_interface__0__extends_private_interface__1_";
-        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 81;
-        DiagnosticCode._map[82] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 82;
-        DiagnosticCode._map[83] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 83;
-        DiagnosticCode._map[84] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 84;
-        DiagnosticCode._map[85] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 85;
-        DiagnosticCode._map[86] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 86;
-        DiagnosticCode._map[87] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 87;
-        DiagnosticCode._map[88] = "Exported_variable__0__has_or_is_using_private_type__1_";
-        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 88;
-        DiagnosticCode._map[89] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 89;
-        DiagnosticCode._map[90] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 90;
-        DiagnosticCode._map[91] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 91;
-        DiagnosticCode._map[92] = "Exported_variable__0__is_using_inaccessible_module__1_";
-        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 92;
-        DiagnosticCode._map[93] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 93;
-        DiagnosticCode._map[94] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 94;
-        DiagnosticCode._map[95] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 95;
-        DiagnosticCode._map[96] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 96;
-        DiagnosticCode._map[97] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 97;
-        DiagnosticCode._map[98] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 98;
-        DiagnosticCode._map[99] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 99;
-        DiagnosticCode._map[100] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 100;
-        DiagnosticCode._map[101] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 101;
-        DiagnosticCode._map[102] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 102;
-        DiagnosticCode._map[103] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 103;
-        DiagnosticCode._map[104] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 104;
-        DiagnosticCode._map[105] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 105;
-        DiagnosticCode._map[106] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 106;
-        DiagnosticCode._map[107] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 107;
-        DiagnosticCode._map[108] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 108;
-        DiagnosticCode._map[109] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 109;
-        DiagnosticCode._map[110] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 110;
-        DiagnosticCode._map[111] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 111;
-        DiagnosticCode._map[112] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 112;
-        DiagnosticCode._map[113] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 113;
-        DiagnosticCode._map[114] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
-        DiagnosticCode._map[115] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 115;
-        DiagnosticCode._map[116] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 116;
-        DiagnosticCode._map[117] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 117;
-        DiagnosticCode._map[118] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 118;
-        DiagnosticCode._map[119] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 119;
-        DiagnosticCode._map[120] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 120;
-        DiagnosticCode._map[121] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 121;
-        DiagnosticCode._map[122] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 122;
-        DiagnosticCode._map[123] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
-        DiagnosticCode._map[124] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 124;
-        DiagnosticCode._map[125] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 125;
-        DiagnosticCode._map[126] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 126;
-        DiagnosticCode._map[127] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 127;
-        DiagnosticCode._map[128] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 128;
-        DiagnosticCode._map[129] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
-        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 129;
-        DiagnosticCode._map[130] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
-        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 130;
-        DiagnosticCode._map[131] = "Multiple_constructor_implementations_are_not_allowed";
-        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 131;
-        DiagnosticCode._map[132] = "Unable_to_resolve_external_module__0_";
-        DiagnosticCode.Unable_to_resolve_external_module__0_ = 132;
-        DiagnosticCode._map[133] = "Module_cannot_be_aliased_to_a_non_module_type";
-        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 133;
-        DiagnosticCode._map[134] = "A_class_may_only_extend_another_class";
-        DiagnosticCode.A_class_may_only_extend_another_class = 134;
-        DiagnosticCode._map[135] = "A_class_may_only_implement_another_class_or_interface";
-        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 135;
-        DiagnosticCode._map[136] = "An_interface_may_only_extend_another_class_or_interface";
-        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 136;
-        DiagnosticCode._map[137] = "An_interface_cannot_implement_another_type";
-        DiagnosticCode.An_interface_cannot_implement_another_type = 137;
-        DiagnosticCode._map[138] = "Unable_to_resolve_type";
-        DiagnosticCode.Unable_to_resolve_type = 138;
-        DiagnosticCode._map[139] = "Unable_to_resolve_type_of__0_";
-        DiagnosticCode.Unable_to_resolve_type_of__0_ = 139;
-        DiagnosticCode._map[140] = "Unable_to_resolve_type_parameter_constraint";
-        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 140;
-        DiagnosticCode._map[141] = "Type_parameter_constraint_cannot_be_a_primitive_type";
-        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 141;
-        DiagnosticCode._map[142] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 142;
-        DiagnosticCode._map[143] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 143;
-        DiagnosticCode._map[144] = "Invalid__new__expression";
-        DiagnosticCode.Invalid__new__expression = 144;
-        DiagnosticCode._map[145] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
-        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 145;
-        DiagnosticCode._map[146] = "Could_not_select_overload_for__new__expression";
-        DiagnosticCode.Could_not_select_overload_for__new__expression = 146;
-        DiagnosticCode._map[147] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
-        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 147;
-        DiagnosticCode._map[148] = "Could_not_select_overload_for__call__expression";
-        DiagnosticCode.Could_not_select_overload_for__call__expression = 148;
-        DiagnosticCode._map[149] = "Unable_to_invoke_type_with_no_call_signatures";
-        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 149;
-        DiagnosticCode._map[150] = "Calls_to__super__are_only_valid_inside_a_class";
-        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 150;
-        DiagnosticCode._map[151] = "Generic_type__0__requires_1_type_argument_s_";
-        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 151;
-        DiagnosticCode._map[152] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
-        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 152;
-        DiagnosticCode._map[153] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
-        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 153;
-        DiagnosticCode._map[154] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
-        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 154;
-        DiagnosticCode._map[155] = "The_property__0__does_not_exist_on_value_of_type__1__";
-        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 155;
-        DiagnosticCode._map[156] = "Could_not_find_symbol__0_";
-        DiagnosticCode.Could_not_find_symbol__0_ = 156;
-        DiagnosticCode._map[157] = "_get__and__set__accessor_must_have_the_same_type";
-        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 157;
-        DiagnosticCode._map[158] = "_this__cannot_be_referenced_in_current_location";
-        DiagnosticCode._this__cannot_be_referenced_in_current_location = 158;
-        DiagnosticCode._map[159] = "Use_of_deprecated__bool__type__Use__boolean__instead";
-        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 159;
-        DiagnosticCode._map[160] = "Static_methods_cannot_reference_class_type_parameters";
-        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 160;
+        DiagnosticCode._map[61] = "A_generic_type_may_not_reference_itself_with_its_own_type_parameters";
+        DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters = 61;
+        DiagnosticCode._map[62] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 62;
+        DiagnosticCode._map[63] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 63;
+        DiagnosticCode._map[64] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 64;
+        DiagnosticCode._map[65] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 65;
+        DiagnosticCode._map[66] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 66;
+        DiagnosticCode._map[67] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 67;
+        DiagnosticCode._map[68] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 68;
+        DiagnosticCode._map[69] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 69;
+        DiagnosticCode._map[70] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 70;
+        DiagnosticCode._map[71] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 71;
+        DiagnosticCode._map[72] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 72;
+        DiagnosticCode._map[73] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 73;
+        DiagnosticCode._map[74] = "Cannot_convert__0__to__1__NL__2";
+        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 74;
+        DiagnosticCode._map[75] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 75;
+        DiagnosticCode._map[76] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 76;
+        DiagnosticCode._map[77] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 77;
+        DiagnosticCode._map[78] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 78;
+        DiagnosticCode._map[79] = "Accessor_cannot_have_type_parameters";
+        DiagnosticCode.Accessor_cannot_have_type_parameters = 79;
+        DiagnosticCode._map[80] = "Exported_class__0__extends_private_class__1_";
+        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 80;
+        DiagnosticCode._map[81] = "Exported_class__0__implements_private_interface__1_";
+        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 81;
+        DiagnosticCode._map[82] = "Exported_interface__0__extends_private_interface__1_";
+        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 82;
+        DiagnosticCode._map[83] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 83;
+        DiagnosticCode._map[84] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 84;
+        DiagnosticCode._map[85] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 85;
+        DiagnosticCode._map[86] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 86;
+        DiagnosticCode._map[87] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 87;
+        DiagnosticCode._map[88] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 88;
+        DiagnosticCode._map[89] = "Exported_variable__0__has_or_is_using_private_type__1_";
+        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 89;
+        DiagnosticCode._map[90] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 90;
+        DiagnosticCode._map[91] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 91;
+        DiagnosticCode._map[92] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 92;
+        DiagnosticCode._map[93] = "Exported_variable__0__is_using_inaccessible_module__1_";
+        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 93;
+        DiagnosticCode._map[94] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 94;
+        DiagnosticCode._map[95] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 95;
+        DiagnosticCode._map[96] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 96;
+        DiagnosticCode._map[97] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 97;
+        DiagnosticCode._map[98] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 98;
+        DiagnosticCode._map[99] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 99;
+        DiagnosticCode._map[100] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 100;
+        DiagnosticCode._map[101] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 101;
+        DiagnosticCode._map[102] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 102;
+        DiagnosticCode._map[103] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 103;
+        DiagnosticCode._map[104] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 104;
+        DiagnosticCode._map[105] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 105;
+        DiagnosticCode._map[106] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 106;
+        DiagnosticCode._map[107] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 107;
+        DiagnosticCode._map[108] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 108;
+        DiagnosticCode._map[109] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 109;
+        DiagnosticCode._map[110] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 110;
+        DiagnosticCode._map[111] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 111;
+        DiagnosticCode._map[112] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 112;
+        DiagnosticCode._map[113] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 113;
+        DiagnosticCode._map[114] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
+        DiagnosticCode._map[115] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 115;
+        DiagnosticCode._map[116] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 116;
+        DiagnosticCode._map[117] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 117;
+        DiagnosticCode._map[118] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 118;
+        DiagnosticCode._map[119] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 119;
+        DiagnosticCode._map[120] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 120;
+        DiagnosticCode._map[121] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 121;
+        DiagnosticCode._map[122] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 122;
+        DiagnosticCode._map[123] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
+        DiagnosticCode._map[124] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 124;
+        DiagnosticCode._map[125] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 125;
+        DiagnosticCode._map[126] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 126;
+        DiagnosticCode._map[127] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 127;
+        DiagnosticCode._map[128] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 128;
+        DiagnosticCode._map[129] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 129;
+        DiagnosticCode._map[130] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
+        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 130;
+        DiagnosticCode._map[131] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
+        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 131;
+        DiagnosticCode._map[132] = "Multiple_constructor_implementations_are_not_allowed";
+        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 132;
+        DiagnosticCode._map[133] = "Unable_to_resolve_external_module__0_";
+        DiagnosticCode.Unable_to_resolve_external_module__0_ = 133;
+        DiagnosticCode._map[134] = "Module_cannot_be_aliased_to_a_non_module_type";
+        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 134;
+        DiagnosticCode._map[135] = "A_class_may_only_extend_another_class";
+        DiagnosticCode.A_class_may_only_extend_another_class = 135;
+        DiagnosticCode._map[136] = "A_class_may_only_implement_another_class_or_interface";
+        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 136;
+        DiagnosticCode._map[137] = "An_interface_may_only_extend_another_class_or_interface";
+        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 137;
+        DiagnosticCode._map[138] = "An_interface_cannot_implement_another_type";
+        DiagnosticCode.An_interface_cannot_implement_another_type = 138;
+        DiagnosticCode._map[139] = "Unable_to_resolve_type";
+        DiagnosticCode.Unable_to_resolve_type = 139;
+        DiagnosticCode._map[140] = "Unable_to_resolve_type_of__0_";
+        DiagnosticCode.Unable_to_resolve_type_of__0_ = 140;
+        DiagnosticCode._map[141] = "Unable_to_resolve_type_parameter_constraint";
+        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 141;
+        DiagnosticCode._map[142] = "Type_parameter_constraint_cannot_be_a_primitive_type";
+        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 142;
+        DiagnosticCode._map[143] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 143;
+        DiagnosticCode._map[144] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 144;
+        DiagnosticCode._map[145] = "Invalid__new__expression";
+        DiagnosticCode.Invalid__new__expression = 145;
+        DiagnosticCode._map[146] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
+        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 146;
+        DiagnosticCode._map[147] = "Could_not_select_overload_for__new__expression";
+        DiagnosticCode.Could_not_select_overload_for__new__expression = 147;
+        DiagnosticCode._map[148] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
+        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 148;
+        DiagnosticCode._map[149] = "Could_not_select_overload_for__call__expression";
+        DiagnosticCode.Could_not_select_overload_for__call__expression = 149;
+        DiagnosticCode._map[150] = "Unable_to_invoke_type_with_no_call_signatures";
+        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 150;
+        DiagnosticCode._map[151] = "Calls_to__super__are_only_valid_inside_a_class";
+        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 151;
+        DiagnosticCode._map[152] = "Generic_type__0__requires_1_type_argument_s_";
+        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 152;
+        DiagnosticCode._map[153] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
+        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 153;
+        DiagnosticCode._map[154] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
+        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 154;
+        DiagnosticCode._map[155] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
+        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 155;
+        DiagnosticCode._map[156] = "The_property__0__does_not_exist_on_value_of_type__1__";
+        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 156;
+        DiagnosticCode._map[157] = "Could_not_find_symbol__0_";
+        DiagnosticCode.Could_not_find_symbol__0_ = 157;
+        DiagnosticCode._map[158] = "_get__and__set__accessor_must_have_the_same_type";
+        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 158;
+        DiagnosticCode._map[159] = "_this__cannot_be_referenced_in_current_location";
+        DiagnosticCode._this__cannot_be_referenced_in_current_location = 159;
+        DiagnosticCode._map[160] = "Use_of_deprecated__bool__type__Use__boolean__instead";
+        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 160;
         DiagnosticCode._map[161] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
         DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 161;
         DiagnosticCode._map[162] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
@@ -568,142 +570,166 @@ var TypeScript;
         DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 169;
         DiagnosticCode._map[170] = "_this__must_only_be_used_inside_a_function_or_script_context";
         DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 170;
-        DiagnosticCode._map[171] = "______parameters_must_be_array_types";
-        DiagnosticCode.______parameters_must_be_array_types = 171;
-        DiagnosticCode._map[172] = "Invalid__addition__expression___types_do_not_agree";
-        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 172;
-        DiagnosticCode._map[173] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
-        DiagnosticCode._map[174] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 174;
-        DiagnosticCode._map[175] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 175;
-        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 176;
-        DiagnosticCode._map[177] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 177;
-        DiagnosticCode._map[178] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 178;
-        DiagnosticCode._map[179] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
-        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 179;
-        DiagnosticCode._map[180] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
-        DiagnosticCode._map[181] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 181;
-        DiagnosticCode._map[182] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
-        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 182;
-        DiagnosticCode._map[183] = "Setters_cannot_return_a_value";
-        DiagnosticCode.Setters_cannot_return_a_value = 183;
-        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 184;
-        DiagnosticCode._map[185] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 185;
-        DiagnosticCode._map[186] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 186;
-        DiagnosticCode._map[187] = "Getters_must_return_a_value";
-        DiagnosticCode.Getters_must_return_a_value = 187;
-        DiagnosticCode._map[188] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
-        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 188;
-        DiagnosticCode._map[189] = "Invalid_left_hand_side_of_assignment_expression";
-        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 189;
-        DiagnosticCode._map[190] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 190;
-        DiagnosticCode._map[191] = "Cannot_resolve_return_type_reference";
-        DiagnosticCode.Cannot_resolve_return_type_reference = 191;
-        DiagnosticCode._map[192] = "Constructors_cannot_have_a_return_type_of__void_";
-        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 192;
-        DiagnosticCode._map[193] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
-        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 193;
-        DiagnosticCode._map[194] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
-        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 194;
-        DiagnosticCode._map[195] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
-        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 195;
-        DiagnosticCode._map[196] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 196;
-        DiagnosticCode._map[197] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 197;
-        DiagnosticCode._map[198] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 198;
-        DiagnosticCode._map[199] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
-        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 199;
-        DiagnosticCode._map[200] = "Class__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 200;
-        DiagnosticCode._map[201] = "Interface__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 201;
-        DiagnosticCode._map[202] = "Interface__0__cannot_extend_interface__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 202;
-        DiagnosticCode._map[203] = "Duplicate_overload_signature_for__0_";
-        DiagnosticCode.Duplicate_overload_signature_for__0_ = 203;
-        DiagnosticCode._map[204] = "Duplicate_constructor_overload_signature";
-        DiagnosticCode.Duplicate_constructor_overload_signature = 204;
-        DiagnosticCode._map[205] = "Duplicate_overload_call_signature";
-        DiagnosticCode.Duplicate_overload_call_signature = 205;
-        DiagnosticCode._map[206] = "Duplicate_overload_construct_signature";
-        DiagnosticCode.Duplicate_overload_construct_signature = 206;
-        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 207;
-        DiagnosticCode._map[208] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 208;
-        DiagnosticCode._map[209] = "Overload_signatures_must_all_be_public_or_private";
-        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 209;
-        DiagnosticCode._map[210] = "Overload_signatures_must_all_be_exported_or_local";
-        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 210;
-        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
-        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 211;
-        DiagnosticCode._map[212] = "Overload_signatures_must_all_be_optional_or_required";
-        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 212;
-        DiagnosticCode._map[213] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
-        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 213;
-        DiagnosticCode._map[214] = "_this__cannot_be_referenced_in_constructor_arguments";
-        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 214;
-        DiagnosticCode._map[215] = "Static_member_cannot_be_accessed_off_an_instance_variable";
-        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 215;
-        DiagnosticCode._map[216] = "Instance_member_cannot_be_accessed_off_a_class";
-        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 216;
-        DiagnosticCode._map[217] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 217;
-        DiagnosticCode._map[218] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 218;
-        DiagnosticCode._map[219] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 219;
-        DiagnosticCode._map[220] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 220;
-        DiagnosticCode._map[221] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 221;
-        DiagnosticCode._map[222] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 222;
-        DiagnosticCode._map[223] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 223;
-        DiagnosticCode._map[224] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 224;
-        DiagnosticCode._map[225] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 225;
-        DiagnosticCode._map[226] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 226;
-        DiagnosticCode._map[227] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 227;
-        DiagnosticCode._map[228] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 228;
-        DiagnosticCode._map[229] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 229;
-        DiagnosticCode._map[230] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 230;
-        DiagnosticCode._map[231] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 231;
-        DiagnosticCode._map[232] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 232;
-        DiagnosticCode._map[233] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 233;
-        DiagnosticCode._map[234] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 234;
-        DiagnosticCode._map[235] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 235;
-        DiagnosticCode._map[236] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 236;
-        DiagnosticCode._map[237] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 237;
-        DiagnosticCode._map[238] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 238;
+        DiagnosticCode._map[171] = "Invalid__addition__expression___types_do_not_agree";
+        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 171;
+        DiagnosticCode._map[172] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 172;
+        DiagnosticCode._map[173] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
+        DiagnosticCode._map[174] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 174;
+        DiagnosticCode._map[175] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 175;
+        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 176;
+        DiagnosticCode._map[177] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 177;
+        DiagnosticCode._map[178] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
+        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 178;
+        DiagnosticCode._map[179] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 179;
+        DiagnosticCode._map[180] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
+        DiagnosticCode._map[181] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
+        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 181;
+        DiagnosticCode._map[182] = "Setters_cannot_return_a_value";
+        DiagnosticCode.Setters_cannot_return_a_value = 182;
+        DiagnosticCode._map[183] = "Tried_to_set_variable_type_to_uninitialized_module_type";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 183;
+        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 184;
+        DiagnosticCode._map[185] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 185;
+        DiagnosticCode._map[186] = "Getters_must_return_a_value";
+        DiagnosticCode.Getters_must_return_a_value = 186;
+        DiagnosticCode._map[187] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
+        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 187;
+        DiagnosticCode._map[188] = "Invalid_left_hand_side_of_assignment_expression";
+        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 188;
+        DiagnosticCode._map[189] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 189;
+        DiagnosticCode._map[190] = "Cannot_resolve_return_type_reference";
+        DiagnosticCode.Cannot_resolve_return_type_reference = 190;
+        DiagnosticCode._map[191] = "Constructors_cannot_have_a_return_type_of__void_";
+        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 191;
+        DiagnosticCode._map[192] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
+        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 192;
+        DiagnosticCode._map[193] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
+        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 193;
+        DiagnosticCode._map[194] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
+        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 194;
+        DiagnosticCode._map[195] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 195;
+        DiagnosticCode._map[196] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 196;
+        DiagnosticCode._map[197] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 197;
+        DiagnosticCode._map[198] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
+        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 198;
+        DiagnosticCode._map[199] = "Class__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 199;
+        DiagnosticCode._map[200] = "Interface__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 200;
+        DiagnosticCode._map[201] = "Interface__0__cannot_extend_interface__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 201;
+        DiagnosticCode._map[202] = "Duplicate_overload_signature_for__0_";
+        DiagnosticCode.Duplicate_overload_signature_for__0_ = 202;
+        DiagnosticCode._map[203] = "Duplicate_constructor_overload_signature";
+        DiagnosticCode.Duplicate_constructor_overload_signature = 203;
+        DiagnosticCode._map[204] = "Duplicate_overload_call_signature";
+        DiagnosticCode.Duplicate_overload_call_signature = 204;
+        DiagnosticCode._map[205] = "Duplicate_overload_construct_signature";
+        DiagnosticCode.Duplicate_overload_construct_signature = 205;
+        DiagnosticCode._map[206] = "Overload_signature_is_not_compatible_with_function_definition";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 206;
+        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 207;
+        DiagnosticCode._map[208] = "Overload_signatures_must_all_be_public_or_private";
+        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 208;
+        DiagnosticCode._map[209] = "Overload_signatures_must_all_be_exported_or_local";
+        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 209;
+        DiagnosticCode._map[210] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
+        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 210;
+        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_optional_or_required";
+        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 211;
+        DiagnosticCode._map[212] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
+        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 212;
+        DiagnosticCode._map[213] = "_this__cannot_be_referenced_in_constructor_arguments";
+        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 213;
+        DiagnosticCode._map[214] = "Static_member_cannot_be_accessed_off_an_instance_variable";
+        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 214;
+        DiagnosticCode._map[215] = "Instance_member_cannot_be_accessed_off_a_class";
+        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 215;
+        DiagnosticCode._map[216] = "Untyped_function_calls_may_not_accept_type_arguments";
+        DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments = 216;
+        DiagnosticCode._map[217] = "Non_generic_functions_may_not_accept_type_arguments";
+        DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments = 217;
+        DiagnosticCode._map[218] = "Static_methods_cannot_reference_class_type_parameters";
+        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 218;
+        DiagnosticCode._map[219] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ = 219;
+        DiagnosticCode._map[220] = "Rest_parameters_must_be_array_types";
+        DiagnosticCode.Rest_parameters_must_be_array_types = 220;
+        DiagnosticCode._map[221] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 221;
+        DiagnosticCode._map[222] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 222;
+        DiagnosticCode._map[223] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 223;
+        DiagnosticCode._map[224] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 224;
+        DiagnosticCode._map[225] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 225;
+        DiagnosticCode._map[226] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 226;
+        DiagnosticCode._map[227] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 227;
+        DiagnosticCode._map[228] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 228;
+        DiagnosticCode._map[229] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 229;
+        DiagnosticCode._map[230] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 230;
+        DiagnosticCode._map[231] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 231;
+        DiagnosticCode._map[232] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 232;
+        DiagnosticCode._map[233] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 233;
+        DiagnosticCode._map[234] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 234;
+        DiagnosticCode._map[235] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 235;
+        DiagnosticCode._map[236] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 236;
+        DiagnosticCode._map[237] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 237;
+        DiagnosticCode._map[238] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 238;
+        DiagnosticCode._map[239] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 239;
+        DiagnosticCode._map[240] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 240;
+        DiagnosticCode._map[241] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 241;
+        DiagnosticCode._map[242] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 242;
+        DiagnosticCode._map[243] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode.Current_host_does_not_support__w_atch_option = 243;
+        DiagnosticCode._map[244] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 244;
+        DiagnosticCode._map[245] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 245;
+        DiagnosticCode._map[246] = "Could_not_find_file___0_";
+        DiagnosticCode.Could_not_find_file___0_ = 246;
+        DiagnosticCode._map[247] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 247;
+        DiagnosticCode._map[248] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode.A_file_cannot_have_a_reference_itself = 248;
+        DiagnosticCode._map[249] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 249;
+        DiagnosticCode._map[250] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode.Cannot_resolve_imported_file___0_ = 250;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -711,1203 +737,1263 @@ var TypeScript;
 (function (TypeScript) {
     TypeScript.diagnosticMessages = {
         error_TS_0__1: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "error TS{0}: {1}",
             code: 0
         },
         warning_TS_0__1: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "warning TS{0}: {1}",
             code: 1
         },
         _0__NL__1_TB__2: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "{0}{NL}{{1}TB}{2}",
             code: 21
         },
         _0_TB__1: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "{{0}TB}{1}",
             code: 22
         },
         Unrecognized_escape_sequence: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unrecognized escape sequence.",
             code: 1000
         },
         Unexpected_character_0: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unexpected character {0}.",
             code: 1001
         },
         Missing_closing_quote_character: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Missing close quote character.",
             code: 1002
         },
         Identifier_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Identifier expected.",
             code: 1003
         },
         _0_keyword_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' keyword expected.",
             code: 1004
         },
         _0_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' expected.",
             code: 1005
         },
         Identifier_expected__0__is_a_keyword: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Identifier expected; '{0}' is a keyword.",
             code: 1006
         },
         Automatic_semicolon_insertion_not_allowed: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Automatic semicolon insertion not allowed.",
             code: 1007
         },
         Unexpected_token__0_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unexpected token; '{0}' expected.",
             code: 1008
         },
         Trailing_separator_not_allowed: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Trailing separator not allowed.",
             code: 1009
         },
         _StarSlash__expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'*/' expected.",
             code: 1010
         },
         _public_or_private_modifier_must_precede__static_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'public' or 'private' modifier must precede 'static'.",
             code: 1011
         },
         Unexpected_token_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unexpected token.",
             code: 1012
         },
         A_catch_clause_variable_cannot_have_a_type_annotation: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "A catch clause variable cannot have a type annotation.",
             code: 1013
         },
         Rest_parameter_must_be_last_in_list: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Rest parameter must be last in list.",
             code: 1014
         },
         Parameter_cannot_have_question_mark_and_initializer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter cannot have question mark and initializer.",
             code: 1015
         },
         Required_parameter_cannot_follow_optional_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "required parameter cannot follow optional parameter.",
             code: 1016
         },
         Index_signatures_cannot_have_rest_parameters: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signatures cannot have rest parameters.",
             code: 1017
         },
         Index_signature_parameter_cannot_have_accessibility_modifiers: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature parameter cannot have accessibility modifiers.",
             code: 1018
         },
         Index_signature_parameter_cannot_have_a_question_mark: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature parameter cannot have a question mark.",
             code: 1019
         },
         Index_signature_parameter_cannot_have_an_initializer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature parameter cannot have an initializer.",
             code: 1020
         },
         Index_signature_must_have_a_type_annotation: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature must have a type annotation.",
             code: 1021
         },
         Index_signature_parameter_must_have_a_type_annotation: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature parameter must have a type annotation.",
             code: 1022
         },
         Index_signature_parameter_type_must_be__string__or__number_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Index signature parameter type must be 'string' or 'number'.",
             code: 1023
         },
         _extends__clause_already_seen: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'extends' clause already seen.",
             code: 1024
         },
         _extends__clause_must_precede__implements__clause: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'extends' clause must precede 'implements' clause.",
             code: 1025
         },
         Class_can_only_extend_single_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Class can only extend single type.",
             code: 1026
         },
         _implements__clause_already_seen: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'implements' clause already seen.",
             code: 1027
         },
         Accessibility_modifier_already_seen: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Accessibility modifier already seen.",
             code: 1028
         },
         _0__modifier_must_precede__1__modifier: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' modifier must precede '{1}' modifier.",
             code: 1029
         },
         _0__modifier_already_seen: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' modifier already seen.",
             code: 1030
         },
         _0__modifier_cannot_appear_on_a_class_element: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' modifier cannot appear on a class element.",
             code: 1031
         },
         Interface_declaration_cannot_have__implements__clause: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Interface declaration cannot have 'implements' clause.",
             code: 1032
         },
         Enum_element_must_have_initializer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Enum element must have initializer.",
             code: 1033
         },
         _super__invocation_cannot_have_type_arguments: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'super' invocation cannot have type arguments.",
             code: 1034
         },
         Non_ambient_modules_cannot_use_quoted_names: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Non ambient modules cannot use quoted names.",
             code: 1035
         },
         Statements_are_not_allowed_in_ambient_contexts: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Statements are not allowed in ambient contexts.",
             code: 1036
         },
         Implementations_are_not_allowed_in_ambient_contexts: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Implementations are not allowed in ambient contexts.",
             code: 1037
         },
         _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'declare' modifier not allowed for code already in an ambient context.",
             code: 1038
         },
         Initializers_are_not_allowed_in_ambient_contexts: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Initializers are not allowed in ambient contexts.",
             code: 1039
         },
         Overload_and_ambient_signatures_cannot_specify_parameter_properties: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload and ambient signatures cannot specify parameter properties.",
             code: 1040
         },
         Function_implementation_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Function implementation expected.",
             code: 1041
         },
         Constructor_implementation_expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Constructor implementation expected.",
             code: 1042
         },
         Function_overload_name_must_be__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Function overload name must be '{0}'.",
             code: 1043
         },
         _0__modifier_cannot_appear_on_a_module_element: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}' modifier cannot appear on a module element.",
             code: 1044
         },
         _declare__modifier_cannot_appear_on_an_interface_declaration: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'declare' modifier cannot appear on an interface declaration.",
             code: 1045
         },
         _declare__modifier_required_for_top_level_element: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'declare' modifier required for top level element.",
             code: 1046
         },
         Rest_parameter_cannot_be_optional: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Rest parameter cannot be optional.",
             code: 1047
         },
         Rest_parameter_cannot_have_initializer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Rest parameter cannot have initializer.",
             code: 1048
         },
         _set__accessor_must_have_only_one_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'set' accessor must have one and only one parameter.",
             code: 1049
         },
         _set__accessor_parameter_cannot_have_accessibility_modifier: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'set' accessor parameter cannot have accessibility modifier.",
             code: 1050
         },
         _set__accessor_parameter_cannot_be_optional: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'set' accessor parameter cannot be optional.",
             code: 1051
         },
         _set__accessor_parameter_cannot_have_initializer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'set' accessor parameter cannot have initializer.",
             code: 1052
         },
         _set__accessor_cannot_have_rest_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'set' accessor cannot have rest parameter.",
             code: 1053
         },
         _get__accessor_cannot_have_parameters: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'get' accessor cannot have parameters.",
             code: 1054
         },
         Modifiers_cannot_appear_here: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Modifiers cannot appear here.",
             code: 1055
         },
         Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Accessors are only when targeting EcmaScript5 and higher.",
             code: 1056
         },
         Duplicate_identifier__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Duplicate identifier '{0}'.",
             code: 2000
         },
         The_name__0__does_not_exist_in_the_current_scope: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The name '{0}' does not exist in the current scope.",
             code: 2001
         },
         The_name__0__does_not_refer_to_a_value: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The name '{0}' does not refer to a value.",
             code: 2002
         },
         Keyword__super__can_only_be_used_inside_a_class_instance_method: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Keyword 'super' can only be used inside a class instance method.",
             code: 2003
         },
         The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
             code: 2004
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
             code: 2005
         },
         Value_of_type__0__is_not_callable: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Value of type '{0}' is not callable.",
             code: 2006
         },
         Value_of_type__0__is_not_newable: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Value of type '{0}' is not newable.",
             code: 2007
         },
         Value_of_type__0__is_not_indexable_by_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Value of type '{0}' is not indexable by type '{1}'.",
             code: 2008
         },
         Operator__0__cannot_be_applied_to_types__1__and__2_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
             code: 2009
         },
         Operator__0__cannot_be_applied_to_types__1__and__2__3: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
             code: 2010
         },
         Cannot_convert__0__to__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Cannot convert '{0}' to '{1}'.",
             code: 2011
         },
         Cannot_convert__0__to__1__NL__2: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Cannot convert '{0}' to '{1}':{NL}{2}",
             code: 2012
         },
         Expected_var__class__interface__or_module: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Expected var, class, interface, or module.",
             code: 2013
         },
         Operator__0__cannot_be_applied_to_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Operator '{0}' cannot be applied to type '{1}'.",
             code: 2014
         },
         Getter__0__already_declared: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Getter '{0}' already declared.",
             code: 2015
         },
         Setter__0__already_declared: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Setter '{0}' already declared.",
             code: 2016
         },
         Accessor_cannot_have_type_parameters: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Accessors cannot have type parameters.",
             code: 2017
         },
         Exported_class__0__extends_private_class__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported class '{0}' extends private class '{1}'.",
             code: 2018
         },
         Exported_class__0__implements_private_interface__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported class '{0}' implements private interface '{1}'.",
             code: 2019
         },
         Exported_interface__0__extends_private_interface__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported interface '{0}' extends private interface '{1}'.",
             code: 2020
         },
         Exported_class__0__extends_class_from_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported class '{0}' extends class from inaccessible module {1}.",
             code: 2021
         },
         Exported_class__0__implements_interface_from_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported class '{0}' implements interface from inaccessible module {1}.",
             code: 2022
         },
         Exported_interface__0__extends_interface_from_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported interface '{0}' extends interface from inaccessible module {1}.",
             code: 2023
         },
         Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Public static property '{0}' of exported class has or is using private type '{1}'.",
             code: 2024
         },
         Public_property__0__of__exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Public property '{0}' of exported class has or is using private type '{1}'.",
             code: 2025
         },
         Property__0__of__exported_interface_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Property '{0}' of exported interface has or is using private type '{1}'.",
             code: 2026
         },
         Exported_variable__0__has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported variable '{0}' has or is using private type '{1}'.",
             code: 2027
         },
         Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Public static property '{0}' of exported class is using inaccessible module {1}.",
             code: 2028
         },
         Public_property__0__of__exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Public property '{0}' of exported class is using inaccessible module {1}.",
             code: 2029
         },
         Property__0__of__exported_interface_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Property '{0}' of exported interface is using inaccessible module {1}.",
             code: 2030
         },
         Exported_variable__0__is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Exported variable '{0}' is using inaccessible module {1}.",
             code: 2031
         },
         Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of constructor from exported class has or is using private type '{1}'.",
             code: 2032
         },
         Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public static property setter from exported class has or is using private type '{1}'.",
             code: 2033
         },
         Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public property setter from exported class has or is using private type '{1}'.",
             code: 2034
         },
         Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of constructor signature from exported interface has or is using private type '{1}'.",
             code: 2035
         },
         Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of call signature from exported interface has or is using private type '{1}'.",
             code: 2036
         },
         Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public static method from exported class has or is using private type '{1}'.",
             code: 2037
         },
         Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public method from exported class has or is using private type '{1}'.",
             code: 2038
         },
         Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of method from exported interface has or is using private type '{1}'.",
             code: 2039
         },
         Parameter__0__of_exported_function_has_or_is_using_private_type__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of exported function has or is using private type '{1}'.",
             code: 2040
         },
         Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of constructor from exported class is using inaccessible module {1}.",
             code: 2041
         },
         Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public static property setter from exported class is using inaccessible module {1}.",
             code: 2042
         },
         Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public property setter from exported class is using inaccessible module {1}.",
             code: 2043
         },
         Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of constructor signature from exported interface is using inaccessible module {1}.",
             code: 2044
         },
         Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of call signature from exported interface is using inaccessible module {1}",
             code: 2045
         },
         Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public static method from exported class is using inaccessible module {1}.",
             code: 2046
         },
         Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of public method from exported class is using inaccessible module {1}.",
             code: 2047
         },
         Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of method from exported interface is using inaccessible module {1}.",
             code: 2048
         },
         Parameter__0__of_exported_function_is_using_inaccessible_module__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Parameter '{0}' of exported function is using inaccessible module {1}.",
             code: 2049
         },
         Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public static property getter from exported class has or is using private type '{0}'.",
             code: 2050
         },
         Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public property getter from exported class has or is using private type '{0}'.",
             code: 2051
         },
         Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of constructor signature from exported interface has or is using private type '{0}'.",
             code: 2052
         },
         Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of call signature from exported interface has or is using private type '{0}'.",
             code: 2053
         },
         Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of index signature from exported interface has or is using private type '{0}'.",
             code: 2054
         },
         Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public static method from exported class has or is using private type '{0}'.",
             code: 2055
         },
         Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public method from exported class has or is using private type '{0}'.",
             code: 2056
         },
         Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of method from exported interface has or is using private type '{0}'.",
             code: 2057
         },
         Return_type_of_exported_function_has_or_is_using_private_type__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of exported function has or is using private type '{0}'.",
             code: 2058
         },
         Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public static property getter from exported class is using inaccessible module {0}.",
             code: 2059
         },
         Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public property getter from exported class is using inaccessible module {0}.",
             code: 2060
         },
         Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of constructor signature from exported interface is using inaccessible module {0}.",
             code: 2061
         },
         Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of call signature from exported interface is using inaccessible module {0}.",
             code: 2062
         },
         Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of index signature from exported interface is using inaccessible module {0}.",
             code: 2063
         },
         Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public static method from exported class is using inaccessible module {0}.",
             code: 2064
         },
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of public method from exported class is using inaccessible module {0}.",
             code: 2065
         },
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of method from exported interface is using inaccessible module {0}.",
             code: 2066
         },
         Return_type_of_exported_function_is_using_inaccessible_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Return type of exported function is using inaccessible module {0}.",
             code: 2067
         },
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.",
             code: 2068
         },
         A_parameter_list_must_follow_a_generic_type_argument_list______expected: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "A parameter list must follow a generic type argument list. '(' expected.",
             code: 2069
         },
         Multiple_constructor_implementations_are_not_allowed: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Multiple constructor implementations are not allowed.",
             code: 2070
         },
         Unable_to_resolve_external_module__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unable to resolve external module '{0}'.",
             code: 2071
         },
         Module_cannot_be_aliased_to_a_non_module_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Module cannot be aliased to a non-module type.",
             code: 2072
         },
         A_class_may_only_extend_another_class: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "A class may only extend another class.",
             code: 2073
         },
         A_class_may_only_implement_another_class_or_interface: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "A class may only implement another class or interface.",
             code: 2074
         },
         An_interface_may_only_extend_another_class_or_interface: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "An interface may only extend another class or interface.",
             code: 2075
         },
         An_interface_cannot_implement_another_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "An interface cannot implement another type.",
             code: 2076
         },
         Unable_to_resolve_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unable to resolve type.",
             code: 2077
         },
         Unable_to_resolve_type_of__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unable to resolve type of '{0}'.",
             code: 2078
         },
         Unable_to_resolve_type_parameter_constraint: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unable to resolve type parameter constraint.",
             code: 2079
         },
         Type_parameter_constraint_cannot_be_a_primitive_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Type parameter constraint cannot be a primitive type.",
             code: 2080
         },
         Supplied_parameters_do_not_match_any_signature_of_call_target: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Supplied parameters do not match any signature of call target.",
             code: 2081
         },
         Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Supplied parameters do not match any signature of call target:{NL}{0}",
             code: 2082
         },
         Invalid__new__expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Invalid 'new' expression.",
             code: 2083
         },
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Call sigantures used in a 'new' expression must have a 'void' return type.",
             code: 2084
         },
         Could_not_select_overload_for__new__expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Could not select overload for 'new' expression.",
             code: 2085
         },
         Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Type '{0}' does not satisfy the constraint '{1}' for type parameter '{2}'.",
             code: 2086
         },
         Could_not_select_overload_for__call__expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Could not select overload for 'call' expression.",
             code: 2087
         },
         Unable_to_invoke_type_with_no_call_signatures: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Unable to invoke type with no call signatures.",
             code: 2088
         },
         Calls_to__super__are_only_valid_inside_a_class: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Calls to 'super' are only valid inside a class.",
             code: 2089
         },
         Generic_type__0__requires_1_type_argument_s_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Generic type '{0}' requires {1} type argument(s).",
             code: 2090
         },
         Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Type of conditional expression cannot be determined. Best common type could not be found between '{0}' and '{1}'.",
             code: 2091
         },
         Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Type of array literal cannot be determined. Best common type could not be found for array elements.",
             code: 2092
         },
         Could_not_find_enclosing_symbol_for_dotted_name__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Could not find enclosing symbol for dotted name '{0}'.",
             code: 2093
         },
         The_property__0__does_not_exist_on_value_of_type__1__: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The property '{0}' does not exist on value of type '{1}'.",
             code: 2094
         },
         Could_not_find_symbol__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Could not find symbol '{0}'.",
             code: 2095
         },
         _get__and__set__accessor_must_have_the_same_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'get' and 'set' accessor must have the same type.",
             code: 2096
         },
         _this__cannot_be_referenced_in_current_location: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'this' cannot be referenced in current location.",
             code: 2097
         },
         Use_of_deprecated__bool__type__Use__boolean__instead: {
-            category: 0 /* Warning */ ,
+            category: 0 /* Warning */,
             message: "Use of deprecated type 'bool'. Use 'boolean' instead.",
             code: 2098
         },
         Static_methods_cannot_reference_class_type_parameters: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Static methods cannot reference class type parameters.",
             code: 2099
         },
         Class__0__is_recursively_referenced_as_a_base_type_of_itself: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Class '{0}' is recursively referenced as a base type of itself.",
             code: 2100
         },
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Interface '{0}' is recursively referenced as a base type of itself.",
             code: 2101
         },
         _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.",
             code: 2102
         },
         _super__cannot_be_referenced_in_non_derived_classes: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'super' cannot be referenced in non-derived classes.",
             code: 2103
         },
         A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.",
             code: 2104
         },
         Constructors_for_derived_classes_must_contain_a__super__call: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Constructors for derived classes must contain a 'super' call.",
             code: 2105
         },
         Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Super calls are not permitted outside constructors or in local functions inside constructors.",
             code: 2106
         },
         _0_1__is_inaccessible: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'{0}.{1}' is inaccessible.",
             code: 2107
         },
         _this__cannot_be_referenced_within_module_bodies: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'this' cannot be referenced within module bodies.",
             code: 2108
         },
         _this__must_only_be_used_inside_a_function_or_script_context: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'this' must only be used inside a function or script context.",
             code: 2109
         },
-        ______parameters_must_be_array_types: {
-            category: 1 /* Error */ ,
-            message: "'...' parameters must be array types.",
-            code: 2110
-        },
         Invalid__addition__expression___types_do_not_agree: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Invalid '+' expression - types do not agree.",
             code: 2111
         },
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.",
             code: 2112
         },
         The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.",
             code: 2113
         },
         The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type.",
             code: 2114
         },
         Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Variable declarations for for/in expressions cannot contain a type annotation.",
             code: 2115
         },
         Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Variable declarations for for/in expressions must be of types 'string' or 'any'.",
             code: 2116
         },
         The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.",
             code: 2117
         },
         The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The left-hand side of an 'in' expression must be of types 'string' or 'any'.",
             code: 2118
         },
         The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter.",
             code: 2119
         },
         The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.",
             code: 2120
         },
         The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.",
             code: 2121
         },
         Setters_cannot_return_a_value: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Setters cannot return a value.",
             code: 2122
         },
         Tried_to_set_variable_type_to_uninitialized_module_type: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Tried to set variable type to uninitialized module type.",
             code: 2123
         },
         Tried_to_set_variable_type_to_uninitialized_module_type__0__: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Tried to set variable type to uninitialized module type '{0}'.",
             code: 2124
         },
         Function__0__declared_a_non_void_return_type__but_has_no_return_expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Function {0} declared a non-void return type, but has no return expression.",
             code: 2125
         },
         Getters_must_return_a_value: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Getters must return a value.",
             code: 2126
         },
         Getter_and_setter_accessors_do_not_agree_in_visibility: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Getter and setter accessors do not agree in visibility.",
             code: 2127
         },
         Invalid_left_hand_side_of_assignment_expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Invalid left-hand side of assignment expression.",
             code: 2130
         },
         Function_declared_a_non_void_return_type__but_has_no_return_expression: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Function declared a non-void return type, but has no return expression.",
             code: 2131
         },
         Cannot_resolve_return_type_reference: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Cannot resolve return type reference.",
             code: 2132
         },
         Constructors_cannot_have_a_return_type_of__void_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Constructors cannot have a return type of 'void'.",
             code: 2133
         },
         Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'",
             code: 2134
         },
         All_symbols_within_a__with__block_will_be_resolved_to__any__: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "All symbols within a with block will be resolved to 'any'.",
             code: 2135
         },
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Import declarations in an internal module cannot reference an external module.",
             code: 2136
         },
         Class__0__declares_interface__1__but_does_not_implement_it__NL__2: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Class {0} declares interface {1} but does not implement it:{NL}{2}",
             code: 2137
         },
         Class__0__declares_class__1__but_does_not_implement_it__NL__2: {
-            category: 1 /* Error */ ,
-            message: "Class {0} class interface {1} but does not implement it:{NL}{2}",
+            category: 1 /* Error */,
+            message: "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}",
             code: 2138
         },
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "The operand of an increment or decrement operator must be a variable, property or indexer.",
             code: 2139
         },
         _this__cannot_be_referenced_in_initializers_in_a_class_body: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'this' cannot be referenced in initializers in a class body.",
             code: 2140
         },
         Class__0__cannot_extend_class__1__NL__2: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Class '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2141
         },
         Interface__0__cannot_extend_class__1__NL__2: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Interface '{0}' cannot extend class '{1}':{NL}{2}",
             code: 2142
         },
         Interface__0__cannot_extend_interface__1__NL__2: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Interface '{0}' cannot extend interface '{1}':{NL}{2}",
             code: 2143
         },
         Duplicate_overload_signature_for__0_: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Duplicate overload signature for '{0}'.",
             code: 2144
         },
         Duplicate_constructor_overload_signature: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Duplicate constructor overload signature.",
             code: 2145
         },
         Duplicate_overload_call_signature: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Duplicate overload call signature.",
             code: 2146
         },
         Duplicate_overload_construct_signature: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Duplicate overload construct signature.",
             code: 2147
         },
         Overload_signature_is_not_compatible_with_function_definition: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signature is not compatible with function definition.",
             code: 2148
         },
         Overload_signature_is_not_compatible_with_function_definition__NL__0: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signature is not compatible with function definition:{NL}{0}",
             code: 2149
         },
         Overload_signatures_must_all_be_public_or_private: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signatures must all be public or private.",
             code: 2150
         },
         Overload_signatures_must_all_be_exported_or_local: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signatures must all be exported or local.",
             code: 2151
         },
         Overload_signatures_must_all_be_ambient_or_non_ambient: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signatures must all be ambient or non-ambient.",
             code: 2152
         },
         Overload_signatures_must_all_be_optional_or_required: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Overload signatures must all be optional or required.",
             code: 2153
         },
         Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Specialized overload signature is not subtype of any non-specialized signature.",
             code: 2154
         },
         _this__cannot_be_referenced_in_constructor_arguments: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "'this' cannot be referenced in constructor arguments.",
             code: 2155
         },
         Static_member_cannot_be_accessed_off_an_instance_variable: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Static member cannot be accessed off an instance variable.",
             code: 2156
         },
         Instance_member_cannot_be_accessed_off_a_class: {
-            category: 1 /* Error */ ,
+            category: 1 /* Error */,
             message: "Instance member cannot be accessed off a class.",
             code: 2157
         },
+        Untyped_function_calls_may_not_accept_type_arguments: {
+            category: 1 /* Error */,
+            message: "Untyped function calls may not accept type arguments.",
+            code: 2158
+        },
+        Non_generic_functions_may_not_accept_type_arguments: {
+            category: 1 /* Error */,
+            message: "Non-generic functions may not accept type arguments.",
+            code: 2159
+        },
+        A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
+            category: 1 /* Error */,
+            message: "A generic type may not reference itself with its own type parameters",
+            code: 2160
+        },
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
+            category: 1 /* Error */,
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
+            code: 2161
+        },
+        Rest_parameters_must_be_array_types: {
+            category: 1 /* Error */,
+            message: "Rest parameters must be array types",
+            code: 2162
+        },
         Type__0__is_missing_property__1__from_type__2_: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Type '{0}' is missing property '{1}' from type '{2}'.",
             code: 4000
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
             code: 4001
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
             code: 4002
         },
         Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.",
             code: 4003
         },
         Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.",
             code: 4004
         },
         Types__0__and__1__define_property__2__as_private: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Types '{0}' and '{1}' define property '{2}' as private.",
             code: 4005
         },
         Call_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible.",
             code: 4006
         },
         Call_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4007
         },
         Type__0__requires_a_call_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Type '{0}' requires a call signature, but type '{1}' lacks one.",
             code: 4008
         },
         Construct_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible.",
             code: 4009
         },
         Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 40010
         },
         Type__0__requires_a_construct_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Type '{0}' requires a construct signature, but type '{1}' lacks one.",
             code: 4011
         },
         Index_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible.",
             code: 4012
         },
         Index_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4013
         },
         Call_signature_expects__0__or_fewer_parameters: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Call signature expects {0} or fewer parameters.",
             code: 4014
         },
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
             code: 4015
         },
         Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4016
         },
         Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4017
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.",
             code: 4018
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.",
             code: 4019
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.",
             code: 4020
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */ ,
+            category: 2 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
+        },
+        Current_host_does_not_support__w_atch_option: {
+            category: 1 /* Error */,
+            message: "Current host does not support -w[atch] option.",
+            code: 5001
+        },
+        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation: {
+            category: 0 /* Warning */,
+            message: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
+            code: 5002
+        },
+        Module_code_generation__0__not_supported___Using_default__1__code_generation: {
+            category: 0 /* Warning */,
+            message: "Module code generation '{0}' not supported.  Using default '{1}' code generation.",
+            code: 5003
+        },
+        Could_not_find_file___0_: {
+            category: 1 /* Error */,
+            message: "Could not find file: '{0}'.",
+            code: 5004
+        },
+        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: {
+            category: 1 /* Error */,
+            message: "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.",
+            code: 5005
+        },
+        A_file_cannot_have_a_reference_itself: {
+            category: 1 /* Error */,
+            message: "A file cannot have a reference itself.",
+            code: 5006
+        },
+        Cannot_resolve_referenced_file___0_: {
+            category: 1 /* Error */,
+            message: "Cannot resolve referenced file: '{0}'.",
+            code: 5007
+        },
+        Cannot_resolve_imported_file___0_: {
+            category: 1 /* Error */,
+            message: "Cannot resolve imported file: '{0}'.",
+            code: 5008
         }
     };
     var seenCodes = [];
-    for(var name in TypeScript.diagnosticMessages) {
+    for (var name in TypeScript.diagnosticMessages) {
         if (TypeScript.diagnosticMessages.hasOwnProperty(name)) {
             var diagnosticMessage = TypeScript.diagnosticMessages[name];
             var value = seenCodes[diagnosticMessage.code];
@@ -1921,68 +2007,68 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Errors = (function () {
-        function Errors() { }
-        Errors.argument = function argument(argument, message) {
+        function Errors() {
+        }
+        Errors.argument = function (argument, message) {
             return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
         };
-        Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+        Errors.argumentOutOfRange = function (argument) {
             return new Error("Argument out of range: " + argument + ".");
         };
-        Errors.argumentNull = function argumentNull(argument) {
+        Errors.argumentNull = function (argument) {
             return new Error("Argument null: " + argument + ".");
         };
-        Errors.abstract = function abstract() {
+        Errors.abstract = function () {
             return new Error("Operation not implemented properly by subclass.");
         };
-        Errors.notYetImplemented = function notYetImplemented() {
+        Errors.notYetImplemented = function () {
             return new Error("Not yet implemented.");
         };
-        Errors.invalidOperation = function invalidOperation(message) {
+        Errors.invalidOperation = function (message) {
             return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
         };
         return Errors;
     })();
-    TypeScript.Errors = Errors;    
+    TypeScript.Errors = Errors;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     var Hash = (function () {
-        function Hash() { }
-        Hash.FNV_BASE = 2166136261;
-        Hash.FNV_PRIME = 16777619;
-        Hash.computeFnv1aCharArrayHashCode = function computeFnv1aCharArrayHashCode(text, start, len) {
+        function Hash() {
+        }
+        Hash.computeFnv1aCharArrayHashCode = function (text, start, len) {
             var hashCode = Hash.FNV_BASE;
             var end = start + len;
-            for(var i = start; i < end; i++) {
+            for (var i = start; i < end; i++) {
                 hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
             }
             return hashCode;
         };
-        Hash.computeSimple31BitCharArrayHashCode = function computeSimple31BitCharArrayHashCode(key, start, len) {
+        Hash.computeSimple31BitCharArrayHashCode = function (key, start, len) {
             var hash = 0;
-            for(var i = 0; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 var ch = key[start + i];
                 hash = (((hash << 5) + hash) + ch) | 0;
             }
             return hash & 0x7FFFFFFF;
         };
-        Hash.computeSimple31BitStringHashCode = function computeSimple31BitStringHashCode(key) {
+        Hash.computeSimple31BitStringHashCode = function (key) {
             var hash = 0;
             var start = 0;
             var len = key.length;
-            for(var i = 0; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 var ch = key.charCodeAt(start + i);
                 hash = (((hash << 5) + hash) + ch) | 0;
             }
             return hash & 0x7FFFFFFF;
         };
-        Hash.computeMurmur2CharArrayHashCode = function computeMurmur2CharArrayHashCode(key, start, len) {
+        Hash.computeMurmur2CharArrayHashCode = function (key, start, len) {
             var m = 0x5bd1e995;
             var r = 24;
             var numberOfCharsLeft = len;
             var h = (0 ^ numberOfCharsLeft);
             var index = start;
-            while(numberOfCharsLeft >= 2) {
+            while (numberOfCharsLeft >= 2) {
                 var c1 = key[index];
                 var c2 = key[index + 1];
                 var k = c1 | (c2 << 16);
@@ -2003,7 +2089,7 @@ var TypeScript;
             h ^= h >> 15;
             return h;
         };
-        Hash.computeMurmur2StringHashCode = function computeMurmur2StringHashCode(key) {
+        Hash.computeMurmur2StringHashCode = function (key) {
             var m = 0x5bd1e995;
             var r = 24;
             var start = 0;
@@ -2011,7 +2097,7 @@ var TypeScript;
             var numberOfCharsLeft = len;
             var h = (0 ^ numberOfCharsLeft);
             var index = start;
-            while(numberOfCharsLeft >= 2) {
+            while (numberOfCharsLeft >= 2) {
                 var c1 = key.charCodeAt(index);
                 var c2 = key.charCodeAt(index + 1);
                 var k = c1 | (c2 << 16);
@@ -2032,82 +2118,8 @@ var TypeScript;
             h ^= h >> 15;
             return h;
         };
-        Hash.primes = [
-            3, 
-            7, 
-            11, 
-            17, 
-            23, 
-            29, 
-            37, 
-            47, 
-            59, 
-            71, 
-            89, 
-            107, 
-            131, 
-            163, 
-            197, 
-            239, 
-            293, 
-            353, 
-            431, 
-            521, 
-            631, 
-            761, 
-            919, 
-            1103, 
-            1327, 
-            1597, 
-            1931, 
-            2333, 
-            2801, 
-            3371, 
-            4049, 
-            4861, 
-            5839, 
-            7013, 
-            8419, 
-            10103, 
-            12143, 
-            14591, 
-            17519, 
-            21023, 
-            25229, 
-            30293, 
-            36353, 
-            43627, 
-            52361, 
-            62851, 
-            75431, 
-            90523, 
-            108631, 
-            130363, 
-            156437, 
-            187751, 
-            225307, 
-            270371, 
-            324449, 
-            389357, 
-            467237, 
-            560689, 
-            672827, 
-            807403, 
-            968897, 
-            1162687, 
-            1395263, 
-            1674319, 
-            2009191, 
-            2411033, 
-            2893249, 
-            3471899, 
-            4166287, 
-            4999559, 
-            5999471, 
-            7199369
-        ];
-        Hash.getPrime = function getPrime(min) {
-            for(var i = 0; i < Hash.primes.length; i++) {
+        Hash.getPrime = function (min) {
+            for (var i = 0; i < Hash.primes.length; i++) {
                 var num = Hash.primes[i];
                 if (num >= min) {
                     return num;
@@ -2115,19 +2127,95 @@ var TypeScript;
             }
             throw TypeScript.Errors.notYetImplemented();
         };
-        Hash.expandPrime = function expandPrime(oldSize) {
+        Hash.expandPrime = function (oldSize) {
             var num = oldSize << 1;
             if (num > 2146435069 && 2146435069 > oldSize) {
                 return 2146435069;
             }
             return Hash.getPrime(num);
         };
-        Hash.combine = function combine(value, currentHash) {
+        Hash.combine = function (value, currentHash) {
             return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
         };
+        Hash.FNV_BASE = 2166136261;
+        Hash.FNV_PRIME = 16777619;
+        Hash.primes = [
+            3,
+            7,
+            11,
+            17,
+            23,
+            29,
+            37,
+            47,
+            59,
+            71,
+            89,
+            107,
+            131,
+            163,
+            197,
+            239,
+            293,
+            353,
+            431,
+            521,
+            631,
+            761,
+            919,
+            1103,
+            1327,
+            1597,
+            1931,
+            2333,
+            2801,
+            3371,
+            4049,
+            4861,
+            5839,
+            7013,
+            8419,
+            10103,
+            12143,
+            14591,
+            17519,
+            21023,
+            25229,
+            30293,
+            36353,
+            43627,
+            52361,
+            62851,
+            75431,
+            90523,
+            108631,
+            130363,
+            156437,
+            187751,
+            225307,
+            270371,
+            324449,
+            389357,
+            467237,
+            560689,
+            672827,
+            807403,
+            968897,
+            1162687,
+            1395263,
+            1674319,
+            2009191,
+            2411033,
+            2893249,
+            3471899,
+            4166287,
+            4999559,
+            5999471,
+            7199369
+        ];
         return Hash;
     })();
-    TypeScript.Hash = Hash;    
+    TypeScript.Hash = Hash;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -2141,7 +2229,7 @@ var TypeScript;
                 this.Next = Next;
             }
             return HashTableEntry;
-        })();        
+        })();
         var HashTable = (function () {
             function HashTable(capacity, hash, equals) {
                 this.hash = hash;
@@ -2189,7 +2277,7 @@ var TypeScript;
                 return this.addEntry(key, value, hashCode);
             };
             HashTable.prototype.findEntry = function (key, hashCode) {
-                for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
                     if (e.HashCode === hashCode) {
                         var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
                         if (equals) {
@@ -2214,9 +2302,9 @@ var TypeScript;
                 var oldEntries = this.entries;
                 var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
                 this.entries = newEntries;
-                for(var i = 0; i < oldEntries.length; i++) {
+                for (var i = 0; i < oldEntries.length; i++) {
                     var e = oldEntries[i];
-                    while(e !== null) {
+                    while (e !== null) {
                         var newIndex = e.HashCode % newSize;
                         var tmp = e.Next;
                         e.Next = newEntries[newIndex];
@@ -2227,7 +2315,7 @@ var TypeScript;
             };
             return HashTable;
         })();
-        Collections.HashTable = HashTable;        
+        Collections.HashTable = HashTable;
         function createHashTable(capacity, hash, equals) {
             if (typeof capacity === "undefined") { capacity = Collections.DefaultHashTableCapacity; }
             if (typeof hash === "undefined") { hash = null; }
@@ -2270,195 +2358,8 @@ var TypeScript;
         };
         return Diagnostic;
     })();
-    TypeScript.Diagnostic = Diagnostic;    
+    TypeScript.Diagnostic = Diagnostic;
 })(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    var IntegerUtilities = (function () {
-        function IntegerUtilities() { }
-        IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
-            return (numerator / denominator) >> 0;
-        };
-        IntegerUtilities.integerMultiplyLow32Bits = function integerMultiplyLow32Bits(n1, n2) {
-            var n1Low16 = n1 & 0x0000ffff;
-            var n1High16 = n1 >>> 16;
-            var n2Low16 = n2 & 0x0000ffff;
-            var n2High16 = n2 >>> 16;
-            var resultLow32 = (((n1 & 0xffff0000) * n2) >>> 0) + (((n1 & 0x0000ffff) * n2) >>> 0) >>> 0;
-            return resultLow32;
-        };
-        IntegerUtilities.integerMultiplyHigh32Bits = function integerMultiplyHigh32Bits(n1, n2) {
-            var n1Low16 = n1 & 0x0000ffff;
-            var n1High16 = n1 >>> 16;
-            var n2Low16 = n2 & 0x0000ffff;
-            var n2High16 = n2 >>> 16;
-            var resultHigh32 = n1High16 * n2High16 + ((((n1Low16 * n2Low16) >>> 17) + n1Low16 * n2High16) >>> 15);
-            return resultHigh32;
-        };
-        return IntegerUtilities;
-    })();
-    TypeScript.IntegerUtilities = IntegerUtilities;    
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    var MathPrototype = (function () {
-        function MathPrototype() { }
-        MathPrototype.max = function max(a, b) {
-            return a >= b ? a : b;
-        };
-        MathPrototype.min = function min(a, b) {
-            return a <= b ? a : b;
-        };
-        return MathPrototype;
-    })();
-    TypeScript.MathPrototype = MathPrototype;    
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    (function (Collections) {
-        Collections.DefaultStringTableCapacity = 256;
-        var StringTableEntry = (function () {
-            function StringTableEntry(Text, HashCode, Next) {
-                this.Text = Text;
-                this.HashCode = HashCode;
-                this.Next = Next;
-            }
-            return StringTableEntry;
-        })();        
-        var StringTable = (function () {
-            function StringTable(capacity) {
-                this.entries = [];
-                this.count = 0;
-                var size = TypeScript.Hash.getPrime(capacity);
-                this.entries = TypeScript.ArrayUtilities.createArray(size, null);
-            }
-            StringTable.prototype.addCharArray = function (key, start, len) {
-                var hashCode = TypeScript.Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 0x7FFFFFFF;
-                var entry = this.findCharArrayEntry(key, start, len, hashCode);
-                if (entry !== null) {
-                    return entry.Text;
-                }
-                var slice = key.slice(start, start + len);
-                return this.addEntry(TypeScript.StringUtilities.fromCharCodeArray(slice), hashCode);
-            };
-            StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
-                for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-                    if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
-                        return e;
-                    }
-                }
-                return null;
-            };
-            StringTable.prototype.addEntry = function (text, hashCode) {
-                var index = hashCode % this.entries.length;
-                var e = new StringTableEntry(text, hashCode, this.entries[index]);
-                this.entries[index] = e;
-                if (this.count === this.entries.length) {
-                    this.grow();
-                }
-                this.count++;
-                return e.Text;
-            };
-            StringTable.prototype.grow = function () {
-                var newSize = TypeScript.Hash.expandPrime(this.entries.length);
-                var oldEntries = this.entries;
-                var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
-                this.entries = newEntries;
-                for(var i = 0; i < oldEntries.length; i++) {
-                    var e = oldEntries[i];
-                    while(e !== null) {
-                        var newIndex = e.HashCode % newSize;
-                        var tmp = e.Next;
-                        e.Next = newEntries[newIndex];
-                        newEntries[newIndex] = e;
-                        e = tmp;
-                    }
-                }
-            };
-            StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
-                if (text.length !== length) {
-                    return false;
-                }
-                var s = start;
-                for(var i = 0; i < length; i++) {
-                    if (text.charCodeAt(i) !== array[s]) {
-                        return false;
-                    }
-                    s++;
-                }
-                return true;
-            };
-            return StringTable;
-        })();
-        Collections.StringTable = StringTable;        
-        Collections.DefaultStringTable = new StringTable(Collections.DefaultStringTableCapacity);
-    })(TypeScript.Collections || (TypeScript.Collections = {}));
-    var Collections = TypeScript.Collections;
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    var StringUtilities = (function () {
-        function StringUtilities() { }
-        StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
-            return String.fromCharCode.apply(null, array);
-        };
-        StringUtilities.endsWith = function endsWith(string, value) {
-            return string.substring(string.length - value.length, string.length) === value;
-        };
-        StringUtilities.startsWith = function startsWith(string, value) {
-            return string.substr(0, value.length) === value;
-        };
-        StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
-            for(var i = 0; i < count; i++) {
-                destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
-            }
-        };
-        StringUtilities.repeat = function repeat(value, count) {
-            return Array(count + 1).join(value);
-        };
-        StringUtilities.stringEquals = function stringEquals(val1, val2) {
-            return val1 === val2;
-        };
-        return StringUtilities;
-    })();
-    TypeScript.StringUtilities = StringUtilities;    
-})(TypeScript || (TypeScript = {}));
-var global = Function("return this").call(null);
-var TypeScript;
-(function (TypeScript) {
-    var Clock;
-    (function (Clock) {
-        Clock.now;
-        Clock.resolution;
-                        if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
-            global['WScript'].InitializeProjection();
-            Clock.now = function () {
-                return TestUtilities.QueryPerformanceCounter();
-            };
-            Clock.resolution = TestUtilities.QueryPerformanceFrequency();
-        } else {
-            Clock.now = function () {
-                return Date.now();
-            };
-            Clock.resolution = 1000;
-        }
-    })(Clock || (Clock = {}));
-    var Timer = (function () {
-        function Timer() {
-            this.time = 0;
-        }
-        Timer.prototype.start = function () {
-            this.time = 0;
-            this.startTime = Clock.now();
-        };
-        Timer.prototype.end = function () {
-            this.time = (Clock.now() - this.startTime);
-        };
-        return Timer;
-    })();
-    TypeScript.Timer = Timer;    
-})(TypeScript || (TypeScript = {}));
-
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
         try  {
@@ -2478,7 +2379,7 @@ var Environment = (function () {
             streamObjectPool.push(obj);
         }
         var args = [];
-        for(var i = 0; i < WScript.Arguments.length; i++) {
+        for (var i = 0; i < WScript.Arguments.length; i++) {
             args[i] = WScript.Arguments.Item(i);
         }
         return {
@@ -2534,12 +2435,12 @@ var Environment = (function () {
                     var fc;
                     if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
-                        for(; !fc.atEnd(); fc.moveNext()) {
+                        for (; !fc.atEnd(); fc.moveNext()) {
                             paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
                         }
                     }
                     fc = new Enumerator(folder.files);
-                    for(; !fc.atEnd(); fc.moveNext()) {
+                    for (; !fc.atEnd(); fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
                             paths.push(root + "\\" + fc.item().Name);
                         }
@@ -2589,11 +2490,11 @@ var Environment = (function () {
             },
             readFile: function (file, useUTF8) {
                 var buffer = _fs.readFileSync(file);
-                switch(buffer[0]) {
+                switch (buffer[0]) {
                     case 0xFE:
                         if (buffer[1] === 0xFF) {
                             var i = 0;
-                            while((i + 1) < buffer.length) {
+                            while ((i + 1) < buffer.length) {
                                 var temp = buffer[i];
                                 buffer[i] = buffer[i + 1];
                                 buffer[i + 1] = temp;
@@ -2638,7 +2539,7 @@ var Environment = (function () {
                 function filesInFolder(folder) {
                     var paths = [];
                     var files = _fs.readdirSync(folder);
-                    for(var i = 0; i < files.length; i++) {
+                    for (var i = 0; i < files.length; i++) {
                         var stat = _fs.statSync(folder + "\\" + files[i]);
                         if (options.recursive && stat.isDirectory()) {
                             paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
@@ -2691,7 +2592,7 @@ var Environment = (function () {
         };
     }
     ;
-    if (typeof ActiveXObject === "function") {
+    if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     } else if (typeof require === "function") {
         return getNodeEnvironment();
@@ -2699,6 +2600,195 @@ var Environment = (function () {
         return null;
     }
 })();
+var TypeScript;
+(function (TypeScript) {
+    var IntegerUtilities = (function () {
+        function IntegerUtilities() {
+        }
+        IntegerUtilities.integerDivide = function (numerator, denominator) {
+            return (numerator / denominator) >> 0;
+        };
+        IntegerUtilities.integerMultiplyLow32Bits = function (n1, n2) {
+            var n1Low16 = n1 & 0x0000ffff;
+            var n1High16 = n1 >>> 16;
+            var n2Low16 = n2 & 0x0000ffff;
+            var n2High16 = n2 >>> 16;
+            var resultLow32 = (((n1 & 0xffff0000) * n2) >>> 0) + (((n1 & 0x0000ffff) * n2) >>> 0) >>> 0;
+            return resultLow32;
+        };
+        IntegerUtilities.integerMultiplyHigh32Bits = function (n1, n2) {
+            var n1Low16 = n1 & 0x0000ffff;
+            var n1High16 = n1 >>> 16;
+            var n2Low16 = n2 & 0x0000ffff;
+            var n2High16 = n2 >>> 16;
+            var resultHigh32 = n1High16 * n2High16 + ((((n1Low16 * n2Low16) >>> 17) + n1Low16 * n2High16) >>> 15);
+            return resultHigh32;
+        };
+        return IntegerUtilities;
+    })();
+    TypeScript.IntegerUtilities = IntegerUtilities;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var MathPrototype = (function () {
+        function MathPrototype() {
+        }
+        MathPrototype.max = function (a, b) {
+            return a >= b ? a : b;
+        };
+        MathPrototype.min = function (a, b) {
+            return a <= b ? a : b;
+        };
+        return MathPrototype;
+    })();
+    TypeScript.MathPrototype = MathPrototype;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (Collections) {
+        Collections.DefaultStringTableCapacity = 256;
+        var StringTableEntry = (function () {
+            function StringTableEntry(Text, HashCode, Next) {
+                this.Text = Text;
+                this.HashCode = HashCode;
+                this.Next = Next;
+            }
+            return StringTableEntry;
+        })();
+        var StringTable = (function () {
+            function StringTable(capacity) {
+                this.entries = [];
+                this.count = 0;
+                var size = TypeScript.Hash.getPrime(capacity);
+                this.entries = TypeScript.ArrayUtilities.createArray(size, null);
+            }
+            StringTable.prototype.addCharArray = function (key, start, len) {
+                var hashCode = TypeScript.Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 0x7FFFFFFF;
+                var entry = this.findCharArrayEntry(key, start, len, hashCode);
+                if (entry !== null) {
+                    return entry.Text;
+                }
+                var slice = key.slice(start, start + len);
+                return this.addEntry(TypeScript.StringUtilities.fromCharCodeArray(slice), hashCode);
+            };
+            StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
+                for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                    if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
+                        return e;
+                    }
+                }
+                return null;
+            };
+            StringTable.prototype.addEntry = function (text, hashCode) {
+                var index = hashCode % this.entries.length;
+                var e = new StringTableEntry(text, hashCode, this.entries[index]);
+                this.entries[index] = e;
+                if (this.count === this.entries.length) {
+                    this.grow();
+                }
+                this.count++;
+                return e.Text;
+            };
+            StringTable.prototype.grow = function () {
+                var newSize = TypeScript.Hash.expandPrime(this.entries.length);
+                var oldEntries = this.entries;
+                var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
+                this.entries = newEntries;
+                for (var i = 0; i < oldEntries.length; i++) {
+                    var e = oldEntries[i];
+                    while (e !== null) {
+                        var newIndex = e.HashCode % newSize;
+                        var tmp = e.Next;
+                        e.Next = newEntries[newIndex];
+                        newEntries[newIndex] = e;
+                        e = tmp;
+                    }
+                }
+            };
+            StringTable.textCharArrayEquals = function (text, array, start, length) {
+                if (text.length !== length) {
+                    return false;
+                }
+                var s = start;
+                for (var i = 0; i < length; i++) {
+                    if (text.charCodeAt(i) !== array[s]) {
+                        return false;
+                    }
+                    s++;
+                }
+                return true;
+            };
+            return StringTable;
+        })();
+        Collections.StringTable = StringTable;
+        Collections.DefaultStringTable = new StringTable(Collections.DefaultStringTableCapacity);
+    })(TypeScript.Collections || (TypeScript.Collections = {}));
+    var Collections = TypeScript.Collections;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var StringUtilities = (function () {
+        function StringUtilities() {
+        }
+        StringUtilities.fromCharCodeArray = function (array) {
+            return String.fromCharCode.apply(null, array);
+        };
+        StringUtilities.endsWith = function (string, value) {
+            return string.substring(string.length - value.length, string.length) === value;
+        };
+        StringUtilities.startsWith = function (string, value) {
+            return string.substr(0, value.length) === value;
+        };
+        StringUtilities.copyTo = function (source, sourceIndex, destination, destinationIndex, count) {
+            for (var i = 0; i < count; i++) {
+                destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
+            }
+        };
+        StringUtilities.repeat = function (value, count) {
+            return Array(count + 1).join(value);
+        };
+        StringUtilities.stringEquals = function (val1, val2) {
+            return val1 === val2;
+        };
+        return StringUtilities;
+    })();
+    TypeScript.StringUtilities = StringUtilities;
+})(TypeScript || (TypeScript = {}));
+var global = Function("return this").call(null);
+var TypeScript;
+(function (TypeScript) {
+    var Clock;
+    (function (Clock) {
+        Clock.now;
+        Clock.resolution;
+        if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
+            global['WScript'].InitializeProjection();
+            Clock.now = function () {
+                return TestUtilities.QueryPerformanceCounter();
+            };
+            Clock.resolution = TestUtilities.QueryPerformanceFrequency();
+        } else {
+            Clock.now = function () {
+                return Date.now();
+            };
+            Clock.resolution = 1000;
+        }
+    })(Clock || (Clock = {}));
+    var Timer = (function () {
+        function Timer() {
+            this.time = 0;
+        }
+        Timer.prototype.start = function () {
+            this.time = 0;
+            this.startTime = Clock.now();
+        };
+        Timer.prototype.end = function () {
+            this.time = (Clock.now() - this.startTime);
+        };
+        return Timer;
+    })();
+    TypeScript.Timer = Timer;
+})(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     (function (SyntaxKind) {
@@ -3218,124 +3308,124 @@ var TypeScript;
 (function (TypeScript) {
     (function (SyntaxFacts) {
         var textToKeywordKind = {
-            "any": 60 /* AnyKeyword */ ,
-            "bool": 62 /* BoolKeyword */ ,
-            "boolean": 61 /* BooleanKeyword */ ,
-            "break": 15 /* BreakKeyword */ ,
-            "case": 16 /* CaseKeyword */ ,
-            "catch": 17 /* CatchKeyword */ ,
-            "class": 44 /* ClassKeyword */ ,
-            "continue": 18 /* ContinueKeyword */ ,
-            "const": 45 /* ConstKeyword */ ,
-            "constructor": 63 /* ConstructorKeyword */ ,
-            "debugger": 19 /* DebuggerKeyword */ ,
-            "declare": 64 /* DeclareKeyword */ ,
-            "default": 20 /* DefaultKeyword */ ,
-            "delete": 21 /* DeleteKeyword */ ,
-            "do": 22 /* DoKeyword */ ,
-            "else": 23 /* ElseKeyword */ ,
-            "enum": 46 /* EnumKeyword */ ,
-            "export": 47 /* ExportKeyword */ ,
-            "extends": 48 /* ExtendsKeyword */ ,
-            "false": 24 /* FalseKeyword */ ,
-            "finally": 25 /* FinallyKeyword */ ,
-            "for": 26 /* ForKeyword */ ,
-            "function": 27 /* FunctionKeyword */ ,
-            "get": 65 /* GetKeyword */ ,
-            "if": 28 /* IfKeyword */ ,
-            "implements": 51 /* ImplementsKeyword */ ,
-            "import": 49 /* ImportKeyword */ ,
-            "in": 29 /* InKeyword */ ,
-            "instanceof": 30 /* InstanceOfKeyword */ ,
-            "interface": 52 /* InterfaceKeyword */ ,
-            "let": 53 /* LetKeyword */ ,
-            "module": 66 /* ModuleKeyword */ ,
-            "new": 31 /* NewKeyword */ ,
-            "null": 32 /* NullKeyword */ ,
-            "number": 67 /* NumberKeyword */ ,
-            "package": 54 /* PackageKeyword */ ,
-            "private": 55 /* PrivateKeyword */ ,
-            "protected": 56 /* ProtectedKeyword */ ,
-            "public": 57 /* PublicKeyword */ ,
-            "return": 33 /* ReturnKeyword */ ,
-            "set": 68 /* SetKeyword */ ,
-            "static": 58 /* StaticKeyword */ ,
-            "string": 69 /* StringKeyword */ ,
-            "super": 50 /* SuperKeyword */ ,
-            "switch": 34 /* SwitchKeyword */ ,
-            "this": 35 /* ThisKeyword */ ,
-            "throw": 36 /* ThrowKeyword */ ,
-            "true": 37 /* TrueKeyword */ ,
-            "try": 38 /* TryKeyword */ ,
-            "typeof": 39 /* TypeOfKeyword */ ,
-            "var": 40 /* VarKeyword */ ,
-            "void": 41 /* VoidKeyword */ ,
-            "while": 42 /* WhileKeyword */ ,
-            "with": 43 /* WithKeyword */ ,
-            "yield": 59 /* YieldKeyword */ ,
-            "{": 70 /* OpenBraceToken */ ,
-            "}": 71 /* CloseBraceToken */ ,
-            "(": 72 /* OpenParenToken */ ,
-            ")": 73 /* CloseParenToken */ ,
-            "[": 74 /* OpenBracketToken */ ,
-            "]": 75 /* CloseBracketToken */ ,
-            ".": 76 /* DotToken */ ,
-            "...": 77 /* DotDotDotToken */ ,
-            ";": 78 /* SemicolonToken */ ,
-            ",": 79 /* CommaToken */ ,
-            "<": 80 /* LessThanToken */ ,
-            ">": 81 /* GreaterThanToken */ ,
-            "<=": 82 /* LessThanEqualsToken */ ,
-            ">=": 83 /* GreaterThanEqualsToken */ ,
-            "==": 84 /* EqualsEqualsToken */ ,
-            "=>": 85 /* EqualsGreaterThanToken */ ,
-            "!=": 86 /* ExclamationEqualsToken */ ,
-            "===": 87 /* EqualsEqualsEqualsToken */ ,
-            "!==": 88 /* ExclamationEqualsEqualsToken */ ,
-            "+": 89 /* PlusToken */ ,
-            "-": 90 /* MinusToken */ ,
-            "*": 91 /* AsteriskToken */ ,
-            "%": 92 /* PercentToken */ ,
-            "++": 93 /* PlusPlusToken */ ,
-            "--": 94 /* MinusMinusToken */ ,
-            "<<": 95 /* LessThanLessThanToken */ ,
-            ">>": 96 /* GreaterThanGreaterThanToken */ ,
-            ">>>": 97 /* GreaterThanGreaterThanGreaterThanToken */ ,
-            "&": 98 /* AmpersandToken */ ,
-            "|": 99 /* BarToken */ ,
-            "^": 100 /* CaretToken */ ,
-            "!": 101 /* ExclamationToken */ ,
-            "~": 102 /* TildeToken */ ,
-            "&&": 103 /* AmpersandAmpersandToken */ ,
-            "||": 104 /* BarBarToken */ ,
-            "?": 105 /* QuestionToken */ ,
-            ":": 106 /* ColonToken */ ,
-            "=": 107 /* EqualsToken */ ,
-            "+=": 108 /* PlusEqualsToken */ ,
-            "-=": 109 /* MinusEqualsToken */ ,
-            "*=": 110 /* AsteriskEqualsToken */ ,
-            "%=": 111 /* PercentEqualsToken */ ,
-            "<<=": 112 /* LessThanLessThanEqualsToken */ ,
-            ">>=": 113 /* GreaterThanGreaterThanEqualsToken */ ,
-            ">>>=": 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ,
-            "&=": 115 /* AmpersandEqualsToken */ ,
-            "|=": 116 /* BarEqualsToken */ ,
-            "^=": 117 /* CaretEqualsToken */ ,
-            "/": 118 /* SlashToken */ ,
-            "/=": 119 /* SlashEqualsToken */ 
+            "any": 60 /* AnyKeyword */,
+            "bool": 62 /* BoolKeyword */,
+            "boolean": 61 /* BooleanKeyword */,
+            "break": 15 /* BreakKeyword */,
+            "case": 16 /* CaseKeyword */,
+            "catch": 17 /* CatchKeyword */,
+            "class": 44 /* ClassKeyword */,
+            "continue": 18 /* ContinueKeyword */,
+            "const": 45 /* ConstKeyword */,
+            "constructor": 63 /* ConstructorKeyword */,
+            "debugger": 19 /* DebuggerKeyword */,
+            "declare": 64 /* DeclareKeyword */,
+            "default": 20 /* DefaultKeyword */,
+            "delete": 21 /* DeleteKeyword */,
+            "do": 22 /* DoKeyword */,
+            "else": 23 /* ElseKeyword */,
+            "enum": 46 /* EnumKeyword */,
+            "export": 47 /* ExportKeyword */,
+            "extends": 48 /* ExtendsKeyword */,
+            "false": 24 /* FalseKeyword */,
+            "finally": 25 /* FinallyKeyword */,
+            "for": 26 /* ForKeyword */,
+            "function": 27 /* FunctionKeyword */,
+            "get": 65 /* GetKeyword */,
+            "if": 28 /* IfKeyword */,
+            "implements": 51 /* ImplementsKeyword */,
+            "import": 49 /* ImportKeyword */,
+            "in": 29 /* InKeyword */,
+            "instanceof": 30 /* InstanceOfKeyword */,
+            "interface": 52 /* InterfaceKeyword */,
+            "let": 53 /* LetKeyword */,
+            "module": 66 /* ModuleKeyword */,
+            "new": 31 /* NewKeyword */,
+            "null": 32 /* NullKeyword */,
+            "number": 67 /* NumberKeyword */,
+            "package": 54 /* PackageKeyword */,
+            "private": 55 /* PrivateKeyword */,
+            "protected": 56 /* ProtectedKeyword */,
+            "public": 57 /* PublicKeyword */,
+            "return": 33 /* ReturnKeyword */,
+            "set": 68 /* SetKeyword */,
+            "static": 58 /* StaticKeyword */,
+            "string": 69 /* StringKeyword */,
+            "super": 50 /* SuperKeyword */,
+            "switch": 34 /* SwitchKeyword */,
+            "this": 35 /* ThisKeyword */,
+            "throw": 36 /* ThrowKeyword */,
+            "true": 37 /* TrueKeyword */,
+            "try": 38 /* TryKeyword */,
+            "typeof": 39 /* TypeOfKeyword */,
+            "var": 40 /* VarKeyword */,
+            "void": 41 /* VoidKeyword */,
+            "while": 42 /* WhileKeyword */,
+            "with": 43 /* WithKeyword */,
+            "yield": 59 /* YieldKeyword */,
+            "{": 70 /* OpenBraceToken */,
+            "}": 71 /* CloseBraceToken */,
+            "(": 72 /* OpenParenToken */,
+            ")": 73 /* CloseParenToken */,
+            "[": 74 /* OpenBracketToken */,
+            "]": 75 /* CloseBracketToken */,
+            ".": 76 /* DotToken */,
+            "...": 77 /* DotDotDotToken */,
+            ";": 78 /* SemicolonToken */,
+            ",": 79 /* CommaToken */,
+            "<": 80 /* LessThanToken */,
+            ">": 81 /* GreaterThanToken */,
+            "<=": 82 /* LessThanEqualsToken */,
+            ">=": 83 /* GreaterThanEqualsToken */,
+            "==": 84 /* EqualsEqualsToken */,
+            "=>": 85 /* EqualsGreaterThanToken */,
+            "!=": 86 /* ExclamationEqualsToken */,
+            "===": 87 /* EqualsEqualsEqualsToken */,
+            "!==": 88 /* ExclamationEqualsEqualsToken */,
+            "+": 89 /* PlusToken */,
+            "-": 90 /* MinusToken */,
+            "*": 91 /* AsteriskToken */,
+            "%": 92 /* PercentToken */,
+            "++": 93 /* PlusPlusToken */,
+            "--": 94 /* MinusMinusToken */,
+            "<<": 95 /* LessThanLessThanToken */,
+            ">>": 96 /* GreaterThanGreaterThanToken */,
+            ">>>": 97 /* GreaterThanGreaterThanGreaterThanToken */,
+            "&": 98 /* AmpersandToken */,
+            "|": 99 /* BarToken */,
+            "^": 100 /* CaretToken */,
+            "!": 101 /* ExclamationToken */,
+            "~": 102 /* TildeToken */,
+            "&&": 103 /* AmpersandAmpersandToken */,
+            "||": 104 /* BarBarToken */,
+            "?": 105 /* QuestionToken */,
+            ":": 106 /* ColonToken */,
+            "=": 107 /* EqualsToken */,
+            "+=": 108 /* PlusEqualsToken */,
+            "-=": 109 /* MinusEqualsToken */,
+            "*=": 110 /* AsteriskEqualsToken */,
+            "%=": 111 /* PercentEqualsToken */,
+            "<<=": 112 /* LessThanLessThanEqualsToken */,
+            ">>=": 113 /* GreaterThanGreaterThanEqualsToken */,
+            ">>>=": 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */,
+            "&=": 115 /* AmpersandEqualsToken */,
+            "|=": 116 /* BarEqualsToken */,
+            "^=": 117 /* CaretEqualsToken */,
+            "/": 118 /* SlashToken */,
+            "/=": 119 /* SlashEqualsToken */
         };
         var kindToText = [];
-        for(var name in textToKeywordKind) {
+        for (var name in textToKeywordKind) {
             if (textToKeywordKind.hasOwnProperty(name)) {
                 kindToText[textToKeywordKind[name]] = name;
             }
         }
-        kindToText[63 /* ConstructorKeyword */ ] = "constructor";
+        kindToText[63 /* ConstructorKeyword */] = "constructor";
         function getTokenKind(text) {
             if (textToKeywordKind.hasOwnProperty(text)) {
                 return textToKeywordKind[text];
             }
-            return 0 /* None */ ;
+            return 0 /* None */;
         }
         SyntaxFacts.getTokenKind = getTokenKind;
         function getText(kind) {
@@ -3344,7 +3434,7 @@ var TypeScript;
         }
         SyntaxFacts.getText = getText;
         function isTokenKind(kind) {
-            return kind >= 9 /* FirstToken */  && kind <= 119 /* LastToken */ ;
+            return kind >= 9 /* FirstToken */ && kind <= 119 /* LastToken */;
         }
         SyntaxFacts.isTokenKind = isTokenKind;
         function isAnyKeyword(kind) {
@@ -3352,142 +3442,142 @@ var TypeScript;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
         function isStandardKeyword(kind) {
-            return kind >= 15 /* FirstStandardKeyword */  && kind <= 43 /* LastStandardKeyword */ ;
+            return kind >= 15 /* FirstStandardKeyword */ && kind <= 43 /* LastStandardKeyword */;
         }
         SyntaxFacts.isStandardKeyword = isStandardKeyword;
         function isFutureReservedKeyword(kind) {
-            return kind >= 44 /* FirstFutureReservedKeyword */  && kind <= 50 /* LastFutureReservedKeyword */ ;
+            return kind >= 44 /* FirstFutureReservedKeyword */ && kind <= 50 /* LastFutureReservedKeyword */;
         }
         SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
         function isFutureReservedStrictKeyword(kind) {
-            return kind >= 51 /* FirstFutureReservedStrictKeyword */  && kind <= 59 /* LastFutureReservedStrictKeyword */ ;
+            return kind >= 51 /* FirstFutureReservedStrictKeyword */ && kind <= 59 /* LastFutureReservedStrictKeyword */;
         }
         SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
         function isAnyPunctuation(kind) {
-            return kind >= 70 /* FirstPunctuation */  && kind <= 119 /* LastPunctuation */ ;
+            return kind >= 70 /* FirstPunctuation */ && kind <= 119 /* LastPunctuation */;
         }
         SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
         function isPrefixUnaryExpressionOperatorToken(tokenKind) {
-            return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+            return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */;
         }
         SyntaxFacts.isPrefixUnaryExpressionOperatorToken = isPrefixUnaryExpressionOperatorToken;
         function isBinaryExpressionOperatorToken(tokenKind) {
-            return getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */ ;
+            return getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */;
         }
         SyntaxFacts.isBinaryExpressionOperatorToken = isBinaryExpressionOperatorToken;
         function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
-            switch(tokenKind) {
-                case 89 /* PlusToken */ :
-                    return 162 /* PlusExpression */ ;
-                case 90 /* MinusToken */ :
-                    return 163 /* NegateExpression */ ;
-                case 102 /* TildeToken */ :
-                    return 164 /* BitwiseNotExpression */ ;
-                case 101 /* ExclamationToken */ :
-                    return 165 /* LogicalNotExpression */ ;
-                case 93 /* PlusPlusToken */ :
-                    return 166 /* PreIncrementExpression */ ;
-                case 94 /* MinusMinusToken */ :
-                    return 167 /* PreDecrementExpression */ ;
+            switch (tokenKind) {
+                case 89 /* PlusToken */:
+                    return 162 /* PlusExpression */;
+                case 90 /* MinusToken */:
+                    return 163 /* NegateExpression */;
+                case 102 /* TildeToken */:
+                    return 164 /* BitwiseNotExpression */;
+                case 101 /* ExclamationToken */:
+                    return 165 /* LogicalNotExpression */;
+                case 93 /* PlusPlusToken */:
+                    return 166 /* PreIncrementExpression */;
+                case 94 /* MinusMinusToken */:
+                    return 167 /* PreDecrementExpression */;
                 default:
-                    return 0 /* None */ ;
+                    return 0 /* None */;
             }
         }
         SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = getPrefixUnaryExpressionFromOperatorToken;
         function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
-            switch(tokenKind) {
-                case 93 /* PlusPlusToken */ :
-                    return 208 /* PostIncrementExpression */ ;
-                case 94 /* MinusMinusToken */ :
-                    return 209 /* PostDecrementExpression */ ;
+            switch (tokenKind) {
+                case 93 /* PlusPlusToken */:
+                    return 208 /* PostIncrementExpression */;
+                case 94 /* MinusMinusToken */:
+                    return 209 /* PostDecrementExpression */;
                 default:
-                    return 0 /* None */ ;
+                    return 0 /* None */;
             }
         }
         SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = getPostfixUnaryExpressionFromOperatorToken;
         function getBinaryExpressionFromOperatorToken(tokenKind) {
-            switch(tokenKind) {
-                case 91 /* AsteriskToken */ :
-                    return 203 /* MultiplyExpression */ ;
-                case 118 /* SlashToken */ :
-                    return 204 /* DivideExpression */ ;
-                case 92 /* PercentToken */ :
-                    return 205 /* ModuloExpression */ ;
-                case 89 /* PlusToken */ :
-                    return 206 /* AddExpression */ ;
-                case 90 /* MinusToken */ :
-                    return 207 /* SubtractExpression */ ;
-                case 95 /* LessThanLessThanToken */ :
-                    return 200 /* LeftShiftExpression */ ;
-                case 96 /* GreaterThanGreaterThanToken */ :
-                    return 201 /* SignedRightShiftExpression */ ;
-                case 97 /* GreaterThanGreaterThanGreaterThanToken */ :
-                    return 202 /* UnsignedRightShiftExpression */ ;
-                case 80 /* LessThanToken */ :
-                    return 194 /* LessThanExpression */ ;
-                case 81 /* GreaterThanToken */ :
-                    return 195 /* GreaterThanExpression */ ;
-                case 82 /* LessThanEqualsToken */ :
-                    return 196 /* LessThanOrEqualExpression */ ;
-                case 83 /* GreaterThanEqualsToken */ :
-                    return 197 /* GreaterThanOrEqualExpression */ ;
-                case 30 /* InstanceOfKeyword */ :
-                    return 198 /* InstanceOfExpression */ ;
-                case 29 /* InKeyword */ :
-                    return 199 /* InExpression */ ;
-                case 84 /* EqualsEqualsToken */ :
-                    return 190 /* EqualsWithTypeConversionExpression */ ;
-                case 86 /* ExclamationEqualsToken */ :
-                    return 191 /* NotEqualsWithTypeConversionExpression */ ;
-                case 87 /* EqualsEqualsEqualsToken */ :
-                    return 192 /* EqualsExpression */ ;
-                case 88 /* ExclamationEqualsEqualsToken */ :
-                    return 193 /* NotEqualsExpression */ ;
-                case 98 /* AmpersandToken */ :
-                    return 189 /* BitwiseAndExpression */ ;
-                case 100 /* CaretToken */ :
-                    return 188 /* BitwiseExclusiveOrExpression */ ;
-                case 99 /* BarToken */ :
-                    return 187 /* BitwiseOrExpression */ ;
-                case 103 /* AmpersandAmpersandToken */ :
-                    return 186 /* LogicalAndExpression */ ;
-                case 104 /* BarBarToken */ :
-                    return 185 /* LogicalOrExpression */ ;
-                case 116 /* BarEqualsToken */ :
-                    return 180 /* OrAssignmentExpression */ ;
-                case 115 /* AmpersandEqualsToken */ :
-                    return 178 /* AndAssignmentExpression */ ;
-                case 117 /* CaretEqualsToken */ :
-                    return 179 /* ExclusiveOrAssignmentExpression */ ;
-                case 112 /* LessThanLessThanEqualsToken */ :
-                    return 181 /* LeftShiftAssignmentExpression */ ;
-                case 113 /* GreaterThanGreaterThanEqualsToken */ :
-                    return 182 /* SignedRightShiftAssignmentExpression */ ;
-                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ :
-                    return 183 /* UnsignedRightShiftAssignmentExpression */ ;
-                case 108 /* PlusEqualsToken */ :
-                    return 173 /* AddAssignmentExpression */ ;
-                case 109 /* MinusEqualsToken */ :
-                    return 174 /* SubtractAssignmentExpression */ ;
-                case 110 /* AsteriskEqualsToken */ :
-                    return 175 /* MultiplyAssignmentExpression */ ;
-                case 119 /* SlashEqualsToken */ :
-                    return 176 /* DivideAssignmentExpression */ ;
-                case 111 /* PercentEqualsToken */ :
-                    return 177 /* ModuloAssignmentExpression */ ;
-                case 107 /* EqualsToken */ :
-                    return 172 /* AssignmentExpression */ ;
-                case 79 /* CommaToken */ :
-                    return 171 /* CommaExpression */ ;
+            switch (tokenKind) {
+                case 91 /* AsteriskToken */:
+                    return 203 /* MultiplyExpression */;
+                case 118 /* SlashToken */:
+                    return 204 /* DivideExpression */;
+                case 92 /* PercentToken */:
+                    return 205 /* ModuloExpression */;
+                case 89 /* PlusToken */:
+                    return 206 /* AddExpression */;
+                case 90 /* MinusToken */:
+                    return 207 /* SubtractExpression */;
+                case 95 /* LessThanLessThanToken */:
+                    return 200 /* LeftShiftExpression */;
+                case 96 /* GreaterThanGreaterThanToken */:
+                    return 201 /* SignedRightShiftExpression */;
+                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
+                    return 202 /* UnsignedRightShiftExpression */;
+                case 80 /* LessThanToken */:
+                    return 194 /* LessThanExpression */;
+                case 81 /* GreaterThanToken */:
+                    return 195 /* GreaterThanExpression */;
+                case 82 /* LessThanEqualsToken */:
+                    return 196 /* LessThanOrEqualExpression */;
+                case 83 /* GreaterThanEqualsToken */:
+                    return 197 /* GreaterThanOrEqualExpression */;
+                case 30 /* InstanceOfKeyword */:
+                    return 198 /* InstanceOfExpression */;
+                case 29 /* InKeyword */:
+                    return 199 /* InExpression */;
+                case 84 /* EqualsEqualsToken */:
+                    return 190 /* EqualsWithTypeConversionExpression */;
+                case 86 /* ExclamationEqualsToken */:
+                    return 191 /* NotEqualsWithTypeConversionExpression */;
+                case 87 /* EqualsEqualsEqualsToken */:
+                    return 192 /* EqualsExpression */;
+                case 88 /* ExclamationEqualsEqualsToken */:
+                    return 193 /* NotEqualsExpression */;
+                case 98 /* AmpersandToken */:
+                    return 189 /* BitwiseAndExpression */;
+                case 100 /* CaretToken */:
+                    return 188 /* BitwiseExclusiveOrExpression */;
+                case 99 /* BarToken */:
+                    return 187 /* BitwiseOrExpression */;
+                case 103 /* AmpersandAmpersandToken */:
+                    return 186 /* LogicalAndExpression */;
+                case 104 /* BarBarToken */:
+                    return 185 /* LogicalOrExpression */;
+                case 116 /* BarEqualsToken */:
+                    return 180 /* OrAssignmentExpression */;
+                case 115 /* AmpersandEqualsToken */:
+                    return 178 /* AndAssignmentExpression */;
+                case 117 /* CaretEqualsToken */:
+                    return 179 /* ExclusiveOrAssignmentExpression */;
+                case 112 /* LessThanLessThanEqualsToken */:
+                    return 181 /* LeftShiftAssignmentExpression */;
+                case 113 /* GreaterThanGreaterThanEqualsToken */:
+                    return 182 /* SignedRightShiftAssignmentExpression */;
+                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
+                    return 183 /* UnsignedRightShiftAssignmentExpression */;
+                case 108 /* PlusEqualsToken */:
+                    return 173 /* AddAssignmentExpression */;
+                case 109 /* MinusEqualsToken */:
+                    return 174 /* SubtractAssignmentExpression */;
+                case 110 /* AsteriskEqualsToken */:
+                    return 175 /* MultiplyAssignmentExpression */;
+                case 119 /* SlashEqualsToken */:
+                    return 176 /* DivideAssignmentExpression */;
+                case 111 /* PercentEqualsToken */:
+                    return 177 /* ModuloAssignmentExpression */;
+                case 107 /* EqualsToken */:
+                    return 172 /* AssignmentExpression */;
+                case 79 /* CommaToken */:
+                    return 171 /* CommaExpression */;
                 default:
-                    return 0 /* None */ ;
+                    return 0 /* None */;
             }
         }
         SyntaxFacts.getBinaryExpressionFromOperatorToken = getBinaryExpressionFromOperatorToken;
         function isAnyDivideToken(kind) {
-            switch(kind) {
-                case 118 /* SlashToken */ :
-                case 119 /* SlashEqualsToken */ :
+            switch (kind) {
+                case 118 /* SlashToken */:
+                case 119 /* SlashEqualsToken */:
                     return true;
                 default:
                     return false;
@@ -3495,10 +3585,10 @@ var TypeScript;
         }
         SyntaxFacts.isAnyDivideToken = isAnyDivideToken;
         function isAnyDivideOrRegularExpressionToken(kind) {
-            switch(kind) {
-                case 118 /* SlashToken */ :
-                case 119 /* SlashEqualsToken */ :
-                case 12 /* RegularExpressionLiteral */ :
+            switch (kind) {
+                case 118 /* SlashToken */:
+                case 119 /* SlashEqualsToken */:
+                case 12 /* RegularExpressionLiteral */:
                     return true;
                 default:
                     return false;
@@ -3506,12 +3596,12 @@ var TypeScript;
         }
         SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
         function isParserGenerated(kind) {
-            switch(kind) {
-                case 96 /* GreaterThanGreaterThanToken */ :
-                case 97 /* GreaterThanGreaterThanGreaterThanToken */ :
-                case 83 /* GreaterThanEqualsToken */ :
-                case 113 /* GreaterThanGreaterThanEqualsToken */ :
-                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ :
+            switch (kind) {
+                case 96 /* GreaterThanGreaterThanToken */:
+                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
+                case 83 /* GreaterThanEqualsToken */:
+                case 113 /* GreaterThanGreaterThanEqualsToken */:
+                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
                     return true;
                 default:
                     return false;
@@ -3519,43 +3609,43 @@ var TypeScript;
         }
         SyntaxFacts.isParserGenerated = isParserGenerated;
         function isAnyBinaryExpression(kind) {
-            switch(kind) {
-                case 171 /* CommaExpression */ :
-                case 172 /* AssignmentExpression */ :
-                case 173 /* AddAssignmentExpression */ :
-                case 174 /* SubtractAssignmentExpression */ :
-                case 175 /* MultiplyAssignmentExpression */ :
-                case 176 /* DivideAssignmentExpression */ :
-                case 177 /* ModuloAssignmentExpression */ :
-                case 178 /* AndAssignmentExpression */ :
-                case 179 /* ExclusiveOrAssignmentExpression */ :
-                case 180 /* OrAssignmentExpression */ :
-                case 181 /* LeftShiftAssignmentExpression */ :
-                case 182 /* SignedRightShiftAssignmentExpression */ :
-                case 183 /* UnsignedRightShiftAssignmentExpression */ :
-                case 185 /* LogicalOrExpression */ :
-                case 186 /* LogicalAndExpression */ :
-                case 187 /* BitwiseOrExpression */ :
-                case 188 /* BitwiseExclusiveOrExpression */ :
-                case 189 /* BitwiseAndExpression */ :
-                case 190 /* EqualsWithTypeConversionExpression */ :
-                case 191 /* NotEqualsWithTypeConversionExpression */ :
-                case 192 /* EqualsExpression */ :
-                case 193 /* NotEqualsExpression */ :
-                case 194 /* LessThanExpression */ :
-                case 195 /* GreaterThanExpression */ :
-                case 196 /* LessThanOrEqualExpression */ :
-                case 197 /* GreaterThanOrEqualExpression */ :
-                case 198 /* InstanceOfExpression */ :
-                case 199 /* InExpression */ :
-                case 200 /* LeftShiftExpression */ :
-                case 201 /* SignedRightShiftExpression */ :
-                case 202 /* UnsignedRightShiftExpression */ :
-                case 203 /* MultiplyExpression */ :
-                case 204 /* DivideExpression */ :
-                case 205 /* ModuloExpression */ :
-                case 206 /* AddExpression */ :
-                case 207 /* SubtractExpression */ :
+            switch (kind) {
+                case 171 /* CommaExpression */:
+                case 172 /* AssignmentExpression */:
+                case 173 /* AddAssignmentExpression */:
+                case 174 /* SubtractAssignmentExpression */:
+                case 175 /* MultiplyAssignmentExpression */:
+                case 176 /* DivideAssignmentExpression */:
+                case 177 /* ModuloAssignmentExpression */:
+                case 178 /* AndAssignmentExpression */:
+                case 179 /* ExclusiveOrAssignmentExpression */:
+                case 180 /* OrAssignmentExpression */:
+                case 181 /* LeftShiftAssignmentExpression */:
+                case 182 /* SignedRightShiftAssignmentExpression */:
+                case 183 /* UnsignedRightShiftAssignmentExpression */:
+                case 185 /* LogicalOrExpression */:
+                case 186 /* LogicalAndExpression */:
+                case 187 /* BitwiseOrExpression */:
+                case 188 /* BitwiseExclusiveOrExpression */:
+                case 189 /* BitwiseAndExpression */:
+                case 190 /* EqualsWithTypeConversionExpression */:
+                case 191 /* NotEqualsWithTypeConversionExpression */:
+                case 192 /* EqualsExpression */:
+                case 193 /* NotEqualsExpression */:
+                case 194 /* LessThanExpression */:
+                case 195 /* GreaterThanExpression */:
+                case 196 /* LessThanOrEqualExpression */:
+                case 197 /* GreaterThanOrEqualExpression */:
+                case 198 /* InstanceOfExpression */:
+                case 199 /* InExpression */:
+                case 200 /* LeftShiftExpression */:
+                case 201 /* SignedRightShiftExpression */:
+                case 202 /* UnsignedRightShiftExpression */:
+                case 203 /* MultiplyExpression */:
+                case 204 /* DivideExpression */:
+                case 205 /* ModuloExpression */:
+                case 206 /* AddExpression */:
+                case 207 /* SubtractExpression */:
                     return true;
             }
             return false;
@@ -3578,2257 +3668,1001 @@ var definitions = [
         name: 'SourceUnitSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'moduleElements',
-                isList: true,
-                elementType: 'IModuleElementSyntax'
-            }, 
-            {
-                name: 'endOfFileToken',
-                isToken: true
-            }
+            { name: 'moduleElements', isList: true, elementType: 'IModuleElementSyntax' },
+            { name: 'endOfFileToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ModuleReferenceSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleReferenceSyntax'
-        ],
+        interfaces: ['IModuleReferenceSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ExternalModuleReferenceSyntax',
         baseType: 'ModuleReferenceSyntax',
         children: [
-            {
-                name: 'moduleKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'stringLiteral',
-                isToken: true
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }
+            { name: 'moduleKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'stringLiteral', isToken: true },
+            { name: 'closeParenToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ModuleNameModuleReferenceSyntax',
         baseType: 'ModuleReferenceSyntax',
         children: [
-            {
-                name: 'moduleName',
-                type: 'INameSyntax'
-            }
+            { name: 'moduleName', type: 'INameSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ImportDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'importKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'equalsToken',
-                isToken: true
-            }, 
-            {
-                name: 'moduleReference',
-                type: 'ModuleReferenceSyntax'
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'importKeyword', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'equalsToken', isToken: true },
+            { name: 'moduleReference', type: 'ModuleReferenceSyntax' },
+            { name: 'semicolonToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ExportAssignmentSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'exportKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'equalsToken',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'exportKeyword', isToken: true },
+            { name: 'equalsToken', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'semicolonToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ClassDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'classKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'heritageClauses',
-                isList: true,
-                elementType: 'HeritageClauseSyntax'
-            }, 
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'classElements',
-                isList: true,
-                elementType: 'IClassElementSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'classKeyword', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
+            { name: 'heritageClauses', isList: true, elementType: 'HeritageClauseSyntax' },
+            { name: 'openBraceToken', isToken: true },
+            { name: 'classElements', isList: true, elementType: 'IClassElementSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'InterfaceDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'interfaceKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'heritageClauses',
-                isList: true,
-                elementType: 'HeritageClauseSyntax'
-            }, 
-            {
-                name: 'body',
-                type: 'ObjectTypeSyntax'
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'interfaceKeyword', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
+            { name: 'heritageClauses', isList: true, elementType: 'HeritageClauseSyntax' },
+            { name: 'body', type: 'ObjectTypeSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'HeritageClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'extendsOrImplementsKeyword',
-                isToken: true,
-                tokenKinds: [
-                    'ExtendsKeyword', 
-                    'ImplementsKeyword'
-                ]
-            }, 
-            {
-                name: 'typeNames',
-                isSeparatedList: true,
-                requiresAtLeastOneItem: true,
-                elementType: 'INameSyntax'
-            }
+            { name: 'extendsOrImplementsKeyword', isToken: true, tokenKinds: ['ExtendsKeyword', 'ImplementsKeyword'] },
+            { name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ModuleDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'moduleKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'moduleName',
-                type: 'INameSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'stringLiteral',
-                isToken: true,
-                isOptional: true
-            }, 
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'moduleElements',
-                isList: true,
-                elementType: 'IModuleElementSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'moduleKeyword', isToken: true },
+            { name: 'moduleName', type: 'INameSyntax', isOptional: true },
+            { name: 'stringLiteral', isToken: true, isOptional: true },
+            { name: 'openBraceToken', isToken: true },
+            { name: 'moduleElements', isList: true, elementType: 'IModuleElementSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'FunctionDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'functionKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true,
-                isOptional: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'functionKeyword', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'callSignature', type: 'CallSignatureSyntax' },
+            { name: 'block', type: 'BlockSyntax', isOptional: true },
+            { name: 'semicolonToken', isToken: true, isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'VariableStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'variableDeclaration',
-                type: 'VariableDeclarationSyntax'
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'variableDeclaration', type: 'VariableDeclarationSyntax' },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'VariableDeclarationSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'varKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'variableDeclarators',
-                isSeparatedList: true,
-                requiresAtLeastOneItem: true,
-                elementType: 'VariableDeclaratorSyntax'
-            }
+            { name: 'varKeyword', isToken: true },
+            { name: 'variableDeclarators', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'VariableDeclaratorSyntax' }
         ]
-    }, 
+    },
     {
         name: 'VariableDeclaratorSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'equalsValueClause',
-                type: 'EqualsValueClauseSyntax',
-                isOptional: true
-            }
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
+            { name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'EqualsValueClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'equalsToken',
-                isToken: true
-            }, 
-            {
-                name: 'value',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'equalsToken', isToken: true },
+            { name: 'value', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'PrefixUnaryExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'kind',
-                type: 'SyntaxKind'
-            }, 
-            {
-                name: 'operatorToken',
-                isToken: true,
-                tokenKinds: [
-                    'PlusPlusToken', 
-                    'MinusMinusToken', 
-                    'PlusToken', 
-                    'MinusToken', 
-                    'TildeToken', 
-                    'ExclamationToken'
-                ]
-            }, 
-            {
-                name: 'operand',
-                type: 'IUnaryExpressionSyntax'
-            }
+            { name: 'kind', type: 'SyntaxKind' },
+            { name: 'operatorToken', isToken: true, tokenKinds: ['PlusPlusToken', 'MinusMinusToken', 'PlusToken', 'MinusToken', 'TildeToken', 'ExclamationToken'] },
+            { name: 'operand', type: 'IUnaryExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'ArrayLiteralExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'openBracketToken',
-                isToken: true
-            }, 
-            {
-                name: 'expressions',
-                isSeparatedList: true,
-                elementType: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeBracketToken',
-                isToken: true
-            }
+            { name: 'openBracketToken', isToken: true },
+            { name: 'expressions', isSeparatedList: true, elementType: 'IExpressionSyntax' },
+            { name: 'closeBracketToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'OmittedExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IExpressionSyntax'
-        ],
+        interfaces: ['IExpressionSyntax'],
         children: []
-    }, 
+    },
     {
         name: 'ParenthesizedExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }
+            { name: 'openParenToken', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ArrowFunctionExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'SimpleArrowFunctionExpressionSyntax',
         baseType: 'ArrowFunctionExpressionSyntax',
         children: [
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'equalsGreaterThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'body',
-                type: 'ISyntaxNodeOrToken'
-            }
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'equalsGreaterThanToken', isToken: true },
+            { name: 'body', type: 'ISyntaxNodeOrToken' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ParenthesizedArrowFunctionExpressionSyntax',
         baseType: 'ArrowFunctionExpressionSyntax',
         children: [
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }, 
-            {
-                name: 'equalsGreaterThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'body',
-                type: 'ISyntaxNodeOrToken'
-            }
+            { name: 'callSignature', type: 'CallSignatureSyntax' },
+            { name: 'equalsGreaterThanToken', isToken: true },
+            { name: 'body', type: 'ISyntaxNodeOrToken' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'QualifiedNameSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'INameSyntax'
-        ],
+        interfaces: ['INameSyntax'],
         children: [
-            {
-                name: 'left',
-                type: 'INameSyntax'
-            }, 
-            {
-                name: 'dotToken',
-                isToken: true
-            }, 
-            {
-                name: 'right',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }
+            { name: 'left', type: 'INameSyntax' },
+            { name: 'dotToken', isToken: true },
+            { name: 'right', isToken: true, tokenKinds: ['IdentifierName'] }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'TypeArgumentListSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'lessThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'typeArguments',
-                isSeparatedList: true,
-                elementType: 'ITypeSyntax'
-            }, 
-            {
-                name: 'greaterThanToken',
-                isToken: true
-            }
+            { name: 'lessThanToken', isToken: true },
+            { name: 'typeArguments', isSeparatedList: true, elementType: 'ITypeSyntax' },
+            { name: 'greaterThanToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ConstructorTypeSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeSyntax'
-        ],
+        interfaces: ['ITypeSyntax'],
         children: [
-            {
-                name: 'newKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'equalsGreaterThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }
+            { name: 'newKeyword', isToken: true },
+            { name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'equalsGreaterThanToken', isToken: true },
+            { name: 'type', type: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'FunctionTypeSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeSyntax'
-        ],
+        interfaces: ['ITypeSyntax'],
         children: [
-            {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'equalsGreaterThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }
+            { name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'equalsGreaterThanToken', isToken: true },
+            { name: 'type', type: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ObjectTypeSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeSyntax'
-        ],
+        interfaces: ['ITypeSyntax'],
         children: [
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'typeMembers',
-                isSeparatedList: true,
-                elementType: 'ITypeMemberSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'openBraceToken', isToken: true },
+            { name: 'typeMembers', isSeparatedList: true, elementType: 'ITypeMemberSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ArrayTypeSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeSyntax'
-        ],
+        interfaces: ['ITypeSyntax'],
         children: [
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }, 
-            {
-                name: 'openBracketToken',
-                isToken: true
-            }, 
-            {
-                name: 'closeBracketToken',
-                isToken: true
-            }
+            { name: 'type', type: 'ITypeSyntax' },
+            { name: 'openBracketToken', isToken: true },
+            { name: 'closeBracketToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'GenericTypeSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeSyntax'
-        ],
+        interfaces: ['ITypeSyntax'],
         children: [
-            {
-                name: 'name',
-                type: 'INameSyntax'
-            }, 
-            {
-                name: 'typeArgumentList',
-                type: 'TypeArgumentListSyntax'
-            }
+            { name: 'name', type: 'INameSyntax' },
+            { name: 'typeArgumentList', type: 'TypeArgumentListSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'TypeAnnotationSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }
+            { name: 'colonToken', isToken: true },
+            { name: 'type', type: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'BlockSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'statements',
-                isList: true,
-                elementType: 'IStatementSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'openBraceToken', isToken: true },
+            { name: 'statements', isList: true, elementType: 'IStatementSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ParameterSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'dotDotDotToken',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'publicOrPrivateKeyword',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'PublicKeyword', 
-                    'PrivateKeyword'
-                ],
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'questionToken',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'equalsValueClause',
-                type: 'EqualsValueClauseSyntax',
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }
+            { name: 'dotDotDotToken', isToken: true, isOptional: true, isTypeScriptSpecific: true },
+            { name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'], isTypeScriptSpecific: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'questionToken', isToken: true, isOptional: true, isTypeScriptSpecific: true },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
+            { name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true, isTypeScriptSpecific: true }
         ]
-    }, 
+    },
     {
         name: 'MemberAccessExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'dotToken',
-                isToken: true
-            }, 
-            {
-                name: 'name',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'dotToken', isToken: true },
+            { name: 'name', isToken: true, tokenKinds: ['IdentifierName'] }
         ]
-    }, 
+    },
     {
         name: 'PostfixUnaryExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'kind',
-                type: 'SyntaxKind'
-            }, 
-            {
-                name: 'operand',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'operatorToken',
-                isToken: true,
-                tokenKinds: [
-                    'PlusPlusToken', 
-                    'MinusMinusToken'
-                ]
-            }
+            { name: 'kind', type: 'SyntaxKind' },
+            { name: 'operand', type: 'IExpressionSyntax' },
+            { name: 'operatorToken', isToken: true, tokenKinds: ['PlusPlusToken', 'MinusMinusToken'] }
         ]
-    }, 
+    },
     {
         name: 'ElementAccessExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'openBracketToken',
-                isToken: true
-            }, 
-            {
-                name: 'argumentExpression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeBracketToken',
-                isToken: true
-            }
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'openBracketToken', isToken: true },
+            { name: 'argumentExpression', type: 'IExpressionSyntax' },
+            { name: 'closeBracketToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'InvocationExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'argumentList',
-                type: 'ArgumentListSyntax'
-            }
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'argumentList', type: 'ArgumentListSyntax' }
         ]
-    }, 
+    },
     {
         name: 'ArgumentListSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'typeArgumentList',
-                type: 'TypeArgumentListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'arguments',
-                isSeparatedList: true,
-                elementType: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }
+            { name: 'typeArgumentList', type: 'TypeArgumentListSyntax', isOptional: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'arguments', isSeparatedList: true, elementType: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'BinaryExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IExpressionSyntax'
-        ],
+        interfaces: ['IExpressionSyntax'],
         children: [
-            {
-                name: 'kind',
-                type: 'SyntaxKind'
-            }, 
-            {
-                name: 'left',
-                type: 'IExpressionSyntax'
-            }, 
+            { name: 'kind', type: 'SyntaxKind' },
+            { name: 'left', type: 'IExpressionSyntax' },
             {
                 name: 'operatorToken',
                 isToken: true,
                 tokenKinds: [
-                    'AsteriskToken', 
-                    'SlashToken', 
-                    'PercentToken', 
-                    'PlusToken', 
-                    'MinusToken', 
-                    'LessThanLessThanToken', 
-                    'GreaterThanGreaterThanToken', 
-                    'GreaterThanGreaterThanGreaterThanToken', 
-                    'LessThanToken', 
-                    'GreaterThanToken', 
-                    'LessThanEqualsToken', 
-                    'GreaterThanEqualsToken', 
-                    'InstanceOfKeyword', 
-                    'InKeyword', 
-                    'EqualsEqualsToken', 
-                    'ExclamationEqualsToken', 
-                    'EqualsEqualsEqualsToken', 
-                    'ExclamationEqualsEqualsToken', 
-                    'AmpersandToken', 
-                    'CaretToken', 
-                    'BarToken', 
-                    'AmpersandAmpersandToken', 
-                    'BarBarToken', 
-                    'BarEqualsToken', 
-                    'AmpersandEqualsToken', 
-                    'CaretEqualsToken', 
-                    'LessThanLessThanEqualsToken', 
-                    'GreaterThanGreaterThanEqualsToken', 
-                    'GreaterThanGreaterThanGreaterThanEqualsToken', 
-                    'PlusEqualsToken', 
-                    'MinusEqualsToken', 
-                    'AsteriskEqualsToken', 
-                    'SlashEqualsToken', 
-                    'PercentEqualsToken', 
-                    'EqualsToken', 
+                    'AsteriskToken',
+                    'SlashToken',
+                    'PercentToken',
+                    'PlusToken',
+                    'MinusToken',
+                    'LessThanLessThanToken',
+                    'GreaterThanGreaterThanToken',
+                    'GreaterThanGreaterThanGreaterThanToken',
+                    'LessThanToken',
+                    'GreaterThanToken',
+                    'LessThanEqualsToken',
+                    'GreaterThanEqualsToken',
+                    'InstanceOfKeyword',
+                    'InKeyword',
+                    'EqualsEqualsToken',
+                    'ExclamationEqualsToken',
+                    'EqualsEqualsEqualsToken',
+                    'ExclamationEqualsEqualsToken',
+                    'AmpersandToken',
+                    'CaretToken',
+                    'BarToken',
+                    'AmpersandAmpersandToken',
+                    'BarBarToken',
+                    'BarEqualsToken',
+                    'AmpersandEqualsToken',
+                    'CaretEqualsToken',
+                    'LessThanLessThanEqualsToken',
+                    'GreaterThanGreaterThanEqualsToken',
+                    'GreaterThanGreaterThanGreaterThanEqualsToken',
+                    'PlusEqualsToken',
+                    'MinusEqualsToken',
+                    'AsteriskEqualsToken',
+                    'SlashEqualsToken',
+                    'PercentEqualsToken',
+                    'EqualsToken',
                     'CommaToken'
                 ]
-            }, 
-            {
-                name: 'right',
-                type: 'IExpressionSyntax'
-            }
+            },
+            { name: 'right', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'ConditionalExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IExpressionSyntax'
-        ],
+        interfaces: ['IExpressionSyntax'],
         children: [
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'questionToken',
-                isToken: true
-            }, 
-            {
-                name: 'whenTrue',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'whenFalse',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'condition', type: 'IExpressionSyntax' },
+            { name: 'questionToken', isToken: true },
+            { name: 'whenTrue', type: 'IExpressionSyntax' },
+            { name: 'colonToken', isToken: true },
+            { name: 'whenFalse', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'ConstructSignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeMemberSyntax'
-        ],
+        interfaces: ['ITypeMemberSyntax'],
         children: [
-            {
-                name: 'newKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }
+            { name: 'newKeyword', isToken: true },
+            { name: 'callSignature', type: 'CallSignatureSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'MethodSignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeMemberSyntax'
-        ],
+        interfaces: ['ITypeMemberSyntax'],
         children: [
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'questionToken',
-                isToken: true,
-                isOptional: true,
-                itTypeScriptSpecific: true
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
+            { name: 'callSignature', type: 'CallSignatureSyntax' }
         ]
-    }, 
+    },
     {
         name: 'IndexSignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeMemberSyntax'
-        ],
+        interfaces: ['ITypeMemberSyntax', 'IClassElementSyntax'],
         children: [
-            {
-                name: 'openBracketToken',
-                isToken: true
-            }, 
-            {
-                name: 'parameter',
-                type: 'ParameterSyntax'
-            }, 
-            {
-                name: 'closeBracketToken',
-                isToken: true
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
-            }
+            { name: 'openBracketToken', isToken: true },
+            { name: 'parameter', type: 'ParameterSyntax' },
+            { name: 'closeBracketToken', isToken: true },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'PropertySignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeMemberSyntax'
-        ],
+        interfaces: ['ITypeMemberSyntax'],
         children: [
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'questionToken',
-                isToken: true,
-                isOptional: true
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
-            }
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'questionToken', isToken: true, isOptional: true },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'CallSignatureSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ITypeMemberSyntax'
-        ],
+        interfaces: ['ITypeMemberSyntax'],
         children: [
-            {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }
+            { name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true, isTypeScriptSpecific: true },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true }
         ]
-    }, 
+    },
     {
         name: 'ParameterListSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'parameters',
-                isSeparatedList: true,
-                elementType: 'ParameterSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }
+            { name: 'openParenToken', isToken: true },
+            { name: 'parameters', isSeparatedList: true, elementType: 'ParameterSyntax' },
+            { name: 'closeParenToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'TypeParameterListSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'lessThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'typeParameters',
-                isSeparatedList: true,
-                elementType: 'TypeParameterSyntax'
-            }, 
-            {
-                name: 'greaterThanToken',
-                isToken: true
-            }
+            { name: 'lessThanToken', isToken: true },
+            { name: 'typeParameters', isSeparatedList: true, elementType: 'TypeParameterSyntax' },
+            { name: 'greaterThanToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'TypeParameterSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'constraint',
-                type: 'ConstraintSyntax',
-                isOptional: true
-            }
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'constraint', type: 'ConstraintSyntax', isOptional: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ConstraintSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'extendsKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }
+            { name: 'extendsKeyword', isToken: true },
+            { name: 'type', type: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ElseClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'elseKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'elseKeyword', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'IfStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'ifKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }, 
-            {
-                name: 'elseClause',
-                type: 'ElseClauseSyntax',
-                isOptional: true
-            }
+            { name: 'ifKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'condition', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' },
+            { name: 'elseClause', type: 'ElseClauseSyntax', isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'ExpressionStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ConstructorDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IClassElementSyntax'
-        ],
+        interfaces: ['IClassElementSyntax'],
         children: [
-            {
-                name: 'constructorKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true,
-                isOptional: true
-            }
+            { name: 'constructorKeyword', isToken: true },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'block', type: 'BlockSyntax', isOptional: true },
+            { name: 'semicolonToken', isToken: true, isOptional: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'MemberFunctionDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IMemberDeclarationSyntax'
-        ],
+        interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true,
-                isOptional: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'callSignature', type: 'CallSignatureSyntax' },
+            { name: 'block', type: 'BlockSyntax', isOptional: true },
+            { name: 'semicolonToken', isToken: true, isOptional: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'MemberAccessorDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IMemberDeclarationSyntax'
-        ],
+        interfaces: ['IMemberDeclarationSyntax'],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'GetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'getKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'getKeyword', isToken: true },
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
+            { name: 'block', type: 'BlockSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'SetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'setKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'setKeyword', isToken: true },
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'parameterList', type: 'ParameterListSyntax' },
+            { name: 'block', type: 'BlockSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'MemberVariableDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IMemberDeclarationSyntax'
-        ],
+        interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'variableDeclarator',
-                type: 'VariableDeclaratorSyntax'
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'variableDeclarator', type: 'VariableDeclaratorSyntax' },
+            { name: 'semicolonToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ThrowStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'throwKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'throwKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ReturnStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'returnKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'returnKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax', isOptional: true },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ObjectCreationExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'newKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'argumentList',
-                type: 'ArgumentListSyntax',
-                isOptional: true
-            }
+            { name: 'newKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'argumentList', type: 'ArgumentListSyntax', isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'SwitchStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'switchKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'switchClauses',
-                isList: true,
-                elementType: 'SwitchClauseSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'switchKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'openBraceToken', isToken: true },
+            { name: 'switchClauses', isList: true, elementType: 'SwitchClauseSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'SwitchClauseSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'ISwitchClauseSyntax'
-        ],
+        interfaces: ['ISwitchClauseSyntax'],
         isAbstract: true,
         children: []
-    }, 
+    },
     {
         name: 'CaseSwitchClauseSyntax',
         baseType: 'SwitchClauseSyntax',
         children: [
-            {
-                name: 'caseKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'statements',
-                isList: true,
-                elementType: 'IStatementSyntax'
-            }
+            { name: 'caseKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'colonToken', isToken: true },
+            { name: 'statements', isList: true, elementType: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'DefaultSwitchClauseSyntax',
         baseType: 'SwitchClauseSyntax',
         children: [
-            {
-                name: 'defaultKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'statements',
-                isList: true,
-                elementType: 'IStatementSyntax'
-            }
+            { name: 'defaultKeyword', isToken: true },
+            { name: 'colonToken', isToken: true },
+            { name: 'statements', isList: true, elementType: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'BreakStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'breakKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'breakKeyword', isToken: true },
+            { name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'ContinueStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'continueKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'continueKeyword', isToken: true },
+            { name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'IterationStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         isAbstract: true,
         children: []
-    }, 
+    },
     {
         name: 'BaseForStatementSyntax',
         baseType: 'IterationStatementSyntax',
         isAbstract: true,
         children: []
-    }, 
+    },
     {
         name: 'ForStatementSyntax',
         baseType: 'BaseForStatementSyntax',
         children: [
-            {
-                name: 'forKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'variableDeclaration',
-                type: 'VariableDeclarationSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'initializer',
-                type: 'IExpressionSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'firstSemicolonToken',
-                isToken: true,
-                tokenKinds: [
-                    'SemicolonToken'
-                ]
-            }, 
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'secondSemicolonToken',
-                isToken: true,
-                tokenKinds: [
-                    'SemicolonToken'
-                ]
-            }, 
-            {
-                name: 'incrementor',
-                type: 'IExpressionSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'forKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'variableDeclaration', type: 'VariableDeclarationSyntax', isOptional: true },
+            { name: 'initializer', type: 'IExpressionSyntax', isOptional: true },
+            { name: 'firstSemicolonToken', isToken: true, tokenKinds: ['SemicolonToken'] },
+            { name: 'condition', type: 'IExpressionSyntax', isOptional: true },
+            { name: 'secondSemicolonToken', isToken: true, tokenKinds: ['SemicolonToken'] },
+            { name: 'incrementor', type: 'IExpressionSyntax', isOptional: true },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'ForInStatementSyntax',
         baseType: 'BaseForStatementSyntax',
         children: [
-            {
-                name: 'forKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'variableDeclaration',
-                type: 'VariableDeclarationSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'left',
-                type: 'IExpressionSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'inKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'forKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'variableDeclaration', type: 'VariableDeclarationSyntax', isOptional: true },
+            { name: 'left', type: 'IExpressionSyntax', isOptional: true },
+            { name: 'inKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'WhileStatementSyntax',
         baseType: 'IterationStatementSyntax',
         children: [
-            {
-                name: 'whileKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'whileKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'condition', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'WithStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'withKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'withKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'condition', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'EnumDeclarationSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
+        interfaces: ['IModuleElementSyntax'],
         children: [
-            {
-                name: 'modifiers',
-                isList: true,
-                elementType: 'ISyntaxToken'
-            }, 
-            {
-                name: 'enumKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'enumElements',
-                isSeparatedList: true,
-                elementType: 'EnumElementSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
+            { name: 'enumKeyword', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'openBraceToken', isToken: true },
+            { name: 'enumElements', isSeparatedList: true, elementType: 'EnumElementSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'EnumElementSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'equalsValueClause',
-                type: 'EqualsValueClauseSyntax',
-                isOptional: true
-            }
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'CastExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'lessThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'type',
-                type: 'ITypeSyntax'
-            }, 
-            {
-                name: 'greaterThanToken',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IUnaryExpressionSyntax'
-            }
+            { name: 'lessThanToken', isToken: true },
+            { name: 'type', type: 'ITypeSyntax' },
+            { name: 'greaterThanToken', isToken: true },
+            { name: 'expression', type: 'IUnaryExpressionSyntax' }
         ],
         isTypeScriptSpecific: true
-    }, 
+    },
     {
         name: 'ObjectLiteralExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'openBraceToken',
-                isToken: true
-            }, 
-            {
-                name: 'propertyAssignments',
-                isSeparatedList: true,
-                elementType: 'PropertyAssignmentSyntax'
-            }, 
-            {
-                name: 'closeBraceToken',
-                isToken: true
-            }
+            { name: 'openBraceToken', isToken: true },
+            { name: 'propertyAssignments', isSeparatedList: true, elementType: 'PropertyAssignmentSyntax' },
+            { name: 'closeBraceToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'PropertyAssignmentSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
         children: []
-    }, 
+    },
     {
         name: 'SimplePropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         children: [
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'colonToken', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'FunctionPropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         children: [
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName', 
-                    'StringLiteral', 
-                    'NumericLiteral'
-                ]
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            { name: 'callSignature', type: 'CallSignatureSyntax' },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'AccessorPropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         isAbstract: true,
         children: []
-    }, 
+    },
     {
         name: 'GetAccessorPropertyAssignmentSyntax',
         baseType: 'AccessorPropertyAssignmentSyntax',
         children: [
-            {
-                name: 'getKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'getKeyword', isToken: true },
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'openParenToken', isToken: true },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'SetAccessorPropertyAssignmentSyntax',
         baseType: 'AccessorPropertyAssignmentSyntax',
         children: [
-            {
-                name: 'setKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'propertyName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'parameter',
-                type: 'ParameterSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'setKeyword', isToken: true },
+            { name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'openParenToken', isToken: true },
+            { name: 'parameter', type: 'ParameterSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'FunctionExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'functionKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'callSignature',
-                type: 'CallSignatureSyntax'
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'functionKeyword', isToken: true },
+            { name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
+            { name: 'callSignature', type: 'CallSignatureSyntax' },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'EmptyStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'TryStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'tryKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }, 
-            {
-                name: 'catchClause',
-                type: 'CatchClauseSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'finallyClause',
-                type: 'FinallyClauseSyntax',
-                isOptional: true
-            }
+            { name: 'tryKeyword', isToken: true },
+            { name: 'block', type: 'BlockSyntax' },
+            { name: 'catchClause', type: 'CatchClauseSyntax', isOptional: true },
+            { name: 'finallyClause', type: 'FinallyClauseSyntax', isOptional: true }
         ]
-    }, 
+    },
     {
         name: 'CatchClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'catchKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true,
-                isTypeScriptSpecified: true
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'catchKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecified: true },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'FinallyClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            {
-                name: 'finallyKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'block',
-                type: 'BlockSyntax'
-            }
+            { name: 'finallyKeyword', isToken: true },
+            { name: 'block', type: 'BlockSyntax' }
         ]
-    }, 
+    },
     {
         name: 'LabeledStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }
+            { name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            { name: 'colonToken', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' }
         ]
-    }, 
+    },
     {
         name: 'DoStatementSyntax',
         baseType: 'IterationStatementSyntax',
         children: [
-            {
-                name: 'doKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'statement',
-                type: 'IStatementSyntax'
-            }, 
-            {
-                name: 'whileKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'condition',
-                type: 'IExpressionSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'doKeyword', isToken: true },
+            { name: 'statement', type: 'IStatementSyntax' },
+            { name: 'whileKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'condition', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true },
+            { name: 'semicolonToken', isToken: true }
         ]
-    }, 
+    },
     {
         name: 'TypeOfExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'typeOfKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'typeOfKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'DeleteExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'deleteKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'deleteKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'VoidExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IUnaryExpressionSyntax'
-        ],
+        interfaces: ['IUnaryExpressionSyntax'],
         children: [
-            {
-                name: 'voidKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'expression',
-                type: 'IExpressionSyntax'
-            }
+            { name: 'voidKeyword', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' }
         ]
-    }, 
+    },
     {
         name: 'DebuggerStatementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IStatementSyntax'
-        ],
+        interfaces: ['IStatementSyntax'],
         children: [
-            {
-                name: 'debuggerKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'semicolonToken',
-                isToken: true
-            }
+            { name: 'debuggerKeyword', isToken: true },
+            { name: 'semicolonToken', isToken: true }
         ]
     }
 ];
@@ -5873,7 +4707,7 @@ function getPropertyAccess(child) {
 }
 function generateProperties(definition) {
     var result = "";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if (getType(child) === "SyntaxKind") {
             result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
@@ -5887,7 +4721,7 @@ function generateProperties(definition) {
 }
 function generateNullChecks(definition) {
     var result = "";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if (!child.isOptional && !child.isToken) {
             result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
@@ -5898,7 +4732,7 @@ function generateNullChecks(definition) {
 function generateIfKindCheck(child, tokenKinds, indent) {
     var result = "";
     result += indent + "        if (";
-    for(var j = 0; j < tokenKinds.length; j++) {
+    for (var j = 0; j < tokenKinds.length; j++) {
         if (j > 0) {
             result += " && ";
         }
@@ -5920,7 +4754,7 @@ function generateBreakStatement(indent) {
 }
 function generateSwitchCases(tokenKinds, indent) {
     var result = "";
-    for(var j = 0; j < tokenKinds.length; j++) {
+    for (var j = 0; j < tokenKinds.length; j++) {
         var tokenKind = tokenKinds[j];
         result += generateSwitchCase(tokenKind, indent);
     }
@@ -5969,9 +4803,7 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
     return result;
 }
 function tokenKinds(child) {
-    return child.tokenKinds ? child.tokenKinds : [
-        pascalCase(child.name)
-    ];
+    return child.tokenKinds ? child.tokenKinds : [pascalCase(child.name)];
 }
 function generateKindCheck(child) {
     var indent = "";
@@ -5993,7 +4825,7 @@ function generateKindCheck(child) {
 }
 function generateKindChecks(definition) {
     var result = "";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if (child.isToken) {
             result += generateKindCheck(child);
@@ -6029,7 +4861,7 @@ function generateConstructor(definition) {
     if (subchildren.length > 0) {
         children = subchildren;
     }
-    for(i = 0; i < children.length; i++) {
+    for (i = 0; i < children.length; i++) {
         child = children[i];
         if (getType(child) !== "SyntaxKind" && !TypeScript.ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
@@ -6039,7 +4871,7 @@ function generateConstructor(definition) {
     }
     result += "parsedInStrictMode: boolean) {\r\n";
     result += "            super(";
-    for(i = 0; i < baseSubchildrenNames.length; i++) {
+    for (i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
     }
     result += "parsedInStrictMode); \r\n";
@@ -6047,7 +4879,7 @@ function generateConstructor(definition) {
         result += "\r\n";
     }
     result += generateArgumentChecks(definition);
-    for(i = 0; i < definition.children.length; i++) {
+    for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
         if (child.type === "SyntaxKind") {
             result += "            " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
@@ -6078,7 +4910,7 @@ function generateFactory1Method(definition) {
     var result = "\r\n    public static create(";
     var i;
     var child;
-    for(i = 0; i < mandatoryChildren.length; i++) {
+    for (i = 0; i < mandatoryChildren.length; i++) {
         child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
         if (i < mandatoryChildren.length - 1) {
@@ -6087,7 +4919,7 @@ function generateFactory1Method(definition) {
     }
     result += "): " + definition.name + " {\r\n";
     result += "        return new " + definition.name + "(";
-    for(i = 0; i < definition.children.length; i++) {
+    for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
         if (!isOptional(child)) {
             result += child.name;
@@ -6117,7 +4949,7 @@ function isDefaultConstructable(definition) {
     if (definition === null || definition.isAbstract) {
         return false;
     }
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         if (isMandatory(definition.children[i])) {
             return false;
         }
@@ -6146,7 +4978,7 @@ function generateFactory2Method(definition) {
     var i;
     var child;
     var result = "\r\n    public static create1(";
-    for(i = 0; i < mandatoryChildren.length; i++) {
+    for (i = 0; i < mandatoryChildren.length; i++) {
         child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
         if (i < mandatoryChildren.length - 1) {
@@ -6155,7 +4987,7 @@ function generateFactory2Method(definition) {
     }
     result += "): " + definition.name + " {\r\n";
     result += "        return new " + definition.name + "(";
-    for(i = 0; i < definition.children.length; i++) {
+    for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
         if (isMandatory(child)) {
             result += child.name;
@@ -6194,16 +5026,16 @@ function generateIsMethod(definition) {
     if (definition.interfaces) {
         var ifaces = definition.interfaces.slice(0);
         var i;
-        for(i = 0; i < ifaces.length; i++) {
+        for (i = 0; i < ifaces.length; i++) {
             var current = ifaces[i];
-            while(current !== undefined) {
+            while (current !== undefined) {
                 if (!TypeScript.ArrayUtilities.contains(ifaces, current)) {
                     ifaces.push(current);
                 }
                 current = interfaces[current];
             }
         }
-        for(i = 0; i < ifaces.length; i++) {
+        for (i = 0; i < ifaces.length; i++) {
             var type = ifaces[i];
             type = getStringWithoutSuffix(type);
             if (isInterface(type)) {
@@ -6243,7 +5075,7 @@ function generateSlotMethods(definition) {
         } else {
             result += "        switch (slot) {\r\n";
             var index = 0;
-            for(var i = 0; i < definition.children.length; i++) {
+            for (var i = 0; i < definition.children.length; i++) {
                 var child = definition.children[i];
                 if (child.type === "SyntaxKind") {
                     continue;
@@ -6264,7 +5096,7 @@ function generateFirstTokenMethod(definition) {
         result += "\r\n";
         result += "    public firstToken(): ISyntaxToken {\r\n";
         result += "        var token = null;\r\n";
-        for(var i = 0; i < definition.children.length; i++) {
+        for (var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
             if (getType(child) === "SyntaxKind") {
                 continue;
@@ -6302,7 +5134,7 @@ function generateLastTokenMethod(definition) {
             result += "        return this._endOfFileToken;\r\n";
         } else {
             result += "        var token = null;\r\n";
-            for(var i = definition.children.length - 1; i >= 0; i--) {
+            for (var i = definition.children.length - 1; i >= 0; i--) {
                 var child = definition.children[i];
                 if (getType(child) === "SyntaxKind") {
                     continue;
@@ -6333,7 +5165,7 @@ function generateInsertChildrenIntoMethod(definition) {
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public insertChildrenInto(array: ISyntaxElement[], index: number) {\r\n";
-        for(var i = definition.children.length - 1; i >= 0; i--) {
+        for (var i = definition.children.length - 1; i >= 0; i--) {
             var child = definition.children[i];
             if (child.type === "SyntaxKind") {
                 continue;
@@ -6362,7 +5194,7 @@ function memberDefinitionType(child) {
 }
 function derivesFrom(def1, def2) {
     var current = def1;
-    while(current !== null) {
+    while (current !== null) {
         var base = baseType(current);
         if (base === def2) {
             return true;
@@ -6384,7 +5216,7 @@ function childrenInAllSubclasses(definition) {
         });
         if (subclasses.length > 0) {
             var firstSubclass = subclasses[0];
-            for(var i = 0; i < firstSubclass.children.length; i++) {
+            for (var i = 0; i < firstSubclass.children.length; i++) {
                 var child = firstSubclass.children[i];
                 if (TypeScript.ArrayUtilities.all(subclasses, function (s) {
                     return contains(s, child);
@@ -6398,7 +5230,7 @@ function childrenInAllSubclasses(definition) {
 }
 function generateAccessors(definition) {
     var result = "";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if (child.type === "SyntaxKind") {
             result += "\r\n";
@@ -6414,7 +5246,7 @@ function generateWithMethod(definition, child) {
     result += "\r\n";
     result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";
     result += "        return this.update(";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         if (i > 0) {
             result += ", ";
         }
@@ -6448,7 +5280,7 @@ function generateWithMethod(definition, child) {
 }
 function generateWithMethods(definition) {
     var result = "";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         result += generateWithMethod(definition, child);
     }
@@ -6474,7 +5306,7 @@ function generateUpdateMethod(definition) {
     result += "update(";
     var i;
     var child;
-    for(i = 0; i < definition.children.length; i++) {
+    for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
         result += getSafeName(child) + ": " + getType(child);
         if (i < definition.children.length - 1) {
@@ -6486,7 +5318,7 @@ function generateUpdateMethod(definition) {
         result += "        return this;\r\n";
     } else {
         result += "        if (";
-        for(i = 0; i < definition.children.length; i++) {
+        for (i = 0; i < definition.children.length; i++) {
             child = definition.children[i];
             if (i !== 0) {
                 result += " && ";
@@ -6497,7 +5329,7 @@ function generateUpdateMethod(definition) {
         result += "            return this;\r\n";
         result += "        }\r\n\r\n";
         result += "        return new " + definition.name + "(";
-        for(i = 0; i < definition.children.length; i++) {
+        for (i = 0; i < definition.children.length; i++) {
             child = definition.children[i];
             result += getSafeName(child);
             result += ", ";
@@ -6512,7 +5344,7 @@ function generateIsTypeScriptSpecificMethod(definition) {
     if (definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
     } else {
-        for(var i = 0; i < definition.children.length; i++) {
+        for (var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
             if (child.type === "SyntaxKind") {
                 continue;
@@ -6548,7 +5380,7 @@ function generateStructuralEqualsMethod(definition) {
     result += "        if (node === null) { return false; }\r\n";
     result += "        if (this.kind() !== node.kind()) { return false; }\r\n";
     result += "        var other = <" + definition.name + ">node;\r\n";
-    for(var i = 0; i < definition.children.length; i++) {
+    for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         if (child.type !== "SyntaxKind") {
             if (child.isList) {
@@ -6593,9 +5425,9 @@ function generateNode(definition) {
     return result;
 }
 function generateNodes() {
-    var result = "///<reference path='References.ts' />\r\n\r\n";
+    var result = "///<reference path='references.ts' />\r\n\r\n";
     result += "module TypeScript {\r\n";
-    for(var i = 0; i < definitions.length; i++) {
+    for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (i > 0) {
             result += "\r\n\r\n";
@@ -6612,9 +5444,9 @@ function isNodeOrToken(child) {
     return child.type && isInterface(child.type);
 }
 function generateRewriter() {
-    var result = "///<reference path='References.ts' />\r\n\r\n";
+    var result = "///<reference path='references.ts' />\r\n\r\n";
     result += "module TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
-    for(var i = 0; i < definitions.length; i++) {
+    for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
             continue;
@@ -6627,7 +5459,7 @@ function generateRewriter() {
             continue;
         }
         result += "            return node.update(\r\n";
-        for(var j = 0; j < definition.children.length; j++) {
+        for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
             result += "                ";
             if (child.isOptional) {
@@ -6803,7 +5635,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     return result;
 }
 function generateTokens() {
-    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript.Syntax {\r\n";
+    var result = "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript.Syntax {\r\n";
     result += generateToken(false, false, false);
     result += "\r\n";
     result += generateToken(false, true, false);
@@ -6827,15 +5659,15 @@ function generateTokens() {
 }
 function generateWalker() {
     var result = "";
-    result += "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): void {\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): void {\r\n" + "            node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken.isToken()) { \r\n" + "                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "            if (token === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitToken(token);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNode(node: SyntaxNode): void {\r\n" + "            if (node === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNode(node);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNodeOrToken(nodeOrToken);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "               this.visitNodeOrToken(list.childAt(i));\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                this.visitNodeOrToken(item);\r\n" + "            }\r\n" + "        }\r\n";
-    for(var i = 0; i < definitions.length; i++) {
+    result += "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): void {\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): void {\r\n" + "            node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken.isToken()) { \r\n" + "                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "            if (token === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitToken(token);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNode(node: SyntaxNode): void {\r\n" + "            if (node === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNode(node);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNodeOrToken(nodeOrToken);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "               this.visitNodeOrToken(list.childAt(i));\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                this.visitNodeOrToken(item);\r\n" + "            }\r\n" + "        }\r\n";
+    for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "\r\n";
         result += "        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
-        for(var j = 0; j < definition.children.length; j++) {
+        for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
             if (child.isToken) {
                 if (child.isOptional) {
@@ -6878,7 +5710,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
         }
         var keywordText = keywords[0].text;
         result = indent + "return (";
-        for(var i = currentCharacter; i < length; i++) {
+        for (var i = currentCharacter; i < length; i++) {
             if (i > currentCharacter) {
                 result += " && ";
             }
@@ -6892,7 +5724,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
         var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, function (k) {
             return k.text.substr(currentCharacter, 1);
         });
-        for(var c in groupedKeywords) {
+        for (var c in groupedKeywords) {
             if (groupedKeywords.hasOwnProperty(c)) {
                 result += indent + "case CharacterCodes." + c + ":\r\n";
                 result += indent + "    // " + TypeScript.ArrayUtilities.select(groupedKeywords[c], function (k) {
@@ -6908,14 +5740,11 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
     return result;
 }
 function generateScannerUtilities() {
-    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class ScannerUtilities {\r\n";
+    var result = "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class ScannerUtilities {\r\n";
     var i;
     var keywords = [];
-    for(i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
-        keywords.push({
-            kind: i,
-            text: TypeScript.SyntaxFacts.getText(i)
-        });
+    for (i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
+        keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
     }
     result += "        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n";
     var minTokenLength = TypeScript.ArrayUtilities.min(keywords, function (k) {
@@ -6925,7 +5754,7 @@ function generateScannerUtilities() {
         return k.text.length;
     });
     result += "            switch (length) {\r\n";
-    for(i = minTokenLength; i <= maxTokenLength; i++) {
+    for (i = minTokenLength; i <= maxTokenLength; i++) {
         var keywordsOfLengthI = TypeScript.ArrayUtilities.where(keywords, function (k) {
             return k.text.length === i;
         });
@@ -6949,11 +5778,11 @@ function generateVisitor() {
     var i;
     var definition;
     var result = "";
-    result += "///<reference path='References.ts' />\r\n\r\n";
+    result += "///<reference path='references.ts' />\r\n\r\n";
     result += "module TypeScript {\r\n";
     result += "    export interface ISyntaxVisitor {\r\n";
     result += "        visitToken(token: ISyntaxToken): any;\r\n";
-    for(i = 0; i < definitions.length; i++) {
+    for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (!definition.isAbstract) {
             result += "        visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
@@ -6969,7 +5798,7 @@ function generateVisitor() {
         result += "        public visitToken(token: ISyntaxToken): any {\r\n";
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
-        for(i = 0; i < definitions.length; i++) {
+        for (i = 0; i < definitions.length; i++) {
             definition = definitions[i];
             if (!definition.isAbstract) {
                 result += "\r\n        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
@@ -6983,20 +5812,20 @@ function generateVisitor() {
     return result;
 }
 function generateFactory() {
-    var result = "///<reference path='References.ts' />\r\n";
+    var result = "///<reference path='references.ts' />\r\n";
     result += "\r\nmodule TypeScript.Syntax {\r\n";
     result += "    export interface IFactory {\r\n";
     var i;
     var j;
     var definition;
     var child;
-    for(i = 0; i < definitions.length; i++) {
+    for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
@@ -7007,13 +5836,13 @@ function generateFactory() {
     }
     result += "    }\r\n\r\n";
     result += "    export class NormalModeFactory implements IFactory {\r\n";
-    for(i = 0; i < definitions.length; i++) {
+    for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
@@ -7022,7 +5851,7 @@ function generateFactory() {
         }
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
-        for(j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
@@ -7032,13 +5861,13 @@ function generateFactory() {
     }
     result += "    }\r\n\r\n";
     result += "    export class StrictModeFactory implements IFactory {\r\n";
-    for(i = 0; i < definitions.length; i++) {
+    for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
@@ -7047,7 +5876,7 @@ function generateFactory() {
         }
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
-        for(j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
@@ -7068,10 +5897,10 @@ var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts", syntaxNodes, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxRewriter.generated.ts", rewriter, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxWalker.generated.ts", walker, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\ScannerUtilities.generated.ts", scannerUtilities, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxVisitor.generated.ts", visitor, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxFactory.generated.ts", factory, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxRewriter.generated.ts", rewriter, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxToken.generated.ts", tokens, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxWalker.generated.ts", walker, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\scannerUtilities.generated.ts", scannerUtilities, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxFactory.generated.ts", factory, true);
