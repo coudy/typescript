@@ -1344,7 +1344,7 @@ module TypeScript {
         },
         Class__0__declares_class__1__but_does_not_implement_it__NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Class {0} class interface {1} but does not implement it:{NL}{2}",
+            message: "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}",
             code: 2138
         },
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: {
