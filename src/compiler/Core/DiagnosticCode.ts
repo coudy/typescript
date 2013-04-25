@@ -229,6 +229,7 @@ module TypeScript {
         Instance_member_cannot_be_accessed_off_a_class,
         Untyped_function_calls_may_not_accept_type_arguments,
         Non_generic_functions_may_not_accept_type_arguments,
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

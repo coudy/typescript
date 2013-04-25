@@ -1189,6 +1189,11 @@ module TypeScript {
             message: "A generic type may not reference itself with its own type parameters",
             code: 2160
         },
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
+            category: DiagnosticCategory.Error,
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
+            code: 2161
+        },
 
 
         Type__0__is_missing_property__1__from_type__2_: {

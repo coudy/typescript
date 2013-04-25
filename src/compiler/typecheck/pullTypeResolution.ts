@@ -3676,6 +3676,11 @@ module TypeScript {
 
             var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetTypeSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetTypeSymbol).getCallSignatures();
 
+            if (!signatures.length && (targetTypeSymbol.getKind() == PullElementKind.ConstructorType)) {
+                context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___, [targetTypeSymbol.toString()]), enclosingDecl, true);
+            }
+
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
             var couldNotFindGenericOverload = false;
