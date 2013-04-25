@@ -9,7 +9,7 @@ var withComplicatedValue = { x: 30, y: 70, desc: "position" };
 exports.exportedWithComplicatedValue = { x: 30, y: 70, desc: "position" };
 var arrayVar = ['a', 'b'];
 exports.exportedArrayVar;
-exportedArrayVar.push({ x: 30, y: 'hello world' });
+exports.exportedArrayVar.push({ x: 30, y: 'hello world' });
 function simpleFunction() {
     return {
         x: "Hello",

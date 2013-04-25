@@ -1155,6 +1155,7 @@ module TypeScript {
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
+
                     if (pullSymbolContainer) {
                         var pullSymbolContainerKind = pullSymbolContainer.getKind();
 
@@ -1169,18 +1170,17 @@ module TypeScript {
                             }
                         }
                         else if (pullSymbolContainerKind === PullElementKind.Container || pullSymbolContainerKind === PullElementKind.Enum ||
-                        pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule)) {
+                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
-                            pullSymbolKind === PullElementKind.Variable &&
-                            !pullSymbol.hasFlag(PullElementFlags.InitializedModule)) {
+                                     pullSymbolKind === PullElementKind.Variable &&
+                                     !pullSymbol.hasFlag(PullElementFlags.InitializedModule)) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
-                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
-                            !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
+                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
@@ -1190,16 +1190,18 @@ module TypeScript {
                             //         this.writeToOutput(pullSymbolContainer.getName() + ".");
                             // }
                         }
-                        else if (pullSymbolContainerKind === PullElementKind.DynamicModule) {
-                            if (pullSymbolKind === PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
+                        else if (pullSymbolContainerKind === PullElementKind.DynamicModule ||
+                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedDynamicModule)) {
+                            if (pullSymbolKind === PullElementKind.Property) {
                                 // If dynamic module
-                                if (pullSymbolKind === PullElementKind.Property) {
-                                    this.writeToOutput("exports.");
-                                }
-                                else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
-                                !this.symbolIsUsedInItsEnclosingContainer(pullSymbol, true)) {
-                                    this.writeToOutput("exports.");
-                                }
+                                this.writeToOutput("exports.");
+                            }
+                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                                     !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
+                                     pullSymbol.getKind() !== PullElementKind.ConstructorMethod &&
+                                     pullSymbol.getKind() !== PullElementKind.Class &&
+                                     pullSymbol.getKind() !== PullElementKind.Enum) {
+                                this.writeToOutput("exports.");
                             }
                         }
                         else if (pullSymbolKind === PullElementKind.Property) {
