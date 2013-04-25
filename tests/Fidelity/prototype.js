@@ -823,66 +823,68 @@ var TypeScript;
         DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments = 217;
         DiagnosticCode._map[218] = "Non_generic_functions_may_not_accept_type_arguments";
         DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments = 218;
-        DiagnosticCode._map[219] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 219;
-        DiagnosticCode._map[220] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 220;
-        DiagnosticCode._map[221] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 221;
-        DiagnosticCode._map[222] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 222;
-        DiagnosticCode._map[223] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 223;
-        DiagnosticCode._map[224] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 224;
-        DiagnosticCode._map[225] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 225;
-        DiagnosticCode._map[226] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 226;
-        DiagnosticCode._map[227] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 227;
-        DiagnosticCode._map[228] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 228;
-        DiagnosticCode._map[229] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 229;
-        DiagnosticCode._map[230] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 230;
-        DiagnosticCode._map[231] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 231;
-        DiagnosticCode._map[232] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 232;
-        DiagnosticCode._map[233] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 233;
-        DiagnosticCode._map[234] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 234;
-        DiagnosticCode._map[235] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 235;
-        DiagnosticCode._map[236] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 236;
-        DiagnosticCode._map[237] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 237;
-        DiagnosticCode._map[238] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 238;
-        DiagnosticCode._map[239] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 239;
-        DiagnosticCode._map[240] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 240;
-        DiagnosticCode._map[241] = "Current_host_does_not_support__w_atch_option";
-        DiagnosticCode.Current_host_does_not_support__w_atch_option = 241;
-        DiagnosticCode._map[242] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 242;
-        DiagnosticCode._map[243] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 243;
-        DiagnosticCode._map[244] = "Could_not_find_file___0_";
-        DiagnosticCode.Could_not_find_file___0_ = 244;
-        DiagnosticCode._map[245] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 245;
-        DiagnosticCode._map[246] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode.A_file_cannot_have_a_reference_itself = 246;
-        DiagnosticCode._map[247] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 247;
-        DiagnosticCode._map[248] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode.Cannot_resolve_imported_file___0_ = 248;
+        DiagnosticCode._map[219] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ = 219;
+        DiagnosticCode._map[220] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 220;
+        DiagnosticCode._map[221] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 221;
+        DiagnosticCode._map[222] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 222;
+        DiagnosticCode._map[223] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 223;
+        DiagnosticCode._map[224] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 224;
+        DiagnosticCode._map[225] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 225;
+        DiagnosticCode._map[226] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 226;
+        DiagnosticCode._map[227] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 227;
+        DiagnosticCode._map[228] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 228;
+        DiagnosticCode._map[229] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 229;
+        DiagnosticCode._map[230] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 230;
+        DiagnosticCode._map[231] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 231;
+        DiagnosticCode._map[232] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 232;
+        DiagnosticCode._map[233] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 233;
+        DiagnosticCode._map[234] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 234;
+        DiagnosticCode._map[235] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 235;
+        DiagnosticCode._map[236] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 236;
+        DiagnosticCode._map[237] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 237;
+        DiagnosticCode._map[238] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 238;
+        DiagnosticCode._map[239] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 239;
+        DiagnosticCode._map[240] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 240;
+        DiagnosticCode._map[241] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 241;
+        DiagnosticCode._map[242] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode.Current_host_does_not_support__w_atch_option = 242;
+        DiagnosticCode._map[243] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 243;
+        DiagnosticCode._map[244] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 244;
+        DiagnosticCode._map[245] = "Could_not_find_file___0_";
+        DiagnosticCode.Could_not_find_file___0_ = 245;
+        DiagnosticCode._map[246] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 246;
+        DiagnosticCode._map[247] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode.A_file_cannot_have_a_reference_itself = 247;
+        DiagnosticCode._map[248] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 248;
+        DiagnosticCode._map[249] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode.Cannot_resolve_imported_file___0_ = 249;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1984,6 +1986,11 @@ var TypeScript;
             message: "A generic type may not reference itself with its own type parameters",
             code: 2160
         },
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
+            category: 1 /* Error */,
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
+            code: 2161
+        },
         Type__0__is_missing_property__1__from_type__2_: {
             category: 2 /* NoPrefix */,
             message: "Type '{0}' is missing property '{1}' from type '{2}'.",
@@ -2503,6 +2510,246 @@ var TypeScript;
     })();
     TypeScript.Diagnostic = Diagnostic;
 })(TypeScript || (TypeScript = {}));
+var Environment = (function () {
+    function getWindowsScriptHostEnvironment() {
+        try  {
+            var fso = new ActiveXObject("Scripting.FileSystemObject");
+        } catch (e) {
+            return null;
+        }
+        var streamObjectPool = [];
+        function getStreamObject() {
+            if (streamObjectPool.length > 0) {
+                return streamObjectPool.pop();
+            } else {
+                return new ActiveXObject("ADODB.Stream");
+            }
+        }
+        function releaseStreamObject(obj) {
+            streamObjectPool.push(obj);
+        }
+        var args = [];
+        for (var i = 0; i < WScript.Arguments.length; i++) {
+            args[i] = WScript.Arguments.Item(i);
+        }
+        return {
+            currentDirectory: function () {
+                return (WScript).CreateObject("WScript.Shell").CurrentDirectory;
+            },
+            readFile: function (path, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
+                try  {
+                    var streamObj = getStreamObject();
+                    streamObj.Open();
+                    streamObj.Type = 2;
+                    streamObj.Charset = 'x-ansi';
+                    streamObj.LoadFromFile(path);
+                    var bomChar = streamObj.ReadText(2);
+                    streamObj.Position = 0;
+                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
+                        streamObj.Charset = 'unicode';
+                    } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
+                        streamObj.Charset = 'utf-8';
+                    } else {
+                        streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
+                    }
+                    var str = streamObj.ReadText(-1);
+                    streamObj.Close();
+                    releaseStreamObject(streamObj);
+                    return str;
+                } catch (err) {
+                    throw new Error("Error reading file \"" + path + "\": " + err.message);
+                }
+            },
+            writeFile: function (path, contents, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
+                var file = this.createFile(path, useUTF8);
+                file.Write(contents);
+                file.Close();
+            },
+            fileExists: function (path) {
+                return fso.FileExists(path);
+            },
+            deleteFile: function (path) {
+                if (fso.FileExists(path)) {
+                    fso.DeleteFile(path, true);
+                }
+            },
+            directoryExists: function (path) {
+                return fso.FolderExists(path);
+            },
+            listFiles: function (path, spec, options) {
+                options = options || {};
+                function filesInFolder(folder, root) {
+                    var paths = [];
+                    var fc;
+                    if (options.recursive) {
+                        fc = new Enumerator(folder.subfolders);
+                        for (; !fc.atEnd(); fc.moveNext()) {
+                            paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
+                        }
+                    }
+                    fc = new Enumerator(folder.files);
+                    for (; !fc.atEnd(); fc.moveNext()) {
+                        if (!spec || fc.item().Name.match(spec)) {
+                            paths.push(root + "\\" + fc.item().Name);
+                        }
+                    }
+                    return paths;
+                }
+                var folder = fso.GetFolder(path);
+                var paths = [];
+                return filesInFolder(folder, path);
+            },
+            createFile: function (path, useUTF8) {
+                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
+                try  {
+                    var streamObj = getStreamObject();
+                    streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
+                    streamObj.Open();
+                    return {
+                        Write: function (str) {
+                            streamObj.WriteText(str, 0);
+                        },
+                        WriteLine: function (str) {
+                            streamObj.WriteText(str, 1);
+                        },
+                        Close: function () {
+                            streamObj.SaveToFile(path, 2);
+                            streamObj.Close();
+                            releaseStreamObject(streamObj);
+                        }
+                    };
+                } catch (ex) {
+                    WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
+                    throw ex;
+                }
+            },
+            arguments: args,
+            standardOut: WScript.StdOut
+        };
+    }
+    ;
+    function getNodeEnvironment() {
+        var _fs = require('fs');
+        var _path = require('path');
+        var _module = require('module');
+        return {
+            currentDirectory: function () {
+                return (process).cwd();
+            },
+            readFile: function (file, useUTF8) {
+                var buffer = _fs.readFileSync(file);
+                switch (buffer[0]) {
+                    case 0xFE:
+                        if (buffer[1] === 0xFF) {
+                            var i = 0;
+                            while ((i + 1) < buffer.length) {
+                                var temp = buffer[i];
+                                buffer[i] = buffer[i + 1];
+                                buffer[i + 1] = temp;
+                                i += 2;
+                            }
+                            return buffer.toString("ucs2", 2);
+                        }
+                        break;
+                    case 0xFF:
+                        if (buffer[1] === 0xFE) {
+                            return buffer.toString("ucs2", 2);
+                        }
+                        break;
+                    case 0xEF:
+                        if (buffer[1] === 0xBB) {
+                            return buffer.toString("utf8", 3);
+                        }
+                }
+                return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
+            },
+            writeFile: function (path, contents, useUTF) {
+                if (useUTF) {
+                    _fs.writeFileSync(path, contents, "utf8");
+                } else {
+                    _fs.writeFileSync(path, contents);
+                }
+            },
+            fileExists: function (path) {
+                return _fs.existsSync(path);
+            },
+            deleteFile: function (path) {
+                try  {
+                    _fs.unlinkSync(path);
+                } catch (e) {
+                }
+            },
+            directoryExists: function (path) {
+                return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
+            },
+            listFiles: function dir(path, spec, options) {
+                options = options || {};
+                function filesInFolder(folder) {
+                    var paths = [];
+                    var files = _fs.readdirSync(folder);
+                    for (var i = 0; i < files.length; i++) {
+                        var stat = _fs.statSync(folder + "\\" + files[i]);
+                        if (options.recursive && stat.isDirectory()) {
+                            paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
+                        } else if (stat.isFile() && (!spec || files[i].match(spec))) {
+                            paths.push(folder + "\\" + files[i]);
+                        }
+                    }
+                    return paths;
+                }
+                return filesInFolder(path);
+            },
+            createFile: function (path, useUTF8) {
+                function mkdirRecursiveSync(path) {
+                    var stats = _fs.statSync(path);
+                    if (stats.isFile()) {
+                        throw "\"" + path + "\" exists but isn't a directory.";
+                    } else if (stats.isDirectory()) {
+                        return;
+                    } else {
+                        mkdirRecursiveSync(_path.dirname(path));
+                        _fs.mkdirSync(path, 0775);
+                    }
+                }
+                mkdirRecursiveSync(_path.dirname(path));
+                var fd = _fs.openSync(path, 'w');
+                return {
+                    Write: function (str) {
+                        _fs.writeSync(fd, str);
+                    },
+                    WriteLine: function (str) {
+                        _fs.writeSync(fd, str + '\r\n');
+                    },
+                    Close: function () {
+                        _fs.closeSync(fd);
+                        fd = null;
+                    }
+                };
+            },
+            arguments: process.argv.slice(2),
+            standardOut: {
+                Write: function (str) {
+                    process.stdout.write(str);
+                },
+                WriteLine: function (str) {
+                    process.stdout.write(str + '\n');
+                },
+                Close: function () {
+                }
+            }
+        };
+    }
+    ;
+    if (typeof ActiveXObject === "function") {
+        return getWindowsScriptHostEnvironment();
+    } else if (typeof require === "function") {
+        return getNodeEnvironment();
+    } else {
+        return null;
+    }
+})();
 var TypeScript;
 (function (TypeScript) {
     var IntegerUtilities = (function () {
@@ -23747,246 +23994,6 @@ var negative262ExpectedResults = {
     '15.3.5-1gs.js': true,
     '15.3.5-2gs.js': true
 };
-var Environment = (function () {
-    function getWindowsScriptHostEnvironment() {
-        try  {
-            var fso = new ActiveXObject("Scripting.FileSystemObject");
-        } catch (e) {
-            return null;
-        }
-        var streamObjectPool = [];
-        function getStreamObject() {
-            if (streamObjectPool.length > 0) {
-                return streamObjectPool.pop();
-            } else {
-                return new ActiveXObject("ADODB.Stream");
-            }
-        }
-        function releaseStreamObject(obj) {
-            streamObjectPool.push(obj);
-        }
-        var args = [];
-        for (var i = 0; i < WScript.Arguments.length; i++) {
-            args[i] = WScript.Arguments.Item(i);
-        }
-        return {
-            currentDirectory: function () {
-                return (WScript).CreateObject("WScript.Shell").CurrentDirectory;
-            },
-            readFile: function (path, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
-                try  {
-                    var streamObj = getStreamObject();
-                    streamObj.Open();
-                    streamObj.Type = 2;
-                    streamObj.Charset = 'x-ansi';
-                    streamObj.LoadFromFile(path);
-                    var bomChar = streamObj.ReadText(2);
-                    streamObj.Position = 0;
-                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
-                        streamObj.Charset = 'unicode';
-                    } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
-                        streamObj.Charset = 'utf-8';
-                    } else {
-                        streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-                    }
-                    var str = streamObj.ReadText(-1);
-                    streamObj.Close();
-                    releaseStreamObject(streamObj);
-                    return str;
-                } catch (err) {
-                    throw new Error("Error reading file \"" + path + "\": " + err.message);
-                }
-            },
-            writeFile: function (path, contents, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
-                var file = this.createFile(path, useUTF8);
-                file.Write(contents);
-                file.Close();
-            },
-            fileExists: function (path) {
-                return fso.FileExists(path);
-            },
-            deleteFile: function (path) {
-                if (fso.FileExists(path)) {
-                    fso.DeleteFile(path, true);
-                }
-            },
-            directoryExists: function (path) {
-                return fso.FolderExists(path);
-            },
-            listFiles: function (path, spec, options) {
-                options = options || {};
-                function filesInFolder(folder, root) {
-                    var paths = [];
-                    var fc;
-                    if (options.recursive) {
-                        fc = new Enumerator(folder.subfolders);
-                        for (; !fc.atEnd(); fc.moveNext()) {
-                            paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
-                        }
-                    }
-                    fc = new Enumerator(folder.files);
-                    for (; !fc.atEnd(); fc.moveNext()) {
-                        if (!spec || fc.item().Name.match(spec)) {
-                            paths.push(root + "\\" + fc.item().Name);
-                        }
-                    }
-                    return paths;
-                }
-                var folder = fso.GetFolder(path);
-                var paths = [];
-                return filesInFolder(folder, path);
-            },
-            createFile: function (path, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
-                try  {
-                    var streamObj = getStreamObject();
-                    streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-                    streamObj.Open();
-                    return {
-                        Write: function (str) {
-                            streamObj.WriteText(str, 0);
-                        },
-                        WriteLine: function (str) {
-                            streamObj.WriteText(str, 1);
-                        },
-                        Close: function () {
-                            streamObj.SaveToFile(path, 2);
-                            streamObj.Close();
-                            releaseStreamObject(streamObj);
-                        }
-                    };
-                } catch (ex) {
-                    WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
-                    throw ex;
-                }
-            },
-            arguments: args,
-            standardOut: WScript.StdOut
-        };
-    }
-    ;
-    function getNodeEnvironment() {
-        var _fs = require('fs');
-        var _path = require('path');
-        var _module = require('module');
-        return {
-            currentDirectory: function () {
-                return (process).cwd();
-            },
-            readFile: function (file, useUTF8) {
-                var buffer = _fs.readFileSync(file);
-                switch (buffer[0]) {
-                    case 0xFE:
-                        if (buffer[1] === 0xFF) {
-                            var i = 0;
-                            while ((i + 1) < buffer.length) {
-                                var temp = buffer[i];
-                                buffer[i] = buffer[i + 1];
-                                buffer[i + 1] = temp;
-                                i += 2;
-                            }
-                            return buffer.toString("ucs2", 2);
-                        }
-                        break;
-                    case 0xFF:
-                        if (buffer[1] === 0xFE) {
-                            return buffer.toString("ucs2", 2);
-                        }
-                        break;
-                    case 0xEF:
-                        if (buffer[1] === 0xBB) {
-                            return buffer.toString("utf8", 3);
-                        }
-                }
-                return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
-            },
-            writeFile: function (path, contents, useUTF) {
-                if (useUTF) {
-                    _fs.writeFileSync(path, contents, "utf8");
-                } else {
-                    _fs.writeFileSync(path, contents);
-                }
-            },
-            fileExists: function (path) {
-                return _fs.existsSync(path);
-            },
-            deleteFile: function (path) {
-                try  {
-                    _fs.unlinkSync(path);
-                } catch (e) {
-                }
-            },
-            directoryExists: function (path) {
-                return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
-            },
-            listFiles: function dir(path, spec, options) {
-                options = options || {};
-                function filesInFolder(folder) {
-                    var paths = [];
-                    var files = _fs.readdirSync(folder);
-                    for (var i = 0; i < files.length; i++) {
-                        var stat = _fs.statSync(folder + "\\" + files[i]);
-                        if (options.recursive && stat.isDirectory()) {
-                            paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
-                        } else if (stat.isFile() && (!spec || files[i].match(spec))) {
-                            paths.push(folder + "\\" + files[i]);
-                        }
-                    }
-                    return paths;
-                }
-                return filesInFolder(path);
-            },
-            createFile: function (path, useUTF8) {
-                function mkdirRecursiveSync(path) {
-                    var stats = _fs.statSync(path);
-                    if (stats.isFile()) {
-                        throw "\"" + path + "\" exists but isn't a directory.";
-                    } else if (stats.isDirectory()) {
-                        return;
-                    } else {
-                        mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 0775);
-                    }
-                }
-                mkdirRecursiveSync(_path.dirname(path));
-                var fd = _fs.openSync(path, 'w');
-                return {
-                    Write: function (str) {
-                        _fs.writeSync(fd, str);
-                    },
-                    WriteLine: function (str) {
-                        _fs.writeSync(fd, str + '\r\n');
-                    },
-                    Close: function () {
-                        _fs.closeSync(fd);
-                        fd = null;
-                    }
-                };
-            },
-            arguments: process.argv.slice(2),
-            standardOut: {
-                Write: function (str) {
-                    process.stdout.write(str);
-                },
-                WriteLine: function (str) {
-                    process.stdout.write(str + '\n');
-                },
-                Close: function () {
-                }
-            }
-        };
-    }
-    ;
-    if (typeof ActiveXObject === "function") {
-        return getWindowsScriptHostEnvironment();
-    } else if (typeof require === "function") {
-        return getNodeEnvironment();
-    } else {
-        return null;
-    }
-})();
 var TypeScript;
 (function (TypeScript) {
     (function (CompilerDiagnostics) {
@@ -25194,11 +25201,11 @@ var TypeScript;
         AstPath.prototype.isArgumentListOfFunction = function () {
             return this.count() >= 2 && this.asts[this.top - 0].nodeType === 1 /* List */ && this.asts[this.top - 1].nodeType === 12 /* FunctionDeclaration */ && (this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         };
-        AstPath.prototype.isArgumentListOfCall = function () {
-            return this.count() >= 2 && this.asts[this.top - 0].nodeType === 1 /* List */ && this.asts[this.top - 1].nodeType === 36 /* InvocationExpression */ && (this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
+        AstPath.prototype.isTargetOfCall = function () {
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 36 /* InvocationExpression */ && (this.asts[this.top - 1]).target === this.asts[this.top];
         };
-        AstPath.prototype.isArgumentListOfNew = function () {
-            return this.count() >= 2 && this.asts[this.top - 0].nodeType === 1 /* List */ && this.asts[this.top - 1].nodeType === 37 /* ObjectCreationExpression */ && (this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
+        AstPath.prototype.isTargetOfNew = function () {
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 37 /* ObjectCreationExpression */ && (this.asts[this.top - 1]).target === this.asts[this.top];
         };
         AstPath.prototype.isInClassImplementsList = function () {
             if (this.ast() === null || this.parent() === null)
@@ -25922,11 +25929,14 @@ var TypeScript;
                 this.recordSourceMappingEnd(args);
             }
         };
-        Emitter.prototype.emitInnerFunction = function (funcDecl, printName) {
+        Emitter.prototype.emitInnerFunction = function (funcDecl, printName, includePreComments) {
+            if (typeof includePreComments === "undefined") { includePreComments = true; }
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
             this.pushDecl(pullDecl);
             var shouldParenthesize = false;
-            this.emitComments(funcDecl, true);
+            if (includePreComments) {
+                this.emitComments(funcDecl, true);
+            }
             if (shouldParenthesize) {
                 this.writeToOutput("(");
             }
@@ -25952,6 +25962,7 @@ var TypeScript;
             this.writeToOutput("(");
             var argsLen = 0;
             if (funcDecl.arguments) {
+                this.emitComments(funcDecl.arguments, true);
                 var tempContainer = this.setContainer(6 /* Args */);
                 argsLen = funcDecl.arguments.members.length;
                 var printLen = argsLen;
@@ -25966,6 +25977,7 @@ var TypeScript;
                     }
                 }
                 this.setContainer(tempContainer);
+                this.emitComments(funcDecl.arguments, false);
             }
             this.writeLineToOutput(") {");
             if (funcDecl.isConstructor) {
@@ -26740,8 +26752,9 @@ var TypeScript;
             } else {
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
+                this.emitComments(funcDecl, true);
                 this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                this.emitInnerFunction(funcDecl, false);
+                this.emitInnerFunction(funcDecl, false, false);
                 this.writeLineToOutput(";");
             }
         };
@@ -27300,19 +27313,19 @@ var TypeScript;
                         normalizedPath = TypeScript.isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, normalizedPath, TypeScript.getDiagnosticMessage(246 /* A_file_cannot_have_a_reference_itself */, null)));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, normalizedPath, TypeScript.getDiagnosticMessage(247 /* A_file_cannot_have_a_reference_itself */, null)));
                             continue;
                         }
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, resolvedFilePath, TypeScript.getDiagnosticMessage(247 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, resolvedFilePath, TypeScript.getDiagnosticMessage(248 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path])));
                         }
                     }
                     for (var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
                         var fileImport = preProcessedFileInfo.importedFiles[i];
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileImport.position, fileImport.length, resolvedFilePath, TypeScript.getDiagnosticMessage(248 /* Cannot_resolve_imported_file___0_ */, [fileImport.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileImport.position, fileImport.length, resolvedFilePath, TypeScript.getDiagnosticMessage(249 /* Cannot_resolve_imported_file___0_ */, [fileImport.path])));
                         }
                     }
                     resolutionDispatcher.postResolution(sourceUnit.path, sourceUnit);
@@ -27334,7 +27347,6 @@ var TypeScript;
             this.watch = false;
             this.exec = false;
             this.resolve = true;
-            this.canCallDefinitionSignature = false;
             this.disallowBool = false;
             this.useDefaultLib = true;
             this.codeGenTarget = 0 /* EcmaScript3 */;
@@ -30117,7 +30129,7 @@ var TypeScript;
         };
         PullTypeSymbol.prototype.isNamedTypeSymbol = function () {
             var kind = this.getKind();
-            if (kind === 4 /* Primitive */ || kind === 16 /* Class */ || kind === 8 /* Container */ || kind === 64 /* DynamicModule */ || kind === 128 /* Enum */ || kind === 16384 /* TypeParameter */ || ((kind === 32 /* Interface */ || kind === 16777216 /* ObjectType */) && this.getName() != "")) {
+            if (kind === 4 /* Primitive */ || kind === 16 /* Class */ || kind === 8 /* Container */ || kind === 64 /* DynamicModule */ || kind === 512 /* TypeAlias */ || kind === 128 /* Enum */ || kind === 16384 /* TypeParameter */ || ((kind === 32 /* Interface */ || kind === 16777216 /* ObjectType */) && this.getName() != "")) {
                 return true;
             }
             return false;
@@ -32076,6 +32088,8 @@ var TypeScript;
         };
         PullTypeResolver.prototype.resolveDeclaration = function (declAST, context, enclosingDecl) {
             switch (declAST.nodeType) {
+                case 101 /* CatchClause */:
+                case 99 /* WithStatement */:
                 case 2 /* Script */:
                     return null;
                 case 15 /* ModuleDeclaration */:
@@ -34006,6 +34020,9 @@ var TypeScript;
                 }
             }
             var signatures = isSuperCall ? (targetTypeSymbol).getConstructSignatures() : (targetTypeSymbol).getCallSignatures();
+            if (!signatures.length && (targetTypeSymbol.getKind() == 67108864 /* ConstructorType */)) {
+                context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(219 /* Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ */, [targetTypeSymbol.toString()]), enclosingDecl, true);
+            }
             var typeArgs = null;
             var typeReplacementMap = null;
             var couldNotFindGenericOverload = false;
@@ -34875,7 +34892,7 @@ var TypeScript;
                             if (!(targetProp.getIsOptional())) {
                                 if (comparisonInfo) {
                                     comparisonInfo.flags |= 2 /* RequiredPropertyIsMissing */;
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(219 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
+                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(220 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
                                 }
                                 return false;
                             }
@@ -34895,9 +34912,9 @@ var TypeScript;
             if (targetPropIsPrivate != sourcePropIsPrivate) {
                 if (comparisonInfo) {
                     if (targetPropIsPrivate) {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(223 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(224 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
                     } else {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(222 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(223 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
                     }
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
                 }
@@ -34907,7 +34924,7 @@ var TypeScript;
                 var sourceDecl = sourceProp.getDeclarations()[0];
                 if (!targetDecl.isEqual(sourceDecl)) {
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(224 /* Types__0__and__1__define_property__2__as_private */, [source.toString(), target.toString(), targetProp.getScopedNameEx().toString()]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(225 /* Types__0__and__1__define_property__2__as_private */, [source.toString(), target.toString(), targetProp.getScopedNameEx().toString()]));
                     return false;
                 }
             }
@@ -34928,9 +34945,9 @@ var TypeScript;
                     comparisonInfo.flags |= 32 /* IncompatiblePropertyTypes */;
                     var message;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = TypeScript.getDiagnosticMessage(221 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
+                        message = TypeScript.getDiagnosticMessage(222 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(220 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
+                        message = TypeScript.getDiagnosticMessage(221 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
                     }
                     comparisonInfo.addMessage(message);
                 }
@@ -34951,14 +34968,14 @@ var TypeScript;
                         var message;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(226 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(227 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(225 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(226 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(227 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(228 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -34981,14 +34998,14 @@ var TypeScript;
                         var message;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(229 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(230 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(228 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(229 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(230 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(231 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -35064,9 +35081,9 @@ var TypeScript;
                     if (comparisonInfo) {
                         var message;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = TypeScript.getDiagnosticMessage(232 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                            message = TypeScript.getDiagnosticMessage(233 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(231 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                            message = TypeScript.getDiagnosticMessage(232 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -35129,7 +35146,7 @@ var TypeScript;
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableParamList()) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= 3 /* SourceSignatureHasTooManyParameters */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(233 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(234 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
                 }
                 return false;
             }
@@ -35348,7 +35365,7 @@ var TypeScript;
                             argSym = this.resolveFunctionExpression(args.members[j], true, enclosingDecl, context);
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(235 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
                                 miss = true;
                             }
@@ -35367,7 +35384,7 @@ var TypeScript;
                         argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(235 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             miss = true;
                         }
@@ -35385,7 +35402,7 @@ var TypeScript;
                         argSym = this.resolveArrayLiteralExpression(args.members[j], true, enclosingDecl, context);
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(234 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(235 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }
@@ -35969,6 +35986,8 @@ var TypeScript;
                     return this.typeCheckExpressionStatement(ast, typeCheckContext, inTypedAssignment);
                 case 100 /* CaseClause */:
                     return this.typeCheckCaseClause(ast, typeCheckContext);
+                case 92 /* LabeledStatement */:
+                    return this.typeCheckLabeledStatement(ast, typeCheckContext);
                 case 7 /* NumericLiteral */:
                     return this.semanticInfoChain.numberTypeSymbol;
                 case 5 /* StringLiteral */:
@@ -36313,15 +36332,15 @@ var TypeScript;
             var errorCode;
             if (typeMemberKind === 8192 /* Property */) {
                 if (typeMember.isAccessor()) {
-                    errorCode = 235 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 236 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 } else {
-                    errorCode = 236 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 237 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 }
             } else if (typeMemberKind === 131072 /* Method */) {
                 if (extendedTypeMember.isAccessor()) {
-                    errorCode = 237 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
+                    errorCode = 238 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
                 } else {
-                    errorCode = 238 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
+                    errorCode = 239 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
                 }
             }
             var message = TypeScript.getDiagnosticMessage(errorCode, [typeSymbol.toString(), typeMember.getScopedNameEx().toString(), extendedType.toString()]);
@@ -36375,9 +36394,9 @@ var TypeScript;
                             if (!this.resolver.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
                                 var propMessage;
                                 if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = TypeScript.getDiagnosticMessage(240 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
+                                    propMessage = TypeScript.getDiagnosticMessage(241 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
                                 } else {
-                                    propMessage = TypeScript.getDiagnosticMessage(239 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
+                                    propMessage = TypeScript.getDiagnosticMessage(240 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
                                 }
                                 comparisonInfo.addMessage(propMessage);
                                 foundError = true;
@@ -37206,6 +37225,9 @@ var TypeScript;
             this.typeCheckAST(caseClause.body, typeCheckContext);
             return this.semanticInfoChain.voidTypeSymbol;
         };
+        PullTypeChecker.prototype.typeCheckLabeledStatement = function (labeledStatement, typeCheckContext) {
+            return this.typeCheckAST(labeledStatement.statement, typeCheckContext);
+        };
         PullTypeChecker.prototype.checkTypePrivacy = function (declSymbol, typeSymbol, privacyErrorReporter) {
             if (!typeSymbol || typeSymbol.getKind() === 4 /* Primitive */) {
                 return;
@@ -37674,6 +37696,10 @@ var TypeScript;
                     return this.typeParameterIsEquivalent(oldAST, newAST);
                 case 12 /* FunctionDeclaration */:
                     return this.functionDeclarationIsEquivalent(oldAST, newAST);
+                case 101 /* CatchClause */:
+                    return this.catchClauseIsEquivalent(oldAST, newAST);
+                case 99 /* WithStatement */:
+                    return this.withStatementIsEquivalent(oldAST, newAST);
                 case 2 /* Script */:
                     return this.scriptIsEquivalent(oldAST, newAST);
                 default:
@@ -37720,6 +37746,12 @@ var TypeScript;
                 }
             }
             return false;
+        };
+        PullDeclDiffer.prototype.catchClauseIsEquivalent = function (decl1, decl2) {
+            return TypeScript.structuralEqualsNotIncludingPosition(decl1.param, decl2.param) && TypeScript.structuralEqualsNotIncludingPosition(decl1.body, decl2.body);
+        };
+        PullDeclDiffer.prototype.withStatementIsEquivalent = function (decl1, decl2) {
+            return TypeScript.structuralEqualsNotIncludingPosition(decl1.expr, decl2.expr) && TypeScript.structuralEqualsNotIncludingPosition(decl1.body, decl2.body);
         };
         PullDeclDiffer.prototype.scriptIsEquivalent = function (decl1, decl2) {
             return true;
@@ -38757,6 +38789,8 @@ var TypeScript;
         } else if (ast.nodeType === 37 /* ObjectCreationExpression */) {
             go = true;
         } else if (ast.nodeType === 96 /* TryStatement */) {
+            go = true;
+        } else if (ast.nodeType === 92 /* LabeledStatement */) {
             go = true;
         } else if (ast.nodeType === 101 /* CatchClause */) {
             go = preCollectCatchDecls(ast, parentAST, context);
@@ -42139,7 +42173,7 @@ var TypeScript;
             }
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var decl = semanticInfo.getDeclForAST(ast);
-            var symbol = decl.getSymbol();
+            var symbol = (decl.getKind() & TypeScript.PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
             this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, context.resolutionContext);
             return {
                 symbol: symbol,
@@ -43013,6 +43047,9 @@ var TypeScript;
             if (!this.isDeclareFile) {
                 emitter.emitScriptElements(this, this.requiresExtendsBlock);
             }
+        };
+        Script.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
         };
         return Script;
     })(AST);
@@ -44082,6 +44119,7 @@ var TypeScript;
                         this.movePast(separatorToken);
                     }
                 }
+                result.postComments = this.previousTokenTrailingComments;
                 this.previousTokenTrailingComments = null;
                 if (n > 0) {
                     this.setAST(list, result);
@@ -44271,6 +44309,7 @@ var TypeScript;
                 var postComments = this.convertNodeTrailingComments(node, start);
                 this.moveTo(node, node.identifier);
                 var name = this.identifierFromToken(node.identifier, false, true);
+                var constructorName = this.identifierFromToken(node.identifier, false, true);
                 this.movePast(node.identifier);
                 var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
                 var extendsList = new TypeScript.ASTList();
@@ -44299,7 +44338,7 @@ var TypeScript;
                     if (member.nodeType === 12 /* FunctionDeclaration */) {
                         var funcDecl = member;
                         if (funcDecl.isConstructor) {
-                            funcDecl.name = name;
+                            funcDecl.name = constructorName;
                             funcDecl.classDecl = result;
                             result.constructorDecl = funcDecl;
                         }
@@ -44309,9 +44348,13 @@ var TypeScript;
             this.requiresExtendsBlock = this.requiresExtendsBlock || result.extendsList.members.length > 0;
             if (this.containsToken(node.modifiers, 47 /* ExportKeyword */) || this.isParsingAmbientModule) {
                 result.setVarFlags(result.getVarFlags() | 1 /* Exported */);
+            } else {
+                result.setVarFlags(result.getVarFlags() & ~1 /* Exported */);
             }
             if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setVarFlags(result.getVarFlags() | 8 /* Ambient */);
+            } else {
+                result.setVarFlags(result.getVarFlags() & ~8 /* Ambient */);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -44348,6 +44391,8 @@ var TypeScript;
             }
             if (this.containsToken(node.modifiers, 47 /* ExportKeyword */) || this.isParsingAmbientModule) {
                 result.setVarFlags(result.getVarFlags() | 1 /* Exported */);
+            } else {
+                result.setVarFlags(result.getVarFlags() & ~1 /* Exported */);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -44440,6 +44485,8 @@ var TypeScript;
             }
             if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setModuleFlags(result.getModuleFlags() | 8 /* Ambient */);
+            } else {
+                result.setModuleFlags(result.getModuleFlags() & ~8 /* Ambient */);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -44481,9 +44528,13 @@ var TypeScript;
             }
             if (this.containsToken(node.modifiers, 47 /* ExportKeyword */) || this.isParsingAmbientModule) {
                 result.setFunctionFlags(result.getFunctionFlags() | 1 /* Exported */);
+            } else {
+                result.setFunctionFlags(result.getFunctionFlags() & ~1 /* Exported */);
             }
             if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setFunctionFlags(result.getFunctionFlags() | 8 /* Ambient */);
+            } else {
+                result.setFunctionFlags(result.getFunctionFlags() & ~8 /* Ambient */);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -44650,9 +44701,13 @@ var TypeScript;
                 }
                 if (this.containsToken(node.modifiers, 47 /* ExportKeyword */) || this.isParsingAmbientModule) {
                     varDecl.setVarFlags(varDecl.getVarFlags() | 1 /* Exported */);
+                } else {
+                    varDecl.setVarFlags(varDecl.getVarFlags() & ~1 /* Exported */);
                 }
                 if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     varDecl.setVarFlags(varDecl.getVarFlags() | 8 /* Ambient */);
+                } else {
+                    varDecl.setVarFlags(varDecl.getVarFlags() & ~8 /* Ambient */);
                 }
             }
             var result = new TypeScript.VariableStatement(declaration);
@@ -45873,12 +45928,14 @@ var TypeScript;
             if (result) {
                 this.movePast(node);
             } else {
+                var preComments = this.convertNodeLeadingComments(node, start);
                 var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
                 this.movePast(node.openBraceToken);
                 var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
                 var closeStart = this.position + node.closeBraceToken.leadingTriviaWidth();
                 this.movePast(node.closeBraceToken);
                 result = new TypeScript.UnaryExpression(22 /* ObjectLiteralExpression */, propertyAssignments);
+                result.preComments = preComments;
                 if (this.isOnSingleLine(openStart, closeStart)) {
                     result.setFlags(result.getFlags() | 2 /* SingleLine */);
                 }
