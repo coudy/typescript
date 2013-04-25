@@ -14,11 +14,9 @@
 //
 
 ///<reference path='..\typescriptServices.ts' />
-///<reference path='ITextSnapshot.ts' />
-///<reference path='ITextSnapshotLine.ts' />
-///<reference path='TextSnapshot.ts' />
-///<reference path='TextSnapshotLine.ts' />
-///<reference path='SnapshotPoint.ts' />
+///<reference path='textSnapshot.ts' />
+///<reference path='textSnapshotLine.ts' />
+///<reference path='snapshotPoint.ts' />
 ///<reference path='formattingContext.ts' />
 ///<reference path='formattingManager.ts' />
 ///<reference path='formattingRequestKind.ts' />
@@ -34,9 +32,9 @@
 ///<reference path='textEditInfo.ts' />
 ///<reference path='tokenRange.ts' />
 ///<reference path='tokenSpan.ts' /> 
-///<reference path='IndentationNodeContext.ts' /> 
-///<reference path='IndentationNodeContextPool.ts' /> 
-///<reference path='IndentationTrackingWalker.ts' /> 
-///<reference path='MultipleTokenIndenter.ts' /> 
-///<reference path='SingleTokenIndenter.ts' /> 
-///<reference path='Formatter.ts' /> 
+///<reference path='indentationNodeContext.ts' /> 
+///<reference path='indentationNodeContextPool.ts' /> 
+///<reference path='indentationTrackingWalker.ts' /> 
+///<reference path='multipleTokenIndenter.ts' /> 
+///<reference path='singleTokenIndenter.ts' /> 
+///<reference path='formatter.ts' /> 

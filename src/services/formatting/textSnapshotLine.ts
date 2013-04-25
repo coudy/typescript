@@ -16,6 +16,23 @@
 ///<reference path='formatting.ts' />
 
 module TypeScript.Formatting {
+    export interface ITextSnapshotLine {
+        snapshot(): ITextSnapshot;
+
+        start(): SnapshotPoint;
+        startPosition(): number;
+
+        end(): SnapshotPoint;
+        endPosition(): number;
+
+        endIncludingLineBreak(): SnapshotPoint;
+        endIncludingLineBreakPosition(): number;
+
+        length(): number;
+        lineNumber(): number;
+        getText(): string;
+    }
+
     export class TextSnapshotLine implements ITextSnapshotLine {
         constructor(private _snapshot: ITextSnapshot, private _lineNumber: number, private _start: number, private _end: number, private _lineBreak: string) {
         }
