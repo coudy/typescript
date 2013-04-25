@@ -2585,7 +2585,7 @@ module TypeScript {
 
             var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST, context);
 
-            if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
+            if (typeNameSymbol && typeNameSymbol.isType()) {
                 if (!typeNameSymbol.isResolved()) {
                     this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
                 }

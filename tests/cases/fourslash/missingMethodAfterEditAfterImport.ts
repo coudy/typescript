@@ -15,12 +15,12 @@
 
 // Sanity check
 goTo.marker('foo');
-// verify.quickInfoSymbolNameIs('foo');
+verify.quickInfoSymbolNameIs('foo');
 
 // Delete some code
-// goTo.marker('delete');
-// edit.deleteAtCaret('var x;'.length);
+goTo.marker('delete');
+edit.deleteAtCaret('var x;'.length);
 
 // Pull on the RHS of an import
-// goTo.marker('foo');
-// verify.quickInfoSymbolNameIs('foo');
+goTo.marker('foo');
+verify.quickInfoSymbolNameIs('foo');
