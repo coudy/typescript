@@ -1,15 +1,15 @@
 ///<reference path='..\core\references.ts' />
 
-///<reference path='CharacterCodes.ts' />
-///<reference path='ILineAndCharacter.ts' />
-///<reference path='IScriptSnapshot.ts' />
-///<reference path='IText.ts' />
-///<reference path='ITextLine.ts' />
-///<reference path='LineMap.ts' />
-///<reference path='LinePosition.ts' />
-///<reference path='TextFactory.ts' />
-///<reference path='TextUtilities.ts' />
-///<reference path='TextSpan.ts' />
+///<reference path='characterCodes.ts' />
+///<reference path='lineAndCharacter.ts' />
+///<reference path='scriptSnapshot.ts' />
+///<reference path='text.ts' />
+///<reference path='textLine.ts' />
+///<reference path='lineMap.ts' />
+///<reference path='linePosition.ts' />
+///<reference path='textFactory.ts' />
+///<reference path='textUtilities.ts' />
+///<reference path='textSpan.ts' />
 
 // TextChangeRange depends on TextSpan.
-///<reference path='TextChangeRange.ts' />
+///<reference path='textChangeRange.ts' />

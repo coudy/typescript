@@ -59,5 +59,5 @@
 // SyntaxTree depends on PositionTrackingWalker
 ///<reference path='syntaxTree.ts' />
 
-///<reference path='TextSpanWalker.ts' />
+///<reference path='textSpanWalker.ts' />
 ///<reference path='unicode.ts' />

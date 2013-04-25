@@ -13,6 +13,9 @@
 // limitations under the License.
 //
 
+///<reference path='core\references.ts' />
+///<reference path='text\references.ts' />
+///<reference path='syntax\references.ts' />
 ///<reference path='diagnostics.ts' />
 ///<reference path='flags.ts' />
 ///<reference path='nodeTypes.ts' />
@@ -29,7 +32,6 @@
 ///<reference path='referenceResolution.ts' />
 ///<reference path='precompile.ts' />
 ///<reference path='declarationEmitter.ts' />
-///<reference path='Text\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
 ///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
@@ -46,8 +48,6 @@
 ///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
-///<reference path='core\references.ts' />
-///<reference path='syntax\references.ts' />
 
 module TypeScript {
 
