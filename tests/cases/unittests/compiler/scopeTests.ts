@@ -31,22 +31,6 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
         });
     });
 
-    it("Scope check extended class", function() {
-        var code  = 'class C { private v; public p; static s; }';
-        code += 'class D extends C {';
-        code += '  public p: number;'
-        code += '  constructor() {';
-        code += '   super();'
-        code += '   this.v = 1;';
-        code += '   this.p = 1;';
-        code += '   C.s = 1;';
-        code += '  }';
-        code += '}';
-        Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 0);
-        });
-    });
-
     it("Scope check extended class with errors", function () {
         var code = 'class C { private v; public p; static s; }';
         code += 'class D extends C {';

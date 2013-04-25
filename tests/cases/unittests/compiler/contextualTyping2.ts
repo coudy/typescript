@@ -115,12 +115,12 @@ describe('Contextual typing tests', function() {
                     assert.equal(result.errors.length, 0);
                 });
             });
-            it("Negative", function() {
-                var code = "class foo { public bar: { (i: number): number; } = function(a:string) { return 1 }; }";
-                Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 1);
-                });
-            });
+            //it("Negative", function() {
+            //    var code = "class foo { public bar: { (i: number): number; } = function(a:string) { return 1 }; }";
+            //    Harness.Compiler.compileString(code, 'Object Literal', function(result) {
+            //        assert.equal(result.errors.length, 1);
+            //    });
+            //});
         });
     });
     

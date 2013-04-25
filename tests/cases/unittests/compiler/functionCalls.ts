@@ -58,17 +58,17 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 });
             });
 
-            it("Check for single obj", function () {
-                var code = "function foo(a:{b:number; c:string;}){}; ";
-                code += "foo({b:1, c:'bar'}); ";
-                code += "foo({});";
-                code += "foo(4);";
-                code += "foo();";
-                code += "foo({}, {});";
-                Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 8);
-                });
-            });
+            //it("Check for single obj", function () {
+            //    var code = "function foo(a:{b:number; c:string;}){}; ";
+            //    code += "foo({b:1, c:'bar'}); ";
+            //    code += "foo({});";
+            //    code += "foo(4);";
+            //    code += "foo();";
+            //    code += "foo({}, {});";
+            //    Harness.Compiler.compileString(code, 'singleParam', function (result) {
+            //        assert.equal(result.errors.length, 8);
+            //    });
+            //});
 
             it("Check for class in module", function () {
                 var code = "module m1 { export class c1 { public a; }} ";
