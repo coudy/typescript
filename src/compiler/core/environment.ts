@@ -1,5 +1,5 @@
 ///<reference path='references.ts' />
-///<reference path='..\Enumerator.ts' />
+///<reference path='..\enumerator.ts' />
 ///<reference path='..\process.ts' />
 
 interface IEnvironment {

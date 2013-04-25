@@ -47,7 +47,7 @@
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
-///<reference path='SyntaxTreeToAstVisitor.ts' />
+///<reference path='syntaxTreeToAstVisitor.ts' />
 
 module TypeScript {
 
