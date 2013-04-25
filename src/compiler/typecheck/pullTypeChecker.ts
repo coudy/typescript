@@ -361,6 +361,9 @@ module TypeScript {
                 case NodeType.CaseClause:
                     return this.typeCheckCaseClause(<CaseClause>ast, typeCheckContext);
 
+                case NodeType.LabeledStatement:
+                    return this.typeCheckLabeledStatement(<LabeledStatement>ast, typeCheckContext);
+
                 // primitives
                 case NodeType.NumericLiteral:
                     return this.semanticInfoChain.numberTypeSymbol;
@@ -2229,6 +2232,12 @@ module TypeScript {
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
+
+        private typeCheckLabeledStatement(labeledStatement: LabeledStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.typeCheckAST(labeledStatement.statement, typeCheckContext);
+        }
+
+        // Privacy checking
 
         private checkTypePrivacy(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
             if (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive) {

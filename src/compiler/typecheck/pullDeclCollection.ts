@@ -1052,6 +1052,9 @@ module TypeScript {
         else if (ast.nodeType === NodeType.TryStatement) {
             go = true;
         }
+        else if (ast.nodeType === NodeType.LabeledStatement) {
+            go = true;
+        }
         else if (ast.nodeType === NodeType.CatchClause) {
             go = preCollectCatchDecls(ast, parentAST, context);
         }

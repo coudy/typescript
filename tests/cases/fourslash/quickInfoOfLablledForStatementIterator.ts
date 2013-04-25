@@ -4,4 +4,4 @@
 
 goTo.marker();
 // Bug 673526: No quick info on iterator variable in labelled for loop statement
-// verify.quickInfoExists();
+verify.quickInfoExists();
