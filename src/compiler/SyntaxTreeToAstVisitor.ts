@@ -2671,6 +2671,8 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+
                 var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
                 this.movePast(node.openBraceToken);
 
@@ -2680,6 +2682,7 @@ module TypeScript {
                 this.movePast(node.closeBraceToken);
 
                 result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments);
+                result.preComments = preComments;
 
                 if (this.isOnSingleLine(openStart, closeStart)) {
                     result.setFlags(result.getFlags() | ASTFlags.SingleLine);
