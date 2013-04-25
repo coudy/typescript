@@ -26,7 +26,6 @@ module TypeScript {
         public watch = false;
         public exec = false;
         public resolve = true;
-        public canCallDefinitionSignature = false;
         public disallowBool = false;
 
         public useDefaultLib = true;

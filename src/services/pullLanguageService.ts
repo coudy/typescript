@@ -219,7 +219,7 @@ module Services {
             var hasOverloads = signatures.length > 1;
             signatures
                 // Same test as in "typeFlow.str: resolveOverload()": filter out the definition signature if there are overloads
-                .filter(signature => !(hasOverloads && signature.isDefinition() && !this.compilerState.compilationSettings().canCallDefinitionSignature))
+                .filter(signature => !(hasOverloads && signature.isDefinition()))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
                     signatureGroupInfo.docComment = this.compilerState.getDocComments(signature);

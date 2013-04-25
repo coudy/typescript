@@ -428,14 +428,6 @@ class BatchCompiler {
             }
         });
 
-        opts.flag('canCallDefinitionSignature', {
-            usage: 'Allows you to call the definition signature of an overload group',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.canCallDefinitionSignature = true;
-            }
-        });
-
         opts.flag('nolib', {
             usage: 'Do not include a default lib.d.ts with global declarations',
             set: () => {
