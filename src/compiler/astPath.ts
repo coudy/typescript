@@ -161,19 +161,17 @@ module TypeScript {
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
-
-        public isArgumentListOfCall(): boolean {
+        
+        public isTargetOfCall(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.InvocationExpression &&
-                (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
+                (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
-
-        public isArgumentListOfNew(): boolean {
+        
+        public isTargetOfNew(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectCreationExpression &&
-                (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
+                (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
 
         public isInClassImplementsList(): boolean {

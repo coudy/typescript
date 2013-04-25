@@ -159,27 +159,16 @@ module Services {
                 return null;
             }
 
-            /// TODO: disable signature help in string literals and regexp literals
-
             // Find call expression
             while (path.count() >= 2) {
-                // Path we are looking for...
-                if (path.isArgumentListOfCall() || path.isArgumentListOfNew()) {
-                    // The caret position should be *after* the opening "(" of the argument list
-                    if (atEOF || position >= path.ast().minChar) {
-                        path.pop();
-                    }
-                    break;
-                } else if (path.ast().nodeType === TypeScript.NodeType.InvocationExpression || path.ast().nodeType === TypeScript.NodeType.ObjectCreationExpression) {
+                if (path.ast().nodeType === TypeScript.NodeType.InvocationExpression ||
+                    path.ast().nodeType === TypeScript.NodeType.ObjectCreationExpression ||  // Valid call or new expressions
+                    path.isTargetOfCall() || path.isTargetOfNew() || // If on target eg. fo/*caretPos*/o no signature help
+                    (path.isDeclaration() && position > path.ast().minChar)) // Its a declaration node - call expression cannot be in parent scope
+                {
                     break;
                 }
 
-                // Path that should make us stop looking up..
-                if (position > path.ast().minChar) {  // If cursor is on the "{" of the body, we may wat to display param help
-                    if (path.ast().nodeType !== TypeScript.NodeType.List) { 
-                        break;
-                    }
-                }
                 path.pop();
             }
 
@@ -190,6 +179,12 @@ module Services {
 
             var callExpression = <TypeScript.CallExpression>path.ast();
             var isNew = (callExpression.nodeType === TypeScript.NodeType.ObjectCreationExpression);
+
+            //var closeParenLimChar = Math.max(callExpression.arguments.minChar, callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth);
+            if (position < callExpression.target.limChar + callExpression.target.trailingTriviaWidth || position > callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth) {
+                this.logger.log("Outside argument list");
+                return null;
+            }
 
             // Resolve symbol
             var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, document);
@@ -202,7 +197,7 @@ module Services {
             var result = new SignatureInfo();
 
             result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.resolvedSignatures, callSymbolInfo.enclosingScopeSymbol);
-            result.actual = this.convertCallExprToActualSignatureInfo(callExpression, position, atEOF);
+            result.actual = this.convertCallExprToActualSignatureInfo(callExpression, position);
             result.activeFormal = (callSymbolInfo.resolvedSignatures && callSymbolInfo.candidateSignature) ? callSymbolInfo.resolvedSignatures.indexOf(callSymbolInfo.candidateSignature) : -1;
             
             if (result.actual === null || result.formal === null || result.activeFormal === null) {
@@ -244,7 +239,7 @@ module Services {
             return result;
         }
 
-        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number, atEOF: boolean): ActualSignatureInfo {
+        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number): ActualSignatureInfo {
             if (!TypeScript.isValidAstNode(ast))
                 return null;
 
@@ -255,16 +250,13 @@ module Services {
             result.openParenMinChar = ast.arguments.minChar;
             result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar + ast.arguments.trailingTriviaWidth);
 
-            if (caretPosition < result.openParenMinChar || caretPosition > result.closeParenLimChar) {
-                result.currentParameter = -1;
-            } else {
-                result.currentParameter = 0;
-                for (var index = 0; index < ast.arguments.members.length; index++) {
-                    if (caretPosition > ast.arguments.members[index].limChar + ast.arguments.members[index].trailingTriviaWidth) {
-                        result.currentParameter++;
-                    }
+            result.currentParameter = 0;
+            for (var index = 0; index < ast.arguments.members.length; index++) {
+                if (caretPosition > ast.arguments.members[index].limChar + ast.arguments.members[index].trailingTriviaWidth) {
+                    result.currentParameter++;
                 }
             }
+
             return result;
         }
 
