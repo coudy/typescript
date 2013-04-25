@@ -14,8 +14,6 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\compiler\syntax\TextSpanWalker.ts' />
-///<reference path='..\compiler\syntax\SyntaxUtilities.ts' />
 
 module Services {
     export class BraceMatcher {

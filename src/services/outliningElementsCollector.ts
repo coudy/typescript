@@ -14,7 +14,6 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\compiler\syntax\DepthLimitedWalker.ts' />
 
 module Services {
     export class OutliningElementsCollector extends TypeScript.DepthLimitedWalker {
