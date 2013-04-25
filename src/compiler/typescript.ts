@@ -921,7 +921,7 @@ module TypeScript {
                     resolutionContext.resolveAggressively = true;
                     resolutionContext.searchTypeSpace = inTypeReference;
 
-                    var isTypedAssignment = false;
+                    var inContextuallyTypedAssignment = false;
 
                     if (declarationInitASTs.length) {
                         var assigningAST: VariableDeclarator;
@@ -930,34 +930,34 @@ module TypeScript {
                         for (var i = 0; i < declarationInitASTs.length; i++) {
 
                             assigningAST = declarationInitASTs[i];
-                            isTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
+                            inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
                             this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
                             varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
 
-                            if (varSymbol && isTypedAssignment) {
+                            if (varSymbol && inContextuallyTypedAssignment) {
                                 var contextualType = varSymbol.getType();
                                 resolutionContext.pushContextualType(contextualType, false, null);
                             }
 
                             if (assigningAST.init) {
-                                this.pullTypeChecker.resolver.resolveAST(assigningAST.init, isTypedAssignment, enclosingDecl, resolutionContext);
+                                this.pullTypeChecker.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                         }
                     }
 
                     if (typeAssertionASTs.length) {
                         for (var i = 0; i < typeAssertionASTs.length; i++) {
-                            this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], isTypedAssignment, enclosingDecl, resolutionContext);
+                            this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         }
                     }
 
                     if (asgAST) {
-                        this.pullTypeChecker.resolver.resolveAST(asgAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST(asgAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (objectLitAST) {
-                        this.pullTypeChecker.resolver.resolveAST(objectLitAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST(objectLitAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (lambdaAST) {
@@ -965,7 +965,7 @@ module TypeScript {
                         enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
                     }
 
-                    symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                    symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
                         var isPropertyOrVar = symbol.getKind() === PullElementKind.Property || symbol.getKind() === PullElementKind.Variable;
                         var typeSymbol = symbol.getType();
@@ -986,9 +986,9 @@ module TypeScript {
 
                             var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (callExpression.nodeType === NodeType.InvocationExpression) {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             if (callResolutionResults.candidateSignature) {
@@ -1029,13 +1029,13 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromPath(path: AstPath, document: Document): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: boolean; } {
+        private extractResolutionContextFromPath(path: AstPath, document: Document): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var enclosingDecl: PullDecl = null;
-            var isTypedAssignment = false;
+            var inContextuallyTypedAssignment = false;
 
             var resolutionContext = new PullTypeResolutionContext();
             resolutionContext.resolveAggressively = true;
@@ -1060,18 +1060,18 @@ module TypeScript {
 
                     case NodeType.VariableDeclarator:
                         var assigningAST = <VariableDeclarator> current;
-                        isTypedAssignment = (assigningAST.typeExpr !== null);
+                        inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
 
                         this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
                         var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
 
-                        if (varSymbol && isTypedAssignment) {
+                        if (varSymbol && inContextuallyTypedAssignment) {
                             var contextualType = varSymbol.getType();
                             resolutionContext.pushContextualType(contextualType, false, null);
                         }
 
                         if (assigningAST.init) {
-                            this.pullTypeChecker.resolver.resolveAST(assigningAST.init, isTypedAssignment, enclosingDecl, resolutionContext);
+                            this.pullTypeChecker.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         }
 
                         break;
@@ -1085,10 +1085,10 @@ module TypeScript {
                         if ((i + 1 < n) && callExpression.arguments === path.asts[i + 1]) {
                             var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (isNew) {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
                             else {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             // Find the index in the arguments list
@@ -1108,17 +1108,17 @@ module TypeScript {
                         else {
                             // Just resolve the call expression
                             if (isNew) {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext);
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                             else {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext);
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                         }
 
                         break;
 
                     case NodeType.ArrayLiteralExpression:
-                        this.pullTypeChecker.resolver.resolveAST(current, isTypedAssignment, enclosingDecl, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
                         // Propagate the child element type
                         var currentContextualType = resolutionContext.getContextualType();
@@ -1129,11 +1129,11 @@ module TypeScript {
                         break;
 
                     case NodeType.ObjectLiteralExpression:
-                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         break;
 
                     case NodeType.AssignmentExpression:
-                        this.pullTypeChecker.resolver.resolveAST((<BinaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST((<BinaryExpression>current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         break;
 
                     case NodeType.CastExpression:
@@ -1142,7 +1142,7 @@ module TypeScript {
                             resolutionContext.searchTypeSpace = true;
                         }
 
-                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(current, isTypedAssignment, enclosingDecl, resolutionContext);
+                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
                         // Set the context type
                         if (typeSymbol) {
@@ -1187,7 +1187,7 @@ module TypeScript {
                 ast: path.ast(),
                 enclosingDecl: enclosingDecl,
                 resolutionContext: resolutionContext,
-                isTypedAssignment: isTypedAssignment
+                inContextuallyTypedAssignment: inContextuallyTypedAssignment
             };
         }
 
@@ -1197,7 +1197,7 @@ module TypeScript {
                 return null;
             }
 
-            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
             return {
                 symbol: symbol,
@@ -1249,10 +1249,10 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {

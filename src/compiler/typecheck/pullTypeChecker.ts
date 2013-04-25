@@ -153,7 +153,7 @@ module TypeScript {
 
         // declarations
 
-        private typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
 
             if (!ast) {
                 return null;
@@ -179,7 +179,7 @@ module TypeScript {
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
                 case NodeType.FunctionDeclaration:
-                    return this.typeCheckFunction(<FunctionDeclaration>ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckFunction(<FunctionDeclaration>ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.ClassDeclaration:
                     return this.typeCheckClass(ast, typeCheckContext);
@@ -200,10 +200,10 @@ module TypeScript {
                     return this.typeCheckGenericType(ast, typeCheckContext);
 
                 case NodeType.ObjectLiteralExpression:
-                    return this.typeCheckObjectLiteral(ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckObjectLiteral(ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.ArrayLiteralExpression:
-                    return this.typeCheckArrayLiteral(ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckArrayLiteral(ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.ThisExpression:
                     return this.typeCheckThisExpression(<ThisExpression>ast, typeCheckContext);
@@ -270,13 +270,13 @@ module TypeScript {
                 case NodeType.PreIncrementExpression:
                 case NodeType.PostDecrementExpression:
                 case NodeType.PreDecrementExpression:
-                    return this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.ElementAccessExpression:
                     return this.typeCheckElementAccessExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.LogicalNotExpression:
-                    return this.typeCheckLogicalNotExpression(<UnaryExpression>ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckLogicalNotExpression(<UnaryExpression>ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.LogicalOrExpression:
                 case NodeType.LogicalAndExpression:
@@ -356,7 +356,7 @@ module TypeScript {
                     return this.typeCheckSwitchStatement(<SwitchStatement>ast, typeCheckContext);
 
                 case NodeType.ExpressionStatement:
-                    return this.typeCheckExpressionStatement(<ExpressionStatement>ast, typeCheckContext, inTypedAssignment);
+                    return this.typeCheckExpressionStatement(<ExpressionStatement>ast, typeCheckContext, inContextuallyTypedAssignment);
 
                 case NodeType.CaseClause:
                     return this.typeCheckCaseClause(<CaseClause>ast, typeCheckContext);
@@ -536,26 +536,26 @@ module TypeScript {
         //  - getters return a value
         //  - setters return no value
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
-        private typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
             if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-                return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inTypedAssignment);
+                return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
             }
             else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-                return this.typeCheckIndexer(funcDeclAST, typeCheckContext, inTypedAssignment);
+                return this.typeCheckIndexer(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
             }
             else if (funcDeclAST.isAccessor()) {
-                return this.typeCheckAccessor(funcDeclAST, typeCheckContext, inTypedAssignment);
+                return this.typeCheckAccessor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
             }
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
+            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inContextuallyTypedAssignment, enclosingDecl, this.context);
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
@@ -592,7 +592,7 @@ module TypeScript {
             }
 
             this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             return functionSymbol ? functionSymbol.getType() : null;
         }
@@ -713,12 +713,12 @@ module TypeScript {
             }
         }
 
-        private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
             var funcDeclAST = <FunctionDeclaration>ast;
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+            var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context);
             this.checkForResolutionError(accessorSymbol.getType(), enclosingDecl);
 
             var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
@@ -730,7 +730,7 @@ module TypeScript {
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
@@ -771,22 +771,22 @@ module TypeScript {
                 }
             }
 
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             return null;
         }
 
-        private typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
+        private typeCheckConstructor(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inTypedAssignment, enclosingDecl, this.context);
+            var functionSymbol = this.resolver.resolveAST(funcDeclAST, inContextuallyTypedAssignment, enclosingDecl, this.context);
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
             typeCheckContext.inConstructorArguments = true;
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
             typeCheckContext.inConstructorArguments = false;
 
             // Reset the flag
@@ -830,23 +830,23 @@ module TypeScript {
             }
 
             this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
             return functionSymbol ? functionSymbol.getType() : null;
         }
 
-        private typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             // resolve the index signature, even though we won't be needing its type
-            this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+            this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context);
 
             var funcDeclAST = <FunctionDeclaration>ast;
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inTypedAssignment);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
@@ -864,7 +864,7 @@ module TypeScript {
             }
 
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             return null;
         }
@@ -1243,12 +1243,12 @@ module TypeScript {
         // Object literals
         // validate:
         //
-        private typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
             var objectLitAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             // PULLTODO: We're really resolving these expressions twice - need a better way...
-            var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
+            var objectLitType = this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context).getType();
             var memberDecls = <ASTList>objectLitAST.operand;
 
             var contextualType = this.context.getContextualType();
@@ -1295,12 +1295,12 @@ module TypeScript {
         // Array literals
         // validate:
         //  - incompatible types in expression
-        private typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        private typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment = false): PullTypeSymbol {
             var arrayLiteralAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             // PULLTODO: We're really resolving these expressions twice - need a better way...
-            var type = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
+            var type = this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context).getType();
             var memberASTs = <ASTList>arrayLiteralAST.operand;
 
             // Find the contextual member type
@@ -1318,7 +1318,7 @@ module TypeScript {
                 }
 
                 for (var i = 0; i < memberASTs.members.length; i++) {
-                    elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inTypedAssignment*/ false);
+                    elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inContextuallyTypedAssignment*/ false);
                 }
 
                 if (contextualMemberType) {
@@ -1834,16 +1834,16 @@ module TypeScript {
             return this.semanticInfoChain.numberTypeSymbol;
         }
 
-        private typeCheckLogicalNotExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
-            this.typeCheckAST(unaryExpression.operand, typeCheckContext, inTypedAssignment);
+        private typeCheckLogicalNotExpression(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
+            this.typeCheckAST(unaryExpression.operand, typeCheckContext, inContextuallyTypedAssignment);
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
         // Unary arithmetic expressions 
         // validate:
         //  -
-        private typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
-            var operandType = this.typeCheckAST(unaryExpression.operand, typeCheckContext, inTypedAssignment);
+        private typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
+            var operandType = this.typeCheckAST(unaryExpression.operand, typeCheckContext, inContextuallyTypedAssignment);
 
             switch (unaryExpression.nodeType) {
                 case NodeType.PlusExpression:
@@ -2222,8 +2222,8 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckExpressionStatement(ast: ExpressionStatement, typeCheckContext: PullTypeCheckContext, inTypedAssignment: boolean): PullTypeSymbol {
-            return this.typeCheckAST(ast.expression, typeCheckContext, inTypedAssignment);
+        private typeCheckExpressionStatement(ast: ExpressionStatement, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
+            return this.typeCheckAST(ast.expression, typeCheckContext, inContextuallyTypedAssignment);
         }
 
         private typeCheckCaseClause(caseClause: CaseClause, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -2404,8 +2404,8 @@ module TypeScript {
             this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
-        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inTypedAssignment: boolean, typeCheckContext: PullTypeCheckContext) {
-            if (inTypedAssignment || (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, typeCheckContext: PullTypeCheckContext) {
+            if (inContextuallyTypedAssignment || (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
                 return;
             }
 

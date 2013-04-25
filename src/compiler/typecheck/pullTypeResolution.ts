@@ -2159,7 +2159,7 @@ module TypeScript {
 
         // Expression resolution
 
-        public resolveAST(ast: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             switch (ast.nodeType) {
                 case NodeType.ModuleDeclaration:
                 case NodeType.InterfaceDeclaration:
@@ -2169,19 +2169,19 @@ module TypeScript {
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 
                 case NodeType.FunctionDeclaration:
-                    if (isTypedAssignment || ((<FunctionDeclaration>ast).getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
-                        return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
+                    if (inContextuallyTypedAssignment || ((<FunctionDeclaration>ast).getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+                        return this.resolveStatementOrExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
                     }
                     else {
                         return this.resolveDeclaration(ast, context, enclosingDecl);
                     }
 
                 default:
-                    return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveStatementOrExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
             }
         }
 
-        public resolveStatementOrExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveStatementOrExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             switch (expressionAST.nodeType) {
                 case NodeType.Name:
                     if (context.searchTypeSpace) {
@@ -2211,15 +2211,15 @@ module TypeScript {
                             return this.resolveSetAccessorDeclaration(funcDecl, context);
                         }
                         else {
-                            return this.resolveFunctionExpression(funcDecl, isTypedAssignment, enclosingDecl, context);
+                            return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
                         }
                     }
 
                 case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ArrayLiteralExpression:
-                    return this.resolveArrayLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveArrayLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ThisExpression:
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
@@ -2228,13 +2228,13 @@ module TypeScript {
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
                 case NodeType.InvocationExpression:
-                    return this.resolveCallExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveCallExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ObjectCreationExpression:
-                    return this.resolveNewExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveNewExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.CastExpression:
-                    return this.resolveTypeAssertionExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveTypeAssertionExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeRef:
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
@@ -2254,7 +2254,7 @@ module TypeScript {
 
                 // assignment
                 case NodeType.AssignmentExpression:
-                    return this.resolveAssignmentStatement(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveAssignmentStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 // boolean operations
                 case NodeType.LogicalNotExpression:
@@ -2270,7 +2270,7 @@ module TypeScript {
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
-                    return this.resolveArithmeticExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveArithmeticExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.SubtractAssignmentExpression:
                 case NodeType.MultiplyAssignmentExpression:
@@ -2303,12 +2303,12 @@ module TypeScript {
                     return this.semanticInfoChain.numberTypeSymbol;
 
                 case NodeType.ElementAccessExpression:
-                    return this.resolveIndexExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveIndexExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.LogicalOrExpression:
-                    return this.resolveLogicalOrExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveLogicalOrExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
                 case NodeType.LogicalAndExpression:
-                    return this.resolveLogicalAndExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveLogicalAndExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeOfExpression:
                     return this.semanticInfoChain.stringTypeSymbol;
@@ -2329,7 +2329,7 @@ module TypeScript {
                     return this.resolveParenthesizedExpression(<ParenthesizedExpression>expressionAST, enclosingDecl, context);
 
                 case NodeType.ExpressionStatement:
-                    return this.resolveExpressionStatement(<ExpressionStatement>expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveExpressionStatement(<ExpressionStatement>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.InstanceOfExpression:
                     return this.semanticInfoChain.booleanTypeSymbol;
@@ -2832,7 +2832,7 @@ module TypeScript {
             return childTypeSymbol;
         }
 
-        public resolveFunctionExpression(funcDeclAST: FunctionDeclaration, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var functionDecl = this.getDeclForAST(funcDeclAST);
             var funcDeclSymbol: PullSymbol = null;
@@ -2848,7 +2848,7 @@ module TypeScript {
             // we'll contextually type it
             // otherwise, just process it as a normal function declaration
 
-            var shouldContextuallyType = isTypedAssignment;
+            var shouldContextuallyType = inContextuallyTypedAssignment;
 
             var assigningFunctionTypeSymbol: PullFunctionTypeSymbol = null;
             var assigningFunctionSignature: PullSignatureSymbol = null;
@@ -3077,7 +3077,7 @@ module TypeScript {
 
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
-        public resolveObjectLiteralExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var previousResolutionSymbol = this.getSymbolForAST(expressionAST, context);
 
@@ -3118,7 +3118,7 @@ module TypeScript {
 
             var contextualType: PullTypeSymbol = null;
 
-            if (isTypedAssignment) {
+            if (inContextuallyTypedAssignment) {
                 contextualType = context.getContextualType();
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
@@ -3232,7 +3232,7 @@ module TypeScript {
             return typeSymbol;
         }
 
-        public resolveArrayLiteralExpression(expressionAST: AST, isTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveArrayLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var previousResolutionSymbol = this.getSymbolForAST(expressionAST, context);
 
@@ -3250,7 +3250,7 @@ module TypeScript {
             comparisonInfo.onlyCaptureFirstError = true;
 
             // if the target type is an array type, extract the element type
-            if (isTypedAssignment) {
+            if (inContextuallyTypedAssignment) {
                 contextualType = context.getContextualType();
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
@@ -3265,10 +3265,10 @@ module TypeScript {
             if (elements) {
 
                 for (var i = 0; i < elements.members.length; i++) {
-                    elementTypes[elementTypes.length] = this.resolveStatementOrExpression(elements.members[i], isTypedAssignment, enclosingDecl, context).getType();
+                    elementTypes[elementTypes.length] = this.resolveStatementOrExpression(elements.members[i], inContextuallyTypedAssignment, enclosingDecl, context).getType();
                 }
 
-                if (isTypedAssignment) {
+                if (inContextuallyTypedAssignment) {
                     context.popContextualType();
                 }
 
@@ -3328,7 +3328,7 @@ module TypeScript {
             return arraySymbol;
         }
 
-        public resolveIndexExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveIndexExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var callEx: BinaryExpression = <BinaryExpression>expressionAST;
 
@@ -3343,7 +3343,7 @@ module TypeScript {
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
-            var targetSymbol = this.resolveStatementOrExpression(callEx.operand1, isTypedAssignment, enclosingDecl, context);
+            var targetSymbol = this.resolveStatementOrExpression(callEx.operand1, inContextuallyTypedAssignment, enclosingDecl, context);
 
             var targetTypeSymbol = targetSymbol.getType();
 
@@ -3354,7 +3354,7 @@ module TypeScript {
 
             var elementType = targetTypeSymbol.getElementType();
 
-            var indexType = this.resolveStatementOrExpression(callEx.operand2, isTypedAssignment, enclosingDecl, context).getType();
+            var indexType = this.resolveStatementOrExpression(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol ||
                                 indexType.getKind() === PullElementKind.Enum;
@@ -3457,12 +3457,12 @@ module TypeScript {
             return returnType;
         }
 
-        public resolveBitwiseOperator(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveBitwiseOperator(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             if (this.sourceIsSubtypeOfTarget(leftType, this.semanticInfoChain.numberTypeSymbol, context) &&
                 this.sourceIsSubtypeOfTarget(rightType, this.semanticInfoChain.numberTypeSymbol, context)) {
@@ -3493,11 +3493,11 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        public resolveArithmeticExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveArithmeticExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             // PULLREVIEW: Eh?  I've preserved the logic from the current implementation, but it could use cleaning up
             if (this.isNullOrUndefinedType(leftType)) {
@@ -3542,11 +3542,11 @@ module TypeScript {
             }
         }
 
-        public resolveLogicalOrExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveLogicalOrExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             if (this.isAnyOrEquivalent(leftType) || this.isAnyOrEquivalent(rightType)) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -3585,11 +3585,11 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        public resolveLogicalAndExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveLogicalAndExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             return rightType;
         }
@@ -3633,11 +3633,11 @@ module TypeScript {
             return this.resolveAST(ast.expression, false, enclosingDecl, context);
         }
 
-        public resolveExpressionStatement(ast: ExpressionStatement, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            return this.resolveAST(ast.expression, isTypedAssignment, enclosingDecl, context);
+        public resolveExpressionStatement(ast: ExpressionStatement, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            return this.resolveAST(ast.expression, inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
-        public resolveCallExpression(callEx: CallExpression, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
+        public resolveCallExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             if (!additionalResults) {
                 var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
@@ -3651,7 +3651,7 @@ module TypeScript {
             var diagnostic: PullDiagnostic;
 
             // resolve the target
-            var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
+            var targetSymbol = this.resolveStatementOrExpression(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
             var targetAST = this.getLastIdentifierInTarget(callEx);
 
             // don't be fooled
@@ -3928,7 +3928,7 @@ module TypeScript {
             return returnType;
         }
 
-        public resolveNewExpression(callEx: CallExpression, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
+        public resolveNewExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             if (!additionalResults) {
                 var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
@@ -3942,7 +3942,7 @@ module TypeScript {
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
-            var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
+            var targetSymbol = this.resolveStatementOrExpression(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
 
             var diagnostic: PullDiagnostic;
 
@@ -4235,7 +4235,7 @@ module TypeScript {
 
         }
 
-        public resolveTypeAssertionExpression(expressionAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveTypeAssertionExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
             var assertionExpression = <UnaryExpression>expressionAST;
             var typeReference = this.resolveTypeReference(<TypeReference>assertionExpression.castTerm, enclosingDecl, context);
@@ -4251,7 +4251,7 @@ module TypeScript {
             return typeReference;
         }
 
-        public resolveAssignmentStatement(statementAST: AST, isTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveAssignmentStatement(statementAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var previousResolutionSymbol = this.getSymbolForAST(statementAST, context);
 
             if (previousResolutionSymbol) {
@@ -4260,7 +4260,7 @@ module TypeScript {
 
             var binex = <BinaryExpression>statementAST;
 
-            var leftType = this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             context.pushContextualType(leftType, context.inProvisionalResolution(), null);
             this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
