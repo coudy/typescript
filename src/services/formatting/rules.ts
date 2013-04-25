@@ -43,8 +43,10 @@ module TypeScript.Formatting {
         public SpaceAfterCloseBrace: Rule;
 
         // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
+        // Also should not apply to })
         public SpaceBetweenCloseBraceAndElse: Rule;
         public SpaceBetweenCloseBraceAndWhile: Rule;
+        public NoSpaceBetweenCloseBraceAndCloseParen: Rule;
 
         // No space for indexer and dot
         public NoSpaceBeforeDot: Rule;
@@ -222,6 +224,7 @@ module TypeScript.Formatting {
             // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
             this.SpaceBetweenCloseBraceAndElse = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.ElseKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
             this.SpaceBetweenCloseBraceAndWhile = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.WhileKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.NoSpaceBetweenCloseBraceAndCloseParen = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.CloseParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), RuleAction.Delete));
 
             // No space for indexer and dot
             this.NoSpaceBeforeDot = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.DotToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
@@ -332,6 +335,7 @@ module TypeScript.Formatting {
                 this.SpaceAfterAddWhenFollowedByUnaryPlus, this.SpaceAfterAddWhenFollowedByPreincrement,
                 this.SpaceAfterPostdecrementWhenFollowedBySubtract,
                 this.SpaceAfterSubtractWhenFollowedByUnaryMinus, this.SpaceAfterSubtractWhenFollowedByPredecrement,
+                this.NoSpaceBetweenCloseBraceAndCloseParen,
                 this.SpaceAfterOpenBrace, this.SpaceBeforeCloseBrace, this.SpaceAfterCloseBrace, this.SpaceBetweenCloseBraceAndElse, this.SpaceBetweenCloseBraceAndWhile, this.NoSpaceBetweenEmptyBraceBrackets,
                 this.NewLineBeforeCloseBraceInFunctionOrControl,
                 this.SpaceAfterFunctionInFuncDecl, this.NewLineAfterOpenBraceInBlockContext, this.SpaceAfterGetSetInMember,
@@ -477,104 +481,10 @@ module TypeScript.Formatting {
                 case SyntaxKind.VariableDeclarator:
                 case SyntaxKind.EqualsValueClause:
                     return context.currentTokenSpan.kind() === SyntaxKind.EqualsToken || context.nextTokenSpan.kind() === SyntaxKind.EqualsToken;
+                // "in" keyword in for (var x in []) { }
+                case SyntaxKind.ForInStatement:
+                    return context.currentTokenSpan.kind() === SyntaxKind.InKeyword || context.nextTokenSpan.kind() === SyntaxKind.InKeyword;
             }
-
-            //if (context.contextNode.AuthorNode.Details.ast != null) {
-            //    switch (context.contextNode.AuthorNode.Details.ast.nodeType) {
-            //        case TypeScript.NodeType.ImportDeclaration:
-            //            return true;
-            //    }
-            //}
-
-            //switch (context.contextNode.AuthorNode.Details.Kind) {
-            //    case AuthorParseNodeKind.apnkAdd:
-            //    case AuthorParseNodeKind.apnkSub:
-            //    case AuthorParseNodeKind.apnkMul:
-            //    case AuthorParseNodeKind.apnkDiv:
-            //    case AuthorParseNodeKind.apnkMod:
-            //    case AuthorParseNodeKind.apnkOr:
-            //    case AuthorParseNodeKind.apnkXor:
-            //    case AuthorParseNodeKind.apnkAnd:
-            //    case AuthorParseNodeKind.apnkEq:
-            //    case AuthorParseNodeKind.apnkNe:
-            //    case AuthorParseNodeKind.apnkLt:
-            //    case AuthorParseNodeKind.apnkLe:
-            //    case AuthorParseNodeKind.apnkGe:
-            //    case AuthorParseNodeKind.apnkGt:
-
-            //    case AuthorParseNodeKind.apnkAsg:
-            //    case AuthorParseNodeKind.apnkInstOf:
-            //    case AuthorParseNodeKind.apnkIn:
-            //    case AuthorParseNodeKind.apnkForIn:
-            //    case AuthorParseNodeKind.apnkEqv:
-            //    case AuthorParseNodeKind.apnkNEqv:
-
-            //    case AuthorParseNodeKind.apnkLogOr:
-            //    case AuthorParseNodeKind.apnkLogAnd:
-            //    case AuthorParseNodeKind.apnkLsh:
-            //    case AuthorParseNodeKind.apnkRsh:
-            //    case AuthorParseNodeKind.apnkRs2:
-
-            //    case AuthorParseNodeKind.apnkQmark:
-            //    case AuthorParseNodeKind.apnkAsgAdd:
-            //    case AuthorParseNodeKind.apnkAsgSub:
-            //    case AuthorParseNodeKind.apnkAsgMul:
-            //    case AuthorParseNodeKind.apnkAsgDiv:
-            //    case AuthorParseNodeKind.apnkAsgMod:
-            //    case AuthorParseNodeKind.apnkAsgAnd:
-            //    case AuthorParseNodeKind.apnkAsgXor:
-            //    case AuthorParseNodeKind.apnkAsgOr:
-            //    case AuthorParseNodeKind.apnkAsgLsh:
-            //    case AuthorParseNodeKind.apnkAsgRsh:
-            //    case AuthorParseNodeKind.apnkAsgRs2:
-            //        return true;
-
-            //    case AuthorParseNodeKind.apnkVarDecl:
-            //        //var varOrArgDecl = <TypeScript.BoundDecl>context.contextNode.AuthorNode.Details.ast;
-
-            //        //// TypeScript: Special case for "?" tokens: We don't want to format them as 
-            //        ////         as binary operators unless they are in the initialiation expression
-            //        //var tokenSpan: Span = null;
-            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.Question)
-            //        //    tokenSpan = context.tokenSpan.Span.span;
-            //        //else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Question)
-            //        //    tokenSpan = context.nextTokenSpan.Span.span;
-
-            //        //// TypeScript: Special case for ":" tokens: We don't want to format them as 
-            //        ////         as binary operators if they are the "type" part of the VarDecl.
-            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.Colon)
-            //        //    tokenSpan = context.tokenSpan.Span.span;
-            //        //else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Colon)
-            //        //    tokenSpan = context.nextTokenSpan.Span.span;
-
-            //        //if (tokenSpan != null) {
-            //        //    if (varOrArgDecl != null && (varOrArgDecl.nodeType === TypeScript.NodeType.VarDecl || varOrArgDecl.nodeType === TypeScript.NodeType.ArgDecl)) {
-            //        //        if (TypeScript.isValidAstNode(varOrArgDecl)) {
-            //        //            if (!TypeScript.isValidAstNode(varOrArgDecl.init)) {
-            //        //                // If no init expression, the token is not part of the binary expression
-            //        //                return false;
-            //        //            }
-
-            //        //            var initSpan = Span.FromBounds(varOrArgDecl.init.minChar, varOrArgDecl.init.limChar);
-            //        //            return initSpan.Contains(tokenSpan);
-            //        //        }
-            //        //    }
-            //        //}
-            //        return true;
-
-            //    case AuthorParseNodeKind.apnkFncDecl:
-            //        //var fncDecl = <TypeScript.FuncDecl>context.contextNode.AuthorNode.Details.ast;
-            //        //// Treat "=>" as a binary expression
-            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan || context.nextTokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan) { 
-            //        //    if (fncDecl != null && TypeScript.hasFlag(fncDecl.fncFlags, TypeScript.FncFlags.IsFunctionExpression)) { 
-            //        //        return true;
-            //        //    }
-            //        //}
-            //        break;
-
-            //    default:
-            //        return false;
-            //}
             return false;
         }
 

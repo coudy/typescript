@@ -29,11 +29,11 @@
 ////foo(
 ////function() {
 ////"hello";
-////} );
+////});
 ////foo(
 ////() => {
 ////"hello";
-////} );
+////});
 ////var t,
 ////u = 1,
 ////v;
@@ -70,11 +70,11 @@ verify.currentFileContentIs(
 "    foo(\n" +
 "        function() {\n" +
 "            \"hello\";\n" +
-"        } );\n" +
+"        });\n" +
 "    foo(\n" +
 "        () => {\n" +
 "            \"hello\";\n" +
-"        } );\n" +
+"        });\n" +
 "    var t,\n" +
 "        u = 1,\n" +
 "        v;\n" +
