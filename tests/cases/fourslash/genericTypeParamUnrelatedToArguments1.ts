@@ -17,13 +17,13 @@ goTo.marker('2');
 verify.quickInfoIs('Foo<number>', null, 'f2');
 
 goTo.marker('3');
-verify.quickInfoIs('Foo<any>', null, 'f3');
+verify.quickInfoIs('any', null, 'f3');
 
 goTo.marker('4');
 verify.quickInfoIs('Foo<number>', null, 'f4');
 
 goTo.marker('5');
-verify.quickInfoIs('Foo<number>', null, 'f5');
+verify.quickInfoIs('any', null, 'f5');
 
 goTo.marker('6');
 verify.quickInfoIs('Foo<number>', null, 'f6');

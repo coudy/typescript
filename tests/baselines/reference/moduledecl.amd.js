@@ -200,7 +200,7 @@ declare module m1 {
             y: string;
         };
         constructor(n, n2: number, n3, n4: string);
-        public f: c.a.b;
+        public f;
     }
     interface i1 {
         (): Object;

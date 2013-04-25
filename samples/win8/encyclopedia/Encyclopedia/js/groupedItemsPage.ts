@@ -5,7 +5,6 @@ module GroupedItemsPage {
     "use strict";
 
     var appView = Windows.UI.ViewManagement.ApplicationView;
-    var appViewState = Windows.UI.ViewManagement.ApplicationViewState;
     var nav = WinJS.Navigation;
     var ui = WinJS.UI;
     var utils = WinJS.Utilities;
@@ -16,7 +15,7 @@ module GroupedItemsPage {
         initializeLayout: function (listView, viewState) {
             /// <param name="listView" value="WinJS.UI.ListView.prototype" />
 
-            if (viewState === appViewState.snapped) {
+            if (viewState === Windows.UI.ViewManagement.ApplicationViewState.snapped) {
                 listView.itemDataSource = Data.groups.dataSource;
                 listView.groupDataSource = null;
                 listView.layout = new ui.ListLayout();
@@ -28,7 +27,7 @@ module GroupedItemsPage {
         },
 
         itemInvoked: function (args) {
-            if (appView.value === appViewState.snapped) {
+            if (appView.value === Windows.UI.ViewManagement.ApplicationViewState.snapped) {
                 // If the page is snapped, the user invoked a group.
                 var group = Data.groups.getAt(args.detail.itemIndex);
                 nav.navigate("/html/groupDetailPage.html", { groupKey: group.key });
@@ -62,7 +61,7 @@ module GroupedItemsPage {
 
             var listView = element.querySelector(".groupeditemslist").winControl;
             if (lastViewState !== viewState) {
-                if (lastViewState === appViewState.snapped || viewState === appViewState.snapped) {
+                if (lastViewState === Windows.UI.ViewManagement.ApplicationViewState.snapped || viewState === Windows.UI.ViewManagement.ApplicationViewState.snapped) {
                     var handler: (e: Event)=>void = function (e) {
                         listView.removeEventListener("contentanimating", handler, false);
                         e.preventDefault();

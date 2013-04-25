@@ -2186,13 +2186,15 @@ module TypeScript {
         }
 
         private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var resolvedName = this.resolver.resolveDottedNameExpression(memberAccessExpression, enclosingDecl, this.context);
             var type = resolvedName.getType();
             this.checkForResolutionError(type, enclosingDecl);
-
+            var prevCanUseTypeSymbol = this.context.canUseTypeSymbol;
+            this.context.canUseTypeSymbol = true;
+            var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext);
+            this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
             if (resolvedName && resolvedName.hasFlag(PullElementFlags.Private)) {
                 var memberContainer = resolvedName.getContainer();
                 if (memberContainer && memberContainer.getKind() === PullElementKind.ConstructorType) {

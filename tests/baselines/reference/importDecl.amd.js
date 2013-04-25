@@ -34,20 +34,20 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
 })
 ////[0.d.ts]
 export declare var x4: m4.d;
-export declare var d4: m4.d;
+export declare var d4: new() => m4.d;
 export declare var f4: m4.d;
 export declare module m1 {
     var x2: m4.d;
-    var d2: m4.d;
+    var d2: new() => m4.d;
     var f2: m4.d;
 }
 export declare var useGlo_m4_x4: glo_m4.d;
-export declare var useGlo_m4_d4: glo_m4.d;
+export declare var useGlo_m4_d4: new() => glo_m4.d;
 export declare var useGlo_m4_f4: glo_m4.d;
 export declare var useFncOnly_m4_f4: fncOnly_m4.d;
 export declare module usePrivate_m4_m1 {
 }
 export declare var d: m4.d;
 export declare var useMultiImport_m4_x4: m4.d;
-export declare var useMultiImport_m4_d4: m4.d;
+export declare var useMultiImport_m4_d4: new() => m4.d;
 export declare var useMultiImport_m4_f4: m4.d;

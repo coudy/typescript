@@ -2361,6 +2361,17 @@ module TypeScript {
             }
         }
 
+        public resolveNameSymbol(nameSymbol: PullSymbol, context: PullTypeResolutionContext) {
+            if (nameSymbol && !context.searchTypeSpace && !context.canUseTypeSymbol && 
+                nameSymbol != this.semanticInfoChain.undefinedTypeSymbol && nameSymbol != this.semanticInfoChain.nullTypeSymbol &&
+                (nameSymbol.isPrimitive() ||
+                !(nameSymbol.getKind() & TypeScript.PullElementKind.SomeValue))) {
+                    nameSymbol = null;
+            }
+
+            return nameSymbol
+        }
+
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             if (nameAST.isMissing()) {
@@ -2389,10 +2400,7 @@ module TypeScript {
             // PULLREVIEW: until further notice, search out for modules or enums
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-
-                if (nameSymbol && (nameSymbol.isPrimitive() && nameSymbol != this.semanticInfoChain.undefinedTypeSymbol && nameSymbol != this.semanticInfoChain.nullTypeSymbol)) {
-                    nameSymbol = null;
-                }
+                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
             }
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
@@ -2431,8 +2439,10 @@ module TypeScript {
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).text;
-
+            var prevCanUseTypeSymbol = context.canUseTypeSymbol;
+            context.canUseTypeSymbol = true;
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
+            context.canUseTypeSymbol = prevCanUseTypeSymbol;
             var lhsType = lhs.getType();
             var diagnostic: PullDiagnostic;
 
@@ -2491,6 +2501,7 @@ module TypeScript {
             // For classes, check the statics first below
             if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass() && this.isNameOrMemberAccessExpression(dottedNameAST.operand1)) && !nameSymbol) {
                 nameSymbol = lhsType.findMember(rhsName);
+                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
             }
 
             if (!nameSymbol) {
@@ -2542,6 +2553,7 @@ module TypeScript {
                         nameSymbol = associatedType.findMember(rhsName);
                     }
                 }
+                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
                 // could be an object member
                 if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType) {
