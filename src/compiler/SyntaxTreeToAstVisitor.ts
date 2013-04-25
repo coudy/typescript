@@ -280,6 +280,7 @@ module TypeScript {
                     }
                 }
 
+                result.postComments = this.previousTokenTrailingComments;
                 this.previousTokenTrailingComments = null;
 
                 if (n > 0) {
