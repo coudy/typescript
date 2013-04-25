@@ -290,6 +290,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.deleteChar(times);
         }
 
+        public replace(start: number, length: number, text: string) {
+            FourSlash.currentTestState.replace(start, length, text);
+        }
+
         public insert(text: string) {
             this.insertLines(text);
         }

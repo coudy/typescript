@@ -581,6 +581,13 @@ module FourSlash {
             this.checkSyntacticErrors();
         }
 
+        public replace(start: number, length: number, text: string) {
+            this.languageServiceShimHost.editScript(this.activeFile.fileName, start, start + length, text);
+            this.updateMarkersForEdit(this.activeFile.fileName, start, start + length, text);
+
+            this.checkSyntacticErrors();
+        }
+
         public deleteCharBehindMarker(count = 1) {
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
