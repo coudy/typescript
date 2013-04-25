@@ -1036,6 +1036,9 @@ module TypeScript {
             }
 
             var constructorMethod = classDeclSymbol.getConstructorMethod();
+            var extendedTypes = classDeclSymbol.getExtendedTypes();
+            var parentType = extendedTypes.length ? extendedTypes[0] : null;
+
             if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.getType();
 
@@ -1045,8 +1048,6 @@ module TypeScript {
                     var constructorSignature: PullSignatureSymbol;
 
                     // inherit parent's constructor signatures
-                    var extendedTypes = classDeclSymbol.getExtendedTypes();
-                    var parentType = extendedTypes.length ? extendedTypes[0] : null;
                     if (parentType) {
                         var parentClass = <PullClassTypeSymbol>parentType;
                         var parentConstructor = parentClass.getConstructorMethod();
@@ -1086,6 +1087,15 @@ module TypeScript {
 
                 for (var i = 0; i < constructorMembers.length; i++) {
                     this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                }
+
+                if (parentType) {
+                    var parentConstructorSymbol = (<PullClassTypeSymbol>parentType).getConstructorMethod();
+                    var parentConstructorTypeSymbol = parentConstructorSymbol.getType();
+
+                    if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                        constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                    }
                 }
             }
 

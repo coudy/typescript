@@ -1439,13 +1439,19 @@ module TypeScript {
                     members[members.length] = this.constructSignatureLinks[i].end;
                 }
             }
-            var extendedTypes = this.getExtendedTypes();
 
-            for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(this)) {
-                    continue;
+            // If it's a constructor type, we don't inherit construct signatures
+            // (E.g., we'd be looking at the statics on a class, where we want
+            // to inherit members, but not construct signatures
+            if (!(this.getKind() == PullElementKind.ConstructorType)) {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+                    members = members.concat(extendedTypes[i].getConstructSignatures());
                 }
-                members = members.concat(extendedTypes[i].getConstructSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
