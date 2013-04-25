@@ -1,7 +1,4 @@
-﻿/// <reference path='Syntax\SyntaxVisitor.generated.ts' />
-/// <reference path='Syntax\SyntaxWalker.generated.ts' />
-/// <reference path='Syntax\SyntaxInformationMap.ts' />
-/// <reference path='ast.ts' />
+﻿/// <reference path='ast.ts' />
 
 module TypeScript {
     var incrementalAst = true;

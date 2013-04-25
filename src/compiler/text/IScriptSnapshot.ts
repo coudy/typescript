@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
 
 module TypeScript {
     // Represents an immutable snapshot of a script at a specified time.  Once acquired, the 

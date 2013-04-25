@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
 
 /// <summary>
 /// Represents an immutable snapshot of text.

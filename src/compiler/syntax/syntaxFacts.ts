@@ -1,4 +1,4 @@
-///<reference path='SyntaxKind.ts' />
+///<reference path='syntaxKind.ts' />
 
 module TypeScript.SyntaxFacts {
     var textToKeywordKind: any = {

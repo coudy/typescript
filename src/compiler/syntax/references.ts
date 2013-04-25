@@ -1,68 +1,63 @@
-///<reference path='..\Text\References.ts' />
+///<reference path='..\text\references.ts' />
 
 ///<reference path='..\..\harness\external\json2stringify.ts' />
-///<reference path='CharacterInfo.ts' />
-///<reference path='Constants.ts' />
-///<reference path='Diagnostic.ts' />
-///<reference path='FormattingOptions.ts' />
-///<reference path='Indentation.ts' />
-///<reference path='ISeparatedSyntaxList.ts' />
-///<reference path='ISyntaxElement.ts' />
-///<reference path='ISyntaxList.ts' />
-///<reference path='ISyntaxNodeOrToken.ts' />
-///<reference path='ISyntaxToken.ts' />
-///<reference path='ISyntaxTrivia.ts' />
-///<reference path='ISyntaxTriviaList.ts' />
-///<reference path='LanguageVersion.ts' />
-///<reference path='ParseOptions.ts' />
-///<reference path='PositionedElement.ts' />
-///<reference path='Scanner.ts' />
-///<reference path='ScannerUtilities.generated.ts' />
-///<reference path='SeparatedSyntaxList.ts' />
-///<reference path='SlidingWindow.ts' />
-///<reference path='Strings.ts' />
-///<reference path='Syntax.ts' />
-///<reference path='SyntaxDiagnostic.ts' />
-///<reference path='SyntaxFactory.generated.ts' />
-///<reference path='SyntaxFacts.ts' />
-///<reference path='SyntaxFacts2.ts' />
-///<reference path='SyntaxKind.ts' />
-///<reference path='SyntaxList.ts' />
-///<reference path='SyntaxNode.ts' />
-///<reference path='SyntaxNodes.generated.ts' />
-///<reference path='SyntaxRewriter.generated.ts' />
+///<reference path='characterInfo.ts' />
+///<reference path='constants.ts' />
+///<reference path='diagnostic.ts' />
+///<reference path='formattingOptions.ts' />
+///<reference path='indentation.ts' />
+///<reference path='languageVersion.ts' />
+///<reference path='parseOptions.ts' />
+///<reference path='positionedElement.ts' />
+///<reference path='scanner.ts' />
+///<reference path='scannerUtilities.generated.ts' />
+///<reference path='separatedSyntaxList.ts' />
+///<reference path='slidingWindow.ts' />
+///<reference path='strings.ts' />
+///<reference path='syntax.ts' />
+///<reference path='syntaxDiagnostic.ts' />
+///<reference path='syntaxElement.ts' />
+///<reference path='syntaxFactory.generated.ts' />
+///<reference path='syntaxFacts.ts' />
+///<reference path='syntaxFacts2.ts' />
+///<reference path='syntaxKind.ts' />
+///<reference path='syntaxList.ts' />
+///<reference path='syntaxNode.ts' />
+///<reference path='syntaxNodeOrToken.ts' />
+///<reference path='syntaxNodes.generated.ts' />
+///<reference path='syntaxRewriter.generated.ts' />
 
 // SyntaxDedenter depends on SyntaxRewriter
-///<reference path='SyntaxDedenter.ts' />
+///<reference path='syntaxDedenter.ts' />
 // SyntaxIndenter depends on SyntaxRewriter
-///<reference path='SyntaxIndenter.ts' />
+///<reference path='syntaxIndenter.ts' />
 
-///<reference path='SyntaxToken.generated.ts' />
-///<reference path='SyntaxToken.ts' />
-///<reference path='SyntaxTokenReplacer.ts' />
-///<reference path='SyntaxTrivia.ts' />
-///<reference path='SyntaxTriviaList.ts' />
-///<reference path='SyntaxUtilities.ts' />
-///<reference path='SyntaxVisitor.generated.ts' />
-///<reference path='SyntaxWalker.generated.ts' />
+///<reference path='syntaxToken.generated.ts' />
+///<reference path='syntaxToken.ts' />
+///<reference path='syntaxTokenReplacer.ts' />
+///<reference path='syntaxTrivia.ts' />
+///<reference path='syntaxTriviaList.ts' />
+///<reference path='syntaxUtilities.ts' />
+///<reference path='syntaxVisitor.generated.ts' />
+///<reference path='syntaxWalker.generated.ts' />
 
 // PositionTrackingWalker depends on SyntaxWalker
-///<reference path='PositionTrackingWalker.ts' />
+///<reference path='positionTrackingWalker.ts' />
 
 // SyntaxInformationMap depends on SyntaxWalker
-///<reference path='SyntaxInformationMap.ts' />
+///<reference path='syntaxInformationMap.ts' />
 
 // SyntaxInformationMap depends on SyntaxWalker
-///<reference path='SyntaxNodeInvariantsChecker.ts' />
+///<reference path='syntaxNodeInvariantsChecker.ts' />
 
 // DepthLimitedWalker depends on PositionTrackingWalker
-///<reference path='DepthLimitedWalker.ts' />
+///<reference path='depthLimitedWalker.ts' />
 
 // Parser depends on PositionTrackingWalker
-///<reference path='Parser.ts' />
+///<reference path='parser.ts' />
 
 // SyntaxTree depends on PositionTrackingWalker
-///<reference path='SyntaxTree.ts' />
+///<reference path='syntaxTree.ts' />
 
 ///<reference path='TextSpanWalker.ts' />
-///<reference path='Unicode.ts' />
+///<reference path='unicode.ts' />

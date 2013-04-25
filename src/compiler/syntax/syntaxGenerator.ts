@@ -1,7 +1,7 @@
-///<reference path='..\Core\References.ts' />
-///<reference path='..\Core\Environment.ts' />
-///<reference path='SyntaxFacts.ts' />
-///<reference path='SyntaxKind.ts' />
+///<reference path='..\core\references.ts' />
+///<reference path='..\core\environment.ts' />
+///<reference path='syntaxFacts.ts' />
+///<reference path='syntaxKind.ts' />
 
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
@@ -2935,10 +2935,10 @@ var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
 
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts", syntaxNodes, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxRewriter.generated.ts", rewriter, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxWalker.generated.ts", walker, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\ScannerUtilities.generated.ts", scannerUtilities, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxVisitor.generated.ts", visitor, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxFactory.generated.ts", factory, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxRewriter.generated.ts", rewriter, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxToken.generated.ts", tokens, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxWalker.generated.ts", walker, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\scannerUtilities.generated.ts", scannerUtilities, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxFactory.generated.ts", factory, true);

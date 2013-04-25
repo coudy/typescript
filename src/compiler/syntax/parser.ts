@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
 
 module TypeScript.Parser {
     // Information the parser needs to effectively rewind.

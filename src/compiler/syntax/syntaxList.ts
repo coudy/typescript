@@ -1,4 +1,13 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
+
+module TypeScript {
+    export interface ISyntaxList extends ISyntaxElement {
+        childAt(index: number): ISyntaxNodeOrToken;
+        toArray(): ISyntaxNodeOrToken[];
+
+        insertChildrenInto(array: ISyntaxElement[], index: number): void;
+    }
+}
 
 module TypeScript.Syntax {
     // TODO: stop exporting this once typecheck bug is fixed.

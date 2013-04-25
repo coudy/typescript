@@ -29,8 +29,6 @@
 ///<reference path='referenceResolution.ts' />
 ///<reference path='precompile.ts' />
 ///<reference path='declarationEmitter.ts' />
-///<reference path='Syntax\ISyntaxNodeOrToken.ts' />
-///<reference path='Syntax\Parser.ts' />
 ///<reference path='Text\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
 ///<reference path='typecheck\pullFlags.ts' />
@@ -49,6 +47,7 @@
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='core\references.ts' />
+///<reference path='syntax\references.ts' />
 
 module TypeScript {
 

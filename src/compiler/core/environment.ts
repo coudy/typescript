@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
 ///<reference path='..\Enumerator.ts' />
 ///<reference path='..\process.ts' />
 

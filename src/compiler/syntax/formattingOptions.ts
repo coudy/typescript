@@ -1,4 +1,4 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
 
 class FormattingOptions {
     constructor(public useTabs: boolean,

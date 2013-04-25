@@ -1,4 +1,21 @@
-///<reference path='References.ts' />
+///<reference path='references.ts' />
+
+module TypeScript {
+    export interface ISeparatedSyntaxList extends ISyntaxElement {
+        childAt(index: number): ISyntaxNodeOrToken;
+
+        toArray(): ISyntaxNodeOrToken[];
+        toNonSeparatorArray(): ISyntaxNodeOrToken[];
+
+        separatorCount();
+        separatorAt(index: number): ISyntaxToken;
+
+        nonSeparatorCount();
+        nonSeparatorAt(index: number): ISyntaxNodeOrToken;
+
+        insertChildrenInto(array: ISyntaxElement[], index: number): void;
+    }
+}
 
 module TypeScript.Syntax {
     class EmptySeparatedSyntaxList implements ISeparatedSyntaxList {
