@@ -16,8 +16,7 @@
 
 goTo.marker('indirectSuperCall');
 verify.signatureHelpFunctionNameIs('B2');
-// bug 667736: Wrong overloads count in signature help on super calls in nested class hierarchies
-//verify.signatureHelpCountIs(2);
+verify.signatureHelpCountIs(2);
 
 verify.currentSignatureHelpReturnTypeIs("B2");
 verify.currentSignatureParamterCountIs(1);

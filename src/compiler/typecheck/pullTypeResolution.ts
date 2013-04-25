@@ -1060,7 +1060,8 @@ module TypeScript {
                             parentConstructSignature = parentConstructSignatures[i];
                             parentParameters = parentConstructSignature.getParameters();
 
-                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                            constructorSignature = parentConstructSignature.isDefinition() ?
+                                new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
                             constructorSignature.setReturnType(classDeclSymbol);
 
                             for (var j = 0; j < parentParameters.length; j++) {
