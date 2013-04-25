@@ -2655,12 +2655,11 @@ module TypeScript.Parser {
                 case SyntaxKind.PrivateKeyword:
                 case SyntaxKind.StaticKeyword:
                     // None of hte above are actually keywords.  And they might show up in a real
-                    // statement (i.e. "public();").  However, if we can determine that they're
-                    // parsable as a ClassElement then don't consider them a statement.  Note:
-                    //
-                    // It should not be possible for any class element that starts with public, private
-                    // or static to be parsed as a statement.  So this is safe to do.
-                    if (this.isClassElement(inErrorRecovery)) {
+                    // statement (i.e. "public();").  However, if we see 'public identifier' then 
+                    // that can't possibly be a statement (and instead will be a class element), 
+                    // and we should not parse it out here.
+                    var token1 = this.peekToken(1);
+                    if (SyntaxFacts.isIdentifierNameOrAnyKeyword(token1)) {
                         return false;
                     }
             }

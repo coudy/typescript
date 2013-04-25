@@ -281,6 +281,33 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
+        public findTokenOnLeft(position: number): PositionedToken {
+            var positionedToken = this.findToken(position);
+            var start = positionedToken.start();
+
+            // Position better fall within this token.
+            // Debug.assert(position >= positionedToken.fullStart());
+            // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
+
+            // if position is after the start of the token, then this token is the token on the left.
+            if (position > start) {
+                return positionedToken;
+            }
+
+            // we're in the trivia before the start of the token.  Need to return the previous token.
+            if (positionedToken.fullStart() === 0) {
+                // Already on the first token.  Nothing before us.
+                return null;
+            }
+
+            var previousToken = this.findToken(positionedToken.fullStart() - 1);
+
+            // Position better be after this token.
+            // Debug.assert(previousToken.fullEnd() <= position);
+
+            return previousToken;
+        }
+
         public findCompleteTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
             var positionedToken = this.findToken(position, includeSkippedTokens);
 

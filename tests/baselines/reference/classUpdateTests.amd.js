@@ -124,14 +124,12 @@ var P = (function () {
 })();
 var Q = (function () {
     function Q() {
-        public;
         this.p1 = 0;
     }
     return Q;
 })();
 var R = (function () {
     function R() {
-        private;
         this.p1 = 0;
     }
     return R;

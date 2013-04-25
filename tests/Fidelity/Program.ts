@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "FunctionPropertyAssignment1.ts";
+    // "PublicBreak1.ts";
     undefined;
 
 var generate = false;

@@ -4,21 +4,6 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
-    "diagnostics": [
-        {
-            "_position": 27,
-            "_width": 6,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
-        },
-        {
-            "_position": 34,
-            "_width": 1,
-            "_diagnosticCode": "Identifier_expected"
-        }
-    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 36,
@@ -126,8 +111,7 @@
             },
             {
                 "kind": "ExpressionStatement",
-                "fullWidth": 15,
-                "isIncrementallyUnusable": true,
+                "fullWidth": 9,
                 "expression": {
                     "kind": "InvocationExpression",
                     "fullWidth": 6,
@@ -161,57 +145,51 @@
                 "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "fullWidth": 9,
+                    "fullWidth": 3,
                     "text": ";",
                     "value": ";",
                     "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
-                    "hasTrailingSkippedText": true,
                     "trailingTrivia": [
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
-                        },
-                        {
-                            "kind": "SkippedTokenTrivia",
-                            "skippedToken": {
-                                "kind": "StaticKeyword",
-                                "width": 6,
-                                "text": "static",
-                                "value": "static",
-                                "valueText": "static"
-                            }
                         }
                     ]
                 }
             },
             {
                 "kind": "ExpressionStatement",
-                "fullWidth": 3,
-                "isIncrementallyUnusable": true,
+                "fullWidth": 9,
                 "expression": {
-                    "kind": "ParenthesizedExpression",
-                    "fullWidth": 2,
-                    "isIncrementallyUnusable": true,
-                    "openParenToken": {
-                        "kind": "OpenParenToken",
-                        "width": 1,
-                        "text": "(",
-                        "value": "(",
-                        "valueText": "("
-                    },
+                    "kind": "InvocationExpression",
+                    "fullWidth": 8,
                     "expression": {
-                        "kind": "IdentifierName",
-                        "width": 0,
-                        "text": ""
+                        "kind": "StaticKeyword",
+                        "width": 6,
+                        "text": "static",
+                        "value": "static",
+                        "valueText": "static"
                     },
-                    "closeParenToken": {
-                        "kind": "CloseParenToken",
-                        "width": 1,
-                        "text": ")",
-                        "value": ")",
-                        "valueText": ")"
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 2,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
+                        },
+                        "arguments": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
+                        }
                     }
                 },
                 "semicolonToken": {
