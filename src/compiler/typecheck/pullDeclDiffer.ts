@@ -188,6 +188,10 @@ module TypeScript {
                     return this.typeParameterIsEquivalent(<TypeParameter>oldAST, <TypeParameter>newAST);
                 case NodeType.FunctionDeclaration:
                     return this.functionDeclarationIsEquivalent(<FunctionDeclaration>oldAST, <FunctionDeclaration>newAST);
+                case NodeType.CatchClause:
+                    return this.catchClauseIsEquivalent(<CatchClause>oldAST, <CatchClause>newAST);
+                case NodeType.WithStatement:
+                    return this.withStatementIsEquivalent(<WithStatement>oldAST, <WithStatement>newAST);
                 case NodeType.Script:
                     return this.scriptIsEquivalent(<Script>oldAST, <Script>newAST);
                 default:
@@ -268,6 +272,16 @@ module TypeScript {
             }
 
             return false;
+        }
+
+        private catchClauseIsEquivalent(decl1: CatchClause, decl2: CatchClause): boolean {
+            return structuralEqualsNotIncludingPosition(decl1.param, decl2.param) &&
+                    structuralEqualsNotIncludingPosition(decl1.body, decl2.body)
+        }
+
+        private withStatementIsEquivalent(decl1: WithStatement, decl2: WithStatement): boolean {
+            return structuralEqualsNotIncludingPosition(decl1.expr, decl2.expr) &&
+                structuralEqualsNotIncludingPosition(decl1.body, decl2.body);
         }
 
         private scriptIsEquivalent(decl1: Script, decl2: Script): boolean {

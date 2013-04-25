@@ -764,6 +764,8 @@ module TypeScript {
 
         public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
             switch (declAST.nodeType) {
+                case NodeType.CatchClause:
+                case NodeType.WithStatement:
                 case NodeType.Script:
                     return null;
 
