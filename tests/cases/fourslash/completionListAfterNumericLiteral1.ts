@@ -3,5 +3,4 @@
 ////5../**/
 
 goTo.marker();
-verify.not.memberListContains('alert');
-//verify.memberListContains('toExponential');
+verify.completionListIsEmpty();

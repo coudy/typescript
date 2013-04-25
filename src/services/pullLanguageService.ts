@@ -785,21 +785,12 @@ module Services {
             // This method uses Fidelity completelly. Some information can be reached using the AST, but not everything.
             return TypeScript.Syntax.isEntirelyInsideComment(syntaxTree.sourceUnit(), position) ||
                 TypeScript.Syntax.isEntirelyInStringOrRegularExpressionLiteral(syntaxTree.sourceUnit(), position) ||
-                this.isIdentifierDefinitionLocation(syntaxTree.sourceUnit(), position);
+                this.isIdentifierDefinitionLocation(syntaxTree.sourceUnit(), position) ||
+                this.isRightOfIllegalDot(syntaxTree.sourceUnit(), position);
         }
 
         private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
-            var positionedToken = sourceUnit.findCompleteTokenOnLeft(position, /*includeSkippedTokens*/true);
-
-            if (positionedToken && position === positionedToken.end() && positionedToken.kind() == TypeScript.SyntaxKind.EndOfFileToken) {
-                // EndOfFile token is not intresting, get the one before it
-                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
-            }
-
-            if (positionedToken && position === positionedToken.end() && positionedToken.kind() === TypeScript.SyntaxKind.IdentifierName) {
-                // The caret is at the end of an identifier, the decession to provide completion depends on the previous token
-                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
-            }
+            var positionedToken = this.getNonIdentifierCompleteTokenOnLeft(sourceUnit, position);
 
             if (positionedToken) {
                 var containingNodeKind = positionedToken.containingNode() && positionedToken.containingNode().kind();
@@ -827,6 +818,40 @@ module Services {
                     case TypeScript.SyntaxKind.GetKeyword:
                     case TypeScript.SyntaxKind.SetKeyword:
                         return true;
+                }
+            }
+
+            return false;
+        }
+
+        private getNonIdentifierCompleteTokenOnLeft(sourceUnit: TypeScript.SourceUnitSyntax, position: number): TypeScript.PositionedToken {
+            var positionedToken = sourceUnit.findCompleteTokenOnLeft(position, /*includeSkippedTokens*/true);
+
+            if (positionedToken && position === positionedToken.end() && positionedToken.kind() == TypeScript.SyntaxKind.EndOfFileToken) {
+                // EndOfFile token is not intresting, get the one before it
+                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
+            }
+
+            if (positionedToken && position === positionedToken.end() && positionedToken.kind() === TypeScript.SyntaxKind.IdentifierName) {
+                // The caret is at the end of an identifier, the decession to provide completion depends on the previous token
+                positionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
+            }
+
+            return positionedToken;
+        }
+
+        private isRightOfIllegalDot(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
+            var positionedToken = this.getNonIdentifierCompleteTokenOnLeft(sourceUnit, position);
+
+            if (positionedToken) {
+                switch (positionedToken.kind()) {
+                    case TypeScript.SyntaxKind.DotToken:
+                        var leftOfDotPositionedToken = positionedToken.previousToken(/*includeSkippedTokens*/true);
+                        return leftOfDotPositionedToken && leftOfDotPositionedToken.kind() === TypeScript.SyntaxKind.NumericLiteral;
+
+                    case TypeScript.SyntaxKind.NumericLiteral:
+                        var text = positionedToken.token().text();
+                        return text.charAt(text.length - 1) === ".";
                 }
             }
 
