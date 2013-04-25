@@ -2,7 +2,6 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\Compiler\Core\IDiagnostic.ts' />
 
 module Services {
     export class LanguageService implements ILanguageService {

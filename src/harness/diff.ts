@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-/// <reference path='..\Compiler\Core\Environment.ts' />
-/// <reference path='..\Services\es5compat.ts' />
+/// <reference path='..\compiler\core\environment.ts' />
+/// <reference path='..\services\es5compat.ts' />
 
 module Diff {
     /// <summary>

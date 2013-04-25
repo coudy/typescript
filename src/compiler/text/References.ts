@@ -1,4 +1,4 @@
-///<reference path='..\Core\References.ts' />
+///<reference path='..\core\references.ts' />
 
 ///<reference path='CharacterCodes.ts' />
 ///<reference path='ILineAndCharacter.ts' />

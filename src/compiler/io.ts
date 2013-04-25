@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-///<reference path='Enumerator.ts' />
+///<reference path='enumerator.ts' />
 ///<reference path='process.ts' />
-///<reference path='Core\References.ts' />
+///<reference path='core\references.ts' />
 
 interface IResolvedFile {
     content: string;

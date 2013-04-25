@@ -48,7 +48,7 @@
 ///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
-///<reference path='Core\Timer.ts' />
+///<reference path='core\references.ts' />
 
 module TypeScript {
 

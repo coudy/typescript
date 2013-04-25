@@ -2,7 +2,6 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='..\typescript.ts' />
-///<reference path='..\Core\IDiagnostic.ts' />
 
 module TypeScript {
 
