@@ -170,7 +170,6 @@ module TypeScript {
         _get__and__set__accessor_must_have_the_same_type,
         _this__cannot_be_referenced_in_current_location,
         Use_of_deprecated__bool__type__Use__boolean__instead,
-        Static_methods_cannot_reference_class_type_parameters,
 
         Class__0__is_recursively_referenced_as_a_base_type_of_itself,
         Interface__0__is_recursively_referenced_as_a_base_type_of_itself,
@@ -229,7 +228,9 @@ module TypeScript {
         Instance_member_cannot_be_accessed_off_a_class,
         Untyped_function_calls_may_not_accept_type_arguments,
         Non_generic_functions_may_not_accept_type_arguments,
+        Static_methods_cannot_reference_class_type_parameters,
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___,
+        Rest_parameters_must_be_array_types,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

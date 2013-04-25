@@ -231,8 +231,11 @@ module TypeScript {
         _this__cannot_be_referenced_in_constructor_arguments: DiagnosticInfo;
         Static_member_cannot_be_accessed_off_an_instance_variable: DiagnosticInfo;
         Instance_member_cannot_be_accessed_off_a_class: DiagnosticInfo;
-
-
+        Untyped_function_calls_may_not_accept_type_arguments;
+        Non_generic_functions_may_not_accept_type_arguments;
+        Static_methods_cannot_reference_class_type_parameters;
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___;
+        Rest_parameters_must_be_array_types;
 
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
@@ -1463,7 +1466,11 @@ module TypeScript {
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
             code: 2161
         },
-
+        Rest_parameters_must_be_array_types: {
+            category: DiagnosticCategory.Error,
+            message: "Rest parameters must be array types",
+            code: 2162
+        },
 
         Type__0__is_missing_property__1__from_type__2_: {
             category: DiagnosticCategory.NoPrefix,

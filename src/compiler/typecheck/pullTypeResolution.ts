@@ -1247,9 +1247,9 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    if (this.cachedArrayInterfaceType) {
-                        typeRef = specializeToArrayType(this.cachedArrayInterfaceType, typeRef, this, context);
-                    }
+                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Rest_parameters_must_be_array_types, null), enclosingDecl);
+                    typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
@@ -1287,9 +1287,9 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    if (this.cachedArrayInterfaceType) {
-                        typeRef = specializeToArrayType(this.cachedArrayInterfaceType, typeRef, this, context);
-                    }
+                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Rest_parameters_must_be_array_types, null), enclosingDecl);
+                    typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
@@ -1563,7 +1563,10 @@ module TypeScript {
                         }
                     }
                     else if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray() && this.cachedArrayInterfaceType) {
-                        typeExprSymbol = specializeToArrayType(this.cachedArrayInterfaceType, typeExprSymbol, this, context);
+                        var diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Rest_parameters_must_be_array_types, null), enclosingDecl);
+                        typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                        hadError = true;
                     }
 
                     context.setTypeInContext(declSymbol, typeExprSymbol);
@@ -2111,42 +2114,44 @@ module TypeScript {
 
             var parameters = signature.getParameters();
 
-            if (parameters.length) {
-                var accessorType = parameters[0].getType();
+            var getter = accessorSymbol.getGetter();
 
-                var getter = accessorSymbol.getGetter();
+            var accessorType = parameters.length ? parameters[0].getType() : getter ? getter.getType() : this.semanticInfoChain.undefinedTypeSymbol;
 
-                if (getter) {
-                    var getterType = getter.getType();
-                    var getterSig = getterType.getCallSignatures()[0];
+            if (getter) {
+                var getterType = getter.getType();
+                var getterSig = getterType.getCallSignatures()[0];
 
-                    if (getterSig.isResolved()) {
-                        // compare setter parameter type and getter return type
-                        var getterReturnType = getterSig.getReturnType();
+                if (accessorType == this.semanticInfoChain.undefinedTypeSymbol) {
+                    accessorType = getterType;
+                }
 
-                        if (!this.typesAreIdentical(accessorType, getterReturnType)) {
+                if (getterSig.isResolved()) {
+                    // compare setter parameter type and getter return type
+                    var getterReturnType = getterSig.getReturnType();
 
-                            if (this.isAnyOrEquivalent(accessorType)) {
-                                accessorSymbol.setType(getterReturnType);
-                                if (!accessorType.isError()) {
-                                    parameters[0].setType(getterReturnType);
-                                }
-                            }
-                            else {
-                                var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath,
-                                    getDiagnosticMessage(DiagnosticCode._get__and__set__accessor_must_have_the_same_type, null), this.getEnclosingDecl(funcDecl));
-                                accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
+                    if (!this.typesAreIdentical(accessorType, getterReturnType)) {
+
+                        if (this.isAnyOrEquivalent(accessorType)) {
+                            accessorSymbol.setType(getterReturnType);
+                            if (!accessorType.isError()) {
+                                parameters[0].setType(getterReturnType);
                             }
                         }
-                    }
-                    else {
-                        accessorSymbol.setType(accessorType);
+                        else {
+                            var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode._get__and__set__accessor_must_have_the_same_type, null), this.getEnclosingDecl(funcDecl));
+                            accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
+                        }
                     }
                 }
                 else {
                     accessorSymbol.setType(accessorType);
                 }
             }
+            else {
+                accessorSymbol.setType(accessorType);
+            }            
 
             return accessorSymbol;
         }

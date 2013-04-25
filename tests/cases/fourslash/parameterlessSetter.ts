@@ -11,4 +11,4 @@
 
 goTo.marker();
 // Bug 674577: Crash in language service when getting quick info with parameterless setter
-// verify.quickInfoExists();
+verify.quickInfoExists();
