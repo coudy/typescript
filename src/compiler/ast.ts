@@ -826,6 +826,11 @@ module TypeScript {
                 emitter.emitScriptElements(this, this.requiresExtendsBlock);
             }
         }
+
+        public structuralEquals(ast: Script, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
+        }
     }
 
     export class NamedDeclaration extends AST {
