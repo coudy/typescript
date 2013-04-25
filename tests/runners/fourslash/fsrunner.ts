@@ -3,7 +3,8 @@
 ///<reference path='..\runnerbase.ts' />
 
 class FourslashRunner extends RunnerBase {
-    private basePath = 'tests/cases/';
+    public basePath = 'tests/cases/';
+
     constructor(testType?: string) {
         super(testType);
         if(testType == 'all') {

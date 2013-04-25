@@ -2190,19 +2190,20 @@ module TypeScript {
             var type = resolvedName.getType();
             this.checkForResolutionError(type, enclosingDecl);
 
-            if (expressionType && resolvedName && resolvedName.hasFlag(PullElementFlags.Private)) {
-                if (expressionType.getKind() === PullElementKind.ConstructorType) {
-                    expressionType = expressionType.getAssociatedContainerType();
+            if (resolvedName && resolvedName.hasFlag(PullElementFlags.Private)) {
+                var memberContainer = resolvedName.getContainer();
+                if (memberContainer && memberContainer.getKind() === PullElementKind.ConstructorType) {
+                    memberContainer = memberContainer.getAssociatedContainerType();
                 }
 
-                if (expressionType.isClass()) {
+                if (memberContainer && memberContainer.isClass()) {
                     // We're accessing a private member of a class.  We can only do that if we're 
                     // actually contained within that class.
                     var containingClass = typeCheckContext.getEnclosingClassDecl();
-                    if (!containingClass || containingClass.getSymbol() !== expressionType) {
+                    if (!containingClass || containingClass.getSymbol() !== memberContainer) {
                         var name = <Identifier>memberAccessExpression.operand2;
                         this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName,
-                            getDiagnosticMessage(DiagnosticCode._0_1__is_inaccessible, [expressionType.toString(false), name.actualText]), enclosingDecl);
+                            getDiagnosticMessage(DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(false), name.actualText]), enclosingDecl);
                     }
                 }
             }
