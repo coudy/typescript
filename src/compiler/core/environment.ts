@@ -279,7 +279,7 @@ var Environment = (function () {
         }
     };
 
-    if (typeof ActiveXObject === "function") {
+    if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     }
     else if (typeof require === "function") {
