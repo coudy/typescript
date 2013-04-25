@@ -512,6 +512,8 @@ module TypeScript {
             this.writeToOutput("(");
             var argsLen = 0;
             if (funcDecl.arguments) {
+                this.emitComments(funcDecl.arguments, true);
+
                 var tempContainer = this.setContainer(EmitContainer.Args);
                 argsLen = funcDecl.arguments.members.length;
                 var printLen = argsLen;
@@ -527,6 +529,8 @@ module TypeScript {
                     }
                 }
                 this.setContainer(tempContainer);
+
+                this.emitComments(funcDecl.arguments, false);
             }
             this.writeLineToOutput(") {");
 
