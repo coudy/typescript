@@ -1900,6 +1900,7 @@ module TypeScript {
             kind === PullElementKind.Class || // class
             kind === PullElementKind.Container || // module
             kind === PullElementKind.DynamicModule || // dynamic module
+            kind === PullElementKind.TypeAlias || // dynamic module
             kind === PullElementKind.Enum || // enum
             kind === PullElementKind.TypeParameter || //TypeParameter
             ((kind === PullElementKind.Interface || kind === PullElementKind.ObjectType) && this.getName() != "")) {
