@@ -601,9 +601,15 @@ module TypeScript {
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Exported);
             }
+            else {
+                result.setVarFlags(result.getVarFlags() & ~VariableFlags.Exported);
+            }
 
             if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Ambient);
+            }
+            else {
+                result.setVarFlags(result.getVarFlags() & ~VariableFlags.Ambient);
             }
 
             this.setAST(node, result);
@@ -652,6 +658,9 @@ module TypeScript {
 
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Exported);
+            }
+            else {
+                result.setVarFlags(result.getVarFlags() & ~VariableFlags.Exported);
             }
 
             this.setAST(node, result);
@@ -775,6 +784,9 @@ module TypeScript {
             if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Ambient);
             }
+            else {
+                result.setModuleFlags(result.getModuleFlags() & ~ModuleFlags.Ambient);
+            }
 
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -834,9 +846,15 @@ module TypeScript {
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Exported);
             }
+            else {
+                result.setFunctionFlags(result.getFunctionFlags() & ~FunctionFlags.Exported);
+            }
 
             if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Ambient);
+            }
+            else {
+                result.setFunctionFlags(result.getFunctionFlags() & ~FunctionFlags.Ambient);
             }
 
             this.setAST(node, result);
@@ -1067,9 +1085,15 @@ module TypeScript {
                 if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                     varDecl.setVarFlags(varDecl.getVarFlags() | VariableFlags.Exported);
                 }
+                else {
+                    varDecl.setVarFlags(varDecl.getVarFlags() & ~VariableFlags.Exported);
+                }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     varDecl.setVarFlags(varDecl.getVarFlags() | VariableFlags.Ambient);
+                }
+                else {
+                    varDecl.setVarFlags(varDecl.getVarFlags() & ~VariableFlags.Ambient);
                 }
             }
 

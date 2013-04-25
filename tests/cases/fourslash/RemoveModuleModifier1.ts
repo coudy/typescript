@@ -6,4 +6,4 @@
 ////Foo.a();
 
 goTo.marker();
-// edit.replace(0, 7, "");
+edit.replace(0, 7, "");
