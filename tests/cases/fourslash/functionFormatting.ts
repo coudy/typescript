@@ -5,4 +5,4 @@
 
 format.document();
 goTo.marker();
-verify.currentLineContentIs("    function foo() { } });");
+verify.currentLineContentIs("    function foo() { }");
