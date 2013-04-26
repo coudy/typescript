@@ -2055,7 +2055,7 @@ module TypeScript {
     }
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
-        constructor(public diagnostic: PullDiagnostic, public delegateType: PullTypeSymbol) {
+        constructor(public diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol) {
             super("error");
         }
 
@@ -2823,7 +2823,7 @@ module TypeScript {
         else {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
             var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
-            var diagnostic: PullDiagnostic;
+            var diagnostic: SemanticDiagnostic;
             var declAST: AST;
 
             for (var i = 0; i < typesToReplace.length; i++) {
@@ -2831,7 +2831,7 @@ module TypeScript {
                 if (!typesToReplace[i].isTypeParameter() && typeWrapsTypeParameter(typesToReplace[i], typeParameters[i])) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST) {
-                        diagnostic = context.postError(declAST.minChar, declAST.getLength(), resolver.getUnitPath(), getDiagnosticMessage(DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null), enclosingDecl, true);
+                        diagnostic = context.postError(resolver.getUnitPath(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
                     else {

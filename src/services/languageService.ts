@@ -308,6 +308,13 @@ module Services {
         static prefix = "prefix";
     }
 
+    export class DiagnosticCategory {
+        static none = "";
+        static error = "error";
+        static warning = "warning";
+        static message = "message";
+    }
+
     export class ScriptSyntaxASTState {
         public version: number;
         public syntaxTree: TypeScript.SyntaxTree;

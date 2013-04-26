@@ -288,8 +288,26 @@ module Services {
         /// SQUIGGLES
         ///
 
-        private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; } {
-            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
+        private static realizeDiagnosticCategory(category: TypeScript.DiagnosticCategory): string {
+            switch (category) {
+                case TypeScript.DiagnosticCategory.Error:
+                    return DiagnosticCategory.error;
+                case TypeScript.DiagnosticCategory.Warning:
+                    return DiagnosticCategory.warning;
+                case TypeScript.DiagnosticCategory.Message:
+                    return DiagnosticCategory.message;
+                default:
+                    return DiagnosticCategory.none;
+            }
+        }
+
+        private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; category: string; } {
+            return {
+                message: diagnostic.text(),
+                start: diagnostic.start(),
+                length: diagnostic.length(),
+                category: LanguageServiceShim.realizeDiagnosticCategory(TypeScript.getDiagnosticInfoFromCode(diagnostic.diagnosticCode()).category)
+            };
         }
 
         public getSyntacticDiagnostics(fileName: string): string {

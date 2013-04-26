@@ -139,12 +139,12 @@ class BatchCompiler {
             if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
                 var path = this.compilationEnvironment.code[i].path;
                 if (!TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
-                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
-                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed, [path])));
+                    this.errorReporter.addDiagnostic(
+                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed, [path]));
                 }
                 else {
-                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
-                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_find_file___0_, [path])));
+                    this.errorReporter.addDiagnostic(
+                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Could_not_find_file___0_, [path]));
                 }
             }
         }
@@ -464,8 +464,8 @@ class BatchCompiler {
                     this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 }
                 else {
-                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
-                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation, [type, "ES3"])));
+                    this.errorReporter.addDiagnostic(
+                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation, [type, "ES3"]));
                 }
             }
         });
@@ -483,8 +483,8 @@ class BatchCompiler {
                     this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
                 }
                 else {
-                    this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
-                        TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation, [type, "commonjs"])));
+                    this.errorReporter.addDiagnostic(
+                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation, [type, "commonjs"]));
                 }
             }
         });
@@ -588,8 +588,8 @@ class BatchCompiler {
 
     private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
-            this.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(0, 0, null,
-                TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Current_host_does_not_support__w_atch_option, null)));
+            this.errorReporter.addDiagnostic(
+                new TypeScript.SemanticDiagnostic(null, 0, 0, TypeScript.DiagnosticCode.Current_host_does_not_support__w_atch_option, null));
             return;
         }
 

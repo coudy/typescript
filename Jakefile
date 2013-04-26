@@ -45,7 +45,7 @@ var compilerSources = [
 	"typecheck/pullDeclCollection.ts",
 	"typecheck/pullSymbolBinder.ts",
 	"typecheck/pullSymbolGraph.ts",
-	"typecheck/pullErrors.ts",
+	"typecheck/SemanticDiagnostic.ts",
 	"typecheck/pullHelpers.ts",	
 	"syntaxTreeToAstVisitor.ts",
 	"typescript.ts"
