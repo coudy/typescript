@@ -552,7 +552,6 @@ module TypeScript {
                 var postComments = this.convertNodeTrailingComments(node, start);
                 this.moveTo(node, node.identifier);
                 var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-                var constructorName = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
                 this.movePast(node.identifier);
 
                 var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -589,7 +588,6 @@ module TypeScript {
                         var funcDecl = <FunctionDeclaration>member;
 
                         if (funcDecl.isConstructor) {
-                            funcDecl.name = constructorName;
                             funcDecl.classDecl = result;
 
                             result.constructorDecl = funcDecl;

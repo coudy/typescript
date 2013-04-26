@@ -499,6 +499,11 @@ module TypeScript {
             if (!(funcDecl.isAccessor() && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
                 this.writeToOutput("function ");
             }
+
+            if (funcDecl.isConstructor) {
+                this.writeToOutput(this.thisClassNode.name.actualText);
+            }
+
             if (printName) {
                 var id = funcDecl.getNameText();
                 if (id && !funcDecl.isAccessor()) {

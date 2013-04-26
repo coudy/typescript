@@ -753,7 +753,7 @@ module TypeScript {
             }
         }
 
-        var decl = new PullDecl(constructorDeclAST.name.text, constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(parent.getName(), parent.getDisplayName(), declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 

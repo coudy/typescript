@@ -30561,6 +30561,11 @@ var TypeScript;
             if (!(funcDecl.isAccessor() && containerKind !== 16 /* Class */ && containerKind !== 67108864 /* ConstructorType */)) {
                 this.writeToOutput("function ");
             }
+
+            if (funcDecl.isConstructor) {
+                this.writeToOutput(this.thisClassNode.name.actualText);
+            }
+
             if (printName) {
                 var id = funcDecl.getNameText();
                 if (id && !funcDecl.isAccessor()) {
@@ -46376,7 +46381,7 @@ var TypeScript;
             }
         }
 
-        var decl = new TypeScript.PullDecl(constructorDeclAST.name.text, constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(parent.getName(), parent.getDisplayName(), declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
@@ -53416,7 +53421,6 @@ var TypeScript;
                 var postComments = this.convertNodeTrailingComments(node, start);
                 this.moveTo(node, node.identifier);
                 var name = this.identifierFromToken(node.identifier, false, true);
-                var constructorName = this.identifierFromToken(node.identifier, false, true);
                 this.movePast(node.identifier);
 
                 var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -53452,7 +53456,6 @@ var TypeScript;
                         var funcDecl = member;
 
                         if (funcDecl.isConstructor) {
-                            funcDecl.name = constructorName;
                             funcDecl.classDecl = result;
 
                             result.constructorDecl = funcDecl;
@@ -56328,6 +56331,21 @@ var o2 = { set Foo(val:number) { } };";
             var oldText = TypeScript.TextFactory.createText(source);
             var index = source.indexOf("set");
             var newTextAndChange = withInsert(oldText, index, "public ");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+
+        IncrementalParserTests.testParameter2 = function () {
+            var source = "alert(100);\
+\
+class OverloadedMonster {\
+constructor();\
+constructor(name) { }\
+}";
+
+            var oldText = TypeScript.TextFactory.createText(source);
+            var index = source.indexOf("100");
+            var newTextAndChange = withInsert(oldText, index, "'1', ");
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         };
