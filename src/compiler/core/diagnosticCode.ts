@@ -236,6 +236,7 @@ module TypeScript {
         Static_methods_cannot_reference_class_type_parameters,
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___,
         Rest_parameters_must_be_array_types,
+        Overload_signature_implementation_cannot_use_specialized_type,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

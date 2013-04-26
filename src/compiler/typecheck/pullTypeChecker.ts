@@ -596,15 +596,11 @@ module TypeScript {
 
         private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, typeCheckContext: PullTypeCheckContext) {
             var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
-            if (functionSignatureInfo.allSignatures.length === 1 || functionSignatureInfo.signature.isDefinition()) {
-                // Function deifinition doesnt need to verify anything
-                return;
-            }
 
             var signature = functionSignatureInfo.signature;
             var allSignatures = functionSignatureInfo.allSignatures;
             var funcSymbol = typeCheckContext.semanticInfo.getSymbolForAST(funcDecl);
-            
+
             // Find the definition signature for this signature group
             var definitionSignature: PullSignatureSymbol = null;
             for (var i = allSignatures.length - 1; i >= 0; i--) {
@@ -614,53 +610,63 @@ module TypeScript {
                 }
             }
 
-            // Check for if the signatures are identical, check with the signatures before the current current one
-            var message: string;
-            for (var i = 0; i < allSignatures.length; i++) {
-                if (allSignatures[i] === signature) {
-                    break;
-                }
-
-                if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
-                    if (funcDecl.isConstructor) {
-                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_constructor_overload_signature, null, typeCheckContext.getEnclosingDecl());
-                    } else if (funcDecl.isConstructMember()) {
-                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_construct_signature, null, typeCheckContext.getEnclosingDecl());
-                    } else if (funcDecl.isCallMember()) {
-                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_call_signature, null, typeCheckContext.getEnclosingDecl());
-                    } else {
-                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_signature_for__0_, [funcSymbol.getScopedNameEx().toString()], typeCheckContext.getEnclosingDecl());
+            if (!signature.isDefinition()) {
+                // Check for if the signatures are identical, check with the signatures before the current current one
+                for (var i = 0; i < allSignatures.length; i++) {
+                    if (allSignatures[i] === signature) {
+                        break;
                     }
 
-                    break;
+                    if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
+                        if (funcDecl.isConstructor) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_constructor_overload_signature, null, typeCheckContext.getEnclosingDecl());
+                        } else if (funcDecl.isConstructMember()) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_construct_signature, null, typeCheckContext.getEnclosingDecl());
+                        } else if (funcDecl.isCallMember()) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_call_signature, null, typeCheckContext.getEnclosingDecl());
+                        } else {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_signature_for__0_, [funcSymbol.getScopedNameEx().toString()], typeCheckContext.getEnclosingDecl());
+                        }
+
+                        break;
+                    }
                 }
             }
 
             // Verify assignment compatibility or in case of constantOverload signature, if its subtype of atleast one signature
             var isConstantOverloadSignature = signature.isStringConstantOverloadSignature();
             if (isConstantOverloadSignature) {
-                var resolutionContext = new PullTypeResolutionContext();
-                var foundSubtypeSignature = false;
-                for (var i = 0; i < allSignatures.length; i++) {
-                    if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
-                        continue;
-                    }
+                if (signature.isDefinition()) {
+                    // Report error - definition signature cannot specify constant type
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type, null, typeCheckContext.getEnclosingDecl());
+                } else {
+                    var resolutionContext = new PullTypeResolutionContext();
+                    var foundSubtypeSignature = false;
+                    for (var i = 0; i < allSignatures.length; i++) {
+                        if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
+                            continue;
+                        }
 
-                    if (!allSignatures[i].isResolved()) {
-                        this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
-                    }
+                        if (!allSignatures[i].isResolved()) {
+                            this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
+                        }
+                        
+                        if (allSignatures[i].isStringConstantOverloadSignature()) {
+                            continue;
+                        }
 
-                    if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
-                        foundSubtypeSignature = true;
-                        break;
+                        if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
+                            foundSubtypeSignature = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!foundSubtypeSignature) {
+                        // Could not find the overload signature subtype
+                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null, typeCheckContext.getEnclosingDecl());
                     }
                 }
-                
-                if (!foundSubtypeSignature) {
-                    // Could not find the overload signature subtype
-                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null, typeCheckContext.getEnclosingDecl());
-                }
-            } else if (definitionSignature) {
+            } else if (definitionSignature && definitionSignature != signature) {
                 var comparisonInfo = new TypeComparisonInfo();
                 var resolutionContext = new PullTypeResolutionContext();
                 if (!definitionSignature.isResolved()) {
