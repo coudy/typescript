@@ -373,11 +373,16 @@ module TypeScript {
         }
 
         private emitArgDecl(argDecl: Parameter, funcDecl: FunctionDeclaration) {
+            this.indenter.increaseIndent();
+
             this.emitDeclarationComments(argDecl, false);
             this.declFile.Write(argDecl.id.actualText);
             if (argDecl.isOptionalArg()) {
                 this.declFile.Write("?");
             }
+            
+            this.indenter.decreaseIndent();
+
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 this.emitTypeOfBoundDecl(argDecl);
             }
@@ -467,8 +472,6 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            this.indenter.increaseIndent();
-
             if (funcDecl.arguments) {
                 var argsLen = funcDecl.arguments.members.length;
                 if (funcDecl.variableArgList) {
@@ -493,8 +496,6 @@ module TypeScript {
                 }
                 this.emitArgDecl(lastArg, funcDecl);
             }
-
-            this.indenter.decreaseIndent();
 
             if (!funcDecl.isIndexerMember()) {
                 this.declFile.Write(")");

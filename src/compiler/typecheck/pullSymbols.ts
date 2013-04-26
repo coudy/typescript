@@ -2578,7 +2578,11 @@ module TypeScript {
         }
 
         public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean) {
-            var elementMemberName = this.elementType ? this.elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName) : MemberName.create("any");
+            var elementMemberName = this.elementType ?
+                (this.elementType.isArray() || this.elementType.isNamedTypeSymbol() ?
+                this.elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName) :
+                this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
+                MemberName.create("any");
             return MemberName.create(elementMemberName, "", "[]");
         }
 
