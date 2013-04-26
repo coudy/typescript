@@ -1871,6 +1871,12 @@ module TypeScript {
 
                 signature.startResolving();
 
+                if (funcDeclAST.typeArguments) {
+                    for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
+                        this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+                    }
+                }
+
                 // resolve parameter type annotations as necessary
                 if (funcDeclAST.arguments) {
                     for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
@@ -3699,6 +3705,8 @@ module TypeScript {
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
             var couldNotFindGenericOverload = false;
+            var lastConstraintFailureDiagnostic: Diagnostic = null;
+            var couldNotAssignToConstraint: boolean;
 
             // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
@@ -3733,6 +3741,7 @@ module TypeScript {
                 var beforeResolutionSignatures = signatures;
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
+                    couldNotAssignToConstraint = false;
 
                     if (signatures[i].isGeneric() && typeParameters.length) {
                         if (typeArgs) {
@@ -3767,13 +3776,19 @@ module TypeScript {
                                             context.popTypeSpecializationCache();
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
+                                            lastConstraintFailureDiagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl);
+                                            couldNotAssignToConstraint = true;
+                                            break;
                                         }
                                     }
                                 }
                             }
                             else {
                                 context.specializingToAny = true;
+                            }
+
+                            if (couldNotAssignToConstraint) {
+                                continue;
                             }
 
                             specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
@@ -3811,7 +3826,11 @@ module TypeScript {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                diagnostic = context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
+                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
+            }
+            else if (!signatures.length) {
+                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -3962,6 +3981,8 @@ module TypeScript {
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
             var usedCallSignaturesInstead = false;
+            var lastConstraintFailureDiagnostic: Diagnostic = null;
+            var couldNotAssignToConstraint: boolean;
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 this.setSymbolForAST(callEx, targetTypeSymbol, context);
@@ -4008,6 +4029,8 @@ module TypeScript {
                     var prevSpecializingToAny = context.specializingToAny;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
+                        couldNotAssignToConstraint = false;
+
                         if (constructSignatures[i].isGeneric()) {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
@@ -4044,13 +4067,19 @@ module TypeScript {
                                             }
 
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
+                                                lastConstraintFailureDiagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
+                                                couldNotAssignToConstraint = true;
+                                                break;
                                             }
                                         }
                                     }
                                 }
                                 else {
                                     context.specializingToAny = true;
+                                }
+
+                                if (couldNotAssignToConstraint) {
+                                    continue;
                                 }
 
                                 specializedSignature = specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
@@ -4076,6 +4105,10 @@ module TypeScript {
                 //    this.log("Attempting to call a non-function symbol");
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
+
+                if (!constructSignatures.length && lastConstraintFailureDiagnostic) {
+                    return this.getNewErrorTypeSymbol(lastConstraintFailureDiagnostic);
+                }
 
                 var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context);
 
