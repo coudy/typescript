@@ -3933,7 +3933,6 @@ module TypeScript {
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
             }
 
-
             if (errorCondition) {
                 return errorCondition;
             }
@@ -4106,10 +4105,6 @@ module TypeScript {
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
 
-                if (!constructSignatures.length && lastConstraintFailureDiagnostic) {
-                    return this.getNewErrorTypeSymbol(lastConstraintFailureDiagnostic);
-                }
-
                 var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context);
 
                 // Store any additional resolution results if needed before we return
@@ -4119,6 +4114,10 @@ module TypeScript {
                     additionalResults.resolvedSignatures = constructSignatures;
                     additionalResults.candidateSignature = signature;
                     additionalResults.actualParametersContextTypeSymbols = [];
+                }
+
+                if (!constructSignatures.length && lastConstraintFailureDiagnostic) {
+                    return this.getNewErrorTypeSymbol(lastConstraintFailureDiagnostic);
                 }
 
                 var errorCondition: PullSymbol = null;
