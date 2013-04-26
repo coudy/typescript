@@ -3328,6 +3328,11 @@ module TypeScript {
                 newParameter.setIsOptional();
             }
 
+            if (parameters[k].getIsVarArg()) {
+                newParameter.setIsVarArg();
+                newSignature.setHasVariableParamList();
+            }
+
             newParameter.setType(newParameterType);
             newSignature.addParameter(newParameter, newParameter.getIsOptional());
         }
