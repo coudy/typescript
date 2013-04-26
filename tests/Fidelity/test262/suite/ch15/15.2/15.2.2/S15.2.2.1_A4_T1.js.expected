@@ -12,10 +12,12 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 375,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 373,
+                    "isIncrementallyUnusable": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -72,8 +74,9 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 11,
+                            "isIncrementallyUnusable": true,
                             "identifier": {
-                                "kind": "BoolKeyword",
+                                "kind": "IdentifierName",
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "bool",
@@ -136,6 +139,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 85,
+                "isIncrementallyUnusable": true,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -178,9 +182,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 26,
+                    "isIncrementallyUnusable": true,
                     "left": {
                         "kind": "TypeOfExpression",
                         "fullWidth": 13,
+                        "isIncrementallyUnusable": true,
                         "typeOfKeyword": {
                             "kind": "TypeOfKeyword",
                             "width": 6,
@@ -197,7 +203,7 @@
                             ]
                         },
                         "expression": {
-                            "kind": "BoolKeyword",
+                            "kind": "IdentifierName",
                             "width": 4,
                             "fullWidth": 6,
                             "text": "bool",
@@ -358,10 +364,12 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 31,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 29,
+                    "isIncrementallyUnusable": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -389,6 +397,7 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 24,
+                            "isIncrementallyUnusable": true,
                             "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 5,
@@ -407,6 +416,7 @@
                             "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 18,
+                                "isIncrementallyUnusable": true,
                                 "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
@@ -425,6 +435,7 @@
                                 "value": {
                                     "kind": "ObjectCreationExpression",
                                     "fullWidth": 16,
+                                    "isIncrementallyUnusable": true,
                                     "newKeyword": {
                                         "kind": "NewKeyword",
                                         "width": 3,
@@ -450,6 +461,7 @@
                                     "argumentList": {
                                         "kind": "ArgumentList",
                                         "fullWidth": 6,
+                                        "isIncrementallyUnusable": true,
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
@@ -459,7 +471,7 @@
                                         },
                                         "arguments": [
                                             {
-                                                "kind": "BoolKeyword",
+                                                "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "bool",
                                                 "value": "bool",
@@ -945,6 +957,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 137,
+                "isIncrementallyUnusable": true,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -995,6 +1008,7 @@
                 "condition": {
                     "kind": "NotEqualsWithTypeConversionExpression",
                     "fullWidth": 13,
+                    "isIncrementallyUnusable": true,
                     "left": {
                         "kind": "IdentifierName",
                         "width": 5,
@@ -1026,7 +1040,7 @@
                         ]
                     },
                     "right": {
-                        "kind": "BoolKeyword",
+                        "kind": "IdentifierName",
                         "width": 4,
                         "text": "bool",
                         "value": "bool",
@@ -1156,6 +1170,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 138,
+                "isIncrementallyUnusable": true,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -1206,6 +1221,7 @@
                 "condition": {
                     "kind": "EqualsExpression",
                     "fullWidth": 14,
+                    "isIncrementallyUnusable": true,
                     "left": {
                         "kind": "IdentifierName",
                         "width": 5,
@@ -1237,7 +1253,7 @@
                         ]
                     },
                     "right": {
-                        "kind": "BoolKeyword",
+                        "kind": "IdentifierName",
                         "width": 4,
                         "text": "bool",
                         "value": "bool",

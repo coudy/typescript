@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 501,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -45,9 +46,11 @@
                 "callSignature": {
                     "kind": "CallSignature",
                     "fullWidth": 46,
+                    "isIncrementallyUnusable": true,
                     "parameterList": {
                         "kind": "ParameterList",
                         "fullWidth": 46,
+                        "isIncrementallyUnusable": true,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -59,8 +62,9 @@
                             {
                                 "kind": "Parameter",
                                 "fullWidth": 11,
+                                "isIncrementallyUnusable": true,
                                 "identifier": {
-                                    "kind": "ConstructorKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 11,
                                     "text": "constructor",
                                     "value": "constructor",
@@ -140,6 +144,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 432,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -160,11 +165,13 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 59,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "AssignmentExpression",
                                 "fullWidth": 56,
+                                "isIncrementallyUnusable": true,
                                 "left": {
-                                    "kind": "ConstructorKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 11,
                                     "fullWidth": 24,
                                     "text": "constructor",
@@ -203,8 +210,9 @@
                                 "right": {
                                     "kind": "LogicalOrExpression",
                                     "fullWidth": 30,
+                                    "isIncrementallyUnusable": true,
                                     "left": {
-                                        "kind": "ConstructorKeyword",
+                                        "kind": "IdentifierName",
                                         "width": 11,
                                         "fullWidth": 12,
                                         "text": "constructor",
@@ -332,9 +340,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 80,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 77,
+                                "isIncrementallyUnusable": true,
                                 "expression": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 64,
@@ -389,6 +399,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 13,
+                                    "isIncrementallyUnusable": true,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -398,7 +409,7 @@
                                     },
                                     "arguments": [
                                         {
-                                            "kind": "ConstructorKeyword",
+                                            "kind": "IdentifierName",
                                             "width": 11,
                                             "text": "constructor",
                                             "value": "constructor",
@@ -434,6 +445,7 @@
                         {
                             "kind": "IfStatement",
                             "fullWidth": 130,
+                            "isIncrementallyUnusable": true,
                             "ifKeyword": {
                                 "kind": "IfKeyword",
                                 "width": 2,
@@ -488,6 +500,7 @@
                             "statement": {
                                 "kind": "Block",
                                 "fullWidth": 97,
+                                "isIncrementallyUnusable": true,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -508,9 +521,11 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 79,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 76,
+                                            "isIncrementallyUnusable": true,
                                             "expression": {
                                                 "kind": "IdentifierName",
                                                 "width": 20,
@@ -529,6 +544,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 40,
+                                                "isIncrementallyUnusable": true,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -540,8 +556,9 @@
                                                     {
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 21,
+                                                        "isIncrementallyUnusable": true,
                                                         "expression": {
-                                                            "kind": "ConstructorKeyword",
+                                                            "kind": "IdentifierName",
                                                             "width": 11,
                                                             "text": "constructor",
                                                             "value": "constructor",
@@ -640,6 +657,7 @@
                         {
                             "kind": "IfStatement",
                             "fullWidth": 116,
+                            "isIncrementallyUnusable": true,
                             "ifKeyword": {
                                 "kind": "IfKeyword",
                                 "width": 2,
@@ -694,6 +712,7 @@
                             "statement": {
                                 "kind": "Block",
                                 "fullWidth": 85,
+                                "isIncrementallyUnusable": true,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -714,9 +733,11 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 67,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 64,
+                                            "isIncrementallyUnusable": true,
                                             "expression": {
                                                 "kind": "IdentifierName",
                                                 "width": 20,
@@ -735,6 +756,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 28,
+                                                "isIncrementallyUnusable": true,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -744,7 +766,7 @@
                                                 },
                                                 "arguments": [
                                                     {
-                                                        "kind": "ConstructorKeyword",
+                                                        "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "constructor",
                                                         "value": "constructor",
@@ -828,6 +850,7 @@
                         {
                             "kind": "ReturnStatement",
                             "fullWidth": 33,
+                            "isIncrementallyUnusable": true,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -851,7 +874,7 @@
                                 ]
                             },
                             "expression": {
-                                "kind": "ConstructorKeyword",
+                                "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "constructor",
                                 "value": "constructor",
@@ -903,6 +926,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 979,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -941,9 +965,11 @@
                 "callSignature": {
                     "kind": "CallSignature",
                     "fullWidth": 57,
+                    "isIncrementallyUnusable": true,
                     "parameterList": {
                         "kind": "ParameterList",
                         "fullWidth": 57,
+                        "isIncrementallyUnusable": true,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -981,8 +1007,9 @@
                             {
                                 "kind": "Parameter",
                                 "fullWidth": 11,
+                                "isIncrementallyUnusable": true,
                                 "identifier": {
-                                    "kind": "ConstructorKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 11,
                                     "text": "constructor",
                                     "value": "constructor",
@@ -1062,6 +1089,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 897,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -1082,6 +1110,7 @@
                         {
                             "kind": "IfStatement",
                             "fullWidth": 883,
+                            "isIncrementallyUnusable": true,
                             "ifKeyword": {
                                 "kind": "IfKeyword",
                                 "width": 2,
@@ -1136,6 +1165,7 @@
                             "statement": {
                                 "kind": "Block",
                                 "fullWidth": 756,
+                                "isIncrementallyUnusable": true,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -1156,11 +1186,13 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 63,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "AssignmentExpression",
                                             "fullWidth": 60,
+                                            "isIncrementallyUnusable": true,
                                             "left": {
-                                                "kind": "ConstructorKeyword",
+                                                "kind": "IdentifierName",
                                                 "width": 11,
                                                 "fullWidth": 28,
                                                 "text": "constructor",
@@ -1199,8 +1231,9 @@
                                             "right": {
                                                 "kind": "LogicalOrExpression",
                                                 "fullWidth": 30,
+                                                "isIncrementallyUnusable": true,
                                                 "left": {
-                                                    "kind": "ConstructorKeyword",
+                                                    "kind": "IdentifierName",
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
@@ -1440,14 +1473,17 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 71,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "AssignmentExpression",
                                             "fullWidth": 68,
+                                            "isIncrementallyUnusable": true,
                                             "left": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 38,
+                                                "isIncrementallyUnusable": true,
                                                 "expression": {
-                                                    "kind": "ConstructorKeyword",
+                                                    "kind": "IdentifierName",
                                                     "width": 11,
                                                     "fullWidth": 27,
                                                     "text": "constructor",
@@ -1576,9 +1612,11 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 84,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 81,
+                                            "isIncrementallyUnusable": true,
                                             "expression": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 68,
@@ -1633,6 +1671,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 13,
+                                                "isIncrementallyUnusable": true,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -1642,7 +1681,7 @@
                                                 },
                                                 "arguments": [
                                                     {
-                                                        "kind": "ConstructorKeyword",
+                                                        "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "constructor",
                                                         "value": "constructor",
@@ -1678,9 +1717,11 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 156,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 153,
+                                            "isIncrementallyUnusable": true,
                                             "expression": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 37,
@@ -1717,6 +1758,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 116,
+                                                "isIncrementallyUnusable": true,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -1728,8 +1770,9 @@
                                                     {
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 21,
+                                                        "isIncrementallyUnusable": true,
                                                         "expression": {
-                                                            "kind": "ConstructorKeyword",
+                                                            "kind": "IdentifierName",
                                                             "width": 11,
                                                             "text": "constructor",
                                                             "value": "constructor",
@@ -1790,6 +1833,7 @@
                                                     {
                                                         "kind": "ObjectLiteralExpression",
                                                         "fullWidth": 76,
+                                                        "isIncrementallyUnusable": true,
                                                         "openBraceToken": {
                                                             "kind": "OpenBraceToken",
                                                             "width": 1,
@@ -1809,6 +1853,7 @@
                                                             {
                                                                 "kind": "SimplePropertyAssignment",
                                                                 "fullWidth": 18,
+                                                                "isIncrementallyUnusable": true,
                                                                 "propertyName": {
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
@@ -1832,7 +1877,7 @@
                                                                     ]
                                                                 },
                                                                 "expression": {
-                                                                    "kind": "ConstructorKeyword",
+                                                                    "kind": "IdentifierName",
                                                                     "width": 11,
                                                                     "text": "constructor",
                                                                     "value": "constructor",
@@ -2030,6 +2075,7 @@
                                     {
                                         "kind": "IfStatement",
                                         "fullWidth": 142,
+                                        "isIncrementallyUnusable": true,
                                         "ifKeyword": {
                                             "kind": "IfKeyword",
                                             "width": 2,
@@ -2084,6 +2130,7 @@
                                         "statement": {
                                             "kind": "Block",
                                             "fullWidth": 105,
+                                            "isIncrementallyUnusable": true,
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
@@ -2104,9 +2151,11 @@
                                                 {
                                                     "kind": "ExpressionStatement",
                                                     "fullWidth": 83,
+                                                    "isIncrementallyUnusable": true,
                                                     "expression": {
                                                         "kind": "InvocationExpression",
                                                         "fullWidth": 80,
+                                                        "isIncrementallyUnusable": true,
                                                         "expression": {
                                                             "kind": "IdentifierName",
                                                             "width": 20,
@@ -2125,6 +2174,7 @@
                                                         "argumentList": {
                                                             "kind": "ArgumentList",
                                                             "fullWidth": 40,
+                                                            "isIncrementallyUnusable": true,
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
@@ -2136,8 +2186,9 @@
                                                                 {
                                                                     "kind": "MemberAccessExpression",
                                                                     "fullWidth": 21,
+                                                                    "isIncrementallyUnusable": true,
                                                                     "expression": {
-                                                                        "kind": "ConstructorKeyword",
+                                                                        "kind": "IdentifierName",
                                                                         "width": 11,
                                                                         "text": "constructor",
                                                                         "value": "constructor",
@@ -2236,6 +2287,7 @@
                                     {
                                         "kind": "IfStatement",
                                         "fullWidth": 128,
+                                        "isIncrementallyUnusable": true,
                                         "ifKeyword": {
                                             "kind": "IfKeyword",
                                             "width": 2,
@@ -2290,6 +2342,7 @@
                                         "statement": {
                                             "kind": "Block",
                                             "fullWidth": 93,
+                                            "isIncrementallyUnusable": true,
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
@@ -2310,9 +2363,11 @@
                                                 {
                                                     "kind": "ExpressionStatement",
                                                     "fullWidth": 71,
+                                                    "isIncrementallyUnusable": true,
                                                     "expression": {
                                                         "kind": "InvocationExpression",
                                                         "fullWidth": 68,
+                                                        "isIncrementallyUnusable": true,
                                                         "expression": {
                                                             "kind": "IdentifierName",
                                                             "width": 20,
@@ -2331,6 +2386,7 @@
                                                         "argumentList": {
                                                             "kind": "ArgumentList",
                                                             "fullWidth": 28,
+                                                            "isIncrementallyUnusable": true,
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
@@ -2340,7 +2396,7 @@
                                                             },
                                                             "arguments": [
                                                                 {
-                                                                    "kind": "ConstructorKeyword",
+                                                                    "kind": "IdentifierName",
                                                                     "width": 11,
                                                                     "text": "constructor",
                                                                     "value": "constructor",
@@ -2424,6 +2480,7 @@
                                     {
                                         "kind": "ReturnStatement",
                                         "fullWidth": 37,
+                                        "isIncrementallyUnusable": true,
                                         "returnKeyword": {
                                             "kind": "ReturnKeyword",
                                             "width": 6,
@@ -2447,7 +2504,7 @@
                                             ]
                                         },
                                         "expression": {
-                                            "kind": "ConstructorKeyword",
+                                            "kind": "IdentifierName",
                                             "width": 11,
                                             "text": "constructor",
                                             "value": "constructor",
@@ -2497,6 +2554,7 @@
                             "elseClause": {
                                 "kind": "ElseClause",
                                 "fullWidth": 100,
+                                "isIncrementallyUnusable": true,
                                 "elseKeyword": {
                                     "kind": "ElseKeyword",
                                     "width": 4,
@@ -2515,6 +2573,7 @@
                                 "statement": {
                                     "kind": "Block",
                                     "fullWidth": 95,
+                                    "isIncrementallyUnusable": true,
                                     "openBraceToken": {
                                         "kind": "OpenBraceToken",
                                         "width": 1,
@@ -2535,6 +2594,7 @@
                                         {
                                             "kind": "ReturnStatement",
                                             "fullWidth": 77,
+                                            "isIncrementallyUnusable": true,
                                             "returnKeyword": {
                                                 "kind": "ReturnKeyword",
                                                 "width": 6,
@@ -2560,6 +2620,7 @@
                                             "expression": {
                                                 "kind": "InvocationExpression",
                                                 "fullWidth": 51,
+                                                "isIncrementallyUnusable": true,
                                                 "expression": {
                                                     "kind": "IdentifierName",
                                                     "width": 6,
@@ -2570,6 +2631,7 @@
                                                 "argumentList": {
                                                     "kind": "ArgumentList",
                                                     "fullWidth": 45,
+                                                    "isIncrementallyUnusable": true,
                                                     "openParenToken": {
                                                         "kind": "OpenParenToken",
                                                         "width": 1,
@@ -2579,7 +2641,7 @@
                                                     },
                                                     "arguments": [
                                                         {
-                                                            "kind": "ConstructorKeyword",
+                                                            "kind": "IdentifierName",
                                                             "width": 11,
                                                             "text": "constructor",
                                                             "value": "constructor",
@@ -2712,6 +2774,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 321,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -2750,9 +2813,11 @@
                 "callSignature": {
                     "kind": "CallSignature",
                     "fullWidth": 14,
+                    "isIncrementallyUnusable": true,
                     "parameterList": {
                         "kind": "ParameterList",
                         "fullWidth": 14,
+                        "isIncrementallyUnusable": true,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -2764,8 +2829,9 @@
                             {
                                 "kind": "Parameter",
                                 "fullWidth": 11,
+                                "isIncrementallyUnusable": true,
                                 "identifier": {
-                                    "kind": "ConstructorKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 11,
                                     "text": "constructor",
                                     "value": "constructor",
@@ -2793,6 +2859,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 285,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -2813,11 +2880,13 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 59,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "AssignmentExpression",
                                 "fullWidth": 56,
+                                "isIncrementallyUnusable": true,
                                 "left": {
-                                    "kind": "ConstructorKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 11,
                                     "fullWidth": 24,
                                     "text": "constructor",
@@ -2856,8 +2925,9 @@
                                 "right": {
                                     "kind": "LogicalOrExpression",
                                     "fullWidth": 30,
+                                    "isIncrementallyUnusable": true,
                                     "left": {
-                                        "kind": "ConstructorKeyword",
+                                        "kind": "IdentifierName",
                                         "width": 11,
                                         "fullWidth": 12,
                                         "text": "constructor",
@@ -3071,6 +3141,7 @@
                         {
                             "kind": "ForStatement",
                             "fullWidth": 156,
+                            "isIncrementallyUnusable": true,
                             "forKeyword": {
                                 "kind": "ForKeyword",
                                 "width": 3,
@@ -3326,6 +3397,7 @@
                             "statement": {
                                 "kind": "Block",
                                 "fullWidth": 94,
+                                "isIncrementallyUnusable": true,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -3346,9 +3418,11 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 76,
+                                        "isIncrementallyUnusable": true,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 73,
+                                            "isIncrementallyUnusable": true,
                                             "expression": {
                                                 "kind": "IdentifierName",
                                                 "width": 20,
@@ -3367,6 +3441,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 37,
+                                                "isIncrementallyUnusable": true,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -3378,8 +3453,9 @@
                                                     {
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 21,
+                                                        "isIncrementallyUnusable": true,
                                                         "expression": {
-                                                            "kind": "ConstructorKeyword",
+                                                            "kind": "IdentifierName",
                                                             "width": 11,
                                                             "text": "constructor",
                                                             "value": "constructor",
@@ -3503,6 +3579,7 @@
                         {
                             "kind": "ReturnStatement",
                             "fullWidth": 33,
+                            "isIncrementallyUnusable": true,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -3526,7 +3603,7 @@
                                 ]
                             },
                             "expression": {
-                                "kind": "ConstructorKeyword",
+                                "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "constructor",
                                 "value": "constructor",

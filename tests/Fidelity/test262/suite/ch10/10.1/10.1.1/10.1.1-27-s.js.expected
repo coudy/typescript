@@ -700,6 +700,7 @@
                         {
                             "kind": "ReturnStatement",
                             "fullWidth": 56,
+                            "isIncrementallyUnusable": true,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -725,6 +726,7 @@
                             "expression": {
                                 "kind": "LogicalAndExpression",
                                 "fullWidth": 38,
+                                "isIncrementallyUnusable": true,
                                 "left": {
                                     "kind": "EqualsExpression",
                                     "fullWidth": 23,
@@ -810,8 +812,9 @@
                                 "right": {
                                     "kind": "EqualsExpression",
                                     "fullWidth": 12,
+                                    "isIncrementallyUnusable": true,
                                     "left": {
-                                        "kind": "PublicKeyword",
+                                        "kind": "IdentifierName",
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "public",

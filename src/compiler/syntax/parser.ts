@@ -1290,7 +1290,12 @@ module TypeScript.Parser {
             var token = this.currentToken();
             if (this.isIdentifier(token)) {
                 this.moveToNextToken();
-                return token;
+
+                if (token.tokenKind === SyntaxKind.IdentifierName) {
+                    return token;
+                }
+
+                return Syntax.convertToIdentifierName(token);
             }
 
             return this.createMissingToken(SyntaxKind.IdentifierName, token);

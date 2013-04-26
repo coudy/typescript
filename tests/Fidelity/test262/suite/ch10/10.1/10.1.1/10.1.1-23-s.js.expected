@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 764,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -130,6 +131,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 154,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -150,6 +152,7 @@
                         {
                             "kind": "ReturnStatement",
                             "fullWidth": 144,
+                            "isIncrementallyUnusable": true,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -175,9 +178,11 @@
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 126,
+                                "isIncrementallyUnusable": true,
                                 "expression": {
                                     "kind": "FunctionExpression",
                                     "fullWidth": 124,
+                                    "isIncrementallyUnusable": true,
                                     "functionKeyword": {
                                         "kind": "FunctionKeyword",
                                         "width": 8,
@@ -227,6 +232,7 @@
                                     "block": {
                                         "kind": "Block",
                                         "fullWidth": 112,
+                                        "isIncrementallyUnusable": true,
                                         "openBraceToken": {
                                             "kind": "OpenBraceToken",
                                             "width": 1,
@@ -313,6 +319,7 @@
                                             {
                                                 "kind": "ReturnStatement",
                                                 "fullWidth": 34,
+                                                "isIncrementallyUnusable": true,
                                                 "returnKeyword": {
                                                     "kind": "ReturnKeyword",
                                                     "width": 6,
@@ -338,8 +345,9 @@
                                                 "expression": {
                                                     "kind": "EqualsExpression",
                                                     "fullWidth": 12,
+                                                    "isIncrementallyUnusable": true,
                                                     "left": {
-                                                        "kind": "PublicKeyword",
+                                                        "kind": "IdentifierName",
                                                         "width": 6,
                                                         "fullWidth": 7,
                                                         "text": "public",

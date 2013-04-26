@@ -7,6 +7,7 @@
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 795,
+        "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
@@ -362,10 +363,12 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 12,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 10,
+                    "isIncrementallyUnusable": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -385,8 +388,9 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 6,
+                            "isIncrementallyUnusable": true,
                             "identifier": {
-                                "kind": "NumberKeyword",
+                                "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "number",
                                 "value": "number",
@@ -546,6 +550,7 @@
             {
                 "kind": "ForInStatement",
                 "fullWidth": 390,
+                "isIncrementallyUnusable": true,
                 "forKeyword": {
                     "kind": "ForKeyword",
                     "width": 3,
@@ -631,6 +636,7 @@
                 "statement": {
                     "kind": "Block",
                     "fullWidth": 369,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -744,11 +750,13 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 21,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "AssignmentExpression",
                                 "fullWidth": 19,
+                                "isIncrementallyUnusable": true,
                                 "left": {
-                                    "kind": "NumberKeyword",
+                                    "kind": "IdentifierName",
                                     "width": 6,
                                     "fullWidth": 11,
                                     "text": "number",
@@ -823,9 +831,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 46,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "AssignmentExpression",
                                 "fullWidth": 44,
+                                "isIncrementallyUnusable": true,
                                 "left": {
                                     "kind": "IdentifierName",
                                     "width": 13,
@@ -866,6 +876,7 @@
                                 "right": {
                                     "kind": "InvocationExpression",
                                     "fullWidth": 24,
+                                    "isIncrementallyUnusable": true,
                                     "expression": {
                                         "kind": "MemberAccessExpression",
                                         "fullWidth": 16,
@@ -894,6 +905,7 @@
                                     "argumentList": {
                                         "kind": "ArgumentList",
                                         "fullWidth": 8,
+                                        "isIncrementallyUnusable": true,
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
@@ -903,7 +915,7 @@
                                         },
                                         "arguments": [
                                             {
-                                                "kind": "NumberKeyword",
+                                                "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "number",
                                                 "value": "number",

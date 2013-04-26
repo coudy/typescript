@@ -12,6 +12,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 41,
+                "isIncrementallyUnusable": true,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -37,6 +38,7 @@
                 "condition": {
                     "kind": "LogicalNotExpression",
                     "fullWidth": 15,
+                    "isIncrementallyUnusable": true,
                     "operatorToken": {
                         "kind": "ExclamationToken",
                         "width": 1,
@@ -47,8 +49,9 @@
                     "operand": {
                         "kind": "MemberAccessExpression",
                         "fullWidth": 14,
+                        "isIncrementallyUnusable": true,
                         "expression": {
-                            "kind": "ModuleKeyword",
+                            "kind": "IdentifierName",
                             "width": 6,
                             "text": "module",
                             "value": "module",
@@ -88,14 +91,17 @@
                 "statement": {
                     "kind": "ExpressionStatement",
                     "fullWidth": 20,
+                    "isIncrementallyUnusable": true,
                     "expression": {
                         "kind": "AssignmentExpression",
                         "fullWidth": 19,
+                        "isIncrementallyUnusable": true,
                         "left": {
                             "kind": "MemberAccessExpression",
                             "fullWidth": 15,
+                            "isIncrementallyUnusable": true,
                             "expression": {
-                                "kind": "ModuleKeyword",
+                                "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "module",
                                 "value": "module",

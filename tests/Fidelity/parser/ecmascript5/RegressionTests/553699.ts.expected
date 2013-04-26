@@ -12,6 +12,7 @@
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 70,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -145,6 +146,7 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 33,
+                        "isIncrementallyUnusable": true,
                         "modifiers": [
                             {
                                 "kind": "PublicKeyword",
@@ -187,9 +189,11 @@
                         "callSignature": {
                             "kind": "CallSignature",
                             "fullWidth": 12,
+                            "isIncrementallyUnusable": true,
                             "parameterList": {
                                 "kind": "ParameterList",
                                 "fullWidth": 12,
+                                "isIncrementallyUnusable": true,
                                 "openParenToken": {
                                     "kind": "OpenParenToken",
                                     "width": 1,
@@ -201,6 +205,7 @@
                                     {
                                         "kind": "Parameter",
                                         "fullWidth": 9,
+                                        "isIncrementallyUnusable": true,
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 1,
@@ -211,6 +216,7 @@
                                         "typeAnnotation": {
                                             "kind": "TypeAnnotation",
                                             "fullWidth": 8,
+                                            "isIncrementallyUnusable": true,
                                             "colonToken": {
                                                 "kind": "ColonToken",
                                                 "width": 1,
@@ -227,7 +233,7 @@
                                                 ]
                                             },
                                             "type": {
-                                                "kind": "PublicKeyword",
+                                                "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "public",
                                                 "value": "public",

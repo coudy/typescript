@@ -21704,7 +21704,12 @@ var TypeScript;
                 var token = this.currentToken();
                 if (this.isIdentifier(token)) {
                     this.moveToNextToken();
-                    return token;
+
+                    if (token.tokenKind === 11 /* IdentifierName */) {
+                        return token;
+                    }
+
+                    return TypeScript.Syntax.convertToIdentifierName(token);
                 }
 
                 return this.createMissingToken(11 /* IdentifierName */, token);
@@ -56068,7 +56073,7 @@ var TypeScript;
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         };
 
         IncrementalParserTests.testStrictMode2 = function () {
@@ -56088,7 +56093,7 @@ var TypeScript;
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = withDelete(oldText, 0, index);
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 20);
         };
 
         IncrementalParserTests.testStrictMode4 = function () {
@@ -57036,7 +57041,7 @@ var timer = new TypeScript.Timer();
 
 var specificFile = undefined;
 
-var generate = false;
+var generate = true;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();

@@ -229,7 +229,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         }
 
         public static testStrictMode2() {
@@ -257,7 +257,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = withDelete(oldText, 0, index);
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 20);
         }
 
         public static testStrictMode4() {
