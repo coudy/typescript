@@ -219,14 +219,16 @@ module Services {
                     var paramIndexInfo: number[] = [];
                     var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
                     if (!functionName) {
-                        functionName = symbol.getDisplayName();                    }
+                        functionName = symbol.getDisplayName();
+                    }
                     var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true);
                     signatureGroupInfo.signatureInfo = TypeScript.MemberName.memberNameToString(signatureMemberName, paramIndexInfo);
                     signatureGroupInfo.docComment = this.compilerState.getDocComments(signature);
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
-                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);                        signatureParameterInfo.name = p.getDisplayName();
+                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
+                        signatureParameterInfo.name = p.getDisplayName();
                         signatureParameterInfo.docComment = this.compilerState.getDocComments(p);
                         signatureParameterInfo.minChar = paramIndexInfo[2 * i];
                         signatureParameterInfo.limChar = paramIndexInfo[2 * i + 1];

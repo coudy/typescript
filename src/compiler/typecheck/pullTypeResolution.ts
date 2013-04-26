@@ -941,6 +941,7 @@ module TypeScript {
 
             // Extends list
             if (typeDeclAST.extendsList) {
+                var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
                 if (typeDeclIsClass) {
                     context.isResolvingClassExtendedType = true;
                 }
@@ -961,7 +962,7 @@ module TypeScript {
                     }
                 }
 
-                context.isResolvingClassExtendedType = false;
+                context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
             if (typeDeclAST.implementsList && typeDeclIsClass) {
