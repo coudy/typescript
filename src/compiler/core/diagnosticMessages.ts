@@ -1245,7 +1245,7 @@ module TypeScript {
         },
         Invalid__addition__expression___types_do_not_agree: {
             category: DiagnosticCategory.Error,
-            message: "Invalid '+' expression - types do not agree.",
+            message: "Invalid '+' expression - types not known to support the addition operator.",
             code: 2111
         },
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
