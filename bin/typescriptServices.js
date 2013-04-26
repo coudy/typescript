@@ -365,8 +365,10 @@ var TypeScript;
         DiagnosticCategory.Warning = 0;
         DiagnosticCategory._map[1] = "Error";
         DiagnosticCategory.Error = 1;
-        DiagnosticCategory._map[2] = "NoPrefix";
-        DiagnosticCategory.NoPrefix = 2;
+        DiagnosticCategory._map[2] = "Message";
+        DiagnosticCategory.Message = 2;
+        DiagnosticCategory._map[3] = "NoPrefix";
+        DiagnosticCategory.NoPrefix = 3;
     })(TypeScript.DiagnosticCategory || (TypeScript.DiagnosticCategory = {}));
     var DiagnosticCategory = TypeScript.DiagnosticCategory;
 })(TypeScript || (TypeScript = {}));
@@ -496,386 +498,402 @@ var TypeScript;
         DiagnosticCode.Modifiers_cannot_appear_here = 59;
         DiagnosticCode._map[60] = "Accessors_are_only_available_when_targeting_EcmaScript5_and_higher";
         DiagnosticCode.Accessors_are_only_available_when_targeting_EcmaScript5_and_higher = 60;
-        DiagnosticCode._map[61] = "A_generic_type_may_not_reference_itself_with_its_own_type_parameters";
-        DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters = 61;
-        DiagnosticCode._map[62] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 62;
-        DiagnosticCode._map[63] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 63;
-        DiagnosticCode._map[64] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 64;
-        DiagnosticCode._map[65] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 65;
-        DiagnosticCode._map[66] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 66;
-        DiagnosticCode._map[67] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 67;
-        DiagnosticCode._map[68] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 68;
-        DiagnosticCode._map[69] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 69;
-        DiagnosticCode._map[70] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 70;
-        DiagnosticCode._map[71] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 71;
-        DiagnosticCode._map[72] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 72;
-        DiagnosticCode._map[73] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 73;
-        DiagnosticCode._map[74] = "Cannot_convert__0__to__1__NL__2";
-        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 74;
-        DiagnosticCode._map[75] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 75;
-        DiagnosticCode._map[76] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 76;
-        DiagnosticCode._map[77] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 77;
-        DiagnosticCode._map[78] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 78;
-        DiagnosticCode._map[79] = "Accessor_cannot_have_type_parameters";
-        DiagnosticCode.Accessor_cannot_have_type_parameters = 79;
-        DiagnosticCode._map[80] = "Exported_class__0__extends_private_class__1_";
-        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 80;
-        DiagnosticCode._map[81] = "Exported_class__0__implements_private_interface__1_";
-        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 81;
-        DiagnosticCode._map[82] = "Exported_interface__0__extends_private_interface__1_";
-        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 82;
-        DiagnosticCode._map[83] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 83;
-        DiagnosticCode._map[84] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 84;
-        DiagnosticCode._map[85] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 85;
-        DiagnosticCode._map[86] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 86;
-        DiagnosticCode._map[87] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 87;
-        DiagnosticCode._map[88] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 88;
-        DiagnosticCode._map[89] = "Exported_variable__0__has_or_is_using_private_type__1_";
-        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 89;
-        DiagnosticCode._map[90] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 90;
-        DiagnosticCode._map[91] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 91;
-        DiagnosticCode._map[92] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 92;
-        DiagnosticCode._map[93] = "Exported_variable__0__is_using_inaccessible_module__1_";
-        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 93;
-        DiagnosticCode._map[94] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 94;
-        DiagnosticCode._map[95] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 95;
-        DiagnosticCode._map[96] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 96;
-        DiagnosticCode._map[97] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 97;
-        DiagnosticCode._map[98] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 98;
-        DiagnosticCode._map[99] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 99;
-        DiagnosticCode._map[100] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 100;
-        DiagnosticCode._map[101] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 101;
-        DiagnosticCode._map[102] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 102;
-        DiagnosticCode._map[103] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 103;
-        DiagnosticCode._map[104] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 104;
-        DiagnosticCode._map[105] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 105;
-        DiagnosticCode._map[106] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 106;
-        DiagnosticCode._map[107] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 107;
-        DiagnosticCode._map[108] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 108;
-        DiagnosticCode._map[109] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 109;
-        DiagnosticCode._map[110] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 110;
-        DiagnosticCode._map[111] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 111;
-        DiagnosticCode._map[112] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 112;
-        DiagnosticCode._map[113] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 113;
-        DiagnosticCode._map[114] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
-        DiagnosticCode._map[115] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 115;
-        DiagnosticCode._map[116] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 116;
-        DiagnosticCode._map[117] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 117;
-        DiagnosticCode._map[118] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 118;
-        DiagnosticCode._map[119] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 119;
-        DiagnosticCode._map[120] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 120;
-        DiagnosticCode._map[121] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 121;
-        DiagnosticCode._map[122] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 122;
-        DiagnosticCode._map[123] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
-        DiagnosticCode._map[124] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 124;
-        DiagnosticCode._map[125] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 125;
-        DiagnosticCode._map[126] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 126;
-        DiagnosticCode._map[127] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 127;
-        DiagnosticCode._map[128] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 128;
-        DiagnosticCode._map[129] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 129;
-        DiagnosticCode._map[130] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
-        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 130;
-        DiagnosticCode._map[131] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
-        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 131;
-        DiagnosticCode._map[132] = "Multiple_constructor_implementations_are_not_allowed";
-        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 132;
-        DiagnosticCode._map[133] = "Unable_to_resolve_external_module__0_";
-        DiagnosticCode.Unable_to_resolve_external_module__0_ = 133;
-        DiagnosticCode._map[134] = "Module_cannot_be_aliased_to_a_non_module_type";
-        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 134;
-        DiagnosticCode._map[135] = "A_class_may_only_extend_another_class";
-        DiagnosticCode.A_class_may_only_extend_another_class = 135;
-        DiagnosticCode._map[136] = "A_class_may_only_implement_another_class_or_interface";
-        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 136;
-        DiagnosticCode._map[137] = "An_interface_may_only_extend_another_class_or_interface";
-        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 137;
-        DiagnosticCode._map[138] = "An_interface_cannot_implement_another_type";
-        DiagnosticCode.An_interface_cannot_implement_another_type = 138;
-        DiagnosticCode._map[139] = "Unable_to_resolve_type";
-        DiagnosticCode.Unable_to_resolve_type = 139;
-        DiagnosticCode._map[140] = "Unable_to_resolve_type_of__0_";
-        DiagnosticCode.Unable_to_resolve_type_of__0_ = 140;
-        DiagnosticCode._map[141] = "Unable_to_resolve_type_parameter_constraint";
-        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 141;
-        DiagnosticCode._map[142] = "Type_parameter_constraint_cannot_be_a_primitive_type";
-        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 142;
-        DiagnosticCode._map[143] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 143;
-        DiagnosticCode._map[144] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 144;
-        DiagnosticCode._map[145] = "Invalid__new__expression";
-        DiagnosticCode.Invalid__new__expression = 145;
-        DiagnosticCode._map[146] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
-        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 146;
-        DiagnosticCode._map[147] = "Could_not_select_overload_for__new__expression";
-        DiagnosticCode.Could_not_select_overload_for__new__expression = 147;
-        DiagnosticCode._map[148] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
-        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 148;
-        DiagnosticCode._map[149] = "Could_not_select_overload_for__call__expression";
-        DiagnosticCode.Could_not_select_overload_for__call__expression = 149;
-        DiagnosticCode._map[150] = "Unable_to_invoke_type_with_no_call_signatures";
-        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 150;
-        DiagnosticCode._map[151] = "Calls_to__super__are_only_valid_inside_a_class";
-        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 151;
-        DiagnosticCode._map[152] = "Generic_type__0__requires_1_type_argument_s_";
-        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 152;
-        DiagnosticCode._map[153] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
-        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 153;
-        DiagnosticCode._map[154] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
-        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 154;
-        DiagnosticCode._map[155] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
-        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 155;
-        DiagnosticCode._map[156] = "The_property__0__does_not_exist_on_value_of_type__1__";
-        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 156;
-        DiagnosticCode._map[157] = "Could_not_find_symbol__0_";
-        DiagnosticCode.Could_not_find_symbol__0_ = 157;
-        DiagnosticCode._map[158] = "_get__and__set__accessor_must_have_the_same_type";
-        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 158;
-        DiagnosticCode._map[159] = "_this__cannot_be_referenced_in_current_location";
-        DiagnosticCode._this__cannot_be_referenced_in_current_location = 159;
-        DiagnosticCode._map[160] = "Use_of_deprecated__bool__type__Use__boolean__instead";
-        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 160;
-        DiagnosticCode._map[161] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 161;
-        DiagnosticCode._map[162] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself = 162;
-        DiagnosticCode._map[163] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
-        DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class = 163;
-        DiagnosticCode._map[164] = "_super__cannot_be_referenced_in_non_derived_classes";
-        DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes = 164;
-        DiagnosticCode._map[165] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
-        DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties = 165;
-        DiagnosticCode._map[166] = "Constructors_for_derived_classes_must_contain_a__super__call";
-        DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call = 166;
-        DiagnosticCode._map[167] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
-        DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors = 167;
-        DiagnosticCode._map[168] = "_0_1__is_inaccessible";
-        DiagnosticCode._0_1__is_inaccessible = 168;
-        DiagnosticCode._map[169] = "_this__cannot_be_referenced_within_module_bodies";
-        DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 169;
-        DiagnosticCode._map[170] = "_this__must_only_be_used_inside_a_function_or_script_context";
-        DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 170;
-        DiagnosticCode._map[171] = "Invalid__addition__expression___types_do_not_agree";
-        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 171;
-        DiagnosticCode._map[172] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 172;
-        DiagnosticCode._map[173] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
-        DiagnosticCode._map[174] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 174;
-        DiagnosticCode._map[175] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 175;
-        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 176;
-        DiagnosticCode._map[177] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 177;
-        DiagnosticCode._map[178] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
-        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 178;
-        DiagnosticCode._map[179] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 179;
-        DiagnosticCode._map[180] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
-        DiagnosticCode._map[181] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
-        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 181;
-        DiagnosticCode._map[182] = "Setters_cannot_return_a_value";
-        DiagnosticCode.Setters_cannot_return_a_value = 182;
-        DiagnosticCode._map[183] = "Tried_to_set_variable_type_to_uninitialized_module_type";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 183;
-        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 184;
-        DiagnosticCode._map[185] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 185;
-        DiagnosticCode._map[186] = "Getters_must_return_a_value";
-        DiagnosticCode.Getters_must_return_a_value = 186;
-        DiagnosticCode._map[187] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
-        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 187;
-        DiagnosticCode._map[188] = "Invalid_left_hand_side_of_assignment_expression";
-        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 188;
-        DiagnosticCode._map[189] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 189;
-        DiagnosticCode._map[190] = "Cannot_resolve_return_type_reference";
-        DiagnosticCode.Cannot_resolve_return_type_reference = 190;
-        DiagnosticCode._map[191] = "Constructors_cannot_have_a_return_type_of__void_";
-        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 191;
-        DiagnosticCode._map[192] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
-        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 192;
-        DiagnosticCode._map[193] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
-        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 193;
-        DiagnosticCode._map[194] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
-        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 194;
-        DiagnosticCode._map[195] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 195;
-        DiagnosticCode._map[196] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 196;
-        DiagnosticCode._map[197] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 197;
-        DiagnosticCode._map[198] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
-        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 198;
-        DiagnosticCode._map[199] = "Class__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 199;
-        DiagnosticCode._map[200] = "Interface__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 200;
-        DiagnosticCode._map[201] = "Interface__0__cannot_extend_interface__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 201;
-        DiagnosticCode._map[202] = "Duplicate_overload_signature_for__0_";
-        DiagnosticCode.Duplicate_overload_signature_for__0_ = 202;
-        DiagnosticCode._map[203] = "Duplicate_constructor_overload_signature";
-        DiagnosticCode.Duplicate_constructor_overload_signature = 203;
-        DiagnosticCode._map[204] = "Duplicate_overload_call_signature";
-        DiagnosticCode.Duplicate_overload_call_signature = 204;
-        DiagnosticCode._map[205] = "Duplicate_overload_construct_signature";
-        DiagnosticCode.Duplicate_overload_construct_signature = 205;
-        DiagnosticCode._map[206] = "Overload_signature_is_not_compatible_with_function_definition";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 206;
-        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 207;
-        DiagnosticCode._map[208] = "Overload_signatures_must_all_be_public_or_private";
-        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 208;
-        DiagnosticCode._map[209] = "Overload_signatures_must_all_be_exported_or_local";
-        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 209;
-        DiagnosticCode._map[210] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
-        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 210;
-        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_optional_or_required";
-        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 211;
-        DiagnosticCode._map[212] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
-        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 212;
-        DiagnosticCode._map[213] = "_this__cannot_be_referenced_in_constructor_arguments";
-        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 213;
-        DiagnosticCode._map[214] = "Static_member_cannot_be_accessed_off_an_instance_variable";
-        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 214;
-        DiagnosticCode._map[215] = "Instance_member_cannot_be_accessed_off_a_class";
-        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 215;
-        DiagnosticCode._map[216] = "Untyped_function_calls_may_not_accept_type_arguments";
-        DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments = 216;
-        DiagnosticCode._map[217] = "Non_generic_functions_may_not_accept_type_arguments";
-        DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments = 217;
-        DiagnosticCode._map[218] = "Static_methods_cannot_reference_class_type_parameters";
-        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 218;
-        DiagnosticCode._map[219] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ = 219;
-        DiagnosticCode._map[220] = "Rest_parameters_must_be_array_types";
-        DiagnosticCode.Rest_parameters_must_be_array_types = 220;
-        DiagnosticCode._map[221] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 221;
-        DiagnosticCode._map[222] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 222;
-        DiagnosticCode._map[223] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 223;
-        DiagnosticCode._map[224] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 224;
-        DiagnosticCode._map[225] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 225;
-        DiagnosticCode._map[226] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 226;
-        DiagnosticCode._map[227] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 227;
-        DiagnosticCode._map[228] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 228;
-        DiagnosticCode._map[229] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 229;
-        DiagnosticCode._map[230] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 230;
-        DiagnosticCode._map[231] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 231;
-        DiagnosticCode._map[232] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 232;
-        DiagnosticCode._map[233] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 233;
-        DiagnosticCode._map[234] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 234;
-        DiagnosticCode._map[235] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 235;
-        DiagnosticCode._map[236] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 236;
-        DiagnosticCode._map[237] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 237;
-        DiagnosticCode._map[238] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 238;
-        DiagnosticCode._map[239] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 239;
-        DiagnosticCode._map[240] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 240;
-        DiagnosticCode._map[241] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 241;
-        DiagnosticCode._map[242] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 242;
-        DiagnosticCode._map[243] = "Current_host_does_not_support__w_atch_option";
-        DiagnosticCode.Current_host_does_not_support__w_atch_option = 243;
-        DiagnosticCode._map[244] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 244;
-        DiagnosticCode._map[245] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 245;
-        DiagnosticCode._map[246] = "Could_not_find_file___0_";
-        DiagnosticCode.Could_not_find_file___0_ = 246;
-        DiagnosticCode._map[247] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 247;
-        DiagnosticCode._map[248] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode.A_file_cannot_have_a_reference_itself = 248;
-        DiagnosticCode._map[249] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 249;
-        DiagnosticCode._map[250] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode.Cannot_resolve_imported_file___0_ = 250;
+        DiagnosticCode._map[61] = "Class_name_cannot_be__0_";
+        DiagnosticCode.Class_name_cannot_be__0_ = 61;
+        DiagnosticCode._map[62] = "Interface_name_cannot_be__0_";
+        DiagnosticCode.Interface_name_cannot_be__0_ = 62;
+        DiagnosticCode._map[63] = "Enum_name_cannot_be__0_";
+        DiagnosticCode.Enum_name_cannot_be__0_ = 63;
+        DiagnosticCode._map[64] = "Module_name_cannot_be__0_";
+        DiagnosticCode.Module_name_cannot_be__0_ = 64;
+        DiagnosticCode._map[65] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 65;
+        DiagnosticCode._map[66] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 66;
+        DiagnosticCode._map[67] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 67;
+        DiagnosticCode._map[68] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 68;
+        DiagnosticCode._map[69] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 69;
+        DiagnosticCode._map[70] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 70;
+        DiagnosticCode._map[71] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 71;
+        DiagnosticCode._map[72] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 72;
+        DiagnosticCode._map[73] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 73;
+        DiagnosticCode._map[74] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 74;
+        DiagnosticCode._map[75] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 75;
+        DiagnosticCode._map[76] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 76;
+        DiagnosticCode._map[77] = "Cannot_convert__0__to__1__NL__2";
+        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 77;
+        DiagnosticCode._map[78] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 78;
+        DiagnosticCode._map[79] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 79;
+        DiagnosticCode._map[80] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 80;
+        DiagnosticCode._map[81] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 81;
+        DiagnosticCode._map[82] = "Accessor_cannot_have_type_parameters";
+        DiagnosticCode.Accessor_cannot_have_type_parameters = 82;
+        DiagnosticCode._map[83] = "Exported_class__0__extends_private_class__1_";
+        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 83;
+        DiagnosticCode._map[84] = "Exported_class__0__implements_private_interface__1_";
+        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 84;
+        DiagnosticCode._map[85] = "Exported_interface__0__extends_private_interface__1_";
+        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 85;
+        DiagnosticCode._map[86] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 86;
+        DiagnosticCode._map[87] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 87;
+        DiagnosticCode._map[88] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
+        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 88;
+        DiagnosticCode._map[89] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 89;
+        DiagnosticCode._map[90] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 90;
+        DiagnosticCode._map[91] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 91;
+        DiagnosticCode._map[92] = "Exported_variable__0__has_or_is_using_private_type__1_";
+        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 92;
+        DiagnosticCode._map[93] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 93;
+        DiagnosticCode._map[94] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 94;
+        DiagnosticCode._map[95] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 95;
+        DiagnosticCode._map[96] = "Exported_variable__0__is_using_inaccessible_module__1_";
+        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 96;
+        DiagnosticCode._map[97] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 97;
+        DiagnosticCode._map[98] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 98;
+        DiagnosticCode._map[99] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 99;
+        DiagnosticCode._map[100] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 100;
+        DiagnosticCode._map[101] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 101;
+        DiagnosticCode._map[102] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 102;
+        DiagnosticCode._map[103] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 103;
+        DiagnosticCode._map[104] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 104;
+        DiagnosticCode._map[105] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 105;
+        DiagnosticCode._map[106] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 106;
+        DiagnosticCode._map[107] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 107;
+        DiagnosticCode._map[108] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 108;
+        DiagnosticCode._map[109] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 109;
+        DiagnosticCode._map[110] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 110;
+        DiagnosticCode._map[111] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 111;
+        DiagnosticCode._map[112] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 112;
+        DiagnosticCode._map[113] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 113;
+        DiagnosticCode._map[114] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 114;
+        DiagnosticCode._map[115] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 115;
+        DiagnosticCode._map[116] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 116;
+        DiagnosticCode._map[117] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 117;
+        DiagnosticCode._map[118] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 118;
+        DiagnosticCode._map[119] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 119;
+        DiagnosticCode._map[120] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 120;
+        DiagnosticCode._map[121] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 121;
+        DiagnosticCode._map[122] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 122;
+        DiagnosticCode._map[123] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 123;
+        DiagnosticCode._map[124] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 124;
+        DiagnosticCode._map[125] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 125;
+        DiagnosticCode._map[126] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 126;
+        DiagnosticCode._map[127] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 127;
+        DiagnosticCode._map[128] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 128;
+        DiagnosticCode._map[129] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 129;
+        DiagnosticCode._map[130] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 130;
+        DiagnosticCode._map[131] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 131;
+        DiagnosticCode._map[132] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 132;
+        DiagnosticCode._map[133] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
+        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 133;
+        DiagnosticCode._map[134] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
+        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 134;
+        DiagnosticCode._map[135] = "Multiple_constructor_implementations_are_not_allowed";
+        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 135;
+        DiagnosticCode._map[136] = "Unable_to_resolve_external_module__0_";
+        DiagnosticCode.Unable_to_resolve_external_module__0_ = 136;
+        DiagnosticCode._map[137] = "Module_cannot_be_aliased_to_a_non_module_type";
+        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 137;
+        DiagnosticCode._map[138] = "A_class_may_only_extend_another_class";
+        DiagnosticCode.A_class_may_only_extend_another_class = 138;
+        DiagnosticCode._map[139] = "A_class_may_only_implement_another_class_or_interface";
+        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 139;
+        DiagnosticCode._map[140] = "An_interface_may_only_extend_another_class_or_interface";
+        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 140;
+        DiagnosticCode._map[141] = "An_interface_cannot_implement_another_type";
+        DiagnosticCode.An_interface_cannot_implement_another_type = 141;
+        DiagnosticCode._map[142] = "Unable_to_resolve_type";
+        DiagnosticCode.Unable_to_resolve_type = 142;
+        DiagnosticCode._map[143] = "Unable_to_resolve_type_of__0_";
+        DiagnosticCode.Unable_to_resolve_type_of__0_ = 143;
+        DiagnosticCode._map[144] = "Unable_to_resolve_type_parameter_constraint";
+        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 144;
+        DiagnosticCode._map[145] = "Type_parameter_constraint_cannot_be_a_primitive_type";
+        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 145;
+        DiagnosticCode._map[146] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 146;
+        DiagnosticCode._map[147] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
+        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 147;
+        DiagnosticCode._map[148] = "Invalid__new__expression";
+        DiagnosticCode.Invalid__new__expression = 148;
+        DiagnosticCode._map[149] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
+        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 149;
+        DiagnosticCode._map[150] = "Could_not_select_overload_for__new__expression";
+        DiagnosticCode.Could_not_select_overload_for__new__expression = 150;
+        DiagnosticCode._map[151] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
+        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 151;
+        DiagnosticCode._map[152] = "Could_not_select_overload_for__call__expression";
+        DiagnosticCode.Could_not_select_overload_for__call__expression = 152;
+        DiagnosticCode._map[153] = "Unable_to_invoke_type_with_no_call_signatures";
+        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 153;
+        DiagnosticCode._map[154] = "Calls_to__super__are_only_valid_inside_a_class";
+        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 154;
+        DiagnosticCode._map[155] = "Generic_type__0__requires_1_type_argument_s_";
+        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 155;
+        DiagnosticCode._map[156] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
+        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 156;
+        DiagnosticCode._map[157] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
+        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 157;
+        DiagnosticCode._map[158] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
+        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 158;
+        DiagnosticCode._map[159] = "The_property__0__does_not_exist_on_value_of_type__1__";
+        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 159;
+        DiagnosticCode._map[160] = "Could_not_find_symbol__0_";
+        DiagnosticCode.Could_not_find_symbol__0_ = 160;
+        DiagnosticCode._map[161] = "_get__and__set__accessor_must_have_the_same_type";
+        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 161;
+        DiagnosticCode._map[162] = "_this__cannot_be_referenced_in_current_location";
+        DiagnosticCode._this__cannot_be_referenced_in_current_location = 162;
+        DiagnosticCode._map[163] = "Use_of_deprecated__bool__type__Use__boolean__instead";
+        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 163;
+        DiagnosticCode._map[164] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 164;
+        DiagnosticCode._map[165] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself = 165;
+        DiagnosticCode._map[166] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
+        DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class = 166;
+        DiagnosticCode._map[167] = "_super__cannot_be_referenced_in_non_derived_classes";
+        DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes = 167;
+        DiagnosticCode._map[168] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
+        DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties = 168;
+        DiagnosticCode._map[169] = "Constructors_for_derived_classes_must_contain_a__super__call";
+        DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call = 169;
+        DiagnosticCode._map[170] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
+        DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors = 170;
+        DiagnosticCode._map[171] = "_0_1__is_inaccessible";
+        DiagnosticCode._0_1__is_inaccessible = 171;
+        DiagnosticCode._map[172] = "_this__cannot_be_referenced_within_module_bodies";
+        DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 172;
+        DiagnosticCode._map[173] = "_this__must_only_be_used_inside_a_function_or_script_context";
+        DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 173;
+        DiagnosticCode._map[174] = "Invalid__addition__expression___types_do_not_agree";
+        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 174;
+        DiagnosticCode._map[175] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 175;
+        DiagnosticCode._map[176] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 176;
+        DiagnosticCode._map[177] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 177;
+        DiagnosticCode._map[178] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 178;
+        DiagnosticCode._map[179] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
+        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 179;
+        DiagnosticCode._map[180] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 180;
+        DiagnosticCode._map[181] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
+        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 181;
+        DiagnosticCode._map[182] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 182;
+        DiagnosticCode._map[183] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 183;
+        DiagnosticCode._map[184] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
+        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 184;
+        DiagnosticCode._map[185] = "Setters_cannot_return_a_value";
+        DiagnosticCode.Setters_cannot_return_a_value = 185;
+        DiagnosticCode._map[186] = "Tried_to_set_variable_type_to_uninitialized_module_type";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 186;
+        DiagnosticCode._map[187] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
+        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 187;
+        DiagnosticCode._map[188] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 188;
+        DiagnosticCode._map[189] = "Getters_must_return_a_value";
+        DiagnosticCode.Getters_must_return_a_value = 189;
+        DiagnosticCode._map[190] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
+        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 190;
+        DiagnosticCode._map[191] = "Invalid_left_hand_side_of_assignment_expression";
+        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 191;
+        DiagnosticCode._map[192] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 192;
+        DiagnosticCode._map[193] = "Cannot_resolve_return_type_reference";
+        DiagnosticCode.Cannot_resolve_return_type_reference = 193;
+        DiagnosticCode._map[194] = "Constructors_cannot_have_a_return_type_of__void_";
+        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 194;
+        DiagnosticCode._map[195] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
+        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 195;
+        DiagnosticCode._map[196] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
+        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 196;
+        DiagnosticCode._map[197] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
+        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 197;
+        DiagnosticCode._map[198] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 198;
+        DiagnosticCode._map[199] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 199;
+        DiagnosticCode._map[200] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 200;
+        DiagnosticCode._map[201] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
+        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 201;
+        DiagnosticCode._map[202] = "Class__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 202;
+        DiagnosticCode._map[203] = "Interface__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 203;
+        DiagnosticCode._map[204] = "Interface__0__cannot_extend_interface__1__NL__2";
+        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 204;
+        DiagnosticCode._map[205] = "Duplicate_overload_signature_for__0_";
+        DiagnosticCode.Duplicate_overload_signature_for__0_ = 205;
+        DiagnosticCode._map[206] = "Duplicate_constructor_overload_signature";
+        DiagnosticCode.Duplicate_constructor_overload_signature = 206;
+        DiagnosticCode._map[207] = "Duplicate_overload_call_signature";
+        DiagnosticCode.Duplicate_overload_call_signature = 207;
+        DiagnosticCode._map[208] = "Duplicate_overload_construct_signature";
+        DiagnosticCode.Duplicate_overload_construct_signature = 208;
+        DiagnosticCode._map[209] = "Overload_signature_is_not_compatible_with_function_definition";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 209;
+        DiagnosticCode._map[210] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
+        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 210;
+        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_public_or_private";
+        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 211;
+        DiagnosticCode._map[212] = "Overload_signatures_must_all_be_exported_or_local";
+        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 212;
+        DiagnosticCode._map[213] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
+        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 213;
+        DiagnosticCode._map[214] = "Overload_signatures_must_all_be_optional_or_required";
+        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 214;
+        DiagnosticCode._map[215] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
+        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 215;
+        DiagnosticCode._map[216] = "_this__cannot_be_referenced_in_constructor_arguments";
+        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 216;
+        DiagnosticCode._map[217] = "Static_member_cannot_be_accessed_off_an_instance_variable";
+        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 217;
+        DiagnosticCode._map[218] = "Instance_member_cannot_be_accessed_off_a_class";
+        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 218;
+        DiagnosticCode._map[219] = "Untyped_function_calls_may_not_accept_type_arguments";
+        DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments = 219;
+        DiagnosticCode._map[220] = "Non_generic_functions_may_not_accept_type_arguments";
+        DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments = 220;
+        DiagnosticCode._map[221] = "A_generic_type_may_not_reference_itself_with_its_own_type_parameters";
+        DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters = 221;
+        DiagnosticCode._map[222] = "Static_methods_cannot_reference_class_type_parameters";
+        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 222;
+        DiagnosticCode._map[223] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ = 223;
+        DiagnosticCode._map[224] = "Rest_parameters_must_be_array_types";
+        DiagnosticCode.Rest_parameters_must_be_array_types = 224;
+        DiagnosticCode._map[225] = "Overload_signature_implementation_cannot_use_specialized_type";
+        DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type = 225;
+        DiagnosticCode._map[226] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 226;
+        DiagnosticCode._map[227] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 227;
+        DiagnosticCode._map[228] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 228;
+        DiagnosticCode._map[229] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 229;
+        DiagnosticCode._map[230] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 230;
+        DiagnosticCode._map[231] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 231;
+        DiagnosticCode._map[232] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 232;
+        DiagnosticCode._map[233] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 233;
+        DiagnosticCode._map[234] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 234;
+        DiagnosticCode._map[235] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 235;
+        DiagnosticCode._map[236] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 236;
+        DiagnosticCode._map[237] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 237;
+        DiagnosticCode._map[238] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 238;
+        DiagnosticCode._map[239] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 239;
+        DiagnosticCode._map[240] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 240;
+        DiagnosticCode._map[241] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 241;
+        DiagnosticCode._map[242] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 242;
+        DiagnosticCode._map[243] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 243;
+        DiagnosticCode._map[244] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 244;
+        DiagnosticCode._map[245] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 245;
+        DiagnosticCode._map[246] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 246;
+        DiagnosticCode._map[247] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 247;
+        DiagnosticCode._map[248] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode.Current_host_does_not_support__w_atch_option = 248;
+        DiagnosticCode._map[249] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 249;
+        DiagnosticCode._map[250] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 250;
+        DiagnosticCode._map[251] = "Could_not_find_file___0_";
+        DiagnosticCode.Could_not_find_file___0_ = 251;
+        DiagnosticCode._map[252] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 252;
+        DiagnosticCode._map[253] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode.A_file_cannot_have_a_reference_itself = 253;
+        DiagnosticCode._map[254] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 254;
+        DiagnosticCode._map[255] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode.Cannot_resolve_imported_file___0_ = 255;
+        DiagnosticCode._map[256] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
+        DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files = 256;
+        DiagnosticCode._map[257] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
+        DiagnosticCode.Cannot_compile_dynamic_modules_when_emitting_into_single_file = 257;
+        DiagnosticCode._map[258] = "Emit_Error__0";
+        DiagnosticCode.Emit_Error__0 = 258;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -883,22 +901,22 @@ var TypeScript;
 (function (TypeScript) {
     TypeScript.diagnosticMessages = {
         error_TS_0__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "error TS{0}: {1}",
             code: 0
         },
         warning_TS_0__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "warning TS{0}: {1}",
             code: 1
         },
         _0__NL__1_TB__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "{0}{NL}{{1}TB}{2}",
             code: 21
         },
         _0_TB__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "{{0}TB}{1}",
             code: 22
         },
@@ -1186,6 +1204,26 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Accessors are only when targeting EcmaScript5 and higher.",
             code: 1056
+        },
+        Class_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Class name cannot be '{0}'.",
+            code: 1057
+        },
+        Interface_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Interface name cannot be '{0}'.",
+            code: 1058
+        },
+        Enum_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Enum name cannot be '{0}'.",
+            code: 1059
+        },
+        Module_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Module name cannot be '{0}'.",
+            code: 1060
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */,
@@ -1739,7 +1777,7 @@ var TypeScript;
         },
         Invalid__addition__expression___types_do_not_agree: {
             category: 1 /* Error */,
-            message: "Invalid '+' expression - types do not agree.",
+            message: "Invalid '+' expression - types not known to support the addition operator.",
             code: 2111
         },
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
@@ -1974,7 +2012,7 @@ var TypeScript;
         },
         A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
             category: 1 /* Error */,
-            message: "A generic type may not reference itself with its own type parameters",
+            message: "A generic type may not reference itself with its own type parameters.",
             code: 2160
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
@@ -1984,116 +2022,121 @@ var TypeScript;
         },
         Rest_parameters_must_be_array_types: {
             category: 1 /* Error */,
-            message: "Rest parameters must be array types",
+            message: "Rest parameters must be array types.",
             code: 2162
         },
+        Overload_signature_implementation_cannot_use_specialized_type: {
+            category: 1 /* Error */,
+            message: "Overload signature implementation cannot use specialized type.",
+            code: 2163
+        },
         Type__0__is_missing_property__1__from_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' is missing property '{1}' from type '{2}'.",
             code: 4000
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
             code: 4001
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
             code: 4002
         },
         Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.",
             code: 4003
         },
         Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.",
             code: 4004
         },
         Types__0__and__1__define_property__2__as_private: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types '{0}' and '{1}' define property '{2}' as private.",
             code: 4005
         },
         Call_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible.",
             code: 4006
         },
         Call_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4007
         },
         Type__0__requires_a_call_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' requires a call signature, but type '{1}' lacks one.",
             code: 4008
         },
         Construct_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible.",
             code: 4009
         },
         Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 40010
         },
         Type__0__requires_a_construct_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' requires a construct signature, but type '{1}' lacks one.",
             code: 4011
         },
         Index_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible.",
             code: 4012
         },
         Index_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4013
         },
         Call_signature_expects__0__or_fewer_parameters: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signature expects {0} or fewer parameters.",
             code: 4014
         },
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
             code: 4015
         },
         Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4016
         },
         Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4017
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.",
             code: 4018
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.",
             code: 4019
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.",
             code: 4020
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
@@ -2136,6 +2179,21 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Cannot resolve imported file: '{0}'.",
             code: 5008
+        },
+        Cannot_find_the_common_subdirectory_path_for_the_input_files: {
+            category: 1 /* Error */,
+            message: "Cannot find the common subdirectory path for the input files",
+            code: 5009
+        },
+        Cannot_compile_dynamic_modules_when_emitting_into_single_file: {
+            category: 1 /* Error */,
+            message: "Cannot compile dynamic modules when emitting into single file",
+            code: 5010
+        },
+        Emit_Error__0: {
+            category: 1 /* Error */,
+            message: "Emit Error: {0}.",
+            code: 5011
         }
     };
 
@@ -2557,11 +2615,12 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Diagnostic = (function () {
-        function Diagnostic(start, length, fileName, message) {
+        function Diagnostic(fileName, start, length, diagnosticCode, arguments) {
+            this._diagnosticCode = diagnosticCode;
+            this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
-            this._start = start;
+            this._originalStart = this._start = start;
             this._length = length;
-            this._message = message;
         }
         Diagnostic.prototype.fileName = function () {
             return this._fileName;
@@ -2575,12 +2634,115 @@ var TypeScript;
             return this._length;
         };
 
+        Diagnostic.prototype.diagnosticCode = function () {
+            return this._diagnosticCode;
+        };
+
+        Diagnostic.prototype.arguments = function () {
+            return this._arguments;
+        };
+
+        Diagnostic.prototype.text = function () {
+            return TypeScript.getDiagnosticText(this._diagnosticCode, this._arguments);
+        };
+
         Diagnostic.prototype.message = function () {
-            return this._message;
+            return TypeScript.getDiagnosticMessage(this._diagnosticCode, this._arguments);
+        };
+
+        Diagnostic.prototype.adjustOffset = function (pos) {
+            this._start = this._originalStart + pos;
+        };
+
+        Diagnostic.prototype.additionalLocations = function () {
+            return [];
+        };
+
+        Diagnostic.equals = function (diagnostic1, diagnostic2) {
+            return diagnostic1._fileName === diagnostic2._fileName && diagnostic1._start === diagnostic2._start && diagnostic1._length === diagnostic2._length && diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && TypeScript.ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
+                return v1 === v2;
+            });
         };
         return Diagnostic;
     })();
     TypeScript.Diagnostic = Diagnostic;
+
+    function getLargestIndex(diagnostic) {
+        var largest = -1;
+        var stringComponents = diagnostic.split("_");
+
+        for (var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
+            if (!isNaN(val) && val > largest) {
+                largest = val;
+            }
+        }
+
+        return largest;
+    }
+
+    function getDiagnosticInfoFromCode(diagnosticCode) {
+        var diagnosticName = (TypeScript.DiagnosticCode)._map[diagnosticCode];
+        return TypeScript.diagnosticMessages[diagnosticName];
+    }
+    TypeScript.getDiagnosticInfoFromCode = getDiagnosticInfoFromCode;
+
+    function getDiagnosticText(diagnosticCode, args) {
+        var diagnosticName = (TypeScript.DiagnosticCode)._map[diagnosticCode];
+
+        var diagnostic = TypeScript.diagnosticMessages[diagnosticName];
+
+        var actualCount = args ? args.length : 0;
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        } else {
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
+
+            if (expectedCount !== actualCount) {
+                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
+            }
+        }
+
+        var diagnosticMessageText = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
+            var tabChar = "\t";
+            var result = tabChar;
+            if (num && args[num]) {
+                for (var i = 1; i < args[num]; i++) {
+                    result += tabChar;
+                }
+            }
+
+            return result;
+        });
+
+        diagnosticMessageText = diagnosticMessageText.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined' ? args[num] : match;
+        });
+
+        diagnosticMessageText = diagnosticMessageText.replace(/{(NL)}/g, function (match) {
+            return "\r\n";
+        });
+
+        return diagnosticMessageText;
+    }
+    TypeScript.getDiagnosticText = getDiagnosticText;
+
+    function getDiagnosticMessage(diagnosticCode, args) {
+        var diagnostic = getDiagnosticInfoFromCode(diagnosticCode);
+        var diagnosticMessageText = getDiagnosticText(diagnosticCode, args);
+
+        var message;
+        if (diagnostic.category === 1 /* Error */) {
+            message = getDiagnosticText(0 /* error_TS_0__1 */, [diagnostic.code, diagnosticMessageText]);
+        } else if (diagnostic.category === 0 /* Warning */) {
+            message = getDiagnosticText(1 /* warning_TS_0__1 */, [diagnostic.code, diagnosticMessageText]);
+        } else {
+            message = diagnosticMessageText;
+        }
+
+        return message;
+    }
+    TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
@@ -4093,11 +4255,14 @@ var JSON2 = {};
         switch (typeof value) {
             case 'string':
                 return quote(value);
+
             case 'number':
                 return isFinite(value) ? String(value) : 'null';
+
             case 'boolean':
             case 'null':
                 return String(value);
+
             case 'object':
                 if (!value) {
                     return 'null';
@@ -4203,6 +4368,7 @@ var TypeScript;
                 case 8203 /* zeroWidthSpace */:
                 case 8239 /* narrowNoBreakSpace */:
                 case 12288 /* ideographicSpace */:
+
                 case 9 /* tab */:
                 case 11 /* verticalTab */:
                 case 12 /* formFeed */:
@@ -4242,97 +4408,6 @@ var TypeScript;
         SyntaxConstants.NodeFullWidthShift = 3;
     })(TypeScript.SyntaxConstants || (TypeScript.SyntaxConstants = {}));
     var SyntaxConstants = TypeScript.SyntaxConstants;
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    var Diagnostic1 = (function () {
-        function Diagnostic1(diagnosticCode, arguments) {
-            this._diagnosticCode = diagnosticCode;
-            this._arguments = (arguments && arguments.length > 0) ? arguments : null;
-        }
-        Diagnostic1.prototype.diagnosticCode = function () {
-            return this._diagnosticCode;
-        };
-
-        Diagnostic1.prototype.additionalLocations = function () {
-            return [];
-        };
-
-        Diagnostic1.prototype.message = function () {
-            return getDiagnosticMessage(this._diagnosticCode, this._arguments);
-        };
-
-        Diagnostic1.equals = function (diagnostic1, diagnostic2) {
-            return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && TypeScript.ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
-                return v1 === v2;
-            });
-        };
-        return Diagnostic1;
-    })();
-    TypeScript.Diagnostic1 = Diagnostic1;
-
-    function getLargestIndex(diagnostic) {
-        var largest = -1;
-        var stringComponents = diagnostic.split("_");
-
-        for (var i = 0; i < stringComponents.length; i++) {
-            var val = parseInt(stringComponents[i]);
-            if (!isNaN(val) && val > largest) {
-                largest = val;
-            }
-        }
-
-        return largest;
-    }
-
-    function getDiagnosticMessage(diagnosticType, args) {
-        var diagnosticName = (TypeScript.DiagnosticCode)._map[diagnosticType];
-
-        var diagnostic = TypeScript.diagnosticMessages[diagnosticName];
-
-        var actualCount = args ? args.length : 0;
-        if (!diagnostic) {
-            throw new Error("Invalid diagnostic");
-        } else {
-            var expectedCount = 1 + getLargestIndex(diagnosticName);
-
-            if (expectedCount !== actualCount) {
-                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
-            }
-        }
-
-        var diagnosticMessage = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
-            var tabChar = "\t";
-            var result = tabChar;
-            if (num && args[num]) {
-                for (var i = 1; i < args[num]; i++) {
-                    result += tabChar;
-                }
-            }
-
-            return result;
-        });
-
-        diagnosticMessage = diagnosticMessage.replace(/{(\d+)}/g, function (match, num) {
-            return typeof args[num] !== 'undefined' ? args[num] : match;
-        });
-
-        diagnosticMessage = diagnosticMessage.replace(/{(NL)}/g, function (match) {
-            return "\r\n";
-        });
-
-        var message;
-        if (diagnostic.category === 1 /* Error */) {
-            message = getDiagnosticMessage(0 /* error_TS_0__1 */, [diagnostic.code, diagnosticMessage]);
-        } else if (diagnostic.category === 0 /* Warning */) {
-            message = getDiagnosticMessage(1 /* warning_TS_0__1 */, [diagnostic.code, diagnosticMessage]);
-        } else {
-            message = diagnosticMessage;
-        }
-
-        return message;
-    }
-    TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
 var FormattingOptions = (function () {
     function FormattingOptions(useTabs, spacesPerTab, indentSpaces, newLineCharacter) {
@@ -4895,12 +4970,14 @@ var TypeScript;
                         case 8203 /* zeroWidthSpace */:
                         case 8239 /* narrowNoBreakSpace */:
                         case 12288 /* ideographicSpace */:
+
                         case 9 /* tab */:
                         case 11 /* verticalTab */:
                         case 12 /* formFeed */:
                         case 65279 /* byteOrderMark */:
                             trivia.push(this.scanWhitespaceTrivia());
                             continue;
+
                         case 47 /* slash */:
                             var ch2 = this.slidingWindow.peekItemN(1);
                             if (ch2 === 47 /* slash */) {
@@ -4914,6 +4991,7 @@ var TypeScript;
                             }
 
                             throw TypeScript.Errors.invalidOperation();
+
                         case 13 /* carriageReturn */:
                         case 10 /* lineFeed */:
                         case 8233 /* paragraphSeparator */:
@@ -4925,6 +5003,7 @@ var TypeScript;
                             }
 
                             break;
+
                         default:
                             throw TypeScript.Errors.invalidOperation();
                     }
@@ -4958,6 +5037,7 @@ var TypeScript;
                     case 8203 /* zeroWidthSpace */:
                     case 8239 /* narrowNoBreakSpace */:
                     case 12288 /* ideographicSpace */:
+
                     case 9 /* tab */:
                     case 11 /* verticalTab */:
                     case 12 /* formFeed */:
@@ -4965,6 +5045,7 @@ var TypeScript;
                         this.slidingWindow.moveToNextItem();
                         width++;
                         continue;
+
                     case 47 /* slash */:
                         var ch2 = this.slidingWindow.peekItemN(1);
                         if (ch2 === 47 /* slash */) {
@@ -4980,6 +5061,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 13 /* carriageReturn */:
                     case 10 /* lineFeed */:
                     case 8233 /* paragraphSeparator */:
@@ -5034,6 +5116,7 @@ var TypeScript;
                     case 8203 /* zeroWidthSpace */:
                     case 8239 /* narrowNoBreakSpace */:
                     case 12288 /* ideographicSpace */:
+
                     case 9 /* tab */:
                     case 11 /* verticalTab */:
                     case 12 /* formFeed */:
@@ -5146,52 +5229,76 @@ var TypeScript;
                 case 34 /* doubleQuote */:
                 case 39 /* singleQuote */:
                     return this.scanStringLiteral(diagnostics);
+
                 case 47 /* slash */:
                     return this.scanSlashToken(allowRegularExpression);
+
                 case 46 /* dot */:
                     return this.scanDotToken();
+
                 case 45 /* minus */:
                     return this.scanMinusToken();
+
                 case 33 /* exclamation */:
                     return this.scanExclamationToken();
+
                 case 61 /* equals */:
                     return this.scanEqualsToken();
+
                 case 124 /* bar */:
                     return this.scanBarToken();
+
                 case 42 /* asterisk */:
                     return this.scanAsteriskToken();
+
                 case 43 /* plus */:
                     return this.scanPlusToken();
+
                 case 37 /* percent */:
                     return this.scanPercentToken();
+
                 case 38 /* ampersand */:
                     return this.scanAmpersandToken();
+
                 case 94 /* caret */:
                     return this.scanCaretToken();
+
                 case 60 /* lessThan */:
                     return this.scanLessThanToken();
+
                 case 62 /* greaterThan */:
                     return this.advanceAndSetTokenKind(81 /* GreaterThanToken */);
+
                 case 44 /* comma */:
                     return this.advanceAndSetTokenKind(79 /* CommaToken */);
+
                 case 58 /* colon */:
                     return this.advanceAndSetTokenKind(106 /* ColonToken */);
+
                 case 59 /* semicolon */:
                     return this.advanceAndSetTokenKind(78 /* SemicolonToken */);
+
                 case 126 /* tilde */:
                     return this.advanceAndSetTokenKind(102 /* TildeToken */);
+
                 case 40 /* openParen */:
                     return this.advanceAndSetTokenKind(72 /* OpenParenToken */);
+
                 case 41 /* closeParen */:
                     return this.advanceAndSetTokenKind(73 /* CloseParenToken */);
+
                 case 123 /* openBrace */:
                     return this.advanceAndSetTokenKind(70 /* OpenBraceToken */);
+
                 case 125 /* closeBrace */:
                     return this.advanceAndSetTokenKind(71 /* CloseBraceToken */);
+
                 case 91 /* openBracket */:
                     return this.advanceAndSetTokenKind(74 /* OpenBracketToken */);
+
                 case 93 /* closeBracket */:
                     return this.advanceAndSetTokenKind(75 /* CloseBracketToken */);
+
                 case 63 /* question */:
                     return this.advanceAndSetTokenKind(105 /* QuestionToken */);
             }
@@ -5528,18 +5635,22 @@ var TypeScript;
                         case 92 /* backslash */:
                             inEscape = true;
                             continue;
+
                         case 91 /* openBracket */:
                             inCharacterClass = true;
                             continue;
+
                         case 93 /* closeBracket */:
                             inCharacterClass = false;
                             continue;
+
                         case 47 /* slash */:
                             if (inCharacterClass) {
                                 continue;
                             }
 
                             break;
+
                         default:
                             continue;
                     }
@@ -5606,11 +5717,13 @@ var TypeScript;
                         this.slidingWindow.rewindToPinnedIndex(rewindPoint);
                         var value = this.scanUnicodeOrHexEscape(diagnostics);
                         return;
+
                     case 13 /* carriageReturn */:
                         if (this.currentCharCode() === 10 /* lineFeed */) {
                             this.slidingWindow.moveToNextItem();
                         }
                         return;
+
                     default:
                         return;
                 }
@@ -5799,9 +5912,11 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 3:
                     switch (array[startIndex]) {
                         case 102 /* f */:
@@ -5823,6 +5938,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 4:
                     switch (array[startIndex]) {
                         case 99 /* c */:
@@ -5836,6 +5952,7 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 110 /* n */:
                             return (array[startIndex + 1] === 117 /* u */ && array[startIndex + 2] === 108 /* l */ && array[startIndex + 3] === 108 /* l */) ? 32 /* NullKeyword */ : 11 /* IdentifierName */;
                         case 116 /* t */:
@@ -5847,6 +5964,7 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 118 /* v */:
                             return (array[startIndex + 1] === 111 /* o */ && array[startIndex + 2] === 105 /* i */ && array[startIndex + 3] === 100 /* d */) ? 41 /* VoidKeyword */ : 11 /* IdentifierName */;
                         case 119 /* w */:
@@ -5856,6 +5974,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 5:
                     switch (array[startIndex]) {
                         case 98 /* b */:
@@ -5871,6 +5990,7 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 102 /* f */:
                             return (array[startIndex + 1] === 97 /* a */ && array[startIndex + 2] === 108 /* l */ && array[startIndex + 3] === 115 /* s */ && array[startIndex + 4] === 101 /* e */) ? 24 /* FalseKeyword */ : 11 /* IdentifierName */;
                         case 116 /* t */:
@@ -5884,6 +6004,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 6:
                     switch (array[startIndex]) {
                         case 100 /* d */:
@@ -5903,9 +6024,11 @@ var TypeScript;
                                         default:
                                             return 11 /* IdentifierName */;
                                     }
+
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 116 /* t */:
                             return (array[startIndex + 1] === 121 /* y */ && array[startIndex + 2] === 112 /* p */ && array[startIndex + 3] === 101 /* e */ && array[startIndex + 4] === 111 /* o */ && array[startIndex + 5] === 102 /* f */) ? 39 /* TypeOfKeyword */ : 11 /* IdentifierName */;
                         case 101 /* e */:
@@ -5921,6 +6044,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 7:
                     switch (array[startIndex]) {
                         case 100 /* d */:
@@ -5934,9 +6058,11 @@ var TypeScript;
                                         default:
                                             return 11 /* IdentifierName */;
                                     }
+
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 102 /* f */:
                             return (array[startIndex + 1] === 105 /* i */ && array[startIndex + 2] === 110 /* n */ && array[startIndex + 3] === 97 /* a */ && array[startIndex + 4] === 108 /* l */ && array[startIndex + 5] === 108 /* l */ && array[startIndex + 6] === 121 /* y */) ? 25 /* FinallyKeyword */ : 11 /* IdentifierName */;
                         case 101 /* e */:
@@ -5950,11 +6076,13 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         case 98 /* b */:
                             return (array[startIndex + 1] === 111 /* o */ && array[startIndex + 2] === 111 /* o */ && array[startIndex + 3] === 108 /* l */ && array[startIndex + 4] === 101 /* e */ && array[startIndex + 5] === 97 /* a */ && array[startIndex + 6] === 110 /* n */) ? 61 /* BooleanKeyword */ : 11 /* IdentifierName */;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 8:
                     switch (array[startIndex]) {
                         case 99 /* c */:
@@ -5966,6 +6094,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 9:
                     switch (array[startIndex]) {
                         case 105 /* i */:
@@ -5975,6 +6104,7 @@ var TypeScript;
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 10:
                     switch (array[startIndex]) {
                         case 105 /* i */:
@@ -5986,9 +6116,11 @@ var TypeScript;
                                 default:
                                     return 11 /* IdentifierName */;
                             }
+
                         default:
                             return 11 /* IdentifierName */;
                     }
+
                 case 11:
                     return (array[startIndex] === 99 /* c */ && array[startIndex + 1] === 111 /* o */ && array[startIndex + 2] === 110 /* n */ && array[startIndex + 3] === 115 /* s */ && array[startIndex + 4] === 116 /* t */ && array[startIndex + 5] === 114 /* r */ && array[startIndex + 6] === 117 /* u */ && array[startIndex + 7] === 99 /* c */ && array[startIndex + 8] === 116 /* t */ && array[startIndex + 9] === 111 /* o */ && array[startIndex + 10] === 114 /* r */) ? 63 /* ConstructorKeyword */ : 11 /* IdentifierName */;
                 default:
@@ -7057,48 +7189,14 @@ var TypeScript;
 (function (TypeScript) {
     var SyntaxDiagnostic = (function (_super) {
         __extends(SyntaxDiagnostic, _super);
-        function SyntaxDiagnostic(fileName, start, length, code, args) {
-            _super.call(this, code, args);
-
-            if (length < 0) {
-                throw TypeScript.Errors.argumentOutOfRange("width");
-            }
-
-            this._fileName = fileName;
-            this._start = start;
-            this._length = length;
+        function SyntaxDiagnostic() {
+            _super.apply(this, arguments);
         }
-        SyntaxDiagnostic.prototype.toJSON = function (key) {
-            var result = {};
-            result._position = this._start;
-            result._width = this._length;
-            result._diagnosticCode = (TypeScript.DiagnosticCode)._map[this.diagnosticCode()];
-
-            var arguments = (this)._arguments;
-            if (arguments && arguments.length > 0) {
-                result._arguments = arguments;
-            }
-
-            return result;
-        };
-
-        SyntaxDiagnostic.prototype.fileName = function () {
-            return this._fileName;
-        };
-
-        SyntaxDiagnostic.prototype.start = function () {
-            return this._start;
-        };
-
-        SyntaxDiagnostic.prototype.length = function () {
-            return this._length;
-        };
-
         SyntaxDiagnostic.equals = function (diagnostic1, diagnostic2) {
-            return diagnostic1._start === diagnostic2._start && diagnostic1._length === diagnostic2._length && TypeScript.Diagnostic1.equals(diagnostic1, diagnostic2);
+            return TypeScript.Diagnostic.equals(diagnostic1, diagnostic2);
         };
         return SyntaxDiagnostic;
-    })(TypeScript.Diagnostic1);
+    })(TypeScript.Diagnostic);
     TypeScript.SyntaxDiagnostic = SyntaxDiagnostic;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
@@ -8346,6 +8444,7 @@ var TypeScript;
                     return 166 /* PreIncrementExpression */;
                 case 94 /* MinusMinusToken */:
                     return 167 /* PreDecrementExpression */;
+
                 default:
                     return 0 /* None */;
             }
@@ -8368,76 +8467,112 @@ var TypeScript;
             switch (tokenKind) {
                 case 91 /* AsteriskToken */:
                     return 203 /* MultiplyExpression */;
+
                 case 118 /* SlashToken */:
                     return 204 /* DivideExpression */;
+
                 case 92 /* PercentToken */:
                     return 205 /* ModuloExpression */;
+
                 case 89 /* PlusToken */:
                     return 206 /* AddExpression */;
+
                 case 90 /* MinusToken */:
                     return 207 /* SubtractExpression */;
+
                 case 95 /* LessThanLessThanToken */:
                     return 200 /* LeftShiftExpression */;
+
                 case 96 /* GreaterThanGreaterThanToken */:
                     return 201 /* SignedRightShiftExpression */;
+
                 case 97 /* GreaterThanGreaterThanGreaterThanToken */:
                     return 202 /* UnsignedRightShiftExpression */;
+
                 case 80 /* LessThanToken */:
                     return 194 /* LessThanExpression */;
+
                 case 81 /* GreaterThanToken */:
                     return 195 /* GreaterThanExpression */;
+
                 case 82 /* LessThanEqualsToken */:
                     return 196 /* LessThanOrEqualExpression */;
+
                 case 83 /* GreaterThanEqualsToken */:
                     return 197 /* GreaterThanOrEqualExpression */;
+
                 case 30 /* InstanceOfKeyword */:
                     return 198 /* InstanceOfExpression */;
+
                 case 29 /* InKeyword */:
                     return 199 /* InExpression */;
+
                 case 84 /* EqualsEqualsToken */:
                     return 190 /* EqualsWithTypeConversionExpression */;
+
                 case 86 /* ExclamationEqualsToken */:
                     return 191 /* NotEqualsWithTypeConversionExpression */;
+
                 case 87 /* EqualsEqualsEqualsToken */:
                     return 192 /* EqualsExpression */;
+
                 case 88 /* ExclamationEqualsEqualsToken */:
                     return 193 /* NotEqualsExpression */;
+
                 case 98 /* AmpersandToken */:
                     return 189 /* BitwiseAndExpression */;
+
                 case 100 /* CaretToken */:
                     return 188 /* BitwiseExclusiveOrExpression */;
+
                 case 99 /* BarToken */:
                     return 187 /* BitwiseOrExpression */;
+
                 case 103 /* AmpersandAmpersandToken */:
                     return 186 /* LogicalAndExpression */;
+
                 case 104 /* BarBarToken */:
                     return 185 /* LogicalOrExpression */;
+
                 case 116 /* BarEqualsToken */:
                     return 180 /* OrAssignmentExpression */;
+
                 case 115 /* AmpersandEqualsToken */:
                     return 178 /* AndAssignmentExpression */;
+
                 case 117 /* CaretEqualsToken */:
                     return 179 /* ExclusiveOrAssignmentExpression */;
+
                 case 112 /* LessThanLessThanEqualsToken */:
                     return 181 /* LeftShiftAssignmentExpression */;
+
                 case 113 /* GreaterThanGreaterThanEqualsToken */:
                     return 182 /* SignedRightShiftAssignmentExpression */;
+
                 case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
                     return 183 /* UnsignedRightShiftAssignmentExpression */;
+
                 case 108 /* PlusEqualsToken */:
                     return 173 /* AddAssignmentExpression */;
+
                 case 109 /* MinusEqualsToken */:
                     return 174 /* SubtractAssignmentExpression */;
+
                 case 110 /* AsteriskEqualsToken */:
                     return 175 /* MultiplyAssignmentExpression */;
+
                 case 119 /* SlashEqualsToken */:
                     return 176 /* DivideAssignmentExpression */;
+
                 case 111 /* PercentEqualsToken */:
                     return 177 /* ModuloAssignmentExpression */;
+
                 case 107 /* EqualsToken */:
                     return 172 /* AssignmentExpression */;
+
                 case 79 /* CommaToken */:
                     return 171 /* CommaExpression */;
+
                 default:
                     return 0 /* None */;
             }
@@ -17465,17 +17600,21 @@ var TypeScript;
                     case 6 /* MultiLineCommentTrivia */:
                         this.indentMultiLineComment(trivia, indentThisTrivia, result);
                         continue;
+
                     case 7 /* SingleLineCommentTrivia */:
                     case 8 /* SkippedTokenTrivia */:
                         this.indentSingleLineOrSkippedText(trivia, indentThisTrivia, result);
                         continue;
+
                     case 4 /* WhitespaceTrivia */:
                         this.indentWhitespace(trivia, indentThisTrivia, result);
                         continue;
+
                     case 5 /* NewLineTrivia */:
                         result.push(trivia);
                         indentNextTrivia = true;
                         continue;
+
                     default:
                         throw TypeScript.Errors.invalidOperation();
                 }
@@ -18914,32 +19053,41 @@ var TypeScript;
                             case 48 /* _0 */:
                                 characterArray.push(0 /* nullCharacter */);
                                 continue;
+
                             case 98 /* b */:
                                 characterArray.push(8 /* backspace */);
                                 continue;
+
                             case 102 /* f */:
                                 characterArray.push(12 /* formFeed */);
                                 continue;
+
                             case 110 /* n */:
                                 characterArray.push(10 /* lineFeed */);
                                 continue;
+
                             case 114 /* r */:
                                 characterArray.push(13 /* carriageReturn */);
                                 continue;
+
                             case 116 /* t */:
                                 characterArray.push(9 /* tab */);
                                 continue;
+
                             case 118 /* v */:
                                 characterArray.push(11 /* verticalTab */);
                                 continue;
+
                             case 120 /* x */:
                                 characterArray.push(hexValue(text, i + 1, 2));
                                 i += 2;
                                 continue;
+
                             case 117 /* u */:
                                 characterArray.push(hexValue(text, i + 1, 4));
                                 i += 4;
                                 continue;
+
                             default:
                         }
                     }
@@ -19472,6 +19620,7 @@ var TypeScript;
                         if (i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === 10 /* lineFeed */) {
                             i++;
                         }
+
                     case 10 /* lineFeed */:
                     case 8233 /* paragraphSeparator */:
                     case 8232 /* lineSeparator */:
@@ -21605,7 +21754,12 @@ var TypeScript;
                 var token = this.currentToken();
                 if (this.isIdentifier(token)) {
                     this.moveToNextToken();
-                    return token;
+
+                    if (token.tokenKind === 11 /* IdentifierName */) {
+                        return token;
+                    }
+
+                    return TypeScript.Syntax.convertToIdentifierName(token);
                 }
 
                 return this.createMissingToken(11 /* IdentifierName */, token);
@@ -21702,6 +21856,7 @@ var TypeScript;
                 switch (expressionKind) {
                     case 171 /* CommaExpression */:
                         return 1 /* CommaExpressionPrecedence */;
+
                     case 172 /* AssignmentExpression */:
                     case 173 /* AddAssignmentExpression */:
                     case 174 /* SubtractAssignmentExpression */:
@@ -21715,23 +21870,31 @@ var TypeScript;
                     case 182 /* SignedRightShiftAssignmentExpression */:
                     case 183 /* UnsignedRightShiftAssignmentExpression */:
                         return 2 /* AssignmentExpressionPrecedence */;
+
                     case 184 /* ConditionalExpression */:
                         return 3 /* ConditionalExpressionPrecedence */;
+
                     case 185 /* LogicalOrExpression */:
                         return 5 /* LogicalOrExpressionPrecedence */;
+
                     case 186 /* LogicalAndExpression */:
                         return 6 /* LogicalAndExpressionPrecedence */;
+
                     case 187 /* BitwiseOrExpression */:
                         return 7 /* BitwiseOrExpressionPrecedence */;
+
                     case 188 /* BitwiseExclusiveOrExpression */:
                         return 8 /* BitwiseExclusiveOrExpressionPrecedence */;
+
                     case 189 /* BitwiseAndExpression */:
                         return 9 /* BitwiseAndExpressionPrecedence */;
+
                     case 190 /* EqualsWithTypeConversionExpression */:
                     case 191 /* NotEqualsWithTypeConversionExpression */:
                     case 192 /* EqualsExpression */:
                     case 193 /* NotEqualsExpression */:
                         return 10 /* EqualityExpressionPrecedence */;
+
                     case 194 /* LessThanExpression */:
                     case 195 /* GreaterThanExpression */:
                     case 196 /* LessThanOrEqualExpression */:
@@ -21739,17 +21902,21 @@ var TypeScript;
                     case 198 /* InstanceOfExpression */:
                     case 199 /* InExpression */:
                         return 11 /* RelationalExpressionPrecedence */;
+
                     case 200 /* LeftShiftExpression */:
                     case 201 /* SignedRightShiftExpression */:
                     case 202 /* UnsignedRightShiftExpression */:
                         return 12 /* ShiftExpressionPrecdence */;
+
                     case 206 /* AddExpression */:
                     case 207 /* SubtractExpression */:
                         return 13 /* AdditiveExpressionPrecedence */;
+
                     case 203 /* MultiplyExpression */:
                     case 204 /* DivideExpression */:
                     case 205 /* ModuloExpression */:
                         return 14 /* MultiplicativeExpressionPrecedence */;
+
                     case 162 /* PlusExpression */:
                     case 163 /* NegateExpression */:
                     case 164 /* BitwiseNotExpression */:
@@ -22027,6 +22194,7 @@ var TypeScript;
                 switch (kind) {
                     case 72 /* OpenParenToken */:
                     case 76 /* DotToken */:
+
                     case 73 /* CloseParenToken */:
                     case 75 /* CloseBracketToken */:
                     case 106 /* ColonToken */:
@@ -22045,6 +22213,7 @@ var TypeScript;
                     case 71 /* CloseBraceToken */:
                     case 10 /* EndOfFileToken */:
                         return true;
+
                     default:
                         return false;
                 }
@@ -22133,6 +22302,7 @@ var TypeScript;
                     case 47 /* ExportKeyword */:
                     case 64 /* DeclareKeyword */:
                         return true;
+
                     default:
                         return false;
                 }
@@ -23137,11 +23307,14 @@ var TypeScript;
                     case 14 /* StringLiteral */:
                     case 12 /* RegularExpressionLiteral */:
                         return true;
+
                     case 74 /* OpenBracketToken */:
                     case 72 /* OpenParenToken */:
                         return true;
+
                     case 80 /* LessThanToken */:
                         return true;
+
                     case 93 /* PlusPlusToken */:
                     case 94 /* MinusMinusToken */:
                     case 89 /* PlusToken */:
@@ -23149,25 +23322,32 @@ var TypeScript;
                     case 102 /* TildeToken */:
                     case 101 /* ExclamationToken */:
                         return true;
+
                     case 70 /* OpenBraceToken */:
                         return true;
+
                     case 85 /* EqualsGreaterThanToken */:
                         return true;
+
                     case 118 /* SlashToken */:
                     case 119 /* SlashEqualsToken */:
                         return true;
+
                     case 50 /* SuperKeyword */:
                     case 35 /* ThisKeyword */:
                     case 37 /* TrueKeyword */:
                     case 24 /* FalseKeyword */:
                     case 32 /* NullKeyword */:
                         return true;
+
                     case 31 /* NewKeyword */:
                         return true;
+
                     case 21 /* DeleteKeyword */:
                     case 41 /* VoidKeyword */:
                     case 39 /* TypeOfKeyword */:
                         return true;
+
                     case 27 /* FunctionKeyword */:
                         return true;
                 }
@@ -23473,6 +23653,7 @@ var TypeScript;
 
                             expression = this.factory.invocationExpression(expression, this.parseArgumentList(null));
                             continue;
+
                         case 80 /* LessThanToken */:
                             if (inObjectCreation) {
                                 return expression;
@@ -23485,9 +23666,11 @@ var TypeScript;
                             }
 
                             break;
+
                         case 74 /* OpenBracketToken */:
                             expression = this.parseElementAccessExpression(expression, inObjectCreation);
                             continue;
+
                         case 93 /* PlusPlusToken */:
                         case 94 /* MinusMinusToken */:
                             if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
@@ -23496,6 +23679,7 @@ var TypeScript;
 
                             expression = this.factory.postfixUnaryExpression(TypeScript.SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
                             continue;
+
                         case 76 /* DotToken */:
                             expression = this.factory.memberAccessExpression(expression, this.eatToken(76 /* DotToken */), this.eatIdentifierNameToken());
                             continue;
@@ -23523,7 +23707,7 @@ var TypeScript;
                         }
 
                         if (isDot) {
-                            var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(), 131 /* A_parameter_list_must_follow_a_generic_type_argument_list______expected */, null);
+                            var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(), 134 /* A_parameter_list_must_follow_a_generic_type_argument_list______expected */, null);
                             this.addDiagnostic(diagnostic);
 
                             return this.factory.argumentList(typeArgumentList, TypeScript.Syntax.emptyToken(72 /* OpenParenToken */), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.emptyToken(73 /* CloseParenToken */));
@@ -23562,7 +23746,7 @@ var TypeScript;
 
                 if (this.currentToken().tokenKind === 75 /* CloseBracketToken */ && inObjectCreation) {
                     var end = this.currentTokenStart() + this.currentToken().width();
-                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, start, end - start, 130 /* _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead */, null);
+                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, start, end - start, 133 /* _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead */, null);
                     this.addDiagnostic(diagnostic);
 
                     argumentExpression = TypeScript.Syntax.emptyToken(11 /* IdentifierName */);
@@ -23595,37 +23779,53 @@ var TypeScript;
                 switch (currentTokenKind) {
                     case 35 /* ThisKeyword */:
                         return this.parseThisExpression();
+
                     case 37 /* TrueKeyword */:
                     case 24 /* FalseKeyword */:
                         return this.parseLiteralExpression();
+
                     case 32 /* NullKeyword */:
                         return this.parseLiteralExpression();
+
                     case 31 /* NewKeyword */:
                         return this.parseObjectCreationExpression();
+
                     case 27 /* FunctionKeyword */:
                         return this.parseFunctionExpression();
+
                     case 50 /* SuperKeyword */:
                         return this.parseSuperExpression();
+
                     case 39 /* TypeOfKeyword */:
                         return this.parseTypeOfExpression();
+
                     case 21 /* DeleteKeyword */:
                         return this.parseDeleteExpression();
+
                     case 41 /* VoidKeyword */:
                         return this.parseVoidExpression();
+
                     case 13 /* NumericLiteral */:
                         return this.parseLiteralExpression();
+
                     case 12 /* RegularExpressionLiteral */:
                         return this.parseLiteralExpression();
+
                     case 14 /* StringLiteral */:
                         return this.parseLiteralExpression();
+
                     case 74 /* OpenBracketToken */:
                         return this.parseArrayLiteralExpression();
+
                     case 70 /* OpenBraceToken */:
                         return this.parseObjectLiteralExpression();
+
                     case 72 /* OpenParenToken */:
                         return this.parseParenthesizedOrArrowFunctionExpression();
+
                     case 80 /* LessThanToken */:
                         return this.parseCastOrArrowFunctionExpression();
+
                     case 118 /* SlashToken */:
                     case 119 /* SlashEqualsToken */:
                         var result = this.tryReparseDivideAsRegularExpression();
@@ -23646,10 +23846,12 @@ var TypeScript;
                     switch (previousTokenKind) {
                         case 11 /* IdentifierName */:
                             return null;
+
                         case 35 /* ThisKeyword */:
                         case 37 /* TrueKeyword */:
                         case 24 /* FalseKeyword */:
                             return null;
+
                         case 14 /* StringLiteral */:
                         case 13 /* NumericLiteral */:
                         case 12 /* RegularExpressionLiteral */:
@@ -23999,6 +24201,7 @@ var TypeScript;
                     case 14 /* StringLiteral */:
                     case 13 /* NumericLiteral */:
                         return true;
+
                     default:
                         return false;
                 }
@@ -24467,8 +24670,10 @@ var TypeScript;
                     case 262144 /* TypeArgumentList_Types */:
                     case 524288 /* TypeParameterList_TypeParameters */:
                         return 79 /* CommaToken */;
+
                     case 512 /* ObjectType_TypeMembers */:
                         return 78 /* SemicolonToken */;
+
                     case 1 /* SourceUnit_ModuleElements */:
                     case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */:
                     case 2 /* ClassDeclaration_ClassElements */:
@@ -24500,44 +24705,64 @@ var TypeScript;
                 switch (currentListType) {
                     case 1 /* SourceUnit_ModuleElements */:
                         return this.isExpectedSourceUnit_ModuleElementsTerminator();
+
                     case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */:
                         return this.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator();
+
                     case 2 /* ClassDeclaration_ClassElements */:
                         return this.isExpectedClassDeclaration_ClassElementsTerminator();
+
                     case 4 /* ModuleDeclaration_ModuleElements */:
                         return this.isExpectedModuleDeclaration_ModuleElementsTerminator();
+
                     case 8 /* SwitchStatement_SwitchClauses */:
                         return this.isExpectedSwitchStatement_SwitchClausesTerminator();
+
                     case 16 /* SwitchClause_Statements */:
                         return this.isExpectedSwitchClause_StatementsTerminator();
+
                     case 32 /* Block_Statements */:
                         return this.isExpectedBlock_StatementsTerminator();
+
                     case 64 /* TryBlock_Statements */:
                         return this.isExpectedTryBlock_StatementsTerminator();
+
                     case 128 /* CatchBlock_Statements */:
                         return this.isExpectedCatchBlock_StatementsTerminator();
+
                     case 256 /* EnumDeclaration_EnumElements */:
                         return this.isExpectedEnumDeclaration_EnumElementsTerminator();
+
                     case 512 /* ObjectType_TypeMembers */:
                         return this.isExpectedObjectType_TypeMembersTerminator();
+
                     case 16384 /* ArgumentList_AssignmentExpressions */:
                         return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
+
                     case 2048 /* HeritageClause_TypeNameList */:
                         return this.isExpectedHeritageClause_TypeNameListTerminator();
+
                     case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */:
                         return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator();
+
                     case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */:
                         return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
+
                     case 32768 /* ObjectLiteralExpression_PropertyAssignments */:
                         return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
+
                     case 131072 /* ParameterList_Parameters */:
                         return this.isExpectedParameterList_ParametersTerminator();
+
                     case 262144 /* TypeArgumentList_Types */:
                         return this.isExpectedTypeArgumentList_TypesTerminator();
+
                     case 524288 /* TypeParameterList_TypeParameters */:
                         return this.isExpectedTypeParameterList_TypeParametersTerminator();
+
                     case 65536 /* ArrayLiteralExpression_AssignmentExpressions */:
                         return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
+
                     default:
                         throw TypeScript.Errors.invalidOperation();
                 }
@@ -24689,42 +24914,60 @@ var TypeScript;
                 switch (currentListType) {
                     case 1 /* SourceUnit_ModuleElements */:
                         return this.isModuleElement(inErrorRecovery);
+
                     case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */:
                         return this.isHeritageClause();
+
                     case 2 /* ClassDeclaration_ClassElements */:
                         return this.isClassElement(inErrorRecovery);
+
                     case 4 /* ModuleDeclaration_ModuleElements */:
                         return this.isModuleElement(inErrorRecovery);
+
                     case 8 /* SwitchStatement_SwitchClauses */:
                         return this.isSwitchClause();
+
                     case 16 /* SwitchClause_Statements */:
                         return this.isStatement(inErrorRecovery);
+
                     case 32 /* Block_Statements */:
                         return this.isStatement(inErrorRecovery);
+
                     case 64 /* TryBlock_Statements */:
                     case 128 /* CatchBlock_Statements */:
                         return false;
+
                     case 256 /* EnumDeclaration_EnumElements */:
                         return this.isEnumElement(inErrorRecovery);
+
                     case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */:
                     case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */:
                         return this.isVariableDeclarator();
+
                     case 512 /* ObjectType_TypeMembers */:
                         return this.isTypeMember(inErrorRecovery);
+
                     case 16384 /* ArgumentList_AssignmentExpressions */:
                         return this.isExpectedArgumentList_AssignmentExpression();
+
                     case 2048 /* HeritageClause_TypeNameList */:
                         return this.isHeritageClauseTypeName();
+
                     case 32768 /* ObjectLiteralExpression_PropertyAssignments */:
                         return this.isPropertyAssignment(inErrorRecovery);
+
                     case 131072 /* ParameterList_Parameters */:
                         return this.isParameter();
+
                     case 262144 /* TypeArgumentList_Types */:
                         return this.isType();
+
                     case 524288 /* TypeParameterList_TypeParameters */:
                         return this.isTypeParameter();
+
                     case 65536 /* ArrayLiteralExpression_AssignmentExpressions */:
                         return this.isAssignmentOrOmittedExpression();
+
                     default:
                         throw TypeScript.Errors.invalidOperation();
                 }
@@ -24746,40 +24989,58 @@ var TypeScript;
                 switch (currentListType) {
                     case 1 /* SourceUnit_ModuleElements */:
                         return this.parseModuleElement();
+
                     case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */:
                         return this.parseHeritageClause();
+
                     case 2 /* ClassDeclaration_ClassElements */:
                         return this.parseClassElement(false);
+
                     case 4 /* ModuleDeclaration_ModuleElements */:
                         return this.parseModuleElement();
+
                     case 8 /* SwitchStatement_SwitchClauses */:
                         return this.parseSwitchClause();
+
                     case 16 /* SwitchClause_Statements */:
                         return this.parseStatement();
+
                     case 32 /* Block_Statements */:
                         return this.parseStatement();
+
                     case 256 /* EnumDeclaration_EnumElements */:
                         return this.parseEnumElement();
+
                     case 512 /* ObjectType_TypeMembers */:
                         return this.parseTypeMember();
+
                     case 16384 /* ArgumentList_AssignmentExpressions */:
                         return this.parseAssignmentExpression(true);
+
                     case 2048 /* HeritageClause_TypeNameList */:
                         return this.parseNameOrGenericType();
+
                     case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */:
                         return this.parseVariableDeclarator(true, false);
+
                     case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */:
                         return this.parseVariableDeclarator(false, false);
+
                     case 32768 /* ObjectLiteralExpression_PropertyAssignments */:
                         return this.parsePropertyAssignment();
+
                     case 65536 /* ArrayLiteralExpression_AssignmentExpressions */:
                         return this.parseAssignmentOrOmittedExpression();
+
                     case 131072 /* ParameterList_Parameters */:
                         return this.parseParameter();
+
                     case 262144 /* TypeArgumentList_Types */:
                         return this.parseType();
+
                     case 524288 /* TypeParameterList_TypeParameters */:
                         return this.parseTypeParameter();
+
                     default:
                         throw TypeScript.Errors.invalidOperation();
                 }
@@ -24789,39 +25050,56 @@ var TypeScript;
                 switch (currentListType) {
                     case 1 /* SourceUnit_ModuleElements */:
                         return TypeScript.Strings.module__class__interface__enum__import_or_statement;
+
                     case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */:
                         return '{';
+
                     case 2 /* ClassDeclaration_ClassElements */:
                         return TypeScript.Strings.constructor__function__accessor_or_variable;
+
                     case 4 /* ModuleDeclaration_ModuleElements */:
                         return TypeScript.Strings.module__class__interface__enum__import_or_statement;
+
                     case 8 /* SwitchStatement_SwitchClauses */:
                         return TypeScript.Strings.case_or_default_clause;
+
                     case 16 /* SwitchClause_Statements */:
                         return TypeScript.Strings.statement;
+
                     case 32 /* Block_Statements */:
                         return TypeScript.Strings.statement;
+
                     case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */:
                     case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */:
                         return TypeScript.Strings.identifier;
+
                     case 256 /* EnumDeclaration_EnumElements */:
                         return TypeScript.Strings.identifier;
+
                     case 512 /* ObjectType_TypeMembers */:
                         return TypeScript.Strings.call__construct__index__property_or_function_signature;
+
                     case 16384 /* ArgumentList_AssignmentExpressions */:
                         return TypeScript.Strings.expression;
+
                     case 2048 /* HeritageClause_TypeNameList */:
                         return TypeScript.Strings.type_name;
+
                     case 32768 /* ObjectLiteralExpression_PropertyAssignments */:
                         return TypeScript.Strings.property_or_accessor;
+
                     case 131072 /* ParameterList_Parameters */:
                         return TypeScript.Strings.parameter;
+
                     case 262144 /* TypeArgumentList_Types */:
                         return TypeScript.Strings.type;
+
                     case 524288 /* TypeParameterList_TypeParameters */:
                         return TypeScript.Strings.type_parameter;
+
                     case 65536 /* ArrayLiteralExpression_AssignmentExpressions */:
                         return TypeScript.Strings.expression;
+
                     default:
                         throw TypeScript.Errors.invalidOperation();
                 }
@@ -25356,8 +25634,41 @@ var TypeScript;
             return false;
         };
 
+        GrammarCheckerWalker.prototype.checkForReservedName = function (parent, name, code) {
+            var nameFullStart = this.childFullStart(parent, name);
+            var token;
+            var tokenFullStart;
+
+            var current = name;
+            while (current !== null) {
+                if (current.kind() === 121 /* QualifiedName */) {
+                    var qualifiedName = current;
+                    token = qualifiedName.right;
+                    tokenFullStart = nameFullStart + this.childFullStart(qualifiedName, token);
+                    current = qualifiedName.left;
+                } else {
+                    TypeScript.Debug.assert(current.kind() === 11 /* IdentifierName */);
+                    token = current;
+                    tokenFullStart = nameFullStart;
+                    current = null;
+                }
+
+                switch (token.valueText()) {
+                    case "any":
+                    case "number":
+                    case "bool":
+                    case "string":
+                    case "void":
+                        this.pushDiagnostic(tokenFullStart + token.leadingTriviaWidth(), token.width(), code, [token.valueText()]);
+                        return true;
+                }
+            }
+
+            return false;
+        };
+
         GrammarCheckerWalker.prototype.visitClassDeclaration = function (node) {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.classKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkClassDeclarationHeritageClauses(node) || this.checkClassOverloads(node)) {
+            if (this.checkForReservedName(node, node.identifier, 61 /* Class_name_cannot_be__0_ */) || this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.classKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkClassDeclarationHeritageClauses(node) || this.checkClassOverloads(node)) {
                 this.skip(node);
                 return;
             }
@@ -25413,7 +25724,7 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.visitInterfaceDeclaration = function (node) {
-            if (this.checkInterfaceModifiers(node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkInterfaceDeclarationHeritageClauses(node)) {
+            if (this.checkForReservedName(node, node.identifier, 62 /* Interface_name_cannot_be__0_ */) || this.checkInterfaceModifiers(node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkInterfaceDeclarationHeritageClauses(node)) {
                 this.skip(node);
                 return;
             }
@@ -25591,7 +25902,7 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.visitEnumDeclaration = function (node) {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkEnumDeclarationElements(node)) {
+            if (this.checkForReservedName(node, node.identifier, 63 /* Enum_name_cannot_be__0_ */) || this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkEnumDeclarationElements(node)) {
                 this.skip(node);
                 return;
             }
@@ -25658,7 +25969,7 @@ var TypeScript;
                     if (child.kind() === 132 /* ImportDeclaration */) {
                         var importDeclaration = child;
                         if (importDeclaration.moduleReference.kind() === 244 /* ExternalModuleReference */) {
-                            this.pushDiagnostic1(currentElementFullStart, importDeclaration, 194 /* Import_declarations_in_an_internal_module_cannot_reference_an_external_module */, null);
+                            this.pushDiagnostic1(currentElementFullStart, importDeclaration, 197 /* Import_declarations_in_an_internal_module_cannot_reference_an_external_module */, null);
                         }
                     }
 
@@ -25670,7 +25981,7 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.visitModuleDeclaration = function (node) {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkForDisallowedImportDeclaration(node) || (!this.containsToken(node.modifiers, 64 /* DeclareKeyword */) && this.checkFunctionOverloads(node, node.moduleElements))) {
+            if (this.checkForReservedName(node, node.moduleName, 64 /* Module_name_cannot_be__0_ */) || this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkForDisallowedImportDeclaration(node) || (!this.containsToken(node.modifiers, 64 /* DeclareKeyword */) && this.checkFunctionOverloads(node, node.moduleElements))) {
                 this.skip(node);
                 return;
             }
@@ -26976,6 +27287,7 @@ var TypeScript;
                 case 35 /* ElementAccessExpression */:
                     emitter.emitIndex(this.operand1, this.operand2);
                     break;
+
                 case 80 /* Member */:
                     if (this.operand2.nodeType === 12 /* FunctionDeclaration */ && (this.operand2).isAccessor()) {
                         var funcDecl = this.operand2;
@@ -27874,10 +28186,15 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this.statement);
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
-            var casesLen = this.caseList.members.length;
-            for (var i = 0; i < casesLen; i++) {
+
+            var lastEmittedNode = null;
+            for (var i = 0, n = this.caseList.members.length; i < n; i++) {
                 var caseExpr = this.caseList.members[i];
+
+                emitter.emitSpaceBetweenConstructs(lastEmittedNode, caseExpr);
                 emitter.emitJavascript(caseExpr, true);
+
+                lastEmittedNode = caseExpr;
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
@@ -29903,6 +30220,11 @@ var TypeScript;
             if (!(funcDecl.isAccessor() && containerKind !== 16 /* Class */ && containerKind !== 67108864 /* ConstructorType */)) {
                 this.writeToOutput("function ");
             }
+
+            if (funcDecl.isConstructor) {
+                this.writeToOutput(this.thisClassNode.name.actualText);
+            }
+
             if (printName) {
                 var id = funcDecl.getNameText();
                 if (id && !funcDecl.isAccessor()) {
@@ -31108,7 +31430,7 @@ var TypeScript;
 
         Emitter.handleEmitterError = function (fileName, e) {
             if ((e).isEmitterError === true) {
-                return [new TypeScript.Diagnostic(0, 0, fileName, e.message)];
+                return [new TypeScript.Diagnostic(fileName, 0, 0, 258 /* Emit_Error__0 */, [e.message])];
             }
 
             throw e;
@@ -31138,20 +31460,29 @@ var TypeScript;
         MemberName.prototype.isArray = function () {
             return false;
         };
+        MemberName.prototype.isMarker = function () {
+            return !this.isString() && !this.isArray();
+        };
 
         MemberName.prototype.toString = function () {
             return MemberName.memberNameToString(this);
         };
 
-        MemberName.memberNameToString = function (memberName) {
+        MemberName.memberNameToString = function (memberName, markerInfo) {
             var result = memberName.prefix;
 
             if (memberName.isString()) {
                 result += (memberName).text;
-            } else {
+            } else if (memberName.isArray()) {
                 var ar = memberName;
                 for (var index = 0; index < ar.entries.length; index++) {
-                    result += MemberName.memberNameToString(ar.entries[index]);
+                    if (ar.entries[index].isMarker()) {
+                        if (markerInfo) {
+                            markerInfo.push(result.length);
+                        }
+                        continue;
+                    }
+                    result += MemberName.memberNameToString(ar.entries[index], markerInfo);
                     result += ar.delim;
                 }
             }
@@ -31543,15 +31874,14 @@ var TypeScript;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, normalizedPath, TypeScript.getDiagnosticMessage(248 /* A_file_cannot_have_a_reference_itself */, null)));
-
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 253 /* A_file_cannot_have_a_reference_itself */, null));
                             continue;
                         }
 
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, resolvedFilePath, TypeScript.getDiagnosticMessage(249 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 254 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
                         }
                     }
 
@@ -31561,7 +31891,7 @@ var TypeScript;
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileImport.position, fileImport.length, resolvedFilePath, TypeScript.getDiagnosticMessage(250 /* Cannot_resolve_imported_file___0_ */, [fileImport.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 255 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
                         }
                     }
 
@@ -33931,7 +34261,7 @@ var TypeScript;
             return s;
         };
 
-        PullSignatureSymbol.prototype.getSignatureTypeNameEx = function (prefix, shortform, brackets, scopeSymbol) {
+        PullSignatureSymbol.prototype.getSignatureTypeNameEx = function (prefix, shortform, brackets, scopeSymbol, getParamMarkerInfo) {
             var builder = new TypeScript.MemberNameArray();
             var typeParameters = this.getTypeParameters();
             var typeParameterString = PullSymbol.getTypeParameterString(typeParameters, scopeSymbol);
@@ -33949,9 +34279,15 @@ var TypeScript;
                 var paramIsVarArg = params[i].getIsVarArg();
                 var varArgPrefix = paramIsVarArg ? "..." : "";
                 var optionalString = (!paramIsVarArg && params[i].getIsOptional()) ? "?" : "";
+                if (getParamMarkerInfo) {
+                    builder.add(new TypeScript.MemberName());
+                }
                 builder.add(TypeScript.MemberName.create(varArgPrefix + params[i].getScopedNameEx(scopeSymbol).toString() + optionalString + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
+                }
+                if (getParamMarkerInfo) {
+                    builder.add(new TypeScript.MemberName());
                 }
                 if (i < paramLen - 1) {
                     builder.add(TypeScript.MemberName.create(", "));
@@ -35103,6 +35439,10 @@ var TypeScript;
         PullErrorTypeSymbol.prototype.toString = function () {
             return this.delegateType.toString();
         };
+
+        PullErrorTypeSymbol.prototype.isResolved = function () {
+            return false;
+        };
         return PullErrorTypeSymbol;
     })(PullPrimitiveTypeSymbol);
     TypeScript.PullErrorTypeSymbol = PullErrorTypeSymbol;
@@ -35870,7 +36210,7 @@ var TypeScript;
                 if (!typesToReplace[i].isTypeParameter() && typeWrapsTypeParameter(typesToReplace[i], typeParameters[i])) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST) {
-                        diagnostic = context.postError(declAST.minChar, declAST.getLength(), resolver.getUnitPath(), TypeScript.getDiagnosticMessage(61 /* A_generic_type_may_not_reference_itself_with_its_own_type_parameters */, null), enclosingDecl, true);
+                        diagnostic = context.postError(resolver.getUnitPath(), declAST.minChar, declAST.getLength(), 221 /* A_generic_type_may_not_reference_itself_with_its_own_type_parameters */, null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     } else {
                         return resolver.semanticInfoChain.anyTypeSymbol;
@@ -36326,6 +36666,11 @@ var TypeScript;
                 newParameter.setIsOptional();
             }
 
+            if (parameters[k].getIsVarArg()) {
+                newParameter.setIsVarArg();
+                newSignature.setHasVariableParamList();
+            }
+
             newParameter.setType(newParameterType);
             newSignature.addParameter(newParameter, newParameter.getIsOptional());
         }
@@ -36616,6 +36961,7 @@ var TypeScript;
             this.searchTypeSpace = false;
             this.canUseTypeSymbol = false;
             this.specializingToAny = false;
+            this.isResolvingClassExtendedType = false;
             this.inSpecialization = false;
             this.suppressErrors = false;
             this.inBaseTypeResolution = false;
@@ -36720,13 +37066,13 @@ var TypeScript;
             return type;
         };
 
-        PullTypeResolutionContext.prototype.postError = function (offset, length, fileName, message, enclosingDecl, addToDecl) {
+        PullTypeResolutionContext.prototype.postError = function (fileName, offset, length, diagnosticCode, arguments, enclosingDecl, addToDecl) {
             if (typeof addToDecl === "undefined") { addToDecl = false; }
             if (this.emitting) {
                 return;
             }
 
-            var diagnostic = new TypeScript.PullDiagnostic(offset, length, fileName, message);
+            var diagnostic = new TypeScript.SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
 
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
@@ -37120,6 +37466,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 16 /* Class */:
                     case 32 /* Interface */:
                         if (declSymbol && declSymbol.isGeneric()) {
@@ -37130,11 +37477,13 @@ var TypeScript;
                         }
 
                         break;
+
                     case 262144 /* FunctionExpression */:
                         var functionExpressionName = (decl).getFunctionExpressionName();
                         if (declSymbol && functionExpressionName) {
                             symbols.push(declSymbol);
                         }
+
                     case 32768 /* Function */:
                     case 65536 /* ConstructorMethod */:
                     case 131072 /* Method */:
@@ -37416,6 +37765,7 @@ var TypeScript;
                 case 99 /* WithStatement */:
                 case 2 /* Script */:
                     return null;
+
                 case 15 /* ModuleDeclaration */:
                     return this.resolveModuleDeclaration(declAST, context);
                 case 14 /* InterfaceDeclaration */:
@@ -37436,12 +37786,16 @@ var TypeScript;
                 case 17 /* VariableDeclarator */:
                 case 19 /* Parameter */:
                     return this.resolveVariableDeclaration(declAST, context, enclosingDecl);
+
                 case 9 /* TypeParameter */:
                     return this.resolveTypeParameterDeclaration(declAST, context);
+
                 case 16 /* ImportDeclaration */:
                     return this.resolveImportDeclaration(declAST, context);
+
                 case 22 /* ObjectLiteralExpression */:
                     return this.resolveObjectLiteralExpression(declAST, false, enclosingDecl, context);
+
                 default:
                     throw new Error("Invalid declaration type");
             }
@@ -37555,6 +37909,10 @@ var TypeScript;
             }
 
             if (typeDeclAST.extendsList) {
+                if (typeDeclIsClass) {
+                    context.isResolvingClassExtendedType = true;
+                }
+
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var parentType = this.resolveTypeReference(new TypeScript.TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
@@ -37570,6 +37928,8 @@ var TypeScript;
                         }
                     }
                 }
+
+                context.isResolvingClassExtendedType = false;
             }
 
             if (typeDeclAST.implementsList && typeDeclIsClass) {
@@ -37746,7 +38106,7 @@ var TypeScript;
                     if (aliasedType) {
                         this.currentUnit.addDynamicModuleImport(importDeclSymbol);
                     } else {
-                        importDecl.addDiagnostic(new TypeScript.PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), TypeScript.getDiagnosticMessage(133 /* Unable_to_resolve_external_module__0_ */, [text])));
+                        importDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), 136 /* Unable_to_resolve_external_module__0_ */, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
@@ -37754,7 +38114,7 @@ var TypeScript;
 
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
-                    importDecl.addDiagnostic(new TypeScript.PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), TypeScript.getDiagnosticMessage(134 /* Module_cannot_be_aliased_to_a_non_module_type */, null)));
+                    importDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), 137 /* Module_cannot_be_aliased_to_a_non_module_type */, null));
                 }
 
                 importDeclSymbol.setAliasedType(aliasedType);
@@ -37837,7 +38197,7 @@ var TypeScript;
                 var typeRef = this.resolveTypeReference(argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(220 /* Rest_parameters_must_be_array_types */, null), enclosingDecl);
+                    var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), 224 /* Rest_parameters_must_be_array_types */, null, enclosingDecl);
                     typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -37870,7 +38230,7 @@ var TypeScript;
                 var typeRef = this.resolveTypeReference(argDeclAST.typeExpr, enclosingDecl, context);
 
                 if (paramSymbol.getIsVarArg() && !typeRef.isArray()) {
-                    var diagnostic = context.postError(argDeclAST.minChar, argDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(220 /* Rest_parameters_must_be_array_types */, null), enclosingDecl);
+                    var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), 224 /* Rest_parameters_must_be_array_types */, null, enclosingDecl);
                     typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -37992,7 +38352,7 @@ var TypeScript;
             }
 
             if (!typeDeclSymbol) {
-                diagnostic = context.postError(typeRef.term.minChar, typeRef.term.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(139 /* Unable_to_resolve_type */, null), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), 142 /* Unable_to_resolve_type */, null, enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -38071,7 +38431,7 @@ var TypeScript;
                 var typeExprSymbol = this.resolveTypeReference(varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
-                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(140 /* Unable_to_resolve_type_of__0_ */, [varDecl.id.actualText]), decl);
+                    diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), 143 /* Unable_to_resolve_type_of__0_ */, [varDecl.id.actualText], decl);
                     declSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
 
                     if (declParameterSymbol) {
@@ -38088,14 +38448,14 @@ var TypeScript;
                         var instanceSymbol = (typeExprSymbol.getType()).getInstanceSymbol();
 
                         if (!instanceSymbol) {
-                            diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(184 /* Tried_to_set_variable_type_to_uninitialized_module_type__0__ */, [typeExprSymbol.toString()]), decl);
+                            diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), 187 /* Tried_to_set_variable_type_to_uninitialized_module_type__0__ */, [typeExprSymbol.toString()], decl);
                             typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                             hadError = true;
                         } else {
                             typeExprSymbol = instanceSymbol.getType();
                         }
                     } else if (declSymbol.getIsVarArg() && !typeExprSymbol.isArray() && this.cachedArrayInterfaceType) {
-                        var diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(220 /* Rest_parameters_must_be_array_types */, null), enclosingDecl);
+                        var diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), 224 /* Rest_parameters_must_be_array_types */, null, enclosingDecl);
                         typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                         hadError = true;
                     }
@@ -38118,7 +38478,7 @@ var TypeScript;
                 var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, wrapperDecl, context);
 
                 if (!initExprSymbol) {
-                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(140 /* Unable_to_resolve_type_of__0_ */, [varDecl.id.actualText]), decl);
+                    diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), 143 /* Unable_to_resolve_type_of__0_ */, [varDecl.id.actualText], decl);
 
                     context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol(diagnostic));
 
@@ -38187,12 +38547,13 @@ var TypeScript;
                 }
 
                 if (!constraintTypeSymbol) {
-                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(141 /* Unable_to_resolve_type_parameter_constraint */, null), enclosingDecl, true);
+                    context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), 144 /* Unable_to_resolve_type_parameter_constraint */, null, enclosingDecl, true);
                 } else if (constraintTypeSymbol.isPrimitive()) {
                     if (constraintTypeSymbol.isError()) {
-                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, (constraintTypeSymbol).getDiagnostic().message(), enclosingDecl, true);
+                        var errorSymbol = (constraintTypeSymbol).getDiagnostic();
+                        context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), errorSymbol.diagnosticCode(), errorSymbol.arguments(), enclosingDecl, true);
                     } else {
-                        context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(142 /* Type_parameter_constraint_cannot_be_a_primitive_type */, null), enclosingDecl, true);
+                        context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), 145 /* Type_parameter_constraint_cannot_be_a_primitive_type */, null, enclosingDecl, true);
                     }
                 } else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -38217,15 +38578,18 @@ var TypeScript;
                     case 12 /* FunctionDeclaration */:
                         go = false;
                         break;
+
                     case 93 /* ReturnStatement */:
                         var returnStatement = ast;
                         returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] };
                         go = false;
                         break;
+
                     case 101 /* CatchClause */:
                     case 99 /* WithStatement */:
                         enclosingDeclStack[enclosingDeclStack.length] = _this.getDeclForAST(ast);
                         break;
+
                     default:
                         break;
                 }
@@ -38261,7 +38625,7 @@ var TypeScript;
                     var isVoidOrAny = this.isAnyOrEquivalent(contextualType) || contextualType === this.semanticInfoChain.voidTypeSymbol;
 
                     if (!isVoidOrAny) {
-                        context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(189 /* Function_declared_a_non_void_return_type__but_has_no_return_expression */, null), enclosingDecl, true);
+                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), 192 /* Function_declared_a_non_void_return_type__but_has_no_return_expression */, null, enclosingDecl, true);
                     }
                 } else {
                     signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
@@ -38344,7 +38708,7 @@ var TypeScript;
                         var returnTypeRef = funcDeclAST.returnTypeAnnotation;
                         var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
                         if (!returnTypeSymbol) {
-                            diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(190 /* Cannot_resolve_return_type_reference */, null), funcDecl);
+                            diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), 193 /* Cannot_resolve_return_type_reference */, null, funcDecl);
                             signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
                             hadError = true;
                         } else {
@@ -38357,7 +38721,7 @@ var TypeScript;
                             signature.setReturnType(returnTypeSymbol);
 
                             if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
-                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(191 /* Constructors_cannot_have_a_return_type_of__void_ */, null), funcDecl, true);
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), 194 /* Constructors_cannot_have_a_return_type_of__void_ */, null, funcDecl, true);
                             }
                         }
                     } else {
@@ -38388,7 +38752,7 @@ var TypeScript;
                     returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(190 /* Cannot_resolve_return_type_reference */, null), funcDecl);
+                        diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), 193 /* Cannot_resolve_return_type_reference */, null, funcDecl);
                         signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
@@ -38404,7 +38768,7 @@ var TypeScript;
                         signature.setReturnType(returnTypeSymbol);
 
                         if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
-                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(191 /* Constructors_cannot_have_a_return_type_of__void_ */, null), funcDecl, true);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), 194 /* Constructors_cannot_have_a_return_type_of__void_ */, null, funcDecl, true);
                         }
                     }
                 } else if (!funcDeclAST.isConstructor) {
@@ -38467,7 +38831,7 @@ var TypeScript;
                     var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(190 /* Cannot_resolve_return_type_reference */, null), funcDecl);
+                        diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), 193 /* Cannot_resolve_return_type_reference */, null, funcDecl);
                         signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
@@ -38511,7 +38875,7 @@ var TypeScript;
                         var setterParameterType = setterParameter.getType();
 
                         if (!this.typesAreIdentical(accessorType, setterParameterType)) {
-                            diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(158 /* _get__and__set__accessor_must_have_the_same_type */, null), this.getEnclosingDecl(funcDecl));
+                            diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), 161 /* _get__and__set__accessor_must_have_the_same_type */, null, this.getEnclosingDecl(funcDecl));
                             accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                         }
                     }
@@ -38591,7 +38955,7 @@ var TypeScript;
                                 parameters[0].setType(getterReturnType);
                             }
                         } else {
-                            var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(158 /* _get__and__set__accessor_must_have_the_same_type */, null), this.getEnclosingDecl(funcDecl));
+                            var diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), 161 /* _get__and__set__accessor_must_have_the_same_type */, null, this.getEnclosingDecl(funcDecl));
                             accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                         }
                     }
@@ -38613,12 +38977,14 @@ var TypeScript;
                 case 17 /* VariableDeclarator */:
                 case 19 /* Parameter */:
                     return this.resolveDeclaration(ast, context, enclosingDecl);
+
                 case 12 /* FunctionDeclaration */:
                     if (inContextuallyTypedAssignment || ((ast).getFunctionFlags() & 8192 /* IsFunctionExpression */)) {
                         return this.resolveStatementOrExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
                     } else {
                         return this.resolveDeclaration(ast, context, enclosingDecl);
                     }
+
                 default:
                     return this.resolveStatementOrExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
             }
@@ -38640,6 +39006,7 @@ var TypeScript;
                     } else {
                         return this.resolveDottedNameExpression(expressionAST, enclosingDecl, context);
                     }
+
                 case 12 /* FunctionDeclaration */: {
                     var funcDecl = expressionAST;
 
@@ -38651,22 +39018,31 @@ var TypeScript;
                         return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
                     }
                 }
+
                 case 22 /* ObjectLiteralExpression */:
                     return this.resolveObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 21 /* ArrayLiteralExpression */:
                     return this.resolveArrayLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 29 /* ThisExpression */:
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
+
                 case 30 /* SuperExpression */:
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
+
                 case 36 /* InvocationExpression */:
                     return this.resolveCallExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 37 /* ObjectCreationExpression */:
                     return this.resolveNewExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 78 /* CastExpression */:
                     return this.resolveTypeAssertionExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 11 /* TypeRef */:
                     return this.resolveTypeReference(expressionAST, enclosingDecl, context);
+
                 case 7 /* NumericLiteral */:
                     return this.semanticInfoChain.numberTypeSymbol;
                 case 5 /* StringLiteral */:
@@ -38678,8 +39054,10 @@ var TypeScript;
                     return this.semanticInfoChain.booleanTypeSymbol;
                 case 24 /* VoidExpression */:
                     return this.semanticInfoChain.voidTypeSymbol;
+
                 case 38 /* AssignmentExpression */:
                     return this.resolveAssignmentStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 73 /* LogicalNotExpression */:
                 case 57 /* NotEqualsWithTypeConversionExpression */:
                 case 56 /* EqualsWithTypeConversionExpression */:
@@ -38690,15 +39068,18 @@ var TypeScript;
                 case 63 /* GreaterThanOrEqualExpression */:
                 case 62 /* GreaterThanExpression */:
                     return this.semanticInfoChain.booleanTypeSymbol;
+
                 case 64 /* AddExpression */:
                 case 39 /* AddAssignmentExpression */:
                     return this.resolveArithmeticExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 40 /* SubtractAssignmentExpression */:
                 case 42 /* MultiplyAssignmentExpression */:
                 case 41 /* DivideAssignmentExpression */:
                 case 43 /* ModuloAssignmentExpression */:
                 case 46 /* OrAssignmentExpression */:
                 case 44 /* AndAssignmentExpression */:
+
                 case 72 /* BitwiseNotExpression */:
                 case 65 /* SubtractExpression */:
                 case 66 /* MultiplyExpression */:
@@ -38713,6 +39094,7 @@ var TypeScript;
                 case 77 /* PostDecrementExpression */:
                 case 75 /* PreDecrementExpression */:
                     return this.semanticInfoChain.numberTypeSymbol;
+
                 case 69 /* LeftShiftExpression */:
                 case 70 /* SignedRightShiftExpression */:
                 case 71 /* UnsignedRightShiftExpression */:
@@ -38720,26 +39102,36 @@ var TypeScript;
                 case 48 /* SignedRightShiftAssignmentExpression */:
                 case 49 /* UnsignedRightShiftAssignmentExpression */:
                     return this.semanticInfoChain.numberTypeSymbol;
+
                 case 35 /* ElementAccessExpression */:
                     return this.resolveIndexExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 51 /* LogicalOrExpression */:
                     return this.resolveLogicalOrExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
                 case 52 /* LogicalAndExpression */:
                     return this.resolveLogicalAndExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 34 /* TypeOfExpression */:
                     return this.semanticInfoChain.stringTypeSymbol;
+
                 case 95 /* ThrowStatement */:
                     return this.semanticInfoChain.voidTypeSymbol;
+
                 case 28 /* DeleteExpression */:
                     return this.semanticInfoChain.booleanTypeSymbol;
+
                 case 50 /* ConditionalExpression */:
                     return this.resolveConditionalExpression(expressionAST, enclosingDecl, context);
+
                 case 6 /* RegularExpressionLiteral */:
                     return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
+
                 case 79 /* ParenthesizedExpression */:
                     return this.resolveParenthesizedExpression(expressionAST, enclosingDecl, context);
+
                 case 88 /* ExpressionStatement */:
                     return this.resolveExpressionStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case 33 /* InstanceOfExpression */:
                     return this.semanticInfoChain.booleanTypeSymbol;
             }
@@ -38807,7 +39199,7 @@ var TypeScript;
             }
 
             if (!nameSymbol) {
-                var diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(157 /* Could_not_find_symbol__0_ */, [nameAST.actualText]), enclosingDecl);
+                var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), 160 /* Could_not_find_symbol__0_ */, [nameAST.actualText], enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -38851,7 +39243,7 @@ var TypeScript;
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* Could_not_find_enclosing_symbol_for_dotted_name__0_ */, [(dottedNameAST.operand2).actualText]), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), 158 /* Could_not_find_enclosing_symbol_for_dotted_name__0_ */, [(dottedNameAST.operand2).actualText], enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -38937,7 +39329,7 @@ var TypeScript;
                 }
 
                 if (!nameSymbol) {
-                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [(dottedNameAST.operand2).actualText, lhsType.getDisplayName()]), enclosingDecl);
+                    diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), 159 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [(dottedNameAST.operand2).actualText, lhsType.getDisplayName()], enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -38977,7 +39369,7 @@ var TypeScript;
             } else if (id === "bool") {
                 if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
                     this.currentUnit.getProperties().unitContainsBool = true;
-                    diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(160 /* Use_of_deprecated__bool__type__Use__boolean__instead */, []), enclosingDecl, true);
+                    diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), 163 /* Use_of_deprecated__bool__type__Use__boolean__instead */, [], enclosingDecl, true);
                 }
                 typeNameSymbol = this.semanticInfoChain.booleanTypeSymbol;
             } else if (id === "boolean") {
@@ -39001,7 +39393,7 @@ var TypeScript;
                 typeNameSymbol = this.getSymbolFromDeclPath(id, declPath, TypeScript.PullElementKind.SomeType);
 
                 if (!typeNameSymbol) {
-                    diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(157 /* Could_not_find_symbol__0_ */, [nameAST.actualText]), enclosingDecl);
+                    diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), 160 /* Could_not_find_symbol__0_ */, [nameAST.actualText], enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -39010,7 +39402,7 @@ var TypeScript;
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl != enclosingDecl) {
-                            diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(218 /* Static_methods_cannot_reference_class_type_parameters */, null), enclosingDecl);
+                            diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), 222 /* Static_methods_cannot_reference_class_type_parameters */, null, enclosingDecl);
 
                             typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
 
@@ -39063,6 +39455,7 @@ var TypeScript;
                         typeArg = this.resolveTypeReference(genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
                         if (typeArg.isError()) {
+                            context.doneResolvingTypeArguments();
                             return typeArg;
                         }
 
@@ -39076,7 +39469,7 @@ var TypeScript;
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                diagnostic = context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(152 /* Generic_type__0__requires_1_type_argument_s_ */, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), 155 /* Generic_type__0__requires_1_type_argument_s_ */, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length], enclosingDecl);
 
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
@@ -39103,7 +39496,7 @@ var TypeScript;
                         return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]), enclosingDecl, true);
+                        context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), 151 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)], enclosingDecl, true);
                     }
                 }
             }
@@ -39138,12 +39531,18 @@ var TypeScript;
 
             var lhsType = lhs.getType();
 
+            if (context.isResolvingClassExtendedType) {
+                if (lhs.isAlias()) {
+                    (lhs).setIsUsedAsValue();
+                }
+            }
+
             if (this.isAnyOrEquivalent(lhsType)) {
                 return lhsType;
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(155 /* Could_not_find_enclosing_symbol_for_dotted_name__0_ */, [(dottedNameAST.operand2).actualText]), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), 158 /* Could_not_find_enclosing_symbol_for_dotted_name__0_ */, [(dottedNameAST.operand2).actualText], enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -39170,7 +39569,7 @@ var TypeScript;
             }
 
             if (!childTypeSymbol) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(156 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [(dottedNameAST.operand2).actualText, lhsType.getName()]), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), 159 /* The_property__0__does_not_exist_on_value_of_type__1__ */, [(dottedNameAST.operand2).actualText, lhsType.getName()], enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -39312,10 +39711,10 @@ var TypeScript;
             var diagnostic = null;
 
             if (enclosingDeclKind === 8 /* Container */) {
-                diagnostic = new TypeScript.PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), TypeScript.getDiagnosticMessage(169 /* _this__cannot_be_referenced_within_module_bodies */, null));
+                diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 172 /* _this__cannot_be_referenced_within_module_bodies */, null);
                 return this.getNewErrorTypeSymbol(diagnostic);
             } else if (!(enclosingDeclKind & (TypeScript.PullElementKind.SomeFunction | 1 /* Script */ | TypeScript.PullElementKind.SomeBlock))) {
-                diagnostic = new TypeScript.PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), TypeScript.getDiagnosticMessage(170 /* _this__must_only_be_used_inside_a_function_or_script_context */, null));
+                diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 173 /* _this__must_only_be_used_inside_a_function_or_script_context */, null);
 
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
@@ -39722,7 +40121,7 @@ var TypeScript;
 
                 this.setSymbolForAST(callEx, returnType, context);
             } else {
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(70 /* Value_of_type__0__is_not_indexable_by_type__1_ */, [targetTypeSymbol.toString(false), indexType.toString(false)]), enclosingDecl);
+                diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), 73 /* Value_of_type__0__is_not_indexable_by_type__1_ */, [targetTypeSymbol.toString(false), indexType.toString(false)], enclosingDecl);
 
                 returnType = this.getNewErrorTypeSymbol(diagnostic);
             }
@@ -39869,7 +40268,7 @@ var TypeScript;
                 }
             }
 
-            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(153 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [leftType.toString(false), rightType.toString(false)]), enclosingDecl);
+            var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), 156 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
         };
@@ -39900,7 +40299,7 @@ var TypeScript;
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 if (callEx.typeArguments) {
-                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(216 /* Untyped_function_calls_may_not_accept_type_arguments */, null), enclosingDecl);
+                    diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 219 /* Untyped_function_calls_may_not_accept_type_arguments */, null, enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -39917,7 +40316,7 @@ var TypeScript;
                     targetSymbol = (targetTypeSymbol).getConstructorMethod();
                     targetTypeSymbol = targetSymbol.getType();
                 } else {
-                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(151 /* Calls_to__super__are_only_valid_inside_a_class */, null), enclosingDecl);
+                    diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 154 /* Calls_to__super__are_only_valid_inside_a_class */, null, enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -39925,7 +40324,7 @@ var TypeScript;
             var signatures = isSuperCall ? (targetTypeSymbol).getConstructSignatures() : (targetTypeSymbol).getCallSignatures();
 
             if (!signatures.length && (targetTypeSymbol.getKind() == 67108864 /* ConstructorType */)) {
-                context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(219 /* Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ */, [targetTypeSymbol.toString()]), enclosingDecl, true);
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 223 /* Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ */, [targetTypeSymbol.toString()], enclosingDecl, true);
             }
 
             var typeArgs = null;
@@ -39956,7 +40355,7 @@ var TypeScript;
                 var typeParameters;
                 var typeConstraint = null;
                 var prevSpecializingToAny = context.specializingToAny;
-
+                var beforeResolutionSignatures = signatures;
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
 
@@ -39988,7 +40387,7 @@ var TypeScript;
                                             context.popTypeSpecializationCache();
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(targetAST.minChar, targetAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
+                                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 151 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
                                         }
                                     }
                                 }
@@ -40021,15 +40420,15 @@ var TypeScript;
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(150 /* Unable_to_invoke_type_with_no_call_signatures */, null), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, callEx.minChar, callEx.getLength(), 153 /* Unable_to_invoke_type_with_no_call_signatures */, null, enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
-
+            var useBeforeResolutionSignatures = signature == null;
             var errorCondition = null;
             if (!signature) {
-                diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(149 /* Could_not_select_overload_for__call__expression */, null), enclosingDecl);
+                diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 152 /* Could_not_select_overload_for__call__expression */, null, enclosingDecl);
 
                 errorCondition = this.getNewErrorTypeSymbol(diagnostic);
 
@@ -40059,7 +40458,7 @@ var TypeScript;
             }
 
             if (!signature.isGeneric() && callEx.typeArguments) {
-                context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(217 /* Non_generic_functions_may_not_accept_type_arguments */, null), enclosingDecl);
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 220 /* Non_generic_functions_may_not_accept_type_arguments */, null, enclosingDecl);
             }
 
             var returnType = signature.getReturnType();
@@ -40105,8 +40504,13 @@ var TypeScript;
             if (additionalResults) {
                 additionalResults.targetSymbol = targetSymbol;
                 additionalResults.targetTypeSymbol = targetTypeSymbol;
-                additionalResults.resolvedSignatures = signatures;
-                additionalResults.candidateSignature = signature;
+                if (useBeforeResolutionSignatures && beforeResolutionSignatures) {
+                    additionalResults.resolvedSignatures = beforeResolutionSignatures;
+                    additionalResults.candidateSignature = beforeResolutionSignatures[0];
+                } else {
+                    additionalResults.resolvedSignatures = signatures;
+                    additionalResults.candidateSignature = signature;
+                }
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
             }
 
@@ -40221,7 +40625,7 @@ var TypeScript;
                                             }
 
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                context.postError(targetAST.minChar, targetAST.getLength(), this.getUnitPath(), TypeScript.getDiagnosticMessage(148 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]), enclosingDecl, true);
+                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 151 /* Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ */, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
                                             }
                                         }
                                     }
@@ -40258,7 +40662,7 @@ var TypeScript;
                 var errorCondition = null;
 
                 if (!signature) {
-                    diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(147 /* Could_not_select_overload_for__new__expression */, null), enclosingDecl);
+                    diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 150 /* Could_not_select_overload_for__new__expression */, null, enclosingDecl);
 
                     errorCondition = this.getNewErrorTypeSymbol(diagnostic);
 
@@ -40299,7 +40703,7 @@ var TypeScript;
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(146 /* Call_signatures_used_in_a__new__expression_must_have_a__void__return_type */, null), enclosingDecl);
+                        diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 149 /* Call_signatures_used_in_a__new__expression_must_have_a__void__return_type */, null, enclosingDecl);
                         return this.getNewErrorTypeSymbol(diagnostic);
                     } else {
                         returnType = this.semanticInfoChain.anyTypeSymbol;
@@ -40377,7 +40781,7 @@ var TypeScript;
                 return returnType;
             }
 
-            diagnostic = context.postError(targetAST.minChar, targetAST.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(145 /* Invalid__new__expression */, null), enclosingDecl);
+            diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), 148 /* Invalid__new__expression */, null, enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
         };
@@ -40582,6 +40986,10 @@ var TypeScript;
 
             if (val && t2.isPrimitive() && (t2).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
                 return (val.nodeType === 5 /* StringLiteral */) && (TypeScript.stripQuotes((val).actualText) === TypeScript.stripQuotes(t2.getName()));
+            }
+
+            if (t1.isPrimitive() && (t1).isStringConstant() && t2.isPrimitive() && (t2).isStringConstant()) {
+                return TypeScript.stripQuotes(t1.getName()) === TypeScript.stripQuotes(t2.getName());
             }
 
             if (t1.isPrimitive() || t2.isPrimitive()) {
@@ -41028,7 +41436,7 @@ var TypeScript;
                             if (!(targetProp.getIsOptional())) {
                                 if (comparisonInfo) {
                                     comparisonInfo.flags |= 2 /* RequiredPropertyIsMissing */;
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(221 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
+                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(226 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
                                 }
                                 return false;
                             }
@@ -41052,9 +41460,9 @@ var TypeScript;
             if (targetPropIsPrivate != sourcePropIsPrivate) {
                 if (comparisonInfo) {
                     if (targetPropIsPrivate) {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(225 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(230 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     } else {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(224 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(229 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     }
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
                 }
@@ -41065,7 +41473,7 @@ var TypeScript;
 
                 if (!targetDecl.isEqual(sourceDecl)) {
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(226 /* Types__0__and__1__define_property__2__as_private */, [source.toString(), target.toString(), targetProp.getScopedNameEx().toString()]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(231 /* Types__0__and__1__define_property__2__as_private */, [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
                     return false;
                 }
             }
@@ -41090,9 +41498,9 @@ var TypeScript;
                     comparisonInfo.flags |= 32 /* IncompatiblePropertyTypes */;
                     var message;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = TypeScript.getDiagnosticMessage(223 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
+                        message = TypeScript.getDiagnosticMessage(228 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(222 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
+                        message = TypeScript.getDiagnosticMessage(227 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
                     }
                     comparisonInfo.addMessage(message);
                 }
@@ -41118,14 +41526,14 @@ var TypeScript;
                         var message;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(228 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(233 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(227 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(232 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(229 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(234 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -41151,14 +41559,14 @@ var TypeScript;
                         var message;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(231 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(236 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(230 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(235 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(232 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(237 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -41251,9 +41659,9 @@ var TypeScript;
                     if (comparisonInfo) {
                         var message;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = TypeScript.getDiagnosticMessage(234 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                            message = TypeScript.getDiagnosticMessage(239 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(233 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                            message = TypeScript.getDiagnosticMessage(238 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -41333,7 +41741,7 @@ var TypeScript;
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableParamList()) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= 3 /* SourceSignatureHasTooManyParameters */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(235 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(240 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
                 }
                 return false;
             }
@@ -41447,9 +41855,9 @@ var TypeScript;
                     candidate = candidateInfo.sig;
                 } else {
                     if (comparisonInfo.message) {
-                        context.postError(target.minChar, target.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(144 /* Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 */, [comparisonInfo.message]), enclosingDecl, true);
+                        context.postError(this.unitPath, target.minChar, target.getLength(), 147 /* Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 */, [comparisonInfo.message], enclosingDecl, true);
                     } else {
-                        context.postError(target.minChar, target.getLength(), this.unitPath, TypeScript.getDiagnosticMessage(143 /* Supplied_parameters_do_not_match_any_signature_of_call_target */, null), enclosingDecl, true);
+                        context.postError(this.unitPath, target.minChar, target.getLength(), 146 /* Supplied_parameters_do_not_match_any_signature_of_call_target */, null, enclosingDecl, true);
                     }
                 }
             } else {
@@ -41600,7 +42008,7 @@ var TypeScript;
 
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(236 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(241 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
                                 miss = true;
                             }
@@ -41621,7 +42029,7 @@ var TypeScript;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(236 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(241 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             miss = true;
                         }
@@ -41642,7 +42050,7 @@ var TypeScript;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(236 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(241 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }
@@ -42170,8 +42578,8 @@ var TypeScript;
             }
         };
 
-        PullTypeChecker.prototype.postError = function (offset, length, fileName, message, enclosingDecl) {
-            enclosingDecl.addDiagnostic(new TypeScript.PullDiagnostic(offset, length, fileName, message));
+        PullTypeChecker.prototype.postError = function (offset, length, fileName, diagnosticCode, arguments, enclosingDecl) {
+            enclosingDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments));
         };
 
         PullTypeChecker.prototype.validateVariableDeclarationGroups = function (enclosingDecl, typeCheckContext) {
@@ -42197,7 +42605,7 @@ var TypeScript;
                     }
 
                     if (!this.resolver.typesAreIdentical(symbol.getType(), firstSymbol.getType())) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(192 /* Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ */, [symbol.getDisplayName(), firstSymbol.getType().toString(), symbol.getType().toString()]), enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, 195 /* Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ */, [symbol.getDisplayName(), firstSymbol.getType().toString(), symbol.getType().toString()], enclosingDecl);
                     }
                 }
             }
@@ -42218,37 +42626,53 @@ var TypeScript;
             switch (ast.nodeType) {
                 case 1 /* List */:
                     return this.typeCheckList(ast, typeCheckContext);
+
                 case 17 /* VariableDeclarator */:
                 case 19 /* Parameter */:
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
+
                 case 12 /* FunctionDeclaration */:
                     return this.typeCheckFunction(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 13 /* ClassDeclaration */:
                     return this.typeCheckClass(ast, typeCheckContext);
+
                 case 14 /* InterfaceDeclaration */:
                     return this.typeCheckInterface(ast, typeCheckContext);
+
                 case 15 /* ModuleDeclaration */:
                     return this.typeCheckModule(ast, typeCheckContext);
+
                 case 38 /* AssignmentExpression */:
                     return this.typeCheckAssignment(ast, typeCheckContext);
+
                 case TypeScript.GenericType:
                     return this.typeCheckGenericType(ast, typeCheckContext);
+
                 case 22 /* ObjectLiteralExpression */:
                     return this.typeCheckObjectLiteral(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 21 /* ArrayLiteralExpression */:
                     return this.typeCheckArrayLiteral(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 29 /* ThisExpression */:
                     return this.typeCheckThisExpression(ast, typeCheckContext);
+
                 case 30 /* SuperExpression */:
                     return this.typeCheckSuper(ast, typeCheckContext);
+
                 case 36 /* InvocationExpression */:
                     return this.typeCheckCallExpression(ast, typeCheckContext);
+
                 case 37 /* ObjectCreationExpression */:
                     return this.typeCheckObjectCreationExpression(ast, typeCheckContext);
+
                 case 78 /* CastExpression */:
                     return this.typeCheckTypeAssertion(ast, typeCheckContext);
+
                 case 11 /* TypeRef */:
                     return this.typeCheckTypeReference(ast, typeCheckContext);
+
                 case 57 /* NotEqualsWithTypeConversionExpression */:
                 case 56 /* EqualsWithTypeConversionExpression */:
                 case 58 /* EqualsExpression */:
@@ -42258,11 +42682,14 @@ var TypeScript;
                 case 63 /* GreaterThanOrEqualExpression */:
                 case 62 /* GreaterThanExpression */:
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
+
                 case 25 /* CommaExpression */:
                     return this.typeCheckCommaExpression(ast, typeCheckContext);
+
                 case 64 /* AddExpression */:
                 case 39 /* AddAssignmentExpression */:
                     return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
+
                 case 65 /* SubtractExpression */:
                 case 66 /* MultiplyExpression */:
                 case 67 /* DivideExpression */:
@@ -42284,6 +42711,7 @@ var TypeScript;
                 case 46 /* OrAssignmentExpression */:
                 case 44 /* AndAssignmentExpression */:
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
+
                 case 26 /* PlusExpression */:
                 case 27 /* NegateExpression */:
                 case 72 /* BitwiseNotExpression */:
@@ -42292,76 +42720,111 @@ var TypeScript;
                 case 77 /* PostDecrementExpression */:
                 case 75 /* PreDecrementExpression */:
                     return this.typeCheckUnaryArithmeticOperation(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 35 /* ElementAccessExpression */:
                     return this.typeCheckElementAccessExpression(ast, typeCheckContext);
+
                 case 73 /* LogicalNotExpression */:
                     return this.typeCheckLogicalNotExpression(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 51 /* LogicalOrExpression */:
                 case 52 /* LogicalAndExpression */:
                     return this.typeCheckLogicalAndOrExpression(ast, typeCheckContext);
+
                 case 34 /* TypeOfExpression */:
                     return this.typeCheckTypeOf(ast, typeCheckContext);
+
                 case 50 /* ConditionalExpression */:
                     return this.typeCheckConditionalExpression(ast, typeCheckContext);
+
                 case 24 /* VoidExpression */:
                     return this.typeCheckVoidExpression(ast, typeCheckContext);
+
                 case 95 /* ThrowStatement */:
                     return this.typeCheckThrowStatement(ast, typeCheckContext);
+
                 case 28 /* DeleteExpression */:
                     return this.typeCheckDeleteExpression(ast, typeCheckContext);
+
                 case 6 /* RegularExpressionLiteral */:
                     return this.typeCheckRegExpExpression(ast, typeCheckContext);
+
                 case 31 /* InExpression */:
                     return this.typeCheckInExpression(ast, typeCheckContext);
+
                 case 33 /* InstanceOfExpression */:
                     return this.typeCheckInstanceOfExpression(ast, typeCheckContext);
+
                 case 79 /* ParenthesizedExpression */:
                     return this.typeCheckParenthesizedExpression(ast, typeCheckContext);
+
                 case 90 /* ForStatement */:
                     return this.typeCheckForStatement(ast, typeCheckContext);
+
                 case 89 /* ForInStatement */:
                     return this.typeCheckForInStatement(ast, typeCheckContext);
+
                 case 98 /* WhileStatement */:
                     return this.typeCheckWhileStatement(ast, typeCheckContext);
+
                 case 85 /* DoStatement */:
                     return this.typeCheckDoStatement(ast, typeCheckContext);
+
                 case 91 /* IfStatement */:
                     return this.typeCheckIfStatement(ast, typeCheckContext);
+
                 case 81 /* Block */:
                     return this.typeCheckBlock(ast, typeCheckContext);
+
                 case 18 /* VariableDeclaration */:
                     return this.typeCheckVariableDeclaration(ast, typeCheckContext);
+
                 case 97 /* VariableStatement */:
                     return this.typeCheckVariableStatement(ast, typeCheckContext);
+
                 case 99 /* WithStatement */:
                     return this.typeCheckWithStatement(ast, typeCheckContext);
+
                 case 96 /* TryStatement */:
                     return this.typeCheckTryStatement(ast, typeCheckContext);
+
                 case 101 /* CatchClause */:
                     return this.typeCheckCatchClause(ast, typeCheckContext);
+
                 case 93 /* ReturnStatement */:
                     return this.typeCheckReturnStatement(ast, typeCheckContext);
+
                 case 20 /* Name */:
                     return this.typeCheckNameExpression(ast, typeCheckContext);
+
                 case 32 /* MemberAccessExpression */:
                     return this.typeCheckMemberAccessExpression(ast, typeCheckContext);
+
                 case 94 /* SwitchStatement */:
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
+
                 case 88 /* ExpressionStatement */:
                     return this.typeCheckExpressionStatement(ast, typeCheckContext, inContextuallyTypedAssignment);
+
                 case 100 /* CaseClause */:
                     return this.typeCheckCaseClause(ast, typeCheckContext);
+
                 case 92 /* LabeledStatement */:
                     return this.typeCheckLabeledStatement(ast, typeCheckContext);
+
                 case 7 /* NumericLiteral */:
                     return this.semanticInfoChain.numberTypeSymbol;
+
                 case 5 /* StringLiteral */:
                     return this.semanticInfoChain.stringTypeSymbol;
+
                 case 8 /* NullLiteral */:
                     return this.semanticInfoChain.nullTypeSymbol;
+
                 case 3 /* TrueLiteral */:
                 case 4 /* FalseLiteral */:
                     return this.semanticInfoChain.booleanTypeSymbol;
+
                 default:
                     break;
             }
@@ -42436,7 +42899,7 @@ var TypeScript;
                     var instanceTypeSymbol = (typeExprSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(183 /* Tried_to_set_variable_type_to_uninitialized_module_type */, null), enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, 186 /* Tried_to_set_variable_type_to_uninitialized_module_type */, null, enclosingDecl);
                         typeExprSymbol = null;
                     } else {
                         typeExprSymbol = instanceTypeSymbol.getType();
@@ -42447,7 +42910,7 @@ var TypeScript;
                     instanceTypeSymbol = (initTypeSymbol.getType()).getInstanceSymbol();
 
                     if (!instanceTypeSymbol) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(184 /* Tried_to_set_variable_type_to_uninitialized_module_type__0__ */, [initTypeSymbol.toString()]), enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, 187 /* Tried_to_set_variable_type_to_uninitialized_module_type__0__ */, [initTypeSymbol.toString()], enclosingDecl);
                         initTypeSymbol = null;
                     } else {
                         initTypeSymbol = instanceTypeSymbol.getType();
@@ -42460,14 +42923,11 @@ var TypeScript;
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, typeExprSymbol, this.context, comparisonInfo);
 
                     if (!isAssignable) {
-                        var message;
                         if (comparisonInfo.message) {
-                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [initTypeSymbol.toString(), typeExprSymbol.toString(), comparisonInfo.message]);
+                            this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, 77 /* Cannot_convert__0__to__1__NL__2 */, [initTypeSymbol.toString(), typeExprSymbol.toString(), comparisonInfo.message], enclosingDecl);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
+                            this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, 76 /* Cannot_convert__0__to__1_ */, [initTypeSymbol.toString(), typeExprSymbol.toString()], enclosingDecl);
                         }
-
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
                 }
             }
@@ -42542,7 +43002,7 @@ var TypeScript;
                     var funcName = functionDecl.getDisplayName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
-                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(185 /* Function__0__declared_a_non_void_return_type__but_has_no_return_expression */, [funcName]), typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, 188 /* Function__0__declared_a_non_void_return_type__but_has_no_return_expression */, [funcName], typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -42554,9 +43014,6 @@ var TypeScript;
 
         PullTypeChecker.prototype.typeCheckFunctionOverloads = function (funcDecl, typeCheckContext) {
             var functionSignatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
-            if (functionSignatureInfo.allSignatures.length === 1 || functionSignatureInfo.signature.isDefinition()) {
-                return;
-            }
 
             var signature = functionSignatureInfo.signature;
             var allSignatures = functionSignatureInfo.allSignatures;
@@ -42570,51 +43027,59 @@ var TypeScript;
                 }
             }
 
-            var message;
-            for (var i = 0; i < allSignatures.length; i++) {
-                if (allSignatures[i] === signature) {
-                    break;
-                }
-
-                if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
-                    if (funcDecl.isConstructor) {
-                        message = TypeScript.getDiagnosticMessage(203 /* Duplicate_constructor_overload_signature */, null);
-                    } else if (funcDecl.isConstructMember()) {
-                        message = TypeScript.getDiagnosticMessage(205 /* Duplicate_overload_construct_signature */, null);
-                    } else if (funcDecl.isCallMember()) {
-                        message = TypeScript.getDiagnosticMessage(204 /* Duplicate_overload_call_signature */, null);
-                    } else {
-                        message = TypeScript.getDiagnosticMessage(202 /* Duplicate_overload_signature_for__0_ */, [funcSymbol.getScopedNameEx().toString()]);
+            if (!signature.isDefinition()) {
+                for (var i = 0; i < allSignatures.length; i++) {
+                    if (allSignatures[i] === signature) {
+                        break;
                     }
-                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
-                    break;
+
+                    if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
+                        if (funcDecl.isConstructor) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 206 /* Duplicate_constructor_overload_signature */, null, typeCheckContext.getEnclosingDecl());
+                        } else if (funcDecl.isConstructMember()) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 208 /* Duplicate_overload_construct_signature */, null, typeCheckContext.getEnclosingDecl());
+                        } else if (funcDecl.isCallMember()) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 207 /* Duplicate_overload_call_signature */, null, typeCheckContext.getEnclosingDecl());
+                        } else {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 205 /* Duplicate_overload_signature_for__0_ */, [funcSymbol.getScopedNameEx().toString()], typeCheckContext.getEnclosingDecl());
+                        }
+
+                        break;
+                    }
                 }
             }
 
             var isConstantOverloadSignature = signature.isStringConstantOverloadSignature();
             if (isConstantOverloadSignature) {
-                var resolutionContext = new TypeScript.PullTypeResolutionContext();
-                var foundSubtypeSignature = false;
-                for (var i = 0; i < allSignatures.length; i++) {
-                    if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
-                        continue;
+                if (signature.isDefinition()) {
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 225 /* Overload_signature_implementation_cannot_use_specialized_type */, null, typeCheckContext.getEnclosingDecl());
+                } else {
+                    var resolutionContext = new TypeScript.PullTypeResolutionContext();
+                    var foundSubtypeSignature = false;
+                    for (var i = 0; i < allSignatures.length; i++) {
+                        if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
+                            continue;
+                        }
+
+                        if (!allSignatures[i].isResolved()) {
+                            this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
+                        }
+
+                        if (allSignatures[i].isStringConstantOverloadSignature()) {
+                            continue;
+                        }
+
+                        if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
+                            foundSubtypeSignature = true;
+                            break;
+                        }
                     }
 
-                    if (!allSignatures[i].isResolved()) {
-                        this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
-                    }
-
-                    if (this.resolver.signatureIsSubtypeOfTarget(signature, allSignatures[i], resolutionContext)) {
-                        foundSubtypeSignature = true;
-                        break;
+                    if (!foundSubtypeSignature) {
+                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 215 /* Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature */, null, typeCheckContext.getEnclosingDecl());
                     }
                 }
-
-                if (!foundSubtypeSignature) {
-                    message = TypeScript.getDiagnosticMessage(212 /* Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature */, null);
-                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
-                }
-            } else if (definitionSignature) {
+            } else if (definitionSignature && definitionSignature != signature) {
                 var comparisonInfo = new TypeComparisonInfo();
                 var resolutionContext = new TypeScript.PullTypeResolutionContext();
                 if (!definitionSignature.isResolved()) {
@@ -42623,11 +43088,10 @@ var TypeScript;
 
                 if (!this.resolver.signatureIsAssignableToTarget(definitionSignature, signature, resolutionContext, comparisonInfo)) {
                     if (comparisonInfo.message) {
-                        message = TypeScript.getDiagnosticMessage(207 /* Overload_signature_is_not_compatible_with_function_definition__NL__0 */, [comparisonInfo.message]);
+                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 210 /* Overload_signature_is_not_compatible_with_function_definition__NL__0 */, [comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                     } else {
-                        message = TypeScript.getDiagnosticMessage(206 /* Overload_signature_is_not_compatible_with_function_definition */, null);
+                        this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, 209 /* Overload_signature_is_not_compatible_with_function_definition */, null, typeCheckContext.getEnclosingDecl());
                     }
-                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -42643,18 +43107,17 @@ var TypeScript;
                 var errorCode;
 
                 if (signatureForVisibilityCheck.hasFlag(2 /* Private */) != signature.hasFlag(2 /* Private */)) {
-                    errorCode = 208 /* Overload_signatures_must_all_be_public_or_private */;
+                    errorCode = 211 /* Overload_signatures_must_all_be_public_or_private */;
                 } else if (signatureForVisibilityCheck.hasFlag(1 /* Exported */) != signature.hasFlag(1 /* Exported */)) {
-                    errorCode = 209 /* Overload_signatures_must_all_be_exported_or_local */;
+                    errorCode = 212 /* Overload_signatures_must_all_be_exported_or_local */;
                 } else if (signatureForVisibilityCheck.hasFlag(8 /* Ambient */) != signature.hasFlag(8 /* Ambient */)) {
-                    errorCode = 210 /* Overload_signatures_must_all_be_ambient_or_non_ambient */;
+                    errorCode = 213 /* Overload_signatures_must_all_be_ambient_or_non_ambient */;
                 } else if (signatureForVisibilityCheck.hasFlag(128 /* Optional */) != signature.hasFlag(128 /* Optional */)) {
-                    errorCode = 211 /* Overload_signatures_must_all_be_optional_or_required */;
+                    errorCode = 214 /* Overload_signatures_must_all_be_optional_or_required */;
                 }
 
                 if (errorCode) {
-                    message = TypeScript.getDiagnosticMessage(errorCode, null);
-                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, errorCode, null, typeCheckContext.getEnclosingDecl());
                 }
             }
         };
@@ -42699,7 +43162,7 @@ var TypeScript;
 
             if (isGetter && !hasReturn) {
                 if (!(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType === 95 /* ThrowStatement */)) {
-                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(186 /* Getters_must_return_a_value */, null), typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, 189 /* Getters_must_return_a_value */, null, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -42711,7 +43174,7 @@ var TypeScript;
                 var setterIsPrivate = setterDecl.getFlags() & 2 /* Private */;
 
                 if (getterIsPrivate != setterIsPrivate) {
-                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(187 /* Getter_and_setter_accessors_do_not_agree_in_visibility */, null), typeCheckContext.getEnclosingDecl());
+                    this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, 190 /* Getter_and_setter_accessors_do_not_agree_in_visibility */, null, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -42754,11 +43217,11 @@ var TypeScript;
 
             if (functionDecl.getSignatureSymbol() && functionDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
                 if (!typeCheckContext.seenSuperConstructorCall) {
-                    this.postError(funcDeclAST.minChar, 11, typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(166 /* Constructors_for_derived_classes_must_contain_a__super__call */, null), enclosingDecl);
+                    this.postError(funcDeclAST.minChar, 11, typeCheckContext.scriptName, 169 /* Constructors_for_derived_classes_must_contain_a__super__call */, null, enclosingDecl);
                 } else if (this.superCallMustBeFirstStatementInConstructor(functionDecl, enclosingDecl)) {
                     var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
                     if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
-                        this.postError(funcDeclAST.minChar, 11, typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(165 /* A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties */, null), enclosingDecl);
+                        this.postError(funcDeclAST.minChar, 11, typeCheckContext.scriptName, 168 /* A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties */, null, enclosingDecl);
                     }
                 }
             }
@@ -42817,15 +43280,15 @@ var TypeScript;
             var errorCode;
             if (typeMemberKind === 8192 /* Property */) {
                 if (typeMember.isAccessor()) {
-                    errorCode = 237 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 242 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 } else {
-                    errorCode = 238 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 243 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 }
             } else if (typeMemberKind === 131072 /* Method */) {
                 if (extendedTypeMember.isAccessor()) {
-                    errorCode = 239 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
+                    errorCode = 244 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
                 } else {
-                    errorCode = 240 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
+                    errorCode = 245 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
                 }
             }
 
@@ -42891,9 +43354,9 @@ var TypeScript;
                             if (!this.resolver.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
                                 var propMessage;
                                 if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = TypeScript.getDiagnosticMessage(242 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
+                                    propMessage = TypeScript.getDiagnosticMessage(247 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
                                 } else {
-                                    propMessage = TypeScript.getDiagnosticMessage(241 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
+                                    propMessage = TypeScript.getDiagnosticMessage(246 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
                                 }
                                 comparisonInfo.addMessage(propMessage);
                                 foundError = true;
@@ -42907,17 +43370,16 @@ var TypeScript;
             if (foundError) {
                 var errorCode;
                 if (typeSymbol.isClass()) {
-                    errorCode = 199 /* Class__0__cannot_extend_class__1__NL__2 */;
+                    errorCode = 202 /* Class__0__cannot_extend_class__1__NL__2 */;
                 } else {
                     if (extendedType.isClass()) {
-                        errorCode = 200 /* Interface__0__cannot_extend_class__1__NL__2 */;
+                        errorCode = 203 /* Interface__0__cannot_extend_class__1__NL__2 */;
                     } else {
-                        errorCode = 201 /* Interface__0__cannot_extend_interface__1__NL__2 */;
+                        errorCode = 204 /* Interface__0__cannot_extend_interface__1__NL__2 */;
                     }
                 }
 
-                var message = TypeScript.getDiagnosticMessage(errorCode, [typeSymbol.getScopedName(), extendedType.getScopedName(), comparisonInfo.message]);
-                this.postError(typeDecl.name.minChar, typeDecl.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                this.postError(typeDecl.name.minChar, typeDecl.name.getLength(), typeCheckContext.scriptName, errorCode, [typeSymbol.getScopedName(), extendedType.getScopedName(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
             }
         };
 
@@ -42936,10 +43398,9 @@ var TypeScript;
             }
 
             if (foundError) {
-                var errorCode = implementedType.isClass() ? 196 /* Class__0__declares_class__1__but_does_not_implement_it__NL__2 */ : 195 /* Class__0__declares_interface__1__but_does_not_implement_it__NL__2 */;
+                var errorCode = implementedType.isClass() ? 199 /* Class__0__declares_class__1__but_does_not_implement_it__NL__2 */ : 198 /* Class__0__declares_interface__1__but_does_not_implement_it__NL__2 */;
 
-                var message = TypeScript.getDiagnosticMessage(errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message]);
-                this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
             }
         };
 
@@ -42947,29 +43408,30 @@ var TypeScript;
             var _this = this;
             var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
             var contextForBaseTypeResolution = new TypeScript.PullTypeResolutionContext();
+            contextForBaseTypeResolution.isResolvingClassExtendedType = true;
             var baseType = this.resolver.resolveTypeReference(new TypeScript.TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+            contextForBaseTypeResolution.isResolvingClassExtendedType = false;
+
             var typeDeclIsClass = typeSymbol.isClass();
-            var message;
 
             if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
                 if (baseType.isError()) {
-                    message = (baseType).getDiagnostic().message();
+                    var error = (baseType).getDiagnostic();
+                    this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, error.diagnosticCode(), error.arguments(), typeCheckContext.getEnclosingDecl());
                 } else if (isExtendedType) {
                     if (typeDeclIsClass) {
-                        message = TypeScript.getDiagnosticMessage(135 /* A_class_may_only_extend_another_class */, null);
+                        this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, 138 /* A_class_may_only_extend_another_class */, null, typeCheckContext.getEnclosingDecl());
                     } else {
-                        message = TypeScript.getDiagnosticMessage(137 /* An_interface_may_only_extend_another_class_or_interface */, null);
+                        this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, 140 /* An_interface_may_only_extend_another_class_or_interface */, null, typeCheckContext.getEnclosingDecl());
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(136 /* A_class_may_only_implement_another_class_or_interface */, null);
+                    this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, 139 /* A_class_may_only_implement_another_class_or_interface */, null, typeCheckContext.getEnclosingDecl());
                 }
-                this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
                 return;
             }
 
             if (baseType.hasBase(typeSymbol)) {
-                message = TypeScript.getDiagnosticMessage(typeDeclIsClass ? 161 /* Class__0__is_recursively_referenced_as_a_base_type_of_itself */ : 162 /* Interface__0__is_recursively_referenced_as_a_base_type_of_itself */, [typeSymbol.getScopedName()]);
-                this.postError(typeDeclAst.name.minChar, typeDeclAst.name.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                this.postError(typeDeclAst.name.minChar, typeDeclAst.name.getLength(), typeCheckContext.scriptName, typeDeclIsClass ? 164 /* Class__0__is_recursively_referenced_as_a_base_type_of_itself */ : 165 /* Interface__0__is_recursively_referenced_as_a_base_type_of_itself */, [typeSymbol.getScopedName()], typeCheckContext.getEnclosingDecl());
                 return;
             }
 
@@ -42997,8 +43459,7 @@ var TypeScript;
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
             } else if (typeDeclAst.implementsList) {
-                var message = TypeScript.getDiagnosticMessage(138 /* An_interface_cannot_implement_another_type */, null);
-                this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, 141 /* An_interface_cannot_implement_another_type */, null, typeCheckContext.getEnclosingDecl());
             }
         };
 
@@ -43060,15 +43521,12 @@ var TypeScript;
             var isAssignable = this.resolver.sourceIsAssignableToTarget(source, target, this.context, comparisonInfo);
 
             if (!isAssignable) {
-                var message;
-                if (comparisonInfo.message) {
-                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [source.toString(), target.toString(), comparisonInfo.message]);
-                } else {
-                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [source.toString(), target.toString()]);
-                }
-
                 var enclosingDecl = typeCheckContext.getEnclosingDecl();
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                if (comparisonInfo.message) {
+                    this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 77 /* Cannot_convert__0__to__1__NL__2 */, [source.toString(), target.toString(), comparisonInfo.message], enclosingDecl);
+                } else {
+                    this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 76 /* Cannot_convert__0__to__1_ */, [source.toString(), target.toString()], enclosingDecl);
+                }
             }
         };
 
@@ -43093,7 +43551,7 @@ var TypeScript;
             this.context.popContextualType();
 
             if (!this.isValidLHS(binaryExpression.operand1, leftExpr, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(188 /* Invalid_left_hand_side_of_assignment_expression */, null), enclosingDecl);
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
             }
 
             this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
@@ -43197,7 +43655,7 @@ var TypeScript;
                     var comparisonInfo = new TypeScript.TypeComparisonInfo();
                     var elementType = this.resolver.findBestCommonType(elementTypes[0], contextualMemberType, collection, false, this.context, comparisonInfo);
                     if (!elementType) {
-                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(154 /* Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements */, null), enclosingDecl);
+                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 157 /* Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements */, null, enclosingDecl);
                     }
                 }
             }
@@ -43315,14 +43773,14 @@ var TypeScript;
             var enclosingNonLambdaDecl = typeCheckContext.getEnclosingNonLambdaDecl();
 
             if (typeCheckContext.inSuperConstructorCall && this.superCallMustBeFirstStatementInConstructor(typeCheckContext.getEnclosingDecl(65536 /* ConstructorMethod */), typeCheckContext.getEnclosingDecl(16 /* Class */))) {
-                this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(159 /* _this__cannot_be_referenced_in_current_location */, null), enclosingDecl);
+                this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, 162 /* _this__cannot_be_referenced_in_current_location */, null, enclosingDecl);
             } else if (enclosingNonLambdaDecl) {
                 if (enclosingNonLambdaDecl.getKind() === 16 /* Class */) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(198 /* _this__cannot_be_referenced_in_initializers_in_a_class_body */, null), enclosingDecl);
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, 201 /* _this__cannot_be_referenced_in_initializers_in_a_class_body */, null, enclosingDecl);
                 } else if (enclosingNonLambdaDecl.getKind() === 8 /* Container */ || enclosingNonLambdaDecl.getKind() === 64 /* DynamicModule */) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(169 /* _this__cannot_be_referenced_within_module_bodies */, null), enclosingDecl);
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, 172 /* _this__cannot_be_referenced_within_module_bodies */, null, enclosingDecl);
                 } else if (typeCheckContext.inConstructorArguments) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(213 /* _this__cannot_be_referenced_in_constructor_arguments */, null), enclosingDecl);
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, 216 /* _this__cannot_be_referenced_in_constructor_arguments */, null, enclosingDecl);
                 }
             }
 
@@ -43342,11 +43800,11 @@ var TypeScript;
             var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
 
             if (inSuperConstructorTarget && enclosingDecl.getKind() !== 65536 /* ConstructorMethod */) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(167 /* Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors */, null), enclosingDecl);
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 170 /* Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors */, null, enclosingDecl);
             } else if ((nonLambdaEnclosingDeclKind !== 131072 /* Method */ && nonLambdaEnclosingDeclKind !== 524288 /* GetAccessor */ && nonLambdaEnclosingDeclKind !== 1048576 /* SetAccessor */ && nonLambdaEnclosingDeclKind !== 65536 /* ConstructorMethod */) || ((nonLambdaEnclosingDecl.getFlags() & 16 /* Static */) !== 0)) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(163 /* _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class */, null), enclosingDecl);
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 166 /* _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class */, null, enclosingDecl);
             } else if (!this.enclosingClassIsDerived(typeCheckContext)) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(164 /* _super__cannot_be_referenced_in_non_derived_classes */, null), enclosingDecl);
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 167 /* _super__cannot_be_referenced_in_non_derived_classes */, null, enclosingDecl);
             }
 
             this.checkForResolutionError(type, enclosingDecl);
@@ -43453,12 +43911,10 @@ var TypeScript;
             if (!isAssignable) {
                 var message;
                 if (comparisonInfo.message) {
-                    message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [exprType.toString(), returnType.toString(), comparisonInfo.message]);
+                    this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 77 /* Cannot_convert__0__to__1__NL__2 */, [exprType.toString(), returnType.toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                 } else {
-                    message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [exprType.toString(), returnType.toString()]);
+                    this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 76 /* Cannot_convert__0__to__1_ */, [exprType.toString(), returnType.toString()], typeCheckContext.getEnclosingDecl());
                 }
-
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
 
             return returnType;
@@ -43477,7 +43933,7 @@ var TypeScript;
 
             var comparisonInfo = new TypeComparisonInfo();
             if (!this.resolver.sourceIsAssignableToTarget(leftType, rightType, this.context, comparisonInfo) && !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(71 /* Operator__0__cannot_be_applied_to_types__1__and__2_ */, [TypeScript.BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()]), enclosingDecl);
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 74 /* Operator__0__cannot_be_applied_to_types__1__and__2_ */, [TypeScript.BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()], enclosingDecl);
             }
             return type;
         };
@@ -43553,13 +44009,13 @@ var TypeScript;
                 if (binaryExpression.nodeType === 39 /* AddAssignmentExpression */) {
                     var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
                     if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
-                        this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(188 /* Invalid_left_hand_side_of_assignment_expression */, null), enclosingDecl);
+                        this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
                     }
 
                     this.checkAssignability(binaryExpression.operand1, exprType, lhsType, typeCheckContext);
                 }
             } else {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(171 /* Invalid__addition__expression___types_do_not_agree */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 174 /* Invalid__addition__expression___types_do_not_agree */, null, typeCheckContext.getEnclosingDecl());
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -43579,11 +44035,11 @@ var TypeScript;
             var rhsIsFit = this.resolver.isAnyOrEquivalent(rhsType) || rhsType === this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() === 128 /* Enum */;
 
             if (!rhsIsFit) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(172 /* The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 175 /* The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!lhsIsFit) {
-                this.postError(binaryExpression.operand2.minChar, binaryExpression.operand2.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(173 /* The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand2.minChar, binaryExpression.operand2.getLength(), typeCheckContext.scriptName, 176 /* The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (rhsIsFit && lhsIsFit) {
@@ -43600,7 +44056,7 @@ var TypeScript;
                     case 45 /* ExclusiveOrAssignmentExpression */:
                         var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
                         if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
-                            this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(188 /* Invalid_left_hand_side_of_assignment_expression */, null), enclosingDecl);
+                            this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
                         }
 
                         this.checkAssignability(binaryExpression.operand1, rhsType, lhsType, typeCheckContext);
@@ -43629,7 +44085,7 @@ var TypeScript;
             var operandIsFit = this.resolver.isAnyOrEquivalent(operandType) || operandType === this.semanticInfoChain.numberTypeSymbol || operandType.getKind() === 128 /* Enum */;
 
             if (!operandIsFit) {
-                this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(174 /* The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName, 177 /* The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type */, null, typeCheckContext.getEnclosingDecl());
             }
 
             switch (unaryExpression.nodeType) {
@@ -43639,7 +44095,7 @@ var TypeScript;
                 case 75 /* PreDecrementExpression */:
                     var expression = this.resolver.resolveAST(unaryExpression.operand, false, typeCheckContext.getEnclosingDecl(), this.context);
                     if (!this.isValidLHS(unaryExpression.operand, expression, false)) {
-                        this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(197 /* The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer */, null), typeCheckContext.getEnclosingDecl());
+                        this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName, 200 /* The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer */, null, typeCheckContext.getEnclosingDecl());
                     }
 
                     break;
@@ -43735,7 +44191,7 @@ var TypeScript;
                 var varDecl = declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
-                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(175 /* Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation */, null), typeCheckContext.getEnclosingDecl());
+                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, 178 /* Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation */, null, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -43747,11 +44203,11 @@ var TypeScript;
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrNumber) {
-                this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(176 /* Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, 179 /* Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(177 /* The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, 180 /* The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter */, null, typeCheckContext.getEnclosingDecl());
             }
 
             this.typeCheckAST(forInStatement.body, typeCheckContext);
@@ -43767,11 +44223,11 @@ var TypeScript;
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringAnyOrNumber) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(178 /* The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 181 /* The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(179 /* The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 182 /* The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter */, null, typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;
@@ -43785,11 +44241,11 @@ var TypeScript;
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context));
 
             if (!isValidLHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(180 /* The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 183 /* The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(181 /* The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 184 /* The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type */, null, typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;
@@ -43840,7 +44296,7 @@ var TypeScript;
         };
 
         PullTypeChecker.prototype.typeCheckWithStatement = function (withStatement, typeCheckContext) {
-            this.postError(withStatement.expr.minChar, withStatement.expr.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(193 /* All_symbols_within_a__with__block_will_be_resolved_to__any__ */, null), typeCheckContext.getEnclosingDecl());
+            this.postError(withStatement.expr.minChar, withStatement.expr.getLength(), typeCheckContext.scriptName, 196 /* All_symbols_within_a__with__block_will_be_resolved_to__any__ */, null, typeCheckContext.getEnclosingDecl());
 
             return this.semanticInfoChain.voidTypeSymbol;
         };
@@ -43871,7 +44327,7 @@ var TypeScript;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             if (enclosingDecl.getKind() === 1048576 /* SetAccessor */ && returnExpr) {
-                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(182 /* Setters_cannot_return_a_value */, null), typeCheckContext.getEnclosingDecl());
+                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, 185 /* Setters_cannot_return_a_value */, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (enclosingDecl.getKind() & TypeScript.PullElementKind.SomeFunction) {
@@ -43909,14 +44365,11 @@ var TypeScript;
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
 
                     if (!isAssignable) {
-                        var message;
                         if (comparisonInfo.message) {
-                            message = TypeScript.getDiagnosticMessage(74 /* Cannot_convert__0__to__1__NL__2 */, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
+                            this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, 77 /* Cannot_convert__0__to__1__NL__2 */, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message], enclosingDecl);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(73 /* Cannot_convert__0__to__1_ */, [returnType.toString(), sigReturnType.toString()]);
+                            this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, 76 /* Cannot_convert__0__to__1_ */, [returnType.toString(), sigReturnType.toString()], enclosingDecl);
                         }
-
-                        this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
                 }
             }
@@ -43950,7 +44403,7 @@ var TypeScript;
                     var containingClass = typeCheckContext.getEnclosingClassDecl();
                     if (!containingClass || containingClass.getSymbol() !== memberContainer) {
                         var name = memberAccessExpression.operand2;
-                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, TypeScript.getDiagnosticMessage(168 /* _0_1__is_inaccessible */, [memberContainer.toString(false), name.actualText]), enclosingDecl);
+                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, 171 /* _0_1__is_inaccessible */, [memberContainer.toString(false), name.actualText], enclosingDecl);
                     }
                 }
             }
@@ -44055,7 +44508,8 @@ var TypeScript;
         PullTypeChecker.prototype.baseListPrivacyErrorReporter = function (declAST, declSymbol, baseAst, isExtendedType, typeSymbol, typeCheckContext) {
             var decl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var message;
+            var messageCode;
+            var messageArguments;
 
             var typeSymbolName = typeSymbol.getScopedName();
             if (typeSymbol.isContainer()) {
@@ -44064,26 +44518,32 @@ var TypeScript;
                 }
                 if (declAST.nodeType === 13 /* ClassDeclaration */) {
                     if (isExtendedType) {
-                        message = TypeScript.getDiagnosticMessage(83 /* Exported_class__0__extends_class_from_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 86 /* Exported_class__0__extends_class_from_inaccessible_module__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(84 /* Exported_class__0__implements_interface_from_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 87 /* Exported_class__0__implements_interface_from_inaccessible_module__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(85 /* Exported_interface__0__extends_interface_from_inaccessible_module__1_ */, [declSymbol.getDisplayName(), typeSymbolName]);
+                    messageCode = 88 /* Exported_interface__0__extends_interface_from_inaccessible_module__1_ */;
+                    messageArguments = [declSymbol.getDisplayName(), typeSymbolName];
                 }
             } else {
                 if (declAST.nodeType === 13 /* ClassDeclaration */) {
                     if (isExtendedType) {
-                        message = TypeScript.getDiagnosticMessage(80 /* Exported_class__0__extends_private_class__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 83 /* Exported_class__0__extends_private_class__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(81 /* Exported_class__0__implements_private_interface__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 84 /* Exported_class__0__implements_private_interface__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(82 /* Exported_interface__0__extends_private_interface__1_ */, [declSymbol.getDisplayName(), typeSymbolName]);
+                    messageCode = 85 /* Exported_interface__0__extends_private_interface__1_ */;
+                    messageArguments = [declSymbol.getDisplayName(), typeSymbolName];
                 }
             }
 
-            this.context.postError(baseAst.minChar, baseAst.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+            this.context.postError(typeCheckContext.scriptName, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl, true);
         };
 
         PullTypeChecker.prototype.variablePrivacyErrorReporter = function (declSymbol, typeSymbol, typeCheckContext) {
@@ -44098,7 +44558,8 @@ var TypeScript;
                 isPropertyOfClass = true;
             }
 
-            var message;
+            var messageCode;
+            var messageArguments;
             var typeSymbolName = typeSymbol.getScopedName();
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
@@ -44106,31 +44567,39 @@ var TypeScript;
                 }
 
                 if (decl.getFlags() & 16 /* Static */) {
-                    message = TypeScript.getDiagnosticMessage(90 /* Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                    messageCode = 93 /* Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ */;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
-                        message = TypeScript.getDiagnosticMessage(91 /* Public_property__0__of__exported_class_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 94 /* Public_property__0__of__exported_class_is_using_inaccessible_module__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(92 /* Property__0__of__exported_interface_is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 95 /* Property__0__of__exported_interface_is_using_inaccessible_module__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(93 /* Exported_variable__0__is_using_inaccessible_module__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                    messageCode = 96 /* Exported_variable__0__is_using_inaccessible_module__1_ */;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 }
             } else {
                 if (decl.getFlags() & 16 /* Static */) {
-                    message = TypeScript.getDiagnosticMessage(86 /* Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                    messageCode = 89 /* Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ */;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
-                        message = TypeScript.getDiagnosticMessage(87 /* Public_property__0__of__exported_class_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 90 /* Public_property__0__of__exported_class_has_or_is_using_private_type__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(88 /* Property__0__of__exported_interface_has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                        messageCode = 91 /* Property__0__of__exported_interface_has_or_is_using_private_type__1_ */;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
-                    message = TypeScript.getDiagnosticMessage(89 /* Exported_variable__0__has_or_is_using_private_type__1_ */, [declSymbol.getScopedName(), typeSymbolName]);
+                    messageCode = 92 /* Exported_variable__0__has_or_is_using_private_type__1_ */;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 }
             }
 
-            this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+            this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
         };
 
         PullTypeChecker.prototype.checkFunctionTypePrivacy = function (funcDeclAST, inContextuallyTypedAssignment, typeCheckContext) {
@@ -44191,7 +44660,9 @@ var TypeScript;
                 isMethodOfClass = true;
             }
 
-            var message = null;
+            var start = declAST.arguments.members[argIndex].minChar;
+            var length = declAST.arguments.members[argIndex].getLength();
+
             var typeSymbolName = typeSymbol.getScopedName();
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
@@ -44199,56 +44670,52 @@ var TypeScript;
                 }
 
                 if (declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(103 /* Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 106 /* Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (isSetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(104 /* Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 107 /* Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(105 /* Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 108 /* Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(106 /* Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 109 /* Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(107 /* Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 110 /* Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(108 /* Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 111 /* Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(109 /* Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 112 /* Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(110 /* Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 113 /* Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     }
                 } else if (!isGetter) {
-                    message = TypeScript.getDiagnosticMessage(111 /* Parameter__0__of_exported_function_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 114 /* Parameter__0__of_exported_function_is_using_inaccessible_module__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 }
             } else {
                 if (declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(94 /* Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 97 /* Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (isSetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(95 /* Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 98 /* Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(96 /* Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 99 /* Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(97 /* Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 100 /* Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(98 /* Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 101 /* Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(99 /* Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 102 /* Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(100 /* Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 103 /* Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(101 /* Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                        this.context.postError(typeCheckContext.scriptName, start, length, 104 /* Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                     }
                 } else if (!isGetter && !declAST.isIndexerMember()) {
-                    message = TypeScript.getDiagnosticMessage(102 /* Parameter__0__of_exported_function_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName]);
+                    this.context.postError(typeCheckContext.scriptName, start, length, 105 /* Parameter__0__of_exported_function_has_or_is_using_private_type__1_ */, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
                 }
-            }
-
-            if (message) {
-                this.context.postError(declAST.arguments.members[argIndex].minChar, declAST.arguments.members[argIndex].getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
             }
         };
 
@@ -44267,7 +44734,8 @@ var TypeScript;
                 isMethodOfClass = true;
             }
 
-            var message = null;
+            var messageCode = null;
+            var messageArguments;
             var typeSymbolName = typeSymbol.getScopedName();
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
@@ -44276,54 +44744,72 @@ var TypeScript;
 
                 if (isGetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(121 /* Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                        messageCode = 124 /* Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(122 /* Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                        messageCode = 125 /* Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ */;
+                        messageArguments = [typeSymbolName];
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(123 /* Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                    messageCode = 126 /* Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(124 /* Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                    messageCode = 127 /* Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (declAST.isIndexerMember()) {
-                    message = TypeScript.getDiagnosticMessage(125 /* Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                    messageCode = 128 /* Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(126 /* Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                        messageCode = 129 /* Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(127 /* Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                        messageCode = 130 /* Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(128 /* Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                        messageCode = 131 /* Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ */;
+                        messageArguments = [typeSymbolName];
                     }
                 } else if (!isSetter && !declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(129 /* Return_type_of_exported_function_is_using_inaccessible_module__0_ */, [typeSymbolName]);
+                    messageCode = 132 /* Return_type_of_exported_function_is_using_inaccessible_module__0_ */;
+                    messageArguments = [typeSymbolName];
                 }
             } else {
                 if (isGetter) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(112 /* Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                        messageCode = 115 /* Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(113 /* Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                        messageCode = 116 /* Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ */;
+                        messageArguments = [typeSymbolName];
                     }
                 } else if (declAST.isConstructMember()) {
-                    message = TypeScript.getDiagnosticMessage(114 /* Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                    messageCode = 117 /* Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (declAST.isCallMember()) {
-                    message = TypeScript.getDiagnosticMessage(115 /* Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                    messageCode = 118 /* Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (declAST.isIndexerMember()) {
-                    message = TypeScript.getDiagnosticMessage(116 /* Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                    messageCode = 119 /* Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ */;
+                    messageArguments = [typeSymbolName];
                 } else if (isMethod) {
                     if (isStatic) {
-                        message = TypeScript.getDiagnosticMessage(117 /* Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                        messageCode = 120 /* Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else if (isMethodOfClass) {
-                        message = TypeScript.getDiagnosticMessage(118 /* Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                        messageCode = 121 /* Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ */;
+                        messageArguments = [typeSymbolName];
                     } else {
-                        message = TypeScript.getDiagnosticMessage(119 /* Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                        messageCode = 122 /* Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ */;
+                        messageArguments = [typeSymbolName];
                     }
                 } else if (!isSetter && !declAST.isConstructor) {
-                    message = TypeScript.getDiagnosticMessage(120 /* Return_type_of_exported_function_has_or_is_using_private_type__0_ */, [typeSymbolName]);
+                    messageCode = 123 /* Return_type_of_exported_function_has_or_is_using_private_type__0_ */;
+                    messageArguments = [typeSymbolName];
                 }
             }
 
-            if (message) {
+            if (messageCode) {
                 var reportOnFuncDecl = false;
                 var contextForReturnTypeResolution = new TypeScript.PullTypeResolutionContext();
                 var returnExpressionSymbol;
@@ -44331,7 +44817,7 @@ var TypeScript;
                     var returnTypeRef = declAST.returnTypeAnnotation;
                     returnExpressionSymbol = this.resolver.resolveTypeReference(returnTypeRef, decl, contextForReturnTypeResolution);
                     if (returnExpressionSymbol === funcReturnType) {
-                        this.context.postError(declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl, true);
                     }
                 }
 
@@ -44342,17 +44828,19 @@ var TypeScript;
                             case 12 /* FunctionDeclaration */:
                                 go = false;
                                 break;
+
                             case 93 /* ReturnStatement */:
                                 var returnStatement = ast;
                                 returnExpressionSymbol = _this.resolver.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
 
                                 if (returnExpressionSymbol === funcReturnType) {
-                                    _this.context.postError(returnStatement.minChar, returnStatement.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+                                    _this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);
                                 } else {
                                     reportOnFuncDecl = true;
                                 }
                                 go = false;
                                 break;
+
                             default:
                                 break;
                         }
@@ -44365,7 +44853,7 @@ var TypeScript;
                 }
 
                 if (reportOnFuncDecl) {
-                    this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
                 }
             }
         };
@@ -45713,7 +46201,7 @@ var TypeScript;
             }
         }
 
-        var decl = new TypeScript.PullDecl(constructorDeclAST.name.text, constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(parent.getName(), parent.getDisplayName(), declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
@@ -46251,7 +46739,7 @@ var TypeScript;
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() !== moduleKind) {
-                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [moduleContainerDecl.getDisplayName()])));
+                moduleContainerDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), 65 /* Duplicate_identifier__0_ */, [moduleContainerDecl.getDisplayName()]));
 
                 moduleContainerTypeSymbol = null;
             }
@@ -46354,7 +46842,7 @@ var TypeScript;
             }
 
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-                importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [importDeclaration.getDisplayName()])));
+                importDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), importDeclAST.minChar, importDeclAST.getLength(), 65 /* Duplicate_identifier__0_ */, [importDeclaration.getDisplayName()]));
                 importSymbol = null;
             }
 
@@ -46406,7 +46894,7 @@ var TypeScript;
             }
 
             if (enumSymbol && (enumSymbol.getKind() !== 128 /* Enum */ || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
-                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [enumDeclaration.getDisplayName()])));
+                enumDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), enumAST.minChar, enumAST.getLength(), 65 /* Duplicate_identifier__0_ */, [enumDeclaration.getDisplayName()]));
                 enumSymbol = null;
             }
 
@@ -46568,7 +47056,7 @@ var TypeScript;
             }
 
             if (classSymbol && (classSymbol.getKind() !== 16 /* Class */ || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
-                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [classDecl.getDisplayName()])));
+                classDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), 65 /* Duplicate_identifier__0_ */, [classDecl.getDisplayName()]));
                 classSymbol = null;
             } else if (classSymbol) {
                 parentHadSymbol = true;
@@ -46724,7 +47212,7 @@ var TypeScript;
                     if (memberMap[member.getName()]) {
                         memberDecl = member.getDeclarations()[0];
                         memberAST = this.semanticInfo.getASTForDecl(memberDecl);
-                        memberDecl.addDiagnostic(new TypeScript.PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [memberDecl.getDisplayName()])));
+                        memberDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), memberAST.minChar, memberAST.getLength(), 65 /* Duplicate_identifier__0_ */, [memberDecl.getDisplayName()]));
                     } else {
                         memberMap[member.getName()] = true;
                     }
@@ -46754,7 +47242,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        classDecl.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        classDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -46786,7 +47274,7 @@ var TypeScript;
             }
 
             if (interfaceSymbol && (interfaceSymbol.getKind() !== 32 /* Interface */)) {
-                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [interfaceDecl.getDisplayName()])));
+                interfaceDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), 65 /* Duplicate_identifier__0_ */, [interfaceDecl.getDisplayName()]));
                 interfaceSymbol = null;
             }
 
@@ -46874,7 +47362,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        interfaceDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -46925,7 +47413,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        objectDecl.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        objectDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -46980,7 +47468,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        constructorTypeDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        constructorTypeDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -47057,7 +47545,7 @@ var TypeScript;
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
-                        variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [variableDeclaration.getDisplayName()])));
+                        variableDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), 65 /* Duplicate_identifier__0_ */, [variableDeclaration.getDisplayName()]));
                     }
 
                     variableSymbol = null;
@@ -47066,7 +47554,7 @@ var TypeScript;
             } else if (variableSymbol && (variableSymbol.getKind() !== 2048 /* Variable */) && !isImplicit) {
                 span = variableDeclaration.getSpan();
 
-                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [variableDeclaration.getDisplayName()])));
+                variableDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), 65 /* Duplicate_identifier__0_ */, [variableDeclaration.getDisplayName()]));
                 variableSymbol = null;
                 parentHadSymbol = false;
             }
@@ -47287,7 +47775,7 @@ var TypeScript;
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
                 var span = propertyDeclaration.getSpan();
 
-                propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [propertyDeclaration.getDisplayName()])));
+                propertyDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), 65 /* Duplicate_identifier__0_ */, [propertyDeclaration.getDisplayName()]));
 
                 propertySymbol = null;
             }
@@ -47366,7 +47854,7 @@ var TypeScript;
                     }
 
                     if (params[argDecl.id.text]) {
-                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [argDecl.id.actualText])));
+                        decl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), argDecl.minChar, argDecl.getLength(), 65 /* Duplicate_identifier__0_ */, [argDecl.id.actualText]));
                     } else {
                         params[argDecl.id.text] = true;
                     }
@@ -47434,7 +47922,7 @@ var TypeScript;
             }
 
             if (functionSymbol && (functionSymbol.getKind() !== 32768 /* Function */ || (this.symbolIsRedeclaration(functionSymbol) && !isSignature && !functionSymbol.allDeclsHaveFlag(2048 /* Signature */)))) {
-                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [functionDeclaration.getDisplayName()])));
+                functionDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 65 /* Duplicate_identifier__0_ */, [functionDeclaration.getDisplayName()]));
                 functionSymbol = null;
             }
 
@@ -47554,7 +48042,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        functionDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -47625,7 +48113,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionExpressionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        functionExpressionDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -47692,7 +48180,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionTypeDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        functionTypeDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -47753,7 +48241,7 @@ var TypeScript;
             }
 
             if (methodSymbol && (methodSymbol.getKind() !== 131072 /* Method */ || (this.symbolIsRedeclaration(methodSymbol) && !isSignature && !methodSymbol.allDeclsHaveFlag(2048 /* Signature */)))) {
-                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [methodDeclaration.getDisplayName()])));
+                methodDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), methodAST.minChar, methodAST.getLength(), 65 /* Duplicate_identifier__0_ */, [methodDeclaration.getDisplayName()]));
                 methodSymbol = null;
             }
 
@@ -47897,7 +48385,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        methodDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -47951,7 +48439,7 @@ var TypeScript;
             var linkKind = 7 /* ConstructorMethod */;
 
             if (constructorSymbol && (constructorSymbol.getKind() !== 65536 /* ConstructorMethod */ || (this.symbolIsRedeclaration(constructorSymbol) && !isSignature && !constructorSymbol.allDeclsHaveFlag(2048 /* Signature */)))) {
-                constructorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(constructorAST.minChar, constructorAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(132 /* Multiple_constructor_implementations_are_not_allowed */, null)));
+                constructorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), 135 /* Multiple_constructor_implementations_are_not_allowed */, null));
 
                 constructorSymbol = null;
             }
@@ -48094,7 +48582,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        constructSignatureDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        constructSignatureDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -48154,7 +48642,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        callSignatureDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        callSignatureDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -48209,7 +48697,7 @@ var TypeScript;
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        indexSignatureDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(typeParameterAST.minChar, typeParameterAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [typeParameter.getName()])));
+                        indexSignatureDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), 65 /* Duplicate_identifier__0_ */, [typeParameter.getName()]));
                     }
 
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -48283,13 +48771,13 @@ var TypeScript;
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [getAccessorDeclaration.getDisplayName()])));
+                    getAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 65 /* Duplicate_identifier__0_ */, [getAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 } else {
                     getterSymbol = accessorSymbol.getGetter();
 
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
-                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(77 /* Getter__0__already_declared */, [getAccessorDeclaration.getDisplayName()])));
+                        getAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 80 /* Getter__0__already_declared */, [getAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         getterSymbol = null;
                     }
@@ -48382,7 +48870,7 @@ var TypeScript;
             var typeParameters = getAccessorDeclaration.getTypeParameters();
 
             if (typeParameters.length) {
-                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(79 /* Accessor_cannot_have_type_parameters */, null)));
+                getAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 82 /* Accessor_cannot_have_type_parameters */, null));
             }
 
             getterTypeSymbol.addSignature(signature);
@@ -48448,13 +48936,13 @@ var TypeScript;
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(62 /* Duplicate_identifier__0_ */, [setAccessorDeclaration.getDisplayName()])));
+                    setAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 65 /* Duplicate_identifier__0_ */, [setAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 } else {
                     setterSymbol = accessorSymbol.getSetter();
 
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
-                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(78 /* Setter__0__already_declared */, [setAccessorDeclaration.getDisplayName()])));
+                        setAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 81 /* Setter__0__already_declared */, [setAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         setterSymbol = null;
                     }
@@ -48547,7 +49035,7 @@ var TypeScript;
             var typeParameters = setAccessorDeclaration.getTypeParameters();
 
             if (typeParameters.length) {
-                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(79 /* Accessor_cannot_have_type_parameters */, null)));
+                setAccessorDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), 82 /* Accessor_cannot_have_type_parameters */, null));
             }
 
             setterTypeSymbol.addSignature(signature);
@@ -48596,72 +49084,95 @@ var TypeScript;
                         this.bindDeclToPullSymbol(childDecls[i]);
                     }
                     break;
+
                 case 64 /* DynamicModule */:
                 case 8 /* Container */:
                     this.bindModuleDeclarationToPullSymbol(decl);
                     break;
+
                 case 32 /* Interface */:
                     this.bindInterfaceDeclarationToPullSymbol(decl);
                     break;
+
                 case 16 /* Class */:
                     this.bindClassDeclarationToPullSymbol(decl);
                     break;
+
                 case 32768 /* Function */:
                     this.bindFunctionDeclarationToPullSymbol(decl);
                     break;
+
                 case 2048 /* Variable */:
                     this.bindVariableDeclarationToPullSymbol(decl);
                     break;
+
                 case 134217728 /* EnumMember */:
                 case 8192 /* Property */:
                     this.bindPropertyDeclarationToPullSymbol(decl);
                     break;
+
                 case 131072 /* Method */:
                     this.bindMethodDeclarationToPullSymbol(decl);
                     break;
+
                 case 65536 /* ConstructorMethod */:
                     this.bindConstructorDeclarationToPullSymbol(decl);
                     break;
+
                 case 2097152 /* CallSignature */:
                     this.bindCallSignatureDeclarationToPullSymbol(decl);
                     break;
+
                 case 4194304 /* ConstructSignature */:
                     this.bindConstructSignatureDeclarationToPullSymbol(decl);
                     break;
+
                 case 8388608 /* IndexSignature */:
                     this.bindIndexSignatureDeclarationToPullSymbol(decl);
                     break;
+
                 case 128 /* Enum */:
                     this.bindEnumDeclarationToPullSymbol(decl);
                     break;
+
                 case 524288 /* GetAccessor */:
                     this.bindGetAccessorDeclarationToPullSymbol(decl);
                     break;
+
                 case 1048576 /* SetAccessor */:
                     this.bindSetAccessorDeclarationToPullSymbol(decl);
                     break;
+
                 case 16777216 /* ObjectType */:
                     this.bindObjectTypeDeclarationToPullSymbol(decl);
                     break;
+
                 case 33554432 /* FunctionType */:
                     this.bindFunctionTypeDeclarationToPullSymbol(decl);
                     break;
+
                 case 67108864 /* ConstructorType */:
                     this.bindConstructorTypeDeclarationToPullSymbol(decl);
                     break;
+
                 case 262144 /* FunctionExpression */:
                     this.bindFunctionExpressionToPullSymbol(decl);
                     break;
+
                 case 512 /* TypeAlias */:
                     this.bindImportDeclaration(decl);
                     break;
+
                 case 4096 /* Parameter */:
                     break;
+
                 case -2147483648 /* CatchBlock */:
                     this.bindCatchBlockPullSymbols(decl);
+
                 case 1073741824 /* WithBlock */:
                     this.bindWithBlockPullSymbols(decl);
                     break;
+
                 default:
                     throw new Error("Unrecognized type declaration");
             }
@@ -49173,36 +49684,17 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var PullDiagnostic = (function () {
-        function PullDiagnostic(start, length, fileName, message) {
-            this._originalStart = start;
-            this._fileName = fileName;
-            this._start = start;
-            this._length = length;
-            this._message = message;
+    var SemanticDiagnostic = (function (_super) {
+        __extends(SemanticDiagnostic, _super);
+        function SemanticDiagnostic() {
+            _super.apply(this, arguments);
         }
-        PullDiagnostic.prototype.fileName = function () {
-            return this._fileName;
+        SemanticDiagnostic.equals = function (diagnostic1, diagnostic2) {
+            return TypeScript.Diagnostic.equals(diagnostic1, diagnostic2);
         };
-
-        PullDiagnostic.prototype.start = function () {
-            return this._start;
-        };
-
-        PullDiagnostic.prototype.length = function () {
-            return this._length;
-        };
-
-        PullDiagnostic.prototype.message = function () {
-            return this._message;
-        };
-
-        PullDiagnostic.prototype.adjustOffset = function (pos) {
-            this._start = this._originalStart + pos;
-        };
-        return PullDiagnostic;
-    })();
-    TypeScript.PullDiagnostic = PullDiagnostic;
+        return SemanticDiagnostic;
+    })(TypeScript.Diagnostic);
+    TypeScript.SemanticDiagnostic = SemanticDiagnostic;
 
     function getDiagnosticsFromEnclosingDecl(enclosingDecl, errors) {
         var declErrors = enclosingDecl.getDiagnostics();
@@ -49495,6 +49987,10 @@ var TypeScript;
         };
 
         SyntaxTreeToAstVisitor.prototype.getAST = function (element) {
+            if (this.previousTokenTrailingComments !== null) {
+                return null;
+            }
+
             if (incrementalAst) {
                 var result = (element)._ast;
                 return result ? result : null;
@@ -49795,7 +50291,6 @@ var TypeScript;
                 var postComments = this.convertNodeTrailingComments(node, start);
                 this.moveTo(node, node.identifier);
                 var name = this.identifierFromToken(node.identifier, false, true);
-                var constructorName = this.identifierFromToken(node.identifier, false, true);
                 this.movePast(node.identifier);
 
                 var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -49831,7 +50326,6 @@ var TypeScript;
                         var funcDecl = member;
 
                         if (funcDecl.isConstructor) {
-                            funcDecl.name = constructorName;
                             funcDecl.classDecl = result;
 
                             result.constructorDecl = funcDecl;
@@ -51927,6 +52421,7 @@ var TypeScript;
             } else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, false, true);
+                var functionName = this.identifierFromToken(node.propertyName, false, true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 this.movePast(node.closeParenToken);
@@ -51934,7 +52429,7 @@ var TypeScript;
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new TypeScript.FunctionDeclaration(name, block, false, null, new TypeScript.ASTList(), 12 /* FunctionDeclaration */);
+                var funcDecl = new TypeScript.FunctionDeclaration(functionName, block, false, null, new TypeScript.ASTList(), 12 /* FunctionDeclaration */);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 32 /* GetAccessor */);
@@ -51960,6 +52455,7 @@ var TypeScript;
             } else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, false, true);
+                var functionName = this.identifierFromToken(node.propertyName, false, true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 var parameter = node.parameter.accept(this);
@@ -51970,7 +52466,7 @@ var TypeScript;
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new TypeScript.FunctionDeclaration(name, block, false, null, parameters, 12 /* FunctionDeclaration */);
+                var funcDecl = new TypeScript.FunctionDeclaration(functionName, block, false, null, parameters, 12 /* FunctionDeclaration */);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 64 /* SetAccessor */);
@@ -52375,7 +52871,7 @@ var TypeScript;
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    return new TypeScript.Diagnostic(0, 0, null, "Cannot find the common subdirectory path for the input files");
+                                    return new TypeScript.Diagnostic(null, 0, 0, 256 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
                                 }
 
                                 break;
@@ -52416,7 +52912,7 @@ var TypeScript;
             }
 
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new TypeScript.Diagnostic(0, 0, null, "Cannot compile dynamic modules when emitting into single file");
+                return new TypeScript.Diagnostic(null, 0, 0, 257 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
             }
 
             if (this.emitOptions.outputMany) {
@@ -52888,11 +53384,13 @@ var TypeScript;
                                 foundAST = previousAST;
                             }
                             break;
+
                         case 17 /* VariableDeclarator */:
                             if (foundAST === (previousAST).id) {
                                 foundAST = previousAST;
                             }
                             break;
+
                         case 12 /* FunctionDeclaration */:
                             if (foundAST === (previousAST).name) {
                                 foundAST = previousAST;
@@ -53079,6 +53577,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 17 /* VariableDeclarator */:
                         var assigningAST = current;
                         inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
@@ -53096,6 +53595,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 36 /* InvocationExpression */:
                     case 37 /* ObjectCreationExpression */:
                         var isNew = current.nodeType === 37 /* ObjectCreationExpression */;
@@ -53130,6 +53630,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 21 /* ArrayLiteralExpression */:
                         this.pullTypeChecker.resolver.resolveAST(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
@@ -53139,12 +53640,15 @@ var TypeScript;
                         }
 
                         break;
+
                     case 22 /* ObjectLiteralExpression */:
                         this.pullTypeChecker.resolver.resolveAST((current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         break;
+
                     case 38 /* AssignmentExpression */:
                         this.pullTypeChecker.resolver.resolveAST((current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         break;
+
                     case 78 /* CastExpression */:
                         if (i + 1 < n && path.asts[i + 1] === (current).castTerm) {
                             resolutionContext.searchTypeSpace = true;
@@ -53157,6 +53661,7 @@ var TypeScript;
                         }
 
                         break;
+
                     case 11 /* TypeRef */:
                     case 9 /* TypeParameter */:
                         resolutionContext.searchTypeSpace = true;
@@ -54198,18 +54703,11 @@ var Services;
 
     var SignatureInfo = (function () {
         function SignatureInfo() {
+            this.formal = [];
         }
         return SignatureInfo;
     })();
     Services.SignatureInfo = SignatureInfo;
-
-    var FormalSignatureInfo = (function () {
-        function FormalSignatureInfo() {
-            this.signatureGroup = [];
-        }
-        return FormalSignatureInfo;
-    })();
-    Services.FormalSignatureInfo = FormalSignatureInfo;
 
     var FormalSignatureItemInfo = (function () {
         function FormalSignatureItemInfo() {
@@ -54328,6 +54826,17 @@ var Services;
         return MatchKind;
     })();
     Services.MatchKind = MatchKind;
+
+    var DiagnosticCategory = (function () {
+        function DiagnosticCategory() {
+        }
+        DiagnosticCategory.none = "";
+        DiagnosticCategory.error = "error";
+        DiagnosticCategory.warning = "warning";
+        DiagnosticCategory.message = "message";
+        return DiagnosticCategory;
+    })();
+    Services.DiagnosticCategory = DiagnosticCategory;
 
     var ScriptSyntaxASTState = (function () {
         function ScriptSyntaxASTState() {
@@ -55004,33 +55513,34 @@ var Services;
 
         LanguageService.prototype.convertSignatureSymbolToSignatureInfo = function (symbol, isNew, signatures, enclosingScopeSymbol) {
             var _this = this;
-            var result = new Services.FormalSignatureInfo();
-            result.isNew = isNew;
-            result.name = symbol.getDisplayName();
-            result.docComment = this.compilerState.getDocComments(symbol);
-            result.openParen = "(";
-            result.closeParen = ")";
+            var signatureGroup = [];
 
             var hasOverloads = signatures.length > 1;
             signatures.filter(function (signature) {
                 return !(hasOverloads && signature.isDefinition());
             }).forEach(function (signature) {
                 var signatureGroupInfo = new Services.FormalSignatureItemInfo();
+                var paramIndexInfo = [];
+                var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
+                if (!functionName) {
+                    functionName = symbol.getDisplayName();
+                }
+                var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true);
+                signatureGroupInfo.signatureInfo = TypeScript.MemberName.memberNameToString(signatureMemberName, paramIndexInfo);
                 signatureGroupInfo.docComment = _this.compilerState.getDocComments(signature);
-                signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getScopedNameEx(enclosingScopeSymbol).toString();
                 var parameters = signature.getParameters();
                 parameters.forEach(function (p, i) {
                     var signatureParameterInfo = new Services.FormalParameterInfo();
                     signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                    signatureParameterInfo.isOptional = p.getIsOptional();
                     signatureParameterInfo.name = p.getDisplayName();
                     signatureParameterInfo.docComment = _this.compilerState.getDocComments(p);
-                    signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
+                    signatureParameterInfo.minChar = paramIndexInfo[2 * i];
+                    signatureParameterInfo.limChar = paramIndexInfo[2 * i + 1];
                     signatureGroupInfo.parameters.push(signatureParameterInfo);
                 });
-                result.signatureGroup.push(signatureGroupInfo);
+                signatureGroup.push(signatureGroupInfo);
             });
-            return result;
+            return signatureGroup;
         };
 
         LanguageService.prototype.convertCallExprToActualSignatureInfo = function (ast, caretPosition) {
@@ -55531,13 +56041,16 @@ var Services;
                 switch (positionedToken.kind()) {
                     case 79 /* CommaToken */:
                         return containingNodeKind === 225 /* ParameterList */ || containingNodeKind === 222 /* VariableDeclaration */;
+
                     case 72 /* OpenParenToken */:
                         return containingNodeKind === 225 /* ParameterList */ || containingNodeKind === 233 /* CatchClause */;
+
                     case 57 /* PublicKeyword */:
                     case 55 /* PrivateKeyword */:
                     case 58 /* StaticKeyword */:
                     case 77 /* DotDotDotToken */:
                         return containingNodeKind === 241 /* Parameter */;
+
                     case 44 /* ClassKeyword */:
                     case 66 /* ModuleKeyword */:
                     case 46 /* EnumKeyword */:
@@ -55575,6 +56088,7 @@ var Services;
                     case 76 /* DotToken */:
                         var leftOfDotPositionedToken = positionedToken.previousToken(true);
                         return leftOfDotPositionedToken && leftOfDotPositionedToken.kind() === 13 /* NumericLiteral */;
+
                     case 13 /* NumericLiteral */:
                         var text = positionedToken.token().text();
                         return text.charAt(text.length - 1) === ".";
@@ -55816,6 +56330,7 @@ var Services;
                             case 83 /* ContinueStatement */:
                                 containerASTs.push(cur);
                                 break;
+
                             case 2 /* Script */:
                             case 1 /* List */:
                             case 7 /* NumericLiteral */:
@@ -55831,9 +56346,11 @@ var Services;
                             case 81 /* Block */:
                             case 88 /* ExpressionStatement */:
                                 break;
+
                             case 11 /* TypeRef */:
                                 walker.options.goChildren = false;
                                 break;
+
                             default:
                                 if (cur.isStatementOrExpression() && (!cur.isExpression() || containerASTs.length == 0 || (!containerASTs[containerASTs.length - 1].isExpression() && (containerASTs[containerASTs.length - 1].nodeType != 17 /* VariableDeclarator */ && containerASTs[containerASTs.length - 1].nodeType != 19 /* Parameter */) || containerASTs[containerASTs.length - 1].nodeType == 50 /* ConditionalExpression */))) {
                                     containerASTs.push(cur);
@@ -55868,6 +56385,7 @@ var Services;
 
                     customSpan = moduleDecl.endingToken;
                     break;
+
                 case 12 /* FunctionDeclaration */:
                     var funcDecl = cur;
 
@@ -55879,6 +56397,7 @@ var Services;
 
                     customSpan = funcDecl.block ? funcDecl.block.closeBraceSpan : null;
                     break;
+
                 case 13 /* ClassDeclaration */:
                     var classDecl = cur;
 
@@ -55890,6 +56409,7 @@ var Services;
 
                     customSpan = classDecl.endingToken;
                     break;
+
                 case 17 /* VariableDeclarator */:
                     var varDecl = cur;
                     if (varDecl.init) {
@@ -55902,17 +56422,20 @@ var Services;
                         }
                     }
                     break;
+
                 case 91 /* IfStatement */:
                     var ifStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, ifStatement.statement, true, resultAST, false, false);
                     resultAST = this.getBreakpointInStatement(pos, ifStatement.thenBod, true, resultAST, false, true);
                     resultAST = this.getBreakpointInStatement(pos, ifStatement.elseBod, false, resultAST, false, true);
                     break;
+
                 case 89 /* ForInStatement */:
                     var forInStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, forInStatement.statement, true, resultAST, false, false);
                     resultAST = this.getBreakpointInStatement(pos, forInStatement.body, false, resultAST, false, true);
                     break;
+
                 case 90 /* ForStatement */:
                     var forStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, forStatement.init, true, null, false, true);
@@ -55920,16 +56443,19 @@ var Services;
                     resultAST = this.getBreakpointInStatement(pos, forStatement.incr, true, resultAST, false, true);
                     resultAST = this.getBreakpointInStatement(pos, forStatement.body, false, resultAST, false, true);
                     break;
+
                 case 98 /* WhileStatement */:
                     var whileStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, whileStatement.cond, true, null, false, true);
                     resultAST = this.getBreakpointInStatement(pos, whileStatement.body, false, resultAST, false, true);
                     break;
+
                 case 85 /* DoStatement */:
                     var doWhileStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, doWhileStatement.body, true, null, false, true);
                     resultAST = this.getBreakpointInStatement(pos, doWhileStatement.cond, false, resultAST, false, true);
                     break;
+
                 case 94 /* SwitchStatement */:
                     var switchStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
@@ -55947,25 +56473,30 @@ var Services;
                         }
                     }
                     break;
+
                 case 100 /* CaseClause */:
                     var caseStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, caseStatement.body.members[0], false, null, false, true);
                     break;
+
                 case 99 /* WithStatement */:
                     var withStatement = cur;
                     resultAST = this.getBreakpointInStatement(pos, withStatement.body, false, null, false, true);
                     break;
+
                 case 96 /* TryStatement */:
                     var tryNode = cur;
                     resultAST = this.getBreakpointInStatement(pos, tryNode.tryBody, true, null, false, false);
                     resultAST = this.getBreakpointInStatement(pos, tryNode.catchClause, true, resultAST, false, false);
                     resultAST = this.getBreakpointInStatement(pos, tryNode.finallyBody, false, resultAST, false, true);
                     break;
+
                 case 101 /* CatchClause */:
                     var catchNode = cur;
                     resultAST = this.getBreakpointInStatement(pos, catchNode.statement, true, null, false, false);
                     resultAST = this.getBreakpointInStatement(pos, catchNode.body, false, resultAST, false, true);
                     break;
+
                 default:
                     resultAST = cur;
                     break;
@@ -56281,8 +56812,26 @@ var Services;
             });
         };
 
+        LanguageServiceShim.realizeDiagnosticCategory = function (category) {
+            switch (category) {
+                case 1 /* Error */:
+                    return Services.DiagnosticCategory.error;
+                case 0 /* Warning */:
+                    return Services.DiagnosticCategory.warning;
+                case 2 /* Message */:
+                    return Services.DiagnosticCategory.message;
+                default:
+                    return Services.DiagnosticCategory.none;
+            }
+        };
+
         LanguageServiceShim.realizeDiagnostic = function (diagnostic) {
-            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
+            return {
+                message: diagnostic.text(),
+                start: diagnostic.start(),
+                length: diagnostic.length(),
+                category: LanguageServiceShim.realizeDiagnosticCategory(TypeScript.getDiagnosticInfoFromCode(diagnostic.diagnosticCode()).category)
+            };
         };
 
         LanguageServiceShim.prototype.getSyntacticDiagnostics = function (fileName) {
@@ -56829,10 +57378,13 @@ var Services;
                 case 230 /* CaseSwitchClause */:
                 case 231 /* DefaultSwitchClause */:
                     return true;
+
                 case 122 /* ObjectType */:
                     return true;
+
                 case 127 /* InterfaceDeclaration */:
                     return element.kind() !== 122 /* ObjectType */;
+
                 case 128 /* FunctionDeclaration */:
                 case 134 /* MemberFunctionDeclaration */:
                 case 137 /* GetMemberAccessorDeclaration */:
@@ -56852,6 +57404,7 @@ var Services;
                 case 145 /* IfStatement */:
                 case 232 /* ElseClause */:
                     return element.kind() !== 144 /* Block */;
+
                 case 157 /* TryStatement */:
                     return false;
                 default:
@@ -56868,6 +57421,7 @@ var Services;
                             return Indenter.getListItemIndentation(list, i - 1);
                     }
                     break;
+
                 case 224 /* ArgumentList */:
                     var argumentList = list;
                     var arguments = argumentList.arguments;
@@ -56875,6 +57429,7 @@ var Services;
                         return Indenter.getListItemIndentation(arguments, arguments.childCount() - 1);
                     }
                     break;
+
                 case 225 /* ParameterList */:
                     var parameterList = list;
                     var parameters = parameterList.parameters;
@@ -56882,6 +57437,7 @@ var Services;
                         return Indenter.getListItemIndentation(parameters, parameters.childCount() - 1);
                     }
                     break;
+
                 case 226 /* TypeArgumentList */:
                     var typeArgumentList = list;
                     var typeArguments = typeArgumentList.typeArguments;
@@ -56889,6 +57445,7 @@ var Services;
                         return Indenter.getListItemIndentation(typeArguments, typeArguments.childCount() - 1);
                     }
                     break;
+
                 case 227 /* TypeParameterList */:
                     var typeParameterList = list;
                     var typeParameters = typeParameterList.typeParameters;
@@ -57463,7 +58020,7 @@ var TypeScript;
 
                 this.NewLineAfterOpenBraceInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
 
-                this.NewLineBeforeCloseBraceInFunctionOrControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
+                this.NewLineBeforeCloseBraceInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
 
                 this.NoSpaceAfterUnaryPrefixOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.UnaryPrefixOperators, Formatting.Shared.TokenRange.UnaryPrefixExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
                 this.NoSpaceAfterUnaryPreincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(93 /* PlusPlusToken */, Formatting.Shared.TokenRange.UnaryPreincrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
@@ -57514,7 +58071,7 @@ var TypeScript;
                 this.NoSpaceBeforeCloseAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 81 /* GreaterThanToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
                 this.NoSpaceAfterCloseAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(81 /* GreaterThanToken */, Formatting.Shared.TokenRange.FromTokens([72 /* OpenParenToken */, 74 /* OpenBracketToken */, 81 /* GreaterThanToken */, 79 /* CommaToken */])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
 
-                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), 3 /* Delete */));
+                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectTypeContext), 3 /* Delete */));
 
                 this.HighPriorityCommonRules = [
                     this.IgnoreBeforeComment,
@@ -57541,11 +58098,11 @@ var TypeScript;
                     this.NoSpaceBetweenCloseBraceAndCloseParen,
                     this.SpaceAfterOpenBrace,
                     this.SpaceBeforeCloseBrace,
+                    this.NewLineBeforeCloseBraceInBlockContext,
                     this.SpaceAfterCloseBrace,
                     this.SpaceBetweenCloseBraceAndElse,
                     this.SpaceBetweenCloseBraceAndWhile,
                     this.NoSpaceBetweenEmptyBraceBrackets,
-                    this.NewLineBeforeCloseBraceInFunctionOrControl,
                     this.SpaceAfterFunctionInFuncDecl,
                     this.NewLineAfterOpenBraceInBlockContext,
                     this.SpaceAfterGetSetInMember,
@@ -57675,10 +58232,13 @@ var TypeScript;
                     case 206 /* AddExpression */:
                     case 207 /* SubtractExpression */:
                         return true;
+
                     case 132 /* ImportDeclaration */:
+
                     case 223 /* VariableDeclarator */:
                     case 229 /* EqualsValueClause */:
                         return context.currentTokenSpan.kind() === 107 /* EqualsToken */ || context.nextTokenSpan.kind() === 107 /* EqualsToken */;
+
                     case 153 /* ForInStatement */:
                         return context.currentTokenSpan.kind() === 29 /* InKeyword */ || context.nextTokenSpan.kind() === 29 /* InKeyword */;
                 }
@@ -57690,7 +58250,7 @@ var TypeScript;
             };
 
             Rules.IsBlockContext = function (context) {
-                if (Rules.IsTypeScriptDeclWithBlockContext(context)) {
+                if (Rules.IsTypeScriptDeclWithBlockContext(context) || Rules.IsFunctionDeclContext(context)) {
                     return true;
                 }
 
@@ -57707,15 +58267,33 @@ var TypeScript;
             Rules.IsSingleLineBlockContext = function (context) {
                 if (!Rules.IsBlockContext(context))
                     return false;
-
-                return context.ContextNodeAllOnSameLine();
+                return Rules.IsSingleLineContext(context);
             };
 
             Rules.IsMultilineBlockContext = function (context) {
                 if (!Rules.IsBlockContext(context))
                     return false;
 
-                return !context.ContextNodeAllOnSameLine();
+                return !Rules.IsSingleLineContext(context);
+            };
+
+            Rules.IsSingleLineContext = function (context) {
+                var node = context.contextNode;
+                var toReturn;
+
+                if (node.kind() === 122 /* ObjectType */ && node.parent().kind() === 127 /* InterfaceDeclaration */) {
+                    context.contextNode = node.parent();
+                    toReturn = context.ContextNodeAllOnSameLine();
+                    context.contextNode = node;
+                } else if (node.kind() === 144 /* Block */) {
+                    context.contextNode = node.parent();
+                    if (this.IsFunctionDeclContext(context)) {
+                        toReturn = context.ContextNodeAllOnSameLine();
+                    }
+                    context.contextNode = node;
+                }
+
+                return (toReturn === undefined) ? context.ContextNodeAllOnSameLine() : toReturn;
             };
 
             Rules.IsFunctionDeclContext = function (context) {
@@ -57727,6 +58305,9 @@ var TypeScript;
                     case 143 /* MethodSignature */:
                     case 140 /* CallSignature */:
                     case 220 /* FunctionExpression */:
+                    case 136 /* ConstructorDeclaration */:
+                    case 217 /* SimpleArrowFunctionExpression */:
+                    case 216 /* ParenthesizedArrowFunctionExpression */:
                         return true;
                 }
 
@@ -57737,6 +58318,7 @@ var TypeScript;
                 switch (context.contextNode.kind()) {
                     case 130 /* ClassDeclaration */:
                     case 131 /* EnumDeclaration */:
+                    case 127 /* InterfaceDeclaration */:
                     case 122 /* ObjectType */:
                     case 129 /* ModuleDeclaration */:
                         return true;
@@ -57759,6 +58341,7 @@ var TypeScript;
                     case 233 /* CatchClause */:
                     case 234 /* FinallyClause */:
                         return true;
+
                     default:
                         return false;
                 }
@@ -57828,8 +58411,8 @@ var TypeScript;
                 return context.contextNode.kind() === 129 /* ModuleDeclaration */;
             };
 
-            Rules.IsInterfaceContext = function (context) {
-                return context.contextNode.kind() === 122 /* ObjectType */;
+            Rules.IsObjectTypeContext = function (context) {
+                return context.contextNode.kind() === 122 /* ObjectType */ && context.contextNode.parent().kind() !== 127 /* InterfaceDeclaration */;
             };
 
             Rules.IsTypeArgumentOrParameter = function (tokenKind, parentKind) {
@@ -58521,6 +59104,7 @@ var TypeScript;
                         indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
                         indentationLevelDelta = 0;
                         break;
+
                     case 130 /* ClassDeclaration */:
                     case 129 /* ModuleDeclaration */:
                     case 122 /* ObjectType */:
@@ -58534,10 +59118,12 @@ var TypeScript;
                     case 137 /* GetMemberAccessorDeclaration */:
                     case 138 /* SetMemberAccessorDeclaration */:
                     case 233 /* CatchClause */:
+
                     case 212 /* ArrayLiteralExpression */:
                     case 124 /* ArrayType */:
                     case 219 /* ElementAccessExpression */:
                     case 142 /* IndexSignature */:
+
                     case 152 /* ForStatement */:
                     case 153 /* ForInStatement */:
                     case 156 /* WhileStatement */:
@@ -58551,6 +59137,7 @@ var TypeScript;
                     case 216 /* ParenthesizedArrowFunctionExpression */:
                     case 222 /* VariableDeclaration */:
                     case 133 /* ExportAssignment */:
+
                     case 211 /* InvocationExpression */:
                     case 214 /* ObjectCreationExpression */:
                     case 140 /* CallSignature */:
@@ -58558,6 +59145,7 @@ var TypeScript;
                         indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
                         indentationLevelDelta = 1;
                         break;
+
                     case 145 /* IfStatement */:
                         if (parent.kind() === 232 /* ElseClause */ && !(parent).elseKeyword.hasTrailingNewLine() && !(node).ifKeyword.hasLeadingNewLine()) {
                             indentationLevel = parentIndentationLevel;
@@ -58566,10 +59154,12 @@ var TypeScript;
                         }
                         indentationLevelDelta = 1;
                         break;
+
                     case 232 /* ElseClause */:
                         indentationLevel = parentIndentationLevel;
                         indentationLevelDelta = 1;
                         break;
+
                     case 144 /* Block */:
                         switch (parent.kind()) {
                             case 120 /* SourceUnit */:
@@ -58579,6 +59169,7 @@ var TypeScript;
                             case 231 /* DefaultSwitchClause */:
                                 indentationLevel = parentIndentationLevel + parentIndentationLevelDelta;
                                 break;
+
                             default:
                                 indentationLevel = parentIndentationLevel;
                                 break;
@@ -58666,6 +59257,7 @@ var TypeScript;
                                 indentNextTokenOrTrivia = false;
                                 leadingWhiteSpace = "";
                                 break;
+
                             case 7 /* SingleLineCommentTrivia */:
                             case 8 /* SkippedTokenTrivia */:
                                 if (indentNextTokenOrTrivia) {
@@ -58673,6 +59265,7 @@ var TypeScript;
                                     indentNextTokenOrTrivia = false;
                                 }
                                 break;
+
                             case 4 /* WhitespaceTrivia */:
                                 var nextTriviaIsComment = triviaList.count() > i + 1 && triviaList.syntaxTriviaAt(i + 1).isComment();
                                 if (indentNextTokenOrTrivia) {
@@ -58681,10 +59274,12 @@ var TypeScript;
                                 }
                                 leadingWhiteSpace += trivia.fullText();
                                 break;
+
                             case 5 /* NewLineTrivia */:
                                 indentNextTokenOrTrivia = true;
                                 leadingWhiteSpace = "";
                                 break;
+
                             default:
                                 throw TypeScript.Errors.invalidOperation();
                         }
@@ -59003,6 +59598,7 @@ var TypeScript;
                             }
                         }
                         break;
+
                     case 2 /* NewLine */:
                          {
                             if (rule.Flag == 1 /* CanDeleteNewLines */) {
@@ -59037,6 +59633,7 @@ var TypeScript;
                             }
                         }
                         break;
+
                     case 1 /* Space */:
                          {
                             if (rule.Flag == 1 /* CanDeleteNewLines */) {

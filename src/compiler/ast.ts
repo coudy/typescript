@@ -1340,10 +1340,15 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this.statement);
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
-            var casesLen = this.caseList.members.length;
-            for (var i = 0; i < casesLen; i++) {
+
+            var lastEmittedNode = null;
+            for (var i = 0, n = this.caseList.members.length; i < n; i++) {
                 var caseExpr = this.caseList.members[i];
+
+                emitter.emitSpaceBetweenConstructs(lastEmittedNode, caseExpr);
                 emitter.emitJavascript(caseExpr, true);
+
+                lastEmittedNode = caseExpr;
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();

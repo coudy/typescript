@@ -1420,7 +1420,7 @@ module TypeScript {
 
         // If these two constructs had more than one line between them originally, then emit at 
         // least one blank line between them.
-        private emitSpaceBetweenConstructs(node1: AST, node2: AST): void {
+        public emitSpaceBetweenConstructs(node1: AST, node2: AST): void {
             if (node1 === null || node2 === null) {
                 return;
             }
