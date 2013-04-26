@@ -35761,6 +35761,10 @@ var TypeScript;
         PullErrorTypeSymbol.prototype.toString = function () {
             return this.delegateType.toString();
         };
+
+        PullErrorTypeSymbol.prototype.isResolved = function () {
+            return false;
+        };
         return PullErrorTypeSymbol;
     })(PullPrimitiveTypeSymbol);
     TypeScript.PullErrorTypeSymbol = PullErrorTypeSymbol;
@@ -39721,6 +39725,7 @@ var TypeScript;
                         typeArg = this.resolveTypeReference(genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
                         if (typeArg.isError()) {
+                            context.doneResolvingTypeArguments();
                             return typeArg;
                         }
 
@@ -55543,6 +55548,7 @@ var TypeScript;
             } else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, false, true);
+                var functionName = this.identifierFromToken(node.propertyName, false, true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 this.movePast(node.closeParenToken);
@@ -55550,7 +55556,7 @@ var TypeScript;
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new TypeScript.FunctionDeclaration(name, block, false, null, new TypeScript.ASTList(), 12 /* FunctionDeclaration */);
+                var funcDecl = new TypeScript.FunctionDeclaration(functionName, block, false, null, new TypeScript.ASTList(), 12 /* FunctionDeclaration */);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 32 /* GetAccessor */);
@@ -55576,6 +55582,7 @@ var TypeScript;
             } else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, false, true);
+                var functionName = this.identifierFromToken(node.propertyName, false, true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 var parameter = node.parameter.accept(this);
@@ -55586,7 +55593,7 @@ var TypeScript;
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new TypeScript.FunctionDeclaration(name, block, false, null, parameters, 12 /* FunctionDeclaration */);
+                var funcDecl = new TypeScript.FunctionDeclaration(functionName, block, false, null, parameters, 12 /* FunctionDeclaration */);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 64 /* SetAccessor */);
@@ -56308,6 +56315,19 @@ else {\
             var oldText = TypeScript.TextFactory.createText(source);
             var index = source.indexOf("a:");
             var newTextAndChange = withDelete(oldText, index, "a: number,".length);
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+
+        IncrementalParserTests.testInsertModifierBeforeSetter1 = function () {
+            var source = "class C {\
+    set Bar(bar:string) {}\
+}\
+var o2 = { set Foo(val:number) { } };";
+
+            var oldText = TypeScript.TextFactory.createText(source);
+            var index = source.indexOf("set");
+            var newTextAndChange = withInsert(oldText, index, "public ");
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         };

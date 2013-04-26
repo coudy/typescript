@@ -503,6 +503,20 @@ else {\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
+
+        public static testInsertModifierBeforeSetter1() {
+            var source =
+"class C {\
+    set Bar(bar:string) {}\
+}\
+var o2 = { set Foo(val:number) { } };";
+
+            var oldText = TextFactory.createText(source);
+            var index = source.indexOf("set");
+            var newTextAndChange = withInsert(oldText, index, "public ");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
         
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");

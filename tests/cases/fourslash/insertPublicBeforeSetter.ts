@@ -7,4 +7,4 @@
 
 goTo.marker();
 // Bug 674761: AST divergence adding 'public' keyword before setter
-// edit.insert("public ");
+edit.insert("public ");

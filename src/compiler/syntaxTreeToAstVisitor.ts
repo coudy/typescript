@@ -2764,6 +2764,7 @@ module TypeScript {
             else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+                var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 this.movePast(node.closeParenToken);
@@ -2773,7 +2774,7 @@ module TypeScript {
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, new ASTList(), NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList(), NodeType.FunctionDeclaration);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor);
@@ -2800,6 +2801,7 @@ module TypeScript {
             else {
                 this.moveTo(node, node.propertyName);
                 var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+                var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
                 this.movePast(node.propertyName);
                 this.movePast(node.openParenToken);
                 var parameter = node.parameter.accept(this);
@@ -2810,7 +2812,7 @@ module TypeScript {
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor);
