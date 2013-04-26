@@ -16,15 +16,16 @@
 ////}
 
 goTo.marker('incompleteCalls1');
-verify.currentSignatureHelpReturnTypeIs("void");
+verify.currentSignatureHelpIs("f1(): void");
 verify.currentSignatureParamterCountIs(0);
+
 goTo.marker('incompleteCalls2');
 verify.currentSignatureParamterCountIs(1);
-verify.currentSignatureHelpReturnTypeIs("number");
+verify.currentSignatureHelpIs("f2(n: number): number");
 goTo.marker('incompleteCalls3');
 verify.currentSignatureParamterCountIs(2);
-verify.currentSignatureHelpReturnTypeIs("string");
+verify.currentSignatureHelpIs("f3(n: number, s: string): string");
 
 verify.currentParameterHelpArgumentNameIs("s");
-verify.currentParameterHelpType("string");  
+verify.currentParameterSpanIs("s: string");  
 

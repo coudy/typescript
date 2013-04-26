@@ -3718,7 +3718,7 @@ module TypeScript {
                 var typeParameters: PullTypeParameterSymbol[];
                 var typeConstraint: PullTypeSymbol = null;
                 var prevSpecializingToAny = context.specializingToAny;
-
+                var beforeResolutionSignatures = signatures;
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
 
@@ -3804,7 +3804,7 @@ module TypeScript {
             }
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
-
+            var useBeforeResolutionSignatures = signature == null;
             var errorCondition: PullSymbol = null;
             if (!signature) {
                 diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl);
@@ -3891,8 +3891,14 @@ module TypeScript {
             if (additionalResults) {
                 additionalResults.targetSymbol = targetSymbol;
                 additionalResults.targetTypeSymbol = targetTypeSymbol;
-                additionalResults.resolvedSignatures = signatures;
-                additionalResults.candidateSignature = signature;
+                if (useBeforeResolutionSignatures && beforeResolutionSignatures) {
+                    additionalResults.resolvedSignatures = beforeResolutionSignatures;
+                    additionalResults.candidateSignature = beforeResolutionSignatures[0];
+
+                } else {
+                    additionalResults.resolvedSignatures = signatures;
+                    additionalResults.candidateSignature = signature;
+                }
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
             }
 

@@ -9,10 +9,11 @@
 
 goTo.marker('functionCall1');
 verify.signatureHelpCountIs(1);
-verify.currentSignatureHelpReturnTypeIs("void");
+verify.currentSignatureHelpIs("functionCall(str: string, num: number): void");
 verify.currentParameterHelpArgumentNameIs("str");
-verify.currentParameterHelpType("string");
+verify.currentParameterSpanIs("str: string");
 goTo.marker('functionCall2');
+verify.currentSignatureHelpIs("functionCall(str: string, num: number): void");
 verify.currentParameterHelpArgumentNameIs("num");
-verify.currentParameterHelpType("number");
+verify.currentParameterSpanIs("num: number");
 

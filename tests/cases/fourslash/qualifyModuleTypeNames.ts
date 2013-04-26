@@ -5,4 +5,4 @@
 ////x(/**/
 
 goTo.marker();
-verify.currentSignatureHelpReturnTypeIs('m.c');
+verify.currentSignatureHelpIs('x(arg: m.c): m.c');

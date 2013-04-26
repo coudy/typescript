@@ -7,6 +7,6 @@
 ////foo(/**/
 
 goTo.marker();
-verify.currentSignatureHelpReturnTypeIs("string");
+verify.currentSignatureHelpIs("foo(n: number): string");
 verify.currentParameterHelpArgumentNameIs("n");
-verify.currentParameterHelpType("number");
+verify.currentParameterSpanIs("n: number");

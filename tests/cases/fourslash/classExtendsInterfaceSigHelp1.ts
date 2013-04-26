@@ -15,4 +15,4 @@
 
 goTo.marker();
 verify.signatureHelpCountIs(2);
-verify.currentParameterHelpType('string');
+verify.currentParameterSpanIs('x: string');

@@ -384,34 +384,31 @@ module FourSlash {
                 }
             }
         }
-
-        public verifySignatureHelpFunctionName(expected: string) {
-            assert.equal(this.getFormalParameter().name, expected);
+        
+        public verifyCurrentSignatureHelpIs(expected: string) {
+            var help = this.getActiveSignatureHelp();
+            assert.equal(help.signatureInfo, expected);
         }
 
         public verifyCurrentParameterIsVariable(isVariable: boolean) {
             assert.equal(isVariable, this.getActiveParameter().isVariable);
-        }
-
+        }
         public verifyCurrentParameterHelpName(name: string) {
             assert.equal(this.getActiveParameter().name, name);
+        }
+
+        public verifyCurrentParameterSpanIs(parameter: string) {
+            var activeSignature = this.getActiveSignatureHelp();
+            var actualParameter = this.getActiveParameter();
+            assert.equal(activeSignature.signatureInfo.substring(actualParameter.minChar, actualParameter.limChar), parameter);
         }
 
         public verifyCurrentParameterHelpDocComment(docComment: string) {
             assert.equal(this.getActiveParameter().docComment, docComment);
         }
 
-        public verifyCurrentParameterHelpType(typeName: string) {
-            assert.equal(this.getActiveParameter().type, typeName);
-        }
-
         public verifyCurrentSignatureHelpParameterCount(expectedCount: number) {
             assert.equal(this.getActiveSignatureHelp().parameters.length, expectedCount);
-        }
-
-        public verifyCurrentSignatureHelpReturnType(returnTypeName: string) {
-            var actualReturnType = this.getActiveSignatureHelp().returnType;
-            assert.equal(actualReturnType, returnTypeName);
         }
 
         public verifyCurrentSignatureHelpDocComment(docComment: string) {
@@ -421,7 +418,7 @@ module FourSlash {
 
         public verifySignatureHelpCount(expected: number) {
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
-            var actual = help && help.formal ? help.formal.signatureGroup.length : 0;
+            var actual = help && help.formal ? help.formal.length : 0;
             assert.equal(actual, expected);
         }
 
@@ -454,7 +451,7 @@ module FourSlash {
                 activeFormal = 0;
             }
 
-            return help.formal.signatureGroup[activeFormal];
+            return help.formal[activeFormal];
         }
 
         private getActiveParameter() {

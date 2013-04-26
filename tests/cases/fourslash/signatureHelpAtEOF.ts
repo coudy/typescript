@@ -8,9 +8,8 @@
 goTo.marker();
 verify.signatureHelpPresent();
 verify.signatureHelpCountIs(1);
-verify.signatureHelpFunctionNameIs('Foo');
 
-verify.currentSignatureHelpReturnTypeIs("void");
+verify.currentSignatureHelpIs("Foo(arg1: string, arg2: string): void");
 verify.currentSignatureParamterCountIs(2);
 verify.currentParameterHelpArgumentNameIs("arg1");
-verify.currentParameterHelpType("string");
+verify.currentParameterSpanIs("arg1: string");

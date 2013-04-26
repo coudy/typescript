@@ -10,4 +10,5 @@
 
 goTo.marker();
 verify.signatureHelpCountIs(3);
-verify.currentParameterHelpType("string");
+verify.currentParameterHelpArgumentNameIs("z");
+verify.currentParameterSpanIs("z: string");

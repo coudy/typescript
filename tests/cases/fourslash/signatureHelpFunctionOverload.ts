@@ -7,12 +7,12 @@
 ////functionOverload(""/*functionOverload2*/);
 
 goTo.marker('functionOverload1');
-verify.signatureHelpFunctionNameIs('functionOverload');
 verify.signatureHelpCountIs(2);
-verify.currentSignatureHelpReturnTypeIs("any");
 verify.currentSignatureParamterCountIs(0);
+verify.currentSignatureHelpIs('functionOverload(): any');
+
 goTo.marker('functionOverload2');
 verify.currentSignatureParamterCountIs(1);
+verify.currentSignatureHelpIs('functionOverload(test: string): any');
 verify.currentParameterHelpArgumentNameIs("test");
-verify.currentParameterHelpType("string");
-verify.currentSignatureHelpReturnTypeIs('any');
+verify.currentParameterSpanIs("test: string");

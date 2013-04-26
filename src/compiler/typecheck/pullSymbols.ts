@@ -825,7 +825,7 @@ module TypeScript {
             this.hasOptionalParam = false;
             this.hasAGenericParameter = false;
             this.stringConstantOverload = undefined;
-            
+
             // re-compute non-optional arg count, etc
             if (this.parameterLinks) {
                 for (var i = 0; i < this.parameterLinks.length; i++) {
@@ -841,10 +841,10 @@ module TypeScript {
                     }
                 }
             }
-            
+
             super.invalidate();
         }
-        
+
         public isStringConstantOverloadSignature() {
             if (this.stringConstantOverload === undefined) {
                 var params = this.getParameters();
@@ -918,7 +918,7 @@ module TypeScript {
             return s;
         }
 
-        public getSignatureTypeNameEx(prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol) {
+        public getSignatureTypeNameEx(prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol, getParamMarkerInfo?: boolean) {
             var builder = new MemberNameArray();
             var typeParameters = this.getTypeParameters();
             var typeParameterString = PullSymbol.getTypeParameterString(typeParameters, scopeSymbol);
@@ -937,9 +937,15 @@ module TypeScript {
                 var paramIsVarArg = params[i].getIsVarArg();
                 var varArgPrefix = paramIsVarArg ? "..." : "";
                 var optionalString = (!paramIsVarArg && params[i].getIsOptional()) ? "?" : "";
+                if (getParamMarkerInfo) {
+                    builder.add(new MemberName());
+                }
                 builder.add(MemberName.create(varArgPrefix + params[i].getScopedNameEx(scopeSymbol).toString() + optionalString + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
+                }
+                if (getParamMarkerInfo) {
+                    builder.add(new MemberName());
                 }
                 if (i < paramLen - 1) {
                     builder.add(MemberName.create(", "));

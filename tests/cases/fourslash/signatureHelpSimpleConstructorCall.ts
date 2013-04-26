@@ -8,9 +8,10 @@
 
 goTo.marker('constructorCall1');
 verify.signatureHelpCountIs(1);
-verify.currentSignatureHelpReturnTypeIs("ConstructorCall");
+verify.currentSignatureHelpIs("ConstructorCall(str: string, num: number): ConstructorCall");
 verify.currentParameterHelpArgumentNameIs("str");
-verify.currentParameterHelpType("string");
+verify.currentParameterSpanIs("str: string");
 goTo.marker('constructorCall2');
+verify.currentSignatureHelpIs("ConstructorCall(str: string, num: number): ConstructorCall");
 verify.currentParameterHelpArgumentNameIs("num");
-verify.currentParameterHelpType("number");
+verify.currentParameterSpanIs("num: number");

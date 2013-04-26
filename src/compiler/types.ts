@@ -22,22 +22,27 @@ module TypeScript {
 
         public isString() { return false; }
         public isArray() { return false; }
+        public isMarker() { return !this.isString() && !this.isArray(); }
 
         public toString(): string {
             return MemberName.memberNameToString(this);
         }
 
-        static memberNameToString(memberName: MemberName): string {
+        static memberNameToString(memberName: MemberName, markerInfo?: number[]): string {
             var result = memberName.prefix;
 
             if (memberName.isString()) {
                 result += (<MemberNameString>memberName).text;
-            }
-            else {
+            } else if (memberName.isArray()) {
                 var ar = <MemberNameArray>memberName;
                 for (var index = 0; index < ar.entries.length; index++) {
-
-                    result += MemberName.memberNameToString(ar.entries[index]);
+                    if (ar.entries[index].isMarker()) {
+                        if (markerInfo) {
+                            markerInfo.push(result.length);
+                        }
+                        continue;
+                    }
+                    result += MemberName.memberNameToString(ar.entries[index], markerInfo);
                     result += ar.delim;
                 }
             }

@@ -5,13 +5,13 @@
 
 goTo.marker('1');
 verify.signatureHelpCountIs(1);
-verify.signatureHelpFunctionNameIs('sampleCls');
 
 verify.currentSignatureParamterCountIs(2);
-verify.currentSignatureHelpReturnTypeIs('sampleCls');
+verify.currentSignatureHelpIs('sampleCls(str: string, num: number): sampleCls');
 
 verify.currentParameterHelpArgumentNameIs('str');
-verify.currentParameterHelpType('string');
+verify.currentParameterSpanIs("str: string");
+
 goTo.marker('2');
 verify.currentParameterHelpArgumentNameIs('num');
-verify.currentParameterHelpType('number');
+verify.currentParameterSpanIs("num: number");

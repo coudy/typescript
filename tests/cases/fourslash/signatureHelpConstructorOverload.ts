@@ -5,14 +5,12 @@
 ////var y = new clsOverload(/*2*/'');
 
 goTo.marker('1');
-verify.signatureHelpFunctionNameIs('clsOverload');
 verify.signatureHelpCountIs(2);
-
 verify.currentSignatureParamterCountIs(0);
-verify.currentSignatureHelpReturnTypeIs('clsOverload');
+verify.currentSignatureHelpIs('clsOverload(): clsOverload');
 
 goTo.marker('2');
 verify.currentSignatureParamterCountIs(1);
-verify.currentSignatureHelpReturnTypeIs('clsOverload');
+verify.currentSignatureHelpIs('clsOverload(test: string): clsOverload');
 verify.currentParameterHelpArgumentNameIs('test');
-verify.currentParameterHelpType('string');
+verify.currentParameterSpanIs("test: string");

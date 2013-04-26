@@ -6,5 +6,5 @@
 
 goTo.marker();
 verify.signatureHelpCountIs(1);
-verify.currentSignatureHelpReturnTypeIs("ImplicitConstructor");
+verify.currentSignatureHelpIs("ImplicitConstructor(): ImplicitConstructor");
 verify.currentSignatureParamterCountIs(0);

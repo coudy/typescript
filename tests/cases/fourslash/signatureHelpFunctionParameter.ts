@@ -5,14 +5,13 @@
 ////}
 
 goTo.marker('parameterFunction1');
-verify.signatureHelpFunctionNameIs('callback');
 verify.signatureHelpCountIs(1);
-
 verify.currentSignatureParamterCountIs(2);
-verify.currentSignatureHelpReturnTypeIs("void");
-
+verify.currentSignatureHelpIs('callback(a: number, b: string): void');
 verify.currentParameterHelpArgumentNameIs("a");
-verify.currentParameterHelpType("number");
+verify.currentParameterSpanIs("a: number");
+
 goTo.marker('parameterFunction2');
+verify.currentSignatureHelpIs('callback(a: number, b: string): void');
 verify.currentParameterHelpArgumentNameIs("b");
-verify.currentParameterHelpType("string");
+verify.currentParameterSpanIs("b: string");

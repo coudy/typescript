@@ -178,31 +178,21 @@ module Services {
 
     export class SignatureInfo {
         public actual: ActualSignatureInfo;
-        public formal: FormalSignatureInfo;
+        public formal: FormalSignatureItemInfo[] = []; // Formal signatures
         public activeFormal: number; // Index of the "best match" formal signature
     }
 
-    export class FormalSignatureInfo {
-        public name: string;
-        public isNew: boolean;
-        public openParen: string;
-        public closeParen: string;
-        public docComment: string;
-        public signatureGroup: FormalSignatureItemInfo[] = [];
-    }
-
     export class FormalSignatureItemInfo {
+        public signatureInfo: string;
         public parameters: FormalParameterInfo[] = [];   // Array of parameters
-        public returnType: string;                          // String representation of parameter type
         public docComment: string; // Help for the signature
     }
 
     export class FormalParameterInfo {
         public name: string;        // Parameter name
-        public type: string;        // String representation of parameter type
-        public isOptional: boolean;    // true if parameter is optional
-        public isVariable: boolean;    // true if parameter is var args
-        public docComment: string; // Comments that contain help for the parameter
+        public isVariable: boolean;    // true if parameter is var args        public docComment: string; // Comments that contain help for the parameter
+        public minChar: number; // minChar for parameter info in the formal signature info string
+        public limChar: number; // lim char for parameter info in the formal signature info string
     }
 
     export class ActualSignatureInfo {

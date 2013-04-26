@@ -147,8 +147,7 @@ module FourSlashInterface {
 
         public currentParameterIsVariable() {
             FourSlash.currentTestState.verifyCurrentParameterIsVariable(!this.negative);
-        }
-
+        }
         public signatureHelpPresent() {
             FourSlash.currentTestState.verifySignatureHelpPresent(!this.negative);
         }
@@ -204,12 +203,12 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCurrentParameterHelpName(name);
         }
 
-        public currentParameterHelpArgumentDocCommentIs(docComment: string) {
-            FourSlash.currentTestState.verifyCurrentParameterHelpDocComment(docComment);
+        public currentParameterSpanIs(parameter: string) {
+            FourSlash.currentTestState.verifyCurrentParameterSpanIs(parameter);
         }
 
-        public currentSignatureHelpReturnTypeIs(returnTypeName: string) {
-            FourSlash.currentTestState.verifyCurrentSignatureHelpReturnType(returnTypeName);
+        public currentParameterHelpArgumentDocCommentIs(docComment: string) {
+            FourSlash.currentTestState.verifyCurrentParameterHelpDocComment(docComment);
         }
 
         public currentSignatureHelpDocCommentIs(docComment: string) {
@@ -220,16 +219,12 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifySignatureHelpCount(expected);
         }
 
-        public currentParameterHelpType(expected: string) {
-            FourSlash.currentTestState.verifyCurrentParameterHelpType(expected);
-        }
-
         public currentSignatureParamterCountIs(expected: number) {
             FourSlash.currentTestState.verifyCurrentSignatureHelpParameterCount(expected);
         }
-
-        public signatureHelpFunctionNameIs(expected: string) {
-            FourSlash.currentTestState.verifySignatureHelpFunctionName(expected);
+        
+        public currentSignatureHelpIs(expected: string) {
+            FourSlash.currentTestState.verifyCurrentSignatureHelpIs(expected);
         }
 
         public numberOfErrorsInCurrentFile(expected: number) {

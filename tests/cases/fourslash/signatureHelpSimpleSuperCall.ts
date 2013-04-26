@@ -12,6 +12,6 @@
 
 goTo.marker('superCall');
 verify.signatureHelpCountIs(1);
-verify.currentSignatureHelpReturnTypeIs("SuperCallBase");
+verify.currentSignatureHelpIs("SuperCallBase(b: boolean): SuperCallBase");
 verify.currentParameterHelpArgumentNameIs("b");
-verify.currentParameterHelpType("boolean");
+verify.currentParameterSpanIs("b: boolean");

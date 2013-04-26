@@ -6,14 +6,12 @@
 ////anonymousFunctionTest(5, "")(/*anonymousFunction1*/1, /*anonymousFunction2*/"");
 
 goTo.marker('anonymousFunction1');
-verify.signatureHelpFunctionNameIs('');
 verify.signatureHelpCountIs(1);
-
 verify.currentSignatureParamterCountIs(2);
-verify.currentSignatureHelpReturnTypeIs('string');
-
+verify.currentSignatureHelpIs('(a: number, b: string): string');
 verify.currentParameterHelpArgumentNameIs("a");
-verify.currentParameterHelpType("number");
+verify.currentParameterSpanIs("a: number");
+
 goTo.marker('anonymousFunction2');
 verify.currentParameterHelpArgumentNameIs("b");
-verify.currentParameterHelpType("string");
+verify.currentParameterSpanIs("b: string");

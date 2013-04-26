@@ -207,13 +207,8 @@ module Services {
             return result;
         }
 
-        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: boolean, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol): FormalSignatureInfo {
-            var result = new FormalSignatureInfo();
-            result.isNew = isNew;
-            result.name = symbol.getDisplayName();
-            result.docComment = this.compilerState.getDocComments(symbol); 
-            result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
-            result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
+        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: boolean, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol) {
+            var signatureGroup: FormalSignatureItemInfo[] = [];
 
             var hasOverloads = signatures.length > 1;
             signatures
@@ -221,21 +216,25 @@ module Services {
                 .filter(signature => !(hasOverloads && signature.isDefinition()))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
+                    var paramIndexInfo: number[] = [];
+                    var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
+                    if (!functionName) {
+                        functionName = symbol.getDisplayName();                    }
+                    var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true);
+                    signatureGroupInfo.signatureInfo = TypeScript.MemberName.memberNameToString(signatureMemberName, paramIndexInfo);
                     signatureGroupInfo.docComment = this.compilerState.getDocComments(signature);
-                    signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getScopedNameEx(enclosingScopeSymbol).toString();
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
-                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                        signatureParameterInfo.isOptional = p.getIsOptional();
-                        signatureParameterInfo.name = p.getDisplayName();
+                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);                        signatureParameterInfo.name = p.getDisplayName();
                         signatureParameterInfo.docComment = this.compilerState.getDocComments(p);
-                        signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
+                        signatureParameterInfo.minChar = paramIndexInfo[2 * i];
+                        signatureParameterInfo.limChar = paramIndexInfo[2 * i + 1];
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
-                    result.signatureGroup.push(signatureGroupInfo);
+                    signatureGroup.push(signatureGroupInfo);
                 });
-            return result;
+            return signatureGroup;
         }
 
         private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number): ActualSignatureInfo {

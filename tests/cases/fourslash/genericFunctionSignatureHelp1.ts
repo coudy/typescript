@@ -4,5 +4,4 @@
 ////f(/**/
 
 goTo.marker();
-// currently shows 'any'
-//verify.currentSignatureHelpReturnTypeIs('T');
+verify.currentSignatureHelpIs('f<T>(a: T): T');
