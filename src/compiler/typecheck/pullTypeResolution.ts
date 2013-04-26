@@ -2707,7 +2707,8 @@ module TypeScript {
                         typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
                         if (typeArg.isError()) {
-                            return typeArg;
+                            context.doneResolvingTypeArguments();
+                            return typeArg;                       
                         }
 
                         typeArgs[i] = context.findSpecializationForType(typeArg);

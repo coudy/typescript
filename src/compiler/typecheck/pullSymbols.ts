@@ -2078,6 +2078,10 @@ module TypeScript {
         public toString() {
             return this.delegateType.toString();
         }
+
+        public isResolved() {
+            return false;
+        }
     }
 
     // PULLTODO: Unify concepts of constructor method and container
