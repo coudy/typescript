@@ -648,7 +648,7 @@ module Services {
             var script = document.script;
 
             if (this.isCompletionListBlocker(document.syntaxTree(), position)) {
-                this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
+                this.logger.log("Returning an empty list because completion was blocked.");
                 return null;
             }
 
@@ -805,6 +805,15 @@ module Services {
                     case TypeScript.SyntaxKind.VarKeyword:
                     case TypeScript.SyntaxKind.GetKeyword:
                     case TypeScript.SyntaxKind.SetKeyword:
+                        return true;
+                }
+
+                // Previous token may have been a keyword that was converted to an identifier.
+                switch (positionedToken.token().text()) {
+                    case "class":
+                    case "interface":
+                    case "enum":
+                    case "module":
                         return true;
                 }
             }
