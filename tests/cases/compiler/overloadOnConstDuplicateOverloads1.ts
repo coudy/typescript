@@ -1,4 +1,3 @@
-// BUG 669457
 function foo(a: 'hi', x: string);
 function foo(a: 'hi', x: string);
 function foo(a: any, x: any) {

@@ -4456,6 +4456,11 @@ module TypeScript {
                 return (val.nodeType === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).actualText) === stripQuotes(t2.getName()));
             }
 
+            if (t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant()) {
+                // Both are string constants
+                return TypeScript.stripQuotes(t1.getName()) === TypeScript.stripQuotes(t2.getName());
+            }
+
             if (t1.isPrimitive() || t2.isPrimitive()) {
                 return false;
             }
