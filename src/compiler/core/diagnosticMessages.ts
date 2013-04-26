@@ -271,6 +271,9 @@ module TypeScript {
         A_file_cannot_have_a_reference_itself: DiagnosticInfo;
         Cannot_resolve_referenced_file___0_: DiagnosticInfo;
         Cannot_resolve_imported_file___0_: DiagnosticInfo;
+        Cannot_find_the_common_subdirectory_path_for_the_input_files: DiagnosticInfo;
+        Cannot_compile_dynamic_modules_when_emitting_into_single_file: DiagnosticInfo;
+        Emit_Error__0: DiagnosticInfo;
     }
 
     export var diagnosticMessages: IDiagnosticMessages = {
@@ -1650,6 +1653,22 @@ module TypeScript {
             message: "Cannot resolve imported file: '{0}'.",
             code: 5008
         },
+        Cannot_find_the_common_subdirectory_path_for_the_input_files: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot find the common subdirectory path for the input files",
+            code: 5009
+        },
+        Cannot_compile_dynamic_modules_when_emitting_into_single_file: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot compile dynamic modules when emitting into single file",
+            code: 5010
+        },
+        Emit_Error__0: {
+            category: DiagnosticCategory.Error,
+            message: "Emit Error: {0}.",
+            code: 5011
+        },
+
     };
 
     var seenCodes = [];

@@ -198,17 +198,16 @@ module TypeScript {
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, normalizedPath,
-                                getDiagnosticMessage(DiagnosticCode.A_file_cannot_have_a_reference_itself, null)));
-
+                            resolutionDispatcher.errorReporter.addDiagnostic(
+                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, DiagnosticCode.A_file_cannot_have_a_reference_itself, null));
                             continue;
                         }
 
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileReference.position, fileReference.length, resolvedFilePath,
-                                getDiagnosticMessage(DiagnosticCode.Cannot_resolve_referenced_file___0_, [fileReference.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(
+                                new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, DiagnosticCode.Cannot_resolve_referenced_file___0_, [fileReference.path]));
                         }
                     }
                     
@@ -219,8 +218,8 @@ module TypeScript {
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.PullDiagnostic(fileImport.position, fileImport.length, resolvedFilePath,
-                                getDiagnosticMessage(DiagnosticCode.Cannot_resolve_imported_file___0_, [fileImport.path])));
+                            resolutionDispatcher.errorReporter.addDiagnostic(
+                                new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, DiagnosticCode.Cannot_resolve_imported_file___0_, [fileImport.path]));
                         }
                     }
 

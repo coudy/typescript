@@ -3,7 +3,6 @@
 ///<reference path='..\..\harness\external\json2stringify.ts' />
 ///<reference path='characterInfo.ts' />
 ///<reference path='constants.ts' />
-///<reference path='diagnostic.ts' />
 ///<reference path='formattingOptions.ts' />
 ///<reference path='indentation.ts' />
 ///<reference path='languageVersion.ts' />

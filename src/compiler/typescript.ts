@@ -45,7 +45,7 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
-///<reference path='typecheck\pullErrors.ts' />
+///<reference path='typecheck\SemanticDiagnostic.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='syntaxTreeToAstVisitor.ts' />
 
@@ -263,7 +263,7 @@ module TypeScript {
 
                                 if (j === 0) {
                                     // Its error to not have common path
-                                    return new Diagnostic(0, 0, null, "Cannot find the common subdirectory path for the input files");
+                                    return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
                                 }
 
                                 break;
@@ -311,7 +311,7 @@ module TypeScript {
 
             // Verify if options are correct
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new Diagnostic(0, 0, null, "Cannot compile dynamic modules when emitting into single file");
+                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_dynamic_modules_when_emitting_into_single_file, null);
             }
 
             // Parse the directory structure
