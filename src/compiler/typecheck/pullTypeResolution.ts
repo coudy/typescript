@@ -4989,11 +4989,11 @@ module TypeScript {
                     if (targetPropIsPrivate) {
                         // Overshadowing property in source that is already defined as private in target
                         comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                            [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     } else {
                         // Public property of target is private in source
                         comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                            [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     }
                     comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
                 }
@@ -5008,7 +5008,7 @@ module TypeScript {
                     // Both types define property with same name as private
                     comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
                     comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types__0__and__1__define_property__2__as_private,
-                        [source.toString(), target.toString(), targetProp.getScopedNameEx().toString()]));
+                        [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
                     return false;
                 }
             }
