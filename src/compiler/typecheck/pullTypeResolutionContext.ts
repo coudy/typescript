@@ -163,6 +163,7 @@ module TypeScript {
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;
+        public isResolvingClassExtendedType = false;
 
         constructor (public emitting = false) {}
 

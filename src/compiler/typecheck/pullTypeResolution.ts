@@ -941,6 +941,10 @@ module TypeScript {
 
             // Extends list
             if (typeDeclAST.extendsList) {
+                if (typeDeclIsClass) {
+                    context.isResolvingClassExtendedType = true;
+                }
+
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
@@ -956,6 +960,8 @@ module TypeScript {
                         }
                     }
                 }
+
+                context.isResolvingClassExtendedType = false;
             }
 
             if (typeDeclAST.implementsList && typeDeclIsClass) {
@@ -2774,6 +2780,12 @@ module TypeScript {
             context.searchTypeSpace = prevSearchTypeSpace;
 
             var lhsType = lhs.getType();
+
+            if (context.isResolvingClassExtendedType) {
+                if (lhs.isAlias()) {
+                    (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
+                }
+            }
 
             if (this.isAnyOrEquivalent(lhsType)) {
                 return lhsType;

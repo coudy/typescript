@@ -1025,12 +1025,17 @@ module TypeScript {
             }
         }
 
-        private typeCheckBase(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, baseDeclAST: AST,
-            isExtendedType: boolean, typeCheckContext: PullTypeCheckContext) {
+        private typeCheckBase(typeDeclAst: TypeDeclaration,
+                              typeSymbol: PullTypeSymbol, baseDeclAST: AST,
+                              isExtendedType: boolean,
+                              typeCheckContext: PullTypeCheckContext) {
 
             var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
+            contextForBaseTypeResolution.isResolvingClassExtendedType = true;
             var baseType = this.resolver.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+            contextForBaseTypeResolution.isResolvingClassExtendedType = false;
+
             var typeDeclIsClass = typeSymbol.isClass();
 
             if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
