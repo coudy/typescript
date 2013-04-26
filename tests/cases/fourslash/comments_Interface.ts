@@ -113,13 +113,13 @@ verify.currentParameterHelpArgumentDocCommentIs("param help");
 goTo.marker('12q');
 verify.quickInfoIs("(b: number) => string", "this is foo", "i2.foo", "property");
 
-//goTo.marker('13');
-//verify.quickInfoIs("number", "", "i2_i_i2_si", "var");
+goTo.marker('13');
+verify.quickInfoIs("number", "", "i2_i_i2_si", "var");
 goTo.marker('13q');
 verify.quickInfoIs("i2", "", "i2_i", "var");
 
-//goTo.marker('14');
-//verify.quickInfoIs("number", "", "i2_i_i2_ii", "var");
+goTo.marker('14');
+verify.quickInfoIs("number", "", "i2_i_i2_ii", "var");
 goTo.marker('14q');
 verify.quickInfoIs("i2", "", "i2_i", "var");
 
@@ -206,8 +206,8 @@ verify.completionListContains("i2_i", "i2", "", "i2_i", "var");
 verify.completionListContains("i2_i_x", "number", "", "i2_i_x", "var");
 verify.completionListContains("i2_i_foo", "(b: number) => string", "", "i2_i_foo", "var");
 verify.completionListContains("i2_i_foo_r", "string", "", "i2_i_foo_r", "var");
-//verify.completionListContains("i2_i_i2_si", "number", "", "i2_i_i2_si", "var");
-//verify.completionListContains("i2_i_i2_ii", "number", "", "i2_i_i2_ii", "var");
+verify.completionListContains("i2_i_i2_si", "number", "", "i2_i_i2_si", "var");
+verify.completionListContains("i2_i_i2_ii", "number", "", "i2_i_i2_ii", "var");
 verify.completionListContains("i2_i_n", "any", "", "i2_i_n", "var");
 verify.completionListContains("i2_i_nc_x", "number", "", "i2_i_nc_x", "var");
 verify.completionListContains("i2_i_nc_foo", "(b: number) => string", "", "i2_i_nc_foo", "var");
