@@ -13,27 +13,33 @@ var C1 = (function () {
     C1.prototype.C1M1 = function () {
         return 0;
     };
+
     C1.prototype.C1M2 = function (C1M2A1) {
         return C1M2A1;
     };
+
     C1.prototype.C1M3 = function (C1M3A1, C1M3A2) {
         if (typeof C1M3A1 === "undefined") { C1M3A1 = 0; }
         if (typeof C1M3A2 === "undefined") { C1M3A2 = C1M3A1; }
         return C1M3A1 + C1M3A2;
     };
+
     C1.prototype.C1M4 = function (C1M4A1, C1M4A2) {
         return C1M4A1 + C1M4A2;
     };
+
     C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
         if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
         return C1M5A1 + C1M5A2;
     };
+
     C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
         if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
         return C1M5A1 + C1M5A2;
     };
     return C1;
 })();
+
 var C2 = (function (_super) {
     __extends(C2, _super);
     function C2(v2) {
@@ -42,6 +48,7 @@ var C2 = (function (_super) {
     }
     return C2;
 })(C1);
+
 function F1() {
     return 0;
 }
@@ -56,6 +63,7 @@ function F3(F3A1, F3A2) {
 function F4(F4A1, F4A2) {
     return F4A1 + F4A2;
 }
+
 var L1 = function () {
     return 0;
 };
@@ -70,35 +78,44 @@ var L3 = function (L3A1, L3A2) {
 var L4 = function (L4A1, L4A2) {
     return L4A1 + L4A2;
 };
+
 var c1o1 = new C1(5);
 var i1o1 = new C1(5);
+
 c1o1.C1M1();
 var f1v1 = F1();
 var l1v1 = L1();
+
 c1o1.C1M2(1);
 i1o1.C1M2(1);
 var f2v1 = F2(1);
 var l2v1 = L2(1);
+
 c1o1.C1M3(1, 2);
 i1o1.C1M3(1, 2);
 var f3v1 = F3(1, 2);
 var l3v1 = L3(1, 2);
+
 c1o1.C1M4(1, 2);
 i1o1.C1M4(1, 2);
 var f4v1 = F4(1, 2);
 var l4v1 = L4(1, 2);
+
 c1o1.C1M3(1);
 i1o1.C1M3(1);
 var f3v2 = F3(1);
 var l3v2 = L3(1);
+
 c1o1.C1M3();
 i1o1.C1M3();
 var f3v3 = F3();
 var l3v3 = L3();
+
 c1o1.C1M4(1);
 i1o1.C1M4(1);
 var f4v2 = F4(1);
 var l4v2 = L4(1);
+
 c1o1.C1M1(1);
 i1o1.C1M1(1);
 F1(1);
@@ -119,6 +136,7 @@ c1o1.C1M4();
 i1o1.C1M4();
 F4();
 L4();
+
 function fnOpt1(id, children, expectedPath, isRoot) {
     if (typeof children === "undefined") { children = []; }
     if (typeof expectedPath === "undefined") { expectedPath = []; }

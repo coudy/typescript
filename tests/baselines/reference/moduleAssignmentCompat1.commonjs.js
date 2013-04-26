@@ -21,7 +21,9 @@ var B;
         return D;
     })();
 })(B || (B = {}));
+
 var a;
 var b;
+
 a = b;
 b = a;

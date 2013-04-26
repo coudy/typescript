@@ -13,6 +13,7 @@ var EventBase = (function () {
     };
     return EventBase;
 })();
+
 var StringEvent = (function (_super) {
     __extends(StringEvent, _super);
     function StringEvent() {

@@ -10,9 +10,11 @@ var Signature = (function () {
     }
     return Signature;
 })();
+
 function aEnclosesB(a) {
     return true;
 }
+
 var Symbol = (function () {
     function Symbol() {
     }
@@ -29,6 +31,7 @@ var InferenceSymbol = (function (_super) {
     }
     return InferenceSymbol;
 })(Symbol);
+
 var ParameterSymbol = (function (_super) {
     __extends(ParameterSymbol, _super);
     function ParameterSymbol() {
@@ -36,6 +39,7 @@ var ParameterSymbol = (function (_super) {
     }
     return ParameterSymbol;
 })(InferenceSymbol);
+
 var TypeSymbol = (function (_super) {
     __extends(TypeSymbol, _super);
     function TypeSymbol() {

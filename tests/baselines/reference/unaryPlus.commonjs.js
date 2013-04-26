@@ -10,6 +10,7 @@ var E;
 })(E || (E = {}));
 ;
 var c = +E.some;
+
 var x = +"3";
 var y = -"3";
 var z = ~"3";

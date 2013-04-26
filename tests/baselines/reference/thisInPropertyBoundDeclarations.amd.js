@@ -11,6 +11,7 @@ var Bug = (function () {
     ];
     return Bug;
 })();
+
 var A = (function () {
     function A() {
         this.prop1 = function () {

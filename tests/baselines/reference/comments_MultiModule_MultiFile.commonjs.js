@@ -10,6 +10,7 @@ var multiM;
     })();
     multiM.b = b;
 })(multiM || (multiM = {}));
+
 /** thi is multi module 2*/
 var multiM;
 (function (multiM) {
@@ -20,6 +21,7 @@ var multiM;
         return c;
     })();
     multiM.c = c;
+
     // class e comment
     var e = (function () {
         function e() {
@@ -28,6 +30,7 @@ var multiM;
     })();
     multiM.e = e;
 })(multiM || (multiM = {}));
+
 new multiM.b();
 new multiM.c();
 ////[comments_MultiModule_MultiFile_1.js]
@@ -41,6 +44,7 @@ var multiM;
         return d;
     })();
     multiM.d = d;
+
     /// class f comment
     var f = (function () {
         function f() {

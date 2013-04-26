@@ -13,18 +13,22 @@ var User = (function () {
     };
     return User;
 })();
+
 var RegisteredUser = (function (_super) {
     __extends(RegisteredUser, _super);
     function RegisteredUser() {
         _super.call(this);
         this.name = "Frank";
+
         _super.prototype.sayHello.call(this);
+
         var x = function () {
             return _super.prototype.sayHello.call(_this);
         };
     }
     RegisteredUser.prototype.sayHello = function () {
         _super.prototype.sayHello.call(this);
+
         var x = function () {
             return _super.prototype.sayHello.call(_this);
         };
@@ -36,6 +40,7 @@ var RegisteredUser2 = (function (_super) {
     function RegisteredUser2() {
         _super.call(this);
         this.name = "Joe";
+
         var x = function () {
             return function () {
                 return function () {
@@ -55,11 +60,13 @@ var RegisteredUser2 = (function (_super) {
     };
     return RegisteredUser2;
 })(User);
+
 var RegisteredUser3 = (function (_super) {
     __extends(RegisteredUser3, _super);
     function RegisteredUser3() {
         _super.call(this);
         this.name = "Sam";
+
         var superName = function () {
             return function () {
                 return function () {
@@ -79,11 +86,13 @@ var RegisteredUser3 = (function (_super) {
     };
     return RegisteredUser3;
 })(User);
+
 var RegisteredUser4 = (function (_super) {
     __extends(RegisteredUser4, _super);
     function RegisteredUser4() {
         _super.call(this);
         this.name = "Mark";
+
         var x = function () {
             return function () {
                 return _super.prototype;

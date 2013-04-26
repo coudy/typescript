@@ -13,10 +13,13 @@ var A;
     })(A.B || (A.B = {}));
     var B = A.B;
 })(A || (A = {}));
+
 var D;
 (function (D) {
     var inner = A.B.C;
+
     var c1 = new inner.Class1();
+
     (function (E) {
         var Class2 = (function () {
             function Class2() {
@@ -27,5 +30,7 @@ var D;
     })(D.E || (D.E = {}));
     var E = D.E;
 })(D || (D = {}));
+
 var c;
+
 c = new D.inner.Class1();

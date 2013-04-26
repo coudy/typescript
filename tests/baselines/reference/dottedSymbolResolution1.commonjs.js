@@ -1,6 +1,7 @@
 function each(collection, callback) {
     return null;
 }
+
 function _setBarAndText() {
     var x, $;
     each(x.find(" "), function () {

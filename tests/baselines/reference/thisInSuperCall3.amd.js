@@ -9,6 +9,7 @@ var Base = (function () {
     }
     return Base;
 })();
+
 var Foo = (function (_super) {
     __extends(Foo, _super);
     function Foo() {

@@ -7,12 +7,14 @@ var Foo1 = (function () {
     }
     return Foo1;
 })();
+
 var Foo2 = (function () {
     function Foo2(args) {
         this.args = args;
     }
     return Foo2;
 })();
+
 var Foo3 = (function () {
     function Foo3(__missing) {
         var args = [];

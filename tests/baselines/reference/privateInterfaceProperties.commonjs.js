@@ -3,6 +3,7 @@ var c1 = (function () {
     }
     return c1;
 })();
+
 var c2 = (function () {
     function c2() {
     }

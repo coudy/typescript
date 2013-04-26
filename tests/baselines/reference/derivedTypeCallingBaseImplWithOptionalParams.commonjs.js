@@ -5,7 +5,9 @@ var MyClass = (function () {
     };
     return MyClass;
 })();
+
 var x = new MyClass();
 x.myMethod();
+
 var y = new MyClass();
 y.myMethod();

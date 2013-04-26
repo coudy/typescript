@@ -3,10 +3,12 @@ var foo = (function () {
     }
     foo.fnOverload = function () {
     };
+
     foo.fnOverload = function (foo) {
     };
     return foo;
 })();
+
 var bar = (function () {
     function bar() {
     }
@@ -14,6 +16,7 @@ var bar = (function () {
     };
     return bar;
 })();
+
 var X = (function () {
     function X() {
     }

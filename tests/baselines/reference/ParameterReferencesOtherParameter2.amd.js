@@ -3,6 +3,7 @@ var Model = (function () {
     }
     return Model;
 })();
+
 var UI = (function () {
     function UI(model, foo) {
         if (typeof foo === "undefined") { foo = model.name; }

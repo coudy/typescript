@@ -2,9 +2,11 @@ var M;
 (function (M) {
     for (var j = 0; j < 10; j++) {
     }
+
     for (var j = 0; j < 10; j++) {
     }
 })(M || (M = {}));
+
 function foo() {
     var x = 2;
     var x = 1;
@@ -14,6 +16,7 @@ function foo() {
         var result = 2;
     }
 }
+
 var C = (function () {
     function C() {
     }

@@ -5,6 +5,7 @@ var a = (function () {
     };
     a.prototype.b = function () {
     };
+
     Object.defineProperty(a.prototype, "x", {
         get: function () {
             return 10;
@@ -14,6 +15,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(a.prototype, "y", {
         get: function () {
             return "Hello";
@@ -23,6 +25,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     a.prototype.z = function () {
     };
     Object.defineProperty(a.prototype, "z", {
@@ -34,6 +37,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(a.prototype, "x2", {
         get: function () {
             return 10;
@@ -43,6 +47,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(a.prototype, "z2", {
         get: function () {
             return "Hello";

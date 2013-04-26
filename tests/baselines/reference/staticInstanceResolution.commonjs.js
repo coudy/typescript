@@ -3,6 +3,7 @@ var Comment = (function () {
     }
     Comment.prototype.getDocCommentText = function () {
     };
+
     Comment.getDocCommentText = function (comments) {
         comments[0].getDocCommentText();
         var c;

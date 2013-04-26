@@ -29,6 +29,7 @@ function () {
     }
     return 105;
 };
+
 function (arg1, arg2) {
     if (typeof arg1 === "undefined") { arg1 = 1; }
     return 1;

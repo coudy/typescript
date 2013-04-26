@@ -1,5 +1,6 @@
 function load(f) {
 }
+
 var f1 = function (z) {
 };
 var f2 = function (z) {

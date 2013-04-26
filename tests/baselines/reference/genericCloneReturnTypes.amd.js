@@ -7,7 +7,9 @@ var Bar = (function () {
     };
     return Bar;
 })();
+
 var b;
+
 var b2 = b.clone();
 var b3;
 b = b2;

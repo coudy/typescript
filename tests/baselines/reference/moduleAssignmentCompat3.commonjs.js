@@ -6,7 +6,9 @@ var B;
 (function (B) {
     B.x = "";
 })(B || (B = {}));
+
 var a;
 var b;
+
 a = b;
 b = a;

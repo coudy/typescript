@@ -16,6 +16,7 @@ var B = (function () {
     }
     return B;
 })();
+
 var A2 = (function (_super) {
     __extends(A2, _super);
     function A2() {

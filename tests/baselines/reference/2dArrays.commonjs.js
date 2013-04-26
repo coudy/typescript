@@ -3,11 +3,13 @@ var Cell = (function () {
     }
     return Cell;
 })();
+
 var Ship = (function () {
     function Ship() {
     }
     return Ship;
 })();
+
 var Board = (function () {
     function Board() {
     }

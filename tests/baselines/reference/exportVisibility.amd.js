@@ -5,7 +5,9 @@ define(["require", "exports"], function(require, exports) {
         return Foo;
     })();
     exports.Foo = Foo;
+
     exports.foo = new Foo();
+
     function test(foo) {
         return true;
     }

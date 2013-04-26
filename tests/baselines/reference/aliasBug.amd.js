@@ -6,6 +6,7 @@ var foo;
         return Provide;
     })();
     foo.Provide = Provide;
+
     (function (bar) {
         (function (baz) {
             var boo = (function () {
@@ -19,9 +20,12 @@ var foo;
     })(foo.bar || (foo.bar = {}));
     var bar = foo.bar;
 })(foo || (foo = {}));
+
 var provide = foo;
 var booz = foo.bar.baz;
+
 var p = new provide.Provide();
+
 function use() {
     var p1;
     var p2;

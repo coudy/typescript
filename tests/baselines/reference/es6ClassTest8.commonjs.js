@@ -1,6 +1,7 @@
 function f1(x) {
     return x;
 }
+
 var C = (function () {
     function C() {
         var bar = (function () {
@@ -10,6 +11,7 @@ var C = (function () {
     }
     return C;
 })();
+
 var Vector = (function () {
     function Vector(x, y, z) {
         this.x = x;
@@ -28,11 +30,13 @@ var Vector = (function () {
     Vector.cross = function (v1, v2) {
         return null;
     };
+
     Vector.dot = function (v1, v2) {
         return null;
     };
     return Vector;
 })();
+
 var Camera = (function () {
     function Camera(pos, lookAt) {
         this.pos = pos;

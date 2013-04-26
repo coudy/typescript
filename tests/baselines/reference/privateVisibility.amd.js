@@ -10,11 +10,14 @@ var Foo = (function () {
     };
     return Foo;
 })();
+
 var f = new Foo();
 f.privMeth();
 f.privProp;
+
 f.pubMeth();
 f.pubProp;
+
 var M;
 (function (M) {
     var C = (function () {
@@ -27,6 +30,8 @@ var M;
     M.C = C;
     M.V = 0;
 })(M || (M = {}));
+
 var c = new M.C();
+
 c.pub;
 c.priv;

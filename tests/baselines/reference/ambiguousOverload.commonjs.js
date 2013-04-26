@@ -4,6 +4,7 @@ function foof(bar) {
 ;
 var x = foof("s", null);
 var y = foof("s", null);
+
 function foof2(bar) {
     return bar;
 }

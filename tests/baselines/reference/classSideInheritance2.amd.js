@@ -11,6 +11,7 @@ var SubText = (function (_super) {
     }
     return SubText;
 })(TextBase);
+
 var TextBase = (function () {
     function TextBase() {
     }

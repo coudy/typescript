@@ -4,6 +4,7 @@ var c1 = (function () {
     }
     return c1;
 })();
+
 var instance1 = new c1();
 function f1() {
     return instance1;

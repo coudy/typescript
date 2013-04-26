@@ -6,6 +6,7 @@ var M;
         return A;
     })();
 })(M || (M = {}));
+
 var M;
 (function (M) {
     var A = (function () {
@@ -13,5 +14,6 @@ var M;
         }
         return A;
     })();
+
     var a = new A();
 })(M || (M = {}));

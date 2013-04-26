@@ -10,11 +10,13 @@ var Base5 = (function () {
     Base5.prototype.x = function () {
         return "BaseX";
     };
+
     Base5.prototype.y = function () {
         return "BaseY";
     };
     return Base5;
 })();
+
 var Sub5 = (function (_super) {
     __extends(Sub5, _super);
     function Sub5() {
@@ -25,6 +27,7 @@ var Sub5 = (function (_super) {
     };
     return Sub5;
 })(Base5);
+
 var SubSub5 = (function (_super) {
     __extends(SubSub5, _super);
     function SubSub5() {
@@ -38,6 +41,7 @@ var SubSub5 = (function (_super) {
     };
     return SubSub5;
 })(Sub5);
+
 var Base6 = (function () {
     function Base6() {
     }
@@ -46,6 +50,7 @@ var Base6 = (function () {
     };
     return Base6;
 })();
+
 var Sub6 = (function (_super) {
     __extends(Sub6, _super);
     function Sub6() {
@@ -56,6 +61,7 @@ var Sub6 = (function (_super) {
     };
     return Sub6;
 })(Base6);
+
 var SubSub6 = (function (_super) {
     __extends(SubSub6, _super);
     function SubSub6() {
@@ -66,6 +72,7 @@ var SubSub6 = (function (_super) {
     };
     return SubSub6;
 })(Sub6);
+
 var results1 = new SubSub5();
 var results2 = new SubSub6();
 results1.x() + results1.y() + results2.y();

@@ -19,6 +19,7 @@ var a = (function () {
     });
     return a;
 })();
+
 var b = (function (_super) {
     __extends(b, _super);
     function b() {

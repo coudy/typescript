@@ -11,6 +11,7 @@ var B = (function () {
     }
     return B;
 })();
+
 var C = (function (_super) {
     __extends(C, _super);
     function C() {
@@ -19,5 +20,6 @@ var C = (function (_super) {
     }
     return C;
 })(B);
+
 new C().x;
 new C().y;

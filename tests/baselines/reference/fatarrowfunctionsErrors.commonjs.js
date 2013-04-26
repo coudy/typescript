@@ -22,6 +22,7 @@ function (__missing) {
 false ? (function () {
     return null;
 }) : null;
+
 var x1 = function () {
 };
 var x2 = function (a) {

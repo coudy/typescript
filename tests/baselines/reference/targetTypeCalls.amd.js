@@ -8,6 +8,7 @@ var fra2 = (function () {
         return 0;
     };
 })();
+
 var fra3 = (function () {
     return (function () {
         return function (v) {

@@ -15,12 +15,14 @@ var M;
             result += (x + ": " + sum);
             return result;
         };
+
         C.prototype.fnope = function (x) {
             var rest = [];
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
                 rest[_i] = arguments[_i + 1];
             }
         };
+
         C.prototype.fonly = function () {
             var rest = [];
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
@@ -36,6 +38,7 @@ var M;
     })();
     M.C = C;
 })(M || (M = {}));
+
 var x = new M.C();
 var result = "";
 result += x.f(x, 3, 3);

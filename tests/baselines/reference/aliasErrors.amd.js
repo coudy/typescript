@@ -19,9 +19,11 @@ var foo;
     })(foo.bar || (foo.bar = {}));
     var bar = foo.bar;
 })(foo || (foo = {}));
+
 var provide = foo;
 var booz = foo.bar.baz;
 var beez = foo.bar;
+
 var m = no;
 var m2 = no.mod;
 var n = ;
@@ -31,7 +33,9 @@ var o = ;
 var q = ;
 null;
 var r = undefined;
+
 var p = new provide.Provide();
+
 function use() {
     beez.baz.boo;
     var p1;

@@ -1,12 +1,15 @@
 /** Variable comments*/
 var myVariable = 10;
+
 /** function comments*/
 function foo(/** parameter comment*/ p) {
 }
+
 /** variable with function type comment*/
 var fooVar;
 foo(50);
 fooVar();
+
 /**class comment*/
 var c = (function () {
     /** constructor comment*/
@@ -18,6 +21,7 @@ var c = (function () {
     c.prototype.myFoo = function () {
         return this.b;
     };
+
     Object.defineProperty(c.prototype, "prop1", {
         get: /** getter comment*/
         function () {
@@ -30,16 +34,21 @@ var c = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     /** overload implementation signature*/
     c.prototype.foo1 = function (aOrb) {
         return aOrb.toString();
     };
     return c;
 })();
+
 /**instance comment*/
 var i = new c();
+
 /**interface instance comments*/
 var i1_i;
+
 /** this is module comment*/
 var m1;
 (function (m1) {

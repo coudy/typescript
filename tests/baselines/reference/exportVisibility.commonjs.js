@@ -4,7 +4,9 @@ var Foo = (function () {
     return Foo;
 })();
 exports.Foo = Foo;
+
 exports.foo = new Foo();
+
 function test(foo) {
     return true;
 }

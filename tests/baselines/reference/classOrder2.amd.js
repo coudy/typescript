@@ -14,6 +14,7 @@ var A = (function (_super) {
     };
     return A;
 })(B);
+
 var B = (function () {
     function B() {
     }
@@ -21,5 +22,7 @@ var B = (function () {
     };
     return B;
 })();
+
 var a = new A();
+
 a.foo();

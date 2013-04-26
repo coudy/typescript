@@ -6,8 +6,11 @@ var A = (function () {
     };
     return A;
 })();
+
 var z = { x: new A() };
+
 var a1 = { x: new A() };
+
 var a2 = (function () {
     var z = { x: new A() };
     return z;

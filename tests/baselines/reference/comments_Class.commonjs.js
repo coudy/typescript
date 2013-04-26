@@ -14,6 +14,7 @@ var c3 = (function () {
 })();
 var i3 = new c3();
 var i3_c = c3;
+
 /** Class comment*/
 var c4 = (function () {
     /** Constructor comment*/
@@ -23,6 +24,7 @@ var c4 = (function () {
 })();
 var i4 = new c4();
 var i4_c = c4;
+
 /** Class with statics*/
 var c5 = (function () {
     function c5() {
@@ -31,6 +33,7 @@ var c5 = (function () {
 })();
 var i5 = new c5();
 var i5_c = c5;
+
 /// class with statics and constructor
 var c6 = (function () {
     /// constructor comment
@@ -40,6 +43,7 @@ var c6 = (function () {
 })();
 var i6 = new c6();
 var i6_c = c6;
+
 // class with statics and constructor
 var c7 = (function () {
     // constructor comment
@@ -49,6 +53,7 @@ var c7 = (function () {
 })();
 var i7 = new c7();
 var i7_c = c7;
+
 /** class with statics and constructor
 */
 var c8 = (function () {

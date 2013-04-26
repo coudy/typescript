@@ -5,5 +5,6 @@ var A = (function () {
     };
     return A;
 })();
+
 var a = new A();
 a.foo();

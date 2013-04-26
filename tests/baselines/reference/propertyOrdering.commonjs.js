@@ -5,11 +5,13 @@ var Foo = (function () {
     Foo.prototype.foo = function () {
         return this._store.length;
     };
+
     Foo.prototype.bar = function () {
         return this.store;
     };
     return Foo;
 })();
+
 var Bar = (function () {
     function Bar(store) {
         this._store = store;

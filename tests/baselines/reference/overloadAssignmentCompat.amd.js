@@ -3,6 +3,7 @@ var Accessor = (function () {
     }
     return Accessor;
 })();
+
 function attr(nameOrMap, value) {
     if (nameOrMap && typeof nameOrMap === "object") {
         return new Accessor();
@@ -10,6 +11,7 @@ function attr(nameOrMap, value) {
         return "s";
     }
 }
+
 function attr2(nameOrMap, value) {
     if (nameOrMap && typeof nameOrMap === "object") {
         return "t";
@@ -17,6 +19,7 @@ function attr2(nameOrMap, value) {
         return "s";
     }
 }
+
 function foo() {
     return "a";
 }

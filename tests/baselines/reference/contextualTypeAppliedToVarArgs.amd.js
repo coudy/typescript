@@ -2,6 +2,7 @@ function delegate(instance, method, data) {
     return function () {
     };
 }
+
 var Foo = (function () {
     function Foo() {
     }

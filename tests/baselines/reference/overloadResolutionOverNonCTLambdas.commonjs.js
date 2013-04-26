@@ -5,6 +5,7 @@ var Bugs;
         }
         return A;
     })();
+
     function bug2(message) {
         var args = [];
         for (var _i = 0; _i < (arguments.length - 1); _i++) {
@@ -17,13 +18,17 @@ var Bugs;
         return result;
     }
 })(Bugs || (Bugs = {}));
+
 function bug3(f) {
     return f("s");
 }
+
 function fprime(x) {
     return x;
 }
+
 bug3(fprime);
+
 bug3(function (x) {
     return x;
 });

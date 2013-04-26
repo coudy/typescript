@@ -6,5 +6,6 @@ var C = (function () {
     };
     return C;
 })();
+
 var x = new C();
 x.bar2(2, "");

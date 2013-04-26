@@ -3,4 +3,5 @@ var f = (function () {
     }
     return f;
 })();
+
 f += '';

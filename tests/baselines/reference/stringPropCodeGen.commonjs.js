@@ -3,5 +3,7 @@ var a = {
     },
     "bar": 5
 };
+
 a.foo();
+
 a.bar.toString();

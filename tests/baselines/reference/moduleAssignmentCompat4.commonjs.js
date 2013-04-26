@@ -21,7 +21,9 @@ var B;
     })(B.M || (B.M = {}));
     var M = B.M;
 })(B || (B = {}));
+
 var a;
 var b;
+
 a = b;
 b = a;

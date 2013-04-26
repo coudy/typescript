@@ -8,6 +8,7 @@ var multiM;
         return b;
     })();
     multiM.b = b;
+
     // class d
     var d = (function () {
         function d() {
@@ -16,6 +17,7 @@ var multiM;
     })();
     multiM.d = d;
 })(multiM || (multiM = {}));
+
 /// this is multi module 2
 var multiM;
 (function (multiM) {
@@ -26,6 +28,7 @@ var multiM;
         return c;
     })();
     multiM.c = c;
+
     /// class e
     var e = (function () {
         function e() {

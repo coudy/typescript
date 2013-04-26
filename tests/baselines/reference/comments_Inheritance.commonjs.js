@@ -10,11 +10,14 @@ var c1 = (function () {
     // i1_f1
     c1.prototype.i1_f1 = function () {
     };
+
     c1.prototype.i1_nc_f1 = function () {
     };
+
     /** c1_f1*/
     c1.prototype.f1 = function () {
     };
+
     /** c1_nc_f1*/
     c1.prototype.nc_f1 = function () {
     };
@@ -22,6 +25,7 @@ var c1 = (function () {
 })();
 var i1_i;
 var c1_i = new c1();
+
 // assign to interface
 i1_i = c1_i;
 var c2 = (function () {
@@ -32,6 +36,7 @@ var c2 = (function () {
     /** c2 c2_f1*/
     c2.prototype.c2_f1 = function () {
     };
+
     Object.defineProperty(c2.prototype, "c2_prop", {
         get: /** c2 c2_prop*/
         function () {
@@ -40,6 +45,7 @@ var c2 = (function () {
         enumerable: true,
         configurable: true
     });
+
     c2.prototype.c2_nc_f1 = function () {
     };
     Object.defineProperty(c2.prototype, "c2_nc_prop", {
@@ -49,9 +55,11 @@ var c2 = (function () {
         enumerable: true,
         configurable: true
     });
+
     /** c2 f1*/
     c2.prototype.f1 = function () {
     };
+
     Object.defineProperty(c2.prototype, "prop", {
         get: /** c2 prop*/
         function () {
@@ -60,6 +68,7 @@ var c2 = (function () {
         enumerable: true,
         configurable: true
     });
+
     c2.prototype.nc_f1 = function () {
     };
     Object.defineProperty(c2.prototype, "nc_prop", {
@@ -79,6 +88,7 @@ var c3 = (function (_super) {
     /** c3 f1*/
     c3.prototype.f1 = function () {
     };
+
     Object.defineProperty(c3.prototype, "prop", {
         get: /** c3 prop*/
         function () {
@@ -87,6 +97,7 @@ var c3 = (function (_super) {
         enumerable: true,
         configurable: true
     });
+
     c3.prototype.nc_f1 = function () {
     };
     Object.defineProperty(c3.prototype, "nc_prop", {
@@ -100,6 +111,7 @@ var c3 = (function (_super) {
 })(c2);
 var c2_i = new c2(10);
 var c3_i = new c3();
+
 // assign
 c2_i = c3_i;
 var c4 = (function (_super) {
@@ -110,8 +122,10 @@ var c4 = (function (_super) {
     return c4;
 })(c2);
 var c4_i = new c4(10);
+
 var i2_i;
 var i3_i;
+
 // assign to interface
 i2_i = i3_i;
 ////[0.d.ts]

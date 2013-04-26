@@ -2,6 +2,7 @@ function foo(x, y, z) {
     if (typeof y === "undefined") { y = false; }
     if (typeof z === "undefined") { z = 0; }
 }
+
 var CCC = (function () {
     function CCC() {
     }
@@ -15,6 +16,7 @@ var CCC = (function () {
     };
     return CCC;
 })();
+
 var a = (x ?  = 0 : );
 function (__missing) {
     return 1;

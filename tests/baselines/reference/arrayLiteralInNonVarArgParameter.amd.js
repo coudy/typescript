@@ -4,4 +4,5 @@ function panic(val) {
         opt[_i] = arguments[_i + 1];
     }
 }
+
 panic([], 'one', 'two');

@@ -11,6 +11,7 @@ define(["require", "exports"], function(require, exports) {
         return A;
     })();
     exports.A = A;
+
     var B = (function (_super) {
         __extends(B, _super);
         function B(element, url) {
@@ -21,6 +22,7 @@ define(["require", "exports"], function(require, exports) {
         return B;
     })(A);
     exports.B = B;
+
     var reg;
     reg.register(B);
 })

@@ -25,6 +25,7 @@ var C2 = (function (_super) {
     };
     return C2;
 })(C1);
+
 var C3 = (function () {
     function C3() {
     }
@@ -33,6 +34,7 @@ var C3 = (function () {
     };
     return C3;
 })();
+
 var a1 = null;
 var c1 = new C1();
 var i1 = c1;
@@ -42,6 +44,7 @@ var o1 = { one: 1 };
 var f1 = function () {
     return new C1();
 };
+
 var arr_any = [];
 var arr_i1 = [];
 var arr_c1 = [];
@@ -50,9 +53,11 @@ var arr_i1_2 = [];
 var arr_c1_2 = [];
 var arr_c2_2 = [];
 var arr_c3 = [];
+
 arr_c3 = arr_c2_2;
 arr_c3 = arr_c1_2;
 arr_c3 = arr_i1_2;
+
 arr_any = f1;
 arr_any = function () {
     return null;

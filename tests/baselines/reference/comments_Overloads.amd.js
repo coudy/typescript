@@ -3,40 +3,51 @@ function f1(aOrb) {
 }
 f1("hello");
 f1(10);
+
 /** this is f2 var comment*/
 function f2(aOrb) {
     return 10;
 }
 f2("hello");
 f2(10);
+
 function f3(aOrb) {
     return 10;
 }
 f3("hello");
 f3(10);
+
 function f4(aOrb) {
     return 10;
 }
 f4("hello");
 f4(10);
+
 var i1_i;
+
 var i2_i;
+
 var i3_i;
+
 var c = (function () {
     function c() {
     }
     c.prototype.prop1 = function (aorb) {
         return 10;
     };
+
     c.prototype.prop2 = function (aorb) {
         return 10;
     };
+
     c.prototype.prop3 = function (aorb) {
         return 10;
     };
+
     c.prototype.prop4 = function (aorb) {
         return 10;
     };
+
     /** Prop5 implementaion*/
     c.prototype.prop5 = function (aorb) {
         return 10;
@@ -71,6 +82,7 @@ var c5 = (function () {
     return c5;
 })();
 var c_i = new c();
+
 var c1_i_1 = new c1(10);
 var c1_i_2 = new c1("hello");
 var c2_i_1 = new c2(10);

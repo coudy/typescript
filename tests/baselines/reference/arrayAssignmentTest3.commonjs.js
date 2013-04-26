@@ -3,6 +3,7 @@ var B = (function () {
     }
     return B;
 })();
+
 var a = (function () {
     function a(x, y, z) {
         this.x = x;
@@ -10,4 +11,5 @@ var a = (function () {
     }
     return a;
 })();
+
 var xx = new a(null, 7, new B());

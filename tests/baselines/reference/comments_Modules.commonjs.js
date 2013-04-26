@@ -3,10 +3,12 @@ var m1;
 (function (m1) {
     /** b's comment*/
     m1.b;
+
     /** foo's comment*/
     function foo() {
         return m1.b;
     }
+
     /** m2 comments*/
     (function (m2) {
         /** class comment;*/
@@ -17,25 +19,30 @@ var m1;
         })();
         m2.c = c;
         ;
+
         /** i*/
         m2.i = new c();
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
+
     /** exported function*/
     function fooExport() {
         return foo();
     }
     m1.fooExport = fooExport;
+
     // shouldn't appear
     function foo2Export(/**hm*/ a) {
     }
     m1.foo2Export = foo2Export;
+
     /** foo3Export
     * comment
     */
     function foo3Export() {
     }
     m1.foo3Export = foo3Export;
+
     /** foo4Export
     * comment
     */
@@ -44,6 +51,7 @@ var m1;
 })(m1 || (m1 = {}));
 m1.fooExport();
 var myvar = new m1.m2.c();
+
 var m2;
 (function (m2) {
     /** module comment of m2.m3*/
@@ -59,6 +67,7 @@ var m2;
     var m3 = m2.m3;
 })(m2 || (m2 = {}));
 new m2.m3.c();
+
 var m3;
 (function (m3) {
     (function (m4) {
@@ -77,6 +86,7 @@ var m3;
     var m4 = m3.m4;
 })(m3 || (m3 = {}));
 new m3.m4.m5.c();
+
 var m4;
 (function (m4) {
     (function (m5) {
@@ -98,6 +108,7 @@ var m4;
     var m5 = m4.m5;
 })(m4 || (m4 = {}));
 new m4.m5.m6.m7.c();
+
 var m5;
 (function (m5) {
     (function (m6) {
@@ -149,12 +160,14 @@ var m7;
                 return c;
             })();
             m9.c = c;
+
             /** class d */
             var d = (function () {
                 function d() {
                 }
                 return d;
             })();
+
             // class e
             var e = (function () {
                 function e() {

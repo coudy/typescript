@@ -13,10 +13,13 @@ var Point = (function () {
     };
     return Point;
 })();
+
 var result = "";
 result += (new Point(3, 4).move(2, 2));
+
 var M;
 (function (M) {
     M.origin = new Point(0, 0);
 })(M || (M = {}));
+
 result += (M.origin.move(1, 1));

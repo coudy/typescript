@@ -14,6 +14,7 @@ var Event = (function () {
     };
     return Event;
 })();
+
 var ItemSetEvent = (function (_super) {
     __extends(ItemSetEvent, _super);
     function ItemSetEvent() {

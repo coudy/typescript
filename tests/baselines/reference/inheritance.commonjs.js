@@ -9,11 +9,13 @@ var B1 = (function () {
     }
     return B1;
 })();
+
 var B2 = (function () {
     function B2() {
     }
     return B2;
 })();
+
 var D1 = (function (_super) {
     __extends(D1, _super);
     function D1() {
@@ -21,6 +23,7 @@ var D1 = (function (_super) {
     }
     return D1;
 })(B1);
+
 var D2 = (function (_super) {
     __extends(D2, _super);
     function D2() {
@@ -28,11 +31,13 @@ var D2 = (function (_super) {
     }
     return D2;
 })(B2);
+
 var N = (function () {
     function N() {
     }
     return N;
 })();
+
 var ND = (function (_super) {
     __extends(ND, _super);
     function ND() {
@@ -40,6 +45,7 @@ var ND = (function (_super) {
     }
     return ND;
 })(N);
+
 var Good = (function () {
     function Good() {
         this.f = function () {
@@ -51,6 +57,7 @@ var Good = (function () {
     };
     return Good;
 })();
+
 var Baad = (function (_super) {
     __extends(Baad, _super);
     function Baad() {

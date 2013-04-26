@@ -11,12 +11,14 @@ var Editor;
             entry.next = entry;
             return entry;
         };
+
         List.MakeHead2 = function () {
             var entry = new List(true, null);
             entry.prev = entry;
             entry.next = entry;
             return entry;
         };
+
         List.MakeHead3 = function () {
             var entry = new List(true, null);
             entry.prev = entry;

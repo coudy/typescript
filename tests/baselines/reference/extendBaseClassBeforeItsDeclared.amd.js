@@ -11,6 +11,7 @@ var derived = (function (_super) {
     }
     return derived;
 })(base);
+
 var base = (function () {
     function base(n) {
         this.n = n;

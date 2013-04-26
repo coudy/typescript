@@ -10,6 +10,7 @@ var C = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(C.prototype, "Bar", {
         get: function () {
             return "foo";
@@ -21,6 +22,7 @@ var C = (function () {
     });
     return C;
 })();
+
 var o1 = { get Foo() {
         return 0;
     }, set Foo(val) {

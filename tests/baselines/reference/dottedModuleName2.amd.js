@@ -5,6 +5,7 @@ var A;
     })(A.B || (A.B = {}));
     var B = A.B;
 })(A || (A = {}));
+
 var AA;
 (function (AA) {
     (function (B) {
@@ -12,8 +13,11 @@ var AA;
     })(AA.B || (AA.B = {}));
     var B = AA.B;
 })(AA || (AA = {}));
+
 var tmpOK = AA.B.x;
+
 var tmpError = A.B.x;
+
 var A;
 (function (A) {
     (function (B) {
@@ -24,9 +28,12 @@ var A;
     })(A.B || (A.B = {}));
     var B = A.B;
 })(A || (A = {}));
+
 var M;
 (function (M) {
     var X1 = A;
+
     var X2 = A.B;
+
     var X3 = A.B.C;
 })(M || (M = {}));

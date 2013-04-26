@@ -1386,13 +1386,18 @@ module TypeScript {
             }
 
             this.emitComments(list, true);
+            var lastEmittedNode = null;
 
             for (var i = 0, n = list.members.length; i < n; i++) {
                 var node = list.members[i];
 
                 if (node.shouldEmit()) {
+                    this.emitSpaceBetweenConstructs(lastEmittedNode, node);
+
                     this.emitJavascript(node, true);
                     this.writeLineToOutput("");
+
+                    lastEmittedNode = node;
                 }
             }
 
@@ -1406,6 +1411,26 @@ module TypeScript {
             }
 
             return false;
+        }
+
+        // If these two constructs had more than one line between them originally, then emit at 
+        // least one blank line between them.
+        private emitSpaceBetweenConstructs(node1: AST, node2: AST): void {
+            if (node1 === null || node2 === null) {
+                return;
+            }
+
+            if (node1.minChar === -1 || node1.limChar === -1 || node2.minChar === -1 || node2.limChar === -1) {
+                return;
+            }
+
+            var lineMap = this.document.lineMap;
+            var node1EndLine = lineMap.getLineNumberFromPosition(node1.limChar);
+            var node2StartLine = lineMap.getLineNumberFromPosition(node2.minChar);
+
+            if ((node2StartLine - node1EndLine) > 1) {
+                this.writeLineToOutput("");
+            }
         }
 
         public emitScriptElements(script: Script, requiresExtendsBlock: boolean) {
@@ -1426,14 +1451,19 @@ module TypeScript {
 
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script, requiresExtendsBlock);
-            
+            var lastEmittedNode = null;
+
                 // Now emit the rest of the script elements
             for (; i < n; i++) {
                 var node = list.members[i];
 
                 if (node.shouldEmit()) {
+                    this.emitSpaceBetweenConstructs(lastEmittedNode, node);
+
                     this.emitJavascript(node, true);
                     this.writeLineToOutput("");
+
+                    lastEmittedNode = node;
                 }
             }
 
@@ -1451,6 +1481,7 @@ module TypeScript {
 
             var emitPropertyAssignmentsAfterSuperCall = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
+            var lastEmittedNode = null;
 
             for (var i = 0, n = list.members.length; i < n; i++) {
                 // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
@@ -1462,8 +1493,12 @@ module TypeScript {
                 var node = list.members[i];
 
                 if (node.shouldEmit()) {
+                    this.emitSpaceBetweenConstructs(lastEmittedNode, node);
+
                     this.emitJavascript(node, true);
                     this.writeLineToOutput("");
+
+                    lastEmittedNode = node;
                 }
             }
 
@@ -1649,6 +1684,8 @@ module TypeScript {
 
         private emitClassMembers(classDecl: ClassDeclaration): void {
             // First, emit all the functions.
+            var lastEmittedMember = null;
+
             for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
                 var memberDecl = classDecl.members.members[i];
 
@@ -1656,6 +1693,8 @@ module TypeScript {
                     var fn = <FunctionDeclaration>memberDecl;
 
                     if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
+                        this.emitSpaceBetweenConstructs(lastEmittedMember, fn);
+
                         if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {
                             this.emitPrototypeMember(fn, classDecl.name.actualText);
                         }
@@ -1671,6 +1710,8 @@ module TypeScript {
                                 this.writeLineToOutput(";");
                             }
                         }
+
+                        lastEmittedMember = fn;
                     }
                 }
             }
@@ -1683,6 +1724,8 @@ module TypeScript {
                     var varDecl = <VariableDeclarator>memberDecl;
 
                     if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                        this.emitSpaceBetweenConstructs(lastEmittedMember, varDecl);
+
                         this.emitIndent();
                         this.recordSourceMappingStart(varDecl);
                         this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
@@ -1690,6 +1733,8 @@ module TypeScript {
 
                         this.writeLineToOutput(";");
                         this.recordSourceMappingEnd(varDecl);
+
+                        lastEmittedMember = varDecl;
                     }
                 }
             }

@@ -7,11 +7,14 @@ var M;
         return XX;
     })();
     M.XX = XX;
+
     function f(y) {
     }
     M.f = f;
+
     var a;
     f({ x: a });
+
     var b;
     f({ x: b });
 })(M || (M = {}));

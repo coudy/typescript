@@ -2,18 +2,21 @@
 function foo() {
 }
 foo();
+
 /** This is comment for function signature*/
 function fooWithParameters(/** this is comment about a*/ a, /** this is comment for b*/
 b) {
     var d = a;
 }
 fooWithParameters("a", 10);
+
 /** fooFunc
 * comment
 */
 var fooFunc = function FooFunctionValue(/** fooFunctionValue param */ b) {
     return b;
 };
+
 /// lamdaFoo var comment
 var lambdaFoo = /** this is lambda comment*/ function (/**param a*/ a, /**param b*/ b) {
     return a + b;

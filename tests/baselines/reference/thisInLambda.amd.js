@@ -11,6 +11,7 @@ var Foo = (function () {
     };
     return Foo;
 })();
+
 function myFn(a) {
 }
 var myCls = (function () {

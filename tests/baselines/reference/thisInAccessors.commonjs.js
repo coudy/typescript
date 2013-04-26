@@ -16,6 +16,7 @@ var GetterOnly = (function () {
     });
     return GetterOnly;
 })();
+
 var SetterOnly = (function () {
     function SetterOnly() {
     }
@@ -34,6 +35,7 @@ var SetterOnly = (function () {
     });
     return SetterOnly;
 })();
+
 var GetterAndSetter = (function () {
     function GetterAndSetter() {
     }

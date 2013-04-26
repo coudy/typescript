@@ -3,6 +3,7 @@ var C = (function () {
     }
     return C;
 })();
+
 var x1 = 3;
 var x2 = 3;
 var x3 = 3;

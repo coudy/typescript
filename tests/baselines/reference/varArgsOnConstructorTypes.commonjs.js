@@ -10,6 +10,7 @@ var A = (function () {
     return A;
 })();
 exports.A = A;
+
 var B = (function (_super) {
     __extends(B, _super);
     function B(element, url) {
@@ -20,5 +21,6 @@ var B = (function (_super) {
     return B;
 })(A);
 exports.B = B;
+
 var reg;
 reg.register(B);

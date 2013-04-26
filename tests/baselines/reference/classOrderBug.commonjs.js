@@ -10,6 +10,7 @@ var bar = (function () {
     }
     return bar;
 })();
+
 var baz = (function () {
     function baz() {
     }

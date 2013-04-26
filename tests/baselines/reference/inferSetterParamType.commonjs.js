@@ -12,6 +12,7 @@ var Foo = (function () {
     });
     return Foo;
 })();
+
 var Foo2 = (function () {
     function Foo2() {
     }

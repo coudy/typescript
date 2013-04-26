@@ -6,5 +6,7 @@ var Foo = (function () {
     };
     return Foo;
 })();
+
 var baz = Foo.b;
+
 baz.concat("y");

@@ -7,6 +7,7 @@ var c1 = (function () {
     c1.prototype.p2 = function (/** number to add*/ b) {
         return this.p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "p3", {
         get: /** getter property*/
         function () {
@@ -19,10 +20,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     /** sum with property*/
     c1.prototype.pp2 = function (/** number to add*/ b) {
         return this.p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "pp3", {
         get: /** getter property*/
         function () {
@@ -35,10 +39,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     c1.s2 = /** static sum with property*/
     function (/** number to add*/ b) {
         return c1.s1 + b;
     };
+
     Object.defineProperty(c1, "s3", {
         get: /** static getter property*/
         function () {
@@ -51,6 +58,8 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     c1.prototype.nc_p2 = function (b) {
         return this.nc_p1 + b;
     };
@@ -64,6 +73,7 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
     c1.prototype.nc_pp2 = function (b) {
         return this.nc_pp1 + b;
     };
@@ -77,6 +87,7 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
     c1.nc_s2 = function (b) {
         return c1.nc_s1 + b;
     };
@@ -90,10 +101,12 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
     // sum with property
     c1.prototype.a_p2 = function (b) {
         return this.a_p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "a_p3", {
         get: // getter property
         function () {
@@ -106,10 +119,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     // sum with property
     c1.prototype.a_pp2 = function (b) {
         return this.a_p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "a_pp3", {
         get: // getter property
         function () {
@@ -122,10 +138,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     c1.a_s2 = // static sum with property
     function (b) {
         return c1.a_s1 + b;
     };
+
     Object.defineProperty(c1, "a_s3", {
         get: // static getter property
         function () {
@@ -138,10 +157,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     /** sum with property */
     c1.prototype.b_p2 = function (b) {
         return this.b_p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "b_p3", {
         get: /** getter property */
         function () {
@@ -154,10 +176,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     /** sum with property */
     c1.prototype.b_pp2 = function (b) {
         return this.b_p1 + b;
     };
+
     Object.defineProperty(c1.prototype, "b_pp3", {
         get: /** getter property */
         function () {
@@ -170,10 +195,13 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
+
     c1.b_s2 = /** static sum with property */
     function (b) {
         return c1.b_s1 + b;
     };
+
     Object.defineProperty(c1, "b_s3", {
         get: /** static getter property
         */
@@ -189,6 +217,7 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
+
     return c1;
 })();
 var i1 = new c1();
@@ -231,6 +260,7 @@ var cProperties = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(cProperties.prototype, "p2", {
         set: /**setter only property*/
         function (value) {

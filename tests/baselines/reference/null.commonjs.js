@@ -14,4 +14,5 @@ function g() {
     return null;
     return 3;
 }
+
 var w = { x: null, y: 3 };

@@ -3,10 +3,12 @@ var Foo = (function () {
     }
     return Foo;
 })();
+
 try  {
     bar = someInitThatMightFail();
 } catch (e) {
 }
+
 baz();
  {
     return this.bar;

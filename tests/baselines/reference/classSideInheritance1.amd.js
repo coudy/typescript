@@ -15,6 +15,7 @@ var A = (function () {
     };
     return A;
 })();
+
 var C2 = (function (_super) {
     __extends(C2, _super);
     function C2() {
@@ -22,5 +23,6 @@ var C2 = (function (_super) {
     }
     return C2;
 })(A);
+
 var c2;
 c2.bar();

@@ -4,6 +4,7 @@ function salt() {
     }
     return pepper();
 }
+
 var M;
 (function (M) {
     function tungsten() {

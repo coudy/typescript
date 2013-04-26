@@ -14,13 +14,16 @@ define(["require", "exports"], function(require, exports) {
         TestRunner.arrayCompare = function (arg1, arg2) {
             return false;
         };
+
         TestRunner.prototype.addTest = function (test) {
         };
         return TestRunner;
     })();
     exports.TestRunner = TestRunner;
+
     exports.tests = (function () {
         var testRunner = new TestRunner();
+
         testRunner.addTest(new TestCase("Check UTF8 encoding", function () {
             var fb;
             fb.writeUtf8Bom();
@@ -36,6 +39,7 @@ define(["require", "exports"], function(require, exports) {
             var expected = [0xEF];
             return TestRunner.arrayCompare(bytes, expected);
         }));
+
         return testRunner;
     })();
 })

@@ -6,6 +6,7 @@ define(["require", "exports"], function(require, exports) {
         };
         return baz;
     })();
+
     function bar(s) {
     }
 })

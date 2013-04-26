@@ -9,6 +9,7 @@ var Events;
     })();
     Events.EventEmitter = EventEmitter;
 })(Events || (Events = {}));
+
 var Consumer;
 (function (Consumer) {
     var EventEmitterConsummer = (function () {
@@ -21,6 +22,7 @@ var Consumer;
                 _this.changed();
             });
         };
+
         EventEmitterConsummer.prototype.changed = function () {
         };
         return EventEmitterConsummer;

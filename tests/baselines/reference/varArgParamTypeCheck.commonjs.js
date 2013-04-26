@@ -4,8 +4,10 @@ function sequence() {
         sequences[_i] = arguments[_i + 0];
     }
 }
+
 function callback(clb) {
 }
+
 sequence(function bar() {
 }, function foo() {
     var _this = this;

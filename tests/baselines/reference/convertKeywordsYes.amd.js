@@ -17,8 +17,10 @@ var string = 0;
 var get = 0;
 var yield = 0;
 var declare = 0;
+
 function bigGeneric(c, a, b, b2, i, i2, l, m, n, p, p2, p3, p4, s, s2, s3, g, y, d) {
 }
+
 var bigObject = {
     constructor: 0,
     any: 0,
@@ -76,6 +78,7 @@ var bigObject = {
     while: 0,
     with: 0
 };
+
 var bigClass = (function () {
     function bigClass() {
         this.constructor = 0;
@@ -136,6 +139,7 @@ var bigClass = (function () {
     }
     return bigClass;
 })();
+
 var bigEnum;
 (function (bigEnum) {
     bigEnum._map = [];
@@ -250,6 +254,7 @@ var bigEnum;
     bigEnum._map[54] = "with";
     bigEnum.with = 54;
 })(bigEnum || (bigEnum = {}));
+
 var bigModule;
 (function (bigModule) {
     var constructor = (function () {

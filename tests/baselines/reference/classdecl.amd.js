@@ -9,6 +9,7 @@ var a = (function () {
     }
     a.prototype.pgF = function () {
     };
+
     Object.defineProperty(a.prototype, "d", {
         get: function () {
             return 30;
@@ -18,6 +19,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(a, "p2", {
         get: function () {
             return { x: 30, y: 40 };
@@ -25,6 +27,7 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     a.d2 = function () {
     };
     Object.defineProperty(a, "p3", {
@@ -34,11 +37,13 @@ var a = (function () {
         enumerable: true,
         configurable: true
     });
+
     a.prototype.foo = function (ns) {
         return ns.toString();
     };
     return a;
 })();
+
 var b = (function (_super) {
     __extends(b, _super);
     function b() {
@@ -46,6 +51,7 @@ var b = (function (_super) {
     }
     return b;
 })(a);
+
 var m1;
 (function (m1) {
     var b = (function () {
@@ -60,6 +66,7 @@ var m1;
         return d;
     })();
 })(m1 || (m1 = {}));
+
 var m2;
 (function (m2) {
     (function (m3) {
@@ -80,6 +87,7 @@ var m2;
     })(m2.m3 || (m2.m3 = {}));
     var m3 = m2.m3;
 })(m2 || (m2 = {}));
+
 var c = (function (_super) {
     __extends(c, _super);
     function c() {
@@ -87,11 +95,13 @@ var c = (function (_super) {
     }
     return c;
 })(m1.b);
+
 var ib2 = (function () {
     function ib2() {
     }
     return ib2;
 })();
+
 var d = (function () {
     function d() {
     }
@@ -100,6 +110,7 @@ var d = (function () {
     };
     return d;
 })();
+
 var e = (function () {
     function e() {
     }

@@ -9,6 +9,7 @@ var Super = (function () {
     }
     return Super;
 })();
+
 var Sub = (function (_super) {
     __extends(Sub, _super);
     function Sub(options) {

@@ -12,6 +12,7 @@ var O;
         return A;
     })();
     O.A = A;
+
     var B = (function (_super) {
         __extends(B, _super);
         function B() {
@@ -20,6 +21,7 @@ var O;
         return B;
     })(A);
     O.B = B;
+
     var C = (function (_super) {
         __extends(C, _super);
         function C() {
@@ -29,6 +31,7 @@ var O;
     })(B);
     O.C = C;
 })(O || (O = {}));
+
 var e = x.g(new O.A());
 var y = x.f(3);
 y = x.f("nope");
@@ -38,4 +41,5 @@ z = x.g();
 z = x.g(new O.B());
 z = x.h(2, 2);
 z = x.h("hello", 0);
+
 var v = x.g;

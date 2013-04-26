@@ -11,6 +11,7 @@ var C = (function () {
         enumerable: true,
         configurable: true
     });
+
     Object.defineProperty(C.prototype, "Goo", {
         get: function (v) {
             return null;
@@ -25,6 +26,7 @@ var C = (function () {
 string;
  {
 }
+
 var E = (function () {
     function E() {
     }

@@ -26,6 +26,7 @@ var ELocVar = (function (_super) {
     };
     return ELocVar;
 })(C);
+
 var D = (function (_super) {
     __extends(D, _super);
     function D(z) {
@@ -50,6 +51,7 @@ var F = (function (_super) {
     }
     return F;
 })(C);
+
 function f() {
     if (x < 10) {
         x = 11;

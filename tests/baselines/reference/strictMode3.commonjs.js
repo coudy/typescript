@@ -10,6 +10,7 @@ var A = (function () {
     }
     return A;
 })();
+
 var B = (function (_super) {
     __extends(B, _super);
     function B() {
@@ -17,6 +18,7 @@ var B = (function (_super) {
     }
     return B;
 })(A);
+
 function foo() {
     return this.window;
 }

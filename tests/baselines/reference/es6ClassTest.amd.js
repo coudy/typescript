@@ -12,6 +12,7 @@ var Bar = (function () {
     };
     return Bar;
 })();
+
 var Foo = (function (_super) {
     __extends(Foo, _super);
     function Foo(x, y, z) {
@@ -27,10 +28,13 @@ var Foo = (function (_super) {
     Foo.prototype.bar = function () {
         return 0;
     };
+
     Foo.prototype.boo = function (x) {
         return x;
     };
+
     Foo.statVal = 0;
     return Foo;
 })(Bar);
+
 var f = new Foo();

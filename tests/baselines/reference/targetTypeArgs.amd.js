@@ -1,9 +1,11 @@
 function foo(callback) {
     callback("hello");
 }
+
 foo(function (x) {
     x;
 });
+
 [1].forEach(function (v, i, a) {
     v;
 });

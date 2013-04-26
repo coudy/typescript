@@ -6,6 +6,7 @@ var IFoo = (function () {
     };
     return IFoo;
 })();
+
 var IntFooBad = (function () {
     function IntFooBad() {
     }
@@ -14,6 +15,7 @@ var IntFooBad = (function () {
     };
     return IntFooBad;
 })();
+
 var StringFoo2 = (function () {
     function StringFoo2() {
     }
@@ -22,6 +24,7 @@ var StringFoo2 = (function () {
     };
     return StringFoo2;
 })();
+
 var StringFoo3 = (function () {
     function StringFoo3() {
     }

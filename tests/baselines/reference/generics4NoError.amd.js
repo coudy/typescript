@@ -3,6 +3,7 @@ var C = (function () {
     }
     return C;
 })();
+
 var a;
 var b;
 ////[0.d.ts]

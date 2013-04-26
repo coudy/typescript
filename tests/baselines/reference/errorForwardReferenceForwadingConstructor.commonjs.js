@@ -8,6 +8,7 @@ function f() {
     var d1 = new derived();
     var d2 = new derived(4);
 }
+
 var base = (function () {
     function base(n) {
         this.n = n;

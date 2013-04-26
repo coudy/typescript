@@ -4,6 +4,7 @@ var obj = {
     break: 3,
     function: 4
 };
+
 var obj2 = {
     if: 0,
     while: 1,

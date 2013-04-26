@@ -1,11 +1,13 @@
 define(["require", "exports"], function(require, exports) {
     exports.x = 0;
     var y = 0;
+
     function f1() {
     }
     exports.f1 = f1;
     function f2() {
     }
+
     var C1 = (function () {
         function C1() {
             this.p1 = 0;
@@ -23,6 +25,7 @@ define(["require", "exports"], function(require, exports) {
         };
         return C2;
     })();
+
     (function (E1) {
         E1._map = [];
         E1.A = 0;

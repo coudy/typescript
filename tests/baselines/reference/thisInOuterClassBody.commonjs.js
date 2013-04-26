@@ -5,6 +5,7 @@ var Foo2 = (function () {
     Foo2.prototype.bar = function () {
         var _this = this;
         this.x;
+
         var f = function () {
             return _this.x;
         };

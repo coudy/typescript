@@ -6,4 +6,5 @@ var Shape = (function () {
     };
     return Shape;
 })();
+
 var x = Shape;

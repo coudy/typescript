@@ -1,5 +1,7 @@
 var i1_i;
+
 var nc_i1_i;
+
 var i2_i;
 var i2_i_x = i2_i.x;
 var i2_i_foo = i2_i.foo;
@@ -15,6 +17,7 @@ var i2_i_fnfoo = i2_i.fnfoo;
 var i2_i_fnfoo_r = i2_i.fnfoo(10);
 var i2_i_nc_fnfoo = i2_i.nc_fnfoo;
 var i2_i_nc_fnfoo_r = i2_i.nc_fnfoo(10);
+
 var i3_i;
 i3_i = {
     f: /**own f*/ function (/**i3_i a*/ a) {

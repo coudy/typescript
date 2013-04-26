@@ -18,6 +18,7 @@ var Red = (function (_super) {
     };
     return Red;
 })(Color);
+
 var Color = (function () {
     function Color() {
     }
@@ -29,6 +30,7 @@ var Color = (function () {
     };
     return Color;
 })();
+
 var Blue = (function (_super) {
     __extends(Blue, _super);
     function Blue() {
@@ -43,8 +45,10 @@ var Blue = (function (_super) {
     };
     return Blue;
 })(Color);
+
 var r = new Red();
 var b = new Blue();
+
 WScript.Echo(r.shade());
 WScript.Echo(r.hue());
 WScript.Echo(b.shade());

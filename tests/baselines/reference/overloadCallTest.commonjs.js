@@ -4,8 +4,10 @@ var foo = (function () {
             return "foo";
         }
         ;
+
         var test = bar("test");
         var goo = bar();
+
         goo = bar("test");
     }
     return foo;

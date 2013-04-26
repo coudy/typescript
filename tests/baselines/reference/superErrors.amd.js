@@ -17,6 +17,7 @@ function foo() {
         };
     };
 }
+
 var User = (function () {
     function User() {
         this.name = "Bob";
@@ -26,19 +27,23 @@ var User = (function () {
     };
     return User;
 })();
+
 var RegisteredUser = (function (_super) {
     __extends(RegisteredUser, _super);
     function RegisteredUser() {
         _super.call(this);
         this.name = "Frank";
+
         function inner() {
             _super.prototype.sayHello.call(_this);
         }
+
         function inner2() {
             var x = function () {
                 return _super.prototype.sayHello.call(_this);
             };
         }
+
         (function () {
             return function () {
                 return _super.prototype;
@@ -47,11 +52,13 @@ var RegisteredUser = (function (_super) {
     }
     RegisteredUser.prototype.sayHello = function () {
         _super.prototype.sayHello.call(this);
+
         function inner() {
             var x = function () {
                 return _super.prototype.sayHello.call(_this);
             };
         }
+
         (function () {
             return function () {
                 return _super.prototype;
