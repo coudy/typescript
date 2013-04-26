@@ -333,8 +333,15 @@ module Services {
             if (!symbol) {
                 return docComments;
             }
+
+            var isParameter = symbol.getKind() == TypeScript.PullElementKind.Parameter;
             var decls = symbol.getDeclarations();
             for (var i = 0; i < decls.length; i++) {
+                if (isParameter && decls[i].getKind() == TypeScript.PullElementKind.Property) {
+                    // Ignore declaration for property that was defined as parameter because they both 
+                    // point to same doc comment
+                    continue;
+                }
                 docComments = docComments.concat(this.getDocCommentsOfDecl(decls[i]));
             }
             return docComments;

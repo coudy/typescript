@@ -690,8 +690,8 @@ verify.memberListContains("a", "number", "more info about a", "cWithConstructorP
 verify.quickInfoIs("number", "more info about a", "cWithConstructorProperty.a", "property");
 
 goTo.marker('115');
-//verify.completionListContains("a", "number", "this is first parameter a\nmore info about a", "a", "parameter");
-//verify.quickInfoIs("number", "this is first parameter a\nmore info about a", "a", "parameter");
+verify.completionListContains("a", "number", "this is first parameter a\nmore info about a", "a", "parameter");
+verify.quickInfoIs("number", "this is first parameter a\nmore info about a", "a", "parameter");
 
 goTo.marker('116');
 verify.quickInfoIs("cWithConstructorProperty", "", "cWithConstructorProperty", "class");
