@@ -641,6 +641,29 @@ module TypeScript {
             code: 1056
         },
 
+        Class_name_cannot_be__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Class name cannot be '{0}'.",
+            code: 1057
+        },
+
+        Interface_name_cannot_be__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Interface name cannot be '{0}'.",
+            code: 1058
+        },
+
+        Enum_name_cannot_be__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Enum name cannot be '{0}'.",
+            code: 1059
+        },
+
+        Module_name_cannot_be__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Module name cannot be '{0}'.",
+            code: 1060
+        },
 
 
 
@@ -1455,7 +1478,6 @@ module TypeScript {
             message: "Non-generic functions may not accept type arguments.",
             code: 2159
         },
-
         A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
             category: DiagnosticCategory.Error,
             message: "A generic type may not reference itself with its own type parameters",

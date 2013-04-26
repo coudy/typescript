@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "PublicBreak1.ts";
+    // "ModuleDeclaration9.ts";
     undefined;
 
 var generate = false;

@@ -591,8 +591,43 @@ module TypeScript {
             return false;
         }
 
+        private checkForReservedName(parent: ISyntaxElement, name: INameSyntax, code: DiagnosticCode): boolean {
+            var nameFullStart = this.childFullStart(parent, name);
+            var token: ISyntaxToken;
+            var tokenFullStart: number;
+
+            var current = name;
+            while (current !== null) {
+                if (current.kind() === SyntaxKind.QualifiedName) {
+                    var qualifiedName = <QualifiedNameSyntax>current;
+                    token = qualifiedName.right;
+                    tokenFullStart = nameFullStart + this.childFullStart(qualifiedName, token);
+                    current = qualifiedName.left;
+                }
+                else {
+                    Debug.assert(current.kind() === SyntaxKind.IdentifierName);
+                    token = <ISyntaxToken>current;
+                    tokenFullStart = nameFullStart;
+                    current = null;
+                }
+
+                switch (token.valueText()) {
+                    case "any":
+                    case "number":
+                    case "bool":
+                    case "string":
+                    case "void":
+                        this.pushDiagnostic(tokenFullStart + token.leadingTriviaWidth(), token.width(), code, [token.valueText()]);
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+            if (this.checkForReservedName(node, node.identifier, DiagnosticCode.Class_name_cannot_be__0_) ||
+                this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.classKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkClassDeclarationHeritageClauses(node) ||
@@ -657,7 +692,8 @@ module TypeScript {
         }
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
-            if (this.checkInterfaceModifiers(node.modifiers) ||
+            if (this.checkForReservedName(node, node.identifier, DiagnosticCode.Interface_name_cannot_be__0_) ||
+                this.checkInterfaceModifiers(node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkInterfaceDeclarationHeritageClauses(node)) {
 
@@ -858,7 +894,8 @@ module TypeScript {
         }
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+            if (this.checkForReservedName(node, node.identifier, DiagnosticCode.Enum_name_cannot_be__0_) ||
+                this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkEnumDeclarationElements(node)) {
@@ -952,7 +989,8 @@ module TypeScript {
         }
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+            if (this.checkForReservedName(node, node.moduleName, DiagnosticCode.Module_name_cannot_be__0_) ||
+                this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkForDisallowedImportDeclaration(node) ||
