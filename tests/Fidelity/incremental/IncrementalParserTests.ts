@@ -493,6 +493,16 @@ else {\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
+
+        public static testParameterDeleteAfterComment1() {
+            var source = "function fn(/* comment! */ a: number, c) { }";
+
+            var oldText = TextFactory.createText(source);
+            var index = source.indexOf("a:");
+            var newTextAndChange = withDelete(oldText, index, "a: number,".length);
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
         
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");

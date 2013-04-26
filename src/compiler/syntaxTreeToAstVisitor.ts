@@ -218,6 +218,10 @@ module TypeScript {
         }
 
         private getAST(element: ISyntaxElement): any {
+            if (this.previousTokenTrailingComments !== null) {
+                return null;
+            }
+
             if (incrementalAst) {
                 var result = (<any>element)._ast;
                 return result ? result : null;
