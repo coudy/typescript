@@ -135,7 +135,7 @@ module TypeScript.Formatting {
             static Any: TokenRange = TokenRange.AllTokens();
             static Keywords = TokenRange.FromRange(SyntaxKind.FirstKeyword, SyntaxKind.LastKeyword);
             static Operators = TokenRange.FromRange(SyntaxKind.SemicolonToken, SyntaxKind.SlashEqualsToken);
-            static BinaryOperators = TokenRange.FromRange(SyntaxKind.CommaToken, SyntaxKind.SlashEqualsToken);
+            static BinaryOperators = TokenRange.FromRange(SyntaxKind.LessThanToken, SyntaxKind.SlashEqualsToken);
             static BinaryKeywordOperators = TokenRange.FromTokens([SyntaxKind.InKeyword, SyntaxKind.InstanceOfKeyword]);
             static ReservedKeywords = TokenRange.FromRange(SyntaxKind.FirstFutureReservedStrictKeyword, SyntaxKind.LastFutureReservedStrictKeyword);
             static UnaryPrefixOperators = TokenRange.FromTokens([SyntaxKind.PlusPlusToken, SyntaxKind.MinusMinusToken, SyntaxKind.TildeToken, SyntaxKind.ExclamationToken]);

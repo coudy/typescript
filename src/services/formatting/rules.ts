@@ -46,7 +46,7 @@ module TypeScript.Formatting {
         // Also should not apply to })
         public SpaceBetweenCloseBraceAndElse: Rule;
         public SpaceBetweenCloseBraceAndWhile: Rule;
-        public NoSpaceBetweenCloseBraceAndCloseParen: Rule;
+        public NoSpaceAfterCloseBrace: Rule;
 
         // No space for indexer and dot
         public NoSpaceBeforeDot: Rule;
@@ -219,12 +219,12 @@ module TypeScript.Formatting {
 
             // Space/new line after }.
             this.NewLineAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineChildParentContext), RuleAction.NewLine));
-            this.SpaceAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), RuleAction.Space));
+            this.SpaceAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsAfterCodeBlockContext), RuleAction.Space));
 
             // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
             this.SpaceBetweenCloseBraceAndElse = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.ElseKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
             this.SpaceBetweenCloseBraceAndWhile = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.WhileKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.NoSpaceBetweenCloseBraceAndCloseParen = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.CloseParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), RuleAction.Delete));
+            this.NoSpaceAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.CloseBracketToken, SyntaxKind.CommaToken, SyntaxKind.SemicolonToken])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // No space for indexer and dot
             this.NoSpaceBeforeDot = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.DotToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
@@ -335,7 +335,7 @@ module TypeScript.Formatting {
                 this.SpaceAfterAddWhenFollowedByUnaryPlus, this.SpaceAfterAddWhenFollowedByPreincrement,
                 this.SpaceAfterPostdecrementWhenFollowedBySubtract,
                 this.SpaceAfterSubtractWhenFollowedByUnaryMinus, this.SpaceAfterSubtractWhenFollowedByPredecrement,
-                this.NoSpaceBetweenCloseBraceAndCloseParen,
+                this.NoSpaceAfterCloseBrace,
                 this.SpaceAfterOpenBrace, this.SpaceBeforeCloseBrace, this.NewLineBeforeCloseBraceInBlockContext,
                 this.SpaceAfterCloseBrace, this.SpaceBetweenCloseBraceAndElse, this.SpaceBetweenCloseBraceAndWhile, this.NoSpaceBetweenEmptyBraceBrackets,
                 this.SpaceAfterFunctionInFuncDecl, this.NewLineAfterOpenBraceInBlockContext, this.SpaceAfterGetSetInMember,
@@ -436,7 +436,6 @@ module TypeScript.Formatting {
 
             switch (context.contextNode.kind()) {
                 // binary expressions
-                case SyntaxKind.CommaExpression:
                 case SyntaxKind.AssignmentExpression:
                 case SyntaxKind.AddAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
@@ -613,6 +612,18 @@ module TypeScript.Formatting {
         }
 
         static IsCodeBlockContext(context: FormattingContext): boolean {
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.ModuleDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.Block:
+                case SyntaxKind.SwitchStatement:
+                    return true;
+            }
+            return false;
+        }
+
+        static IsAfterCodeBlockContext(context: FormattingContext): boolean {
             switch (context.currentTokenParent.kind()) {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.ModuleDeclaration:
