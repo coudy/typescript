@@ -2716,13 +2716,13 @@ var TypeScript;
         }
         Diagnostic.prototype.toJSON = function (key) {
             var result = {};
-            result._position = this._start;
-            result._width = this._length;
-            result._diagnosticCode = (TypeScript.DiagnosticCode)._map[this.diagnosticCode()];
+            result.start = this.start();
+            result.length = this.length();
+            result.diagnosticCode = (TypeScript.DiagnosticCode)._map[this.diagnosticCode()];
 
-            var arguments = (this)._arguments;
+            var arguments = (this).arguments();
             if (arguments && arguments.length > 0) {
-                result._arguments = arguments;
+                result.arguments = arguments;
             }
 
             return result;
@@ -57546,7 +57546,7 @@ var timer = new TypeScript.Timer();
 
 var specificFile = undefined;
 
-var generate = false;
+var generate = true;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();

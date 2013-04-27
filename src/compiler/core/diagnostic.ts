@@ -28,13 +28,13 @@ module TypeScript {
 
         public toJSON(key) {
             var result: any = {};
-            result._position = this._start;
-            result._width = this._length;
-            result._diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
+            result.start = this.start();
+            result.length = this.length();
+            result.diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
 
-            var arguments = (<any>this)._arguments;
+            var arguments = (<any>this).arguments();
             if (arguments && arguments.length > 0) {
-                result._arguments = arguments;
+                result.arguments = arguments;
             }
 
             return result;
