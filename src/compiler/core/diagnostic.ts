@@ -26,6 +26,20 @@ module TypeScript {
             this._length = length;
         }
 
+        public toJSON(key) {
+            var result: any = {};
+            result._position = this._start;
+            result._width = this._length;
+            result._diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
+
+            var arguments = (<any>this)._arguments;
+            if (arguments && arguments.length > 0) {
+                result._arguments = arguments;
+            }
+
+            return result;
+        }
+
         public fileName(): string {
             return this._fileName;
         }
@@ -74,7 +88,10 @@ module TypeScript {
         }
 
         public static equals(diagnostic1: Diagnostic, diagnostic2: Diagnostic): boolean {
-            return diagnostic1._fileName === diagnostic2._fileName &&                diagnostic1._start === diagnostic2._start &&                diagnostic1._length === diagnostic2._length &&                diagnostic1._diagnosticCode === diagnostic2._diagnosticCode &&
+            return diagnostic1._fileName === diagnostic2._fileName &&
+                diagnostic1._start === diagnostic2._start &&
+                diagnostic1._length === diagnostic2._length &&
+                diagnostic1._diagnosticCode === diagnostic2._diagnosticCode &&
                 ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
         }
     }

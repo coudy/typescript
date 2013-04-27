@@ -1596,6 +1596,7 @@ module TypeScript {
 
             this.checkForResolutionError(resultType, enclosingDecl);
 
+            this.typeCheckAST(callExpression.target, typeCheckContext);
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext);
 
             // Type check the arguments

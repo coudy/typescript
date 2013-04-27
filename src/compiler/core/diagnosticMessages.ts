@@ -42,7 +42,6 @@ module TypeScript {
         _0__modifier_already_seen: DiagnosticInfo;
         _0__modifier_cannot_appear_on_a_class_element: DiagnosticInfo;
         Interface_declaration_cannot_have__implements__clause: DiagnosticInfo;
-        Enum_element_must_have_initializer: DiagnosticInfo;
         _super__invocation_cannot_have_type_arguments: DiagnosticInfo;
         Non_ambient_modules_cannot_use_quoted_names: DiagnosticInfo;
         Statements_are_not_allowed_in_ambient_contexts: DiagnosticInfo;
@@ -499,12 +498,6 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Interface declaration cannot have 'implements' clause.",
             code: 1032
-        },
-
-        Enum_element_must_have_initializer: {
-            category: DiagnosticCategory.Error,
-            message: "Enum element must have initializer.",
-            code: 1033
         },
 
         _super__invocation_cannot_have_type_arguments: {

@@ -869,36 +869,11 @@ module TypeScript {
             super.visitSetAccessorPropertyAssignment(node);
         }
 
-        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): boolean {
-            var enumElementFullStart = this.childFullStart(node, node.enumElements);
-            var seenExplicitMember = false;
-            for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
-                var nodeOrToken = node.enumElements.childAt(i);
-                if (i % 2 === 0) {
-                    var enumElement = <EnumElementSyntax>nodeOrToken;
-
-                    if (enumElement.equalsValueClause) {
-                        seenExplicitMember = true;
-                    }
-                    else if (seenExplicitMember) {
-                        this.pushDiagnostic1(enumElementFullStart, enumElement,
-                            DiagnosticCode.Enum_element_must_have_initializer);
-                        return true;
-                    }
-                }
-
-                enumElementFullStart += nodeOrToken.fullWidth();
-            }
-
-            return false;
-        }
-
         public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
             if (this.checkForReservedName(node, node.identifier, DiagnosticCode.Enum_name_cannot_be__0_) ||
                 this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) ||
-                this.checkModuleElementModifiers(node.modifiers) ||
-                this.checkEnumDeclarationElements(node)) {
+                this.checkModuleElementModifiers(node.modifiers)) {
 
                 this.skip(node);
                 return;
