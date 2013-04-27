@@ -207,7 +207,7 @@ module FourSlash {
 
             return diagnostics;
         }
-        
+
         public verifyErrorExistsAfterMarker(markerName: string, negative: boolean, after: boolean) {
             var marker: Marker = this.getMarkerByName(markerName);
             var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => boolean;
@@ -298,11 +298,20 @@ module FourSlash {
                 throw new Error("Member list count was 0. Expected " + expectedCount);
             }
         }
-        
+
         public verifyMemberListDoesNotContain(symbol: string) {
             var members = this.getMemberListAtCaret();
             if (members.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Member list did contain ' + symbol);
+            }
+        }
+
+        public verifyCompletionListItemsCountIsGreaterThan(count: number) {
+            var completions = this.getCompletionListAtCaret();
+            var itemsCount = completions.entries.length;
+
+            if (itemsCount <= count) {
+                throw new Error('Expected completion list items count to be greater than ' + count + ', but is actually ' + itemsCount);
             }
         }
 
@@ -354,12 +363,39 @@ module FourSlash {
             }
         }
 
+        public verifyReferencesCountIs(count: number, localFilesOnly: boolean = true) {
+            var references = this.getReferencesAtCaret();
+            var referencesCount = 0;
+
+            if (localFilesOnly) {
+                var localFiles = this.testData.files.map<string>(file => file.fileName);
+                // Count only the references in local files. Filter the ones in lib and other files.
+                references.forEach((entry) => {
+                    if (localFiles.some((filename) => filename === entry.fileName)) {
+                        ++referencesCount;
+                    }
+                });
+            }
+            else {
+                referencesCount = references.length;
+            }
+
+            if (referencesCount !== count) {
+                var condition = localFilesOnly ? "excluding libs" : "including libs";
+                throw new Error("Expected references count (" + condition + ") to be " + count + ", but is actually " + references.length);
+            }
+        }
+
         private getMemberListAtCaret() {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, true);
         }
 
         private getCompletionListAtCaret() {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, false);
+        }
+
+        private getReferencesAtCaret() {
+            return this.languageService.getReferencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
         }
 
         public verifyQuickInfo(negative: boolean, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
@@ -411,7 +447,7 @@ module FourSlash {
                 }
             }
         }
-        
+
         public verifyCurrentSignatureHelpIs(expected: string) {
             var help = this.getActiveSignatureHelp();
             assert.equal(help.signatureInfo, expected);
@@ -567,7 +603,7 @@ module FourSlash {
             if (errorList.length) {
                 errorList.forEach(err => {
                     IO.printLine("start: " + err.start() + ", length: " + err.length() +
-                    ", message: " + err.message());
+                        ", message: " + err.message());
                 });
             }
         }
@@ -866,8 +902,8 @@ module FourSlash {
             var actual = this.getCurrentLineContent();
             if (actual !== text) {
                 throw new Error('verifyCurrentLineContent\n' +
-                '\tExpected: "' + text + '"\n' +
-                '\t  Actual: "' + actual + '"');
+                    '\tExpected: "' + text + '"\n' +
+                    '\t  Actual: "' + actual + '"');
             }
         }
 
@@ -885,8 +921,8 @@ module FourSlash {
             var actual = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getText(this.currentCaretPosition, this.currentCaretPosition + text.length);
             if (actual !== text) {
                 throw new Error('verifyTextAtCaretIs\n' +
-                '\tExpected: "' + text + '"\n' +
-                '\t  Actual: "' + actual + '"');
+                    '\tExpected: "' + text + '"\n' +
+                    '\t  Actual: "' + actual + '"');
             }
         }
 
@@ -894,15 +930,15 @@ module FourSlash {
             var span = this.languageService.getNameOrDottedNameSpan(this.activeFile.fileName, this.currentCaretPosition, this.currentCaretPosition);
             if (span === null) {
                 throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
-                           '\tExpected: "' + text + '"\n' +
-                           '\t  Actual: null');
+                    '\tExpected: "' + text + '"\n' +
+                    '\t  Actual: null');
             }
 
             var actual = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getText(span.minChar, span.limChar);
             if (actual !== text) {
                 throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
-                               '\tExpected: "' + text + '"\n' +
-                               '\t  Actual: "' + actual + '"');
+                    '\tExpected: "' + text + '"\n' +
+                    '\t  Actual: "' + actual + '"');
             }
         }
 
@@ -993,7 +1029,7 @@ module FourSlash {
                 referenceLanguageServiceShimHost.addScript(this.testData.files[i].fileName, content);
             }
             referenceLanguageServiceShim.refresh(true);
-            
+
             for (i = 0; i < positions.length; i++) {
                 var nameOf = (type: Services.TypeInfo) => type ? type.fullSymbolName : '(none)';
 
@@ -1136,7 +1172,7 @@ module FourSlash {
         }
 
         private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
-            var items: { name: string; type: string; docComment: string; fullSymbolName: string;  kind: string; }[] = completionList.map(element => {
+            var items: { name: string; type: string; docComment: string; fullSymbolName: string; kind: string; }[] = completionList.map(element => {
                 return {
                     name: element.name,
                     type: element.type,
@@ -1302,7 +1338,7 @@ module FourSlash {
             writeFile: (path: string, contents: string, writeByteOrderMark: boolean) => fsOutput.Write(contents),
             directoryExists: (s: string) => false,
             fileExists: (s: string) => true,
-            resolvePath: (s: string)=>s
+            resolvePath: (s: string) => s
         }
 
         Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.RunTime, emitterIOHost);
@@ -1340,7 +1376,7 @@ module FourSlash {
     function parseTestData(contents: string): FourSlashData {
         // Regex for parsing options in the format "@Alpha: Value of any sort"
         var optionRegex = /^\s*@(\w+): (.*)\s*/;
-        
+
         // List of all the subfiles we've parsed out
         var files: FourSlashFile[] = [];
         // Global options
@@ -1355,7 +1391,7 @@ module FourSlash {
 
         var markerMap: MarkerMap = {};
         var markers: Marker[] = [];
-        var ranges : Range[] = [];
+        var ranges: Range[] = [];
 
         // Stuff related to the subfile we're parsing
         var currentFileContent: string = null;
@@ -1365,7 +1401,7 @@ module FourSlash {
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
             var lineLength = line.length;
-            
+
             if (lineLength > 0 && line.charAt(lineLength - 1) === '\r') {
                 line = line.substr(0, lineLength - 1);
             }
@@ -1403,10 +1439,10 @@ module FourSlash {
                 if (currentFileContent) {
                     var file = parseFileContent(currentFileContent, currentFileName, markerMap, markers, ranges);
                     file.fileOptions = currentFileOptions;
-                    
+
                     // Store result file
                     files.push(file);
-                   
+
                     // Reset local data
                     currentFileContent = null;
                     currentFileOptions = {};
@@ -1444,7 +1480,7 @@ module FourSlash {
         try {
             // Attempt to parse the marker value as JSON
             markerValue = JSON2.parse("{ " + text + " }");
-        } catch(e) {
+        } catch (e) {
             reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text " + e.message);
         }
 
@@ -1460,7 +1496,7 @@ module FourSlash {
         };
 
         // Object markers can be anonymous
-        if(markerValue.name) {
+        if (markerValue.name) {
             markerMap[markerValue.name] = marker;
         }
 
@@ -1487,7 +1523,7 @@ module FourSlash {
         }
     }
 
-    function parseFileContent(content: string, fileName: string, markerMap: MarkerMap,  markers: Marker[], ranges: Range[]): FourSlashFile {
+    function parseFileContent(content: string, fileName: string, markerMap: MarkerMap, markers: Marker[], ranges: Range[]): FourSlashFile {
         content = chompLeadingSpace(content);
 
         // Any /*comment*/ with a character not in this string is not a marker.
@@ -1519,7 +1555,7 @@ module FourSlash {
         var column: number = 1;
 
         var flush = (lastSafeCharIndex: number) => {
-            if(lastSafeCharIndex === undefined) {
+            if (lastSafeCharIndex === undefined) {
                 output = output + content.substr(lastNormalCharPosition);
             } else {
                 output = output + content.substr(lastNormalCharPosition, lastSafeCharIndex - lastNormalCharPosition);
@@ -1626,7 +1662,7 @@ module FourSlash {
                             openMarker = null;
                             state = State.none;
                         } else if (validMarkerChars.indexOf(currentChar) < 0) {
-                            if(currentChar === '*' && i < content.length - 1 && content.charAt(i + 1) === '/') {
+                            if (currentChar === '*' && i < content.length - 1 && content.charAt(i + 1) === '/') {
                                 // The marker is about to be closed, ignore the 'invalid' char
                             } else {
                                 // We've hit a non-valid marker character, so we were actually in a /* comment */.
@@ -1672,10 +1708,10 @@ module FourSlash {
         localRanges.forEach((r) => { ranges.push(r); });
 
         return {
-                content: output,
-                fileOptions: {},
-                version: 0,
-                fileName: fileName
-            };
+            content: output,
+            fileOptions: {},
+            version: 0,
+            fileName: fileName
+        };
     }
 }
