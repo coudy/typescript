@@ -374,14 +374,22 @@ module TypeScript {
 
                 }
                 else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
+                    var candidateSymbol: PullSymbol = null;
+
+                    // If the decl is a function expression, we still want to check its children since it may be shadowed by one
+                    // of its parameters
                     if (pathDeclKind === PullElementKind.FunctionExpression && symbolName === (<PullFunctionExpressionDecl>decl).getFunctionExpressionName()) {
-                        return decl.getSymbol();
+                        candidateSymbol = decl.getSymbol();
                     }
 
                     childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
+                    }
+
+                    if (candidateSymbol) {
+                        return candidateSymbol;
                     }
                 }
             }
