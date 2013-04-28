@@ -1,7 +1,5 @@
 ///<reference path='_project.ts'/>
 
-debugger;
-
 describe('getReferencesAtPosition', function() {
     var typescriptLS = new Harness.TypeScriptLS();
 
