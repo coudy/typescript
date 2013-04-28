@@ -2436,13 +2436,13 @@ var Environment = (function () {
                     if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
                         for (; !fc.atEnd(); fc.moveNext()) {
-                            paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
+                            paths = paths.concat(filesInFolder(fc.item(), root + "/" + fc.item().Name));
                         }
                     }
                     fc = new Enumerator(folder.files);
                     for (; !fc.atEnd(); fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
-                            paths.push(root + "\\" + fc.item().Name);
+                            paths.push(root + "/" + fc.item().Name);
                         }
                     }
                     return paths;
@@ -2540,11 +2540,11 @@ var Environment = (function () {
                     var paths = [];
                     var files = _fs.readdirSync(folder);
                     for (var i = 0; i < files.length; i++) {
-                        var stat = _fs.statSync(folder + "\\" + files[i]);
+                        var stat = _fs.statSync(folder + "/" + files[i]);
                         if (options.recursive && stat.isDirectory()) {
-                            paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
+                            paths = paths.concat(filesInFolder(folder + "/" + files[i]));
                         } else if (stat.isFile() && (!spec || files[i].match(spec))) {
-                            paths.push(folder + "\\" + files[i]);
+                            paths.push(folder + "/" + files[i]);
                         }
                     }
                     return paths;
@@ -5897,10 +5897,10 @@ var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxNodes.generated.ts", syntaxNodes, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxRewriter.generated.ts", rewriter, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxToken.generated.ts", tokens, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxWalker.generated.ts", walker, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\scannerUtilities.generated.ts", scannerUtilities, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxVisitor.generated.ts", visitor, true);
-Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxFactory.generated.ts", factory, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxRewriter.generated.ts", rewriter, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxToken.generated.ts", tokens, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxWalker.generated.ts", walker, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/scannerUtilities.generated.ts", scannerUtilities, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile(Environment.currentDirectory() + "/src/compiler/syntax/syntaxFactory.generated.ts", factory, true);
