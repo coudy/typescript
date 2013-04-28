@@ -195,7 +195,7 @@ module TypeScript {
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() !== moduleKind) {
                 // duplicate symbol error
                 moduleContainerDecl.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), "Duplicate identifier '{0}'.", [moduleContainerDecl.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), "Duplicate identifier '{0}'.", [moduleContainerDecl.getDisplayName()]));
 
                 moduleContainerTypeSymbol = null;
             }
@@ -308,7 +308,7 @@ module TypeScript {
 
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
                 importDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), importDeclAST.minChar, importDeclAST.getLength(), "Duplicate identifier '{0}'.", [importDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), importDeclAST.minChar, importDeclAST.getLength(), "Duplicate identifier '{0}'.", [importDeclaration.getDisplayName()]));
                 importSymbol = null;
             }
 
@@ -369,7 +369,7 @@ module TypeScript {
 
             if (enumSymbol && (enumSymbol.getKind() !== PullElementKind.Enum || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
                 enumDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), enumAST.minChar, enumAST.getLength(), "Duplicate identifier '{0}'.", [enumDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), enumAST.minChar, enumAST.getLength(), "Duplicate identifier '{0}'.", [enumDeclaration.getDisplayName()]));
                 enumSymbol = null;
             }
 
@@ -545,7 +545,7 @@ module TypeScript {
 
             if (classSymbol && (classSymbol.getKind() !== PullElementKind.Class || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
                 classDecl.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), "Duplicate identifier '{0}'.", [classDecl.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), "Duplicate identifier '{0}'.", [classDecl.getDisplayName()]));
                 classSymbol = null;
             }
             else if (classSymbol) {
@@ -719,7 +719,7 @@ module TypeScript {
                         memberDecl = member.getDeclarations()[0];
                         memberAST = this.semanticInfo.getASTForDecl(memberDecl);
                         memberDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), memberAST.minChar, memberAST.getLength(), "Duplicate identifier '{0}'.", [memberDecl.getDisplayName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), memberAST.minChar, memberAST.getLength(), "Duplicate identifier '{0}'.", [memberDecl.getDisplayName()]));
                     }
                     else {
                         memberMap[member.getName()] = true;
@@ -754,7 +754,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         classDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -793,7 +793,7 @@ module TypeScript {
 
             if (interfaceSymbol && (interfaceSymbol.getKind() !== PullElementKind.Interface)) {
                 interfaceDecl.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), "Duplicate identifier '{0}'.", [interfaceDecl.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), "Duplicate identifier '{0}'.", [interfaceDecl.getDisplayName()]));
                 interfaceSymbol = null;
             }
 
@@ -892,7 +892,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         interfaceDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -947,7 +947,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         objectDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -1011,7 +1011,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         constructorTypeDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -1098,7 +1098,7 @@ module TypeScript {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
-                        variableDeclaration.addDiagnostic(new SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [variableDeclaration.getDisplayName()]));
+                        variableDeclaration.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [variableDeclaration.getDisplayName()]));
                     }
 
                     variableSymbol = null;
@@ -1109,7 +1109,7 @@ module TypeScript {
                 span = variableDeclaration.getSpan();
 
                 variableDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [variableDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [variableDeclaration.getDisplayName()]));
                 variableSymbol = null;
                 parentHadSymbol = false;
             }
@@ -1362,7 +1362,7 @@ module TypeScript {
                 var span = propertyDeclaration.getSpan();
 
                 propertyDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [propertyDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), "Duplicate identifier '{0}'.", [propertyDeclaration.getDisplayName()]));
 
                 propertySymbol = null;
             }
@@ -1450,7 +1450,7 @@ module TypeScript {
 
                     if (params[argDecl.id.text]) {
                         decl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), argDecl.minChar, argDecl.getLength(), "Duplicate identifier '{0}'.", [argDecl.id.actualText]));
+                            new Diagnostic(this.semanticInfo.getPath(), argDecl.minChar, argDecl.getLength(), "Duplicate identifier '{0}'.", [argDecl.id.actualText]));
                     }
                     else {
                         params[argDecl.id.text] = true;
@@ -1549,7 +1549,7 @@ module TypeScript {
                 (functionSymbol.getKind() !== PullElementKind.Function ||
                     (this.symbolIsRedeclaration(functionSymbol) && !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 functionDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'.", [functionDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'.", [functionDeclaration.getDisplayName()]));
                 functionSymbol = null;
             }
 
@@ -1680,7 +1680,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         functionDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -1763,7 +1763,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         functionExpressionDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -1838,7 +1838,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         functionTypeDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -1907,7 +1907,7 @@ module TypeScript {
                 (methodSymbol.getKind() !== PullElementKind.Method ||
                 (this.symbolIsRedeclaration(methodSymbol) && !isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 methodDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), methodAST.minChar, methodAST.getLength(), "Duplicate identifier '{0}'.", [methodDeclaration.getDisplayName()]));
+                    new Diagnostic(this.semanticInfo.getPath(), methodAST.minChar, methodAST.getLength(), "Duplicate identifier '{0}'.", [methodDeclaration.getDisplayName()]));
                 methodSymbol = null;
             }
 
@@ -2060,7 +2060,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         methodDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -2123,7 +2123,7 @@ module TypeScript {
                 (this.symbolIsRedeclaration(constructorSymbol) && !isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
 
                 constructorDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), "Multiple constructor implementations are not allowed.", null));
+                    new Diagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), "Multiple constructor implementations are not allowed.", null));
 
                 constructorSymbol = null;
             }
@@ -2276,7 +2276,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         constructSignatureDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -2343,7 +2343,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         callSignatureDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -2403,7 +2403,7 @@ module TypeScript {
                     if (this.symbolIsRedeclaration(typeParameter)) {
                         var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
                         indexSignatureDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), "Duplicate identifier '{0}'.", [typeParameter.getName()]));
                     }
 
                     // clean the decls
@@ -2482,7 +2482,7 @@ module TypeScript {
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     getAccessorDeclaration.addDiagnostic(
-                        new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'." , [getAccessorDeclaration.getDisplayName()]));
+                        new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'." , [getAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 }
                 else {
@@ -2490,7 +2490,7 @@ module TypeScript {
 
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
                         getAccessorDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(),funcDeclAST.minChar, funcDeclAST.getLength(), "Getter '{0}' already declared.", [getAccessorDeclaration.getDisplayName()]));
+                            new Diagnostic(this.semanticInfo.getPath(),funcDeclAST.minChar, funcDeclAST.getLength(), "Getter '{0}' already declared.", [getAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         getterSymbol = null;
                     }
@@ -2596,7 +2596,7 @@ module TypeScript {
 
             if (typeParameters.length) {
                 getAccessorDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Accessors cannot have type parameters.", null));
+                    new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Accessors cannot have type parameters.", null));
             }
 
             // add the implicit call member for this function type
@@ -2665,7 +2665,7 @@ module TypeScript {
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     setAccessorDeclaration.addDiagnostic(
-                        new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'.", [setAccessorDeclaration.getDisplayName()]));
+                        new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Duplicate identifier '{0}'.", [setAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 }
                 else {
@@ -2673,7 +2673,7 @@ module TypeScript {
 
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
                         setAccessorDeclaration.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Setter '{0}' already declared.", [setAccessorDeclaration.getDisplayName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Setter '{0}' already declared.", [setAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         setterSymbol = null;
                     }
@@ -2781,7 +2781,7 @@ module TypeScript {
 
             if (typeParameters.length) {
                 setAccessorDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Accessors cannot have type parameters.", null));
+                    new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), "Accessors cannot have type parameters.", null));
             }
 
             // add the implicit call member for this function type

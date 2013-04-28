@@ -161,7 +161,7 @@ module TypeScript {
             return this.cachedArrayInterfaceType;
         }
 
-        public getNewErrorTypeSymbol(diagnostic: SemanticDiagnostic): PullErrorTypeSymbol {
+        public getNewErrorTypeSymbol(diagnostic: Diagnostic): PullErrorTypeSymbol {
             return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol);
         }
 
@@ -1164,7 +1164,7 @@ module TypeScript {
                     }
                     else {
                         importDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), "Unable to resolve external module '{0}'.", [text]));
+                            new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), "Unable to resolve external module '{0}'.", [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
@@ -1173,7 +1173,7 @@ module TypeScript {
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
                     importDecl.addDiagnostic(
-                        new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), "Module cannot be aliased to a non-module type.", null));
+                        new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), "Module cannot be aliased to a non-module type.", null));
                 }
 
                 importDeclSymbol.setAliasedType(aliasedType);
@@ -1397,7 +1397,7 @@ module TypeScript {
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var prevResolvingTypeReference = context.resolvingTypeReference;
-            var diagnostic: SemanticDiagnostic = null;
+            var diagnostic: Diagnostic = null;
 
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
@@ -1538,7 +1538,7 @@ module TypeScript {
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
-            var diagnostic: SemanticDiagnostic = null;
+            var diagnostic: Diagnostic = null;
 
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
@@ -1844,7 +1844,7 @@ module TypeScript {
                     }
                 }
 
-                var diagnostic: SemanticDiagnostic;
+                var diagnostic: Diagnostic;
 
                 if (signature.isResolving()) {
 
@@ -1964,7 +1964,7 @@ module TypeScript {
             var signature: PullSignatureSymbol = getterTypeSymbol.getCallSignatures()[0];
 
             var hadError = false;
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             if (signature) {
 
@@ -2452,7 +2452,7 @@ module TypeScript {
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             context.canUseTypeSymbol = prevCanUseTypeSymbol;
             var lhsType = lhs.getType();
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             if (lhs.isAlias()) {
                 (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
@@ -2636,7 +2636,7 @@ module TypeScript {
             else {
 
                 var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-                var diagnostic: SemanticDiagnostic;
+                var diagnostic: Diagnostic;
 
                 if (enclosingDecl && !declPath.length) {
                     declPath = [enclosingDecl];
@@ -2681,7 +2681,7 @@ module TypeScript {
 
         public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var genericTypeSymbol: PullTypeSymbol = null
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             var prevSearchTypeSpace = context.searchTypeSpace;
             context.searchTypeSpace = true;
@@ -2782,7 +2782,7 @@ module TypeScript {
                 return childTypeSymbol;
             }
 
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).text;
@@ -2999,14 +2999,14 @@ module TypeScript {
             }
 
             var enclosingDeclKind = enclosingDecl.getKind();
-            var diagnostic: SemanticDiagnostic = null;
+            var diagnostic: Diagnostic = null;
 
             if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), "'this' cannot be referenced within module bodies.", null);
+                diagnostic = new Diagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), "'this' cannot be referenced within module bodies.", null);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
             else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), "'this' must only be used inside a function or script context.", null);
+                diagnostic = new Diagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), "'this' must only be used inside a function or script context.", null);
 
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
@@ -3358,7 +3358,7 @@ module TypeScript {
                 return previousResolutionSymbol;
             }
 
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
@@ -3665,7 +3665,7 @@ module TypeScript {
                 }
             }
 
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -3971,7 +3971,7 @@ module TypeScript {
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
 
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
 

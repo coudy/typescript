@@ -84,7 +84,7 @@ module TypeScript {
 
         // Scans a token starting at the current position.  Any errors encountered will be added to 
         // 'diagnostics'.
-        public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: boolean): ISyntaxToken {
+        public scan(diagnostics: Diagnostic[], allowRegularExpression: boolean): ISyntaxToken {
             var diagnosticsLength = diagnostics.length;
             var fullStart = this.slidingWindow.absoluteIndex();
             var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
@@ -225,7 +225,7 @@ module TypeScript {
             }
         }
 
-        private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: boolean): number {
+        private scanTriviaInfo(diagnostics: Diagnostic[], isTrailing: boolean): number {
             // Keep this exactly in sync with scanTrivia
             var width = 0;
             var hasCommentOrNewLine = 0;
@@ -396,7 +396,7 @@ module TypeScript {
             return Syntax.multiLineComment(text);
         }
 
-        private scanMultiLineCommentTriviaLength(diagnostics: SyntaxDiagnostic[]): number {
+        private scanMultiLineCommentTriviaLength(diagnostics: Diagnostic[]): number {
             this.slidingWindow.moveToNextItem();
             this.slidingWindow.moveToNextItem();
 
@@ -405,7 +405,7 @@ module TypeScript {
             while (true) {
                 if (this.slidingWindow.isAtEndOfSource()) {
                     if (diagnostics !== null) {
-                        diagnostics.push(new SyntaxDiagnostic(
+                        diagnostics.push(new Diagnostic(
                             this.fileName,
                             this.slidingWindow.absoluteIndex(), 0, "'*/' expected.", null));
                     }
@@ -450,7 +450,7 @@ module TypeScript {
             }
         }
 
-        private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: boolean): SyntaxKind {
+        private scanSyntaxToken(diagnostics: Diagnostic[], allowRegularExpression: boolean): SyntaxKind {
             if (this.slidingWindow.isAtEndOfSource()) {
                 return SyntaxKind.EndOfFileToken;
             }
@@ -615,7 +615,7 @@ module TypeScript {
 
         // A slow path for scanning identifiers.  Called when we run into a unicode character or 
         // escape sequence while processing the fast path.
-        private slowScanIdentifier(diagnostics: SyntaxDiagnostic[]): SyntaxKind {
+        private slowScanIdentifier(diagnostics: Diagnostic[]): SyntaxKind {
             var startIndex = this.slidingWindow.absoluteIndex();
 
             do {
@@ -984,13 +984,13 @@ module TypeScript {
             }
         }
 
-        private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): SyntaxKind {
+        private scanDefaultCharacter(character: number, diagnostics: Diagnostic[]): SyntaxKind {
             var position = this.slidingWindow.absoluteIndex();
             this.slidingWindow.moveToNextItem();
 
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
-            diagnostics.push(new SyntaxDiagnostic(this.fileName,
+            diagnostics.push(new Diagnostic(this.fileName,
                 position, 1, "Unexpected character {0}.", [messageText]));
 
             return SyntaxKind.ErrorToken;
@@ -1008,7 +1008,7 @@ module TypeScript {
             return JSON2.stringify(text);
         }
 
-        private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
+        private skipEscapeSequence(diagnostics: Diagnostic[]): void {
             // Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
 
             var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
@@ -1061,7 +1061,7 @@ module TypeScript {
             }
         }
 
-        private scanStringLiteral(diagnostics: SyntaxDiagnostic[]): SyntaxKind {
+        private scanStringLiteral(diagnostics: Diagnostic[]): SyntaxKind {
             var quoteCharacter = this.currentCharCode();
 
             // Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
@@ -1078,7 +1078,7 @@ module TypeScript {
                     break;
                 }
                 else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                    diagnostics.push(new SyntaxDiagnostic(this.fileName,
+                    diagnostics.push(new Diagnostic(this.fileName,
                         this.slidingWindow.absoluteIndex(), 1, "Missing close quote character.", null));
                     break;
                 }
@@ -1148,7 +1148,7 @@ module TypeScript {
             return ch;
         }
 
-        private scanCharOrUnicodeEscape(errors: SyntaxDiagnostic[]): number {
+        private scanCharOrUnicodeEscape(errors: Diagnostic[]): number {
             var ch = this.currentCharCode();
             if (ch === CharacterCodes.backslash) {
                 var ch2 = this.slidingWindow.peekItemN(1);
@@ -1161,7 +1161,7 @@ module TypeScript {
             return ch;
         }
 
-        private scanCharOrUnicodeOrHexEscape(errors: SyntaxDiagnostic[]): number {
+        private scanCharOrUnicodeOrHexEscape(errors: Diagnostic[]): number {
             var ch = this.currentCharCode();
             if (ch === CharacterCodes.backslash) {
                 var ch2 = this.slidingWindow.peekItemN(1);
@@ -1174,7 +1174,7 @@ module TypeScript {
             return ch;
         }
 
-        private scanUnicodeOrHexEscape(errors: SyntaxDiagnostic[]): number {
+        private scanUnicodeOrHexEscape(errors: Diagnostic[]): number {
             var start = this.slidingWindow.absoluteIndex();
             var character = this.currentCharCode();
             // Debug.assert(character === CharacterCodes.backslash);
@@ -1220,8 +1220,8 @@ module TypeScript {
             }
         }
 
-        private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
-            return new SyntaxDiagnostic(this.fileName, start, end - start,
+        private createIllegalEscapeDiagnostic(start: number, end: number): Diagnostic {
+            return new Diagnostic(this.fileName, start, end - start,
                 "Unrecognized escape sequence.", null);
         }
     }

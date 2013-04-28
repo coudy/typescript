@@ -128,7 +128,7 @@ module TypeScript {
             return this.diagnostics;
         }
 
-        public setErrors(diagnostics: SemanticDiagnostic[]) {
+        public setErrors(diagnostics: Diagnostic[]) {
             if (diagnostics) {
                 this.diagnostics = [];
 

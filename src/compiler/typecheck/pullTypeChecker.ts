@@ -127,7 +127,7 @@ module TypeScript {
         }
 
         private postError(offset: number, length: number, fileName: string, diagnosticKey: string, arguments: any[], enclosingDecl: PullDecl) {
-            enclosingDecl.addDiagnostic(new SemanticDiagnostic(fileName, offset, length, diagnosticKey, arguments));
+            enclosingDecl.addDiagnostic(new Diagnostic(fileName, offset, length, diagnosticKey, arguments));
         }
 
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
