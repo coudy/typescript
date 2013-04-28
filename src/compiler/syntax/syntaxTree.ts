@@ -347,7 +347,7 @@ module TypeScript {
             else if (parameter.publicOrPrivateKeyword) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss);
+                    DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifiers);
                 return true;
             }
             else if (parameter.questionToken) {

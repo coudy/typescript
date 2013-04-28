@@ -542,7 +542,7 @@ class Program {
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
-        var diagnostics: TypeScript.SyntaxDiagnostic[] = [];
+        var diagnostics: TypeScript.Diagnostic[] = [];
 
         while (true) {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
@@ -568,7 +568,7 @@ class Program {
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
-        var diagnostics: TypeScript.SyntaxDiagnostic[] = [];
+        var diagnostics: TypeScript.Diagnostic[] = [];
 
         while (true) {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);

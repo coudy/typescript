@@ -27,7 +27,7 @@ module TypeScript {
         Parameter_cannot_have_question_mark_and_initializer,
         Required_parameter_cannot_follow_optional_parameter,
         Index_signatures_cannot_have_rest_parameters,
-        Index_signature_parameter_cannot_have_accessibility_modifierss,
+        Index_signature_parameter_cannot_have_accessibility_modifiers,
         Index_signature_parameter_cannot_have_a_question_mark,
         Index_signature_parameter_cannot_have_an_initializer,
         Index_signature_must_have_a_type_annotation,
