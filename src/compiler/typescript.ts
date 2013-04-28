@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+///<reference path='resources\EN_DiagnosticMessages.ts' />
 ///<reference path='core\references.ts' />
 ///<reference path='text\references.ts' />
 ///<reference path='syntax\references.ts' />
@@ -180,17 +181,17 @@ module TypeScript {
 
         public fileNameToDocument = new TypeScript.StringHashTable();
 
-        constructor(public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages = EN_US_DiagnosticMessages) {
+        constructor(public diagnosticMessages = EN_DiagnosticMessages,
+                    public logger: ILogger = new NullLogger(),
+                    public settings: CompilationSettings = new CompilationSettings()) {
             this.emitOptions = new EmitOptions(this.settings);
 
             TypeScript.LocalizedDiagnosticMessages = this.diagnosticMessages;
 
             // Ensure that the diagnostic messages passed in contain all the diagnostic messages 
             // from the english set.
-            for (var name in EN_US_DiagnosticMessages) {
-                if (EN_US_DiagnosticMessages.hasOwnProperty(name)) {
+            for (var name in EN_DiagnosticMessages) {
+                if (EN_DiagnosticMessages.hasOwnProperty(name)) {
                     Debug.assert(diagnosticMessages.hasOwnProperty(name));
                 }
             }

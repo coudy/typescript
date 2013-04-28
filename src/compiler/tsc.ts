@@ -152,9 +152,9 @@ class BatchCompiler {
     
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    public compile(): boolean {
+    public compile(diagnosticMessages: any): boolean {
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings);
+        var compiler = new TypeScript.TypeScriptCompiler(diagnosticMessages, logger, this.compilationSettings);
 
         var anySyntacticErrors = false;
         var anySemanticErrors = false;
@@ -239,9 +239,9 @@ class BatchCompiler {
         return false;
     }
 
-    public updateCompile(): boolean {
+    public updateCompile(diagnosticMessages: any): boolean {
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings);
+        var compiler = new TypeScript.TypeScriptCompiler(diagnosticMessages, logger, this.compilationSettings);
 
         var anySyntacticErrors = false;
         var foundLib = false;
@@ -330,7 +330,7 @@ class BatchCompiler {
     }
 
     /// Begin batch compilation
-    public batchCompile() {
+    public batchCompile(diagnosticMessages: any) {
         TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: (s: string) => { this.ioHost.printLine(s); } }
 
         var code: TypeScript.SourceUnit;
@@ -547,10 +547,10 @@ class BatchCompiler {
         this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
 
         if (!this.compilationSettings.updateTC) {
-            this.compile();
+            this.compile(diagnosticMessages);
         }
         else {
-            this.updateCompile();
+            this.updateCompile(diagnosticMessages);
         }
 
         if (!this.errorReporter.hasErrors) {
@@ -561,7 +561,7 @@ class BatchCompiler {
 
         if (this.compilationSettings.watch) {
             // Watch will cause the program to stick around as long as the files exist
-            this.watchFiles(sourceFiles);
+            this.watchFiles(diagnosticMessages, sourceFiles);
         }
         else {  
             // Exit with the appropriate error code
@@ -576,7 +576,7 @@ class BatchCompiler {
         }
     }
 
-    private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
+    private watchFiles(diagnosticMessages: any, sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.addDiagnostic(
                 new TypeScript.SemanticDiagnostic(null, 0, 0, "Current host does not support -w[atch] option.", null));
@@ -662,7 +662,7 @@ class BatchCompiler {
             resolvedFiles.forEach((f) => this.ioHost.printLine("    " + f));
 
             // Trigger a new compilation
-            this.compile();
+            this.compile(diagnosticMessages);
 
             if (!this.errorReporter.hasErrors) {
                 if (this.compilationSettings.exec) {
@@ -685,4 +685,6 @@ class BatchCompiler {
 
 // Start the batch compilation using the current hosts IO
 var batch = new BatchCompiler(IO);
-batch.batchCompile();
+
+// TODO: Determine which localized messages to load.
+batch.batchCompile(TypeScript.EN_DiagnosticMessages);
