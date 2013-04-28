@@ -1,4 +1,4 @@
-﻿//﻿
+//﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,6 @@
 ///<reference path='typescript.ts'/>
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
-
-declare var localizedDiagnosticMessages: TypeScript.IDiagnosticMessages;
 
 class DiagnosticsLogger implements TypeScript.ILogger {
     constructor(public ioHost: IIO) {
@@ -140,11 +138,11 @@ class BatchCompiler {
                 var path = this.compilationEnvironment.code[i].path;
                 if (!TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.errorReporter.addDiagnostic(
-                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed, [path]));
+                        new TypeScript.Diagnostic(null, 0, 0, "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.", [path]));
                 }
                 else {
                     this.errorReporter.addDiagnostic(
-                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Could_not_find_file___0_, [path]));
+                        new TypeScript.Diagnostic(null, 0, 0, "Could not find file: '{0}'.", [path]));
                 }
             }
         }
@@ -155,12 +153,8 @@ class BatchCompiler {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     public compile(): boolean {
-        if (typeof localizedDiagnosticMessages === "undefined") {
-            localizedDiagnosticMessages = null;
-        }
-
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings, localizedDiagnosticMessages);
+        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings);
 
         var anySyntacticErrors = false;
         var anySemanticErrors = false;
@@ -246,12 +240,8 @@ class BatchCompiler {
     }
 
     public updateCompile(): boolean {
-        if (typeof localizedDiagnosticMessages === "undefined") {
-            localizedDiagnosticMessages = null;
-        }
-
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings, localizedDiagnosticMessages);
+        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings);
 
         var anySyntacticErrors = false;
         var foundLib = false;
@@ -465,7 +455,7 @@ class BatchCompiler {
                 }
                 else {
                     this.errorReporter.addDiagnostic(
-                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation, [type, "ES3"]));
+                        new TypeScript.Diagnostic(null, 0, 0, "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.", [type, "ES3"]));
                 }
             }
         });
@@ -484,7 +474,7 @@ class BatchCompiler {
                 }
                 else {
                     this.errorReporter.addDiagnostic(
-                        new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation, [type, "commonjs"]));
+                        new TypeScript.Diagnostic(null, 0, 0, "Module code generation '{0}' not supported.  Using default '{1}' code generation.", [type, "commonjs"]));
                 }
             }
         });
@@ -589,7 +579,7 @@ class BatchCompiler {
     private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.addDiagnostic(
-                new TypeScript.SemanticDiagnostic(null, 0, 0, TypeScript.DiagnosticCode.Current_host_does_not_support__w_atch_option, null));
+                new TypeScript.SemanticDiagnostic(null, 0, 0, "Current host does not support -w[atch] option.", null));
             return;
         }
 

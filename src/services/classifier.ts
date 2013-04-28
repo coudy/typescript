@@ -1,4 +1,4 @@
-﻿//﻿
+//﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,7 +103,7 @@ module Services {
             if (this.scanner.absoluteIndex() >= text.length) {
                 // We're at the end.
                 if (this.diagnostics.length > 0) {
-                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === TypeScript.DiagnosticCode._StarSlash__expected) {
+                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticKey() === "'*/' expected.") {
                         result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                         return;
                     }

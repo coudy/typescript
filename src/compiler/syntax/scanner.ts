@@ -1,4 +1,4 @@
-﻿///<reference path='references.ts' />
+///<reference path='references.ts' />
 
 module TypeScript {
     export class Scanner implements ISlidingWindowSource {
@@ -407,7 +407,7 @@ module TypeScript {
                     if (diagnostics !== null) {
                         diagnostics.push(new SyntaxDiagnostic(
                             this.fileName,
-                            this.slidingWindow.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
+                            this.slidingWindow.absoluteIndex(), 0, "'*/' expected.", null));
                     }
 
                     return width;
@@ -991,7 +991,7 @@ module TypeScript {
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
             diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
+                position, 1, "Unexpected character {0}.", [messageText]));
 
             return SyntaxKind.ErrorToken;
         }
@@ -1079,7 +1079,7 @@ module TypeScript {
                 }
                 else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
                     diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                        this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character, null));
+                        this.slidingWindow.absoluteIndex(), 1, "Missing close quote character.", null));
                     break;
                 }
                 else {
@@ -1222,7 +1222,7 @@ module TypeScript {
 
         private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
             return new SyntaxDiagnostic(this.fileName, start, end - start,
-                DiagnosticCode.Unrecognized_escape_sequence, null);
+                "Unrecognized escape sequence.", null);
         }
     }
 }

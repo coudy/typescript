@@ -2837,7 +2837,7 @@ module TypeScript {
                 if (!typesToReplace[i].isTypeParameter() && typeWrapsTypeParameter(typesToReplace[i], typeParameters[i])) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST) {
-                        diagnostic = context.postError(resolver.getUnitPath(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
+                        diagnostic = context.postError(resolver.getUnitPath(), declAST.minChar, declAST.getLength(), "A generic type may not reference itself with its own type parameters.", null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
                     else {
