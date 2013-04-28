@@ -199,7 +199,7 @@ module TypeScript {
 
                         if (resolvedFilePath === normalizedPath) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, "A file cannot reference itself.", null));
+                                new TypeScript.Diagnostic(TypeScript.switchToForwardSlashes(normalizedPath), fileReference.position, fileReference.length, "A file cannot reference itself.", null));
                             continue;
                         }
 
@@ -207,7 +207,7 @@ module TypeScript {
 
                         if (!resolutionResult) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, "Cannot resolve referenced file: '{0}'.", [fileReference.path]));
+                                new TypeScript.Diagnostic(TypeScript.switchToForwardSlashes(resolvedFilePath), fileReference.position, fileReference.length, "Cannot resolve referenced file: '{0}'.", [fileReference.path]));
                         }
                     }
                     
@@ -219,7 +219,7 @@ module TypeScript {
 
                         if (!resolutionResult) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, "Cannot resolve imported file: '{0}'.", [fileImport.path]));
+                                new TypeScript.Diagnostic(TypeScript.switchToForwardSlashes(resolvedFilePath), fileImport.position, fileImport.length, "Cannot resolve imported file: '{0}'.", [fileImport.path]));
                         }
                     }
 
