@@ -1181,6 +1181,7 @@ module FourSlash {
 
         fsOutput.reset();
         fsErrors.reset();
+        Harness.Compiler.reset();
         Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);
         Harness.Compiler.addUnit(content, mockFilename);
         Harness.Compiler.compile(content, mockFilename);
