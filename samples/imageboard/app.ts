@@ -1,4 +1,4 @@
-///<reference path='..\node\node.d.ts' />
+///<reference path='../node/node.d.ts' />
 
 import http = module("http")
 import url = module("url")
