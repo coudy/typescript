@@ -8,5 +8,4 @@
 //// }
 
 goTo.marker();
-// Bug 674612: AST divergence when inserting an arugment in a function call preceding a class with an overloaded constructor
-// edit.insert("'1', ");
+edit.insert("'1', ");
