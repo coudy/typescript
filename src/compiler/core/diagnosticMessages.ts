@@ -1671,26 +1671,17 @@ module TypeScript {
         }
     }
 
-    var newDiagnosticInfo = {};//"export var DiagnosticInformation {\r\n";
-    var newDiagnosticMessages = {};
-    var dictionary = "new Dictionary<string,string> {\r\n";
-    for (var name in diagnosticMessages) {
-        if (diagnosticMessages.hasOwnProperty(name)) {
-            var diagnosticMessage = <DiagnosticInfo>diagnosticMessages[name];
-            newDiagnosticInfo[diagnosticMessage.message] = { category: diagnosticMessage.category, code: diagnosticMessage.code };
-            newDiagnosticMessages[diagnosticMessage.message] = diagnosticMessage.message;
-            dictionary += "(" + name + ", " + JSON2.stringify(diagnosticMessage.message) + "),\r\n";
-        }
-    }
+    //var newDiagnosticInfo = {};//"export var DiagnosticInformation {\r\n";
+    //var newDiagnosticMessages = {};
+    //for (var name in diagnosticMessages) {
+    //    if (diagnosticMessages.hasOwnProperty(name)) {
+    //        var diagnosticMessage = <DiagnosticInfo>diagnosticMessages[name];
+    //        newDiagnosticInfo[diagnosticMessage.message] = { category: diagnosticMessage.category, code: diagnosticMessage.code };
+    //        newDiagnosticMessages[diagnosticMessage.message] = diagnosticMessage.message;
+    //    }
+    //}
 
-    export var newDiagnosticInfoString = JSON2.stringify(newDiagnosticInfo, null, "    ");
-    newDiagnosticInfoString = newDiagnosticInfoString
-        .replace(/"category": 0/g, "category: DiagnosticCategory.Warning")
-        .replace(/"category": 1/g, "category: DiagnosticCategory.Error")
-        .replace(/"category": 2/g, "category: DiagnosticCategory.Message")
-        .replace(/"category": 3/g, "category: DiagnosticCategory.NoPrefix")
-        .replace(/"code"/g, "code");
-
-    export var newDiagnosticInfoMessagesString = JSON2.stringify(newDiagnosticMessages, null, "    ");
-    export var foo = dictionary;
+    //export var newDiagnosticInfoString = JSON2.stringify(newDiagnosticInfo, null, "    ");
+    //export var newDiagnosticInfoMessagesString = JSON2.stringify(newDiagnosticMessages, null, "    ");
+    //export var foo = "";
 }
