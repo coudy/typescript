@@ -1706,8 +1706,18 @@ module TypeScript {
                 return null;
             }
 
+            var start = this.position;
+
             this.movePast(node.openParenToken);
+
             var result = this.visitSeparatedSyntaxList(node.arguments);
+
+            if (node.arguments.fullWidth() === 0 && node.closeParenToken.fullWidth() === 0) {
+                // If the argument list was empty, and closing paren is missing, set the argument ofsets to be the open paren trivia
+                var openParenTokenEnd = start + node.openParenToken.leadingTriviaWidth() + node.openParenToken.width();
+                this.setSpanExplicit(result, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
+            }
+
             this.movePast(node.closeParenToken);
             return result;
         }
