@@ -14,6 +14,7 @@
 ///<reference path='slidingWindow.ts' />
 ///<reference path='strings.ts' />
 ///<reference path='syntax.ts' />
+///<reference path='syntaxDiagnostic.ts' />
 ///<reference path='syntaxElement.ts' />
 ///<reference path='syntaxFactory.generated.ts' />
 ///<reference path='syntaxFacts.ts' />
