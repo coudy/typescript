@@ -147,7 +147,8 @@ module FourSlashInterface {
 
         public currentParameterIsVariable() {
             FourSlash.currentTestState.verifyCurrentParameterIsVariable(!this.negative);
-        }
+        }
+
         public signatureHelpPresent() {
             FourSlash.currentTestState.verifySignatureHelpPresent(!this.negative);
         }
@@ -371,6 +372,13 @@ module FourSlashInterface {
     export class format {
         public document() {
             FourSlash.currentTestState.formatDocument();
+        }
+
+        public setOption(name: string, value: number);
+        public setOption(name: string, value: string);
+        public setOption(name: string, value: boolean);
+        public setOption(name: string, value: any) {
+            FourSlash.currentTestState.formatCodeOptions[name] = value;
         }
     }
 }

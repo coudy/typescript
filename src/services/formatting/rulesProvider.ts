@@ -34,33 +34,24 @@ module TypeScript.Formatting {
             return this.globalRules[name];
         }
 
-        public setActiveRules(staticList: Rule[]) {
-            this.activeRules = staticList;
-            this.rulesMap = RulesMap.create(this.activeRules);
-        }
-
-        public getActiveRules() {
-            return this.activeRules;
-        }
-
         public getRulesMap() {
             return this.rulesMap;
         }
 
-        public ensureUptodate(options: Services.FormatCodeOptions) {
+        public ensureUpToDate(options: Services.FormatCodeOptions) {
             if (this.options == null || !Services.compareDataObjects(this.options, options)) {
                 var activeRules: Rule[] = TypeScript.timeFunction(this.logger, "RulesProvider: createActiveRules()", () => { return this.createActiveRules(options); });
                 var rulesMap: RulesMap = TypeScript.timeFunction(this.logger, "RulesProvider: RulesMap.create()", () => { return RulesMap.create(activeRules); });
 
                 this.activeRules = activeRules;
                 this.rulesMap = rulesMap;
-                this.options = options;
+                this.options = options.clone();
             }
         }
 
         private createActiveRules(options: Services.FormatCodeOptions): Rule[] {
-            var rules = this.globalRules.HighPriorityCommonRules;
-          
+            var rules = this.globalRules.HighPriorityCommonRules.slice(0);
+
             if (options.InsertSpaceAfterCommaDelimiter) {
                 rules.push(this.globalRules.SpaceAfterComma);
             }

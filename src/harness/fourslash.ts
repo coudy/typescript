@@ -108,6 +108,8 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
+        public formatCodeOptions: Services.FormatCodeOptions = null;
+
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
@@ -120,7 +122,9 @@ module FourSlash {
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
             var compilerState = (<any>this.languageService).compilerState;
             this.compiler = (<any>compilerState).compiler;
-            
+
+            this.formatCodeOptions = new Services.FormatCodeOptions();
+
             // Open the first file by default
             this.openFile(0);
         }
@@ -374,7 +378,7 @@ module FourSlash {
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             if (negative) {
                 if (actualQuickInfo) {
-	                throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
+                    throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
                 }
             }
             else
@@ -392,7 +396,8 @@ module FourSlash {
 
         public verifyCurrentParameterIsVariable(isVariable: boolean) {
             assert.equal(isVariable, this.getActiveParameter().isVariable);
-        }
+        }
+
         public verifyCurrentParameterHelpName(name: string) {
             assert.equal(this.getActiveParameter().name, name);
         }
@@ -555,7 +560,6 @@ module FourSlash {
         }
 
         public deleteChar(count = 1) {
-            var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             var ch = "";
 
@@ -566,7 +570,7 @@ module FourSlash {
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
                     offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
@@ -586,7 +590,6 @@ module FourSlash {
         }
 
         public deleteCharBehindMarker(count = 1) {
-            var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             var ch = "";
 
@@ -598,7 +601,7 @@ module FourSlash {
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
                     offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
@@ -613,7 +616,6 @@ module FourSlash {
 
         // Enters lines of text at the current caret position
         public type(text: string) {
-            var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             for (var i = 0; i < text.length; i++) {
                 // Make the edit
@@ -624,7 +626,7 @@ module FourSlash {
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
                     offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
@@ -696,7 +698,7 @@ module FourSlash {
         }
 
         public formatDocument() {
-            var edits = this.languageService.getFormattingEditsForRange(this.activeFile.fileName, 0, this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength(), new Services.FormatCodeOptions());
+            var edits = this.languageService.getFormattingEditsForDocument(this.activeFile.fileName, 0, this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength(), this.formatCodeOptions);
             this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
             this.fixCaretPosition();
         }

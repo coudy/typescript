@@ -1350,7 +1350,7 @@ module Services {
                 this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
             }
 
-            this.formattingRulesProvider.ensureUptodate(options);
+            this.formattingRulesProvider.ensureUpToDate(options);
 
             // Get the Syntax Tree
             var syntaxTree = this.getSyntaxTree(fileName);

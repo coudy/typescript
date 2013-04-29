@@ -134,6 +134,15 @@ module Services {
         public TabSize: number = 4;
         public NewLineCharacter: string = "\r\n";
         public ConvertTabsToSpaces: boolean = true;
+
+        public clone(): EditorOptions {
+            var editorOptions = new EditorOptions();
+            editorOptions.IndentSize = this.IndentSize;
+            editorOptions.TabSize = this.TabSize;
+            editorOptions.NewLineCharacter = this.NewLineCharacter;
+            editorOptions.ConvertTabsToSpaces = this.ConvertTabsToSpaces;
+            return editorOptions;
+        }
     }
 
     export class FormatCodeOptions extends EditorOptions {
@@ -145,6 +154,19 @@ module Services {
         public InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: boolean = false;
         public PlaceOpenBraceOnNewLineForFunctions: boolean = false;
         public PlaceOpenBraceOnNewLineForControlBlocks: boolean = false;
+
+        public clone(): FormatCodeOptions {
+            var formatCodeOptions = <FormatCodeOptions>super.clone();
+            formatCodeOptions.InsertSpaceAfterCommaDelimiter = this.InsertSpaceAfterCommaDelimiter;
+            formatCodeOptions.InsertSpaceAfterSemicolonInForStatements = this.InsertSpaceAfterSemicolonInForStatements;
+            formatCodeOptions.InsertSpaceBeforeAndAfterBinaryOperators = this.InsertSpaceBeforeAndAfterBinaryOperators;
+            formatCodeOptions.InsertSpaceAfterKeywordsInControlFlowStatements = this.InsertSpaceAfterKeywordsInControlFlowStatements;
+            formatCodeOptions.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = this.InsertSpaceAfterFunctionKeywordForAnonymousFunctions;
+            formatCodeOptions.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = this.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis;
+            formatCodeOptions.PlaceOpenBraceOnNewLineForFunctions = this.PlaceOpenBraceOnNewLineForFunctions;
+            formatCodeOptions.PlaceOpenBraceOnNewLineForControlBlocks = this.PlaceOpenBraceOnNewLineForControlBlocks;
+            return formatCodeOptions;
+        }
     }
 
     export class DefinitionInfo {

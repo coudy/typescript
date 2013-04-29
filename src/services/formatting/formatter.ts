@@ -186,7 +186,7 @@ module TypeScript.Formatting {
                 // Handle the case where the next line is moved to be the end of this line. 
                 // In this case we don't indent the next line in the next pass.
                 if ((rule.Operation.Action == RuleAction.Space || rule.Operation.Action == RuleAction.Delete) &&
-	token1Line != token2Line) {
+                    token1Line != token2Line) {
                     this.forceSkipIndentingNextToken();
                 }
 
