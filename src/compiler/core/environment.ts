@@ -110,7 +110,7 @@ var Environment = (function () {
                         fc = new Enumerator(folder.subfolders);
 
                         for (; !fc.atEnd() ; fc.moveNext()) {
-                            paths = paths.concat(filesInFolder(fc.item(), root + "/" + fc.item().Name));
+                            paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
                         }
                     }
 
@@ -118,7 +118,7 @@ var Environment = (function () {
 
                     for (; !fc.atEnd() ; fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
-                            paths.push(root + "/" + fc.item().Name);
+                            paths.push(root + "\\" + fc.item().Name);
                         }
                     }
 
@@ -233,11 +233,11 @@ var Environment = (function () {
 
                     var files = _fs.readdirSync(folder);
                     for (var i = 0; i < files.length; i++) {
-                        var stat = _fs.statSync(folder + "/" + files[i]);
+                        var stat = _fs.statSync(folder + "\\" + files[i]);
                         if (options.recursive && stat.isDirectory()) {
-                            paths = paths.concat(filesInFolder(folder + "/" + files[i]));
+                            paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
                         } else if (stat.isFile() && (!spec || files[i].match(spec))) {
-                            paths.push(folder + "/" + files[i]);
+                            paths.push(folder + "\\" + files[i]);
                         }
                     }
 
