@@ -100,11 +100,6 @@ module Services {
             this.diagnostics = new CompilerDiagnostics(host);
         }
 
-        private getDiagnosticMessages(): any {
-            // TODO: Use information from the host to determine which diagnostic messages to load.
-            return TypeScript.EN_DiagnosticMessages;
-        }
-
         public compilationSettings() {
             return this._compilationSettings;
         }
@@ -156,7 +151,7 @@ module Services {
             this._compilationSettings = new TypeScript.CompilationSettings();
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
-            this.compiler = new TypeScript.TypeScriptCompiler(this.getDiagnosticMessages(), this.logger, this.compilationSettings());
+            this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
