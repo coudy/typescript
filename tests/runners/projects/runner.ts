@@ -224,7 +224,7 @@ class HarnessBatch {
 class ProjectRunner extends RunnerBase {
     public runTests() {
         describe("Compiling a project", function (done) {
-            var rPath = Harness.userSpecifiedroot + 'tests/cases/projects/r.js';
+            var rPath = Harness.userSpecifiedroot + 'tests\\cases\\projects\\r.js';
             var testExec = true;
 
             function cleanProjectDirectory(directory: string) {
@@ -518,8 +518,8 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
-                        IO.resolvePath(Harness.userSpecifiedroot) + '/tests/cases/projects/NoModule/decl.ts(1,25): error TS5008: Cannot resolve imported file: \'./foo/bar.js\'.',
-                        IO.resolvePath(Harness.userSpecifiedroot) + '/tests/cases/projects/NoModule/decl.ts(3,25): error TS5008: Cannot resolve imported file: \'./baz\'.']
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(1,25): error TS5008: Cannot resolve imported file: \'./foo/bar.js\'.',
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(3,25): error TS5008: Cannot resolve imported file: \'./baz\'.']
                 });
 
             tests.push({
@@ -1515,9 +1515,9 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                 , negative: true
                 , errors: [
-                    IO.resolvePath(Harness.userSpecifiedroot) + '/tests/cases/projects/InvalidReferences/main.ts(1,1): error TS5006: A file cannot have a reference itself.',
-                    IO.resolvePath(Harness.userSpecifiedroot) + '/tests/cases/projects/InvalidReferences/main.ts(2,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile1.ts\'.',
-                    IO.resolvePath(Harness.userSpecifiedroot) + '/tests/cases/projects/InvalidReferences/main.ts(3,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile2.ts\'.']
+                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(1,1): error TS5006: A file cannot reference itself.',
+                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(2,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile1.ts\'.',
+                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(3,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile2.ts\'.']
             });
 
 

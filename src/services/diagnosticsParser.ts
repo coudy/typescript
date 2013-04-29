@@ -1,6 +1,6 @@
-///<reference path='../compiler/io.ts'/>
-///<reference path='../compiler/typescript.ts'/>
-///<reference path='../../samples/node/node.d.ts'/>
+///<reference path='..\compiler\io.ts'/>
+///<reference path='..\compiler\typescript.ts'/>
+///<reference path='..\..\samples\node\node.d.ts'/>
 
 module DiagnosticsParser {
 
