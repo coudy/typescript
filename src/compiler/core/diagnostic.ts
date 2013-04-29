@@ -5,7 +5,7 @@ module TypeScript {
         fileName(): string;
         start(): number;
         length(): number;
-        diagnosticKey(): string;
+        diagnosticCode(): DiagnosticCode;
         text(): string;
         message(): string;
     }
@@ -15,11 +15,11 @@ module TypeScript {
         private _start: number;
         private _originalStart: number;
         private _length: number;
-        private _diagnosticKey: string;
+        private _diagnosticCode: DiagnosticCode;
         private _arguments: any[];
 
-        constructor(fileName: string, start: number, length: number, diagnosticKey: string, arguments: any[]) {
-            this._diagnosticKey = diagnosticKey;
+        constructor(fileName: string, start: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[]) {
+            this._diagnosticCode = diagnosticCode;
             this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
             this._originalStart = this._start = start;
@@ -30,7 +30,7 @@ module TypeScript {
             var result: any = {};
             result.start = this.start();
             result.length = this.length();
-            result.diagnosticCode = this._diagnosticKey;
+            result.diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
 
             var arguments = (<any>this).arguments();
             if (arguments && arguments.length > 0) {
@@ -52,8 +52,8 @@ module TypeScript {
             return this._length;
         }
 
-        public diagnosticKey(): string {
-            return this._diagnosticKey;
+        public diagnosticCode(): DiagnosticCode {
+            return this._diagnosticCode;
         }
 
         public arguments(): any[] {
@@ -64,14 +64,14 @@ module TypeScript {
         /// Get the text of the message in the given language.
         /// </summary>
         public text(): string {
-            return TypeScript.getDiagnosticText(this._diagnosticKey, this._arguments);
+            return TypeScript.getDiagnosticText(this._diagnosticCode, this._arguments);
         }
 
         /// <summary>
         /// Get the text of the message including the error code in the given language.
         /// </summary>
         public message(): string {
-            return TypeScript.getDiagnosticMessage(this._diagnosticKey, this._arguments);
+            return TypeScript.getDiagnosticMessage(this._diagnosticCode, this._arguments);
         }
 
         public adjustOffset(pos: number) {
@@ -91,18 +91,17 @@ module TypeScript {
             return diagnostic1._fileName === diagnostic2._fileName &&
                 diagnostic1._start === diagnostic2._start &&
                 diagnostic1._length === diagnostic2._length &&
-                diagnostic1._diagnosticKey === diagnostic2._diagnosticKey &&
+                diagnostic1._diagnosticCode === diagnostic2._diagnosticCode &&
                 ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
         }
     }
 
     function getLargestIndex(diagnostic: string): number {
         var largest = -1;
-        var regex = /\d+/g;
+        var stringComponents = diagnostic.split("_");
 
-        var match;
-        while ((match = regex.exec(diagnostic)) != null) {
-            var val = parseInt(match[0]);
+        for (var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
             if (!isNaN(val) && val > largest) {
                 largest = val;
             }
@@ -111,18 +110,15 @@ module TypeScript {
         return largest;
     }
 
-    export function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
-        var result = NewDiagnosticMessageInformationMap[diagnosticKey];
-        Debug.assert(result !== undefined && result !== null);
-        return result;
+    export function getDiagnosticInfoFromCode(diagnosticCode: DiagnosticCode): DiagnosticInfo {
+        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
+        return <DiagnosticInfo>diagnosticMessages[diagnosticName];
     }
 
-    export function getDiagnosticText(diagnosticKey: string, args: any[]): string {
-        var diagnosticMessageText = LocalizedDiagnosticMessages[diagnosticKey];
-        Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
-        //var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
+    export function getDiagnosticText(diagnosticCode: DiagnosticCode, args: any[]): string {
+        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
 
-        var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
+        var diagnostic = <DiagnosticInfo>diagnosticMessages[diagnosticName];
 
         var actualCount = args ? args.length : 0;
         if (!diagnostic) {
@@ -131,13 +127,14 @@ module TypeScript {
         else {
             // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
             // (i.e.'1').  We then need one more arg than that to be correct.
-            var expectedCount = 1 + getLargestIndex(diagnosticKey);
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
 
             if (expectedCount !== actualCount) {
                 throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
             }
         }
 
+        var diagnosticMessageText = diagnostic.message;
         
         diagnosticMessageText = diagnosticMessageText.replace(/{(\d+)}/g, function (match, num) {
             return typeof args[num] !== 'undefined'
@@ -152,15 +149,15 @@ module TypeScript {
         return diagnosticMessageText;
     }
 
-    export function getDiagnosticMessage(diagnosticKey: string, args: any[]): string {
-        var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
-        var diagnosticMessageText = getDiagnosticText(diagnosticKey, args);
+    export function getDiagnosticMessage(diagnosticCode: DiagnosticCode, args: any[]): string {
+        var diagnostic = getDiagnosticInfoFromCode(diagnosticCode);
+        var diagnosticMessageText = getDiagnosticText(diagnosticCode, args);
 
         var message: string;
         if (diagnostic.category === DiagnosticCategory.Error) {
-            message = getDiagnosticText("error TS{0}: {1}", [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.error_TS_0__1, [diagnostic.code, diagnosticMessageText]);
         } else if (diagnostic.category === DiagnosticCategory.Warning) {
-            message = getDiagnosticText("warning TS{0}: {1}", [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.warning_TS_0__1, [diagnostic.code, diagnosticMessageText]);
         } else {
             message = diagnosticMessageText;
         }

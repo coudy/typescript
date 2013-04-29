@@ -1,4 +1,4 @@
-//﻿
+﻿//﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,7 +199,7 @@ module TypeScript {
 
                         if (resolvedFilePath === normalizedPath) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, "A file cannot have a reference itself.", null));
+                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, DiagnosticCode.A_file_cannot_have_a_reference_itself, null));
                             continue;
                         }
 
@@ -207,7 +207,7 @@ module TypeScript {
 
                         if (!resolutionResult) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, "Cannot resolve referenced file: '{0}'.", [fileReference.path]));
+                                new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, DiagnosticCode.Cannot_resolve_referenced_file___0_, [fileReference.path]));
                         }
                     }
                     
@@ -219,7 +219,7 @@ module TypeScript {
 
                         if (!resolutionResult) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, "Cannot resolve imported file: '{0}'.", [fileImport.path]));
+                                new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, DiagnosticCode.Cannot_resolve_imported_file___0_, [fileImport.path]));
                         }
                     }
 

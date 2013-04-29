@@ -1,4 +1,4 @@
-//﻿
+﻿//﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -182,17 +182,11 @@ module TypeScript {
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages = EN_US_DiagnosticMessages) {
+                    public diagnosticMessages: IDiagnosticMessages = null) {
             this.emitOptions = new EmitOptions(this.settings);
 
-            TypeScript.LocalizedDiagnosticMessages = this.diagnosticMessages;
-
-            // Ensure that the diagnostic messages passed in contain all the diagnostic messages 
-            // from the english set.
-            for (var name in EN_US_DiagnosticMessages) {
-                if (EN_US_DiagnosticMessages.hasOwnProperty(name)) {
-                    Debug.assert(diagnosticMessages.hasOwnProperty(name));
-                }
+            if (this.diagnosticMessages) {
+                TypeScript.diagnosticMessages = this.diagnosticMessages
             }
         }
 
@@ -269,7 +263,7 @@ module TypeScript {
 
                                 if (j === 0) {
                                     // Its error to not have common path
-                                    return new Diagnostic(null, 0, 0, "Cannot find the common subdirectory path for the input files", null);
+                                    return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
                                 }
 
                                 break;
@@ -317,7 +311,7 @@ module TypeScript {
 
             // Verify if options are correct
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new Diagnostic(null, 0, 0, "Cannot compile dynamic modules when emitting into single file", null);
+                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_dynamic_modules_when_emitting_into_single_file, null);
             }
 
             // Parse the directory structure

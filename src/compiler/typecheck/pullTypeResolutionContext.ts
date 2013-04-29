@@ -270,12 +270,12 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[], enclosingDecl: PullDecl, addToDecl = false) {
+        public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[], enclosingDecl: PullDecl, addToDecl = false) {
             if (this.emitting) {
                 return;
             }
 
-            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticKey, arguments);
+            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
 
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
