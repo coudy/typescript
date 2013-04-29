@@ -123,7 +123,6 @@ module TypeScript {
     }
 
     export class PullContextualTypeContext {
-
         public provisionallyTypedSymbols: PullSymbol[] = [];
         public provisionalDiagnostic: SemanticDiagnostic[] = [];
 

@@ -3,7 +3,6 @@
 
 ///<reference path='..\typescript.ts' />
 
-
 module TypeScript {
     export interface IPullTypeCollection {
         // returns null when types are exhausted
@@ -132,25 +131,24 @@ module TypeScript {
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
 
-        public getDeclForAST(ast: AST, unitPath?: string) {
-            return this.semanticInfoChain.getDeclForAST(ast, unitPath ? unitPath : this.unitPath);
+        public getDeclForAST(ast: AST): PullDecl {
+            return this.semanticInfoChain.getDeclForAST(ast, this.unitPath);
         }
 
-        public getSymbolForAST(ast: AST, context: PullTypeResolutionContext, unitPath?: string) {
-            return this.semanticInfoChain.getSymbolForAST(ast, unitPath ? unitPath : this.unitPath);
+        public getSymbolForAST(ast: AST, context: PullTypeResolutionContext): PullSymbol {
+            return this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
         }
 
-        public setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext, unitPath?: string): void {
-
+        public setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {
             if (context && (context.inProvisionalResolution() || context.inSpecialization)) {
                 return;
             }
 
-            this.semanticInfoChain.setSymbolForAST(ast, symbol, unitPath ? unitPath : this.unitPath);
+            this.semanticInfoChain.setSymbolForAST(ast, symbol, this.unitPath);
         }
 
-        public getASTForSymbol(symbol: PullSymbol, unitPath?: string) {
-            return this.semanticInfoChain.getASTForSymbol(symbol, unitPath ? unitPath : this.unitPath);
+        public getASTForSymbol(symbol: PullSymbol) {
+            return this.semanticInfoChain.getASTForSymbol(symbol, this.unitPath);
         }
 
         public getASTForDecl(decl: PullDecl) {
@@ -168,7 +166,6 @@ module TypeScript {
         // returns a list of decls leading up to decl, inclusive
         // PULLTODO: Don't bother using spans - obtain cached Decls from syntax nodes
         public getPathToDecl(decl: PullDecl): PullDecl[] {
-
             if (!decl) {
                 return [];
             }
@@ -248,7 +245,6 @@ module TypeScript {
 
         //  Given a path to a name, e.g. ["foo"] or ["Foo", "Baz", "bar"], find the associated symbol
         public findSymbolForPath(pathToName: string[], enclosingDecl: PullDecl, declKind: PullElementKind): PullSymbol {
-
             if (!pathToName.length) {
                 return null;
             }
@@ -895,7 +891,7 @@ module TypeScript {
         //
         //
         public resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var containerSymbol = <PullContainerTypeSymbol>this.getSymbolForAST(ast, context, this.unitPath);
+            var containerSymbol = <PullContainerTypeSymbol>this.getSymbolForAST(ast, context);
 
             if (containerSymbol.isResolved()) {
                 return containerSymbol;
@@ -1189,7 +1185,7 @@ module TypeScript {
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context, this.unitPath);
+            var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context);
 
             if (!funcDeclSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1258,8 +1254,7 @@ module TypeScript {
         }
 
         public resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-
-            var paramSymbol = this.getSymbolForAST(argDeclAST, context, this.unitPath);
+            var paramSymbol = this.getSymbolForAST(argDeclAST, context);
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1331,8 +1326,7 @@ module TypeScript {
         }
 
         public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-
-            var interfaceSymbol = <PullTypeSymbol>this.getSymbolForAST(interfaceDeclAST, context, this.unitPath);//new PullTypeSymbol("", PullElementKind.Interface);
+            var interfaceSymbol = <PullTypeSymbol>this.getSymbolForAST(interfaceDeclAST, context);//new PullTypeSymbol("", PullElementKind.Interface);
 
             if (!interfaceSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1363,7 +1357,7 @@ module TypeScript {
                 var typeMembers = <ASTList> interfaceDeclAST.members;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
-                    memberSymbol = this.getSymbolForAST(typeMembers.members[i], context, this.unitPath);
+                    memberSymbol = this.getSymbolForAST(typeMembers.members[i], context);
 
                     this.resolveDeclaredSymbol(memberSymbol, enclosingDecl, context);
 
@@ -2168,10 +2162,9 @@ module TypeScript {
             return accessorSymbol;
         }
 
-
         // Expression resolution
 
-        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             switch (ast.nodeType) {
                 case NodeType.ModuleDeclaration:
                 case NodeType.InterfaceDeclaration:
@@ -2374,10 +2367,12 @@ module TypeScript {
         }
 
         public resolveNameSymbol(nameSymbol: PullSymbol, context: PullTypeResolutionContext) {
-            if (nameSymbol && !context.searchTypeSpace && !context.canUseTypeSymbol && 
-                nameSymbol != this.semanticInfoChain.undefinedTypeSymbol && nameSymbol != this.semanticInfoChain.nullTypeSymbol &&
-                (nameSymbol.isPrimitive() ||
-                !(nameSymbol.getKind() & TypeScript.PullElementKind.SomeValue))) {
+            if (nameSymbol &&
+                !context.searchTypeSpace &&
+                !context.canUseTypeSymbol && 
+                nameSymbol != this.semanticInfoChain.undefinedTypeSymbol &&
+                nameSymbol != this.semanticInfoChain.nullTypeSymbol &&
+                (nameSymbol.isPrimitive() || !(nameSymbol.getKind() & TypeScript.PullElementKind.SomeValue))) {
                     nameSymbol = null;
             }
 
