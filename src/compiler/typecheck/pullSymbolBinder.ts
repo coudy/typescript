@@ -1813,7 +1813,8 @@ module TypeScript {
 
             this.pushParent(functionTypeSymbol, functionTypeDeclaration);
 
-            var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
+            var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
+            var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
             if (funcTypeAST.variableArgList) {
                 signature.setHasVariableParamList();

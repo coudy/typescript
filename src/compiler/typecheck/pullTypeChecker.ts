@@ -42,6 +42,7 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
         public inConstructorArguments = false;
+        public inTypeReference = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
         }
@@ -503,11 +504,9 @@ module TypeScript {
             this.context.suppressErrors = true;
             var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
-
-            if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
+            if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
                 this.checkForResolutionError(varTypeSymbol, decl);
             }
-
             this.context.suppressErrors = prevSupressErrors;
 
             var declSymbol = decl.getSymbol();
@@ -515,7 +514,7 @@ module TypeScript {
             // Check if variable satisfies type privacy
             if (declSymbol.getKind() != PullElementKind.Parameter &&
                 (declSymbol.getKind() != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
-                this.checkTypePrivacy(declSymbol, varTypeSymbol, (typeSymbol: PullTypeSymbol) =>
+                this.checkTypePrivacy(declSymbol, varTypeSymbol, typeCheckContext, (typeSymbol: PullTypeSymbol) =>
                     this.variablePrivacyErrorReporter(declSymbol, typeSymbol, typeCheckContext));
             }
 
@@ -594,11 +593,13 @@ module TypeScript {
             return functionSymbol ? functionSymbol.getType() : null;
         }
 
-        private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, typeCheckContext: PullTypeCheckContext) {
-            var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
+        private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, signature?: PullSignatureSymbol, allSignatures?: PullSignatureSymbol[]) {
+            if (!signature) {
+                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, typeCheckContext.semanticInfo);
+                signature = functionSignatureInfo.signature;
+                allSignatures = functionSignatureInfo.allSignatures;
+            }
 
-            var signature = functionSignatureInfo.signature;
-            var allSignatures = functionSignatureInfo.allSignatures;
             var funcSymbol = typeCheckContext.semanticInfo.getSymbolForAST(funcDecl);
 
             // Find the definition signature for this signature group
@@ -1075,7 +1076,7 @@ module TypeScript {
             }
 
             // Privacy error:
-            this.checkTypePrivacy(typeSymbol, baseType, (errorTypeSymbol: PullTypeSymbol) =>
+            this.checkTypePrivacy(typeSymbol, baseType, typeCheckContext, (errorTypeSymbol: PullTypeSymbol) =>
                 this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, typeCheckContext));
         }
 
@@ -1886,9 +1887,76 @@ module TypeScript {
         // validate:
         //  -
         private typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            var type: PullTypeSymbol;
+
+            // the type reference can be
+            // a name
+            // a function
+            // an interface
+            // a dotted name
+            // an array of any of the above
+
+                // Make sure we report errors for the the object type and function type
+                var typeRef = <TypeReference>ast;
+                
+                // a function
+                if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
+                    type = this.typeCheckFunctionTypeSignature(<FunctionDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+                }
+                // an interface
+                else if (typeRef.term.nodeType === NodeType.InterfaceDeclaration) {
+                    type = this.typeCheckInterfaceTypeReference(<NamedDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+                }
+                // Rest of the cases dont need special type check action
+
+            if (!type || !type.isError()) {
+                type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+                this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            }
+
             return type;
+        }
+
+        private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
+            var funcDeclSymbol = <PullFunctionTypeSymbol>this.resolver.getSymbolForAST(funcDeclAST, this.context);
+            if (!funcDeclSymbol) {
+                funcDeclSymbol = <PullFunctionTypeSymbol>this.resolver.resolveFunctionTypeSignature(<FunctionDeclaration>funcDeclAST, enclosingDecl, this.context);
+            }
+            var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+
+            typeCheckContext.pushEnclosingDecl(functionDecl);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext);
+            typeCheckContext.popEnclosingDecl();
+
+            var functionSignature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
+            var parameters = functionSignature.getParameters();
+            if (parameters.length) {
+                for (var i = 0; i < parameters.length; i++) {
+                    this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
+                }
+            }
+
+            if (funcDeclAST.returnTypeAnnotation) {
+                var returnType = functionSignature.getReturnType();
+                this.checkForResolutionError(returnType, enclosingDecl);
+            }
+
+            this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext, functionSignature, [functionSignature]);
+            return funcDeclSymbol;
+        }
+
+        private typeCheckInterfaceTypeReference(interfaceAST: NamedDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
+            var interfaceSymbol = <PullTypeSymbol>this.resolver.getSymbolForAST(interfaceAST, this.context);
+            if (!interfaceSymbol) {
+                interfaceSymbol = this.resolver.resolveInterfaceTypeReference(interfaceAST, enclosingDecl, this.context);
+            }
+            
+            var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
+            typeCheckContext.pushEnclosingDecl(interfaceDecl);
+            this.typeCheckAST(interfaceAST.members, typeCheckContext);
+            typeCheckContext.popEnclosingDecl();
+
+            return interfaceSymbol;
         }
 
         // Conditional expressions
@@ -2215,13 +2283,14 @@ module TypeScript {
 
         // Privacy checking
 
-        private checkTypePrivacy(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
-            if (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive) {
+        private checkTypePrivacy(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
+            if (typeCheckContext.inTypeReference ||
+                (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive)) {
                 return;
             }
 
             if (typeSymbol.isArray()) {
-                this.checkTypePrivacy(declSymbol, (<PullArrayTypeSymbol>typeSymbol).getElementType(), privacyErrorReporter);
+                this.checkTypePrivacy(declSymbol, (<PullArrayTypeSymbol>typeSymbol).getElementType(), typeCheckContext, privacyErrorReporter);
                 return;
             }
 
@@ -2229,12 +2298,12 @@ module TypeScript {
                 // Check the privacy of members, constructors, calls, index signatures
                 var members = typeSymbol.getMembers();
                 for (var i = 0; i < members.length; i++) {
-                    this.checkTypePrivacy(declSymbol, members[i].getType(), privacyErrorReporter);
+                    this.checkTypePrivacy(declSymbol, members[i].getType(), typeCheckContext, privacyErrorReporter);
                 }
 
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), typeCheckContext, privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), typeCheckContext, privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), typeCheckContext, privacyErrorReporter);
 
                 return;
             }
@@ -2272,7 +2341,7 @@ module TypeScript {
             }
         }
 
-        private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
+        private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], typeCheckContext: PullTypeCheckContext, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
             for (var i = 0; i < signatures.length; i++) {
                 var signature = signatures[i];
                 if (signatures.length && signature.isDefinition()) {
@@ -2281,17 +2350,17 @@ module TypeScript {
 
                 var typeParams = signature.getTypeParameters();
                 for (var j = 0; j < typeParams.length; j++) {
-                    this.checkTypePrivacy(declSymbol, typeParams[j], privacyErrorReporter);
+                    this.checkTypePrivacy(declSymbol, typeParams[j], typeCheckContext, privacyErrorReporter);
                 }
 
                 var params = signature.getParameters();
                 for (var j = 0; j < params.length; j++) {
                     var paramType = params[j].getType();
-                    this.checkTypePrivacy(declSymbol, paramType, privacyErrorReporter);
+                    this.checkTypePrivacy(declSymbol, paramType, typeCheckContext, privacyErrorReporter);
                 }
 
                 var returnType = signature.getReturnType();
-                this.checkTypePrivacy(declSymbol, returnType, privacyErrorReporter);
+                this.checkTypePrivacy(declSymbol, returnType, typeCheckContext, privacyErrorReporter);
             }
         }
 
@@ -2427,14 +2496,14 @@ module TypeScript {
             if (!isGetter) {
                 var funcParams = functionSignature.getParameters();
                 for (var i = 0; i < funcParams.length; i++) {
-                    this.checkTypePrivacy(functionSymbol, funcParams[i].getType(), (typeSymbol: PullTypeSymbol) =>
+                    this.checkTypePrivacy(functionSymbol, funcParams[i].getType(), typeCheckContext, (typeSymbol: PullTypeSymbol) =>
                         this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, typeCheckContext));
                 }
             }
 
             // Check return type
             if (!isSetter) {
-                this.checkTypePrivacy(functionSymbol, functionSignature.getReturnType(), (typeSymbol: PullTypeSymbol) =>
+                this.checkTypePrivacy(functionSymbol, functionSignature.getReturnType(), typeCheckContext, (typeSymbol: PullTypeSymbol) =>
                     this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.getReturnType(), typeSymbol, typeCheckContext));
             }
         }

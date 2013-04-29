@@ -12,6 +12,5 @@ function x1(a: number, cb: (x: string) => number) {
 var cb: (number) => number = (x: number) => 1;
 // BUG 669572
 x1(1, cb); // error
-// BUG 669528
 x1(1, (x: 'hi') => 1); // error
 x1(1, (x: string) => 1);

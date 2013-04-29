@@ -396,7 +396,7 @@ module TypeScript {
 
     // function type expressions
     export function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
-        var declFlags = PullElementFlags.None;
+        var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.FunctionType;
 
         var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);

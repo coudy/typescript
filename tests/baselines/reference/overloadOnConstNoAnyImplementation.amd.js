@@ -12,7 +12,6 @@ var cb = function (x) {
 };
 
 x1(1, cb);
-
 x1(1, function (x) {
     return 1;
 });
