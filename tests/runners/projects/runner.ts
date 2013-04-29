@@ -640,8 +640,8 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                     , negative: true
                     , errors: [
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test1.ts(3,2): warning TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test2.ts(5,5): warning TS2136: Import declarations in an internal module cannot reference an external module."
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test1.ts(3,2): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test2.ts(5,5): error TS2136: Import declarations in an internal module cannot reference an external module."
                     ]
             });
 
@@ -655,7 +655,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                     , negative: true
                     , errors: [
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-SimpleCase/test1.ts(2,2): warning TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-SimpleCase/test1.ts(2,2): error TS2136: Import declarations in an internal module cannot reference an external module.",
                     ]
             });
 
@@ -679,16 +679,16 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(2,5): warning TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(21,5): warning TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(3,16): warning TS2027: Exported variable 'm2.c1' has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(5,9): warning TS2058: Return type of exported function has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(7,16): warning TS2027: Exported variable 'm2.x1' has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(9,33): warning TS2018: Exported class 'm2.class1' extends private class 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(22,16): warning TS2027: Exported variable 'm2.c3' has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(24,9): warning TS2058: Return type of exported function has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(26,16): warning TS2027: Exported variable 'm2.x3' has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(28,33): warning TS2018: Exported class 'm2.class3' extends private class 'mne.class1'. "
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(2,5): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(21,5): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(3,16): error TS2027: Exported variable 'm2.c1' has or is using private type 'me.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(5,9): error TS2058: Return type of exported function has or is using private type 'me.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(7,16): error TS2027: Exported variable 'm2.x1' has or is using private type 'me.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(9,33): error TS2018: Exported class 'm2.class1' extends private class 'me.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(22,16): error TS2027: Exported variable 'm2.c3' has or is using private type 'mne.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(24,9): error TS2058: Return type of exported function has or is using private type 'mne.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(26,16): error TS2027: Exported variable 'm2.x3' has or is using private type 'mne.class1'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(28,33): error TS2018: Exported class 'm2.class3' extends private class 'mne.class1'. "
                     ]
             });
 
@@ -756,7 +756,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: []
                 , negative: true
                 , skipRun: true
-                , errors: [TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/declareVariableCollision/in2.d.ts(1,1): warning TS2000: Duplicate identifier 'a'."]
+                , errors: [TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/declareVariableCollision/in2.d.ts(1,1): error TS2000: Duplicate identifier 'a'."]
             })
 
             tests.push({
@@ -1515,7 +1515,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                 , negative: true
                 , errors: [
-                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(1,1): error TS5006: A file cannot reference itself.',
+                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(1,1): error TS5006: A file cannot have a reference itself.',
                     IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(2,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile1.ts\'.',
                     IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(3,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile2.ts\'.']
             });

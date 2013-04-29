@@ -14,7 +14,7 @@ describe('Property Access', function() {
     it("Type of expression is object", function() {
         var code = "var foo: { a: number; }; foo.a = 4; foo.b = 5;";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.compilerWarning(result, 1, 41, "warning TS2094: The property 'b' does not exist on value of type ''.");
+            assert.compilerWarning(result, 1, 41, "error TS2094: The property 'b' does not exist on value of type ''.");
             assert.equal(result.errors.length, 2);
         });
     });
