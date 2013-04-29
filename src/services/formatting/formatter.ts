@@ -187,14 +187,14 @@ module TypeScript.Formatting {
                 // In this case we don't indent the next line in the next pass.
                 if ((rule.Operation.Action == RuleAction.Space || rule.Operation.Action == RuleAction.Delete) &&
                     token1Line != token2Line) {
-                    this.forceSkipIndentingNextToken();
+                    this.forceSkipIndentingNextToken(t2.start());
                 }
 
                 // Handle the case where token2 is moved to the new line. 
                 // In this case we indent token2 in the next pass but we set
                 // sameLineIndent flag to notify the indenter that the indentation is within the line.
                 if (rule.Operation.Action == RuleAction.NewLine && token1Line == token2Line) {
-                    this.forceIndentNextToken();
+                    this.forceIndentNextToken(t2.start());
                 }
             }
 

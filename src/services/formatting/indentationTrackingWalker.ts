@@ -58,12 +58,14 @@ module TypeScript.Formatting {
             return this._indentationNodeContextPool;
         }
 
-        public forceIndentNextToken(): void {
+        public forceIndentNextToken(tokenStart: number): void {
             this._lastTriviaWasNewLine = true;
+            this.forceRecomputeIndentationOfParent(tokenStart, true);
         }
 
-        public forceSkipIndentingNextToken(): void {
+        public forceSkipIndentingNextToken(tokenStart: number): void {
             this._lastTriviaWasNewLine = false;
+            this.forceRecomputeIndentationOfParent(tokenStart, false);
         }
 
         public indentToken(token: ISyntaxToken, indentationLevel: number, commentIndentationLevel: number): void {
@@ -147,7 +149,7 @@ module TypeScript.Formatting {
             return this._parent.indentationLevel();
         }
 
-        private getNodeIndentation(node: SyntaxNode): { indentationLevel: number; indentationLevelDelta: number; } {
+        private getNodeIndentation(node: SyntaxNode, newLineInsertedByFormatting?: boolean): { indentationLevel: number; indentationLevelDelta: number; } {
             var parent = this._parent.node();
             var parentIndentationLevel = this._parent.indentationLevel();
             var parentIndentationLevelDelta = this._parent.childIndentationLevelDelta();
@@ -270,12 +272,16 @@ module TypeScript.Formatting {
             // has a delta of 1, the resulting delta should be 1. This is to indent cases like the following:
             //  return a
             //      || b;
+            // Lastly, it is possible the node indentation needs to be recomputed because the formatter inserted a newline before its first token.
+            // If this is the case, we know the node no longer starts on the same line as its parent (or at least we shouldn't treat it as such).
             if (parent) {
-                var parentStartLine = this._snapshot.getLineNumberFromPosition(this._parent.start());
-                var currentNodeStartLine = this._snapshot.getLineNumberFromPosition(this._position + node.leadingTriviaWidth());
-                if (parentStartLine === currentNodeStartLine) {
-                    indentationLevel = parentIndentationLevel;
-                    indentationLevelDelta = Math.min(1, parentIndentationLevelDelta + indentationLevelDelta);
+                if (!newLineInsertedByFormatting /*This could be false or undefined here*/) {
+                    var parentStartLine = this._snapshot.getLineNumberFromPosition(this._parent.start());
+                    var currentNodeStartLine = this._snapshot.getLineNumberFromPosition(this._position + node.leadingTriviaWidth());
+                    if (parentStartLine === currentNodeStartLine || newLineInsertedByFormatting === false /*meaning a new line was removed and we are force recomputing*/) {
+                        indentationLevel = parentIndentationLevel;
+                        indentationLevelDelta = Math.min(1, parentIndentationLevelDelta + indentationLevelDelta);
+                    }
                 }
             }
 
@@ -283,6 +289,14 @@ module TypeScript.Formatting {
                 indentationLevel: indentationLevel,
                 indentationLevelDelta: indentationLevelDelta
             };
+        }
+
+        public forceRecomputeIndentationOfParent(tokenStart: number, newLineAdded: boolean /*as opposed to removed*/): void {
+            var parent = this._parent;
+            if (parent.fullStart() === tokenStart) {
+                var indentation = this.getNodeIndentation(parent.node(), /* newLineInsertedByFormatting */ newLineAdded);
+                parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationLevel, indentation.indentationLevelDelta);
+            }
         }
     }
 }
