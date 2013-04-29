@@ -1,4 +1,4 @@
-///<reference path='..\core\diagnosticInfo.ts'/>
+///<reference path='..\core\diagnosticCode.ts'/>
 
 module TypeScript {
     export var EN_DiagnosticMessages = {
@@ -500,7 +500,7 @@ module TypeScript {
 
         "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.": "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.",
 
-        "A file cannot reference itself.": "A file cannot reference itself.",
+        "A file cannot have a reference itself.": "A file cannot have a reference itself.",
 
         "Cannot resolve referenced file: '{0}'.": "Cannot resolve referenced file: '{0}'.",
 
@@ -513,15 +513,15 @@ module TypeScript {
         "Emit Error: {0}.": "Emit Error: {0}."
     };
 
-    for (var name in DiagnosticInfoMap) {
-        if (DiagnosticInfoMap.hasOwnProperty(name)) {
+    for (var name in DiagnosticMessageInformationMap) {
+        if (DiagnosticMessageInformationMap.hasOwnProperty(name)) {
             Debug.assert(EN_DiagnosticMessages.hasOwnProperty(name));
         }
     }
 
     for (var name in EN_DiagnosticMessages) {
         if (EN_DiagnosticMessages.hasOwnProperty(name)) {
-            Debug.assert(DiagnosticInfoMap.hasOwnProperty(name));
+            Debug.assert(DiagnosticMessageInformationMap.hasOwnProperty(name));
             Debug.assert(EN_DiagnosticMessages[name] === name);
         }
     }

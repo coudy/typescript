@@ -579,7 +579,7 @@ class BatchCompiler {
     private watchFiles(diagnosticMessages: any, sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.addDiagnostic(
-                new TypeScript.Diagnostic(null, 0, 0, "Current host does not support -w[atch] option.", null));
+                new TypeScript.SemanticDiagnostic(null, 0, 0, "Current host does not support -w[atch] option.", null));
             return;
         }
 

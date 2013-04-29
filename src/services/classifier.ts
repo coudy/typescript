@@ -52,7 +52,7 @@ module Services {
     export class Classifier {
         private scanner: TypeScript.Scanner;
         private characterWindow: number[] = TypeScript.ArrayUtilities.createArray(2048, 0);
-        private diagnostics: TypeScript.Diagnostic[] = [];
+        private diagnostics: TypeScript.SyntaxDiagnostic[] = [];
 
         constructor(public host: IClassifierHost) {
         }

@@ -5,6 +5,7 @@
 ///<reference path='contract.ts' />
 ///<reference path='debug.ts' />
 ///<reference path='diagnosticCategory.ts' />
+///<reference path='diagnosticCode.ts' />
 ///<reference path='diagnosticInfo.ts' />
 ///<reference path='errors.ts' />
 ///<reference path='hash.ts' />

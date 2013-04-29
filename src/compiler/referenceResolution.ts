@@ -199,7 +199,7 @@ module TypeScript {
 
                         if (resolvedFilePath === normalizedPath) {
                             resolutionDispatcher.errorReporter.addDiagnostic(
-                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, "A file cannot reference itself.", null));
+                                new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, "A file cannot have a reference itself.", null));
                             continue;
                         }
 

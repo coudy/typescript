@@ -399,7 +399,7 @@ module TypeScript.Parser {
 
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
-        tokenDiagnostics(): Diagnostic[];
+        tokenDiagnostics(): SyntaxDiagnostic[];
         
         languageVersion(): LanguageVersion;
     }
@@ -424,7 +424,7 @@ module TypeScript.Parser {
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
         // reparse a / or /= as a regular expression.
-        private _tokenDiagnostics: Diagnostic[] = [];
+        private _tokenDiagnostics: SyntaxDiagnostic[] = [];
 
         // Pool of rewind points we give out if the parser needs one.
         private rewindPointPool: IParserRewindPoint[] = [];
@@ -460,7 +460,7 @@ module TypeScript.Parser {
             return this._previousToken;
         }
 
-        public tokenDiagnostics(): Diagnostic[] {
+        public tokenDiagnostics(): SyntaxDiagnostic[] {
             return this._tokenDiagnostics;
         }
 
@@ -716,7 +716,7 @@ module TypeScript.Parser {
             return this._normalParserSource.previousToken();
         }
 
-        public tokenDiagnostics(): Diagnostic[] {
+        public tokenDiagnostics(): SyntaxDiagnostic[] {
             return this._normalParserSource.tokenDiagnostics();
         }
 
@@ -1078,7 +1078,7 @@ module TypeScript.Parser {
         // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
         // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
         // started at.
-        private diagnostics: Diagnostic[] = [];
+        private diagnostics: SyntaxDiagnostic[] = [];
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
@@ -1356,7 +1356,7 @@ module TypeScript.Parser {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
-                        new Diagnostic(this.fileName, this.previousTokenEnd(), 0, "Automatic semicolon insertion not allowed.", null));
+                        new SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, "Automatic semicolon insertion not allowed.", null));
                 }
 
                 return semicolonToken;
@@ -1390,23 +1390,23 @@ module TypeScript.Parser {
             return Syntax.emptyToken(expectedKind);
         }
 
-        private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, actual: ISyntaxToken): Diagnostic {
+        private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
             var token = this.currentToken();
 
             // They wanted something specific, just report that that token was missing.
             if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), "'{0}' expected.", [SyntaxFacts.getText(expectedKind)]);
+                return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), "'{0}' expected.", [SyntaxFacts.getText(expectedKind)]);
             }
             else {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), "Identifier expected; '{0}' is a keyword.", [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), "Identifier expected; '{0}' is a keyword.", [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), "Identifier expected.", null);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), "Identifier expected.", null);
                 }
             }
 
@@ -1590,7 +1590,7 @@ module TypeScript.Parser {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            allDiagnostics.sort((a: Diagnostic, b: Diagnostic) => a.start() - b.start());
+            allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
             return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
         }
@@ -2334,7 +2334,7 @@ module TypeScript.Parser {
                 // "function f() { return expr; }.
                 // 
                 // Detect if the user is typing this and attempt recovery.
-                var diagnostic = new Diagnostic(this.fileName,
+                var diagnostic = new SyntaxDiagnostic(this.fileName,
                     this.currentTokenStart(), token0.width(), "Unexpected token.", []);
                 this.addDiagnostic(diagnostic);
 
@@ -3806,7 +3806,7 @@ module TypeScript.Parser {
                     // as an arithmetic expression.
                     if (isDot) {
                         // A parameter list must follow a generic type argument list.
-                        var diagnostic = new Diagnostic(this.fileName, this.currentTokenStart(), token0.width(),
+                        var diagnostic = new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(),
                             "A parameter list must follow a generic type argument list. '(' expected.", null);
                         this.addDiagnostic(diagnostic);
 
@@ -3854,7 +3854,7 @@ module TypeScript.Parser {
                 inObjectCreation) {
 
                 var end = this.currentTokenStart() + this.currentToken().width();
-                var diagnostic = new Diagnostic(this.fileName, start, end - start,
+                var diagnostic = new SyntaxDiagnostic(this.fileName, start, end - start,
                     "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.", null);
                 this.addDiagnostic(diagnostic);
 
@@ -5127,12 +5127,12 @@ module TypeScript.Parser {
         private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
             var token = this.currentToken();
 
-            var diagnostic = new Diagnostic(this.fileName,
+            var diagnostic = new SyntaxDiagnostic(this.fileName,
                 this.currentTokenStart(), token.width(), "Unexpected token; '{0}' expected.", [this.getExpectedListElementType(listType)]);
             this.addDiagnostic(diagnostic);
         }
 
-        private addDiagnostic(diagnostic: Diagnostic): void {
+        private addDiagnostic(diagnostic: SyntaxDiagnostic): void {
             // Except: if we already have a diagnostic for this position, don't report another one.
             if (this.diagnostics.length > 0 &&
                 this.diagnostics[this.diagnostics.length - 1].start() === diagnostic.start()) {

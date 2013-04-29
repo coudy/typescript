@@ -112,7 +112,7 @@ module TypeScript {
     }
 
     export function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
-        var result = DiagnosticInfoMap[diagnosticKey];
+        var result = DiagnosticMessageInformationMap[diagnosticKey];
         Debug.assert(result !== undefined && result !== null);
         return result;
     }

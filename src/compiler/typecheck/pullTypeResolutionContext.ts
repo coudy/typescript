@@ -125,7 +125,7 @@ module TypeScript {
     export class PullContextualTypeContext {
 
         public provisionallyTypedSymbols: PullSymbol[] = [];
-        public provisionalDiagnostic: Diagnostic[] = [];
+        public provisionalDiagnostic: SemanticDiagnostic[] = [];
 
         constructor(public contextualType: PullTypeSymbol,
                      public provisional: boolean,
@@ -141,7 +141,7 @@ module TypeScript {
             }
         }
 
-        public postDiagnostic(error: Diagnostic) {
+        public postDiagnostic(error: SemanticDiagnostic) {
             this.provisionalDiagnostic[this.provisionalDiagnostic.length] = error;
         }
 
@@ -275,7 +275,7 @@ module TypeScript {
                 return;
             }
 
-            var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
+            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticKey, arguments);
 
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
