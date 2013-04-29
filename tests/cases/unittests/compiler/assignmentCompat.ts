@@ -1,6 +1,7 @@
 ///<reference path='..\..\..\..\src\harness\harness.ts'/>
 
 describe("Assignment compatibility", function() {
+    debugger;
     var typeFactory = new Harness.Compiler.TypeFactory();
     var any     = typeFactory.any;
     var number  = typeFactory.number;
