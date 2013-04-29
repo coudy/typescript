@@ -20,26 +20,17 @@ module TypeScript {
             }
         }
 
-        private indentString(): string {
-            var result = "";
-            for (var i = 0; i < this.indent; i++) {
-                result += "\t";
-            }
-
-            return result;
-        }
-
         public addMessage(message) {
             if (!this.onlyCaptureFirstError && this.message) {
-                this.message = this.message + "\r\n" + this.indentString() + message;
+                this.message = getDiagnosticMessage(DiagnosticCode._0__NL__1_TB__2, [this.message, this.indent, message]);
             }
             else {
-                this.message = this.indentString() + message;
+                this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
             }
         }
 
         public setMessage(message) {
-            this.message = this.indentString() + message;
+            this.message = getDiagnosticMessage(DiagnosticCode._0_TB__1, [this.indent, message]);
         }
     }
 

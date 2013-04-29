@@ -5,6 +5,9 @@ module TypeScript {
         error_TS_0__1,
         warning_TS_0__1,
 
+        _0__NL__1_TB__2,
+        _0_TB__1,
+
         // Syntactic diagnostics.
         Unrecognized_escape_sequence,
         Unexpected_character_0,

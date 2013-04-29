@@ -134,17 +134,28 @@ module TypeScript {
             }
         }
 
-        var diagnosticMessageText = diagnostic.message;
-        
+        var diagnosticMessageText = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
+            var tabChar = "\t";
+            var result = tabChar;
+            if (num && args[num]) {
+                for (var i = 1; i < <number>args[num]; i++) {
+                    result += tabChar;
+                }
+            }
+
+            return result;
+        } );
+
+
         diagnosticMessageText = diagnosticMessageText.replace(/{(\d+)}/g, function (match, num) {
             return typeof args[num] !== 'undefined'
                 ? args[num]
                 : match;
-        });
+        } );
 
         diagnosticMessageText = diagnosticMessageText.replace(/{(NL)}/g, function (match) {
             return "\r\n";
-        });
+        } );
 
         return diagnosticMessageText;
     }

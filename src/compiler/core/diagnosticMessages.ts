@@ -1,10 +1,12 @@
 ///<reference path='references.ts' />
-///<reference path='..\..\harness\external\json2stringify.ts' />
 
 module TypeScript {
     export interface IDiagnosticMessages {
         error_TS_0__1: DiagnosticInfo;
         warning_TS_0__1: DiagnosticInfo;
+
+        _0__NL__1_TB__2: DiagnosticInfo;
+        _0_TB__1: DiagnosticInfo;
 
         // Syntactic diagnostics.
         Unrecognized_escape_sequence: DiagnosticInfo;
@@ -285,6 +287,18 @@ module TypeScript {
             category: DiagnosticCategory.NoPrefix,
             message: "warning TS{0}: {1}",
             code: 1
+        },
+
+        _0__NL__1_TB__2: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "{0}{NL}{{1}TB}{2}",
+            code: 21
+        },
+
+        _0_TB__1: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "{{0}TB}{1}",
+            code: 22
         },
 
         // Syntactic errors start at 100.
@@ -1670,18 +1684,4 @@ module TypeScript {
             seenCodes[diagnosticMessage.code] = diagnosticMessage;
         }
     }
-
-    //var newDiagnosticInfo = {};//"export var DiagnosticInformation {\r\n";
-    //var newDiagnosticMessages = {};
-    //for (var name in diagnosticMessages) {
-    //    if (diagnosticMessages.hasOwnProperty(name)) {
-    //        var diagnosticMessage = <DiagnosticInfo>diagnosticMessages[name];
-    //        newDiagnosticInfo[diagnosticMessage.message] = { category: diagnosticMessage.category, code: diagnosticMessage.code };
-    //        newDiagnosticMessages[diagnosticMessage.message] = diagnosticMessage.message;
-    //    }
-    //}
-
-    //export var newDiagnosticInfoString = JSON2.stringify(newDiagnosticInfo, null, "    ");
-    //export var newDiagnosticInfoMessagesString = JSON2.stringify(newDiagnosticMessages, null, "    ");
-    //export var foo = "";
 }
