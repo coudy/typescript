@@ -21,20 +21,18 @@
 ////}
 
 goTo.marker('1');
-// bug 667635: The completion list of module's exported members is not complete
-//verify.completionListContains('meX', 'number');
-//verify.completionListContains('meFunc', '(): void');
+verify.completionListContains('meX', 'number');
+verify.completionListContains('meFunc', '(): void');
 verify.completionListContains('meClass', 'mod1.meClass');
 verify.completionListContains('meMod', 'mod1.meMod');
 verify.completionListContains('meInt', 'mod1.meInt');
 
 goTo.marker('2');
-// bug 667635: The completion list of module's exported members is not complete
 verify.completionListContains('meX', 'number');
 verify.completionListContains('meFunc', '(): void');
-//verify.completionListContains('meClass', 'mod1.meClass');
+verify.completionListContains('meClass', 'mod1.meClass');
 verify.completionListContains('meMod', 'mod1.meMod');
-//verify.completionListContains('meInt', 'mod1.meInt');
+verify.completionListContains('meInt', 'mod1.meInt');
 
 goTo.marker('3');
 verify.completionListContains('iMex', 'number');
