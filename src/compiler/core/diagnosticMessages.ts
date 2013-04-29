@@ -1679,7 +1679,7 @@ module TypeScript {
             var diagnosticMessage = <DiagnosticInfo>diagnosticMessages[name];
             newDiagnosticInfo[diagnosticMessage.message] = { category: diagnosticMessage.category, code: diagnosticMessage.code };
             newDiagnosticMessages[diagnosticMessage.message] = diagnosticMessage.message;
-            dictionary += "{ " + JSON2.stringify(name) + ", " + JSON2.stringify(diagnosticMessage.message) + " },\r\n";
+            dictionary += "(" + name + ", " + JSON2.stringify(diagnosticMessage.message) + "),\r\n";
         }
     }
 
