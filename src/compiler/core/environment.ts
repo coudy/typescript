@@ -222,7 +222,7 @@ var Environment = (function () {
             },
             
             directoryExists: function(path: string): boolean {
-                return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
+                return _fs.existsSync(path) && _fs.statSync(path).isDirectory();
             },
 
             listFiles: function dir(path, spec?, options?) {
