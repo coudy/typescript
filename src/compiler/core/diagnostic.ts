@@ -30,11 +30,8 @@ module TypeScript {
             var result: any = {};
             result.start = this.start();
             result.length = this.length();
-<<<<<<< HEAD
+
             result.diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
-=======
-            result.diagnosticKey = this._diagnosticKey;
->>>>>>> Updating fidelity tests.
 
             var arguments = (<any>this).arguments();
             if (arguments && arguments.length > 0) {
