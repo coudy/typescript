@@ -6,4 +6,4 @@ define(["require", "exports"], function(require, exports) {
 
     Baz.x = "goodbye";
     void 0;
-})
+});

@@ -12,4 +12,4 @@ define(["require", "exports"], function(require, exports) {
         return C;
     })();
     exports.C = C;
-})
+});

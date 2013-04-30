@@ -539,7 +539,7 @@ define(["require", "exports"], function(require, exports) {
     var eM = exports.eM;
 
     ;
-})
+});
 ////[0.d.ts]
 export declare var eV;
 export declare function eF(): void;

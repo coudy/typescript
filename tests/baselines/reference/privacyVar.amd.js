@@ -181,4 +181,4 @@ define(["require", "exports"], function(require, exports) {
     exports.glo_v22_public = new glo_C1_public();
     var glo_v23_private = new glo_C2_private();
     exports.glo_v24_public = new glo_C2_private();
-})
+});

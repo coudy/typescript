@@ -66,4 +66,4 @@ define(["require", "exports"], function(require, exports) {
         }
         return C3;
     })();
-})
+});

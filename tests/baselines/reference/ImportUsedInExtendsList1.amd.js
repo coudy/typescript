@@ -13,4 +13,4 @@ define(["require", "exports", 'base'], function(require, exports, __foo__) {
         }
         return Sub;
     })(foo.Super);
-})
+});

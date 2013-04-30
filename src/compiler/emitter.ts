@@ -812,7 +812,7 @@ module TypeScript {
             // epilogue
             if (isDynamicMod) {
                 if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                    this.writeToOutput("})");
+                    this.writeToOutput("});");
                 }
 
                 if (!isWholeFile) {

@@ -310,4 +310,4 @@ define(["require", "exports"], function(require, exports) {
         return glo_C12_public;
     })(glo_c_private);
     exports.glo_C12_public = glo_C12_public;
-})
+});

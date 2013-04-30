@@ -25,4 +25,4 @@ define(["require", "exports"], function(require, exports) {
         return Test;
     })();
     exports.Test = Test;
-})
+});

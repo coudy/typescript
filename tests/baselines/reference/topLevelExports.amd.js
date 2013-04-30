@@ -6,4 +6,4 @@ define(["require", "exports"], function(require, exports) {
     }
 
     void log(exports.foo).toString();
-})
+});

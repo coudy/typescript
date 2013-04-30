@@ -5,4 +5,4 @@ define(["require", "exports"], function(require, exports) {
         return FilterManager;
     })();
     exports.FilterManager = FilterManager;
-})
+});

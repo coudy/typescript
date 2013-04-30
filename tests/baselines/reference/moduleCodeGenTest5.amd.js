@@ -38,4 +38,4 @@ define(["require", "exports"], function(require, exports) {
         E2.B = 0;
     })(E2 || (E2 = {}));
     var v = E2.B;
-})
+});

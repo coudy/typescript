@@ -3,4 +3,4 @@ define(["require", "exports"], function(require, exports) {
     exports.x = function () {
         return _this.window;
     };
-})
+});
