@@ -504,7 +504,8 @@ module TypeScript {
             this.context.suppressErrors = true;
             var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
-            if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
+
+            if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
                 this.checkForResolutionError(varTypeSymbol, decl);
             }
             this.context.suppressErrors = prevSupressErrors;
@@ -1925,7 +1926,7 @@ module TypeScript {
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             typeCheckContext.popEnclosingDecl();
 
             var functionSignature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
@@ -1953,7 +1954,7 @@ module TypeScript {
             
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
             typeCheckContext.pushEnclosingDecl(interfaceDecl);
-            this.typeCheckAST(interfaceAST.members, typeCheckContext);
+            this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             typeCheckContext.popEnclosingDecl();
 
             return interfaceSymbol;

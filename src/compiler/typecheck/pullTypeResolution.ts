@@ -135,7 +135,7 @@ module TypeScript {
             return this.semanticInfoChain.getDeclForAST(ast, this.unitPath);
         }
 
-        private getSymbolForAST(ast: AST, context: PullTypeResolutionContext): PullSymbol {
+        public getSymbolForAST(ast: AST, context: PullTypeResolutionContext): PullSymbol {
             return this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
         }
 
@@ -1184,7 +1184,7 @@ module TypeScript {
             return importDeclSymbol;
         }
 
-        private resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context);
 
             if (!funcDeclSymbol) {
@@ -1325,7 +1325,7 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        private resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceSymbol = <PullTypeSymbol>this.getSymbolForAST(interfaceDeclAST, context);//new PullTypeSymbol("", PullElementKind.Interface);
 
             if (!interfaceSymbol) {
