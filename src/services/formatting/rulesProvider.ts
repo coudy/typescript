@@ -45,7 +45,7 @@ module TypeScript.Formatting {
 
                 this.activeRules = activeRules;
                 this.rulesMap = rulesMap;
-                this.options = options.clone();
+                this.options = Services.FormatCodeOptions.clone(options);
             }
         }
 

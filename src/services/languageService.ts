@@ -135,12 +135,12 @@ module Services {
         public NewLineCharacter: string = "\r\n";
         public ConvertTabsToSpaces: boolean = true;
 
-        public clone(): EditorOptions {
+        public static clone(objectToClone: EditorOptions): EditorOptions {
             var editorOptions = new EditorOptions();
-            editorOptions.IndentSize = this.IndentSize;
-            editorOptions.TabSize = this.TabSize;
-            editorOptions.NewLineCharacter = this.NewLineCharacter;
-            editorOptions.ConvertTabsToSpaces = this.ConvertTabsToSpaces;
+            editorOptions.IndentSize = objectToClone.IndentSize;
+            editorOptions.TabSize = objectToClone.TabSize;
+            editorOptions.NewLineCharacter = objectToClone.NewLineCharacter;
+            editorOptions.ConvertTabsToSpaces = objectToClone.ConvertTabsToSpaces;
             return editorOptions;
         }
     }
@@ -155,16 +155,16 @@ module Services {
         public PlaceOpenBraceOnNewLineForFunctions: boolean = false;
         public PlaceOpenBraceOnNewLineForControlBlocks: boolean = false;
 
-        public clone(): FormatCodeOptions {
-            var formatCodeOptions = <FormatCodeOptions>super.clone();
-            formatCodeOptions.InsertSpaceAfterCommaDelimiter = this.InsertSpaceAfterCommaDelimiter;
-            formatCodeOptions.InsertSpaceAfterSemicolonInForStatements = this.InsertSpaceAfterSemicolonInForStatements;
-            formatCodeOptions.InsertSpaceBeforeAndAfterBinaryOperators = this.InsertSpaceBeforeAndAfterBinaryOperators;
-            formatCodeOptions.InsertSpaceAfterKeywordsInControlFlowStatements = this.InsertSpaceAfterKeywordsInControlFlowStatements;
-            formatCodeOptions.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = this.InsertSpaceAfterFunctionKeywordForAnonymousFunctions;
-            formatCodeOptions.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = this.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis;
-            formatCodeOptions.PlaceOpenBraceOnNewLineForFunctions = this.PlaceOpenBraceOnNewLineForFunctions;
-            formatCodeOptions.PlaceOpenBraceOnNewLineForControlBlocks = this.PlaceOpenBraceOnNewLineForControlBlocks;
+        public static clone(objectToClone: FormatCodeOptions ): FormatCodeOptions {
+            var formatCodeOptions = <FormatCodeOptions>EditorOptions.clone(objectToClone);
+            formatCodeOptions.InsertSpaceAfterCommaDelimiter = objectToClone.InsertSpaceAfterCommaDelimiter;
+            formatCodeOptions.InsertSpaceAfterSemicolonInForStatements = objectToClone.InsertSpaceAfterSemicolonInForStatements;
+            formatCodeOptions.InsertSpaceBeforeAndAfterBinaryOperators = objectToClone.InsertSpaceBeforeAndAfterBinaryOperators;
+            formatCodeOptions.InsertSpaceAfterKeywordsInControlFlowStatements = objectToClone.InsertSpaceAfterKeywordsInControlFlowStatements;
+            formatCodeOptions.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = objectToClone.InsertSpaceAfterFunctionKeywordForAnonymousFunctions;
+            formatCodeOptions.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = objectToClone.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis;
+            formatCodeOptions.PlaceOpenBraceOnNewLineForFunctions = objectToClone.PlaceOpenBraceOnNewLineForFunctions;
+            formatCodeOptions.PlaceOpenBraceOnNewLineForControlBlocks = objectToClone.PlaceOpenBraceOnNewLineForControlBlocks;
             return formatCodeOptions;
         }
     }
