@@ -24,7 +24,7 @@ module TypeScript.Formatting {
         private _lastTriviaWasNewLine: boolean;
         private _indentationNodeContextPool: IndentationNodeContextPool;
 
-        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean) {
+        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, public options: FormattingOptions) {
             super();
 
             // Create a pool object to manage context nodes while walking the tree
@@ -68,18 +68,18 @@ module TypeScript.Formatting {
             this.forceRecomputeIndentationOfParent(tokenStart, false);
         }
 
-        public indentToken(token: ISyntaxToken, indentationLevel: number, commentIndentationLevel: number): void {
+        public indentToken(token: ISyntaxToken, indentationAmount: number, commentIndentationAmount: number): void {
             throw Errors.abstract();
         }
 
         public visitTokenInSpan(token: ISyntaxToken): void {
             if (this._lastTriviaWasNewLine) {
                 // Compute the indentation level at the current token
-                var indentationLevel = this.getTokenIndentationLevel(token);
-                var commentIndentationLevel = this.getCommentIndentationLevel(token);
+                var indentationAmount = this.getTokenIndentationAmount(token);
+                var commentIndentationAmount = this.getCommentIndentationAmount(token);
 
                 // Process the token
-                this.indentToken(token, indentationLevel, commentIndentationLevel);
+                this.indentToken(token, indentationAmount, commentIndentationAmount);
             }
         }
 
@@ -107,7 +107,7 @@ module TypeScript.Formatting {
 
                 // Update the parent
                 var currentParent = this._parent;
-                this._parent = this._indentationNodeContextPool.getNode(currentParent, node, this._position, indentation.indentationLevel, indentation.indentationLevelDelta);
+                this._parent = this._indentationNodeContextPool.getNode(currentParent, node, this._position, indentation.indentationAmount, indentation.indentationAmountDelta);
 
                 // Visit node
                 node.accept(this);
@@ -122,7 +122,7 @@ module TypeScript.Formatting {
             }
         }
 
-        private getTokenIndentationLevel(token: ISyntaxToken): number {
+        private getTokenIndentationAmount(token: ISyntaxToken): number {
             // If this is the first token of a node, it should follow the node indentation and not the child indentation; 
             // (e.g.class in a class declaration or module in module declariotion).
             // Open and close braces should follow the indentation of thier parent as well(e.g.
@@ -133,32 +133,32 @@ module TypeScript.Formatting {
                 token.kind() === SyntaxKind.OpenBraceToken || token.kind() === SyntaxKind.CloseBraceToken ||
                 token.kind() === SyntaxKind.OpenBracketToken || token.kind() === SyntaxKind.CloseBracketToken ||
                 (token.kind() === SyntaxKind.WhileKeyword && this._parent.node().kind() == SyntaxKind.DoStatement)) {
-                return this._parent.indentationLevel();
+                return this._parent.indentationAmount();
             }
 
-            return (this._parent.indentationLevel() + this._parent.childIndentationLevelDelta());
+            return (this._parent.indentationAmount() + this._parent.childIndentationAmountDelta());
         }
 
-        private getCommentIndentationLevel(token: ISyntaxToken): number {
+        private getCommentIndentationAmount(token: ISyntaxToken): number {
             // If this is token terminating an indentation scope, leading comments should be indented to follow the children 
             // indentation level and not the node
 
             if (token.kind() === SyntaxKind.CloseBraceToken || token.kind() === SyntaxKind.CloseBracketToken) {
-                return (this._parent.indentationLevel() + this._parent.childIndentationLevelDelta());
+                return (this._parent.indentationAmount() + this._parent.childIndentationAmountDelta());
             }
-            return this._parent.indentationLevel();
+            return this._parent.indentationAmount();
         }
 
-        private getNodeIndentation(node: SyntaxNode, newLineInsertedByFormatting?: boolean): { indentationLevel: number; indentationLevelDelta: number; } {
+        private getNodeIndentation(node: SyntaxNode, newLineInsertedByFormatting?: boolean): { indentationAmount: number; indentationAmountDelta: number; } {
             var parent = this._parent.node();
-            var parentIndentationLevel = this._parent.indentationLevel();
-            var parentIndentationLevelDelta = this._parent.childIndentationLevelDelta();
+            var parentIndentationAmount = this._parent.indentationAmount();
+            var parentIndentationAmountDelta = this._parent.childIndentationAmountDelta();
 
             // The indentation level of the node
-            var indentationLevel;
+            var indentationAmount;
 
             // The delta it adds to its children. 
-            var indentationLevelDelta;
+            var indentationAmountDelta;
 
             switch (node.kind()) {
                 default:
@@ -166,8 +166,8 @@ module TypeScript.Formatting {
                     // This node should follow the child indentation set by its parent
                     // This node does not introduce any new indentation scope, indent any decendants of this node (tokens or child nodes)
                     // using the same indentation level
-                    indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                    indentationLevelDelta = 0;
+                    indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
+                    indentationAmountDelta = 0;
                     break;
 
                 // Statements introducing {}
@@ -212,8 +212,8 @@ module TypeScript.Formatting {
 
                     // These nodes should follow the child indentation set by its parent;
                     // they introduce a new indenation scope; children should be indented at one level deeper
-                    indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                    indentationLevelDelta = 1;
+                    indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
+                    indentationAmountDelta = this.options.indentSpaces;
                     break;
 
                 case SyntaxKind.IfStatement:
@@ -222,20 +222,20 @@ module TypeScript.Formatting {
                         !(<IfStatementSyntax>node).ifKeyword.hasLeadingNewLine()) {
                         // This is an else if statement with the if on the same line as the else, do not indent the if statmement.
                         // Note: Children indentation has already been set by the parent if statement, so no need to increment
-                        indentationLevel = parentIndentationLevel;
+                        indentationAmount = parentIndentationAmount;
                     }
                     else {
                         // Otherwise introduce a new indenation scope; children should be indented at one level deeper
-                        indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
+                        indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
                     }
-                    indentationLevelDelta = 1;
+                    indentationAmountDelta = this.options.indentSpaces;
                     break;
 
                 case SyntaxKind.ElseClause:
                     // Else should always follow its parent if statement indentation.
                     // Note: Children indentation has already been set by the parent if statement, so no need to increment
-                    indentationLevel = parentIndentationLevel;
-                    indentationLevelDelta = 1;
+                    indentationAmount = parentIndentationAmount;
+                    indentationAmountDelta = this.options.indentSpaces;
                     break;
 
 
@@ -247,15 +247,15 @@ module TypeScript.Formatting {
                         case SyntaxKind.Block:
                         case SyntaxKind.CaseSwitchClause:
                         case SyntaxKind.DefaultSwitchClause:
-                            indentationLevel = parentIndentationLevel + parentIndentationLevelDelta;
+                            indentationAmount = parentIndentationAmount + parentIndentationAmountDelta;
                             break;
 
                         default:
-                            indentationLevel = parentIndentationLevel;
+                            indentationAmount = parentIndentationAmount;
                             break;
                     }
 
-                    indentationLevelDelta = 1;
+                    indentationAmountDelta = this.options.indentSpaces;
                     break;
             }
 
@@ -268,8 +268,8 @@ module TypeScript.Formatting {
             //	return {
             //	        a:1
             //	    };
-            // We also need to pass the delta (if it is 1) to the children, so that subsequent lines get indented. Essentially, if any node starting on the given line
-            // has a delta of 1, the resulting delta should be 1. This is to indent cases like the following:
+            // We also need to pass the delta (if it is nonzero) to the children, so that subsequent lines get indented. Essentially, if any node starting on the given line
+            // has a nonzero delta , the resulting delta should be inherited from this node. This is to indent cases like the following:
             //  return a
             //      || b;
             // Lastly, it is possible the node indentation needs to be recomputed because the formatter inserted a newline before its first token.
@@ -279,15 +279,15 @@ module TypeScript.Formatting {
                     var parentStartLine = this._snapshot.getLineNumberFromPosition(this._parent.start());
                     var currentNodeStartLine = this._snapshot.getLineNumberFromPosition(this._position + node.leadingTriviaWidth());
                     if (parentStartLine === currentNodeStartLine || newLineInsertedByFormatting === false /*meaning a new line was removed and we are force recomputing*/) {
-                        indentationLevel = parentIndentationLevel;
-                        indentationLevelDelta = Math.min(1, parentIndentationLevelDelta + indentationLevelDelta);
+                        indentationAmount = parentIndentationAmount;
+                        indentationAmountDelta = Math.min(this.options.indentSpaces, parentIndentationAmountDelta + indentationAmountDelta);
                     }
                 }
             }
 
             return {
-                indentationLevel: indentationLevel,
-                indentationLevelDelta: indentationLevelDelta
+                indentationAmount: indentationAmount,
+                indentationAmountDelta: indentationAmountDelta
             };
         }
 
@@ -295,7 +295,7 @@ module TypeScript.Formatting {
             var parent = this._parent;
             if (parent.fullStart() === tokenStart) {
                 var indentation = this.getNodeIndentation(parent.node(), /* newLineInsertedByFormatting */ newLineAdded);
-                parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationLevel, indentation.indentationLevelDelta);
+                parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationAmount, indentation.indentationAmountDelta);
             }
         }
     }

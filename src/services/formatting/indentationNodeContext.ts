@@ -20,13 +20,13 @@ module TypeScript.Formatting {
         private _node: SyntaxNode;
         private _parent: IndentationNodeContext;
         private _fullStart: number;
-        private _indentationLevel: number;
-        private _childIndentationLevelDelta: number;
+        private _indentationAmount: number;
+        private _childIndentationAmountDelta: number;
         private _depth: number;
         private _hasSkippedOrMissingTokenChild: boolean;
 
-        constructor(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationLevel: number, childIndentationLevelDelta: number) {
-            this.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
+        constructor(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationAmount: number, childIndentationAmountDelta: number) {
+            this.update(parent, node, fullStart, indentationAmount, childIndentationAmountDelta);
         }
 
         public parent(): IndentationNodeContext {
@@ -53,12 +53,12 @@ module TypeScript.Formatting {
             return this._fullStart + this._node.leadingTriviaWidth() + this._node.width();
         }
 
-        public indentationLevel(): number {
-            return this._indentationLevel;
+        public indentationAmount(): number {
+            return this._indentationAmount;
         }
 
-        public childIndentationLevelDelta(): number {
-            return this._childIndentationLevelDelta;
+        public childIndentationAmountDelta(): number {
+            return this._childIndentationAmountDelta;
         }
 
         public depth(): number {
@@ -81,15 +81,15 @@ module TypeScript.Formatting {
             if (this._parent) {
                 parent = this._parent.clone(pool);
             }
-            return pool.getNode(parent, this._node, this._fullStart, this._indentationLevel, this._childIndentationLevelDelta);
+            return pool.getNode(parent, this._node, this._fullStart, this._indentationAmount, this._childIndentationAmountDelta);
         }
 
-        public update(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationLevel: number, childIndentationLevelDelta: number) {
+        public update(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationAmount: number, childIndentationAmountDelta: number) {
             this._parent = parent;
             this._node = node;
             this._fullStart = fullStart;
-            this._indentationLevel = indentationLevel;
-            this._childIndentationLevelDelta = childIndentationLevelDelta;
+            this._indentationAmount = indentationAmount;
+            this._childIndentationAmountDelta = childIndentationAmountDelta;
             this._hasSkippedOrMissingTokenChild = null;
 
             if (parent) {

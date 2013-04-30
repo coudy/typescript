@@ -19,13 +19,11 @@ module TypeScript.Formatting {
     export class SingleTokenIndenter extends IndentationTrackingWalker {
         private indentationAmount: number = null;
         private indentationPosition: number;
-        private options: FormattingOptions;
 
         constructor(indentationPosition: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
-            super(new TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken);
+            super(new TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken, options);
 
             this.indentationPosition = indentationPosition;
-            this.options = options;
         }
 
         public static getIndentationAmount(position: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, options: FormattingOptions): number {
@@ -34,13 +32,13 @@ module TypeScript.Formatting {
             return walker.indentationAmount;
         }
 
-        public indentToken(token: ISyntaxToken, indentationLevel: number, commentIndentationLevel: number): void {
+        public indentToken(token: ISyntaxToken, indentationAmount: number, commentIndentationAmount: number): void {
             // Compute an indentation string for this token
             if (token.fullWidth() === 0 || (this.indentationPosition - this.position() < token.leadingTriviaWidth())) {
                 // The position is in the leading trivia, use comment indentation
-                this.indentationAmount = commentIndentationLevel * this.options.indentSpaces;
+                this.indentationAmount = commentIndentationAmount;
             } else {
-                this.indentationAmount = indentationLevel * this.options.indentSpaces;
+                this.indentationAmount = indentationAmount;
             }
         }
     }

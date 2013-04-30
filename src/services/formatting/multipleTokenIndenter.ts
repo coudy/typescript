@@ -18,15 +18,8 @@
 module TypeScript.Formatting {
     export class MultipleTokenIndenter extends IndentationTrackingWalker {
         private _edits: TextEditInfo[] = [];
-        public options: FormattingOptions;
 
-        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
-            super(textSpan, sourceUnit, snapshot, indentFirstToken);
-
-            this.options = options;
-        }
-
-        public indentToken(token: ISyntaxToken, indentationLevel: number, commentIndentationLevel: number): void {
+        public indentToken(token: ISyntaxToken, indentationAmount: number, commentIndentationAmount: number): void {
             // Ignore generated tokens
             if (token.fullWidth() === 0) {
                 return;
@@ -45,10 +38,8 @@ module TypeScript.Formatting {
             }
 
             // Compute an indentation string for this token
-            var indentationAmount = indentationLevel * this.options.indentSpaces;
             var indentationString = Indentation.indentationString(indentationAmount, this.options);
 
-            var commentIndentationAmount = commentIndentationLevel * this.options.indentSpaces;
             var commentIndentationString = Indentation.indentationString(commentIndentationAmount, this.options);
 
             // Record any needed indentation edits
