@@ -4902,7 +4902,17 @@ module TypeScript {
                     return false;
                 }
 
-                return this.symbolsShareDeclaration(source, target);
+                // We compare parent declarations instead of container symbols because type parameter symbols are shared
+                // accross overload groups
+                var sourceParentDeclaration = source.getDeclarations()[0].getParentDecl();
+                var targetParentDeclaration = target.getDeclarations()[0].getParentDecl();
+
+                if (targetParentDeclaration === sourceParentDeclaration) {
+                    return this.symbolsShareDeclaration(source, target);
+                }
+                else {
+                    return true;
+                }
             }
 
             // this check ensures that we only operate on object types from this point forward,
