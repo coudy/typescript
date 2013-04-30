@@ -734,11 +734,21 @@ module FourSlash {
             this.currentCaretPosition = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength();
         }
 
-        public goToDefinition() {
+        public goToDefinition(definitionIndex: number) {
             this.languageService.refresh();
-            var defn = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
-            this.openFile(defn.fileName);
-            this.currentCaretPosition = defn.minChar;
+
+            var definitions = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+            if (!definitions || !definitions.length) {
+                throw new Error('goToDefinition failed - expected to at least one defintion location but got 0');
+            }
+
+            if (definitionIndex >= definitions.length) {
+                throw new Error('goToDefinition failed - definitionIndex value (' + definitionIndex + ') exceeds definition list size (' + definitions.length + ')');
+            }
+
+            var definition = definitions[definitionIndex];
+            this.openFile(definition.fileName);
+            this.currentCaretPosition = definition.minChar;
         }
 
         public getMarkers(): Marker[] {

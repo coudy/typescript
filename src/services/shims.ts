@@ -382,19 +382,7 @@ module Services {
             return this.forwardJSONCall(
                 "getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
-                    var definition = this.languageService.getDefinitionAtPosition(fileName, pos);
-                    if (definition === null) {
-                        return null;
-                    }
-
-                    return {
-                        fileName: definition.fileName,
-                        minChar: definition.minChar,
-                        limChar: definition.limChar,
-                        kind: definition.kind,
-                        name: definition.name,
-                        containerKind: definition.containerKind,
-                        containerName: definition.containerName };
+                    return this.languageService.getDefinitionAtPosition(fileName, pos);
                 });
         }
 

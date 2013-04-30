@@ -48,7 +48,7 @@ module Services {
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
         getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo;
         getSignatureAtPosition(fileName: string, pos: number): SignatureInfo;
-        getDefinitionAtPosition(fileName: string, pos: number): DefinitionInfo;
+        getDefinitionAtPosition(fileName: string, pos: number): DefinitionInfo[];
         getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
         getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
         getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[];
@@ -177,8 +177,7 @@ module Services {
             public kind: string,
             public name: string,
             public containerKind: string,
-            public containerName: string,
-            public overloads: DefinitionInfo[]) {
+            public containerName: string) {
         }
     }
 

@@ -144,7 +144,7 @@ module Services {
 
         }
 
-        public getDefinitionAtPosition(fileName: string, pos: number): Services.DefinitionInfo {
+        public getDefinitionAtPosition(fileName: string, pos: number): Services.DefinitionInfo[] {
 
             var args = "fileName: " + this.stringify(fileName) + " pos: " + this.stringify(pos);
             var result = this.internal.getDefinitionAtPosition(fileName, pos);

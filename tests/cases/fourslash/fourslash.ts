@@ -81,8 +81,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToEOF();
         }
 
-        public definition() {
-            FourSlash.currentTestState.goToDefinition();
+        public definition(definitionIndex: number = 0) {
+            FourSlash.currentTestState.goToDefinition(definitionIndex);
         }
 
         public position(position: number, fileIndex?: number);

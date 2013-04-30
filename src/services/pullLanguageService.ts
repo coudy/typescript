@@ -260,10 +260,8 @@ module Services {
             return result;
         }
 
-        public getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo {
+        public getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[] {
             this.refresh();
-
-            var result: DefinitionInfo = null;
 
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
@@ -276,44 +274,44 @@ module Services {
             var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfo == null || symbolInfo.symbol == null) {
                 this.logger.log("No identifier at the specified location.");
-                return result;
+                return null;
             }
 
             var declarations = symbolInfo.symbol.getDeclarations();
             if (declarations == null || declarations.length === 0) {
                 this.logger.log("Could not find declaration for symbol.");
-                return result;
+                return null;
             }
 
             var symbolName = symbolInfo.symbol.getDisplayName();
-            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind(), symbolInfo.symbol);//this.getSymbolElementKind(sym),
+            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind(), symbolInfo.symbol);
             var container = symbolInfo.symbol.getContainer();
-            var containerName = container ? container.getDisplayName() : "<global>";//this.getSymbolContainerName(sym)
-            var containerKind = "";//this.getSymbolContainerKind(sym)
+            var containerName = container ? container.fullName() : "";
+            var containerKind = container ? this.mapPullElementKind(container.getKind(), container): "";
 
-            var entries: DefinitionInfo[] = [];
-            var mainEntry = 0;
+            var result: DefinitionInfo[] = [];
+            var lastAddedSingature: { isDefinition: boolean; index: number; } = null;
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
                 var span = declaration.getSpan();
 
-                // For functions, pick the definition to be the main entry
+                var nextEntryIndex = result.length;
+
                 var signature = declaration.getSignatureSymbol();
-                if (signature && signature.isDefinition()) {
-                    mainEntry = i;
+                if (signature) {
+                    // This is either a signature of an overload, definition or an ambient function signature.
+                    // We want to filter them so that we only have one entry for all signatures. 
+                    // If a definition exits, we should pick it, if not (e.g. ambient methods case) just use the last of the signatures.
+                    if (lastAddedSingature && !lastAddedSingature.isDefinition) {
+                        // The last entry was a signature overload. overwrite it with the new signature.
+                        nextEntryIndex = lastAddedSingature.index;
+                    }
+                    lastAddedSingature = { isDefinition: signature.isDefinition(), index: nextEntryIndex };
                 }
-                // TODO: find a better way of selecting the main entry for none-function overloaded types instead of selecting the first one
 
-                entries.push(new DefinitionInfo(declaration.getScriptName(), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName, null));
+                result[nextEntryIndex] = new DefinitionInfo(declaration.getScriptName(), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName);
             }
 
-            result = entries[mainEntry];
-            if (entries.length > 1) {
-                // Remove the main entry
-                entries.splice(mainEntry, 1);
-                result.overloads = entries;
-            }
-            
             return result;
         }
 
