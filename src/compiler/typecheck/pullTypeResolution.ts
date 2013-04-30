@@ -4,6 +4,37 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
+    export class SymbolAndDiagnostics<TSymbol extends PullSymbol> {
+        private static _empty = new SymbolAndDiagnostics(null, null);
+
+        constructor(public symbol: TSymbol,
+            public diagnostics: Diagnostic[]) {
+        }
+
+        public static create<TSymbol extends PullSymbol>(symbol: TSymbol, diagnostics: Diagnostic[]): SymbolAndDiagnostics<TSymbol> {
+            return new SymbolAndDiagnostics<TSymbol>(symbol, diagnostics);
+        }
+
+        public static empty<TSymbol extends PullSymbol>(): SymbolAndDiagnostics<TSymbol> {
+            return <SymbolAndDiagnostics<TSymbol>>SymbolAndDiagnostics._empty;
+        }
+
+        public static fromSymbol<TSymbol extends PullSymbol>(symbol: TSymbol): SymbolAndDiagnostics<TSymbol> {
+            return new SymbolAndDiagnostics<TSymbol>(symbol, null);
+        }
+
+        public addDiagnostic(diagnostic: Diagnostic): void {
+            Debug.assert(this !== SymbolAndDiagnostics._empty);
+
+            if (this.diagnostics === null) {
+                this.diagnostics = [];
+            }
+
+            this.diagnostics.push(diagnostic);
+        }
+    }
+
+
     export interface IPullTypeCollection {
         // returns null when types are exhausted
         getLength(): number;
