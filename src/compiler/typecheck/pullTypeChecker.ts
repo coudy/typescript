@@ -1334,7 +1334,7 @@ module TypeScript {
                     };
 
                     var comparisonInfo = new TypeScript.TypeComparisonInfo();
-                    var elementType = this.resolver.findBestCommonType(elementTypes[0], contextualMemberType, collection, false, this.context, comparisonInfo);
+                    var elementType = this.resolver.findBestCommonType(elementTypes[0], contextualMemberType, collection, this.context, comparisonInfo);
                     if (!elementType) {
                         this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements, null, enclosingDecl);
                     }

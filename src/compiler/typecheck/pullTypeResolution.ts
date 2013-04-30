@@ -1751,20 +1751,20 @@ module TypeScript {
             getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
 
             if (!returnStatements.length) {
-                if (useContextualType) {
-                    var contextualType = this.widenType(context.getContextualType());
+                //if (useContextualType) {
+                //    var contextualType = this.widenType(context.getContextualType());
 
-                    signature.setReturnType(contextualType);
+                //    signature.setReturnType(contextualType);
 
-                    var isVoidOrAny = this.isAnyOrEquivalent(contextualType) || contextualType === this.semanticInfoChain.voidTypeSymbol;
+                //    var isVoidOrAny = this.isAnyOrEquivalent(contextualType) || contextualType === this.semanticInfoChain.voidTypeSymbol;
 
-                    if (!isVoidOrAny) {
-                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression, null, enclosingDecl, true);
-                    }
-                }
-                else {
+                //    if (!isVoidOrAny) {
+                //        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression, null, enclosingDecl, true);
+                //    }
+                //}
+                //else {
                     signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
-                }
+                //}
             }
 
             else {
@@ -1798,7 +1798,7 @@ module TypeScript {
                         }
                     }
 
-                    returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, true, context, new TypeComparisonInfo());
+                    returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, context, new TypeComparisonInfo());
 
                     signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
 
@@ -2542,7 +2542,8 @@ module TypeScript {
                     }
                 }
                 else if (lhsType.isContainer()) {
-                    var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
+                    var containerType = <PullContainerTypeSymbol>(lhsType.isAlias() ? (<PullTypeAliasSymbol>lhsType).getType() : lhsType);
+                    var associatedInstance = containerType.getInstanceSymbol();
 
                     if (associatedInstance) {
                         var instanceType = associatedInstance.getType();
@@ -3299,7 +3300,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
                 }
 
-                elementType = this.findBestCommonType(elementType, contextualType, collection, false, context, comparisonInfo);
+                elementType = this.findBestCommonType(elementType, contextualType, collection, context, comparisonInfo);
 
                 // if the array type is the undefined type, we should widen it to any
                 // if it's of the null type, only widen it if it's not in a nested array element, so as not to 
@@ -3631,7 +3632,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
                 }
 
-                var bct = this.findBestCommonType(leftType, null, collection, false, context);
+                var bct = this.findBestCommonType(leftType, null, collection, context);
 
                 if (bct) {
                     this.setSymbolForAST(trinex, bct, context);
@@ -3894,20 +3895,22 @@ module TypeScript {
 
                 for (var i = 0; i < len; i++) {
                     // account for varargs
-                    if (params.length && i < signature.getNonOptionalParameterCount()) {
-                        if (typeReplacementMap) {
-                            context.pushTypeSpecializationCache(typeReplacementMap);
+                    if (params.length) {
+                        if (i < params.length - 1 || (i < params.length && !signature.hasVariableParamList())) {
+                            if (typeReplacementMap) {
+                                context.pushTypeSpecializationCache(typeReplacementMap);
+                            }
+                            this.resolveDeclaredSymbol(params[i], signatureDecl, context);
+                            if (typeReplacementMap) {
+                                context.popTypeSpecializationCache();
+                            }
+                            contextualType = params[i].getType();
                         }
-                        this.resolveDeclaredSymbol(params[i], signatureDecl, context);
-                        if (typeReplacementMap) {
-                            context.popTypeSpecializationCache();
-                        }
-                        contextualType = params[i].getType();
-                    }
-                    else if (params.length) {
-                        contextualType = params[params.length - 1].getType();
-                        if (contextualType.isArray()) {
-                            contextualType = contextualType.getElementType();
+                        else if (signature.hasVariableParamList()) {
+                            contextualType = params[params.length - 1].getType();
+                            if (contextualType.isArray()) {
+                                contextualType = contextualType.getElementType();
+                            }
                         }
                     }
 
@@ -4203,20 +4206,22 @@ module TypeScript {
 
                     for (var i = 0; i < len; i++) {
 
-                        if (params.length && i < params.length) {
-                            if (typeReplacementMap) {
-                                context.pushTypeSpecializationCache(typeReplacementMap);
+                        if (params.length) {
+                            if (i < params.length - 1 || (i < params.length && !signature.hasVariableParamList())) {
+                                if (typeReplacementMap) {
+                                    context.pushTypeSpecializationCache(typeReplacementMap);
+                                }
+                                this.resolveDeclaredSymbol(params[i], signatureDecl, context);
+                                if (typeReplacementMap) {
+                                    context.popTypeSpecializationCache();
+                                }
+                                contextualType = params[i].getType();
                             }
-                            this.resolveDeclaredSymbol(params[i], signatureDecl, context);
-                            if (typeReplacementMap) {
-                                context.popTypeSpecializationCache();
-                            }
-                            contextualType = params[i].getType();
-                        }
-                        else if (params.length) {
-                            contextualType = params[params.length - 1].getType();
-                            if (contextualType.isArray()) {
-                                contextualType = contextualType.getElementType();
+                            else if (signature.hasVariableParamList()) {
+                                contextualType = params[params.length - 1].getType();
+                                if (contextualType.isArray()) {
+                                    contextualType = contextualType.getElementType();
+                                }
                             }
                         }
 
@@ -4361,7 +4366,7 @@ module TypeScript {
 
         // type relationships
 
-        private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, acceptVoid: boolean, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
+        private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
             if (this.isAnyOrEquivalent(a) || this.isAnyOrEquivalent(b)) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -4374,10 +4379,10 @@ module TypeScript {
             else if ((a === this.semanticInfoChain.nullTypeSymbol) && (b != this.semanticInfoChain.nullTypeSymbol)) {
                 return b;
             }
-            else if (acceptVoid && (b === this.semanticInfoChain.voidTypeSymbol) && a != this.semanticInfoChain.voidTypeSymbol) {
+            else if ((a === this.semanticInfoChain.voidTypeSymbol) && (b === this.semanticInfoChain.voidTypeSymbol || b === this.semanticInfoChain.undefinedTypeSymbol || b === this.semanticInfoChain.nullTypeSymbol)) {
                 return a;
             }
-            else if (acceptVoid && (a === this.semanticInfoChain.voidTypeSymbol) && (b != this.semanticInfoChain.voidTypeSymbol)) {
+            else if ((a === this.semanticInfoChain.voidTypeSymbol) && (b === this.semanticInfoChain.anyTypeSymbol)) {
                 return b;
             }
             else if ((b === this.semanticInfoChain.undefinedTypeSymbol) && a != this.semanticInfoChain.voidTypeSymbol) {
@@ -4397,7 +4402,7 @@ module TypeScript {
                     return a;
                 }
                 else {
-                    var mergedET = this.mergeOrdered(a.getElementType(), b.getElementType(), acceptVoid, context, comparisonInfo);
+                    var mergedET = this.mergeOrdered(a.getElementType(), b.getElementType(), context, comparisonInfo);
                     if (mergedET) {
                         var mergedArrayType = mergedET.getArrayType();
 
@@ -4435,14 +4440,14 @@ module TypeScript {
                 type === this.semanticInfoChain.undefinedTypeSymbol;
         }
 
-        public findBestCommonType(initialType: PullTypeSymbol, targetType: PullTypeSymbol, collection: IPullTypeCollection, acceptVoid: boolean, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(initialType: PullTypeSymbol, targetType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
             var nlastChecked = 0;
             var bestCommonType = initialType;
 
             if (targetType) {
                 if (bestCommonType) {
-                    bestCommonType = this.mergeOrdered(bestCommonType, targetType, acceptVoid, context);
+                    bestCommonType = this.mergeOrdered(bestCommonType, targetType, context);
                 }
                 else {
                     bestCommonType = targetType
@@ -4462,7 +4467,7 @@ module TypeScript {
                         continue;
                     }
 
-                    if (convergenceType && (bestCommonType = this.mergeOrdered(convergenceType, collection.getTypeAtIndex(i), acceptVoid, context, comparisonInfo))) {
+                    if (convergenceType && (bestCommonType = this.mergeOrdered(convergenceType, collection.getTypeAtIndex(i), context, comparisonInfo))) {
                         convergenceType = bestCommonType;
                     }
 
@@ -4488,7 +4493,7 @@ module TypeScript {
                 }
             }
 
-            return acceptVoid ? bestCommonType : (bestCommonType === this.semanticInfoChain.voidTypeSymbol ? null : bestCommonType);
+            return bestCommonType
         }
 
         // Type Identity
@@ -4870,6 +4875,21 @@ module TypeScript {
 
             if ((source === this.semanticInfoChain.nullTypeSymbol) && (target != this.semanticInfoChain.undefinedTypeSymbol && target != this.semanticInfoChain.voidTypeSymbol)) {
                 return true;
+            }
+
+            if (target == this.semanticInfoChain.voidTypeSymbol) {
+                if (source == this.semanticInfoChain.anyTypeSymbol || source == this.semanticInfoChain.undefinedTypeSymbol || source == this.semanticInfoChain.nullTypeSymbol) {
+                    return true;
+                }
+
+                return false;
+            }
+            else if (source == this.semanticInfoChain.voidTypeSymbol) {
+                if (target == this.semanticInfoChain.anyTypeSymbol) {
+                    return true;
+                }
+
+                return false;
             }
 
             // REVIEW: enum types aren't explicitly covered in the spec
@@ -5854,7 +5874,7 @@ module TypeScript {
                         setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } , // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.getReturnType() : best.signature.getReturnType(); } // we only want the "second" type - the "first" is skipped
                     }
-                    var bct = this.findBestCommonType(best.signature.getReturnType(), null, collection, true, context);
+                    var bct = this.findBestCommonType(best.signature.getReturnType(), null, collection, context);
                     ambiguous = !bct;
                 }
                 else {
