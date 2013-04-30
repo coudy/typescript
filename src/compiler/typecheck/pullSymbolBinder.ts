@@ -890,9 +890,20 @@ module TypeScript {
                     typeParameterDecls = typeParameter.getDeclarations();
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        interfaceDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [typeParameter.getName()]));
+                        
+                        // Because interface declarations can be "split", it's safe to re-use type parameters
+                        // of the same name across interface declarations in the same binding phase
+                        for (var j = 0; j < typeParameterDecls.length; j++) {
+                            var typeParameterDeclParent = typeParameterDecls[j].getParentDecl();
+
+                            if (typeParameterDeclParent && typeParameterDeclParent === interfaceDecl) {
+                                var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                                interfaceDecl.addDiagnostic(
+                                    new SemanticDiagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [typeParameter.getName()]));
+
+                                break;
+                            }
+                        }
                     }
 
                     // clean the decls
