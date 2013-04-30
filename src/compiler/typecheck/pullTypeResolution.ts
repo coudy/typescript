@@ -1751,20 +1751,7 @@ module TypeScript {
             getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
 
             if (!returnStatements.length) {
-                //if (useContextualType) {
-                //    var contextualType = this.widenType(context.getContextualType());
-
-                //    signature.setReturnType(contextualType);
-
-                //    var isVoidOrAny = this.isAnyOrEquivalent(contextualType) || contextualType === this.semanticInfoChain.voidTypeSymbol;
-
-                //    if (!isVoidOrAny) {
-                //        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression, null, enclosingDecl, true);
-                //    }
-                //}
-                //else {
-                    signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
-                //}
+                signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
             }
 
             else {
@@ -4491,6 +4478,11 @@ module TypeScript {
                 if (nlastChecked < len) {
                     convergenceType = collection.getTypeAtIndex(nlastChecked);
                 }
+            }
+
+            if (!bestCommonType) {
+                // if no best common type can be determined, use "{}"
+                bestCommonType = new PullTypeSymbol("", PullElementKind.ObjectType);
             }
 
             return bestCommonType

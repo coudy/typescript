@@ -225,7 +225,7 @@ describe('Contextual typing tests', function() {
             it("Array literal with numbers - 3", function() {
                 var code = 'function foo(param:number[]){}; foo([1, "a"]);';
                 Harness.Compiler.compileString(code, 'Array Literal', function(result) {
-                    assert.equal(result.errors.length, 1);
+                    assert.equal(result.errors.length, 2);
                 });
             });
         });
@@ -247,7 +247,7 @@ describe('Contextual typing tests', function() {
             it("Negative", function() {
                 var code = 'function foo(param: {():number; (i:number):number; }[]) { }; foo([function(){return 1;}, function(){return "foo"}]);';
                 Harness.Compiler.compileString(code, 'Array Literal', function(result) {
-                    assert.equal(result.errors.length, 1);
+                    assert.equal(result.errors.length, 2);
                 });
             });
         });
