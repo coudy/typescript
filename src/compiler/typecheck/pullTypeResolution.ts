@@ -2336,7 +2336,7 @@ module TypeScript {
                 case NodeType.LogicalOrExpression:
                     return this.resolveLogicalOrExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
                 case NodeType.LogicalAndExpression:
-                    return this.resolveLogicalAndExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveLogicalAndExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeOfExpression:
                     return this.semanticInfoChain.stringTypeSymbol;
@@ -3627,13 +3627,8 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        private resolveLogicalAndExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var binex = <BinaryExpression>expressionAST;
-
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-
-            return rightType;
+        private resolveLogicalAndExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
         }
 
         private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
