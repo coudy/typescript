@@ -18,4 +18,4 @@ define(["require", "exports"], function(require, exports) {
 
     a2 = i2;
     i2 = a2;
-})
+});
