@@ -488,14 +488,7 @@ module TypeScript {
         private getAmdDependency(comment: string): string {
             var amdDependencyRegEx = /^\/\/\/\s*<amd-dependency\s+path=('|")(.+?)\1/gim;
             var match = amdDependencyRegEx.exec(comment);
-
-            if (match) {
-                var path: string = match[2];
-                return path;
-            }
-            else {
-                return null;
-            }
+            return match ? match[2] : null;
         }
 
         public visitSourceUnit(node: SourceUnitSyntax): Script {
