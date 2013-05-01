@@ -926,7 +926,6 @@ module TypeScript {
 
                     if (declarationInitASTs.length) {
                         var assigningAST: VariableDeclarator;
-                        var varSymbol: PullSymbol;
 
                         for (var i = 0; i < declarationInitASTs.length; i++) {
 
@@ -934,7 +933,8 @@ module TypeScript {
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
                             this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
-                            varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                            var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
+                            var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
 
                             if (varSymbol && inContextuallyTypedAssignment) {
                                 var contextualType = varSymbol.getType();
@@ -1064,7 +1064,8 @@ module TypeScript {
                         inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
 
                         this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
-                        var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                        var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
+                        var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
 
                         if (varSymbol && inContextuallyTypedAssignment) {
                             var contextualType = varSymbol.getType();

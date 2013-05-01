@@ -166,23 +166,23 @@ module TypeScript {
             return this.semanticInfoChain.getDeclForAST(ast, this.unitPath);
         }
 
-        public getSymbolForAST(ast: AST, context: PullTypeResolutionContext): PullSymbol {
-            return this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
+        public getSymbolAndDiagnosticsForAST(ast: AST, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            return this.semanticInfoChain.getSymbolAndDiagnosticsForAST(ast, this.unitPath);
         }
 
-        private setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {
+        private setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, context: PullTypeResolutionContext): void {
             if (context && (context.inProvisionalResolution() || context.inSpecialization)) {
                 return;
             }
 
-            this.semanticInfoChain.setSymbolForAST(ast, symbol, this.unitPath);
+            this.semanticInfoChain.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics, this.unitPath);
         }
 
-        public getASTForSymbol(symbol: PullSymbol) {
+        public getASTForSymbol(symbol: PullSymbol): AST {
             return this.semanticInfoChain.getASTForSymbol(symbol, this.unitPath);
         }
 
-        public getASTForDecl(decl: PullDecl) {
+        public getASTForDecl(decl: PullDecl): AST {
             return this.semanticInfoChain.getASTForDecl(decl);
         }
 
@@ -922,7 +922,7 @@ module TypeScript {
         //
         //
         private resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var containerSymbol = <PullContainerTypeSymbol>this.getSymbolForAST(ast, context);
+            var containerSymbol = <PullContainerTypeSymbol>this.getSymbolAndDiagnosticsForAST(ast, context).symbol;
 
             if (containerSymbol.isResolved()) {
                 return containerSymbol;
@@ -953,7 +953,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclIsClass = typeDeclAST.nodeType === NodeType.ClassDeclaration;
-            var hasVisited = this.getSymbolForAST(typeDeclAST, context) != null;
+            var hasVisited = this.getSymbolAndDiagnosticsForAST(typeDeclAST, context) != null;
 
             if ((typeDeclSymbol.isResolved() && hasVisited) || (typeDeclSymbol.isResolving() && !context.isInBaseTypeResolution())) {
                 return typeDeclSymbol;
@@ -994,7 +994,7 @@ module TypeScript {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
-                            this.setSymbolForAST(typeDeclAST.extendsList.members[i], resolvedParentType, context);
+                            this.setSymbolAndDiagnosticsForAST(typeDeclAST.extendsList.members[i], SymbolAndDiagnostics.fromSymbol(resolvedParentType), context);
                             typeDeclSymbol.addExtendedType(parentType);
                         }
                     }
@@ -1016,7 +1016,8 @@ module TypeScript {
                         }
 
                         if (!typeDeclSymbol.hasBase(implementedType)) {
-                            this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], resolvedImplementedType, context);
+                            this.setSymbolAndDiagnosticsForAST(
+                                typeDeclAST.implementsList.members[i - extendsCount], SymbolAndDiagnostics.fromSymbol(resolvedImplementedType), context);
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
                     }
@@ -1054,8 +1055,8 @@ module TypeScript {
                 }
             }
 
-            this.setSymbolForAST(typeDeclAST.name, typeDeclSymbol, context);
-            this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(typeDeclAST.name, SymbolAndDiagnostics.fromSymbol(typeDeclSymbol), context);
+            this.setSymbolAndDiagnosticsForAST(typeDeclAST, SymbolAndDiagnostics.fromSymbol(typeDeclSymbol), context);
 
             typeDeclSymbol.setResolved();
 
@@ -1209,14 +1210,15 @@ module TypeScript {
                 importDeclSymbol.setAliasedType(aliasedType);
                 importDeclSymbol.setResolved();
 
-                this.setSymbolForAST(importStatementAST.alias, aliasedType, context);
+                this.setSymbolAndDiagnosticsForAST(importStatementAST.alias, SymbolAndDiagnostics.fromSymbol(aliasedType), context);
             }
 
             return importDeclSymbol;
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context);
+            var funcDeclSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(funcDeclAST, context);
+            var funcDeclSymbol = funcDeclSymbolAndDiagnostics && <PullFunctionTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
 
             if (!funcDeclSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1285,7 +1287,7 @@ module TypeScript {
         }
 
         private resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var paramSymbol = this.getSymbolForAST(argDeclAST, context);
+            var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST, context).symbol;
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1324,7 +1326,7 @@ module TypeScript {
 
         private resolveFunctionExpressionParameter(argDeclAST: Parameter, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
-            var paramSymbol = this.getSymbolForAST(argDeclAST, context);
+            var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST, context).symbol;
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1357,7 +1359,8 @@ module TypeScript {
         }
 
         public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var interfaceSymbol = <PullTypeSymbol>this.getSymbolForAST(interfaceDeclAST, context);//new PullTypeSymbol("", PullElementKind.Interface);
+            var interfaceSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(interfaceDeclAST, context);
+            var interfaceSymbol = interfaceSymbolAndDiagnostics && <PullTypeSymbol>interfaceSymbolAndDiagnostics.symbol;
 
             if (!interfaceSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1388,7 +1391,7 @@ module TypeScript {
                 var typeMembers = <ASTList> interfaceDeclAST.members;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
-                    memberSymbol = this.getSymbolForAST(typeMembers.members[i], context);
+                    memberSymbol = this.getSymbolAndDiagnosticsForAST(typeMembers.members[i], context).symbol;
 
                     this.resolveDeclaredSymbol(memberSymbol, enclosingDecl, context);
 
@@ -1417,11 +1420,13 @@ module TypeScript {
                 return null;
             }
 
-            var previousResolutionSymbol = this.getSymbolForAST(typeRef, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(typeRef, context);
 
-            if (previousResolutionSymbol) {
-                return <PullTypeSymbol>previousResolutionSymbol;
+            if (previousResolutionSymbolAndDiagnostics) {
+                return <PullTypeSymbol>previousResolutionSymbolAndDiagnostics.symbol;
             }
+
+            var previousResolutionSymbol = null;
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var prevResolvingTypeReference = context.resolvingTypeReference;
@@ -1534,7 +1539,7 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isGeneric() /*|| typeDeclSymbol.isArray()*/) {
-                this.setSymbolForAST(typeRef, typeDeclSymbol, context);
+                this.setSymbolAndDiagnosticsForAST(typeRef, SymbolAndDiagnostics.fromSymbol(typeDeclSymbol), context);
             }
 
             return typeDeclSymbol;
@@ -2403,7 +2408,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST, context);
+            var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST, context);
+            var nameSymbol = nameSymbolAndDiagnostics && nameSymbolAndDiagnostics.symbol;
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
                 if (!nameSymbol.isResolved()) {
@@ -2441,7 +2447,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(nameAST, nameSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
 
             return nameSymbol;
         }
@@ -2452,7 +2458,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST, context);
+            var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST, context);
+            var nameSymbol = nameSymbolAndDiagnostics && nameSymbolAndDiagnostics.symbol;
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
                 if (!nameSymbol.isResolved()) {
@@ -2594,8 +2601,8 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(dottedNameAST, nameSymbol, context);
-            this.setSymbolForAST(dottedNameAST.operand2, nameSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(dottedNameAST, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
+            this.setSymbolAndDiagnosticsForAST(dottedNameAST.operand2, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
 
             return nameSymbol;
         }
@@ -2606,7 +2613,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST, context);
+            var typeNameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST, context);
+            var typeNameSymbol = typeNameSymbolAndDiagnostics && <PullTypeSymbol>typeNameSymbolAndDiagnostics.symbol;
 
             if (typeNameSymbol && typeNameSymbol.isType()) {
                 if (!typeNameSymbol.isResolved()) {
@@ -2675,7 +2683,7 @@ module TypeScript {
 
                             typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
 
-                            this.setSymbolForAST(nameAST, typeNameSymbol, context);
+                            this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(typeNameSymbol), context);
 
                             return typeNameSymbol;
                         }
@@ -2690,7 +2698,7 @@ module TypeScript {
             }
 
             if (typeNameSymbol.isType()) {
-                this.setSymbolForAST(nameAST, typeNameSymbol, context);
+                this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(typeNameSymbol), context);
             }
 
             return typeNameSymbol;
@@ -2790,7 +2798,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST, context);
+            var childTypeSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST, context);
+            var childTypeSymbol = childTypeSymbolAndDiagnostics && <PullTypeSymbol>childTypeSymbolAndDiagnostics.symbol;
 
             if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
                 if (!childTypeSymbol.isResolved()) {
@@ -2863,7 +2872,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(dottedNameAST, childTypeSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(dottedNameAST, SymbolAndDiagnostics.fromSymbol(childTypeSymbol), context);
 
             return childTypeSymbol;
         }
@@ -3008,7 +3017,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var previousResolutionSymbol = this.getSymbolForAST(ast, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(ast, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 //CompilerDiagnostics.Alert("Call get hit");
@@ -3040,30 +3050,30 @@ module TypeScript {
                     var declFlags = decl.getFlags();
 
                     if (declFlags & PullElementFlags.Static) {
-                        this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
+                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
                     if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
-                        this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
+                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
                     if (declKind === PullElementKind.Function) {
-                        this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
+                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
                     if (declKind === PullElementKind.Class) {
                         var classSymbol = <PullClassTypeSymbol>decl.getSymbol();
 
-                        this.setSymbolForAST(ast, classSymbol, context);
+                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(classSymbol), context);
                         return classSymbol;
                     }
                 }
             }
 
-            this.setSymbolForAST(ast, this.semanticInfoChain.anyTypeSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
@@ -3114,15 +3124,16 @@ module TypeScript {
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
         private resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
-            var previousResolutionSymbol = this.getSymbolForAST(expressionAST, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 //CompilerDiagnostics.Alert("Call get hit");
                 return <PullTypeSymbol>previousResolutionSymbol;
             }
 
-            var typeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(expressionAST, context);
+            var typeSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST, context);
+            var typeSymbol = typeSymbolAndDiagnostics && <PullTypeSymbol>typeSymbolAndDiagnostics.symbol;
             var span: TextSpan;
 
             if (typeSymbol && typeSymbol.isResolved()) {
@@ -3251,11 +3262,12 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
+
                     context.setTypeInContext(memberSymbol, memberExprType.getType());
 
                     memberSymbol.setResolved();
 
-                    this.setSymbolForAST(binex.operand1, memberSymbol, context);
+                    this.setSymbolAndDiagnosticsForAST(binex.operand1, SymbolAndDiagnostics.fromSymbol(memberSymbol), context);
 
                     typeSymbol.addMember(memberSymbol, SymbolLinkKind.PublicMember);
                 }
@@ -3263,14 +3275,14 @@ module TypeScript {
 
             typeSymbol.setResolved();
 
-            this.setSymbolForAST(expressionAST, typeSymbol, context);
+            this.setSymbolAndDiagnosticsForAST(expressionAST, SymbolAndDiagnostics.fromSymbol(typeSymbol), context);
 
             return typeSymbol;
         }
 
         private resolveArrayLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
-            var previousResolutionSymbol = this.getSymbolForAST(expressionAST, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 return <PullTypeSymbol>previousResolutionSymbol;
@@ -3359,7 +3371,7 @@ module TypeScript {
                 }
             }
 
-            this.setSymbolForAST(expressionAST, arraySymbol, context);
+            this.setSymbolAndDiagnosticsForAST(expressionAST, SymbolAndDiagnostics.fromSymbol(arraySymbol), context);
 
             return arraySymbol;
         }
@@ -3368,7 +3380,8 @@ module TypeScript {
 
             var callEx: BinaryExpression = <BinaryExpression>expressionAST;
 
-            var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 //CompilerDiagnostics.Alert("Call get hit");
@@ -3384,7 +3397,7 @@ module TypeScript {
             var targetTypeSymbol = targetSymbol.getType();
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
-                this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
                 return targetTypeSymbol;
             }
 
@@ -3396,7 +3409,7 @@ module TypeScript {
                                 indexType.getKind() === PullElementKind.Enum;
 
             if (elementType && isNumberIndex) {
-                this.setSymbolForAST(callEx, elementType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(elementType), context);
                 return elementType;
             }
             
@@ -3410,10 +3423,10 @@ module TypeScript {
                 var member = targetTypeSymbol.findMember(memberName);
 
                 if (member) {
-                    this.setSymbolForAST(callEx, member.getType(), context);
+                    this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(member.getType()), context);
                     return member.getType();
                 }
-            }            
+            }
 
             var signatures = targetTypeSymbol.getIndexSignatures();
 
@@ -3457,7 +3470,7 @@ module TypeScript {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolForAST(callEx, returnType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
             }
 
             // otherwise, if the object expression has a string index signature and the index expression is
@@ -3471,7 +3484,7 @@ module TypeScript {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolForAST(callEx, returnType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
             }
 
             // otherwise, if indexExpr is of type Any, the String or Number primitive type or an enum type,
@@ -3479,7 +3492,7 @@ module TypeScript {
             else if (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol || indexType === this.semanticInfoChain.stringTypeSymbol) {
                 returnType = this.semanticInfoChain.anyTypeSymbol;
 
-                this.setSymbolForAST(callEx, returnType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
             }
 
             // otherwise, the property acess is invalid and a compile-time error occurs
@@ -3630,7 +3643,8 @@ module TypeScript {
         }
 
         private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var previousResolutionSymbol = this.getSymbolForAST(trinex, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 return <PullTypeSymbol>previousResolutionSymbol;
@@ -3653,7 +3667,7 @@ module TypeScript {
                 var bct = this.findBestCommonType(leftType, null, collection, context);
 
                 if (bct) {
-                    this.setSymbolForAST(trinex, bct, context);
+                    this.setSymbolAndDiagnosticsForAST(trinex, SymbolAndDiagnostics.fromSymbol(bct), context);
                     return bct;
                 }
             }
@@ -3674,7 +3688,8 @@ module TypeScript {
         public resolveCallExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             if (!additionalResults) {
-                var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
+                var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx, context);
+                var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
                 if (previousResolutionSymbol) {
                     //CompilerDiagnostics.Alert("Call get hit");
@@ -3703,7 +3718,7 @@ module TypeScript {
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
-                this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
                 return targetTypeSymbol;
             }
 
@@ -3881,7 +3896,8 @@ module TypeScript {
                 if (callEx.arguments) {
                     for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
                         var arg = callEx.arguments.members[k];
-                        var argSymbol = this.getSymbolForAST(arg, context);
+                        var argSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(arg, context);
+                        var argSymbol = argSymbolAndDiagnostics && argSymbolAndDiagnostics.symbol;
 
                         if (argSymbol) {
                             var argType = argSymbol.getType();
@@ -3969,7 +3985,7 @@ module TypeScript {
                 returnType = this.semanticInfoChain.anyTypeSymbol;
             }
 
-            this.setSymbolForAST(callEx, returnType, context);
+            this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
 
             return returnType;
         }
@@ -3977,7 +3993,8 @@ module TypeScript {
         public resolveNewExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             if (!additionalResults) {
-                var previousResolutionSymbol = this.getSymbolForAST(callEx, context);
+                var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx, context);
+                var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
                 if (previousResolutionSymbol) {
                     //CompilerDiagnostics.Alert("New get hit");
@@ -4012,7 +4029,7 @@ module TypeScript {
             var couldNotAssignToConstraint: boolean;
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
-                this.setSymbolForAST(callEx, targetTypeSymbol, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(targetTypeSymbol), context);
                 return targetTypeSymbol;
             }
 
@@ -4168,7 +4185,8 @@ module TypeScript {
                     if (callEx.arguments) {
                         for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
                             var arg = callEx.arguments.members[k];
-                            var argSymbol = this.getSymbolForAST(arg, context);
+                            var argSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(arg, context);
+                            var argSymbol = argSymbolAndDiagnostics && argSymbolAndDiagnostics.symbol;
 
                             if (argSymbol) {
                                 var argType = argSymbol.getType();
@@ -4274,13 +4292,13 @@ module TypeScript {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolForAST(callEx, returnType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
 
                 return returnType;
             }
             else if (targetTypeSymbol.isClass()) {
 
-                this.setSymbolForAST(callEx, returnType, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
 
                 // implicit constructor
                 return returnType;
@@ -4309,7 +4327,8 @@ module TypeScript {
         }
 
         private resolveAssignmentStatement(statementAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var previousResolutionSymbol = this.getSymbolForAST(statementAST, context);
+            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(statementAST, context);
+            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
 
             if (previousResolutionSymbol) {
                 return <PullTypeSymbol>previousResolutionSymbol;
@@ -4323,7 +4342,7 @@ module TypeScript {
             this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
             context.popContextualType();
 
-            this.setSymbolForAST(statementAST, leftType, context);
+            this.setSymbolAndDiagnosticsForAST(statementAST, SymbolAndDiagnostics.fromSymbol(leftType), context);
 
             return leftType;
         }
@@ -5928,7 +5947,7 @@ module TypeScript {
                 return true;
             }
 
-            var signature = this.getSymbolForAST(funcDecl, null).getType().getCallSignatures()[0];
+            var signature = this.getSymbolAndDiagnosticsForAST(funcDecl, null).symbol.getType().getCallSignatures()[0];
             var parameters = signature.getParameters();
             var paramLen = parameters.length;
 

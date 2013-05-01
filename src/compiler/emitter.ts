@@ -991,7 +991,8 @@ module TypeScript {
         public emitVariableDeclaration(declaration: VariableDeclaration) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
-            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+            var symbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(varDecl, this.document.fileName);
+            var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
 
             var parentSymbol = symbol ? symbol.getContainer() : null;
             var parentKind = parentSymbol ? parentSymbol.getKind() : PullElementKind.None;
@@ -1034,7 +1035,8 @@ module TypeScript {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
 
-                var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+                var symbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(varDecl, this.document.fileName);
+                var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
                 var parentSymbol = symbol ? symbol.getContainer() : null;
                 var parentKind = parentSymbol ? parentSymbol.getKind() : PullElementKind.None;
                 var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;

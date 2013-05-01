@@ -601,7 +601,7 @@ module TypeScript {
                 allSignatures = functionSignatureInfo.allSignatures;
             }
 
-            var funcSymbol = typeCheckContext.semanticInfo.getSymbolForAST(funcDecl);
+            var funcSymbol = typeCheckContext.semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
 
             // Find the definition signature for this signature group
             var definitionSignature: PullSignatureSymbol = null;
@@ -1919,7 +1919,8 @@ module TypeScript {
         }
 
         private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
-            var funcDeclSymbol = <PullFunctionTypeSymbol>this.resolver.getSymbolForAST(funcDeclAST, this.context);
+            var funcDeclSymbolAndDiagnostics = this.resolver.getSymbolAndDiagnosticsForAST(funcDeclAST, this.context);
+            var funcDeclSymbol = funcDeclSymbolAndDiagnostics && <PullFunctionTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
             if (!funcDeclSymbol) {
                 funcDeclSymbol = <PullFunctionTypeSymbol>this.resolver.resolveFunctionTypeSignature(<FunctionDeclaration>funcDeclAST, enclosingDecl, this.context);
             }
@@ -1947,11 +1948,12 @@ module TypeScript {
         }
 
         private typeCheckInterfaceTypeReference(interfaceAST: NamedDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
-            var interfaceSymbol = <PullTypeSymbol>this.resolver.getSymbolForAST(interfaceAST, this.context);
+            var interfaceSymbolAndDiagnostics = this.resolver.getSymbolAndDiagnosticsForAST(interfaceAST, this.context);
+            var interfaceSymbol = interfaceSymbolAndDiagnostics && <PullTypeSymbol>interfaceSymbolAndDiagnostics.symbol;
             if (!interfaceSymbol) {
                 interfaceSymbol = this.resolver.resolveInterfaceTypeReference(interfaceAST, enclosingDecl, this.context);
             }
-            
+
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
             typeCheckContext.pushEnclosingDecl(interfaceDecl);
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);

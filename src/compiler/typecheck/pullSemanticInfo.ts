@@ -91,13 +91,13 @@ module TypeScript {
             this.declASTMap.link(this.getDeclKey(decl), ast);
         }
 
-        public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap.link(ast.getID().toString(), symbol);
-            this.symbolASTMap.link(symbol.getSymbolID().toString(), ast)
+        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
+            this.astSymbolMap.link(ast.getID().toString(), symbolAndDiagnostics);
+            this.symbolASTMap.link(symbolAndDiagnostics.symbol.getSymbolID().toString(), ast)
         }
 
-        public getSymbolForAST(ast: AST): PullSymbol {
-            return <PullSymbol>this.astSymbolMap.read(ast.getID().toString());
+        public getSymbolAndDiagnosticsForAST(ast: AST): SymbolAndDiagnostics<PullSymbol> {
+            return <SymbolAndDiagnostics>this.astSymbolMap.read(ast.getID().toString());
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
@@ -387,11 +387,11 @@ module TypeScript {
             return null;
         }
 
-        public getSymbolForAST(ast: AST, unitPath: string) {
+        public getSymbolAndDiagnosticsForAST(ast: AST, unitPath: string): SymbolAndDiagnostics<PullSymbol> {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
-                return unit.getSymbolForAST(ast);
+                return unit.getSymbolAndDiagnosticsForAST(ast);
             }
 
             return null;
@@ -407,11 +407,11 @@ module TypeScript {
             return null;
         }
 
-        public setSymbolForAST(ast: AST, typeSymbol: PullSymbol, unitPath: string) {
+        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics, unitPath: string): void {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
-                unit.setSymbolForAST(ast, typeSymbol);
+                unit.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics);
             }
         }
 

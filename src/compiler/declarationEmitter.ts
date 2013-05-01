@@ -247,7 +247,8 @@ module TypeScript {
 
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
-            var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.fileName);
+            var declarationPullSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declarationContainerAst, this.fileName);
+            var declarationPullSymbol = declarationPullSymbolAndDiagnostics && declarationPullSymbolAndDiagnostics.symbol;
             var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
@@ -305,7 +306,7 @@ module TypeScript {
         }
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.fileName);
+            var pullSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(boundDecl, this.fileName).symbol;
             var type = this.widenType(pullSymbol.getType());
             if (!type) {
                 // PULLTODO
@@ -389,7 +390,7 @@ module TypeScript {
         }
 
         public isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
+            var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             return signatures && signatures.length > 1;
@@ -405,7 +406,7 @@ module TypeScript {
             }
 
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
+            var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
             var funcTypeSymbol = funcSymbol.getType();
             if (funcDecl.block) {
                 var constructSignatures = funcTypeSymbol.getConstructSignatures();
@@ -519,7 +520,8 @@ module TypeScript {
         }
 
         public emitBaseExpression(bases: ASTList, index: number) {
-            var baseType = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(bases.members[index], this.fileName);
+            var baseTypeAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(bases.members[index], this.fileName);
+            var baseType = baseTypeAndDiagnostics && <PullTypeSymbol>baseTypeAndDiagnostics.symbol;
             this.emitTypeSignature(baseType);
         }
 
@@ -632,7 +634,8 @@ module TypeScript {
 
             this.declFile.Write("<");
             var containerAst = this.getAstDeclarationContainer();
-            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.fileName);
+            var containerSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(containerAst, this.fileName);
+            var containerSymbol = containerSymbolAndDiagnostics && <PullTypeSymbol>containerSymbolAndDiagnostics.symbol;
             var typars: PullTypeSymbol[];
             if (funcSignature) {
                 typars = funcSignature.getTypeParameters();
@@ -682,7 +685,7 @@ module TypeScript {
 
         public ImportDeclarationCallback(pre: boolean, importDecl: ImportDeclaration): boolean {
             if (pre) {
-                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolForAST(importDecl, this.fileName);
+                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolAndDiagnosticsForAST(importDecl, this.fileName).symbol;
                 if (importSymbol.getTypeUsedExternally()) {
                     this.emitDeclarationComments(importDecl);
                     this.emitIndent();
