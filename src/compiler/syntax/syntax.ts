@@ -301,53 +301,50 @@ module TypeScript.Syntax {
     export function isEntirelyInsideComment(sourceUnit: SourceUnitSyntax, position: number): boolean {
         var positionedToken = sourceUnit.findToken(position);
         var fullStart = positionedToken.fullStart();
-
+        var triviaList: ISyntaxTriviaList = null;
         var lastTriviaBeforeToken: ISyntaxTrivia = null;
 
         if (positionedToken.kind() === SyntaxKind.EndOfFileToken) {
             // Check if the trivia is leading on the EndOfFile token
             if (positionedToken.token().hasLeadingTrivia()) {
-                lastTriviaBeforeToken = positionedToken.token().leadingTrivia().last();
-                fullStart += positionedToken.token().leadingTriviaWidth() - lastTriviaBeforeToken.fullWidth();
+                triviaList = positionedToken.token().leadingTrivia();
             }
             // Or trailing on the previous token
             else {
                 positionedToken = positionedToken.previousToken();
                 if (positionedToken) {
-                    fullStart = positionedToken.fullStart();
                     if (positionedToken && positionedToken.token().hasTrailingTrivia()) {
-                        lastTriviaBeforeToken = positionedToken.token().trailingTrivia().last();
-                        fullStart += positionedToken.token().fullWidth() - lastTriviaBeforeToken.fullWidth();
+                        triviaList = positionedToken.token().trailingTrivia();
+                        fullStart = positionedToken.end();
                     }
                 }
             }
         }
         else {
-            var triviaList: ISyntaxTriviaList = null;
             if (position <= (fullStart + positionedToken.token().leadingTriviaWidth())) {
                 triviaList = positionedToken.token().leadingTrivia();
             }
             else if (position >= (fullStart + positionedToken.token().width())) {
                 triviaList = positionedToken.token().trailingTrivia();
-                fullStart += positionedToken.token().width();
+                fullStart = positionedToken.end();
             }
+        }
 
-            if (triviaList) {
-                // Try to find the trivia matching the position
-                for (var i = 0, n = triviaList.count(); i < n; i++) {
-                    var trivia = triviaList.syntaxTriviaAt(i);
-                    if (position <= fullStart) {
-                        // Moved passed the trivia we need
-                        break;
-                    }
-                    else if (position <= fullStart + trivia.fullWidth() && trivia.isComment()) {
-                        // Found the comment trivia we were looking for
-                        lastTriviaBeforeToken = trivia;
-                        break;
-                    }
-
-                    fullStart += trivia.fullWidth();
+        if (triviaList) {
+            // Try to find the trivia matching the position
+            for (var i = 0, n = triviaList.count(); i < n; i++) {
+                var trivia = triviaList.syntaxTriviaAt(i);
+                if (position <= fullStart) {
+                    // Moved passed the trivia we need
+                    break;
                 }
+                else if (position <= fullStart + trivia.fullWidth() && trivia.isComment()) {
+                    // Found the comment trivia we were looking for
+                    lastTriviaBeforeToken = trivia;
+                    break;
+                }
+
+                fullStart += trivia.fullWidth();
             }
         }
 

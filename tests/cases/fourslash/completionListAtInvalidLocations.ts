@@ -25,6 +25,14 @@
 ////var v9 = '';
 /////* /*inComment5*/
 
+////var v11 = '';
+////  // /*inComment6*/
+////
+///
+
+//////  /*inComment7*/
+////foo;
+
 ////var v10 = /reg/*inRegExp1*/ex/;
 
 test.markers().forEach((m) => {
