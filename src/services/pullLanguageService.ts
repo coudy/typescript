@@ -441,8 +441,9 @@ module Services {
             return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
-        public getEmitOutput(fileName: string): IOutputFile[] {
-            return [];
+        public getEmitOutput(fileName: string): EmitOutput{
+            this.compilerState.refresh();
+            return this.compilerState.getEmitOutput(fileName);
         }
 
         ///

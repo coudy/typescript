@@ -66,7 +66,7 @@ module Services {
         getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
         getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath;
 
-        getEmitOutput(fileName: string): IOutputFile[];
+        getEmitOutput(fileName: string): EmitOutput;
     }
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {
@@ -335,6 +335,11 @@ module Services {
             this.version = -1;
             this.fileName = null;
         }
+    }
+
+    export class EmitOutput {
+        public outputFiles: IOutputFile[] = [];
+        public diagnostics: TypeScript.IDiagnostic[] = [];
     }
 
     export interface IOutputFile {

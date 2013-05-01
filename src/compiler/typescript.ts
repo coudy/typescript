@@ -418,6 +418,30 @@ module TypeScript {
             return [];
         }
 
+        // Will not throw exceptions.
+        public emitUnitDeclarations(fileName: string): IDiagnostic[] {
+            if (this.canEmitDeclarations()) {
+                if (this.emitOptions.outputMany) {
+                    try {
+                        var document = this.getDocument(fileName);
+                        var emitter = this.emitDeclarations(document);
+                        if (emitter) {
+                            emitter.close();
+                        }
+                    }
+                    catch (ex1) {
+                        return Emitter.handleEmitterError(fileName, ex1);
+                    }
+                }
+                else
+                {
+                    return this.emitAllDeclarations();
+                }
+            }
+
+            return [];
+        }
+
         static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: boolean) {
             if (wholeFileNameReplaced) {
                 // The complete output is redirected in this file so do not change extension
@@ -524,6 +548,37 @@ module TypeScript {
             }
 
             return [];
+        }
+
+        // Emit single file if outputMany is specified, else emit all
+        // Will not throw exceptions.
+        public emitUnit(fileName: string, ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
+            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            if (optionsDiagnostic) {
+                return [optionsDiagnostic];
+            }
+
+            if (this.emitOptions.outputMany) {
+                // In outputMany mode, only emit the document specified and its sourceMap if needed
+                var document = this.getDocument(fileName);
+                try {
+                    var emitter = this.emit(document, inputOutputMapper);
+
+                    // Close the emitter
+                    if (emitter) {
+                        emitter.emitSourceMapsAndClose();
+                    }
+                }
+                catch (ex1) {
+                    return Emitter.handleEmitterError(fileName, ex1);
+                }
+
+                return [];
+            }
+            else {
+                // In output Single file mode, emit everything
+                return this.emitAll(ioHost, inputOutputMapper);
+            }
         }
 
         private outputScriptToUTF8(script: Script): boolean {

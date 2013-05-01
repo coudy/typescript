@@ -315,7 +315,7 @@ module Services {
             return result;
         }
 
-        public getEmitOutput(fileName: string): Services.IOutputFile[] {
+        public getEmitOutput(fileName: string): Services.EmitOutput {
 
             var args = "fileName: " + this.stringify(fileName);
             var result = this.internal.getEmitOutput(fileName);

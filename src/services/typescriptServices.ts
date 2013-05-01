@@ -17,6 +17,7 @@
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='coreServices.ts' />
 ///<reference path='classifier.ts' />
+///<reference path='emitOutputTextWriter.ts' />
 ///<reference path='compilerState.ts' />
 ///<reference path='languageService.ts' />
 ///<reference path='keywordCompletions.ts' />

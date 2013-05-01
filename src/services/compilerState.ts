@@ -256,6 +256,77 @@ module Services {
             return this.compiler.getSemanticDiagnostics(fileName);
         }
 
+        public getEmitOutput(fileName: string): EmitOutput {
+            var result = new EmitOutput();
+
+            // Check for syntactic errors
+            var syntacticDiagnostics = this.compiler.getSyntacticDiagnostics(fileName);
+            if (this.containErrors(syntacticDiagnostics)) {
+                // This file has at least one syntactic error, return and do not emit code.
+                return result;
+            }
+
+            var emitterIOHost: TypeScript.EmitterIOHost = {
+                createFile: (fileName: string, useUTF8encoding: boolean = false) => {
+                    var outputFile = new EmitOutputTextWriter(fileName, useUTF8encoding);
+                    result.outputFiles.push(outputFile);
+                    return outputFile;
+                },
+                directoryExists: (fileName: string) => true,
+                fileExists: (fileName: string) => false,
+                resolvePath: (fileName: string) => fileName
+            };
+
+            // Call the emitter
+            var diagnostics: TypeScript.IDiagnostic[];
+
+            diagnostics = this.compiler.parseEmitOption(emitterIOHost) || [];
+            result.diagnostics = result.diagnostics.concat(diagnostics);
+            if (this.containErrors(diagnostics)) {
+                return result;
+            }
+
+            // Emit output files and source maps
+            diagnostics = this.compiler.emitUnit(fileName, emitterIOHost) || [];
+            result.diagnostics = result.diagnostics.concat(diagnostics);
+            if (this.containErrors(diagnostics)) {
+                return result;
+            }
+
+            // Emit declarations
+            if (this.shouldEmitDeclarations(fileName)) {
+                diagnostics = this.compiler.emitUnitDeclarations(fileName) || [];
+                result.diagnostics = result.diagnostics.concat(diagnostics);
+            }
+
+            return result;
+        }
+
+        private shouldEmitDeclarations(fileName: string): boolean {
+            // Only emit declarations if there are no semantic errors
+            var semanticDiagnostics = this.compiler.getSemanticDiagnostics(fileName);
+            if (this.containErrors(semanticDiagnostics)) {
+                // This file has at least one semantic error, return and do not emit declaration.
+                return false;
+            }
+
+            return true;
+        }
+
+
+        private containErrors(diagnostics: TypeScript.IDiagnostic[]): boolean {
+            if (diagnostics && diagnostics.length > 0) {
+                for (var i = 0; i < diagnostics.length; i++) {
+                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromCode(diagnostics[i].diagnosticCode());
+                    if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
             var currentVersion = this.hostCache.getVersion(fileName);
             if (lastKnownVersion === currentVersion) {
