@@ -374,6 +374,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.formatDocument();
         }
 
+        public selection(startMarker: string, endMarker: string) {
+            FourSlash.currentTestState.formatSelection(FourSlash.currentTestState.getMarkerByName(startMarker).position, FourSlash.currentTestState.getMarkerByName(endMarker).position);
+        }
+
         public setOption(name: string, value: number);
         public setOption(name: string, value: string);
         public setOption(name: string, value: boolean);

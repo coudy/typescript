@@ -703,6 +703,12 @@ module FourSlash {
             this.fixCaretPosition();
         }
 
+        public formatSelection(start: number, end: number) {
+            var edits = this.languageService.getFormattingEditsForRange(this.activeFile.fileName, start, end, this.formatCodeOptions);
+            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
+            this.fixCaretPosition();
+        }
+
         private updateMarkersForEdit(fileName: string, minChar: number, limChar: number, text: string) {
             for (var i = 0; i < this.testData.markers.length; i++) {
                 var marker = this.testData.markers[i];

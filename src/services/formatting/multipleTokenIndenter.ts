@@ -19,6 +19,10 @@ module TypeScript.Formatting {
     export class MultipleTokenIndenter extends IndentationTrackingWalker {
         private _edits: TextEditInfo[] = [];
 
+        constructor(textSpan: TextSpan, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
+            super(textSpan, sourceUnit, snapshot, indentFirstToken, options);
+        }
+
         public indentToken(token: ISyntaxToken, indentationAmount: number, commentIndentationAmount: number): void {
             // Ignore generated tokens
             if (token.fullWidth() === 0) {

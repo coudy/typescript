@@ -151,7 +151,17 @@ module TypeScript.Formatting {
 
         private getNodeIndentation(node: SyntaxNode, newLineInsertedByFormatting?: boolean): { indentationAmount: number; indentationAmountDelta: number; } {
             var parent = this._parent.node();
-            var parentIndentationAmount = this._parent.indentationAmount();
+            // We need to get the parent's indentation, which could be one of 2 things. If first token of the parent is in the span, use the parent's computed indentation.
+            // If the parent was outside the span, use the actual indentation of the parent.
+            var parentIndentationAmount;
+            if (this._textSpan.containsPosition(this._parent.start())) {
+                parentIndentationAmount = this._parent.indentationAmount();
+            }
+            else {
+                var line = this._snapshot.getLineFromPosition(this._parent.start()).getText();
+                var firstNonWhiteSpacePosition = Indentation.firstNonWhitespacePosition(line);
+                parentIndentationAmount = Indentation.columnForPositionInString(line, firstNonWhiteSpacePosition, this.options);
+            }
             var parentIndentationAmountDelta = this._parent.childIndentationAmountDelta();
 
             // The indentation level of the node
@@ -291,7 +301,7 @@ module TypeScript.Formatting {
             };
         }
 
-        public forceRecomputeIndentationOfParent(tokenStart: number, newLineAdded: boolean /*as opposed to removed*/): void {
+        private forceRecomputeIndentationOfParent(tokenStart: number, newLineAdded: boolean /*as opposed to removed*/): void {
             var parent = this._parent;
             if (parent.fullStart() === tokenStart) {
                 var indentation = this.getNodeIndentation(parent.node(), /* newLineInsertedByFormatting */ newLineAdded);
