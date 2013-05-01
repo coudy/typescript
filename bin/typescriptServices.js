@@ -30503,7 +30503,7 @@ var TypeScript;
 
             if (isDynamicMod) {
                 if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
-                    this.writeToOutput("})");
+                    this.writeToOutput("});");
                 }
 
                 if (!isWholeFile) {
@@ -39063,7 +39063,7 @@ var TypeScript;
                     return this.resolveArrayLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case 29 /* ThisExpression */:
-                    return this.resolveThisExpression(expressionAST, enclosingDecl, context);
+                    return this.resolveThisExpression(expressionAST, enclosingDecl, context).symbol;
 
                 case 30 /* SuperExpression */:
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
@@ -39093,7 +39093,7 @@ var TypeScript;
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 case 38 /* AssignmentExpression */:
-                    return this.resolveAssignmentStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveAssignmentStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
                 case 73 /* LogicalNotExpression */:
                 case 57 /* NotEqualsWithTypeConversionExpression */:
@@ -39158,7 +39158,7 @@ var TypeScript;
                     return this.semanticInfoChain.booleanTypeSymbol;
 
                 case 50 /* ConditionalExpression */:
-                    return this.resolveConditionalExpression(expressionAST, enclosingDecl, context);
+                    return this.resolveConditionalExpression(expressionAST, enclosingDecl, context).symbol;
 
                 case 6 /* RegularExpressionLiteral */:
                     return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
@@ -39286,7 +39286,7 @@ var TypeScript;
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
-            if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == 134217728 /* EnumMember */)) && this.cachedNumberInterfaceType) {
                 lhsType = this.cachedNumberInterfaceType;
             } else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
                 lhsType = this.cachedStringInterfaceType;
@@ -39739,63 +39739,54 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveThisExpression = function (ast, enclosingDecl, context) {
-            if (!enclosingDecl) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(ast, context);
 
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(ast, context);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
+            if (!symbolAndDiagnostics) {
+                if (enclosingDecl) {
+                    var enclosingDeclKind = enclosingDecl.getKind();
+                    var diagnostics;
 
-            if (previousResolutionSymbol) {
-                return previousResolutionSymbol;
-            }
+                    if (enclosingDeclKind === 8 /* Container */) {
+                        var diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 171 /* _this__cannot_be_referenced_within_module_bodies */, null);
+                        var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                        symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                    } else if (!(enclosingDeclKind & (TypeScript.PullElementKind.SomeFunction | 1 /* Script */ | TypeScript.PullElementKind.SomeBlock))) {
+                        var diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 172 /* _this__must_only_be_used_inside_a_function_or_script_context */, null);
+                        var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                        symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                    } else {
+                        var declPath = this.getPathToDecl(enclosingDecl);
 
-            var enclosingDeclKind = enclosingDecl.getKind();
-            var diagnostic = null;
+                        if (declPath.length) {
+                            for (var i = declPath.length - 1; i >= 0; i--) {
+                                var decl = declPath[i];
+                                var declKind = decl.getKind();
+                                var declFlags = decl.getFlags();
 
-            if (enclosingDeclKind === 8 /* Container */) {
-                diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 171 /* _this__cannot_be_referenced_within_module_bodies */, null);
-                return this.getNewErrorTypeSymbol(diagnostic);
-            } else if (!(enclosingDeclKind & (TypeScript.PullElementKind.SomeFunction | 1 /* Script */ | TypeScript.PullElementKind.SomeBlock))) {
-                diagnostic = new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), 172 /* _this__must_only_be_used_inside_a_function_or_script_context */, null);
-
-                return this.getNewErrorTypeSymbol(diagnostic);
-            }
-
-            var declPath = this.getPathToDecl(enclosingDecl);
-
-            if (declPath.length) {
-                for (var i = declPath.length - 1; i >= 0; i--) {
-                    var decl = declPath[i];
-                    var declKind = decl.getKind();
-                    var declFlags = decl.getFlags();
-
-                    if (declFlags & 16 /* Static */) {
-                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
-                        return this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    if (declKind === 262144 /* FunctionExpression */ && !TypeScript.hasFlag(declFlags, 8192 /* FatArrow */)) {
-                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
-                        return this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    if (declKind === 32768 /* Function */) {
-                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
-                        return this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    if (declKind === 16 /* Class */) {
-                        var classSymbol = decl.getSymbol();
-
-                        this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(classSymbol), context);
-                        return classSymbol;
+                                if (declFlags & 16 /* Static */) {
+                                    break;
+                                } else if (declKind === 262144 /* FunctionExpression */ && !TypeScript.hasFlag(declFlags, 8192 /* FatArrow */)) {
+                                    break;
+                                } else if (declKind === 32768 /* Function */) {
+                                    break;
+                                } else if (declKind === 16 /* Class */) {
+                                    var classSymbol = decl.getSymbol();
+                                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(classSymbol);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
+
+                if (!symbolAndDiagnostics) {
+                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
+                }
+
+                this.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics, context);
             }
 
-            this.setSymbolAndDiagnosticsForAST(ast, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
-            return this.semanticInfoChain.anyTypeSymbol;
+            return symbolAndDiagnostics;
         };
 
         PullTypeResolver.prototype.resolveSuperExpression = function (ast, enclosingDecl, context) {
@@ -40273,52 +40264,50 @@ var TypeScript;
             return this.semanticInfoChain.anyTypeSymbol;
         };
 
-        PullTypeResolver.prototype.resolveLogicalAndExpression = function (expressionAST, inContextuallyTypedAssignment, enclosingDecl, context) {
-            var binex = expressionAST;
-
-            var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-            var rightType = this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-
-            return rightType;
+        PullTypeResolver.prototype.resolveLogicalAndExpression = function (binex, inContextuallyTypedAssignment, enclosingDecl, context) {
+            return this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
         };
 
         PullTypeResolver.prototype.resolveConditionalExpression = function (trinex, enclosingDecl, context) {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex, context);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex, context);
 
-            if (previousResolutionSymbol) {
-                return previousResolutionSymbol;
-            }
+            if (!symbolAndDiagnostics) {
+                var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
+                var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
+                var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
 
-            var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
-            var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
-            var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
+                if (this.typesAreIdentical(leftType, rightType)) {
+                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
+                } else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
+                    var collection = {
+                        getLength: function () {
+                            return 2;
+                        },
+                        setTypeAtIndex: function (index, type) {
+                        },
+                        getTypeAtIndex: function (index) {
+                            return rightType;
+                        }
+                    };
 
-            if (this.typesAreIdentical(leftType, rightType)) {
-                return leftType;
-            } else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
-                var collection = {
-                    getLength: function () {
-                        return 2;
-                    },
-                    setTypeAtIndex: function (index, type) {
-                    },
-                    getTypeAtIndex: function (index) {
-                        return rightType;
+                    var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
+
+                    if (bestCommonType) {
+                        symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(bestCommonType);
                     }
-                };
-
-                var bct = this.findBestCommonType(leftType, null, collection, context);
-
-                if (bct) {
-                    this.setSymbolAndDiagnosticsForAST(trinex, SymbolAndDiagnostics.fromSymbol(bct), context);
-                    return bct;
                 }
+
+                if (!symbolAndDiagnostics) {
+                    var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), 155 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
+
+                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                }
+
+                this.setSymbolAndDiagnosticsForAST(trinex, symbolAndDiagnostics, context);
             }
 
-            var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), 155 /* Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ */, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
-
-            return this.getNewErrorTypeSymbol(diagnostic);
+            return symbolAndDiagnostics;
         };
 
         PullTypeResolver.prototype.resolveParenthesizedExpression = function (ast, enclosingDecl, context) {
@@ -40881,25 +40870,21 @@ var TypeScript;
             return typeReference;
         };
 
-        PullTypeResolver.prototype.resolveAssignmentStatement = function (statementAST, inContextuallyTypedAssignment, enclosingDecl, context) {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(statementAST, context);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
+        PullTypeResolver.prototype.resolveAssignmentStatement = function (binex, inContextuallyTypedAssignment, enclosingDecl, context) {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(binex, context);
 
-            if (previousResolutionSymbol) {
-                return previousResolutionSymbol;
+            if (!symbolAndDiagnostics) {
+                var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+
+                context.pushContextualType(leftType, context.inProvisionalResolution(), null);
+                this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
+                context.popContextualType();
+
+                symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
+                this.setSymbolAndDiagnosticsForAST(binex, symbolAndDiagnostics, context);
             }
 
-            var binex = statementAST;
-
-            var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-
-            context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-            this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
-            context.popContextualType();
-
-            this.setSymbolAndDiagnosticsForAST(statementAST, SymbolAndDiagnostics.fromSymbol(leftType), context);
-
-            return leftType;
+            return symbolAndDiagnostics;
         };
 
         PullTypeResolver.prototype.resolveBoundDecls = function (decl, context) {
@@ -50421,6 +50406,25 @@ var TypeScript;
             return result;
         };
 
+        SyntaxTreeToAstVisitor.prototype.getLeadingComments = function (node) {
+            var firstToken = node.firstToken();
+            var result = [];
+
+            if (firstToken.hasLeadingComment()) {
+                var leadingTrivia = firstToken.leadingTrivia();
+
+                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
+                    var trivia = leadingTrivia.syntaxTriviaAt(i);
+
+                    if (trivia.isComment()) {
+                        result.push(trivia);
+                    }
+                }
+            }
+
+            return result;
+        };
+
         SyntaxTreeToAstVisitor.prototype.hasTopLevelImportOrExport = function (node) {
             var firstToken;
 
@@ -50440,23 +50444,22 @@ var TypeScript;
                 }
             }
 
-            firstToken = node.firstToken();
+            var leadingComments = this.getLeadingComments(node);
+            for (var i = 0, n = leadingComments.length; i < n; i++) {
+                var trivia = leadingComments[i];
 
-            if (firstToken.hasLeadingComment()) {
-                var leadingTrivia = firstToken.leadingTrivia();
-
-                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
-                    var trivia = leadingTrivia.syntaxTriviaAt(i);
-
-                    if (trivia.isComment()) {
-                        if (TypeScript.getImplicitImport(trivia.fullText())) {
-                            return true;
-                        }
-                    }
+                if (TypeScript.getImplicitImport(trivia.fullText())) {
+                    return true;
                 }
             }
 
             return false;
+        };
+
+        SyntaxTreeToAstVisitor.prototype.getAmdDependency = function (comment) {
+            var amdDependencyRegEx = /^\/\/\/\s*<amd-dependency\s+path=('|")(.+?)\1/gim;
+            var match = amdDependencyRegEx.exec(comment);
+            return match ? match[2] : null;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitSourceUnit = function (node) {
@@ -50483,6 +50486,15 @@ var TypeScript;
                 }
 
                 topLevelMod.prettyName = TypeScript.getPrettyName(correctedFileName);
+
+                var leadingComments = this.getLeadingComments(node);
+                for (var i = 0, n = leadingComments.length; i < n; i++) {
+                    var trivia = leadingComments[i];
+                    var amdDependency = this.getAmdDependency(trivia.fullText());
+                    if (amdDependency) {
+                        topLevelMod.amdDependencies.push(amdDependency);
+                    }
+                }
 
                 bod = new TypeScript.ASTList();
                 this.setSpanExplicit(bod, start, this.position);
@@ -59154,8 +59166,8 @@ var TypeScript;
 (function (TypeScript) {
     (function (Formatting) {
         var IndentationNodeContext = (function () {
-            function IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta) {
-                this.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
+            function IndentationNodeContext(parent, node, fullStart, indentationAmount, childIndentationAmountDelta) {
+                this.update(parent, node, fullStart, indentationAmount, childIndentationAmountDelta);
             }
             IndentationNodeContext.prototype.parent = function () {
                 return this._parent;
@@ -59181,12 +59193,12 @@ var TypeScript;
                 return this._fullStart + this._node.leadingTriviaWidth() + this._node.width();
             };
 
-            IndentationNodeContext.prototype.indentationLevel = function () {
-                return this._indentationLevel;
+            IndentationNodeContext.prototype.indentationAmount = function () {
+                return this._indentationAmount;
             };
 
-            IndentationNodeContext.prototype.childIndentationLevelDelta = function () {
-                return this._childIndentationLevelDelta;
+            IndentationNodeContext.prototype.childIndentationAmountDelta = function () {
+                return this._childIndentationAmountDelta;
             };
 
             IndentationNodeContext.prototype.depth = function () {
@@ -59209,15 +59221,15 @@ var TypeScript;
                 if (this._parent) {
                     parent = this._parent.clone(pool);
                 }
-                return pool.getNode(parent, this._node, this._fullStart, this._indentationLevel, this._childIndentationLevelDelta);
+                return pool.getNode(parent, this._node, this._fullStart, this._indentationAmount, this._childIndentationAmountDelta);
             };
 
-            IndentationNodeContext.prototype.update = function (parent, node, fullStart, indentationLevel, childIndentationLevelDelta) {
+            IndentationNodeContext.prototype.update = function (parent, node, fullStart, indentationAmount, childIndentationAmountDelta) {
                 this._parent = parent;
                 this._node = node;
                 this._fullStart = fullStart;
-                this._indentationLevel = indentationLevel;
-                this._childIndentationLevelDelta = childIndentationLevelDelta;
+                this._indentationAmount = indentationAmount;
+                this._childIndentationAmountDelta = childIndentationAmountDelta;
                 this._hasSkippedOrMissingTokenChild = null;
 
                 if (parent) {
@@ -59271,8 +59283,9 @@ var TypeScript;
     (function (Formatting) {
         var IndentationTrackingWalker = (function (_super) {
             __extends(IndentationTrackingWalker, _super);
-            function IndentationTrackingWalker(textSpan, sourceUnit, snapshot, indentFirstToken) {
+            function IndentationTrackingWalker(textSpan, sourceUnit, snapshot, indentFirstToken, options) {
                 _super.call(this);
+                this.options = options;
                 this._position = 0;
                 this._parent = null;
 
@@ -59314,16 +59327,16 @@ var TypeScript;
                 this.forceRecomputeIndentationOfParent(tokenStart, false);
             };
 
-            IndentationTrackingWalker.prototype.indentToken = function (token, indentationLevel, commentIndentationLevel) {
+            IndentationTrackingWalker.prototype.indentToken = function (token, indentationAmount, commentIndentationAmount) {
                 throw TypeScript.Errors.abstract();
             };
 
             IndentationTrackingWalker.prototype.visitTokenInSpan = function (token) {
                 if (this._lastTriviaWasNewLine) {
-                    var indentationLevel = this.getTokenIndentationLevel(token);
-                    var commentIndentationLevel = this.getCommentIndentationLevel(token);
+                    var indentationAmount = this.getTokenIndentationAmount(token);
+                    var commentIndentationAmount = this.getCommentIndentationAmount(token);
 
-                    this.indentToken(token, indentationLevel, commentIndentationLevel);
+                    this.indentToken(token, indentationAmount, commentIndentationAmount);
                 }
             };
 
@@ -59347,7 +59360,7 @@ var TypeScript;
                     var indentation = this.getNodeIndentation(node);
 
                     var currentParent = this._parent;
-                    this._parent = this._indentationNodeContextPool.getNode(currentParent, node, this._position, indentation.indentationLevel, indentation.indentationLevelDelta);
+                    this._parent = this._indentationNodeContextPool.getNode(currentParent, node, this._position, indentation.indentationAmount, indentation.indentationAmountDelta);
 
                     node.accept(this);
 
@@ -59358,34 +59371,42 @@ var TypeScript;
                 }
             };
 
-            IndentationTrackingWalker.prototype.getTokenIndentationLevel = function (token) {
+            IndentationTrackingWalker.prototype.getTokenIndentationAmount = function (token) {
                 if (this._parent.node().firstToken() === token || token.kind() === 70 /* OpenBraceToken */ || token.kind() === 71 /* CloseBraceToken */ || token.kind() === 74 /* OpenBracketToken */ || token.kind() === 75 /* CloseBracketToken */ || (token.kind() === 42 /* WhileKeyword */ && this._parent.node().kind() == 159 /* DoStatement */)) {
-                    return this._parent.indentationLevel();
+                    return this._parent.indentationAmount();
                 }
 
-                return (this._parent.indentationLevel() + this._parent.childIndentationLevelDelta());
+                return (this._parent.indentationAmount() + this._parent.childIndentationAmountDelta());
             };
 
-            IndentationTrackingWalker.prototype.getCommentIndentationLevel = function (token) {
+            IndentationTrackingWalker.prototype.getCommentIndentationAmount = function (token) {
                 if (token.kind() === 71 /* CloseBraceToken */ || token.kind() === 75 /* CloseBracketToken */) {
-                    return (this._parent.indentationLevel() + this._parent.childIndentationLevelDelta());
+                    return (this._parent.indentationAmount() + this._parent.childIndentationAmountDelta());
                 }
-                return this._parent.indentationLevel();
+                return this._parent.indentationAmount();
             };
 
             IndentationTrackingWalker.prototype.getNodeIndentation = function (node, newLineInsertedByFormatting) {
                 var parent = this._parent.node();
-                var parentIndentationLevel = this._parent.indentationLevel();
-                var parentIndentationLevelDelta = this._parent.childIndentationLevelDelta();
 
-                var indentationLevel;
+                var parentIndentationAmount;
+                if (this._textSpan.containsPosition(this._parent.start())) {
+                    parentIndentationAmount = this._parent.indentationAmount();
+                } else {
+                    var line = this._snapshot.getLineFromPosition(this._parent.start()).getText();
+                    var firstNonWhiteSpacePosition = TypeScript.Indentation.firstNonWhitespacePosition(line);
+                    parentIndentationAmount = TypeScript.Indentation.columnForPositionInString(line, firstNonWhiteSpacePosition, this.options);
+                }
+                var parentIndentationAmountDelta = this._parent.childIndentationAmountDelta();
 
-                var indentationLevelDelta;
+                var indentationAmount;
+
+                var indentationAmountDelta;
 
                 switch (node.kind()) {
                     default:
-                        indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                        indentationLevelDelta = 0;
+                        indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
+                        indentationAmountDelta = 0;
                         break;
 
                     case 130 /* ClassDeclaration */:
@@ -59425,22 +59446,22 @@ var TypeScript;
                     case 214 /* ObjectCreationExpression */:
                     case 140 /* CallSignature */:
                     case 141 /* ConstructSignature */:
-                        indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
-                        indentationLevelDelta = 1;
+                        indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
+                        indentationAmountDelta = this.options.indentSpaces;
                         break;
 
                     case 145 /* IfStatement */:
                         if (parent.kind() === 232 /* ElseClause */ && !(parent).elseKeyword.hasTrailingNewLine() && !(node).ifKeyword.hasLeadingNewLine()) {
-                            indentationLevel = parentIndentationLevel;
+                            indentationAmount = parentIndentationAmount;
                         } else {
-                            indentationLevel = (parentIndentationLevel + parentIndentationLevelDelta);
+                            indentationAmount = (parentIndentationAmount + parentIndentationAmountDelta);
                         }
-                        indentationLevelDelta = 1;
+                        indentationAmountDelta = this.options.indentSpaces;
                         break;
 
                     case 232 /* ElseClause */:
-                        indentationLevel = parentIndentationLevel;
-                        indentationLevelDelta = 1;
+                        indentationAmount = parentIndentationAmount;
+                        indentationAmountDelta = this.options.indentSpaces;
                         break;
 
                     case 144 /* Block */:
@@ -59450,15 +59471,15 @@ var TypeScript;
                             case 144 /* Block */:
                             case 230 /* CaseSwitchClause */:
                             case 231 /* DefaultSwitchClause */:
-                                indentationLevel = parentIndentationLevel + parentIndentationLevelDelta;
+                                indentationAmount = parentIndentationAmount + parentIndentationAmountDelta;
                                 break;
 
                             default:
-                                indentationLevel = parentIndentationLevel;
+                                indentationAmount = parentIndentationAmount;
                                 break;
                         }
 
-                        indentationLevelDelta = 1;
+                        indentationAmountDelta = this.options.indentSpaces;
                         break;
                 }
 
@@ -59467,15 +59488,15 @@ var TypeScript;
                         var parentStartLine = this._snapshot.getLineNumberFromPosition(this._parent.start());
                         var currentNodeStartLine = this._snapshot.getLineNumberFromPosition(this._position + node.leadingTriviaWidth());
                         if (parentStartLine === currentNodeStartLine || newLineInsertedByFormatting === false) {
-                            indentationLevel = parentIndentationLevel;
-                            indentationLevelDelta = Math.min(1, parentIndentationLevelDelta + indentationLevelDelta);
+                            indentationAmount = parentIndentationAmount;
+                            indentationAmountDelta = Math.min(this.options.indentSpaces, parentIndentationAmountDelta + indentationAmountDelta);
                         }
                     }
                 }
 
                 return {
-                    indentationLevel: indentationLevel,
-                    indentationLevelDelta: indentationLevelDelta
+                    indentationAmount: indentationAmount,
+                    indentationAmountDelta: indentationAmountDelta
                 };
             };
 
@@ -59483,7 +59504,7 @@ var TypeScript;
                 var parent = this._parent;
                 if (parent.fullStart() === tokenStart) {
                     var indentation = this.getNodeIndentation(parent.node(), newLineAdded);
-                    parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationLevel, indentation.indentationLevelDelta);
+                    parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationAmount, indentation.indentationAmountDelta);
                 }
             };
             return IndentationTrackingWalker;
@@ -59498,12 +59519,10 @@ var TypeScript;
         var MultipleTokenIndenter = (function (_super) {
             __extends(MultipleTokenIndenter, _super);
             function MultipleTokenIndenter(textSpan, sourceUnit, snapshot, indentFirstToken, options) {
-                _super.call(this, textSpan, sourceUnit, snapshot, indentFirstToken);
+                _super.call(this, textSpan, sourceUnit, snapshot, indentFirstToken, options);
                 this._edits = [];
-
-                this.options = options;
             }
-            MultipleTokenIndenter.prototype.indentToken = function (token, indentationLevel, commentIndentationLevel) {
+            MultipleTokenIndenter.prototype.indentToken = function (token, indentationAmount, commentIndentationAmount) {
                 if (token.fullWidth() === 0) {
                     return;
                 }
@@ -59517,10 +59536,8 @@ var TypeScript;
                     return;
                 }
 
-                var indentationAmount = indentationLevel * this.options.indentSpaces;
                 var indentationString = TypeScript.Indentation.indentationString(indentationAmount, this.options);
 
-                var commentIndentationAmount = commentIndentationLevel * this.options.indentSpaces;
                 var commentIndentationString = TypeScript.Indentation.indentationString(commentIndentationAmount, this.options);
 
                 this.recordIndentationEditsForToken(token, indentationString, commentIndentationString);
@@ -59662,11 +59679,10 @@ var TypeScript;
         var SingleTokenIndenter = (function (_super) {
             __extends(SingleTokenIndenter, _super);
             function SingleTokenIndenter(indentationPosition, sourceUnit, snapshot, indentFirstToken, options) {
-                _super.call(this, new TypeScript.TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken);
+                _super.call(this, new TypeScript.TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken, options);
                 this.indentationAmount = null;
 
                 this.indentationPosition = indentationPosition;
-                this.options = options;
             }
             SingleTokenIndenter.getIndentationAmount = function (position, sourceUnit, snapshot, options) {
                 var walker = new SingleTokenIndenter(position, sourceUnit, snapshot, true, options);
@@ -59674,11 +59690,11 @@ var TypeScript;
                 return walker.indentationAmount;
             };
 
-            SingleTokenIndenter.prototype.indentToken = function (token, indentationLevel, commentIndentationLevel) {
+            SingleTokenIndenter.prototype.indentToken = function (token, indentationAmount, commentIndentationAmount) {
                 if (token.fullWidth() === 0 || (this.indentationPosition - this.position() < token.leadingTriviaWidth())) {
-                    this.indentationAmount = commentIndentationLevel * this.options.indentSpaces;
+                    this.indentationAmount = commentIndentationAmount;
                 } else {
-                    this.indentationAmount = indentationLevel * this.options.indentSpaces;
+                    this.indentationAmount = indentationAmount;
                 }
             };
             return SingleTokenIndenter;
