@@ -2490,8 +2490,7 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
-            // if we're resolving a type reference, we really only want to check the constructor type
-            if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType) {
                 lhsType = this.cachedNumberInterfaceType;
             }
             else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
