@@ -1363,6 +1363,17 @@ module TypeScript {
                         break;
                     }
                 }
+
+
+                if (!propertySymbol && this.reBindingAfterChange) {
+                    var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
+
+                    if (classConstructor) {
+                        var classConstructorType = classConstructor.getType();
+
+                        propertySymbol = classConstructorType.findMember(declName);
+                    }
+                }                
             }
             else {
                 propertySymbol = parent.findMember(declName, false);
@@ -1910,6 +1921,17 @@ module TypeScript {
                         break;
                     }
                 }
+
+                if (!methodSymbol && this.reBindingAfterChange) {
+                    var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
+
+                    if (classConstructor) {
+                        var classConstructorType = classConstructor.getType();
+
+                        methodSymbol = classConstructorType.findMember(methodName);
+                    }
+                }
+
             }
             else {
                 methodSymbol = parent.findMember(methodName, false);
