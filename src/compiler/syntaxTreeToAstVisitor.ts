@@ -433,6 +433,25 @@ module TypeScript {
             return result;
         }
 
+        private getLeadingComments(node: SyntaxNode): ISyntaxTrivia[] {
+            var firstToken = node.firstToken();
+            var result: ISyntaxTrivia[] = [];
+
+            if (firstToken.hasLeadingComment()) {
+                var leadingTrivia = firstToken.leadingTrivia();
+
+                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
+                    var trivia = leadingTrivia.syntaxTriviaAt(i);
+
+                    if (trivia.isComment()) {
+                        result.push(trivia);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private hasTopLevelImportOrExport(node: SourceUnitSyntax): boolean {
             // TODO: implement this.
 
@@ -454,29 +473,29 @@ module TypeScript {
                 }
             }
 
-            firstToken = node.firstToken();
+            var leadingComments = this.getLeadingComments(node);
+            for (var i = 0, n = leadingComments.length; i < n; i++) {
+                var trivia = leadingComments[i];
 
-            if (firstToken.hasLeadingComment()) {
-                var leadingTrivia = firstToken.leadingTrivia();
-
-                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
-                    var trivia = leadingTrivia.syntaxTriviaAt(i);
-
-                    if (trivia.isComment()) {
-                        // var dependencyPath = getAdditionalDependencyPath(trivia.text());
-
-                        //if (dependencyPath) {
-                        //    this.amdDependencies.push(dependencyPath);
-                        //}
-
-                        if (getImplicitImport(trivia.fullText())) {
-                            return true;
-                        }
-                    }
+                if (getImplicitImport(trivia.fullText())) {
+                    return true;
                 }
             }
 
             return false;
+        }
+
+        private getAmdDependency(comment: string): string {
+            var amdDependencyRegEx = /^\/\/\/\s*<amd-dependency\s+path=('|")(.+?)\1/gim;
+            var match = amdDependencyRegEx.exec(comment);
+
+            if (match) {
+                var path: string = match[2];
+                return path;
+            }
+            else {
+                return null;
+            }
         }
 
         public visitSourceUnit(node: SourceUnitSyntax): Script {
@@ -505,6 +524,15 @@ module TypeScript {
                 topLevelMod.prettyName = getPrettyName(correctedFileName);
                 //topLevelMod.containsUnicodeChar = this.scanner.seenUnicodeChar;
                 //topLevelMod.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
+
+                var leadingComments = this.getLeadingComments(node);
+                for (var i = 0, n = leadingComments.length; i < n; i++) {
+                    var trivia = leadingComments[i];
+                    var amdDependency = this.getAmdDependency(trivia.fullText());
+                    if (amdDependency) {
+                        topLevelMod.amdDependencies.push(amdDependency);
+                    }
+                }
 
                 // topLevelMod.amdDependencies = this.amdDependencies;
 
