@@ -2282,7 +2282,7 @@ module TypeScript {
 
                 // assignment
                 case NodeType.AssignmentExpression:
-                    return this.resolveAssignmentStatement(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveAssignmentStatement(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
                 // boolean operations
                 case NodeType.LogicalNotExpression:
@@ -2348,7 +2348,7 @@ module TypeScript {
                     return this.semanticInfoChain.booleanTypeSymbol;
 
                 case NodeType.ConditionalExpression:
-                    return this.resolveConditionalExpression(<ConditionalExpression>expressionAST, enclosingDecl, context);
+                    return this.resolveConditionalExpression(<ConditionalExpression>expressionAST, enclosingDecl, context).symbol;
 
                 case NodeType.RegularExpressionLiteral:
                     return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
@@ -3642,39 +3642,42 @@ module TypeScript {
             return rightType;
         }
 
-        private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex, context);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
+        private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex, context);
 
-            if (previousResolutionSymbol) {
-                return <PullTypeSymbol>previousResolutionSymbol;
-            }
+            if (!symbolAndDiagnostics) {
+                var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
+                var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
+                var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
 
-            var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
-            var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
-            var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
+                if (this.typesAreIdentical(leftType, rightType)) {
+                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
+                }
+                else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
+                    var collection: IPullTypeCollection = {
+                        getLength: () => { return 2; },
+                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
+                        getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
+                    }
 
-            if (this.typesAreIdentical(leftType, rightType)) {
-                return leftType;
-            }
-            else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
-                var collection: IPullTypeCollection = {
-                    getLength: () => { return 2; } ,
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } , // no contextual typing here, so no need to do anything
-                    getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
+                    var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
+
+                    if (bestCommonType) {
+                        symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(bestCommonType);
+                    }
                 }
 
-                var bct = this.findBestCommonType(leftType, null, collection, context);
+                if (!symbolAndDiagnostics) {
+                    var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
 
-                if (bct) {
-                    this.setSymbolAndDiagnosticsForAST(trinex, SymbolAndDiagnostics.fromSymbol(bct), context);
-                    return bct;
+                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
                 }
+
+                this.setSymbolAndDiagnosticsForAST(trinex, symbolAndDiagnostics, context);
             }
 
-            var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
-
-            return this.getNewErrorTypeSymbol(diagnostic);
+            return symbolAndDiagnostics;
         }
 
         private resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -4326,25 +4329,21 @@ module TypeScript {
             return typeReference;
         }
 
-        private resolveAssignmentStatement(statementAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(statementAST, context);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
+        private resolveAssignmentStatement(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(binex, context);
 
-            if (previousResolutionSymbol) {
-                return <PullTypeSymbol>previousResolutionSymbol;
+            if (!symbolAndDiagnostics) {
+                var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
+
+                context.pushContextualType(leftType, context.inProvisionalResolution(), null);
+                this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
+                context.popContextualType();
+
+                symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
+                this.setSymbolAndDiagnosticsForAST(binex, symbolAndDiagnostics, context);
             }
 
-            var binex = <BinaryExpression>statementAST;
-
-            var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
-
-            context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-            this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
-            context.popContextualType();
-
-            this.setSymbolAndDiagnosticsForAST(statementAST, SymbolAndDiagnostics.fromSymbol(leftType), context);
-
-            return leftType;
+            return symbolAndDiagnostics;
         }
 
         public resolveBoundDecls(decl: PullDecl, context: PullTypeResolutionContext): void {
