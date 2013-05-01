@@ -16,7 +16,6 @@
 
 ////interface Foo<T> {
 ////    ofFooT: Foo<T>;
-////    ofFooFoo: Foo<Foo<T>>; // should be error
 ////    ofFooFooNum: Foo<Foo<number>>; // should be error?
 ////    ofIG: IG<T>;
 ////    ofIG3: IG<Foo<T>>;
@@ -83,108 +82,92 @@
 
 goTo.marker('a1');
 verify.quickInfoIs('Foo<any>');
-goTo.marker('a2');
-verify.quickInfoIs('Foo<any>');
+// BUG 682406
+//goTo.marker('a2');
+//verify.quickInfoIs('Foo<any>');
 goTo.marker('a3');
 verify.quickInfoIs('IG<any>');
-// BUG 668243
-//goTo.marker('a4');
-//verify.quickInfoIs('IG<any>');
-// BUG 668369
-//goTo.marker('a5');
-//verify.quickInfoIs('{ x: Foo<T>; }');
-// BUG 668243
-//goTo.marker('a6');
-//verify.quickInfoIs('IG<any>');
+goTo.marker('a4');
+verify.quickInfoIs('IG<Foo<any>>');
+goTo.marker('a5');
+verify.quickInfoIs('{ x: Foo<any>; }');
+goTo.marker('a6');
+verify.quickInfoIs('IG<Foo<any>>');
 goTo.marker('a7');
 verify.quickInfoIs('C<any>');
-// BUG 668243
-//goTo.marker('a8');
-//verify.quickInfoIs('C<any>');
+goTo.marker('a8');
+verify.quickInfoIs('C<Foo<any>>');
 
-// BUG 667595
-//goTo.marker('b1');
-//verify.quickInfoIs('any');
-goTo.marker('b2');
-verify.quickInfoIs('Foo<number>'); 
+goTo.marker('b1');
+verify.quickInfoIs('Foo<number>');
+// BUG 682406
+//goTo.marker('b2');
+//verify.quickInfoIs('Foo<number>'); 
 goTo.marker('b3');
 verify.quickInfoIs('IG<number>');
-// BUG 668243
-//goTo.marker('b4');
-//verify.quickInfoIs('IG<number>');
-// BUG 668369
-//goTo.marker('b5');
-//verify.quickInfoIs('{ x: Foo<T>; }');
-// BUG 668243
-//goTo.marker('b6');
-//verify.quickInfoIs('IG<number>');
+goTo.marker('b4');
+verify.quickInfoIs('IG<Foo<number>>');
+goTo.marker('b5');
+verify.quickInfoIs('{ x: Foo<number>; }');
+goTo.marker('b6');
+verify.quickInfoIs('IG<Foo<number>>');
 goTo.marker('b7');
 verify.quickInfoIs('C<number>');
-// BUG 668243
-//goTo.marker('b8');
-//verify.quickInfoIs('C<number>');
+goTo.marker('b8');
+verify.quickInfoIs('C<Foo<number>>');
 
 goTo.marker('c1');
 verify.quickInfoIs('Foo<I>');
-goTo.marker('c2');
-verify.quickInfoIs('Foo<I>');
+// BUG 682406
+//goTo.marker('c2');
+//verify.quickInfoIs('Foo<I>');
 goTo.marker('c3');
 verify.quickInfoIs('IG<I>');
-// BUG 668243
-//goTo.marker('c4');
-//verify.quickInfoIs('IG<I>');
-// BUG 668369
-//goTo.marker('c5');
-//verify.quickInfoIs('{ x: Foo<T>; }');
-// BUG 668243
-//goTo.marker('c6');
-//verify.quickInfoIs('IG<I>');
+goTo.marker('c4');
+verify.quickInfoIs('IG<Foo<I>>');
+goTo.marker('c5');
+verify.quickInfoIs('{ x: Foo<I>; }');
+goTo.marker('c6');
+verify.quickInfoIs('IG<Foo<I>>');
 goTo.marker('c7');
 verify.quickInfoIs('C<I>');
-// BUG 668243
-//goTo.marker('c8');
-//verify.quickInfoIs('C<I>');
+goTo.marker('c8');
+verify.quickInfoIs('C<Foo<I>>');
 
 goTo.marker('d1');
 verify.quickInfoIs('Foo<{ x: number; }>');
-goTo.marker('d2');
-verify.quickInfoIs('Foo<{ x: number; }>');
+// BUG 682406
+//goTo.marker('d2');
+//verify.quickInfoIs('Foo<{ x: number; }>');
 goTo.marker('d3');
 verify.quickInfoIs('IG<{ x: number; }>');
-// BUG 668243
-//goTo.marker('d4');
-//verify.quickInfoIs('IG<{ x: number; }>');
-// BUG 668369
-//goTo.marker('d5');
-//verify.quickInfoIs('{ x: Foo<T>; }');
-// BUG 668243
-//goTo.marker('d6');
-//verify.quickInfoIs('IG<{ x: number; }>');
+goTo.marker('d4');
+verify.quickInfoIs('IG<Foo<{ x: number; }>>');
+goTo.marker('d5');
+verify.quickInfoIs('{ x: Foo<{ x: number; }>; }');
+goTo.marker('d6');
+verify.quickInfoIs('IG<Foo<{ x: number; }>>');
 goTo.marker('d7');
 verify.quickInfoIs('C<{ x: number; }>');
-// BUG 668243
-//goTo.marker('d8');
-//verify.quickInfoIs('C<{ x: number; }>');
+goTo.marker('d8');
+verify.quickInfoIs('C<Foo<{ x: number; }>>');
 
-// BUG 667595
+// BUG 682397
 //goTo.marker('e1');
 //verify.quickInfoIs('any');
-// BUG 667595
+// BUG 682406
 //goTo.marker('e2');
 //verify.quickInfoIs('any'); // TODO: fourslash reporting 'any' but VS is correct...
-goTo.marker('e3');
-verify.quickInfoIs('any');
-// BUG 668243
+//goTo.marker('e3');
+//verify.quickInfoIs('any');
 //goTo.marker('e4');
 //verify.quickInfoIs('IG<Foo<number>>');
 // BUG 668369
 //goTo.marker('e5');
 //verify.quickInfoIs('{ x: Foo<T>; }');
-// BUG 668243
 //goTo.marker('e6');
 //verify.quickInfoIs('IG<Foo<number>>');
-goTo.marker('e7');
-verify.quickInfoIs('any');
-// BUG 668243
+//goTo.marker('e7');
+//verify.quickInfoIs('any');
 //goTo.marker('e8');
 //verify.quickInfoIs('C<Foo<number>>');

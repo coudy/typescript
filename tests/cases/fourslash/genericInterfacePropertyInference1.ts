@@ -103,9 +103,8 @@ goTo.marker('a7');
 verify.quickInfoIs('{ x: any; }');
 goTo.marker('a8');
 verify.quickInfoIs('C<number>');
-// BUG 670274
-//goTo.marker('a9');
-//verify.quickInfoIs('C<{ x: any; }>');
+goTo.marker('a9');
+verify.quickInfoIs('C<{ x: any; }>');
 
 goTo.marker('b1');
 verify.quickInfoIs('number');
@@ -124,9 +123,8 @@ goTo.marker('b7');
 verify.quickInfoIs('{ x: number; }');
 goTo.marker('b8');
 verify.quickInfoIs('C<number>');
-// BUG 670274
-//goTo.marker('b9');
-//verify.quickInfoIs('C<{ x: I; }>');
+goTo.marker('b9');
+verify.quickInfoIs('C<{ x: number; }>');
 
 goTo.marker('c1');
 verify.quickInfoIs('number');
@@ -144,9 +142,8 @@ goTo.marker('c7');
 verify.quickInfoIs('{ x: I; }');
 goTo.marker('c8');
 verify.quickInfoIs('C<number>');
-// BUG 670274
-//goTo.marker('c9');
-//verify.quickInfoIs('C<{ x: number; }>');
+goTo.marker('c9');
+verify.quickInfoIs('C<{ x: I; }>');
 
 goTo.marker('d1');
 verify.quickInfoIs('number');
@@ -164,9 +161,8 @@ goTo.marker('d7');
 verify.quickInfoIs('{ x: { x: number; }; }');
 goTo.marker('d8');
 verify.quickInfoIs('C<number>');
-// BUG 670274
-//goTo.marker('d9');
-//verify.quickInfoIs('C<{ x: {x: number }; }>');
+goTo.marker('d9');
+verify.quickInfoIs('C<{ x: { x: number; }; }>');
 
 goTo.marker('e1');
 verify.quickInfoIs('number');
@@ -185,8 +181,7 @@ goTo.marker('e7');
 verify.quickInfoIs('{ x: Foo<number>; }');
 goTo.marker('e8');
 verify.quickInfoIs('C<number>');
-// BUG 670274
-//goTo.marker('e9');
-//verify.quickInfoIs('C<{ x: Foo<number>; }>');
+goTo.marker('e9');
+verify.quickInfoIs('C<{ x: Foo<number>; }>');
 
 

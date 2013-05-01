@@ -24,5 +24,9 @@ var C2 = (function (_super) {
     return C2;
 })(A);
 
-var c2;
-c2.bar();
+var a;
+var c;
+a.bar();
+c.bar();
+A.bar();
+C2.bar();

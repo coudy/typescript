@@ -6,6 +6,10 @@ class A {
 }
  
 class C2 extends A {}
- 
-var c2: C2;
-c2.bar(); // error
+
+var a: A;
+var c: C2;
+a.bar(); // static off an instance - should be an error
+c.bar(); // static off an instance - should be an error
+A.bar(); // valid
+C2.bar(); // valid
