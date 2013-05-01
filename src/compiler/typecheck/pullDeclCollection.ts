@@ -1066,12 +1066,15 @@ module TypeScript {
     }
 
     function isContainer(decl: PullDecl): boolean {
-        return decl.getKind() === PullElementKind.Container || decl.getKind() === PullElementKind.DynamicModule;
+        return decl.getKind() === PullElementKind.Container || decl.getKind() === PullElementKind.DynamicModule || decl.getKind() === PullElementKind.Enum;
     }
 
     function getInitializationFlag(decl: PullDecl): PullElementFlags {
         if (decl.getKind() & PullElementKind.Container) {
             return PullElementFlags.InitializedModule;
+        }
+        else if (decl.getKind() & PullElementKind.Enum) {
+            return PullElementFlags.InitializedEnum;
         }
         else if (decl.getKind() & PullElementKind.DynamicModule) {
             return PullElementFlags.InitializedDynamicModule;
@@ -1081,10 +1084,15 @@ module TypeScript {
     }
 
     function hasInitializationFlag(decl: PullDecl): boolean {
-        if (decl.getKind() & PullElementKind.Container) {
+        var kind = decl.getKind();
+
+        if (kind & PullElementKind.Container) {
             return (decl.getFlags() & PullElementFlags.InitializedModule) !== 0;
         }
-        else if (decl.getKind() & PullElementKind.DynamicModule) {
+        else if (kind & PullElementKind.Enum) {
+            return (decl.getFlags() & PullElementFlags.InitializedEnum) != 0;
+        }
+        else if (kind & PullElementKind.DynamicModule) {
             return (decl.getFlags() & PullElementFlags.InitializedDynamicModule) !== 0;
         }
 

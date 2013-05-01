@@ -72,5 +72,9 @@ module TypeScript {
 
             return result;
         }
+
+        export function symbolIsEnum(source: PullSymbol) {
+            return source.getKind() & (PullElementKind.Enum | PullElementKind.EnumMember) || source.hasFlag(PullElementFlags.InitializedEnum);
+        }
     }
 }

@@ -25,16 +25,17 @@ module TypeScript {
         ClassConstructorVariable = 1 << 14,
         InitializedModule = 1 << 15,
         InitializedDynamicModule = 1 << 16,
+        InitializedEnum = 1 << 17,
 
-        MustCaptureThis = 1 << 17,
-        Constant = 1 << 18,
+        MustCaptureThis = 1 << 18,
+        Constant = 1 << 19,
 
-        ExpressionElement = 1 << 19,
+        ExpressionElement = 1 << 20,
 
-        DeclaredInAWithBlock = 1 << 20,
+        DeclaredInAWithBlock = 1 << 21,
 
-        ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule,
-        SomeInitializedModule = InitializedModule | InitializedDynamicModule,
+        ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
+        SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }
 
     export enum PullElementKind {

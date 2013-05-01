@@ -3399,8 +3399,7 @@ module TypeScript {
 
             var indexType = this.resolveStatementOrExpression(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
-            var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol ||
-                                indexType.getKind() === PullElementKind.Enum;
+            var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(indexType);
 
             if (elementType && isNumberIndex) {
                 this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(elementType), context);
@@ -4922,13 +4921,17 @@ module TypeScript {
                 return false;
             }
 
-            // REVIEW: enum types aren't explicitly covered in the spec
-            if (target === this.semanticInfoChain.numberTypeSymbol && (source.getKind() & PullElementKind.Enum)) {
+            if (target === this.semanticInfoChain.numberTypeSymbol && PullHelpers.symbolIsEnum(source)) {
                 return true;
             }
-            if (source === this.semanticInfoChain.numberTypeSymbol && (target.getKind() & PullElementKind.Enum)) {
+            if (source === this.semanticInfoChain.numberTypeSymbol && PullHelpers.symbolIsEnum(target)) {
                 return true;
             }
+
+            if (PullHelpers.symbolIsEnum(target) && PullHelpers.symbolIsEnum(source)) {
+                return this.symbolsShareDeclaration(target, source);
+            }
+
             if ((source.getKind() & PullElementKind.Enum) || (target.getKind() & PullElementKind.Enum)) {
                 return false;
             }

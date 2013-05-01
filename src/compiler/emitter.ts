@@ -1177,14 +1177,14 @@ module TypeScript {
                             }
                         }
                         else if (pullSymbolContainerKind === PullElementKind.Container || pullSymbolContainerKind === PullElementKind.Enum ||
-                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule)) {
+                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
                                      pullSymbolKind === PullElementKind.Variable &&
-                                     !pullSymbol.hasFlag(PullElementFlags.InitializedModule)) {
+                                     !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {

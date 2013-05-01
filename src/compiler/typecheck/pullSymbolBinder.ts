@@ -177,6 +177,7 @@ module TypeScript {
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
             var isExported = moduleContainerDecl.getFlags() & PullElementFlags.Exported;
+            var isEnum = (moduleKind & PullElementKind.Enum) != 0;
 
             var createdNewSymbol = false;
 
@@ -261,6 +262,30 @@ module TypeScript {
 
             for (var i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
+            }
+
+            // if it's an enum, freshen the index signature
+            if (isEnum) {
+
+                moduleInstanceTypeSymbol = moduleContainerTypeSymbol.getInstanceSymbol().getType();
+
+                if (this.reBindingAfterChange) {
+                    var existingIndexSigs = moduleInstanceTypeSymbol.getIndexSignatures();
+
+                    for (var i = 0; i < existingIndexSigs.length; i++) {
+                        moduleInstanceTypeSymbol.removeIndexSignature(existingIndexSigs[i]);
+                    }
+                }
+
+                var enumIndexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
+                var enumIndexParameterSymbol = new PullSymbol("x", PullElementKind.Parameter);
+                enumIndexParameterSymbol.setType(this.semanticInfoChain.numberTypeSymbol);
+                enumIndexSignature.addParameter(enumIndexParameterSymbol);
+                enumIndexSignature.setReturnType(this.semanticInfoChain.stringTypeSymbol);
+
+                moduleInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
+
+                moduleInstanceTypeSymbol.recomputeIndexSignatures();
             }
 
             this.popParent();
@@ -2868,6 +2893,7 @@ module TypeScript {
                     }
                     break;
 
+                case PullElementKind.Enum:
                 case PullElementKind.DynamicModule:
                 case PullElementKind.Container:
                     this.bindModuleDeclarationToPullSymbol(decl);
@@ -2912,10 +2938,6 @@ module TypeScript {
 
                 case PullElementKind.IndexSignature:
                     this.bindIndexSignatureDeclarationToPullSymbol(decl);
-                    break;
-
-                case PullElementKind.Enum:
-                    this.bindEnumDeclarationToPullSymbol(decl);
                     break;
 
                 case PullElementKind.GetAccessor:
