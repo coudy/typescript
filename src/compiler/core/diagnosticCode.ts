@@ -69,7 +69,7 @@ module TypeScript {
         Interface_name_cannot_be__0_,
         Enum_name_cannot_be__0_,
         Module_name_cannot_be__0_,
-
+        Enum_member_must_have_initializer,
 
 
 

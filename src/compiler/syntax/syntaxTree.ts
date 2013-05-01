@@ -873,7 +873,8 @@ module TypeScript {
             if (this.checkForReservedName(node, node.identifier, DiagnosticCode.Enum_name_cannot_be__0_) ||
                 this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) ||
-                this.checkModuleElementModifiers(node.modifiers)) {
+                this.checkModuleElementModifiers(node.modifiers),
+                this.checkEnumElements(node)) {
 
                 this.skip(node);
                 return;
@@ -883,6 +884,35 @@ module TypeScript {
             this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitEnumDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private checkEnumElements(node: EnumDeclarationSyntax): boolean {
+            var enumElementFullStart = this.childFullStart(node, node.enumElements);
+
+            var seenComputedValue = false;
+            for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
+                var child = node.enumElements.childAt(i);
+
+                if (i % 2 === 0) {
+                    var enumElement = <EnumElementSyntax>child;
+
+                    if (!enumElement.equalsValueClause && seenComputedValue) {
+                        this.pushDiagnostic1(enumElementFullStart, enumElement, DiagnosticCode.Enum_member_must_have_initializer, null);
+                        return true;
+                    }
+
+                    if (enumElement.equalsValueClause) {
+                        var value = enumElement.equalsValueClause.value;
+                        if (value.kind() !== SyntaxKind.NumericLiteral) {
+                            seenComputedValue = true;
+                        }
+                    }
+                }
+
+                enumElementFullStart += child.fullWidth();
+            }
+
+            return false;
         }
 
         public visitInvocationExpression(node: InvocationExpressionSyntax): void {

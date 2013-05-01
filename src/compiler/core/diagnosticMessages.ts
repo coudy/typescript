@@ -64,7 +64,7 @@ module TypeScript {
         _get__accessor_cannot_have_parameters: DiagnosticInfo;
         Modifiers_cannot_appear_here: DiagnosticInfo;
         Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: DiagnosticInfo;
-
+        Enum_member_must_have_initializer: DiagnosticInfo;
 
 
 
@@ -660,6 +660,12 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Module name cannot be '{0}'.",
             code: 1060
+        },
+
+        Enum_member_must_have_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "Enum member must have initializer.",
+            code: 1061
         },
 
 
