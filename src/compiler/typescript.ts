@@ -139,7 +139,7 @@ module TypeScript {
                 this.fileName,
                 SimpleText.fromScriptSnapshot(this.scriptSnapshot),
                 TypeScript.isDTSFile(this.fileName),
-                LanguageVersion.EcmaScript5);
+                this.compilationSettings.codeGenTarget);
         }
 
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
@@ -151,7 +151,7 @@ module TypeScript {
             // If we don't have a text change, or we don't have an old syntax tree, then do a full
             // parse.  Otherwise, do an incremental parse.
             var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null
-                ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName))
+                ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), this.compilationSettings.codeGenTarget)
                 : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
@@ -160,7 +160,7 @@ module TypeScript {
         public static create(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
 
-            var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
+            var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget);
 
             var document = new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;

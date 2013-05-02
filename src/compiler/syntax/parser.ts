@@ -5586,7 +5586,7 @@ module TypeScript.Parser {
     export function parse(fileName: string,
                           text: ISimpleText,
                           isDeclaration: boolean,
-                          languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
+                          languageVersion: LanguageVersion,
                           options: ParseOptions = null): SyntaxTree {
         var source = new NormalParserSource(fileName, text, languageVersion);
         options = options || new ParseOptions();
