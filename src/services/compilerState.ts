@@ -131,7 +131,7 @@ module Services {
                 this.hostCache.isOpen(fileName));
         }
 
-        private getHostCompilationSettings(): TypeScript.CompilationSettings {
+        public getHostCompilationSettings(): TypeScript.CompilationSettings {
             var settings = this.host.getCompilationSettings();
             if (settings !== null) {
                 return settings;
