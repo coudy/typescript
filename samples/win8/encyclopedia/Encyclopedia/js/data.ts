@@ -54,17 +54,16 @@ module Data {
             list.push(createTopicFromTitle(itemTitles[i], groupsHash[groupName]));
         }
     }
-	 
     var locator = new Windows.Devices.Geolocation.Geolocator();
-    locator.getGeopositionAsync().then(function (pos: Windows.Devices.Geolocation.Geoposition) {
+    locator.getGeopositionAsync().then(function (pos) {
         var lat = pos.coordinate.latitude;
         var long = pos.coordinate.longitude;
         var url = 'http://api.wikilocation.org/articles?radius=100000&limit=10&lat=' + lat + '&lng=' + long;
-        return WinJS.xhr(<IOptions>({ url: url }));
-    }).then(function (xhr: XMLHttpRequest) {
+        return WinJS.xhr({ url: url });
+    }).then(function (xhr) {
         var data = JSON.parse(xhr.responseText);
         addTopicsToGroup(data.articles, groupsHash['nearby']);
-    });
+    }).done();
 
     function addTopicsToGroup(articles: {title: string;}[], group: Data.Group) {
         articles.forEach(function (article) {

@@ -14,10 +14,10 @@ and limitations under the License.
 ***************************************************************************** */
 
 declare module WinJS {
-    export function strictProcessing(): void;
-    export module Binding {
-        export function as(data: any): any;
-        export class List {
+    function strictProcessing(): void;
+    module Binding {
+        function as(data: any): any;
+        class List {
         	constructor(data: any[]);
             public push(item: any): any;
             public indexOf(item: any): number;
@@ -31,62 +31,66 @@ declare module WinJS {
             public getAt: any;
         }
     }
-    export module Namespace {
-        export var define: any;
-        export var defineWithParent: any;
+    module Namespace {
+        var define: any;
+        var defineWithParent: any;
     }
-    export module Class {
-        export function define(constructor: any, instanceMembers: any): any;
-        export function derive(baseClass: any, constructor: any, instanceMembers: any): any;
-        export function mix(constructor: any, mixin: any): any;
+    module Class {
+        function define(constructor: any, instanceMembers: any): any;
+        function derive(baseClass: any, constructor: any, instanceMembers: any): any;
+        function mix(constructor: any, mixin: any): any;
     }
-    export function xhr(options: { type: string; url: string; user: string; password: string; headers: any; data: any; responseType: string; }): WinJS.Promise;
-    export module Application {
-        export interface IOHelper {
+    function xhr(options: { type?: string; url?: string; user?: string; password?: string; headers?: any; data?: any; responseType?: string; }): WinJS.Promise<XMLHttpRequest>;
+    module Application {
+        interface IOHelper {
             exists(filename: string): boolean;
-            readText(fileName: string, def: string): WinJS.Promise;
-            readText(fileName: string): WinJS.Promise;
-            writeText(fileName: string, text: string): WinJS.Promise;
-			remove(fileName: string): WinJS.Promise;
+            readText(fileName: string, def: string): WinJS.Promise<string>;
+            readText(fileName: string): WinJS.Promise<string>;
+            writeText(fileName: string, text: string): WinJS.Promise<void>;
+			remove(fileName: string): WinJS.Promise<void>;
         }
-        export var local: IOHelper;
-        export var roaming: IOHelper;
-        export var onactivated: EventListener;
-        export var sessionState: any;
-        export interface ApplicationActivationEvent extends Event {
+        var local: IOHelper;
+        var roaming: IOHelper;
+        var onactivated: EventListener;
+        var sessionState: any;
+        interface ApplicationActivationEvent extends Event {
             detail: any;
             setPromise(p: Promise): any;
         }
-        export function addEventListener(type: string, listener: EventListener, capture?: boolean): void;
-        export var oncheckpoint: EventListener;  
-        export function start(): void;
-        export function stop(): void;
+        function addEventListener(type: string, listener: EventListener, capture?: boolean): void;
+        var oncheckpoint: EventListener;  
+        function start(): void;
+        function stop(): void;
     }
-    export class Promise {
+    class Promise<T> {
     	constructor(init: (c: any, e: any, p: any) => void);
-        public then: any;
+        then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void ): Promise<U>;
+        then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => U, progress?: (progress: any) => void ): Promise<U>;
+        then<U>(success?: (value: T) => U, error?: (error: any) => Promise<U>, progress?: (progress: any) => void ): Promise<U>;
+        then<U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void ): Promise<U>;
+        done<U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void ): void;
         static join: any;
         static timeout: any;
     }
-    export module Navigation {
-        export var history: any;
-        export var canGoBack: boolean;
-        export var canGoForward: boolean;
-        export var location: string;
-        export var state: any;
-        export function addEventListener(type: string, listener: EventListener, capture: boolean): void;
-		export function back(): void;
-		export function forward(): void;
-		export function navigate(location: any, initialState: any);
-		export function navigate(location: any);	
-		export function removeEventListener(type: string, listener: EventListener, capture: boolean): void;	
-		export var onbeforenavigate: CustomEvent;
-		export var onnavigated: CustomEvent;
-		export var onnavigating: CustomEvent;
+    module Navigation {
+        var history: any;
+        var canGoBack: boolean;
+        var canGoForward: boolean;
+        var location: string;
+        var state: any;
+        function addEventListener(type: string, listener: EventListener, capture: boolean): void;
+		function back(): void;
+		function forward(): void;
+		function navigate(location: any, initialState: any);
+		function navigate(location: any);	
+		function removeEventListener(type: string, listener: EventListener, capture: boolean): void;	
+		var onbeforenavigate: CustomEvent;
+		var onnavigated: CustomEvent;
+		var onnavigating: CustomEvent;
     }
-    export module Utilities {
-        export function markSupportedForProcessing(obj: any): void;
-		export enum Key {
+    module Utilities {
+        function markSupportedForProcessing(obj: any): void;
+		enum Key {
 			backspace, 
 			tab, 
 			enter, 
@@ -187,14 +191,14 @@ declare module WinJS {
 			singleQuote
 		}
 	}
-    export module UI {  
-		export var process: any;
-		export var processAll: any;
-		export var ListLayout: any;
-		export var GridLayout: any;
-		export var Pages: any;
-		export var Menu: any;
-		export var setOptions: any;
+    module UI {  
+		var process: any;
+		var processAll: any;
+		var ListLayout: any;
+		var GridLayout: any;
+		var Pages: any;
+		var Menu: any;
+		var setOptions: any;
     }
 }
 

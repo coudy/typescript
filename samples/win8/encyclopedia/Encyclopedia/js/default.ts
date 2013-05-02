@@ -19,7 +19,7 @@ module Default {
         var deferral = ev.request.getDeferral();
         var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&limit=20&search='
             + encodeURI(ev.queryText);
-        WinJS.xhr(<IOptions>({ url: url })).then(function (xhr) {
+        WinJS.xhr({ url: url }).then(function (xhr) {
             var data = JSON.parse(xhr.response);
             ev.request.searchSuggestionCollection.appendQuerySuggestions(data[1]);
             deferral.complete();
