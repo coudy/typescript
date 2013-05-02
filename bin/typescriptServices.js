@@ -57023,7 +57023,7 @@ var Services;
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), this.compilerState.compilationSettings().codeGenTarget);
+            var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), this.compilerState.getHostCompilationSettings().codeGenTarget);
 
             return syntaxTree;
         };
