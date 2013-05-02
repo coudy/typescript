@@ -254,6 +254,22 @@ module TypeScript {
                 }
 
                 moduleContainerTypeSymbol.invalidate();
+
+                moduleInstanceSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
+
+                if (moduleInstanceSymbol) {
+                    var moduleInstanceTypeSymbol = moduleInstanceSymbol.getType();
+                    decls = moduleInstanceTypeSymbol.getDeclarations();
+
+                    for (var i = 0; i < decls.length; i++) {
+                        if (decls[i].getScriptName() === scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
+                            moduleInstanceTypeSymbol.removeDeclaration(decls[i]);
+                        }
+                    }
+
+                    moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
+                    moduleInstanceTypeSymbol.invalidate();
+                }
             }
 
             this.pushParent(moduleContainerTypeSymbol, moduleContainerDecl);
