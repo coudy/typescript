@@ -36575,6 +36575,10 @@ var TypeScript;
             return signature;
         }
 
+        if (!signature.isResolved() && !signature.isResolving()) {
+            resolver.resolveDeclaredSymbol(signature, enclosingDecl, context);
+        }
+
         var newSignature = signature.getSpecialization(typeArguments);
 
         if (newSignature) {
@@ -47067,76 +47071,6 @@ var TypeScript;
             }
 
             importSymbol.setIsBound(this.bindingPhase);
-        };
-
-        PullSymbolBinder.prototype.bindEnumDeclarationToPullSymbol = function (enumDeclaration) {
-            var enumName = enumDeclaration.getName();
-            var enumSymbol = this.findSymbolInContext(enumName, 128 /* Enum */, []);
-
-            var enumAST = this.semanticInfo.getASTForDecl(enumDeclaration);
-            var createdNewSymbol = false;
-            var parent = this.getParent();
-
-            if (parent) {
-                enumSymbol = parent.findNestedType(enumName);
-            } else if (!(enumDeclaration.getFlags() & 1 /* Exported */)) {
-                enumSymbol = this.findSymbolInContext(enumName, TypeScript.PullElementKind.SomeType, []);
-            }
-
-            if (enumSymbol && (enumSymbol.getKind() !== 128 /* Enum */ || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
-                enumDeclaration.addDiagnostic(new TypeScript.SemanticDiagnostic(this.semanticInfo.getPath(), enumAST.minChar, enumAST.getLength(), 64 /* Duplicate_identifier__0_ */, [enumDeclaration.getDisplayName()]));
-                enumSymbol = null;
-            }
-
-            if (!enumSymbol) {
-                enumSymbol = new TypeScript.PullTypeSymbol(enumName, 128 /* Enum */);
-
-                enumSymbol.addDeclaration(enumDeclaration);
-                enumDeclaration.setSymbol(enumSymbol);
-
-                createdNewSymbol = true;
-            }
-
-            enumSymbol.addDeclaration(enumDeclaration);
-            enumDeclaration.setSymbol(enumSymbol);
-
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(enumAST.name, TypeScript.SymbolAndDiagnostics.fromSymbol(enumSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(enumAST, TypeScript.SymbolAndDiagnostics.fromSymbol(enumSymbol));
-
-            if (createdNewSymbol) {
-                if (parent) {
-                    var linkKind = enumDeclaration.getFlags() & 1 /* Exported */ ? 5 /* PublicMember */ : 6 /* PrivateMember */;
-
-                    if (linkKind === 5 /* PublicMember */) {
-                        parent.addMember(enumSymbol, linkKind);
-                    } else {
-                        enumSymbol.setContainer(parent);
-                    }
-                }
-            } else if (this.reBindingAfterChange) {
-                var decls = enumSymbol.getDeclarations();
-                var scriptName = enumDeclaration.getScriptName();
-
-                for (var i = 0; i < decls.length; i++) {
-                    if (decls[i].getScriptName() === scriptName && decls[i].getDeclID() < this.startingDeclForRebind) {
-                        enumSymbol.removeDeclaration(decls[i]);
-                    }
-                }
-
-                enumSymbol.invalidate();
-            }
-
-            this.pushParent(enumSymbol, enumDeclaration);
-
-            var childDecls = enumDeclaration.getChildDecls();
-
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
-
-            this.popParent();
-
-            enumSymbol.setIsBound(this.bindingPhase);
         };
 
         PullSymbolBinder.prototype.cleanInterfaceSignatures = function (interfaceSymbol) {

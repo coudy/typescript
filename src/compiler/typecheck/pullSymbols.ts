@@ -3248,7 +3248,11 @@ module TypeScript {
 
         if (signature.currentlyBeingSpecialized()) {
             return signature;
-        }        
+        }
+
+        if (!signature.isResolved() && !signature.isResolving()) {
+            resolver.resolveDeclaredSymbol(signature, enclosingDecl, context);
+        }
 
         var newSignature = signature.getSpecialization(typeArguments);
 
