@@ -3764,9 +3764,12 @@ module TypeScript {
                 var typeConstraint: PullTypeSymbol = null;
                 var prevSpecializingToAny = context.specializingToAny;
                 var beforeResolutionSignatures = signatures;
+                var triedToInferTypeArgs: boolean;
+
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
                     couldNotAssignToConstraint = false;
+                    triedToInferTypeArgs = false;
 
                     if (signatures[i].isGeneric() && typeParameters.length) {
                         if (typeArgs) {
@@ -3774,6 +3777,7 @@ module TypeScript {
                         }
                         else if (callEx.arguments) {
                             inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                            triedToInferTypeArgs = true;
                         }
 
                         // if we could infer Args, or we have type arguments, then attempt to specialize the signature
@@ -3809,6 +3813,23 @@ module TypeScript {
                                 }
                             }
                             else {
+
+                                // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
+                                if (triedToInferTypeArgs) {
+
+                                    if (signatures[i].parametersAreFixed()) {
+                                        if (signatures[i].hasGenericParameter()) {
+                                            context.specializingToAny = true;
+                                        }
+                                        else {
+                                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                                        }
+                                    }
+                                    else {
+                                        continue;
+                                    }
+                                }
+
                                 context.specializingToAny = true;
                             }
 
@@ -3855,7 +3876,7 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
             else if (!signatures.length) {
-                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
+                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -4055,6 +4076,7 @@ module TypeScript {
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
                     var prevSpecializingToAny = context.specializingToAny;
+                    var triedToInferTypeArgs: boolean;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
                         couldNotAssignToConstraint = false;
@@ -4065,6 +4087,7 @@ module TypeScript {
                             }
                             else if (callEx.arguments) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                                triedToInferTypeArgs = true;
                             }
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
@@ -4103,6 +4126,22 @@ module TypeScript {
                                     }
                                 }
                                 else {
+
+                                    if (triedToInferTypeArgs) {
+
+                                        if (constructSignatures[i].parametersAreFixed()) {
+                                            if (constructSignatures[i].hasGenericParameter()) {
+                                                context.specializingToAny = true;
+                                            }
+                                            else {
+                                                resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
+                                            }
+                                        }
+                                        else {
+                                            continue;
+                                        }
+                                    }
+
                                     context.specializingToAny = true;
                                 }
 

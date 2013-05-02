@@ -818,6 +818,26 @@ module TypeScript {
             }
         }
 
+        public parametersAreFixed(): boolean {
+
+            if (!this.isGeneric()) {
+                return true;
+            }
+
+            if (this.parameterLinks) {
+                var paramType: PullTypeSymbol;
+                for (var i = 0; i < this.parameterLinks.length; i++) {
+                    paramType = this.parameterLinks[i].end.getType();
+
+                    if (paramType && !paramType.isFixed()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public invalidate() {
 
             this.parameterLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.Parameter);
