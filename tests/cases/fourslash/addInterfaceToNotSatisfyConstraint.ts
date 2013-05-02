@@ -13,4 +13,4 @@
 goTo.marker();
 
 // Bug 673503: Duplicate error when incrementally adding an interface that results in an unsatsified generic constraint
-// edit.insert("interface B { b: string; }");
+edit.insert("interface B { b: string; }");

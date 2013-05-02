@@ -259,7 +259,10 @@ module TypeScript {
             }
 
 
-            symbolWhoseTypeChanged.invalidate();
+            if (symbolWhoseTypeChanged.isResolved()) {
+                symbolWhoseTypeChanged.invalidate();
+            }
+
             this.invalidateUnitsForSymbol(symbolWhoseTypeChanged);
         }
 
