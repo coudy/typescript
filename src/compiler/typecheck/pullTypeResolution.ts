@@ -2545,12 +2545,6 @@ module TypeScript {
                         nameSymbol = lhsType.findMember(rhsName);
                     }
                 }
-                // could be an enum
-                else if ((lhsType.getKind() === PullElementKind.Enum) && this.cachedNumberInterfaceType) {
-                    lhsType = this.cachedNumberInterfaceType;
-
-                    nameSymbol = lhsType.findMember(rhsName);
-                }
                 // could be a function symbol
                 else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType) {
                     lhsType = this.cachedFunctionInterfaceType;

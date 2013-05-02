@@ -1,3 +1,3 @@
 var f = require('filexx');
 
-var x = f.Mode.OPEN;
+var x = f.Mode.Open;
