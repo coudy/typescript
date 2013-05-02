@@ -285,7 +285,7 @@ module TypeScript.Emitter1 {
                 ArgumentListSyntax.create1().withArgument(this.initializedVariable(moduleName))))
                     .withLeadingTrivia(moduleIndentation).withTrailingTrivia(this.newLine);
 
-            return [variableStatement, expressionStatement];
+            return [<IModuleElementSyntax>variableStatement, expressionStatement];
         }
 
         public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatementSyntax {
@@ -1073,7 +1073,7 @@ module TypeScript.Emitter1 {
                         .withLeadingTrivia(this.indentationTriviaForStartOfNode(node))
                         .withTrailingTrivia(this.newLine);
 
-            return [variableStatement, expressionStatement];
+            return [<IModuleElementSyntax>variableStatement, expressionStatement];
         }
 
         private convertSuperInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
