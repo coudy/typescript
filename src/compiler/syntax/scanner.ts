@@ -145,7 +145,7 @@ module TypeScript {
         // Scans a subsection of 'text' as trivia.
         public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: boolean): ISyntaxTriviaList {
             // Debug.assert(length > 0);
-            var scanner = new Scanner(/*fileName:*/ null, text.subText(new TextSpan(start, length)), this._languageVersion, Scanner.triviaWindow);
+            var scanner = new Scanner(/*fileName:*/ null, text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, Scanner.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         }
 
