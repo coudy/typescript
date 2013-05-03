@@ -888,6 +888,11 @@ module TypeScript {
                 return false;
             }
 
+            // Always emit a non ambient enum (even empty ones).
+            if (hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum)) {
+                return true;
+            }
+
             for (var i = 0, n = this.members.members.length; i < n; i++) {
                 var member = this.members.members[i];
 

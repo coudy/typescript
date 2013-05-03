@@ -57,7 +57,8 @@ module TypeScript {
         }
 
         if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsEnum)) {
-            declFlags |= PullElementFlags.Enum;
+            // Consider an enum 'always initialized'.
+            declFlags |= (PullElementFlags.Enum | PullElementFlags.InitializedEnum);
             kind = PullElementKind.Enum;
         }
         else {

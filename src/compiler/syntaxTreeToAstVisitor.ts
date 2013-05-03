@@ -902,19 +902,6 @@ module TypeScript {
             var memberNames: Identifier[] = [];
             var memberName: Identifier;
 
-            var mapDecl = new VariableDeclarator(new Identifier("_map"));
-            var declarators = new ASTList();
-            declarators.append(mapDecl);
-            var statement = new VariableStatement(new VariableDeclaration(declarators));
-
-            statement.setFlags(mapDecl.getFlags() | ASTFlags.EnumMapElement);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.ClassProperty);
-            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, new ASTList());
-
-            members.append(statement);
-
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.enumElements.childAt(i));
@@ -1000,7 +987,6 @@ module TypeScript {
 
             var modDecl = new ModuleDeclaration(name, members, closeBraceSpan);
             this.setSpan(modDecl, start, node);
-            this.setSpan(mapDecl, start, node);
 
             modDecl.preComments = preComments;
             modDecl.postComments = postComments;
