@@ -15,12 +15,10 @@
 
 goTo.marker('1');
 verify.quickInfoIs('Foo<number, string>');
-// BUG 667595
-//goTo.marker('2');
-//verify.quickInfoIs('Foo<number, number>');
+goTo.marker('2');
+verify.quickInfoIs('Foo<string, string>');
 
 goTo.marker('3');
 verify.quickInfoIs('Foo<string, number>');
-// BUG 667595
-//goTo.marker('4');
-//verify.quickInfoIs('Foo<string, string>');
+goTo.marker('4');
+verify.quickInfoIs('Foo<number, number>');

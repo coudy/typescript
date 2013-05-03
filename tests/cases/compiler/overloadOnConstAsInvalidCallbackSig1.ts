@@ -6,5 +6,5 @@ function x3(a: any, cb: (x: number) => number) {
 
 // both should be errors
 x3(1, (x: string) => 1);
-// BUG 669572
+
 x3(1, (x: 'hm') => 1); 
