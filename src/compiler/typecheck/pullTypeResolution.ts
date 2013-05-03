@@ -6129,7 +6129,7 @@ module TypeScript {
             var parameterDeclarations = parameterType.getDeclarations();
             var expressionDeclarations = expressionType.getDeclarations();
             if (!parameterType.isArray() && parameterDeclarations.length && expressionDeclarations.length && parameterDeclarations[0].isEqual(expressionDeclarations[0]) && expressionType.isGeneric()) {
-                var typeParameters: PullTypeSymbol[] = parameterType.getTypeParameters();
+                var typeParameters: PullTypeSymbol[] = parameterType.getIsSpecialized() ? parameterType.getTypeArguments() : parameterType.getTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 
                 // If we're relating an out-of-order resolution of a function call within the body

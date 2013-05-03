@@ -705,7 +705,7 @@ module TypeScript {
                 typeParameter = classSymbol.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
                     classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
                     constructorTypeSymbol.addTypeParameter(typeParameter, true);
@@ -844,7 +844,7 @@ module TypeScript {
                 typeParameter = interfaceSymbol.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
                     interfaceSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
                 }
@@ -910,7 +910,7 @@ module TypeScript {
                 typeParameter = objectSymbol.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
                     objectSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
                 }
@@ -974,7 +974,7 @@ module TypeScript {
                 typeParameter = constructorTypeSymbol.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
                     constructorTypeSymbol.addTypeParameter(typeParameter);
                 }
@@ -1654,7 +1654,7 @@ module TypeScript {
                 typeParameter = signature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     signature.addTypeParameter(typeParameter);
                 }
@@ -1737,7 +1737,7 @@ module TypeScript {
                 typeParameter = signature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     signature.addTypeParameter(typeParameter);
                 }
@@ -1813,7 +1813,7 @@ module TypeScript {
                 typeParameter = signature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     signature.addTypeParameter(typeParameter);
                 }
@@ -2041,7 +2041,7 @@ module TypeScript {
                     }
 
                     if (!typeParameter) {
-                        typeParameter = new PullTypeParameterSymbol(typeParameterName);
+                        typeParameter = new PullTypeParameterSymbol(typeParameterName, true);
 
                         if (!typeParameterAST.constraint) {
                             this.addTypeParameterToCache(typeParameter);
@@ -2262,7 +2262,7 @@ module TypeScript {
                 typeParameter = constructSignature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     constructSignature.addTypeParameter(typeParameter);
                 }
@@ -2329,7 +2329,7 @@ module TypeScript {
                 typeParameter = callSignature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     callSignature.addTypeParameter(typeParameter);
                 }
@@ -2389,7 +2389,7 @@ module TypeScript {
                 typeParameter = indexSignature.findTypeParameter(typeParameters[i].getName());
 
                 if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), true);
 
                     indexSignature.addTypeParameter(typeParameter);
                 }

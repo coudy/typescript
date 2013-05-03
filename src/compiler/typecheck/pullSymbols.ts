@@ -2419,11 +2419,12 @@ module TypeScript {
     export class PullTypeParameterSymbol extends PullTypeSymbol {
         private constraintLink: PullSymbolLink = null;
 
-        constructor(name: string) {
+        constructor(name: string, private _isFunctionTypeParameter) {
             super(name, PullElementKind.TypeParameter);
         }
 
         public isTypeParameter() { return true; }
+        public isFunctionTypeParameter() { return this._isFunctionTypeParameter; }
 
         public isFixed() { return false; }
 
@@ -2508,8 +2509,8 @@ module TypeScript {
     // transient type variables...
     export class PullTypeVariableSymbol extends PullTypeParameterSymbol {
 
-        constructor(name: string) {
-            super(name);
+        constructor(name: string, isFunctionTypeParameter: boolean) {
+            super(name, isFunctionTypeParameter);
         }
 
         private tyvarID =  globalTyvarID++;
@@ -2783,11 +2784,16 @@ module TypeScript {
             var substitution = context.findSpecializationForType(typeToSpecialize);
 
             if (substitution != typeToSpecialize) {
-                return substitution;
+
+                if (!(substitution.isTypeParameter() && (<PullTypeParameterSymbol>substitution).isFunctionTypeParameter())) {
+                    return substitution;
+                }
             }
 
             if (typeArguments && typeArguments.length) {
-                return typeArguments[0];
+                if (!(typeArguments[0].isTypeParameter() && (<PullTypeParameterSymbol>typeArguments[0]).isFunctionTypeParameter())) {
+                    return typeArguments[0];
+                }
             }
 
             return typeToSpecialize;
@@ -2894,7 +2900,7 @@ module TypeScript {
         newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) :
                     isArray ? new PullArrayTypeSymbol() :
                     typeToSpecialize.isTypeParameter() ? // watch out for replacing one tyvar with another
-                        new PullTypeVariableSymbol(typeToSpecialize.getName()) :
+                        new PullTypeVariableSymbol(typeToSpecialize.getName(), (<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter()) :
                         new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
         newType.addDeclaration(newTypeDecl);
 
@@ -3323,16 +3329,11 @@ module TypeScript {
         // enclosing type.  (E.g., "class C<T> { public m<T>() {...} }" )
         if (skipLocalTypeParameters) {
             for (var i = 0; i < typeParameters.length; i++) {
-
-                // if there's no existing specialization for the function type parameter, we don't want to 
-                // consider it for specialization
-                if (context.findSpecializationForType(typeParameters[i]) == typeParameters[i]) {
-                    localTypeParameters[typeParameters[i].getName()] = true;
-                    if (!localSkipMap) {
-                        localSkipMap = {};
-                    }
-                    localSkipMap[typeParameters[i].getSymbolID().toString()] = typeParameters[i];
+                localTypeParameters[typeParameters[i].getName()] = true;
+                if (!localSkipMap) {
+                    localSkipMap = {};
                 }
+                localSkipMap[typeParameters[i].getSymbolID().toString()] = typeParameters[i];
             }
         }
 
