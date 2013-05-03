@@ -401,8 +401,7 @@ module Services {
                     var symbol = declaration.getSymbol();
                     return !this.isModule(symbol) && !this.isDynamicModule(symbol)  && !this.isConstructorMethod(symbol) && !this.isClass(symbol);
                 case TypeScript.PullElementKind.EnumMember:
-                    // Ignore the _map for enums. this should be removed once enum new implmentation is in place
-                    return declaration.getName() !== "_map";
+                    return true;
                 case TypeScript.PullElementKind.FunctionExpression:
                 case TypeScript.PullElementKind.Function:
                     // Ignore anonomus functions
