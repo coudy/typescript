@@ -144,7 +144,7 @@ module TypeScript.AstWalkerWithDetailCallback {
     function AstWalkerCallback(pre: boolean, ast: AST, callback: AstWalkerDetailCallback): boolean {
         // See if the Callback needs to be handled using specific one or default one
         var nodeType = ast.nodeType;
-        var callbackString = (<any>NodeType)._map[nodeType] + "Callback";
+        var callbackString = NodeType[nodeType] + "Callback";
         if (callback[callbackString]) {
             return callback[callbackString](pre, ast);
         }

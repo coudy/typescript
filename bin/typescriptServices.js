@@ -26405,7 +26405,8 @@ var TypeScript;
         ASTFlags.SingleLine = 1 << 1;
         ASTFlags.OptionalName = 1 << 2;
         ASTFlags.TypeReference = 1 << 3;
-        ASTFlags.EnumInitializer = 1 << 4;
+        ASTFlags.EnumElement = 1 << 4;
+        ASTFlags.EnumMapElement = 1 << 5;
     })(TypeScript.ASTFlags || (TypeScript.ASTFlags = {}));
     var ASTFlags = TypeScript.ASTFlags;
 
@@ -26445,6 +26446,8 @@ var TypeScript;
         VariableFlags.Property = 1 << 8;
         VariableFlags.ClassProperty = 1 << 11;
         VariableFlags.Constant = 1 << 12;
+
+        VariableFlags.EnumElement = 1 << 13;
     })(TypeScript.VariableFlags || (TypeScript.VariableFlags = {}));
     var VariableFlags = TypeScript.VariableFlags;
 
@@ -27924,13 +27927,21 @@ var TypeScript;
             this.declaration = declaration;
         }
         VariableStatement.prototype.shouldEmit = function () {
+            if (TypeScript.hasFlag(this.getFlags(), 32 /* EnumMapElement */)) {
+                return false;
+            }
+
             var varDecl = this.declaration.declarators.members[0];
             return !TypeScript.hasFlag(varDecl.getVarFlags(), 8 /* Ambient */) || varDecl.init !== null;
         };
 
         VariableStatement.prototype.emitWorker = function (emitter) {
-            this.declaration.emit(emitter);
-            emitter.writeToOutput(";");
+            if (TypeScript.hasFlag(this.getFlags(), 16 /* EnumElement */)) {
+                emitter.emitEnumElement(this.declaration.declarators.members[0]);
+            } else {
+                this.declaration.emit(emitter);
+                emitter.writeToOutput(";");
+            }
         };
 
         VariableStatement.prototype.structuralEquals = function (ast, includingPosition) {
@@ -30610,6 +30621,19 @@ var TypeScript;
             this.popDecl(pullDecl);
         };
 
+        Emitter.prototype.emitEnumElement = function (varDecl) {
+            this.writeToOutput(this.moduleName);
+            this.writeToOutput('[');
+            this.writeToOutput(this.moduleName);
+            this.writeToOutput('["');
+            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput('"] = ');
+            varDecl.init.emit(this);
+            this.writeToOutput('] = "');
+            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput('";');
+        };
+
         Emitter.prototype.emitIndex = function (operand1, operand2) {
             operand1.emit(this);
             this.writeToOutput("[");
@@ -32784,9 +32808,9 @@ var TypeScript;
 
             this.indenter.increaseIndent();
             var membersLen = moduleDecl.members.members.length;
-            for (var j = 1; j < membersLen; j++) {
+            for (var j = 0; j < membersLen; j++) {
                 var memberDecl = moduleDecl.members.members[j];
-                if (memberDecl.nodeType === 97 /* VariableStatement */) {
+                if (memberDecl.nodeType === 97 /* VariableStatement */ && !TypeScript.hasFlag(memberDecl.getFlags(), 32 /* EnumMapElement */)) {
                     var variableStatement = memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
@@ -43667,10 +43691,10 @@ var TypeScript;
             }
         };
 
-        PullTypeChecker.prototype.isValidLHS = function (ast, expressionSymbol, isEnumInitializer) {
+        PullTypeChecker.prototype.isValidLHS = function (ast, expressionSymbol) {
             var expressionTypeSymbol = expressionSymbol.getType();
 
-            return isEnumInitializer || ast.nodeType === 35 /* ElementAccessExpression */ || this.resolver.isAnyOrEquivalent(expressionTypeSymbol) || ((!expressionSymbol.isType() || expressionTypeSymbol.isArray()) && (expressionSymbol.getKind() & TypeScript.PullElementKind.SomeLHS) != 0);
+            return ast.nodeType === 35 /* ElementAccessExpression */ || this.resolver.isAnyOrEquivalent(expressionTypeSymbol) || ((!expressionSymbol.isType() || expressionTypeSymbol.isArray()) && (expressionSymbol.getKind() & TypeScript.PullElementKind.SomeLHS) != 0);
         };
 
         PullTypeChecker.prototype.typeCheckAssignment = function (binaryExpression, typeCheckContext) {
@@ -43687,7 +43711,7 @@ var TypeScript;
             var rightType = this.resolver.widenType(this.typeCheckAST(binaryExpression.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
-            if (!this.isValidLHS(binaryExpression.operand1, leftExpr, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
+            if (!this.isValidLHS(binaryExpression.operand1, leftExpr)) {
                 this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
             }
 
@@ -44144,7 +44168,7 @@ var TypeScript;
             if (exprType) {
                 if (binaryExpression.nodeType === 39 /* AddAssignmentExpression */) {
                     var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-                    if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
+                    if (!this.isValidLHS(binaryExpression.operand1, lhsExpression)) {
                         this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
                     }
 
@@ -44191,7 +44215,7 @@ var TypeScript;
                     case 44 /* AndAssignmentExpression */:
                     case 45 /* ExclusiveOrAssignmentExpression */:
                         var lhsExpression = this.resolver.resolveAST(binaryExpression.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-                        if (!this.isValidLHS(binaryExpression.operand1, lhsExpression, TypeScript.hasFlag(binaryExpression.getFlags(), 16 /* EnumInitializer */))) {
+                        if (!this.isValidLHS(binaryExpression.operand1, lhsExpression)) {
                             this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, 191 /* Invalid_left_hand_side_of_assignment_expression */, null, enclosingDecl);
                         }
 
@@ -44230,7 +44254,7 @@ var TypeScript;
                 case 77 /* PostDecrementExpression */:
                 case 75 /* PreDecrementExpression */:
                     var expression = this.resolver.resolveAST(unaryExpression.operand, false, typeCheckContext.getEnclosingDecl(), this.context);
-                    if (!this.isValidLHS(unaryExpression.operand, expression, false)) {
+                    if (!this.isValidLHS(unaryExpression.operand, expression)) {
                         this.postError(unaryExpression.operand.minChar, unaryExpression.operand.getLength(), typeCheckContext.scriptName, 200 /* The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer */, null, typeCheckContext.getEnclosingDecl());
                     }
 
@@ -50823,22 +50847,22 @@ var TypeScript;
             this.movePast(node.openBraceToken);
             var members = new TypeScript.ASTList();
 
-            var mapDecl = new TypeScript.VariableDeclarator(new TypeScript.Identifier("_map"));
-
-            var declarators = new TypeScript.ASTList();
-            declarators.append(mapDecl);
-            var declaration = new TypeScript.VariableDeclaration(declarators);
-            var statement = new TypeScript.VariableStatement(declaration);
-
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 1 /* Exported */);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2 /* Private */);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2048 /* ClassProperty */);
-
-            mapDecl.init = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, new TypeScript.ASTList());
-            members.append(statement);
             var lastValue = null;
             var memberNames = [];
             var memberName;
+
+            var mapDecl = new TypeScript.VariableDeclarator(new TypeScript.Identifier("_map"));
+            var declarators = new TypeScript.ASTList();
+            declarators.append(mapDecl);
+            var statement = new TypeScript.VariableStatement(new TypeScript.VariableDeclaration(declarators));
+
+            statement.setFlags(mapDecl.getFlags() | 32 /* EnumMapElement */);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | 1 /* Exported */);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2 /* Private */);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2048 /* ClassProperty */);
+            mapDecl.init = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, new TypeScript.ASTList());
+
+            members.append(statement);
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -50853,7 +50877,7 @@ var TypeScript;
 
                     if (enumElement.equalsValueClause !== null) {
                         memberValue = enumElement.equalsValueClause.accept(this);
-                        lastValue = memberValue;
+                        lastValue = null;
                     }
 
                     var memberStart = this.position;
@@ -50867,12 +50891,6 @@ var TypeScript;
                             memberValue = new TypeScript.NumberLiteral(nextValue, nextValue.toString());
                             lastValue = memberValue;
                         }
-                        var map = new TypeScript.BinaryExpression(38 /* AssignmentExpression */, new TypeScript.BinaryExpression(35 /* ElementAccessExpression */, new TypeScript.Identifier("_map"), memberValue), new TypeScript.StringLiteral('"' + memberName.actualText + '"', memberName.actualText));
-                        map.setFlags(map.getFlags() | 16 /* EnumInitializer */);
-                        members.append(new TypeScript.ExpressionStatement(map));
-                        this.setSpanExplicit(map, memberStart, this.position);
-                        this.setSpanExplicit(map.operand1, memberStart, this.position);
-                        this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
                     var declarator = new TypeScript.VariableDeclarator(memberName);
@@ -50900,12 +50918,13 @@ var TypeScript;
                         }
                     }
 
-                    declarators = new TypeScript.ASTList();
+                    var declarators = new TypeScript.ASTList();
                     declarators.append(declarator);
-                    declaration = new TypeScript.VariableDeclaration(declarators);
+                    var declaration = new TypeScript.VariableDeclaration(declarators);
                     this.setSpanExplicit(declaration, memberStart, this.position);
 
-                    statement = new TypeScript.VariableStatement(declaration);
+                    var statement = new TypeScript.VariableStatement(declaration);
+                    statement.setFlags(16 /* EnumElement */);
                     this.setSpanExplicit(statement, memberStart, this.position);
 
                     members.append(statement);

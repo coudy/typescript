@@ -31,7 +31,7 @@ module TypeScript {
             var result: any = {};
 
             result.isDeclaration = this._isDeclaration;
-            result.languageVersion = (<any>LanguageVersion)._map[this._languageVersion];
+            result.languageVersion = LanguageVersion[this._languageVersion];
             result.parseOptions = this._parseOptions;
 
             if (this.diagnostics().length > 0) {

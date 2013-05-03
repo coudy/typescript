@@ -86,7 +86,7 @@ module TypeScript {
 
         public toJSON(key) {
             var result: any = {
-                kind: (<any>SyntaxKind)._map[this.kind()],
+                kind: SyntaxKind[this.kind()],
                 fullWidth: this.fullWidth()
             };
 

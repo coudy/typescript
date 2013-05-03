@@ -54,7 +54,7 @@ module TypeScript.Syntax {
     export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {};
 
-        result.kind = (<any>SyntaxKind)._map[token.kind()];
+        result.kind = SyntaxKind[token.kind()];
 
         result.width = token.width();
         if (token.fullWidth() !== token.width()) {

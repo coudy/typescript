@@ -714,9 +714,9 @@ module TypeScript {
 
             this.indenter.increaseIndent();
             var membersLen = moduleDecl.members.members.length;
-            for (var j = 1; j < membersLen; j++) {
+            for (var j = 0; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType === NodeType.VariableStatement) {
+                if (memberDecl.nodeType === NodeType.VariableStatement && !hasFlag(memberDecl.getFlags(), ASTFlags.EnumMapElement)) {
                     var variableStatement = <VariableStatement>memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();

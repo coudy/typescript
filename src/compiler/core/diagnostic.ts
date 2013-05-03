@@ -31,7 +31,7 @@ module TypeScript {
             result.start = this.start();
             result.length = this.length();
 
-            result.diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
+            result.diagnosticCode = DiagnosticCode[this.diagnosticCode()];
 
             var arguments = (<any>this).arguments();
             if (arguments && arguments.length > 0) {
@@ -112,12 +112,12 @@ module TypeScript {
     }
 
     export function getDiagnosticInfoFromCode(diagnosticCode: DiagnosticCode): DiagnosticInfo {
-        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
+        var diagnosticName: string = DiagnosticCode[diagnosticCode];
         return <DiagnosticInfo>diagnosticMessages[diagnosticName];
     }
 
     export function getDiagnosticText(diagnosticCode: DiagnosticCode, args: any[]): string {
-        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
+        var diagnosticName: string = DiagnosticCode[diagnosticCode];
 
         var diagnostic = <DiagnosticInfo>diagnosticMessages[diagnosticName];
 

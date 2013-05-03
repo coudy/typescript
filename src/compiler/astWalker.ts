@@ -199,9 +199,11 @@ module TypeScript {
             this.childrenWalkers[NodeType.DebuggerStatement] = ChildrenWalkers.walkNone;
 
             // Verify the code is up to date with the enum
-            for (var e in (<any>NodeType)._map) {
-                if ((<any>this.childrenWalkers)[e] === undefined) {
-                    throw new Error("initWalkers function is not up to date with enum content!");
+            for (var e in NodeType) {
+                if (NodeType.hasOwnProperty(e) && StringUtilities.isString(NodeType[e])) {
+                    if (this.childrenWalkers[e] === undefined) {
+                        throw new Error("initWalkers function is not up to date with enum content!");
+                    }
                 }
             }
         }

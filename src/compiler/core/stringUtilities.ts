@@ -2,6 +2,10 @@
 
 module TypeScript {
     export class StringUtilities {
+        public static isString(value: any): boolean {
+            return Object.prototype.toString.apply(value, []) === '[object String]';
+        }
+
         public static fromCharCodeArray(array: number[]): string {
             return String.fromCharCode.apply(null, array);
         }
