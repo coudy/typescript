@@ -27072,6 +27072,10 @@ var TypeScript;
                 return false;
             }
 
+            if (TypeScript.hasFlag(this.getModuleFlags(), 128 /* IsEnum */)) {
+                return true;
+            }
+
             for (var i = 0, n = this.members.members.length; i < n; i++) {
                 var member = this.members.members[i];
 
@@ -45062,7 +45066,7 @@ var TypeScript;
         }
 
         if (TypeScript.hasFlag(moduleDecl.getModuleFlags(), 128 /* IsEnum */)) {
-            declFlags |= 4096 /* Enum */;
+            declFlags |= (4096 /* Enum */ | 131072 /* InitializedEnum */);
             kind = 128 /* Enum */;
         } else {
             kind = isDynamic ? 64 /* DynamicModule */ : 8 /* Container */;
@@ -50143,19 +50147,6 @@ var TypeScript;
             var memberNames = [];
             var memberName;
 
-            var mapDecl = new TypeScript.VariableDeclarator(new TypeScript.Identifier("_map"));
-            var declarators = new TypeScript.ASTList();
-            declarators.append(mapDecl);
-            var statement = new TypeScript.VariableStatement(new TypeScript.VariableDeclaration(declarators));
-
-            statement.setFlags(mapDecl.getFlags() | 32 /* EnumMapElement */);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 1 /* Exported */);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2 /* Private */);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | 2048 /* ClassProperty */);
-            mapDecl.init = new TypeScript.UnaryExpression(21 /* ArrayLiteralExpression */, new TypeScript.ASTList());
-
-            members.append(statement);
-
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.enumElements.childAt(i));
@@ -50233,7 +50224,6 @@ var TypeScript;
 
             var modDecl = new TypeScript.ModuleDeclaration(name, members, closeBraceSpan);
             this.setSpan(modDecl, start, node);
-            this.setSpan(mapDecl, start, node);
 
             modDecl.preComments = preComments;
             modDecl.postComments = postComments;
