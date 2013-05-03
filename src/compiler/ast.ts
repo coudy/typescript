@@ -1067,13 +1067,22 @@ module TypeScript {
         }
 
         public shouldEmit(): boolean {
+            if (hasFlag(this.getFlags(), ASTFlags.EnumMapElement)) {
+                return false;
+            }
+
             var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
             return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }
 
         public emitWorker(emitter: Emitter) {
-            this.declaration.emit(emitter);
-            emitter.writeToOutput(";");
+            if (hasFlag(this.getFlags(), ASTFlags.EnumElement)) {
+                emitter.emitEnumElement(<VariableDeclarator>this.declaration.declarators.members[0]);
+            }
+            else {
+                this.declaration.emit(emitter);
+                emitter.writeToOutput(";");
+            }
         }
 
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {

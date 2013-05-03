@@ -2,11 +2,8 @@ var a = +1;
 var b = +("");
 var E;
 (function (E) {
-    E._map = [];
-    E._map[0] = "some";
-    E.some = 0;
-    E._map[1] = "thing";
-    E.thing = 1;
+    E[E["some"] = 0] = "some";
+    E[E["thing"] = 1] = "thing";
 })(E || (E = {}));
 ;
 var c = +E.some;

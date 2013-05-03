@@ -81,6 +81,8 @@ class ConsoleLogger extends Harness.Logger {
 
     public testStart(test: Harness.ITestMetadata) {
         this.descriptionStack.push(test.desc);
+        //IO.printLine(test.id);
+        //IO.printLine(test.desc);
     }
 
     public pass(test: Harness.ITestMetadata) {
@@ -118,6 +120,8 @@ class ConsoleLogger extends Harness.Logger {
 
     public scenarioStart(scenario: Harness.IScenarioMetadata) {
         this.descriptionStack.push(scenario.desc);
+        //IO.printLine(scenario.id);
+        //IO.printLine(scenario.desc);
     }
 
     public scenarioEnd(scenario: Harness.IScenarioMetadata, error?: Error) {

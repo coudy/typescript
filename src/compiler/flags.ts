@@ -30,7 +30,8 @@ module TypeScript {
         SingleLine = 1 << 1,
         OptionalName = 1 << 2,
         TypeReference = 1 << 3,
-        EnumInitializer = 1 << 4,
+        EnumElement = 1 << 4,
+        EnumMapElement = 1 << 5,
     }
 
     export enum DeclFlags {
@@ -64,6 +65,7 @@ module TypeScript {
         Property = 1 << 8,
         ClassProperty = 1 << 11,
         Constant = 1 << 12,
+        EnumElement = 1 << 13
     }
 
     export enum FunctionFlags {

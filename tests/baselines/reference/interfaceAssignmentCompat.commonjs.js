@@ -1,13 +1,9 @@
 var M;
 (function (M) {
     (function (Color) {
-        Color._map = [];
-        Color._map[0] = "Green";
-        Color.Green = 0;
-        Color._map[1] = "Blue";
-        Color.Blue = 1;
-        Color._map[2] = "Brown";
-        Color.Brown = 2;
+        Color[Color["Green"] = 0] = "Green";
+        Color[Color["Blue"] = 1] = "Blue";
+        Color[Color["Brown"] = 2] = "Brown";
     })(M.Color || (M.Color = {}));
     var Color = M.Color;
 

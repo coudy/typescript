@@ -1,7 +1,6 @@
 var Enum;
 (function (Enum) {
-    Enum._map = [];
-    Enum.None = 0;
+    Enum[Enum["None"] = 0] = "None";
 })(Enum || (Enum = {}));
 var enumType = Enum.None;
 var numberType = 0;

@@ -898,22 +898,22 @@ module TypeScript {
             this.movePast(node.openBraceToken);
             var members = new ASTList();
 
-            var mapDecl = new VariableDeclarator(new Identifier("_map"));
-
-            var declarators = new ASTList();
-            declarators.append(mapDecl);
-            var declaration = new VariableDeclaration(declarators);
-            var statement = new VariableStatement(declaration);
-
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
-            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.ClassProperty);
-
-            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, new ASTList());
-            members.append(statement);
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
             var memberName: Identifier;
+
+            var mapDecl = new VariableDeclarator(new Identifier("_map"));
+            var declarators = new ASTList();
+            declarators.append(mapDecl);
+            var statement = new VariableStatement(new VariableDeclaration(declarators));
+
+            statement.setFlags(mapDecl.getFlags() | ASTFlags.EnumMapElement);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.ClassProperty);
+            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, new ASTList());
+
+            members.append(statement);
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -929,7 +929,7 @@ module TypeScript {
 
                     if (enumElement.equalsValueClause !== null) {
                         memberValue = enumElement.equalsValueClause.accept(this);
-                        lastValue = <NumberLiteral>memberValue;
+                        lastValue = null;
                     }
 
                     var memberStart = this.position;
@@ -944,17 +944,6 @@ module TypeScript {
                             memberValue = new NumberLiteral(nextValue, nextValue.toString());
                             lastValue = <NumberLiteral>memberValue;
                         }
-                        var map: BinaryExpression =
-                            new BinaryExpression(NodeType.AssignmentExpression,
-                                new BinaryExpression(NodeType.ElementAccessExpression,
-                                    new Identifier("_map"),
-                                    memberValue),
-                                new StringLiteral('"' + memberName.actualText + '"', memberName.actualText));
-                        map.setFlags(map.getFlags() | ASTFlags.EnumInitializer);
-                        members.append(new ExpressionStatement(map));
-                        this.setSpanExplicit(map, memberStart, this.position);
-                        this.setSpanExplicit(map.operand1, memberStart, this.position);
-                        this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
                     var declarator = new VariableDeclarator(memberName);
@@ -988,12 +977,13 @@ module TypeScript {
                         }
                     }
 
-                    declarators = new ASTList();
+                    var declarators = new ASTList();
                     declarators.append(declarator);
-                    declaration = new VariableDeclaration(declarators);
+                    var declaration = new VariableDeclaration(declarators);
                     this.setSpanExplicit(declaration, memberStart, this.position);
 
-                    statement = new VariableStatement(declaration);
+                    var statement = new VariableStatement(declaration);
+                    statement.setFlags(ASTFlags.EnumElement);
                     this.setSpanExplicit(statement, memberStart, this.position);
 
                     members.append(statement);

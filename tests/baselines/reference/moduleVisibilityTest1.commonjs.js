@@ -27,13 +27,9 @@ var M;
     var InnerMod = M.InnerMod;
 
     (function (E) {
-        E._map = [];
-        E._map[0] = "A";
-        E.A = 0;
-        E._map[1] = "B";
-        E.B = 1;
-        E._map[2] = "C";
-        E.C = 2;
+        E[E["A"] = 0] = "A";
+        E[E["B"] = 1] = "B";
+        E[E["C"] = 2] = "C";
     })(M.E || (M.E = {}));
     var E = M.E;
 

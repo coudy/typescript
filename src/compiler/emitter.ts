@@ -892,6 +892,20 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
+        public emitEnumElement(varDecl: VariableDeclarator): void {
+            // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
+            this.writeToOutput(this.moduleName);
+            this.writeToOutput('[');
+            this.writeToOutput(this.moduleName);
+            this.writeToOutput('["');
+            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput('"] = ');
+            varDecl.init.emit(this);
+            this.writeToOutput('] = "');
+            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput('";');
+        }
+
         public emitIndex(operand1: AST, operand2: AST) {
             operand1.emit(this);
             this.writeToOutput("[");

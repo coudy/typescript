@@ -1,12 +1,8 @@
 var E;
 (function (E) {
-    E._map = [];
-    E._map[0] = "Red";
-    E.Red = 0;
-    E._map[1] = "Green";
-    E.Green = 1;
-    E._map[2] = "Blue";
-    E.Blue = 2;
+    E[E["Red"] = 0] = "Red";
+    E[E["Green"] = 1] = "Green";
+    E[E["Blue"] = 2] = "Blue";
 })(E || (E = {}));
 
 function f() {
