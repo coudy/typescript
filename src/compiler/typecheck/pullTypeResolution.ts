@@ -3858,31 +3858,46 @@ module TypeScript {
 
                 signatures = resolvedSignatures;
             }
-
+            
             // the target should be a function
             //if (!targetTypeSymbol.isType()) {
             //    this.log("Attempting to call a non-function symbol");
             //    return this.semanticInfoChain.anyTypeSymbol;
             //}
+            var errorCondition: PullSymbol = null;
 
-            if (!signatures.length && !couldNotFindGenericOverload) {
+            if (!signatures.length) {
 
-                // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
-                if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType, context)) {
-                    return this.semanticInfoChain.anyTypeSymbol;
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetSymbol;
+                    additionalResults.targetTypeSymbol = targetTypeSymbol;
+                    additionalResults.resolvedSignatures = beforeResolutionSignatures;
+                    additionalResults.candidateSignature = beforeResolutionSignatures && beforeResolutionSignatures.length ? beforeResolutionSignatures[0] : null;
+
+                    additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
                 }
 
-                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
-            }
-            else if (!signatures.length) {
-                diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+                if (!couldNotFindGenericOverload) {
+
+                    // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
+                    if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType, context)) {
+                        return this.semanticInfoChain.anyTypeSymbol;
+                    }
+
+                    diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl);
+                    errorCondition = this.getNewErrorTypeSymbol(diagnostic);
+                }
+                else {
+                    diagnostic = lastConstraintFailureDiagnostic ? lastConstraintFailureDiagnostic : context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl);
+                    errorCondition = this.getNewErrorTypeSymbol(diagnostic);
+                }
+
+                return errorCondition;
             }
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
             var useBeforeResolutionSignatures = signature == null;
-            var errorCondition: PullSymbol = null;
+            
             if (!signature) {
                 diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl);
 
