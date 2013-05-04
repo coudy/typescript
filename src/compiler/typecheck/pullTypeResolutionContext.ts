@@ -22,7 +22,7 @@ module TypeScript {
 
 
         public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
-            var comboID = (objectType.getSymbolID() << 16) | parameterType.getSymbolID();
+            var comboID = objectType.getSymbolID().toString() + "#" + parameterType.getSymbolID().toString();
 
             if (this.inferenceCache[comboID]) {
                 return true;
@@ -33,27 +33,36 @@ module TypeScript {
             }            
         }
 
-        public getInferenceInfo(param: PullTypeParameterSymbol) {
+        public resetRelationshipCache() {
+            this.inferenceCache = {};
+        }
+
+        public addInferenceRoot(param: PullTypeParameterSymbol) {
             var info = <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];
 
             if (!info) {
                 info = new CandidateInferenceInfo();
                 info.typeParameter = param;
                 this.candidateCache[param.getSymbolID().toString()] = info;
-            }
+            }        
+        }
 
-            return info;
+        public getInferenceInfo(param: PullTypeParameterSymbol) {
+            return <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];
         }
 
         public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: boolean) {
             var info = this.getInferenceInfo(param);
 
-            if (candidate) {
-                info.addCandidate(candidate);
-            }
+            if (info) {
 
-            if (!info.isFixed) {
-                info.isFixed = fix;
+                if (candidate) {
+                    info.addCandidate(candidate);
+                }
+
+                if (!info.isFixed) {
+                    info.isFixed = fix;
+                }
             }
         }
 

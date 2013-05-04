@@ -3342,7 +3342,7 @@ module TypeScript {
         if (skipLocalTypeParameters && localSkipMap) {
             context.pushTypeSpecializationCache(localSkipMap);
         }
-        var newReturnType = (!localTypeParameters[returnType.getName()] /*&& typeArguments != null*/) ? specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast) : returnType;
+        var newReturnType = (!localTypeParameters[returnType.getName()] /*&& typeArguments != null*/) ? specializeType(returnType, null/*typeArguments*/, resolver, enclosingDecl, context, ast) : returnType;
         if (skipLocalTypeParameters && localSkipMap) {
             context.popTypeSpecializationCache();
         }
@@ -3361,7 +3361,7 @@ module TypeScript {
             if (skipLocalTypeParameters && localSkipMap) {
                 context.pushTypeSpecializationCache(localSkipMap);
             }
-            newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
+            newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, null/*typeArguments*/, resolver, enclosingDecl, context, ast) : parameterType;
             if (skipLocalTypeParameters && localSkipMap) {
                 context.popTypeSpecializationCache();
             }

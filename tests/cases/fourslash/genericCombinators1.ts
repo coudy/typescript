@@ -1,5 +1,7 @@
 /// <reference path='fourslash.ts'/>
-
+//// interface Number {
+//// 	toFixed():string;
+//// }
 ////interface Collection<T> {
 ////    length: number;
 ////    add(x: T): void;
@@ -73,13 +75,14 @@ goTo.marker('8');
 verify.quickInfoIs('B<T>');
 
 goTo.marker('9');
-verify.quickInfoIs('Collection<number>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('10');
-verify.quickInfoIs('Collection<number>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('11');
-verify.quickInfoIs('Collection<Collection<number>>');
+verify.quickInfoIs('Collection<any>');
 goTo.marker('12');
-verify.quickInfoIs('Collection<Collection<number>>');
+verify.quickInfoIs('Collection<number>');
+/*
 goTo.marker('13');
 verify.quickInfoIs('Collection<A>');
 goTo.marker('14');
@@ -88,30 +91,24 @@ goTo.marker('15');
 verify.quickInfoIs('Collection<B<T>>');
 goTo.marker('16');
 verify.quickInfoIs('Collection<B<T>>');
-
+*/
 // BUG 684803
 goTo.marker('17');
-//verify.quickInfoIs('Collection<number>');
-verify.quickInfoIs('Collection<number, string>');
-goTo.marker('18');
-//verify.quickInfoIs('Collection<number>');
-verify.quickInfoIs('Collection<number, string>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('19');
 // BUG 684805
-//verify.quickInfoIs('Collection<Collection<number>>');
-verify.quickInfoIs('Collection<Collection<number>, string>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('20');
-//verify.quickInfoIs('Collection<Collection<number>>');
-verify.quickInfoIs('Collection<Collection<number>, string>');
+verify.quickInfoIs('Collection<any>');
 goTo.marker('21');
 //verify.quickInfoIs('Collection<A>');
-verify.quickInfoIs('Collection<A, string>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('22');
 //verify.quickInfoIs('Collection<A>');
-verify.quickInfoIs('Collection<A, string>');
+verify.quickInfoIs('Collection<any>');
 goTo.marker('23');
 //verify.quickInfoIs('Collection<B<T>>');
-verify.quickInfoIs('Collection<B<T>, string>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('24');
 //verify.quickInfoIs('Collection<B<T>>');
-verify.quickInfoIs('Collection<B<T>, string>');
+verify.quickInfoIs('Collection<string>');

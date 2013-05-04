@@ -1959,7 +1959,7 @@ module TypeScript {
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new PullTypeResolutionContext());
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
                     }
                 }
 
@@ -2052,7 +2052,7 @@ module TypeScript {
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new PullTypeResolutionContext());
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
                     }
                 }
 
@@ -6020,7 +6020,7 @@ module TypeScript {
             // seed each type parameter with the undefined type, so that we can widen it to 'any'
             // if no inferences can be made
             for (var i = 0; i < typeParameters.length; i++) {
-                argContext.addCandidateForInference(typeParameters[i], null, false);
+                argContext.addInferenceRoot(typeParameters[i]);
             }
 
             var substitutions: any;
@@ -6045,6 +6045,8 @@ module TypeScript {
 
                 if (inferenceCandidates.length) {
                     for (var j = 0; j < inferenceCandidates.length; j++) {
+
+                        argContext.resetRelationshipCache();
 
                         inferenceCandidate = inferenceCandidates[j];
 
@@ -6136,7 +6138,7 @@ module TypeScript {
                 // of a generic type's method, the relationship will actually be in reverse.
                 if (!typeArguments) {
                     typeParameters = parameterType.getTypeArguments();
-                    typeArguments = expressionType.getTypeParameters();
+                    typeArguments = expressionType.getIsSpecialized() ? expressionType.getTypeArguments() : expressionType.getTypeParameters();
                 }
 
                 if (typeParameters && typeArguments && typeParameters.length === typeArguments.length) {
@@ -6192,7 +6194,7 @@ module TypeScript {
                 this.relateTypeToTypeParameters(expressionParams[i].getType(), parameterParams[i].getType(), true, argContext, enclosingDecl, context);
             }
 
-            this.relateTypeToTypeParameters(expressionReturnType, parameterReturnType, true, argContext, enclosingDecl, context);
+            this.relateTypeToTypeParameters(expressionReturnType, parameterReturnType, false, argContext, enclosingDecl, context);
         }
 
         private relateObjectTypeToTypeParameters(objectType: PullTypeSymbol,

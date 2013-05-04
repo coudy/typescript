@@ -1,5 +1,7 @@
 /// <reference path='fourslash.ts'/>
-
+//// interface Number {
+//// 	toFixed():string;
+//// }
 ////interface Collection<T, U> {
 ////    length: number;
 ////    add(x: T, y: U): void;
@@ -63,8 +65,7 @@ verify.quickInfoIs('number');
 goTo.marker('1b');
 verify.quickInfoIs('string');
 goTo.marker('1c');
-//verify.quickInfoIs('Combinators.map<T,U,V>(c:Collection<number, string>, f: (x: number, y: string) => string: Collection<number, string>');
-verify.quickInfoIs('<T, U>(c: Collection<number, string>, f: (x: number, y: string) => any): Collection<number, string> (+ 1 overload(s))');
+verify.quickInfoIs('<T, U, V>(c: Collection<number, string>, f: (x: number, y: string) => string): Collection<number, string> (+ 1 overload(s))');
 
 goTo.marker('2a');
 verify.quickInfoIs('Collection<number, number>');
@@ -109,23 +110,22 @@ verify.quickInfoIs('B<T>');
 
 // BUG 684828
 goTo.marker('9');
-verify.quickInfoIs('Collection<number, string>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('10');
 // BUG 684805
 verify.quickInfoIs('Collection<number, string>');
-//verify.quickInfoIs('Collection<number, string, string>');
 goTo.marker('11');
-verify.quickInfoIs('Collection<Collection<number, number>, string>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('12');
-verify.quickInfoIs('Collection<Collection<number, number>, string>');
+verify.quickInfoIs('Collection<Collection<number, number>, number>');
 goTo.marker('13');
-verify.quickInfoIs('Collection<number, A>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('14');
-verify.quickInfoIs('Collection<number, A>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('15');
-verify.quickInfoIs('Collection<number, B<T>>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('16');
-verify.quickInfoIs('Collection<number, B<T>>');
+verify.quickInfoIs('Collection<any, any>');
 
 // BUG 684803
 goTo.marker('17');
@@ -147,13 +147,13 @@ goTo.marker('20');
 verify.quickInfoIs('any');
 
 goTo.marker('21');
-verify.quickInfoIs('Collection<number, A, string>');
+verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('22');
-verify.quickInfoIs('Collection<number, A, string>');
+verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('23');
-verify.quickInfoIs('Collection<number, B<T>, string>');
+verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('24');
-verify.quickInfoIs('Collection<number, B<T>, string>');
+verify.quickInfoIs('Collection<number, string>');
