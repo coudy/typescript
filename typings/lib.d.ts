@@ -942,7 +942,7 @@ declare var JSON: JSON;
 interface Array<T> {
     toString(): string;
     toLocaleString(): string;
-    concat(...items: T[][]): T[]; 
+    concat<U extends T[]>(...items: U[]): T[];
     concat(...items: T[]): T[];
     join(separator?: string): string;
     pop(): T;

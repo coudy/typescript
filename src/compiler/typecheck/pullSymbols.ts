@@ -2761,6 +2761,16 @@ module TypeScript {
         return false;
     }
 
+    export function getRootType(typeToSpecialize: PullTypeSymbol) {
+        var decl = typeToSpecialize.getDeclarations()[0];
+
+        if (!typeToSpecialize.isGeneric()) {
+            return typeToSpecialize;
+        }
+
+        return (typeToSpecialize.getKind() & (PullElementKind.Class | PullElementKind.Interface)) ? <PullTypeSymbol>decl.getSymbol().getType() : typeToSpecialize;
+    }
+
     export var nSpecializationsCreated = 0;
 
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
@@ -2821,7 +2831,7 @@ module TypeScript {
             var newArrayType = specializeType(resolver.getCachedArrayType(), [newElementType], resolver, enclosingDecl, context);
 
             return newArrayType;
-        }
+        }     
 
         var typeParameters = typeToSpecialize.getTypeParameters();
 
@@ -2830,14 +2840,14 @@ module TypeScript {
             searchForExistingSpecialization = false;
         }
 
-        var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
-
         var newType: PullTypeSymbol = null;
 
         var newTypeDecl = typeToSpecialize.getDeclarations()[0];
 
-        var rootType: PullTypeSymbol = (typeToSpecialize.getKind() & (PullElementKind.Class | PullElementKind.Interface)) ? <PullTypeSymbol>newTypeDecl.getSymbol().getType() : typeToSpecialize;
-        
+        var rootType: PullTypeSymbol = getRootType(typeToSpecialize);
+
+        var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
+
         if (searchForExistingSpecialization) {
             if (!typeArguments.length || context.specializingToAny) {
                 for (var i = 0; i < typeParameters.length; i++) {
@@ -2855,6 +2865,19 @@ module TypeScript {
             if (!newType && !typeParameters.length && context.specializingToAny) {
                 newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
             }
+            
+            for (var i = 0; i < typeArguments.length; i++) {
+                if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], typeParameters[i]))) {
+                    declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
+                    if (declAST) {
+                        diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
+                        return resolver.getNewErrorTypeSymbol(diagnostic);
+                    }
+                    else {
+                        return resolver.semanticInfoChain.anyTypeSymbol;
+                    }
+                }
+            }
         }
         else {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
@@ -2864,10 +2887,10 @@ module TypeScript {
 
             for (var i = 0; i < typesToReplace.length; i++) {
 
-                if (!typesToReplace[i].isTypeParameter() && typeWrapsTypeParameter(typesToReplace[i], typeParameters[i])) {
+                if (!typesToReplace[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typesToReplace[i], typeParameters[i]))) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST) {
-                        diagnostic = context.postError(resolver.getUnitPath(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
+                        diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
                     else {
@@ -2882,6 +2905,27 @@ module TypeScript {
             
             newType = rootType.getSpecialization(typeArguments);            
         }
+
+        // check to see if this is a recursive specialization while resolving the root type
+        // E.g.,
+        //
+        // interface Array<T> {
+        //     p: Array<T>; <- This is really just the declaration
+        // }
+        //
+        var rootTypeParameters = rootType.getTypeParameters();
+
+        if (rootTypeParameters.length && (rootTypeParameters.length == typeArguments.length)) {
+            for (var i = 0; i < typeArguments.length; i++) {
+                if (typeArguments[i] != rootTypeParameters[i]) {
+                    break;
+                }
+            }
+
+            if (i == rootTypeParameters.length) {
+                return rootType;
+            }
+        }   
 
         if (newType) {
             if (!newType.isResolved() && !newType.currentlyBeingSpecialized()) {

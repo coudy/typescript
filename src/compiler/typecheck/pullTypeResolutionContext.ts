@@ -171,7 +171,8 @@ module TypeScript {
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;
-        public isResolvingClassExtendedType = false;
+        public isResolvingClassExtendedType = false; 
+        public isSpecializingSignatureAtCallSite = false;
 
         constructor (public emitting = false) {}
 

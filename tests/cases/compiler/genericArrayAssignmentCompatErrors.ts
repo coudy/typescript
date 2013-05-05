@@ -2,7 +2,7 @@ var myCars=new Array();
 var myCars2 = new [];
 var myCars3 = new Array({});
 var myCars4: Array;
-var myCars5: Array[];
+var myCars5: Array<any>[];
  
 myCars = myCars2;
 myCars = myCars3;
