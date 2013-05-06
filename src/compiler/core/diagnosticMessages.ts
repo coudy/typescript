@@ -400,7 +400,7 @@ module TypeScript {
 
         Required_parameter_cannot_follow_optional_parameter: {
             category: DiagnosticCategory.Error,
-            message: "required parameter cannot follow optional parameter.",
+            message: "Required parameter cannot follow optional parameter.",
             code: 1016
         },
 
