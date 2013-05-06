@@ -1225,7 +1225,7 @@ module TypeScript {
             }
 
             this.checkAssignability(binaryExpression.operand1, rightType, leftType, typeCheckContext);
-            return leftType;
+            return rightType;
         }
 
         // Generic Type references
