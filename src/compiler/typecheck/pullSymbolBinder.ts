@@ -1692,7 +1692,7 @@ module TypeScript {
                 this.popParent();
             }
 
-            //functionSymbol.setIsBound(this.bindingPhase);
+            functionSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {

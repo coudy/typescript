@@ -8,4 +8,4 @@
 
 goTo.marker();
 // Bug 681081: Duplicated function implementation gets treated as an overload for error reporting
-// edit.insert("x: string");
+edit.insert("x: string");
