@@ -53,10 +53,20 @@ module Services {
             }
 
             var symbol = symbolInfoAtPosition.symbol;
+            var symbolName: string = symbol.getName();
+
+            
             
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
-                result = result.concat(this.getReferencesInFile(fileNames[i], symbol));
+                var tempFileName = fileNames[i];
+        
+                var tempDocument = this.compilerState.getDocument(tempFileName);
+                var filter: TypeScript.BloomFilter = tempDocument.bloomFilter();
+
+                if (filter.probablyContains(symbolName)) {
+                    result = result.concat(this.getReferencesInFile(tempFileName, symbol));
+                }
             }
 
             return result;
@@ -96,7 +106,7 @@ module Services {
             var result: ReferenceEntry[] = [];
             var symbolName = symbol.getDisplayName();
             
-            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
+            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
             if (possiblePositions && possiblePositions.length > 0) {
                 var document = this.compilerState.getDocument(fileName);
                 var script = document.script;
@@ -106,17 +116,20 @@ module Services {
                     if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
                         return;
                     }
-
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
-                    if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
+
+                    if (searchSymbolInfoAtPosition !== null && this.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
                         var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                        result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast.minChar, searchSymbolInfoAtPosition.ast.limChar, isWriteAccess));
+                        var referenceAST = this.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
+                        result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+
                     }
                 });
             }
 
             return result;
         }
+
 
         private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
             if (parent !== null) {
@@ -169,7 +182,114 @@ module Services {
             return false;
         }
 
-        private getPossibleSymbolReferencePositions(fileName: string, symbol: TypeScript.PullSymbol): number []{
+        private getCorrectASTForReferencedSymbolName(matchingAST: TypeScript.AST, symbolName: string): TypeScript.AST {
+
+            if (matchingAST.nodeType == TypeScript.NodeType.MemberAccessExpression) {
+                var binaryExpression: TypeScript.BinaryExpression = <TypeScript.BinaryExpression>matchingAST;
+                var identifierOperand1: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand1;
+                var identifierOperand2: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand2;
+                if (identifierOperand1.actualText === symbolName) {
+                    return binaryExpression.operand1;
+                }
+                else if (identifierOperand2.actualText === symbolName) {
+                    return binaryExpression.operand2;
+                }
+            }
+            return matchingAST;
+        }
+
+        private declarationsAreSameOrParents(firstDecl: TypeScript.PullDecl, secondDecl: TypeScript.PullDecl): boolean {
+            var firstParent: TypeScript.PullDecl = firstDecl.getParentDecl();
+            var secondParent: TypeScript.PullDecl = secondDecl.getParentDecl();
+            if (firstDecl === secondDecl ||
+                firstDecl === secondParent ||
+                firstParent === secondDecl ||
+                firstParent === secondParent) {
+                return true;
+            }
+            return false;
+        }
+
+        private compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
+            if (firstSymbol.getKind() === secondSymbol.getKind())
+            {
+                return firstSymbol === secondSymbol;
+            }
+            else {
+                switch (firstSymbol.getKind()) {
+                    case TypeScript.PullElementKind.None:
+                    case TypeScript.PullElementKind.Script:
+                    case TypeScript.PullElementKind.Global:
+                    case TypeScript.PullElementKind.Primitive:
+                    case TypeScript.PullElementKind.Container:
+                    case TypeScript.PullElementKind.Class:{
+                        var firstSymbolDeclarations: TypeScript.PullDecl[] = firstSymbol.getDeclarations();
+                        var secondSymbolDeclarations: TypeScript.PullDecl[] = secondSymbol.getDeclarations();
+                        for (var i = 0, iLen = firstSymbolDeclarations.length; i < iLen; i++) {
+                            for (var j = 0, jLen = secondSymbolDeclarations.length; j < jLen; j++) {
+                                if (this.declarationsAreSameOrParents(firstSymbolDeclarations[i], secondSymbolDeclarations[j])) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+                    case TypeScript.PullElementKind.Interface:
+                    case TypeScript.PullElementKind.DynamicModule:
+                    case TypeScript.PullElementKind.Enum:
+                    case TypeScript.PullElementKind.Array:
+                    case TypeScript.PullElementKind.TypeAlias:
+                    case TypeScript.PullElementKind.ObjectLiteral:
+                    case TypeScript.PullElementKind.Variable:
+                    case TypeScript.PullElementKind.Parameter:
+                    case TypeScript.PullElementKind.Property: {
+                        var getSetLinks = firstSymbol.findOutgoingLinks(link => (link.end === secondSymbol && (link.kind === TypeScript.SymbolLinkKind.GetterFunction || link.kind === TypeScript.SymbolLinkKind.SetterFunction)));
+                        if (getSetLinks.length) {
+                            return true;
+                        }
+                    }
+                    case TypeScript.PullElementKind.TypeParameter:
+                    case TypeScript.PullElementKind.Function: {
+                        var getSetLinks = firstSymbol.findIncomingLinks(link => (link.start === secondSymbol && (link.kind === TypeScript.SymbolLinkKind.GetterFunction || link.kind === TypeScript.SymbolLinkKind.SetterFunction)));
+                        if (getSetLinks.length) {
+                            return true;
+                        }
+                    }
+                    case TypeScript.PullElementKind.ConstructorMethod: {
+                        var firstSymbolDeclarations: TypeScript.PullDecl[] = firstSymbol.getDeclarations();
+                        var secondSymbolDeclarations: TypeScript.PullDecl[] = secondSymbol.getDeclarations();
+                        for (var i = 0, iLen = firstSymbolDeclarations.length; i < iLen; i++) {
+                            for (var j = 0, jLen = secondSymbolDeclarations.length; j < jLen; j++) {
+                                if (this.declarationsAreSameOrParents(firstSymbolDeclarations[i], secondSymbolDeclarations[j])) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    case TypeScript.PullElementKind.Method:
+                    case TypeScript.PullElementKind.FunctionExpression:
+                    case TypeScript.PullElementKind.GetAccessor:
+                    case TypeScript.PullElementKind.SetAccessor:
+                    case TypeScript.PullElementKind.CallSignature:
+                    case TypeScript.PullElementKind.ConstructSignature:
+                    case TypeScript.PullElementKind.IndexSignature:
+                    case TypeScript.PullElementKind.ObjectType:
+                    case TypeScript.PullElementKind.FunctionType:
+                    case TypeScript.PullElementKind.ConstructorType:
+                    case TypeScript.PullElementKind.EnumMember:
+                    case TypeScript.PullElementKind.ErrorType:
+                    case TypeScript.PullElementKind.Expression:
+                    case TypeScript.PullElementKind.WithBlock:
+                    case TypeScript.PullElementKind.CatchBlock:
+                    case TypeScript.PullElementKind.All:
+                }
+            }
+
+            return firstSymbol === secondSymbol;
+        }
+
+        private getPossibleSymbolReferencePositions(fileName: string, symbolName: string): number []{
+
             var positions: number[] = [];
 
             /// TODO: Cache symbol existence for files to save text search
@@ -177,7 +297,6 @@ module Services {
 
             var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
-            var symbolName = symbol.getDisplayName();
 
             var position = text.indexOf(symbolName);
             while (position >= 0) {

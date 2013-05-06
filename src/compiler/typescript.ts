@@ -54,6 +54,225 @@ module TypeScript {
 
     declare var IO;
 
+    
+    export class IdentifierWalker extends SyntaxWalker {
+
+        private _identifierList: string[];
+
+        constructor(list: string[]) {
+            super();
+            this._identifierList = list;
+        }
+
+        public visitToken(token: ISyntaxToken): void {
+
+            this._identifierList.push(token.text());
+        }
+    }
+
+    export class BloomFilter {
+        private bitArray: boolean[];
+        private hashFunctionCount: number;
+        private isCaseSensitive: boolean;
+
+        // <summary><![CDATA[
+        // From the bloom filter calculator here: http://hur.st/bloomfilter?n=4&p=1.0E-20
+        // 
+        // 1) n  = Number of items in the filter
+        // 
+        // 2) p = Probability of false positives, (a double between 0 and 1).
+        // 
+        // 3) m = Number of bits in the filter
+        // 
+        // 4) k = Number of hash functions
+        // 
+        // m = ceil((n * log(p)) / log(1.0 / (pow(2.0, log(2.0)))))
+        // 
+        // k = round(log(2.0) * m / n)
+        // ]]></summary>
+        constructor(expectedCount: number, falsePositiveProbability: number, isCaseSensitive: boolean) {
+            var m: number = Math.max(1, BloomFilter.ComputeM(expectedCount, falsePositiveProbability));
+            var k: number = Math.max(1, BloomFilter.ComputeK(expectedCount, falsePositiveProbability));;
+
+            // We must have size in even bytes, so that when we deserialize from bytes we get a bit array with the same count.
+            // The count is used by the hash functions.
+            var sizeInEvenBytes = (m + 7) & ~7;
+
+            this.bitArray = [];
+            for (var i = 0, len = sizeInEvenBytes; i < len; i++) {
+                this.bitArray[i] = false;
+            }
+            this.hashFunctionCount = k;
+            this.isCaseSensitive = isCaseSensitive;
+        }
+
+        //constructor(falsePositiveProbability: number, isCaseSensitive: boolean, values: string[])
+        //    : this(values.Count, falsePositiveProbability, isCaseSensitive)
+        //{
+
+        //    this.AddRange(values);
+        //}
+
+        //constructor(BitArray bitArray, int hashFunctionCount, bool isCaseSensitive)
+        //{
+        //    if (bitArray == null)
+        //    {
+        //        throw new ArgumentNullException("bitArray");
+        //    }
+
+        //    this.bitArray = bitArray;
+        //    this.hashFunctionCount = hashFunctionCount;
+        //    this.isCaseSensitive = isCaseSensitive;
+        //}
+
+        // m = ceil((n * log(p)) / log(1.0 / (pow(2.0, log(2.0)))))
+        static ComputeM(expectedCount: number, falsePositiveProbability: number): number {
+            var p: number = falsePositiveProbability;
+            var n: number = expectedCount;
+
+            var numerator = n * Math.log(p);
+            var denominator = Math.log(1.0 / Math.pow(2.0, Math.log(2.0)));
+            return Math.ceil(numerator / denominator);
+        }
+
+        // k = round(log(2.0) * m / n)
+        static ComputeK(expectedCount: number, falsePositiveProbability: number): number {
+            var n: number = expectedCount;
+            var m: number = BloomFilter.ComputeM(expectedCount, falsePositiveProbability);
+
+            var temp = Math.log(2.0) * m / n;
+            return Math.round(temp);
+        }
+
+        /// <summary>
+        /// Modification of the murmurhash2 algorithm.  Code is simpler because it operates over
+        /// strings instead of byte arrays.  Because each string character is two bytes, it is known
+        /// that the input will be an even number of bytes (though not necessarily a multiple of 4).
+        /// 
+        /// This is needed over the normal 'string.GetHashCode()' because we need to be able to generate
+        /// 'k' different well distributed hashes for any given string s.  Also, we want to be able to
+        /// generate these hashes without allocating any memory.  My ideal solution would be to use an
+        /// MD5 hash.  However, there appears to be no way to do MD5 in .Net where you can:
+        /// 
+        /// a) feed it individual values instead of a byte[]
+        /// 
+        /// b) have the hash computed into a byte[] you provide instead of a newly allocated one
+        /// 
+        /// Generating 'k' pieces of garbage on each insert and lookup seems very wasteful.  So,
+        /// instead, we use murmur hash since it provides well distributed values, allows for a
+        /// seed, and allocates no memory.
+        /// 
+        /// Murmur hash is public domain.  Actual code is included below as reference.
+        /// </summary>
+        private computeHash(key: string, seed: number): number {
+            // 'm' and 'r' are mixing constants generated offline.
+            // They're not really 'magic', they just happen to work well.
+
+            var m: number = 0x5bd1e995;
+            var r: number = 24;
+
+            // Initialize the hash to a 'random' value
+
+            var numberOfCharsLeft = key.length;
+            var h = Math.abs(seed ^ numberOfCharsLeft);
+
+            // Mix 4 bytes at a time into the hash.  NOTE: 4 bytes is two chars, so we iterate
+            // through the string two chars at a time.
+            var index = 0;
+            while (numberOfCharsLeft >= 2)
+            {
+                var c1 = this.getCharacter(key, index);
+                var c2 = this.getCharacter(key, index + 1);
+
+                var k = Math.abs(c1 | (c2 << 16));
+
+                k *= m;
+                k ^= k >> r;
+                k *= m;
+
+                h *= m;
+                h ^= k;
+
+                index += 2;
+                numberOfCharsLeft -= 2;
+            }
+
+            // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
+            // odd length.
+            if (numberOfCharsLeft == 1)
+            {
+                h ^= this.getCharacter(key, index);
+                h *= m;
+            }
+
+            // Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
+
+            h ^= h >> 13;
+            h *= m;
+            h ^= h >> 15;
+
+            return Math.round(h);
+        }
+
+        private getCharacter(key: string, index: number): number {
+            return this.isCaseSensitive ? key.charCodeAt(index) : key.toLowerCase().charCodeAt(index);
+        }
+
+        public addRange(values: string[]) {
+            for (var i = 0, len = values.length; i < len; i++) {
+                this.add(values[i]);
+            }
+        }
+
+        public add(value: string) {
+            for (var i = 0; i < this.hashFunctionCount; i++)
+            {
+                var hash = this.computeHash(value, i);
+                hash = hash % this.bitArray.length;
+                this.bitArray[Math.abs(hash)] = true;
+            }
+        }
+
+        public probablyContains(value: string): boolean
+        {
+            for (var i = 0; i < this.hashFunctionCount; i++)
+            {
+                var hash = this.computeHash(value, i);
+                hash = hash % this.bitArray.length;
+                if (!this.bitArray[Math.abs(hash)])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public isEquivalent(filter: BloomFilter): boolean {
+            return BloomFilter.isEquivalent(this.bitArray, filter.bitArray)
+                && this.hashFunctionCount == filter.hashFunctionCount
+                && this.isCaseSensitive == filter.isCaseSensitive;
+        }
+
+        static isEquivalent(array1: boolean[], array2: boolean[]): boolean
+        {
+            if (array1.length != array2.length)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < array1.length; i++)
+            {
+                if (array1[i] != array2[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
         writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
@@ -100,6 +319,7 @@ module TypeScript {
     export class Document {
         private _diagnostics: IDiagnostic[] = null;
         private _syntaxTree: SyntaxTree = null;
+        private _bloomFilter: BloomFilter = null;
         public script: Script;
         public lineMap: LineMap;
 
@@ -118,6 +338,12 @@ module TypeScript {
                 // Don't store the syntax tree for a closed file.
                 this._diagnostics = syntaxTree.diagnostics();
             }
+
+            var identifiers: string[] = [];
+            var identifierWalker: IdentifierWalker = new IdentifierWalker(identifiers);
+            syntaxTree.sourceUnit().accept(identifierWalker);
+            this._bloomFilter = new BloomFilter(identifiers.length, 0.0001, false);
+            this._bloomFilter.addRange(identifiers);
 
             this.lineMap = syntaxTree.lineMap();
             this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
@@ -144,7 +370,11 @@ module TypeScript {
                 getParseOptions(this.compilationSettings));
         }
 
-        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
+        public bloomFilter(): BloomFilter {
+            return this._bloomFilter;
+        }
+
+        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
             var oldScript = this.script;
             var oldSyntaxTree = this._syntaxTree;
 
