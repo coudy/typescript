@@ -5,5 +5,6 @@
 /////*1*/baz.concat("y");
 
 goTo.marker();
-edit.insert(".b");
-verify.not.errorExistsAfterMarker("1");
+// Bug 686879
+// edit.insert(".b");
+// verify.not.errorExistsAfterMarker("1");

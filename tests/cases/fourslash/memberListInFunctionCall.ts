@@ -11,7 +11,5 @@
 goTo.marker();
 edit.insert('.');
 
-// http://typescript.codeplex.com/workitem/440 bad intellisense in object literal
-verify.not.memberListContains('charAt');
-// verify.memberListContains('charAt');
+verify.memberListContains('charAt');
 

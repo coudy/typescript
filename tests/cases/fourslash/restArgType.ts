@@ -12,8 +12,9 @@
 ////};
 
 goTo.marker("1");
-verify.quickInfoIs("any", "", "restArgs", "parameter");
+// Bug 686822
+// verify.quickInfoIs("any[]", "", "restArgs", "parameter");
 goTo.marker("2");
-verify.quickInfoIs("any", "", "restArgs", "parameter");
+// verify.quickInfoIs("any[]", "", "restArgs", "parameter");
 goTo.marker("3");
-verify.quickInfoIs("any", "", "y", "parameter");
+// verify.quickInfoIs("string[]", "", "y", "parameter");
