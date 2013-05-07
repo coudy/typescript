@@ -2236,7 +2236,7 @@ module TypeScript {
                         return this.resolveTypeNameExpression(<Identifier>expressionAST, enclosingDecl, context);
                     }
                     else {
-                        return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context);
+                        return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context).symbol;
                     }
                 case GenericType:
                     return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context);
@@ -2422,54 +2422,53 @@ module TypeScript {
             return nameSymbol
         }
 
-        public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
-            if (nameAST.isMissing()) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
-
+        public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST, context);
-            var nameSymbol = nameSymbolAndDiagnostics && nameSymbolAndDiagnostics.symbol;
-
-            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
-                if (!nameSymbol.isResolved()) {
-                    this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+            if (!nameSymbolAndDiagnostics) {
+                var nameSymbol: PullSymbol;
+                if (nameAST.isMissing()) {
+                    nameSymbol = this.semanticInfoChain.anyTypeSymbol;
                 }
-                return nameSymbol;
+                else {
+                    var id = nameAST.text;
+
+                    var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+
+                    if (enclosingDecl && !declPath.length) {
+                        declPath = [enclosingDecl];
+                    }
+
+                    var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+
+                    // PULLREVIEW: until further notice, search out for modules or enums
+                    if (!nameSymbol) {
+                        nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                        nameSymbol = this.resolveNameSymbol(nameSymbol, context);
+                    }
+
+                    if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                        nameSymbol = this.cachedFunctionArgumentsSymbol;
+                    }
+                }
+
+                if (!nameSymbol) {
+                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
+                    nameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                    nameSymbolAndDiagnostics = SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
+                }
+                else {
+                    nameSymbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(nameSymbol);
+                }
+
+                this.setSymbolAndDiagnosticsForAST(nameAST, nameSymbolAndDiagnostics, context);
             }
 
-            var id = nameAST.text;
-
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
-
-            nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
-
-            // PULLREVIEW: until further notice, search out for modules or enums
-            if (!nameSymbol) {
-                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
-            }
-
-            if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
-                nameSymbol = this.cachedFunctionArgumentsSymbol;
-            }
-
-            if (!nameSymbol) {
-                var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
-            }
-
+            var nameSymbol = nameSymbolAndDiagnostics.symbol;
             if (!nameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
-
-            return nameSymbol;
+            return nameSymbolAndDiagnostics;
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {

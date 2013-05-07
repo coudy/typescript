@@ -2225,7 +2225,8 @@ module TypeScript {
 
         private typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolver.resolveNameExpression(<Identifier>ast, enclosingDecl, this.context).getType();
+            var typeAndDiagnostics = this.resolver.resolveNameExpression(<Identifier>ast, enclosingDecl, this.context);
+            var type = typeAndDiagnostics.symbol.getType();
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }

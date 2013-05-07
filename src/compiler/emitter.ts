@@ -356,8 +356,9 @@ module TypeScript {
             var ident = <Identifier>init;
 
             this.setTypeCheckerUnit(this.document.fileName);
-            var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
-                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext);
+            var pullSymbol = this.resolvingContext.resolvingTypeReference
+                ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
+                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext).symbol;
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -1171,8 +1172,9 @@ module TypeScript {
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 this.setTypeCheckerUnit(this.document.fileName);
-                var pullSymbol = this.resolvingContext.resolvingTypeReference ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
-                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
+                var pullSymbol = this.resolvingContext.resolvingTypeReference
+                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
+                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext).symbol;
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
