@@ -1229,7 +1229,8 @@ module TypeScript {
                 importDeclSymbol.setAliasedType(aliasedType);
                 importDeclSymbol.setResolved();
 
-                this.setSymbolAndDiagnosticsForAST(importStatementAST.alias, SymbolAndDiagnostics.fromSymbol(aliasedType), context);
+                // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
+                this.semanticInfoChain.setSymbolAndDiagnosticsForAST(importStatementAST.alias, SymbolAndDiagnostics.fromSymbol(aliasedType), this.unitPath);
             }
 
             return importDeclSymbol;
@@ -3333,8 +3334,8 @@ module TypeScript {
                 }
 
                 var collection: IPullTypeCollection = {
-                    getLength: () => { return elements.members.length; } ,
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; } ,
+                    getLength: () => { return elements.members.length; },
+                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; },
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
                 }
 
@@ -3346,6 +3347,8 @@ module TypeScript {
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
+            } else if (inContextuallyTypedAssignment) {
+                context.popContextualType();
             }
 
             if (!elementType) {
