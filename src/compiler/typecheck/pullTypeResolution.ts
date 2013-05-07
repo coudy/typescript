@@ -34,7 +34,6 @@ module TypeScript {
         }
     }
 
-
     export interface IPullTypeCollection {
         // returns null when types are exhausted
         getLength(): number;
@@ -1478,7 +1477,7 @@ module TypeScript {
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
             }
             else if (typeRef.term.nodeType === NodeType.GenericType) {
-                typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
+                typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context).symbol;
             }
             // a dotted name
             else if (typeRef.term.nodeType === NodeType.MemberAccessExpression) {
@@ -2238,7 +2237,7 @@ module TypeScript {
                         return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context).symbol;
                     }
                 case GenericType:
-                    return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context);
+                    return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context).symbol;
                 case NodeType.MemberAccessExpression:
                     if (context.searchTypeSpace) {
                         return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
@@ -2719,7 +2718,26 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(typeNameSymbol);
         }
 
-        private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private addDiagnostic(diagnostics: Diagnostic[], diagnostic: Diagnostic): Diagnostic[] {
+            if (!diagnostics) {
+                diagnostics = [];
+            }
+
+            diagnostics.push(diagnostic);
+            return diagnostics;
+        }
+
+        //private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+        //    var symbolAndDiagnostics = <SymbolAndDiagnostics<PullTypeSymbol>>this.getSymbolAndDiagnosticsForAST(genericTypeAST);
+        //    if (!symbolAndDiagnostics) {
+        //        symbolAndDiagnostics = this.computeGenericTypeReference(genericTypeAST, enclosingDecl, context);
+        //        this.setSymbolAndDiagnosticsForAST(genericTypeAST, symbolAndDiagnostics, context);
+        //    }
+
+        //    return symbolAndDiagnostics;
+        //}
+
+        private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
             var genericTypeSymbol: PullTypeSymbol = null
             var diagnostic: SemanticDiagnostic;
 
@@ -2729,13 +2747,11 @@ module TypeScript {
             context.searchTypeSpace = prevSearchTypeSpace;
 
             if (genericTypeSymbol.isError()) {
-                return genericTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(genericTypeSymbol);
             }
 
             if (!genericTypeSymbol.isResolving() && !genericTypeSymbol.isResolved()) {
-                //genericTypeSymbol.startResolving();
                 this.resolveDeclaredSymbol(genericTypeSymbol, enclosingDecl, context);
-                //genericTypeSymbol.setResolved();
             }
 
             // specialize the type arguments
@@ -2743,18 +2759,11 @@ module TypeScript {
             var typeArg: PullTypeSymbol = null;
 
             if (!context.isResolvingTypeArguments(genericTypeAST)) {
-
                 context.startResolvingTypeArguments(genericTypeAST);
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
-
-                        if (typeArg.isError()) {
-                            context.doneResolvingTypeArguments();
-                            return typeArg;                       
-                        }
-
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
@@ -2769,9 +2778,9 @@ module TypeScript {
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length], enclosingDecl);
-
-                return this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length], enclosingDecl);
+                var result = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
@@ -2779,6 +2788,7 @@ module TypeScript {
             // check constraints, if appropriate
             var typeConstraint: PullTypeSymbol = null;
             var upperBound: PullTypeSymbol = null;
+            var diagnostics: Diagnostic[] = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
@@ -2786,7 +2796,6 @@ module TypeScript {
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
-
                     if (typeArg.isTypeParameter()) {
                         upperBound = (<PullTypeParameterSymbol>typeArg).getConstraint();
 
@@ -2796,15 +2805,16 @@ module TypeScript {
                     }
 
                     if (typeArg.isResolving()) {
-                        return specializedSymbol;
+                        return SymbolAndDiagnostics.fromSymbol(specializedSymbol);
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)], enclosingDecl, true);
+                        var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)], enclosingDecl, true);
+                        diagnostics = this.addDiagnostic(diagnostics, diagnostic);
                     }
                 }
             }
 
-            return specializedSymbol;
+            return SymbolAndDiagnostics.create(specializedSymbol, diagnostics);
         }
 
         private resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
