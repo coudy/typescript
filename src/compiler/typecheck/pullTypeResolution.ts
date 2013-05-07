@@ -1488,7 +1488,7 @@ module TypeScript {
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
 
-                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
+                typeDeclSymbol = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context).symbol;
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
 
@@ -2240,7 +2240,7 @@ module TypeScript {
                     return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context).symbol;
                 case NodeType.MemberAccessExpression:
                     if (context.searchTypeSpace) {
-                        return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
+                        return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context).symbol;
                     }
                     else {
                         return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
@@ -2817,23 +2817,25 @@ module TypeScript {
             return SymbolAndDiagnostics.create(specializedSymbol, diagnostics);
         }
 
-        private resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+            var symbolAndDiagnostics = <SymbolAndDiagnostics<PullTypeSymbol>>this.getSymbolAndDiagnosticsForAST(dottedNameAST);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeDottedTypeNameExpression(dottedNameAST, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(dottedNameAST, symbolAndDiagnostics, context);
+            }
 
+            var symbol = symbolAndDiagnostics.symbol;
+            if (!symbol.isResolved()) {
+                this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
+            }
+
+            return symbolAndDiagnostics;
+        }
+
+        private computeDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
             if ((<Identifier>dottedNameAST.operand2).isMissing()) {
-                return this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
-
-            var childTypeSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST);
-            var childTypeSymbol = childTypeSymbolAndDiagnostics && <PullTypeSymbol>childTypeSymbolAndDiagnostics.symbol;
-
-            if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
-                if (!childTypeSymbol.isResolved()) {
-                    this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
-                }
-                return childTypeSymbol;
-            }
-
-            var diagnostic: SemanticDiagnostic;
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).text;
@@ -2854,16 +2856,17 @@ module TypeScript {
             }
 
             if (this.isAnyOrEquivalent(lhsType)) {
-                return lhsType;
+                return SymbolAndDiagnostics.fromSymbol(lhsType);
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
+                var result = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
             // now for the name...
-            childTypeSymbol = lhsType.findNestedType(rhsName);
+            var childTypeSymbol = lhsType.findNestedType(rhsName);
 
             // If the name is expressed as a dotted name within the parent type,
             // then it will be considered a contained member, so back up to the nearest
@@ -2889,17 +2892,12 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()], enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()], enclosingDecl);
+                var result = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
-            if (!childTypeSymbol.isResolved()) {
-                this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
-            }
-
-            this.setSymbolAndDiagnosticsForAST(dottedNameAST, SymbolAndDiagnostics.fromSymbol(childTypeSymbol), context);
-
-            return childTypeSymbol;
+            return SymbolAndDiagnostics.fromSymbol(childTypeSymbol);
         }
 
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
