@@ -838,7 +838,7 @@ module TypeScript {
                     return this.resolveImportDeclaration(<ImportDeclaration>declAST, context);
 
                 case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(declAST, false, enclosingDecl, context);
+                    return this.resolveObjectLiteralExpression(declAST, false, enclosingDecl, context).symbol;
 
                 default:
                     throw new Error("Invalid declaration type");
@@ -2263,7 +2263,7 @@ module TypeScript {
                     }
 
                 case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
                 case NodeType.ArrayLiteralExpression:
                     return this.resolveArrayLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -3130,32 +3130,26 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
+        private resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
+
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(expressionAST, symbolAndDiagnostics, context);
+            }
+
+            return symbolAndDiagnostics;
+        }
+
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
-        private resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
-
-            if (previousResolutionSymbol) {
-                //CompilerDiagnostics.Alert("Call get hit");
-                return <PullTypeSymbol>previousResolutionSymbol;
-            }
-
-            var typeSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
-            var typeSymbol = typeSymbolAndDiagnostics && <PullTypeSymbol>typeSymbolAndDiagnostics.symbol;
-            var span: TextSpan;
-
-            if (typeSymbol && typeSymbol.isResolved()) {
-                return typeSymbol.getType();
-            }
-
+        private computeObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             // PULLTODO: Create a decl for the object literal
 
             // walk the members of the object literal,
             // create fields for each based on the value assigned in
             var objectLitAST = <UnaryExpression>expressionAST;
-
-            span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
+            var span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
             var objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
 
@@ -3166,7 +3160,7 @@ module TypeScript {
             this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
             this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
 
-            typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
+            var typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
             typeSymbol.addDeclaration(objectLitDecl);
             objectLitDecl.setSymbol(typeSymbol);
 
@@ -3203,7 +3197,8 @@ module TypeScript {
                         text = (<StringLiteral>id).text;
                     }
                     else {
-                        return this.semanticInfoChain.anyTypeSymbol;
+                        // TODO: no error for this?  What if it's a numeric literal?
+                        return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                     }
 
                     // PULLTODO: Collect these at decl collection time, add them to the var decl
@@ -3271,7 +3266,6 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
-
                     context.setTypeInContext(memberSymbol, memberExprType.getType());
 
                     memberSymbol.setResolved();
@@ -3283,10 +3277,7 @@ module TypeScript {
             }
 
             typeSymbol.setResolved();
-
-            this.setSymbolAndDiagnosticsForAST(expressionAST, SymbolAndDiagnostics.fromSymbol(typeSymbol), context);
-
-            return typeSymbol;
+            return SymbolAndDiagnostics.fromSymbol(typeSymbol);
         }
 
         private resolveArrayLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5839,17 +5830,19 @@ module TypeScript {
                         if (this.cachedObjectInterfaceType && memberType === this.cachedObjectInterfaceType) {
                             continue;
                         }
-                        context.pushContextualType(memberType, true, null);
-                        argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
 
+                        context.pushContextualType(memberType, true, null);
+                        argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context).symbol;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
                                 comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
                                     [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
+
                             miss = true;
                         }
+
                         argSym.invalidate();
                         cxt = context.popContextualType();
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
