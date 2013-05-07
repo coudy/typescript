@@ -93,6 +93,7 @@ var servicesSources = [
 	"compilerState.ts",
 	"languageService.ts",
 	"keywordCompletions.ts",
+	"signatureInfoHelpers.ts",
 	"pullLanguageService.ts",
 	"shims.ts",
 	"outliningElementsCollector.ts",

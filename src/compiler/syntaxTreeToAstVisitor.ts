@@ -1394,6 +1394,9 @@ module TypeScript {
             var result = new ASTList();
 
             this.movePast(node.lessThanToken);
+            
+            var start = this.position;
+
             for (var i = 0, n = node.typeArguments.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.typeArguments.childAt(i));
@@ -1403,6 +1406,8 @@ module TypeScript {
                 }
             }
             this.movePast(node.greaterThanToken);
+
+            this.setSpan(result, start, node.typeArguments);
 
             return result;
         }

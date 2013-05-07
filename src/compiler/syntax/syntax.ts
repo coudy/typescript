@@ -370,33 +370,61 @@ module TypeScript.Syntax {
         return false;
     }
 
-    export function findSkippedTokenInTriviaList(triviaList: TypeScript.ISyntaxTriviaList, parentToken: PositionedToken, fullStart: number, position: number): PositionedSkippedToken {
-        for (var i = 0, n = triviaList.count(); i < n; i++) {
-            var trivia = triviaList.syntaxTriviaAt(i);
-            var triviaWidth = trivia.fullWidth();
+    function findSkippedTokenInTriviaList(positionedToken: PositionedToken, position: number, lookInLeadingTriviaList): PositionedSkippedToken {
+        var triviaList: TypeScript.ISyntaxTriviaList = null;
+        var fullStart: number;
 
-            if (trivia.isSkippedToken() && position >= fullStart && position < fullStart + triviaWidth) {
-                return new PositionedSkippedToken(parentToken, trivia.skippedToken(), fullStart);
+        if (lookInLeadingTriviaList) {
+            triviaList = positionedToken.token().leadingTrivia();
+            fullStart = positionedToken.fullStart();
+        }
+        else {
+            triviaList = positionedToken.token().trailingTrivia();
+            fullStart = positionedToken.end();
+        }
+
+        if (triviaList && triviaList.hasSkippedToken()) {
+            for (var i = 0, n = triviaList.count(); i < n; i++) {
+                var trivia = triviaList.syntaxTriviaAt(i);
+                var triviaWidth = trivia.fullWidth();
+
+                if (trivia.isSkippedToken() && position >= fullStart && position <= fullStart + triviaWidth) {
+                    return new PositionedSkippedToken(positionedToken, trivia.skippedToken(), fullStart);
+                }
+
+                fullStart += triviaWidth;
             }
-
-            fullStart += triviaWidth;
         }
 
         return null;
     }
 
+    export function findSkippedTokenInLeadingTriviaList(positionedToken: PositionedToken, position: number): PositionedSkippedToken {
+        return findSkippedTokenInTriviaList(positionedToken, position, /*lookInLeadingTriviaList*/ true);
+    }
+
+    export function findSkippedTokenInTrailingTriviaList(positionedToken: PositionedToken, position: number): PositionedSkippedToken {
+        return findSkippedTokenInTriviaList(positionedToken, position, /*lookInLeadingTriviaList*/ false);
+    }
+    
     export function findSkippedTokenInPositionedToken(positionedToken: PositionedToken, position: number): PositionedSkippedToken {
-        if (position < positionedToken.start()) {
-            var leadingTrivia = positionedToken.token().leadingTrivia();
-            if (leadingTrivia && leadingTrivia.hasSkippedToken()) {
-                return Syntax.findSkippedTokenInTriviaList(leadingTrivia, positionedToken, positionedToken.fullStart(), position);
+        var positionInLeadingTriviaList = (position < positionedToken.start());
+        return findSkippedTokenInTriviaList(positionedToken, position, /*lookInLeadingTriviaList*/ positionInLeadingTriviaList);
+    }
+
+    export function getAncestorOfKind(positionedToken: PositionedElement, kind: SyntaxKind): PositionedElement {
+        while (positionedToken && positionedToken.parent()) {
+            if (positionedToken.parent().kind() === kind) {
+                return positionedToken.parent();
             }
+
+            positionedToken = positionedToken.parent();
         }
-        else if (position >= positionedToken.end()) {
-            var trailingTrivia = positionedToken.token().trailingTrivia();
-            if (trailingTrivia && trailingTrivia.hasSkippedToken()) {
-                return Syntax.findSkippedTokenInTriviaList(trailingTrivia, positionedToken, positionedToken.end(), position);
-            }
-        }
+
+        return null;
+    }
+
+    export function hasAncestorOfKind(positionedToken: PositionedElement, kind: SyntaxKind): boolean {
+        return Syntax.getAncestorOfKind(positionedToken, kind) !== null;
     }
 }

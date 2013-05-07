@@ -142,19 +142,30 @@ module Services {
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
 
-            // If "pos" is the "EOF" position
-            var atEOF = (position === script.limChar);
+            // First check whether we are in a comment where signature help should not be displayed
+            //if (!SignatureInfoHelpers.isSignatureHelpTriggerPosition(document.syntaxTree().sourceUnit(), position)) {
+            //    this.logger.log("position is not a valid singature help location");
+            //    return null;
+            //}
 
-            var path = this.getAstPathToPosition(script, position);
-            if (path.count() == 0) {
+            if (SignatureInfoHelpers.isSignatureHelpBlocker(document.syntaxTree().sourceUnit(), position)) {
+                this.logger.log("position is not a valid singature help location");
                 return null;
             }
 
-            // First check whether we are in a comment where quick info should not be displayed
-            if (path.nodeType() === TypeScript.NodeType.Comment) {
-                this.logger.log("position is inside a comment");
+            // Second check if we are inside a generic parameter
+            var genericTypeArgumentListInfo = SignatureInfoHelpers.isInPartiallyWrittenTypeArgumentList(document.syntaxTree(), position);
+            if (genericTypeArgumentListInfo) {
+                // The expression could be messed up because we are parsing a partial generic expression, so set the search path to a place where we know it
+                // can find a call expression
+                return this.getTypeParameterSignatureFromPartiallyWrittenExpression(document, position, genericTypeArgumentListInfo);
+            }
+
+            // Third set the path to find ask the type system about the call expression
+            var script = document.script;
+            var path = this.getAstPathToPosition(script, position);
+            if (path.count() == 0) {
                 return null;
             }
 
@@ -162,7 +173,6 @@ module Services {
             while (path.count() >= 2) {
                 if (path.ast().nodeType === TypeScript.NodeType.InvocationExpression ||
                     path.ast().nodeType === TypeScript.NodeType.ObjectCreationExpression ||  // Valid call or new expressions
-                    path.isTargetOfCall() || path.isTargetOfNew() || // If on target eg. fo/*caretPos*/o no signature help
                     (path.isDeclaration() && position > path.ast().minChar)) // Its a declaration node - call expression cannot be in parent scope
                 {
                     break;
@@ -172,15 +182,14 @@ module Services {
             }
 
             if (path.ast().nodeType !== TypeScript.NodeType.InvocationExpression && path.ast().nodeType !== TypeScript.NodeType.ObjectCreationExpression) {
-                this.logger.log("No call expression for the given position");
+                this.logger.log("No call expression or generic arguments found for the given position");
                 return null;
             }
 
             var callExpression = <TypeScript.CallExpression>path.ast();
             var isNew = (callExpression.nodeType === TypeScript.NodeType.ObjectCreationExpression);
 
-            //var closeParenLimChar = Math.max(callExpression.arguments.minChar, callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth);
-            if (position < callExpression.target.limChar + callExpression.target.trailingTriviaWidth || position > callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth) {
+            if (position <= callExpression.target.limChar + callExpression.target.trailingTriviaWidth || position > callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth) {
                 this.logger.log("Outside argument list");
                 return null;
             }
@@ -195,10 +204,10 @@ module Services {
             // Build the result
             var result = new SignatureInfo();
 
-            result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.resolvedSignatures, callSymbolInfo.enclosingScopeSymbol);
-            result.actual = this.convertCallExprToActualSignatureInfo(callExpression, position);
+            result.formal = SignatureInfoHelpers.getSignatureInfoFromSignatureSymbol(callSymbolInfo.targetSymbol, callSymbolInfo.resolvedSignatures, callSymbolInfo.enclosingScopeSymbol, this.compilerState);
+            result.actual = SignatureInfoHelpers.getActualSignatureInfoFromCallExpression(callExpression, position, genericTypeArgumentListInfo);
             result.activeFormal = (callSymbolInfo.resolvedSignatures && callSymbolInfo.candidateSignature) ? callSymbolInfo.resolvedSignatures.indexOf(callSymbolInfo.candidateSignature) : -1;
-            
+
             if (result.actual === null || result.formal === null || result.activeFormal === null) {
                 this.logger.log("Can't compute actual and/or formal signature of the call expression");
                 return null;
@@ -207,57 +216,61 @@ module Services {
             return result;
         }
 
-        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: boolean, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol) {
-            var signatureGroup: FormalSignatureItemInfo[] = [];
 
-            var hasOverloads = signatures.length > 1;
-            signatures
-                // Same test as in "typeFlow.str: resolveOverload()": filter out the definition signature if there are overloads
-                .filter(signature => !(hasOverloads && signature.isDefinition()))
-                .forEach(signature => {
-                    var signatureGroupInfo = new FormalSignatureItemInfo();
-                    var paramIndexInfo: number[] = [];
-                    var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
-                    if (!functionName) {
-                        functionName = symbol.getDisplayName();
-                    }
-                    var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true);
-                    signatureGroupInfo.signatureInfo = TypeScript.MemberName.memberNameToString(signatureMemberName, paramIndexInfo);
-                    signatureGroupInfo.docComment = this.compilerState.getDocComments(signature);
-                    var parameters = signature.getParameters();
-                    parameters.forEach((p, i) => {
-                        var signatureParameterInfo = new FormalParameterInfo();
-                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                        signatureParameterInfo.name = p.getDisplayName();
-                        signatureParameterInfo.docComment = this.compilerState.getDocComments(p);
-                        signatureParameterInfo.minChar = paramIndexInfo[2 * i];
-                        signatureParameterInfo.limChar = paramIndexInfo[2 * i + 1];
-                        signatureGroupInfo.parameters.push(signatureParameterInfo);
-                    });
-                    signatureGroup.push(signatureGroupInfo);
-                });
-            return signatureGroup;
-        }
+        private getTypeParameterSignatureFromPartiallyWrittenExpression(document: TypeScript.Document, position: number, genericTypeArgumentListInfo : IPartiallyWrittenTypeArgumentListInformation): SignatureInfo {
+            var script = document.script;
 
-        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number): ActualSignatureInfo {
-            if (!TypeScript.isValidAstNode(ast))
-                return null;
-
-            if (!TypeScript.isValidAstNode(ast.arguments))
-                return null;
-
-            var result = new ActualSignatureInfo();
-            result.openParenMinChar = ast.arguments.minChar;
-            result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar + ast.arguments.trailingTriviaWidth);
-
-            result.currentParameter = 0;
-            for (var index = 0; index < ast.arguments.members.length; index++) {
-                if (caretPosition > ast.arguments.members[index].limChar + ast.arguments.members[index].trailingTriviaWidth) {
-                    result.currentParameter++;
-                }
+            // Get the identifier information
+            var path = this.getAstPathToPosition(script, genericTypeArgumentListInfo.genericIdentifer.start());
+            if (path.count() == 0 || path.ast().nodeType !== TypeScript.NodeType.Name) {
+                throw new Error("getTypeParameterSignatureAtPosition: Looking up path for identifier token did not result in an identifer.");
             }
 
-            return result;
+            var symbolInformation = this.compilerState.getSymbolInformationFromPath(path, document);
+
+            if (!symbolInformation.symbol) {
+                return null;
+            }
+
+            // TODO: are we in an new expression?
+            var isNew = SignatureInfoHelpers.isTargetOfObjectCreationExpression(genericTypeArgumentListInfo.genericIdentifer);
+
+            var typeSymbol = symbolInformation.symbol.getType();
+
+            if (typeSymbol.getKind() === TypeScript.PullElementKind.FunctionType ||
+                (isNew && typeSymbol.getKind() === TypeScript.PullElementKind.ConstructorType)) {
+
+                var signatures = isNew ? typeSymbol.getConstructSignatures() : typeSymbol.getCallSignatures();
+
+                // Build the result
+                var result = new SignatureInfo();
+
+                result.formal = SignatureInfoHelpers.getSignatureInfoFromSignatureSymbol(symbolInformation.symbol, signatures, symbolInformation.enclosingScopeSymbol, this.compilerState);
+                result.actual = SignatureInfoHelpers.getActualSignatureInfoFromPartiallyWritenGenericExpression(position, genericTypeArgumentListInfo);
+                result.activeFormal = 0;
+
+                return result;
+            }
+            else if (typeSymbol.isGeneric()){
+                // The symbol is a generic type
+
+                // Get the class symbol for constuctor symbol
+                if (typeSymbol.getKind() === TypeScript.PullElementKind.ConstructorType) {
+                    typeSymbol = typeSymbol.getAssociatedContainerType();
+                }
+
+                // Build the result
+                var result = new SignatureInfo();
+
+                result.formal = SignatureInfoHelpers.getSignatureInfoFromGenericSymbol(typeSymbol, symbolInformation.enclosingScopeSymbol, this.compilerState);
+                result.actual = SignatureInfoHelpers.getActualSignatureInfoFromPartiallyWritenGenericExpression(position, genericTypeArgumentListInfo);
+                result.activeFormal = 0;
+
+                return result;
+            }
+
+            // Nothing to handle
+            return null;
         }
 
         public getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[] {
@@ -645,7 +658,7 @@ module Services {
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
-            if (this.isCompletionListBlocker(document.syntaxTree(), position)) {
+            if (this.isCompletionListBlocker(document.syntaxTree().sourceUnit(), position)) {
                 this.logger.log("Returning an empty list because completion was blocked.");
                 return null;
             }
@@ -767,12 +780,12 @@ module Services {
                 (path.count() >= 4 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
         }
 
-        private isCompletionListBlocker(syntaxTree: TypeScript.SyntaxTree, position: number): boolean {
+        private isCompletionListBlocker(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
             // This method uses Fidelity completelly. Some information can be reached using the AST, but not everything.
-            return TypeScript.Syntax.isEntirelyInsideComment(syntaxTree.sourceUnit(), position) ||
-                TypeScript.Syntax.isEntirelyInStringOrRegularExpressionLiteral(syntaxTree.sourceUnit(), position) ||
-                this.isIdentifierDefinitionLocation(syntaxTree.sourceUnit(), position) ||
-                this.isRightOfIllegalDot(syntaxTree.sourceUnit(), position);
+            return TypeScript.Syntax.isEntirelyInsideComment(sourceUnit, position) ||
+                TypeScript.Syntax.isEntirelyInStringOrRegularExpressionLiteral(sourceUnit, position) ||
+                this.isIdentifierDefinitionLocation(sourceUnit, position) ||
+                this.isRightOfIllegalDot(sourceUnit, position);
         }
 
         private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {

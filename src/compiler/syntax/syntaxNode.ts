@@ -281,8 +281,8 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public findTokenOnLeft(position: number): PositionedToken {
-            var positionedToken = this.findToken(position);
+        public findTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
+            var positionedToken = this.findToken(position, includeSkippedTokens);
             var start = positionedToken.start();
 
             // Position better fall within this token.
@@ -300,12 +300,7 @@ module TypeScript {
                 return null;
             }
 
-            var previousToken = this.findToken(positionedToken.fullStart() - 1);
-
-            // Position better be after this token.
-            // Debug.assert(previousToken.fullEnd() <= position);
-
-            return previousToken;
+            return positionedToken.previousToken(includeSkippedTokens);
         }
 
         public findCompleteTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {

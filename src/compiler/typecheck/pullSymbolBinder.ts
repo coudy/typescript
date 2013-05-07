@@ -699,7 +699,7 @@ module TypeScript {
             var typeParameter: PullTypeParameterSymbol;
             var typeParameterDecls: PullDecl[] = null;
 
-            // PULLREVIEW: Now that we clean type paramters, searching is redundant
+            // PULLREVIEW: Now that we clean type parameters, searching is redundant
             for (var i = 0; i < typeParameters.length; i++) {
 
                 typeParameter = classSymbol.findTypeParameter(typeParameters[i].getName());
@@ -838,7 +838,7 @@ module TypeScript {
             var typeParameter: PullTypeParameterSymbol;
             var typeParameterDecls: PullDecl[] = null;
 
-            // PULLREVIEW: Now that we clean type paramters, searching is redundant
+            // PULLREVIEW: Now that we clean type parameters, searching is redundant
             for (var i = 0; i < typeParameters.length; i++) {
 
                 typeParameter = interfaceSymbol.findTypeParameter(typeParameters[i].getName());

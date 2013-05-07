@@ -388,7 +388,7 @@ module FourSlash {
             else
             {
                 if (!actualQuickInfo) {
-                	throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
+                    throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
                 }
             }
         }
@@ -399,25 +399,37 @@ module FourSlash {
         }
 
         public verifyCurrentParameterIsVariable(isVariable: boolean) {
-            assert.equal(isVariable, this.getActiveParameter().isVariable);
+            var activeParameter = this.getActiveParameter();
+            assert.notNull(activeParameter.parameter);
+            assert.equal(isVariable, activeParameter.parameter.isVariable);
         }
 
         public verifyCurrentParameterHelpName(name: string) {
-            assert.equal(this.getActiveParameter().name, name);
+            var activeParameter = this.getActiveParameter();
+            var activeParameterName = activeParameter.parameter ? activeParameter.parameter.name : activeParameter.typeParameter.name;
+            assert.equal(activeParameterName, name);
         }
 
         public verifyCurrentParameterSpanIs(parameter: string) {
             var activeSignature = this.getActiveSignatureHelp();
-            var actualParameter = this.getActiveParameter();
-            assert.equal(activeSignature.signatureInfo.substring(actualParameter.minChar, actualParameter.limChar), parameter);
+            var activeParameter = this.getActiveParameter();
+            var activeParameterMinChar = activeParameter.parameter ? activeParameter.parameter.minChar : activeParameter.typeParameter.minChar;
+            var activeParameterLimChar = activeParameter.parameter ? activeParameter.parameter.limChar : activeParameter.typeParameter.limChar;
+            assert.equal(activeSignature.signatureInfo.substring(activeParameterMinChar, activeParameterLimChar), parameter);
         }
 
         public verifyCurrentParameterHelpDocComment(docComment: string) {
-            assert.equal(this.getActiveParameter().docComment, docComment);
+            var activeParameter = this.getActiveParameter();
+            var activeParameterDocComment = activeParameter.parameter ? activeParameter.parameter.docComment : activeParameter.typeParameter.docComment;
+            assert.equal(activeParameterDocComment, docComment);
         }
 
         public verifyCurrentSignatureHelpParameterCount(expectedCount: number) {
             assert.equal(this.getActiveSignatureHelp().parameters.length, expectedCount);
+        }
+
+        public verifyCurrentSignatureHelpTypeParameterCount(expectedCount: number) {
+            assert.equal(this.getActiveSignatureHelp().typeParameters.length, expectedCount);
         }
 
         public verifyCurrentSignatureHelpDocComment(docComment: string) {
@@ -463,7 +475,7 @@ module FourSlash {
             return help.formal[activeFormal];
         }
 
-        private getActiveParameter() {
+        private getActiveParameter(): { parameter: Services.FormalParameterInfo; typeParameter: Services.FormalTypeParameterInfo; } {
             var currentSig = this.getActiveSignatureHelp();
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
 
@@ -471,7 +483,18 @@ module FourSlash {
             var currentParam = help.actual.currentParameter;
             if (currentParam === -1) currentParam = 0;
 
-            return currentSig.parameters[currentParam];
+            if (help.actual.currentParameterIsTypeParameter) {
+                return {
+                    parameter: null,
+                    typeParameter: currentSig.typeParameters[currentParam]
+                };
+            }
+            else {
+                return {
+                    parameter: currentSig.parameters[currentParam],
+                    typeParameter: null
+                };
+            }
         }
 
         public getBreakpointStatementLocation(pos: number) {

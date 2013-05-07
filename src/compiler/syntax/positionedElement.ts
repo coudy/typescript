@@ -220,9 +220,26 @@ module TypeScript {
 
             // find previous skipped token within the same parent
             if (includeSkippedTokens) {
-                var previousSkippedToken = Syntax.findSkippedTokenInPositionedToken(this.parentToken(), start - 1);
-                if (previousSkippedToken) {
-                    return previousSkippedToken;
+                var previousToken: PositionedToken;
+
+                if (start >= this.parentToken().end()) {
+                    // This skipped token was on the right of positioned token, the skipped token found before it in the 
+                    // trailing trivia, if the search for a previous skipped token in the same trivia list return it,
+                    // else return the parent token as the previous token
+                    previousToken = Syntax.findSkippedTokenInTrailingTriviaList(this.parentToken(), start - 1);
+
+                    if (previousToken) {
+                        return previousToken;
+                    }
+
+                    return this.parentToken();
+                }
+                else {
+                    previousToken = Syntax.findSkippedTokenInLeadingTriviaList(this.parentToken(), start - 1);
+
+                    if (previousToken) {
+                        return previousToken;
+                    }
                 }
             }
 
@@ -233,16 +250,34 @@ module TypeScript {
 
             return this.root().node().findToken(start - 1, includeSkippedTokens);
         }
-
+        
         public nextToken(includeSkippedTokens: boolean = false): PositionedToken {
             if (this.token().tokenKind === SyntaxKind.EndOfFileToken) {
                 return null;
             }
 
             if (includeSkippedTokens) {
-                var nextSkippedToken = Syntax.findSkippedTokenInPositionedToken(this.parentToken(), this.fullEnd());
-                if (nextSkippedToken) {
-                    return nextSkippedToken;
+                var end = this.end();
+                var nextToken: PositionedToken;
+
+                if (end <= this.parentToken().start()) {
+                    // This skipped token was on the left of positioned token, the skipped token found after it in the 
+                    // leading trivia, if the search for a next skipped token in the same trivia list return it,
+                    // else return the parent token as the next token
+                    nextToken = Syntax.findSkippedTokenInLeadingTriviaList(this.parentToken(), end);
+
+                    if (nextToken) {
+                        return nextToken;
+                    }
+
+                    return this.parentToken();
+                }
+                else {
+                    nextToken = Syntax.findSkippedTokenInTrailingTriviaList(this.parentToken(), end);
+
+                    if (nextToken) {
+                        return nextToken;
+                    }
                 }
             }
 

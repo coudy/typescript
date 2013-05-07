@@ -205,21 +205,31 @@ module Services {
 
     export class FormalSignatureItemInfo {
         public signatureInfo: string;
+        public typeParameters: FormalTypeParameterInfo[] = [];
         public parameters: FormalParameterInfo[] = [];   // Array of parameters
         public docComment: string; // Help for the signature
     }
 
+    export class FormalTypeParameterInfo {
+        public name: string;        // Type parameter name
+        public docComment: string;  // Comments that contain help for the parameter
+        public minChar: number;     // minChar for parameter info in the formal signature info string
+        public limChar: number;     // lim char for parameter info in the formal signature info string
+    }
+
     export class FormalParameterInfo {
         public name: string;        // Parameter name
-        public isVariable: boolean;    // true if parameter is var args        public docComment: string; // Comments that contain help for the parameter
-        public minChar: number; // minChar for parameter info in the formal signature info string
-        public limChar: number; // lim char for parameter info in the formal signature info string
+        public isVariable: boolean; // true if parameter is var args
+        public docComment: string;  // Comments that contain help for the parameter
+        public minChar: number;     // minChar for parameter info in the formal signature info string
+        public limChar: number;     // lim char for parameter info in the formal signature info string
     }
 
     export class ActualSignatureInfo {
-        public openParenMinChar: number;
-        public closeParenLimChar: number;
-        public currentParameter: number; // Index of active parameter in "parameters" array
+        public parameterMinChar: number;
+        public parameterLimChar: number;
+        public currentParameterIsTypeParameter: boolean; // current parameter is a type argument or a normal argument
+        public currentParameter: number;        // Index of active parameter in "parameters" or "typeParamters" array
     }
 
     export class CompletionInfo {

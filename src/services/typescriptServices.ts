@@ -21,6 +21,7 @@
 ///<reference path='compilerState.ts' />
 ///<reference path='languageService.ts' />
 ///<reference path='keywordCompletions.ts' />
+///<reference path='signatureInfoHelpers.ts' />
 ///<reference path='pullLanguageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
