@@ -1458,7 +1458,7 @@ module TypeScript {
 
                 context.resolvingTypeReference = true;
 
-                typeDeclSymbol = <PullTypeSymbol>this.resolveTypeNameExpression(typeName, enclosingDecl, context);
+                typeDeclSymbol = this.resolveTypeNameExpression(typeName, enclosingDecl, context).symbol;
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
 
@@ -2233,7 +2233,7 @@ module TypeScript {
             switch (expressionAST.nodeType) {
                 case NodeType.Name:
                     if (context.searchTypeSpace) {
-                        return this.resolveTypeNameExpression(<Identifier>expressionAST, enclosingDecl, context);
+                        return this.resolveTypeNameExpression(<Identifier>expressionAST, enclosingDecl, context).symbol;
                     }
                     else {
                         return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context).symbol;
@@ -2425,41 +2425,7 @@ module TypeScript {
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST, context);
             if (!nameSymbolAndDiagnostics) {
-                var nameSymbol: PullSymbol;
-                if (nameAST.isMissing()) {
-                    nameSymbol = this.semanticInfoChain.anyTypeSymbol;
-                }
-                else {
-                    var id = nameAST.text;
-
-                    var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-
-                    if (enclosingDecl && !declPath.length) {
-                        declPath = [enclosingDecl];
-                    }
-
-                    var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
-
-                    // PULLREVIEW: until further notice, search out for modules or enums
-                    if (!nameSymbol) {
-                        nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-                        nameSymbol = this.resolveNameSymbol(nameSymbol, context);
-                    }
-
-                    if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
-                        nameSymbol = this.cachedFunctionArgumentsSymbol;
-                    }
-                }
-
-                if (!nameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
-                    nameSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                    nameSymbolAndDiagnostics = SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
-                }
-                else {
-                    nameSymbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(nameSymbol);
-                }
-
+                nameSymbolAndDiagnostics = this.computeNameExpression(nameAST, enclosingDecl, context);
                 this.setSymbolAndDiagnosticsForAST(nameAST, nameSymbolAndDiagnostics, context);
             }
 
@@ -2469,6 +2435,42 @@ module TypeScript {
             }
 
             return nameSymbolAndDiagnostics;
+        }
+
+        private computeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            if (nameAST.isMissing()) {
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
+            }
+            else {
+                var id = nameAST.text;
+
+                var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+
+                if (enclosingDecl && !declPath.length) {
+                    declPath = [enclosingDecl];
+                }
+
+                var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+
+                // PULLREVIEW: until further notice, search out for modules or enums
+                if (!nameSymbol) {
+                    nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                    nameSymbol = this.resolveNameSymbol(nameSymbol, context);
+                }
+
+                if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                    nameSymbol = this.cachedFunctionArgumentsSymbol;
+                }
+
+                if (!nameSymbol) {
+                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
+                    nameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                    return SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
+                }
+                else {
+                    return SymbolAndDiagnostics.fromSymbol(nameSymbol);
+                }
+            }
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -2619,23 +2621,35 @@ module TypeScript {
             return nameSymbol;
         }
 
-        public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+            var typeNameSymbolAndDiagnostics = <SymbolAndDiagnostics<PullTypeSymbol>>this.getSymbolAndDiagnosticsForAST(nameAST, context);
 
-            if (nameAST.isMissing()) {
-                return this.semanticInfoChain.anyTypeSymbol;
+            // TODO(cyrusn): We really shouldn't be checking "isType" here.  However, we currently
+            // have a bug where some part of the system calls resolveNameExpression on this node
+            // and we cache the wrong thing.  We need to add appropriate checks to ensure that
+            // resolveNameExpression is never called on a node that we should be calling 
+            // resolveTypeNameExpression (and vice versa).
+            if (!typeNameSymbolAndDiagnostics || !typeNameSymbolAndDiagnostics.symbol.isType()) {
+                typeNameSymbolAndDiagnostics = this.computeTypeNameExpression(nameAST, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(nameAST, typeNameSymbolAndDiagnostics, context);
             }
 
-            var typeNameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST, context);
-            var typeNameSymbol = typeNameSymbolAndDiagnostics && <PullTypeSymbol>typeNameSymbolAndDiagnostics.symbol;
+            var typeNameSymbol = typeNameSymbolAndDiagnostics && typeNameSymbolAndDiagnostics.symbol;
+            if (!typeNameSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
+            }
 
-            if (typeNameSymbol && typeNameSymbol.isType()) {
-                if (!typeNameSymbol.isResolved()) {
-                    this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
-                }
-                return typeNameSymbol;
+            return typeNameSymbolAndDiagnostics;
+        }
+
+        private computeTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+            if (nameAST.isMissing()) {
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             var id = nameAST.text;
+
+            var typeNameSymbol: PullTypeSymbol = null;
 
             // if it's a known primitive name, cheat
             if (id === "any") {
@@ -2671,9 +2685,7 @@ module TypeScript {
                 typeNameSymbol = this.semanticInfoChain.elementTypeSymbol;
             }
             else {
-
                 var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-                var diagnostic: SemanticDiagnostic;
 
                 if (enclosingDecl && !declPath.length) {
                     declPath = [enclosingDecl];
@@ -2682,8 +2694,9 @@ module TypeScript {
                 typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
                 if (!typeNameSymbol) {
-                    diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
-                    return this.getNewErrorTypeSymbol(diagnostic);
+                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
+                    typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                    return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                 }
 
                 if (typeNameSymbol.isTypeParameter()) {
@@ -2694,10 +2707,7 @@ module TypeScript {
                             diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters, null, enclosingDecl);
 
                             typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
-
-                            this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(typeNameSymbol), context);
-
-                            return typeNameSymbol;
+                            return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                         }
                     }
                 }
@@ -2707,15 +2717,7 @@ module TypeScript {
                 }
             }
 
-            if (!typeNameSymbol.isResolved()) {
-                this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
-            }
-
-            if (typeNameSymbol.isType()) {
-                this.setSymbolAndDiagnosticsForAST(nameAST, SymbolAndDiagnostics.fromSymbol(typeNameSymbol), context);
-            }
-
-            return typeNameSymbol;
+            return SymbolAndDiagnostics.fromSymbol(typeNameSymbol);
         }
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {

@@ -357,7 +357,7 @@ module TypeScript {
 
             this.setTypeCheckerUnit(this.document.fileName);
             var pullSymbol = this.resolvingContext.resolvingTypeReference
-                ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
+                ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext).symbol
                 : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext).symbol;
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
@@ -1173,7 +1173,7 @@ module TypeScript {
             if (!name.isMissing()) {
                 this.setTypeCheckerUnit(this.document.fileName);
                 var pullSymbol = this.resolvingContext.resolvingTypeReference
-                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
+                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext).symbol
                     : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext).symbol;
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
