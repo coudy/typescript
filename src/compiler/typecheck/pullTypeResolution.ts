@@ -635,6 +635,11 @@ module TypeScript {
                 }
             }
             else {
+                // could be an enum member
+                if (lhs.getKind() == PullElementKind.EnumMember) {
+                    lhsType = this.semanticInfoChain.numberTypeSymbol;
+                }
+
                 // could be a number
                 if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
                     lhsType = this.cachedNumberInterfaceType;
@@ -691,13 +696,8 @@ module TypeScript {
                 }
             }
 
-            // could be an enum
-            if ((lhsType.getKind() === PullElementKind.Enum) && this.cachedNumberInterfaceType) {
-                members = members.concat(this.cachedNumberInterfaceType.getAllMembers(declSearchKind, /*includePrivate*/ false));
-            }
-
             // could be a function symbol
-            else if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
+            if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
                 members = members.concat(this.cachedFunctionInterfaceType.getAllMembers(declSearchKind, /*includePrivate*/ false));
             }
 
