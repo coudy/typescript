@@ -856,11 +856,11 @@ module TypeScript {
             if (symbol.isResolving()) {
                 if (!symbol.currentlyBeingSpecialized()) {
                     if (!symbol.isType()) {
-                    symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                        symbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
-                    
+
                     return symbol;
-                }                
+                }
             }
 
             var thisUnit = this.unitPath;
