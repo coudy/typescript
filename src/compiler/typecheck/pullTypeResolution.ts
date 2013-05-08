@@ -2258,7 +2258,7 @@ module TypeScript {
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
 
                 case NodeType.SuperExpression:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveSuperExpression(expressionAST, enclosingDecl, context));
+                    return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
                 case NodeType.InvocationExpression:
                     return SymbolAndDiagnostics.fromSymbol(this.resolveCallExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
@@ -2303,7 +2303,7 @@ module TypeScript {
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveArithmeticExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
+                    return this.resolveArithmeticExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.SubtractAssignmentExpression:
                 case NodeType.MultiplyAssignmentExpression:
@@ -3091,21 +3091,19 @@ module TypeScript {
         }
 
         // PULLTODO: Optimization: cache this for a given decl path
-        private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             if (!enclosingDecl) {
-                return this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-            var decl: PullDecl;
-            var declFlags: PullElementFlags;
             var classSymbol: PullClassTypeSymbol = null;
 
             // work back up the decl path, until you can find a class
             if (declPath.length) {
                 for (var i = declPath.length - 1; i >= 0; i--) {
-                    decl = declPath[i];
-                    declFlags = decl.getFlags();
+                    var decl = declPath[i];
+                    var declFlags = decl.getFlags();
 
                     if (decl.getKind() === PullElementKind.FunctionExpression &&
                         !(declFlags & PullElementFlags.FatArrow)) {
@@ -3127,11 +3125,11 @@ module TypeScript {
                 var parents = classSymbol.getExtendedTypes();
 
                 if (parents.length) {
-                    return parents[0];
+                    return SymbolAndDiagnostics.fromSymbol(parents[0]);
                 }
             }
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
         }
 
         private resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
@@ -3528,9 +3526,7 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        private resolveArithmeticExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var binex = <BinaryExpression>expressionAST;
-
+        private resolveArithmeticExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
             var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
 
@@ -3545,34 +3541,34 @@ module TypeScript {
             leftType = this.widenType(leftType);
             rightType = this.widenType(rightType);
 
-            if (expressionAST.nodeType === NodeType.AddExpression || expressionAST.nodeType === NodeType.AddAssignmentExpression) {
+            if (binex.nodeType === NodeType.AddExpression || binex.nodeType === NodeType.AddAssignmentExpression) {
                 if (leftType === this.semanticInfoChain.stringTypeSymbol || rightType === this.semanticInfoChain.stringTypeSymbol) {
-                    return this.semanticInfoChain.stringTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.stringTypeSymbol);
                 }
                 else if (leftType === this.semanticInfoChain.numberTypeSymbol && rightType === this.semanticInfoChain.numberTypeSymbol) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else if (this.sourceIsSubtypeOfTarget(leftType, this.semanticInfoChain.numberTypeSymbol, context) && this.sourceIsSubtypeOfTarget(rightType, this.semanticInfoChain.numberTypeSymbol, context)) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else {
                     // could be an error
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
             else {
                 if (leftType === this.semanticInfoChain.numberTypeSymbol && rightType === this.semanticInfoChain.numberTypeSymbol) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else if (this.sourceIsSubtypeOfTarget(leftType, this.semanticInfoChain.numberTypeSymbol, context) && this.sourceIsSubtypeOfTarget(rightType, this.semanticInfoChain.numberTypeSymbol, context)) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else if (this.isAnyOrEquivalent(leftType) || this.isAnyOrEquivalent(rightType)) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else {
                     // error
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
         }
@@ -3763,10 +3759,6 @@ module TypeScript {
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     for (var i = 0; i < callEx.typeArguments.members.length; i++) {
                         var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context).symbol;
-
-                        if (typeArg.isError()) {
-                            return typeArg;
-                        }
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
