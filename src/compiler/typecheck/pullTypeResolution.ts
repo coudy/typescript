@@ -2340,7 +2340,7 @@ module TypeScript {
                     return this.resolveIndexExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.LogicalOrExpression:
-                    return this.resolveLogicalOrExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveLogicalOrExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
                 case NodeType.LogicalAndExpression:
                     return this.resolveLogicalAndExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
@@ -3585,47 +3585,55 @@ module TypeScript {
             }
         }
 
-        private resolveLogicalOrExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var binex = <BinaryExpression>expressionAST;
+        private resolveLogicalOrExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(binex);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeLogicalOrExpressionSymbol(binex, inContextuallyTypedAssignment, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(binex, symbolAndDiagnostics, context);
+            }
 
+            return symbolAndDiagnostics;
+        }
+
+        private computeLogicalOrExpressionSymbol(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
             var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
             if (this.isAnyOrEquivalent(leftType) || this.isAnyOrEquivalent(rightType)) {
-                return this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
             else if (leftType === this.semanticInfoChain.booleanTypeSymbol) {
                 if (rightType === this.semanticInfoChain.booleanTypeSymbol) {
-                    return this.semanticInfoChain.booleanTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
                 }
                 else {
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
             else if (leftType === this.semanticInfoChain.numberTypeSymbol) {
                 if (rightType === this.semanticInfoChain.numberTypeSymbol) {
-                    return this.semanticInfoChain.numberTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
                 }
                 else {
-                    return this.semanticInfoChain.anyTypeSymbol
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
             else if (leftType === this.semanticInfoChain.stringTypeSymbol) {
                 if (rightType === this.semanticInfoChain.stringTypeSymbol) {
-                    return this.semanticInfoChain.stringTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.stringTypeSymbol);
                 }
                 else {
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
             else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context)) {
-                return rightType;
+                return SymbolAndDiagnostics.fromSymbol(rightType);
             }
             else if (this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
-                return leftType;
+                return SymbolAndDiagnostics.fromSymbol(leftType);
             }
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
         }
 
         private resolveLogicalAndExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
