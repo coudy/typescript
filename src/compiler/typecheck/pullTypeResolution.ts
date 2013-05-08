@@ -3183,64 +3183,63 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
-        // PULLTODO: Optimization: cache this for a given decl path
         private resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(ast);
 
             if (!symbolAndDiagnostics) {
-                if (enclosingDecl) {
-                    var enclosingDeclKind = enclosingDecl.getKind();
-                    var diagnostics: Diagnostic[];
-
-                    if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                        var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null);
-                        var symbol = this.getNewErrorTypeSymbol(diagnostic);
-                        symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
-                    }
-                    else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                        var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context, null);
-                        var symbol = this.getNewErrorTypeSymbol(diagnostic);
-                        symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
-                    }
-                    else {
-                        var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
-
-                        // work back up the decl path, until you can find a class
-                        // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
-                        // PULLTODO: Why is this 'obviously not completely correct'.  
-                        if (declPath.length) {
-                            for (var i = declPath.length - 1; i >= 0; i--) {
-                                var decl = declPath[i];
-                                var declKind = decl.getKind();
-                                var declFlags = decl.getFlags();
-
-                                if (declFlags & PullElementFlags.Static) {
-                                    break;
-                                }
-                                else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
-                                    break;
-                                }
-                                else if (declKind === PullElementKind.Function) {
-                                    break;
-                                }
-                                else if (declKind === PullElementKind.Class) {
-                                    var classSymbol = <PullClassTypeSymbol>decl.getSymbol();
-                                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(classSymbol);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!symbolAndDiagnostics) {
-                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
-                }
-
+                symbolAndDiagnostics = this.computeThisExpressionSymbol(ast, enclosingDecl, context);
                 this.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics, context);
             }
 
             return symbolAndDiagnostics;
+        }
+
+        private computeThisExpressionSymbol(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            if (enclosingDecl) {
+                var enclosingDeclKind = enclosingDecl.getKind();
+                var diagnostics: Diagnostic[];
+
+                if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
+                    var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null);
+                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                }
+                else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
+                    var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context, null);
+                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                }
+                else {
+                    var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
+
+                    // work back up the decl path, until you can find a class
+                    // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
+                    // PULLTODO: Why is this 'obviously not completely correct'.  
+                    if (declPath.length) {
+                        for (var i = declPath.length - 1; i >= 0; i--) {
+                            var decl = declPath[i];
+                            var declKind = decl.getKind();
+                            var declFlags = decl.getFlags();
+
+                            if (declFlags & PullElementFlags.Static) {
+                                break;
+                            }
+                            else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
+                                break;
+                            }
+                            else if (declKind === PullElementKind.Function) {
+                                break;
+                            }
+                            else if (declKind === PullElementKind.Class) {
+                                var classSymbol = <PullClassTypeSymbol>decl.getSymbol();
+                                return SymbolAndDiagnostics.fromSymbol(classSymbol);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
         }
 
         // PULLTODO: Optimization: cache this for a given decl path
@@ -3872,7 +3871,7 @@ module TypeScript {
                 if (callEx.typeArguments) {
                     diagnostics = this.addDiagnostic(diagnostics,
                         context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null, enclosingDecl));
-                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
+                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
                 }
 
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
@@ -3890,7 +3889,7 @@ module TypeScript {
                 else {
                     diagnostics = this.addDiagnostic(diagnostics,
                         context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class, null, enclosingDecl));
-                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
+                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
                 }
             }
 
@@ -4364,7 +4363,7 @@ module TypeScript {
                 }
 
                 if (!constructSignatures.length && diagnostics) {
-                    var result = this.getNewErrorTypeSymbol(diagnostics[0]);
+                    var result = this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics));
                     return SymbolAndDiagnostics.create(result, diagnostics);
                 }
 
@@ -4422,7 +4421,7 @@ module TypeScript {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
                         diagnostics = this.addDiagnostic(diagnostics,
                             context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null, enclosingDecl));
-                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
+                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
                     }
                     else {
                         returnType = this.semanticInfoChain.anyTypeSymbol;
@@ -4507,7 +4506,7 @@ module TypeScript {
             diagnostics = this.addDiagnostic(diagnostics,
                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid__new__expression, null, enclosingDecl));
 
-            return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
+            return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
@@ -4518,17 +4517,21 @@ module TypeScript {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(binex);
 
             if (!symbolAndDiagnostics) {
-                var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
-
-                context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-                this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
-                context.popContextualType();
-
-                symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
+                symbolAndDiagnostics = this.computeAssignmentStatementSymbol(binex, inContextuallyTypedAssignment, enclosingDecl, context);
                 this.setSymbolAndDiagnosticsForAST(binex, symbolAndDiagnostics, context);
             }
 
             return symbolAndDiagnostics;
+        }
+
+        private computeAssignmentStatementSymbol(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var leftType = this.resolveStatementOrExpression(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
+
+            context.pushContextualType(leftType, context.inProvisionalResolution(), null);
+            this.resolveStatementOrExpression(binex.operand2, true, enclosingDecl, context);
+            context.popContextualType();
+
+            return SymbolAndDiagnostics.fromSymbol(leftType);
         }
 
         public resolveBoundDecls(decl: PullDecl, context: PullTypeResolutionContext): void {
