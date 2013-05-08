@@ -2230,7 +2230,7 @@ module TypeScript {
                         return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context).symbol;
                     }
                     else {
-                        return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
+                        return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context).symbol;
                     }
 
                 case NodeType.FunctionDeclaration:
@@ -2459,20 +2459,29 @@ module TypeScript {
             }
         }
 
-        public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context);
 
-            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
-                return this.semanticInfoChain.anyTypeSymbol;
+                // Associate the result with both the dotted expres ion and the name on t e right.
+                // TODO(cyrusn): We should not be associating the result with anything but the node
+                // passed in.  A higher layer should be responsible for mapping between nodes.
+                this.setSymbolAndDiagnosticsForAST(dottedNameAST, symbolAndDiagnostics, context);
+                this.setSymbolAndDiagnosticsForAST(dottedNameAST.operand2, symbolAndDiagnostics, context);
             }
 
-            var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST);
-            var nameSymbol = nameSymbolAndDiagnostics && nameSymbolAndDiagnostics.symbol;
+            var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
+            if (symbol && !symbol.isResolved()) {
+                this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
+            }
 
-            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
-                if (!nameSymbol.isResolved()) {
-                    this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
-                }
-                return nameSymbol;
+            return symbolAndDiagnostics;
+        }
+
+        private computeDottedNameExpressionSymbol(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             // assemble the dotted name path
@@ -2482,19 +2491,19 @@ module TypeScript {
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             context.canUseTypeSymbol = prevCanUseTypeSymbol;
             var lhsType = lhs.getType();
-            var diagnostic: SemanticDiagnostic;
 
             if (lhs.isAlias()) {
                 (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
             }
 
             if (this.isAnyOrEquivalent(lhsType)) {
-                return lhsType;
+                return SymbolAndDiagnostics.fromSymbol(lhsType);
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
+                var result = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
             if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType) {
@@ -2520,28 +2529,27 @@ module TypeScript {
             }
 
             if (rhsName === "prototype") {
-
                 if (lhsType.isClass()) {
-                    return lhsType;
+                    return SymbolAndDiagnostics.fromSymbol(lhsType);
                 }
                 else {
                     var classInstanceType = lhsType.getAssociatedContainerType();
 
                     if (classInstanceType && classInstanceType.isClass()) {
-                        return classInstanceType;
+                        return SymbolAndDiagnostics.fromSymbol(classInstanceType);
                     }
                 }
             }
 
             // now for the name...
             // For classes, check the statics first below
+            var nameSymbol: PullSymbol = null;
             if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass() && this.isNameOrMemberAccessExpression(dottedNameAST.operand1)) && !nameSymbol) {
                 nameSymbol = lhsType.findMember(rhsName);
                 nameSymbol = this.resolveNameSymbol(nameSymbol, context);
             }
 
             if (!nameSymbol) {
-
                 // could be a static
                 if (lhsType.isClass()) {
                     var staticType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
@@ -2584,6 +2592,7 @@ module TypeScript {
                         nameSymbol = associatedType.findMember(rhsName);
                     }
                 }
+
                 nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
                 // could be an object member
@@ -2592,19 +2601,13 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()], enclosingDecl);
-                    return this.getNewErrorTypeSymbol(diagnostic);
+                    var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()], enclosingDecl);
+                    var result = this.getNewErrorTypeSymbol(diagnostic);
+                    return SymbolAndDiagnostics.create(result, [diagnostic]);
                 }
             }
 
-            if (!nameSymbol.isResolved()) {
-                this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
-            }
-
-            this.setSymbolAndDiagnosticsForAST(dottedNameAST, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
-            this.setSymbolAndDiagnosticsForAST(dottedNameAST.operand2, SymbolAndDiagnostics.fromSymbol(nameSymbol), context);
-
-            return nameSymbol;
+            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
         }
 
         public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
