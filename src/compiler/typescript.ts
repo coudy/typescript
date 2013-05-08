@@ -974,7 +974,6 @@ module TypeScript {
                         }
                     }
 
-                    resolutionContext.resolveAggressively = true;
                     resolutionContext.searchTypeSpace = inTypeReference;
 
                     var inContextuallyTypedAssignment = false;
@@ -1194,12 +1193,13 @@ module TypeScript {
                         break;
 
                     case NodeType.CastExpression:
-                        if (i + 1 < n && path.asts[i + 1] === (<UnaryExpression>current).castTerm) {
+                        var castExpression = <UnaryExpression>current;
+                        if (i + 1 < n && path.asts[i + 1] === castExpression.castTerm) {
                             // We are inside the cast term
                             resolutionContext.searchTypeSpace = true;
                         }
 
-                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol;
 
                         // Set the context type
                         if (typeSymbol) {

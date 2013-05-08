@@ -2280,7 +2280,7 @@ module TypeScript {
                     return this.resolveNewExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.CastExpression:
-                    return this.resolveTypeAssertionExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveTypeAssertionExpression(<UnaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
                 case NodeType.TypeRef:
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
@@ -4377,20 +4377,8 @@ module TypeScript {
 
         }
 
-        public resolveTypeAssertionExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-
-            var assertionExpression = <UnaryExpression>expressionAST;
-            var typeReference = this.resolveTypeReference(<TypeReference>assertionExpression.castTerm, enclosingDecl, context);
-
-            // PULLTODO: We don't technically need to resolve the operand, since the type of the
-            // expression is the type of the cast term.  Still, it makes life a bit easier for the LS
-            if (context.resolveAggressively && assertionExpression.operand.nodeType !== NodeType.ParenthesizedExpression) {
-                context.pushContextualType(typeReference, context.inProvisionalResolution(), null);
-                this.resolveStatementOrExpression(assertionExpression.operand, true, enclosingDecl, context);
-                context.popContextualType();
-            }
-
-            return typeReference;
+        public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+            return SymbolAndDiagnostics.fromSymbol(this.resolveTypeReference(assertionExpression.castTerm, enclosingDecl, context));
         }
 
         private resolveAssignmentStatement(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {

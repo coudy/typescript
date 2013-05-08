@@ -239,7 +239,7 @@ module TypeScript {
 
         export function walkUnaryExpressionChildren(preAst: UnaryExpression, parent: AST, walker: IAstWalker): void {
             if (preAst.castTerm) {
-                preAst.castTerm = walker.walk(preAst.castTerm, preAst);
+                preAst.castTerm = <TypeReference>walker.walk(preAst.castTerm, preAst);
             }
             if (preAst.operand) {
                 preAst.operand = walker.walk(preAst.operand, preAst);

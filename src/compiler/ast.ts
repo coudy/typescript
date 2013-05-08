@@ -312,7 +312,7 @@ module TypeScript {
     }
 
     export class UnaryExpression extends Expression {
-        public castTerm: AST = null;
+        public castTerm: TypeReference = null;
 
         constructor(nodeType: NodeType, public operand: AST) {
             super(nodeType);
