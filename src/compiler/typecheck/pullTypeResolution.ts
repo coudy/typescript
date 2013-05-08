@@ -2336,7 +2336,7 @@ module TypeScript {
                     return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
 
                 case NodeType.ElementAccessExpression:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveIndexExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
+                    return this.resolveIndexExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.LogicalOrExpression:
                     return this.resolveLogicalOrExpression(<BinaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -3380,29 +3380,24 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(arraySymbol);
         }
 
-        private resolveIndexExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
-            var callEx: BinaryExpression = <BinaryExpression>expressionAST;
-
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
-
-            if (previousResolutionSymbol) {
-                //CompilerDiagnostics.Alert("Call get hit");
-                return previousResolutionSymbol;
+        private resolveIndexExpression(callEx: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeIndexExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnostics, context);
             }
 
-            var diagnostic: SemanticDiagnostic;
-            var returnType: PullTypeSymbol = null;
+            return symbolAndDiagnostics;
+        }
 
+        private computeIndexExpressionSymbol(callEx: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.operand1, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
             var targetTypeSymbol = targetSymbol.getType();
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol), context);
-                return targetTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(targetTypeSymbol);
             }
 
             var elementType = targetTypeSymbol.getElementType();
@@ -3412,22 +3407,19 @@ module TypeScript {
             var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(indexType);
 
             if (elementType && isNumberIndex) {
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(elementType), context);
-                return elementType;
+                return SymbolAndDiagnostics.fromSymbol(elementType);
             }
-            
+
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
             if (callEx.operand2.nodeType === NodeType.StringLiteral || callEx.operand2.nodeType === NodeType.NumericLiteral) {
-
                 var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).actualText :
                     quoteStr((<NumberLiteral>callEx.operand2).value.toString());
 
                 var member = targetTypeSymbol.findMember(memberName);
 
                 if (member) {
-                    this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(member.getType()), context);
-                    return member.getType();
+                    return SymbolAndDiagnostics.fromSymbol(member.getType());
                 }
             }
 
@@ -3440,11 +3432,10 @@ module TypeScript {
             var paramType: PullTypeSymbol;
 
             for (var i = 0; i < signatures.length; i++) {
-                
                 if (stringSignature && numberSignature) {
                     break;
                 }
-                
+
                 signature = signatures[i];
 
                 paramSymbols = signature.getParameters();
@@ -3467,45 +3458,38 @@ module TypeScript {
             // of type Any, the Number primitive type or an enum type, the property access is of the type of that index
             // signature
             if (numberSignature && (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol)) {
-                returnType = numberSignature.getReturnType();
+                var returnType = numberSignature.getReturnType();
 
                 if (!returnType) {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
+                return SymbolAndDiagnostics.fromSymbol(returnType);
             }
-
             // otherwise, if the object expression has a string index signature and the index expression is
             // of type Any, the String or Number primitive type or an enum type, the property access of the type of
             // that index signature
-
             else if (stringSignature && (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol || indexType === this.semanticInfoChain.stringTypeSymbol)) {
-                returnType = stringSignature.getReturnType();
+                var returnType = stringSignature.getReturnType();
 
                 if (!returnType) {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
+                return SymbolAndDiagnostics.fromSymbol(returnType);
             }
-
             // otherwise, if indexExpr is of type Any, the String or Number primitive type or an enum type,
             // the property access is of type Any
             else if (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol || indexType === this.semanticInfoChain.stringTypeSymbol) {
-                returnType = this.semanticInfoChain.anyTypeSymbol;
-
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
+                var returnType = this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(returnType);
             }
-
             // otherwise, the property acess is invalid and a compile-time error occurs
             else {
-                diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)], enclosingDecl);
-
-                returnType = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)], enclosingDecl);
+                var returnType = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(returnType, [diagnostic]);
             }
-            
-            return returnType;
         }
 
         private resolveBitwiseOperator(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -3691,12 +3675,20 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(symbol);
         }
 
-        private resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            return this.resolveAST(ast.expression, false, enclosingDecl, context);
+        private resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            // Note: we don't want to consider errors at a lower node to also be happening at this
+            // node.  If we did that, then we'd end up reporting an error multiple times in type check.
+            // First as we hit this node, then as we hit the lower node that actually produced the
+            // error.
+            return this.resolveAST(ast.expression, false, enclosingDecl, context).withoutDiagnostics();
         }
 
-        private resolveExpressionStatement(ast: ExpressionStatement, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            return this.resolveAST(ast.expression, inContextuallyTypedAssignment, enclosingDecl, context);
+        private resolveExpressionStatement(ast: ExpressionStatement, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            // Note: we don't want to consider errors at a lower node to also be happening at this
+            // node.  If we did that, then we'd end up reporting an error multiple times in type check.
+            // First as we hit this node, then as we hit the lower node that actually produced the
+            // error.
+            return this.resolveAST(ast.expression, inContextuallyTypedAssignment, enclosingDecl, context).withoutDiagnostics();
         }
 
         public resolveCallExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
