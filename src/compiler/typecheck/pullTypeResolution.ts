@@ -2523,79 +2523,78 @@ module TypeScript {
             if (nameAST.isMissing()) {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
+
+            var id = nameAST.text;
+
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+
+            if (enclosingDecl && !declPath.length) {
+                declPath = [enclosingDecl];
+            }
+
+            var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+
+            // Type aliases may have an associated export value symbol
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
+
+                if (nameSymbol && !(nameSymbol.isType() && nameSymbol.isAlias())) {
+                    nameSymbol = null;
+                }
+            }
+
+            if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                nameSymbol = this.cachedFunctionArgumentsSymbol;
+            }
+
+            if (!nameSymbol) {
+                var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
+                nameSymbol = this.getNewErrorTypeSymbol(null);
+                return SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
+            }
             else {
-                var id = nameAST.text;
 
-                var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+                if (nameSymbol.isType() && nameSymbol.isAlias()) {
 
-                if (enclosingDecl && !declPath.length) {
-                    declPath = [enclosingDecl];
-                }
-
-                var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
-
-                // Type aliases may have an associated export value symbol
-                if (!nameSymbol) {
-                    nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
-
-                    if (nameSymbol && !(nameSymbol.isType() && nameSymbol.isAlias())) {
-                        nameSymbol = null;
-                    }
-                }
-
-                if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
-                    nameSymbol = this.cachedFunctionArgumentsSymbol;
-                }
-
-                if (!nameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
-                    nameSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                    return SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
-                }
-                else {
-
-                    if (nameSymbol.isType() && nameSymbol.isAlias()) {
-
-                        if (!nameSymbol.isResolved()) {
-                            this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
-                        }
-
-                        var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
-
-                        if (exportAssignmentSymbol) {
-
-                            if (exportAssignmentSymbol.isType()) {
-                                var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
-
-                                if (exportedTypeSymbol.isClass()) {
-                                    var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
-
-                                    if (constructorMethod) {
-                                        nameSymbol = constructorMethod;
-                                    }
-                                    else {
-                                        nameSymbol = exportedTypeSymbol;
-                                    }
-                                }
-                                else if (exportedTypeSymbol.isContainer()) {
-                                    var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
-
-                                    if (instanceSymbol) {
-                                        nameSymbol = instanceSymbol;
-                                    }
-                                    else {
-                                        nameSymbol = exportedTypeSymbol;
-                                    }
-                                }
-                            }
-                            else {
-                                nameSymbol = exportAssignmentSymbol;
-                            }
-                        }
+                    if (!nameSymbol.isResolved()) {
+                        this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
                     }
 
-                    return SymbolAndDiagnostics.fromSymbol(nameSymbol);
+                    var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
+
+                    if (exportAssignmentSymbol) {
+
+                        if (exportAssignmentSymbol.isType()) {
+                            var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+
+                            if (exportedTypeSymbol.isClass()) {
+                                var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
+
+                                if (constructorMethod) {
+                                    nameSymbol = constructorMethod;
+                                }
+                                else {
+                                    nameSymbol = exportedTypeSymbol;
+                                }
+                            }
+                            else if (exportedTypeSymbol.isContainer()) {
+                                var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
+
+                                if (instanceSymbol) {
+                                    nameSymbol = instanceSymbol;
+                                }
+                                else {
+                                    nameSymbol = exportedTypeSymbol;
+                                }
+                            }
+                        }
+                        else {
+                            nameSymbol = exportAssignmentSymbol;
+                        }
+                    }
                 }
+
+                return SymbolAndDiagnostics.fromSymbol(nameSymbol);
             }
         }
 
