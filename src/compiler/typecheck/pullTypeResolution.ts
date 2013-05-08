@@ -32,6 +32,14 @@ module TypeScript {
 
             this.diagnostics.push(diagnostic);
         }
+
+        public withoutDiagnostics(): SymbolAndDiagnostics<TSymbol> {
+            if (!this.diagnostics) {
+                return this;
+            }
+
+            return SymbolAndDiagnostics.fromSymbol(this.symbol);
+        }
     }
 
     export interface IPullTypeCollection {
@@ -1004,7 +1012,7 @@ module TypeScript {
 
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
+                    var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context).symbol;
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         var resolvedParentType = parentType;
@@ -1025,7 +1033,7 @@ module TypeScript {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); (i - extendsCount) < typeDeclAST.implementsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
+                    var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context).symbol;
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
                         var resolvedImplementedType = implementedType;
@@ -1192,13 +1200,13 @@ module TypeScript {
             // the alias name may be a string literal, in which case we'll need to convert it to a type
             // reference
             if (importStatementAST.alias.nodeType === NodeType.TypeRef) { // dotted name
-                aliasedType = this.resolveTypeReference(<TypeReference>importStatementAST.alias, enclosingDecl, context);
+                aliasedType = this.resolveTypeReference(<TypeReference>importStatementAST.alias, enclosingDecl, context).symbol;
             }
             else if (importStatementAST.alias.nodeType === NodeType.Name) { // name or dynamic module name
                 var text = (<Identifier>importStatementAST.alias).actualText;
 
                 if (!isQuoted(text)) {
-                    aliasedType = this.resolveTypeReference(new TypeReference(importStatementAST.alias, 0), enclosingDecl, context);
+                    aliasedType = this.resolveTypeReference(new TypeReference(importStatementAST.alias, 0), enclosingDecl, context).symbol;
                 }
                 else { // dynamic module name (string literal)
                     var modPath = (<StringLiteral>importStatementAST.alias).actualText;
@@ -1269,8 +1277,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
+                var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, enclosingDecl, context).symbol;
 
                 signature.setReturnType(returnTypeSymbol);
 
@@ -1309,7 +1316,7 @@ module TypeScript {
             var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST).symbol;
 
             if (argDeclAST.typeExpr) {
-                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
+                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context).symbol;
 
                 if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType)) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
@@ -1347,7 +1354,7 @@ module TypeScript {
             var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST).symbol;
 
             if (argDeclAST.typeExpr) {
-                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
+                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context).symbol;
 
                 if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType)) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
@@ -1426,7 +1433,24 @@ module TypeScript {
             return interfaceSymbol;
         }
 
-        public resolveTypeReference(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveTypeReference(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
+            if (typeRef === null) {
+                return null;
+            }
+
+            var symbolAndDiagnostics = <SymbolAndDiagnostics<PullTypeSymbol>>this.getSymbolAndDiagnosticsForAST(typeRef);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
+
+                if (!symbolAndDiagnostics.symbol.isGeneric()) {
+                    this.setSymbolAndDiagnosticsForAST(typeRef, symbolAndDiagnostics, context);
+                }
+            }
+
+            return symbolAndDiagnostics;
+        }
+
+        private computeTypeReferenceSymbol(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
             // the type reference can be
             // a name
             // a function
@@ -1434,46 +1458,24 @@ module TypeScript {
             // a dotted name
             // an array of any of the above
 
-            if (!typeRef) {
-                return null;
-            }
-
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(typeRef);
-
-            if (previousResolutionSymbolAndDiagnostics) {
-                return <PullTypeSymbol>previousResolutionSymbolAndDiagnostics.symbol;
-            }
-
-            var previousResolutionSymbol = null;
-
             var typeDeclSymbol: PullTypeSymbol = null;
-            var prevResolvingTypeReference = context.resolvingTypeReference;
             var diagnostic: SemanticDiagnostic = null;
 
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
                 var typeName = <Identifier>typeRef.term;
-
+                
+                var prevResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = true;
-
                 typeDeclSymbol = this.resolveTypeNameExpression(typeName, enclosingDecl, context).symbol;
-
                 context.resolvingTypeReference = prevResolvingTypeReference;
-
-                if (typeDeclSymbol.isError()) {
-                    return typeDeclSymbol;
-                }
             }
-
             // a function
             else if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
-
                 typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>typeRef.term, enclosingDecl, context);
             }
-
             // an interface
             else if (typeRef.term.nodeType === NodeType.InterfaceDeclaration) {
-
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
             }
             else if (typeRef.term.nodeType === NodeType.GenericType) {
@@ -1481,22 +1483,14 @@ module TypeScript {
             }
             // a dotted name
             else if (typeRef.term.nodeType === NodeType.MemberAccessExpression) {
-
                 // assemble the dotted name path
                 var dottedName = <BinaryExpression> typeRef.term;
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
-
                 typeDeclSymbol = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context).symbol;
-
                 context.resolvingTypeReference = prevResolvingTypeReference;
-
-                if (typeDeclSymbol.isError()) {
-                    return typeDeclSymbol;
-                }
             }
-
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>typeRef.term;
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
@@ -1506,12 +1500,19 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type, null, enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type, null, enclosingDecl);
+                var result = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(result, [diagnostic]);
+            }
+
+            if (typeDeclSymbol.isError()) {
+                // TODO(cyrusn): We shouldn't be returning early here.  Even if we couldn't resolve 
+                // the type name, we still want to be able to create an array from it if it had
+                // array parameters.
+                return SymbolAndDiagnostics.fromSymbol(typeDeclSymbol);
             }
 
             // an array of any of the above
-            // PULLTODO: Arity > 1
             if (typeRef.arrayCount) {
 
                 var arraySymbol: PullTypeSymbol = typeDeclSymbol.getArrayType();
@@ -1536,11 +1537,8 @@ module TypeScript {
                 }
 
                 if (this.cachedArrayInterfaceType && typeRef.arrayCount > 1) {
-                    var arity = typeRef.arrayCount - 1;
-                    var existingArraySymbol: PullTypeSymbol = null;
-
-                    while (arity) {
-                        existingArraySymbol = arraySymbol.getArrayType();
+                    for (var arity = typeRef.arrayCount - 1; arity > 0; arity--) {
+                        var existingArraySymbol = arraySymbol.getArrayType();
 
                         if (!existingArraySymbol) {
                             arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, arraySymbol, this, context);
@@ -1548,19 +1546,13 @@ module TypeScript {
                         else {
                             arraySymbol = existingArraySymbol;
                         }
-
-                        arity--;
                     }
                 }
 
                 typeDeclSymbol = arraySymbol;
             }
 
-            if (!typeDeclSymbol.isGeneric() /*|| typeDeclSymbol.isArray()*/) {
-                this.setSymbolAndDiagnosticsForAST(typeRef, SymbolAndDiagnostics.fromSymbol(typeDeclSymbol), context);
-            }
-
-            return typeDeclSymbol;
+            return SymbolAndDiagnostics.fromSymbol(typeDeclSymbol);
         }
 
         // Also resolves parameter declarations
@@ -1593,7 +1585,7 @@ module TypeScript {
 
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
-                var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
+                var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context).symbol;
 
                 if (!typeExprSymbol) {
                     diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of__0_, [varDecl.id.actualText], decl);
@@ -1722,7 +1714,7 @@ module TypeScript {
 
             if (typeParameterAST.constraint) {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
-                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
+                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context).symbol;
 
                 if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && constraintTypeSymbol.isResolved && this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
@@ -1888,8 +1880,7 @@ module TypeScript {
 
                     // try to set the return type, even though we may be lacking in some information
                     if (funcDeclAST.returnTypeAnnotation) {
-                        var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-                        var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
+                        var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context).symbol;
                         if (!returnTypeSymbol) {
                             diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null, funcDecl);
                             signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
@@ -1940,11 +1931,9 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
-                    returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-
                     // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                     // on the function when resolving the return type
-                    returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
+                    returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context).symbol;
 
                     if (!returnTypeSymbol) {
                         diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null, funcDecl);
@@ -2036,11 +2025,9 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
-                    var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-
                     // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                     // on the function when resolving the return type
-                    var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
+                    var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context).symbol;
 
                     if (!returnTypeSymbol) {
                         diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null, funcDecl);
@@ -2283,7 +2270,8 @@ module TypeScript {
                     return this.resolveTypeAssertionExpression(<UnaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
 
                 case NodeType.TypeRef:
-                    return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
+                    var symbolAndDiagnostics = this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
+                    return symbolAndDiagnostics.symbol;
 
                 // primitives
                 case NodeType.NumericLiteral:
@@ -2756,14 +2744,13 @@ module TypeScript {
 
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
-            var typeArg: PullTypeSymbol = null;
 
             if (!context.isResolvingTypeArguments(genericTypeAST)) {
                 context.startResolvingTypeArguments(genericTypeAST);
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                        typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+                        var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context).symbol;
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
@@ -2999,8 +2986,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
-                var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, functionDecl, context);
+                var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context).symbol;
 
                 signature.setReturnType(returnTypeSymbol);
 
@@ -3761,11 +3747,9 @@ module TypeScript {
                 // specialize the type arguments
                 typeArgs = [];
 
-                var typeArg: PullTypeSymbol = null;
-
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                        typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+                        var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context).symbol;
 
                         if (typeArg.isError()) {
                             return typeArg;
@@ -4091,11 +4075,9 @@ module TypeScript {
                     // specialize the type arguments
                     typeArgs = [];
 
-                    var typeArg: PullTypeSymbol = null;
-
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                            typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+                            var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context).symbol;
 
                             if (typeArg.isError()) {
                                 return typeArg;
@@ -4378,7 +4360,7 @@ module TypeScript {
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
-            return SymbolAndDiagnostics.fromSymbol(this.resolveTypeReference(assertionExpression.castTerm, enclosingDecl, context));
+            return this.resolveTypeReference(assertionExpression.castTerm, enclosingDecl, context).withoutDiagnostics();
         }
 
         private resolveAssignmentStatement(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {

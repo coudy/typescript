@@ -1035,7 +1035,9 @@ module TypeScript {
             var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
-            var baseType = this.resolver.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+
+            var baseTypeAndDiagnostics = this.resolver.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+            var baseType = baseTypeAndDiagnostics && baseTypeAndDiagnostics.symbol;
             contextForBaseTypeResolution.isResolvingClassExtendedType = false;
 
             var typeDeclIsClass = typeSymbol.isClass();
@@ -2676,10 +2678,9 @@ module TypeScript {
             if (messageCode) {
                 var reportOnFuncDecl = false;
                 var contextForReturnTypeResolution = new PullTypeResolutionContext();
-                var returnExpressionSymbol: PullTypeSymbol;
-                if (declAST.returnTypeAnnotation != null) {
-                    var returnTypeRef = <TypeReference>declAST.returnTypeAnnotation;
-                    returnExpressionSymbol = this.resolver.resolveTypeReference(returnTypeRef, decl, contextForReturnTypeResolution);
+                if (declAST.returnTypeAnnotation) {
+                    var returnExpressionSymbolAndDiagnostics = this.resolver.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, contextForReturnTypeResolution);
+                    var returnExpressionSymbol = returnExpressionSymbolAndDiagnostics && returnExpressionSymbolAndDiagnostics.symbol;
                     if (returnExpressionSymbol === funcReturnType) {
                         // Error coming from return annotation
                         this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl, true);
@@ -2698,7 +2699,7 @@ module TypeScript {
 
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
-                                returnExpressionSymbol = this.resolver.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
+                                var returnExpressionSymbol = this.resolver.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
                                 // Check if return statement's type matches the one that we concluded
                                 if (returnExpressionSymbol === funcReturnType) {
                                     this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);

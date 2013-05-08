@@ -42,7 +42,7 @@ describe('Compiling samples', function ()
     it('compiles the imageboard sample without error', function ()
     {
         var units = ["node\\node.d.ts", "imageboard\\app.ts", "imageboard\\db.ts", "imageboard\\express.d.ts", "imageboard\\mongodb.ts", "imageboard\\routes\\index.ts"];
-        
+    
         addUnitsAndCompile(units);
         var errLines = Harness.Compiler.reportCompilationErrors(units);
         assert.equal(errLines.length, 0);
@@ -145,7 +145,7 @@ describe('Compiling samples', function ()
 
     /*  this sample clobbers on the shared compiler in an unexpected way
         temporarily disable */
-
+    debugger;
     it('compiles the win8 sample without error', function ()
     {
         var units = [
