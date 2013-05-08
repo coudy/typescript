@@ -2,23 +2,6 @@
 ///<reference path='..\..\..\..\src\harness\harness.ts' />
 
 describe('Compiling tests\\compiler\\scopeTests.ts', function() {
-    it("Scope check inside a static method inside static method", function() {
-        var code  = 'class C {';
-            code += '   private v;'
-            code += '   public p;'
-            code += '   static s;'
-            code += '   static b() {'
-            code += '      v = 1;' // ERR
-            code += '      C.s = 1;' // OK
-            code += '      this.p = 1;'// ERR
-            code += '   }'
-            code += '}';
-        Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 2);
-            assert.compilerWarning(result, 1, 68, "error TS2095: Could not find symbol 'v'.");
-        });
-    });
-
     it("Scope check extended class with errors", function () {
         var code = 'class C { private v; public p; static s; }';
         code += 'class D extends C {';

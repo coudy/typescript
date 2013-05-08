@@ -11,25 +11,10 @@ describe('Property Access', function() {
         });
     });
 
-    it("Type of expression is object", function() {
-        var code = "var foo: { a: number; }; foo.a = 4; foo.b = 5;";
-        Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.compilerWarning(result, 1, 41, "error TS2094: The property 'b' does not exist on value of type ''.");
-            assert.equal(result.errors.length, 2);
-        });
-    });
-
     it("Type of expression is string", function() {
         var code = "var foo: string; foo.toUpperCase();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
             assert.equal(result.errors.length, 0);
-        });
-    });
-
-    it("Type of expression is number", function() {
-        var code = "var foo: number; foo.toBAZ();";
-        Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
         });
     });
 
@@ -39,19 +24,4 @@ describe('Property Access', function() {
             assert.equal(result.errors.length, 1);
         });
     });
-
-    it("Type of expression is null", function() {
-        var code = "null.toBAZ();";
-        Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
-        });
-    });
-
-    it("Type of expression is undefined", function() {
-        var code = "undefined.toBAZ();";
-        Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
-        });
-    });
 });
-
