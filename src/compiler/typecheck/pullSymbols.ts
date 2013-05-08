@@ -2154,6 +2154,7 @@ module TypeScript {
     // represents the module "namespace" type
     export class PullContainerTypeSymbol extends PullTypeSymbol {
         public instanceSymbol: PullSymbol = null;
+        private _exportAssignedSymbol: PullSymbol = null;
 
         constructor(name: string, kind = PullElementKind.Container) {
             super(name, kind);
@@ -2224,11 +2225,20 @@ module TypeScript {
             }
             return super.getDisplayName();
         }
+
+        public setExportAssignedSymbol(symbol: PullSymbol): void {
+            this._exportAssignedSymbol = symbol;
+        }
+
+        public getExportAssignedSymbol(): PullSymbol {
+            return this._exportAssignedSymbol;
+        }
     }
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {
 
         private typeAliasLink: PullSymbolLink = null;
+        private _exportAssignmentLink: PullSymbolLink = null;
         private isUsedAsValue = false;
         private typeUsedExternally = false;
 
@@ -2245,6 +2255,22 @@ module TypeScript {
             }
 
             this.typeAliasLink = this.addOutgoingLink(type, SymbolLinkKind.Aliases);
+        }
+
+        public setExportAssignmentSymbol(symbol: PullSymbol) {
+            if (this._exportAssignmentLink) {
+                this.removeOutgoingLink(this._exportAssignmentLink);
+            }
+
+            this._exportAssignmentLink = this.addOutgoingLink(symbol, SymbolLinkKind.ExportAliases);
+        }
+
+        public getExportAssignedSymbol(): PullSymbol {
+            if (!this._exportAssignmentLink) {
+                return null;
+            }
+
+            return this._exportAssignmentLink.end;
         }
 
         public getType(): PullTypeSymbol {

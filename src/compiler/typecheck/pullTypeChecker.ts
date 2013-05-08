@@ -224,6 +224,9 @@ module TypeScript {
                 case NodeType.TypeRef:
                     return this.typeCheckTypeReference(ast, typeCheckContext);
 
+                case NodeType.ExportAssignment:
+                    return this.typeCheckExportAssignment(ast, typeCheckContext);
+
                 // boolean operations
                 case NodeType.NotEqualsWithTypeConversionExpression:
                 case NodeType.EqualsWithTypeConversionExpression:
@@ -1931,6 +1934,13 @@ module TypeScript {
             }
 
             return type;
+        }
+
+        
+        private typeCheckExportAssignment(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
+
+            return null;
         }
 
         private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {

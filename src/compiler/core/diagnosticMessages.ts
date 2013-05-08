@@ -236,7 +236,8 @@ module TypeScript {
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: DiagnosticInfo;
         Rest_parameters_must_be_array_types: DiagnosticInfo;
         Overload_signature_implementation_cannot_use_specialized_type: DiagnosticInfo;
-
+        Export_assignments_may_only_be_used_in_External_modules;
+        Export_assignments_may_only_be_made_with_acceptable_kinds;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1501,6 +1502,20 @@ module TypeScript {
             message: "Overload signature implementation cannot use specialized type.",
             code: 2163
         },
+
+        Export_assignments_may_only_be_used_in_External_modules: {
+            category: DiagnosticCategory.Error,
+            message: "Export assignments may only be used at the top-level of external modules",
+            code: 2164
+        },
+
+        Export_assignments_may_only_be_made_with_acceptable_kinds: {
+            category: DiagnosticCategory.Error,
+            message: "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules",
+            code: 2165
+        },
+
+
 
 
 

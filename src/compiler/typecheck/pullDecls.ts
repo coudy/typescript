@@ -42,6 +42,8 @@ module TypeScript {
 
         private parentDecl: PullDecl = null;
 
+        private _exportAssignmentIdentifier: string = null;
+
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
         // edits and updates we don't leak the val decl or symbol

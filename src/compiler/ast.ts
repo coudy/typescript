@@ -666,6 +666,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.id, ast.id, includingPosition);
         }
+
+        public emit(emitter: Emitter) {
+            emitter.setExportAssignmentIdentifier(this.id.actualText);
+        }
     }
 
     export class BoundDecl extends AST {

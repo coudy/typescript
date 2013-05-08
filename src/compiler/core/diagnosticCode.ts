@@ -236,6 +236,9 @@ module TypeScript {
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___,
         Rest_parameters_must_be_array_types,
         Overload_signature_implementation_cannot_use_specialized_type,
+        Export_assignments_may_only_be_used_in_External_modules,
+        Export_assignments_may_only_be_made_with_acceptable_kinds,
+
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

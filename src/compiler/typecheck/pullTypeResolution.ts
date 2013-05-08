@@ -1232,6 +1232,13 @@ module TypeScript {
                     importDecl.addDiagnostic(
                         new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type, null));
                 }
+                else {
+                    var exportedAssignmentSymbol = (<PullContainerTypeSymbol>aliasedType).getExportAssignedSymbol();
+                    
+                    if (exportedAssignmentSymbol) {
+                        importDeclSymbol.setExportAssignmentSymbol(exportedAssignmentSymbol);
+                    }
+                }
 
                 importDeclSymbol.setAliasedType(aliasedType);
                 importDeclSymbol.setResolved();
@@ -1241,6 +1248,62 @@ module TypeScript {
             }
 
             return importDeclSymbol;
+        }
+
+        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+
+            // get the identifier text
+            var id = exportAssignmentAST.id.text;
+            var nameSymbol: PullSymbol = null;
+
+            var parentSymbol = enclosingDecl.getSymbol();
+
+            if (!parentSymbol.isType() && (<PullTypeSymbol>parentSymbol).isContainer()) {
+                // Error
+                // Export assignments may only be used at the top-level of external modules
+                enclosingDecl.addDiagnostic(
+                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_in_External_modules, null));
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+
+            if (enclosingDecl && !declPath.length) {
+                declPath = [enclosingDecl];
+            }
+
+            nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
+            }
+
+            if (!nameSymbol) {
+                // Error
+                // Could_not_find_symbol__0_
+                enclosingDecl.addDiagnostic(
+                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [id]));
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (!nameSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+            }
+
+            // check for valid export assignment type (variable, function, class, interface, enum, internal module)
+            if (!(nameSymbol.getKind() & PullElementKind.AcceptableAlias)) {
+                // Error
+                // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
+                enclosingDecl.addDiagnostic(
+                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_acceptable_kinds, null));
+                return this.semanticInfoChain.anyTypeSymbol;
+
+            }
+
+            (<PullContainerTypeSymbol>parentSymbol).setExportAssignedSymbol(nameSymbol);
+
+            return nameSymbol;
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2272,6 +2335,9 @@ module TypeScript {
                 case NodeType.TypeRef:
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
 
+                case NodeType.ExportAssignment:
+                    return this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context);
+
                 // primitives
                 case NodeType.NumericLiteral:
                     return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
@@ -2446,12 +2512,53 @@ module TypeScript {
 
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
+
                 // PULLREVIEW: until further notice, search out for modules or enums
                 if (!nameSymbol) {
                     nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
                     nameSymbol = this.resolveNameSymbol(nameSymbol, context);
                 }
 
+                if (nameSymbol.isType() && nameSymbol.isAlias()) {
+
+                    if (!nameSymbol.isResolved()) {
+                        this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+                    }
+
+                    var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
+
+                    if (exportAssignmentSymbol) {
+
+                        if (exportAssignmentSymbol.isType()) {
+                            var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+
+                            if (exportedTypeSymbol.isClass()) {
+                                var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
+
+                                if (constructorMethod) {
+                                    nameSymbol = constructorMethod;
+                                }
+                                else {
+                                    nameSymbol = exportedTypeSymbol;
+                                }
+                            }
+                            else if (exportedTypeSymbol.isContainer()) {
+                                var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
+
+                                if (instanceSymbol) {
+                                    nameSymbol = instanceSymbol;
+                                }
+                                else {
+                                    nameSymbol = exportedTypeSymbol;
+                                }
+                            }
+                        }
+                        else {
+                            nameSymbol = exportAssignmentSymbol;
+                        }
+                    }
+                }
+                
                 if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
                     nameSymbol = this.cachedFunctionArgumentsSymbol;
                 }
@@ -2694,6 +2801,26 @@ module TypeScript {
                     var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
                     typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
                     return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
+                }
+
+                if (typeNameSymbol.isAlias()) {
+
+                    if (!typeNameSymbol.isResolved()) {
+                        this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
+                    }
+
+                    var exportAssignmentSymbol = (<PullTypeAliasSymbol>typeNameSymbol).getExportAssignedSymbol()
+
+                    if (exportAssignmentSymbol) {
+
+                        if (exportAssignmentSymbol.isType()) {
+                            typeNameSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+                        }
+                        else {
+                            diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
+                            return this.getNewErrorTypeSymbol(diagnostic);
+                        }
+                    }
                 }
 
                 if (typeNameSymbol.isTypeParameter()) {

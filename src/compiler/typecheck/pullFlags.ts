@@ -96,6 +96,8 @@ module TypeScript {
         SomeType = Script | Global | Primitive | Container | Class | Interface | DynamicModule |
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
 
+        AcceptableAlias = Variable | SomeFunction | Class | Interface | Enum | Container | ObjectType | FunctionType | ConstructorType,
+
         SomeContainer = Container | DynamicModule | TypeAlias,
 
         SomeBlock = WithBlock | CatchBlock,
@@ -121,6 +123,7 @@ module TypeScript {
         ConstructorMethod,
 
         Aliases,
+        ExportAliases,
 
         ContainedBy,
 

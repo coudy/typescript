@@ -111,6 +111,7 @@ module TypeScript {
         private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
         private resolvingContext = new PullTypeResolutionContext();
+        private exportAssignmentIdentifier: string = null;
 
         public document: Document = null;
 
@@ -146,6 +147,14 @@ module TypeScript {
             }
 
             this.pullTypeChecker.resolver.setUnitPath(fileName);
+        }
+
+        public setExportAssignmentIdentifier(id: string) {
+            this.exportAssignmentIdentifier = id;
+        }
+
+        public getExportAssignmentIdentifier() {
+            return this.exportAssignmentIdentifier;
         }
 
         public setDocument(document: Document) {
@@ -725,6 +734,11 @@ module TypeScript {
 
             // prologue
             if (isDynamicMod) {
+
+                // if the external module has an "export =" identifier, we'll
+                // set it in the ExportAssignment emit method
+                this.setExportAssignmentIdentifier(null);
+
                 // create the new outfile for this module
                 var tsModFileName = stripQuotes(moduleDecl.name.actualText);
                 var modFilePath = trimModName(tsModFileName) + ".js";
@@ -812,8 +826,22 @@ module TypeScript {
 
             // epilogue
             if (isDynamicMod) {
+                var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
+
                 if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
+                    if (exportAssignmentIdentifier) {
+                        this.indenter.increaseIndent();
+                        this.emitIndent();
+                        this.writeLineToOutput("return " + exportAssignmentIdentifier + ";");
+                        this.indenter.decreaseIndent();
+                    }
                     this.writeToOutput("});");
+                }
+                else if (exportAssignmentIdentifier) {
+                    this.indenter.increaseIndent();
+                    this.emitIndent();
+                    this.writeLineToOutput("module.exports = " + exportAssignmentIdentifier + ";");
+                    this.indenter.decreaseIndent();
                 }
 
                 if (!isWholeFile) {
