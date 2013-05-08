@@ -4,4 +4,4 @@ var lengths = map(myItems, function (x) {
 });
 ////[0.d.ts]
 declare var myItems: string[];
-declare var lengths: number[];
+declare var lengths: any[];
