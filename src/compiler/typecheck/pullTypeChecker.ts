@@ -1611,7 +1611,7 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultType = this.resolver.resolveNewExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).getType();
+            var resultType = this.resolver.resolveNewExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).symbol.getType();
 
             this.checkForResolutionError(resultType, enclosingDecl);
 

@@ -2350,7 +2350,7 @@ module TypeScript {
                     return SymbolAndDiagnostics.fromSymbol(this.resolveCallExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
 
                 case NodeType.ObjectCreationExpression:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveNewExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
+                    return this.resolveNewExpression(<CallExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.CastExpression:
                     return this.resolveTypeAssertionExpression(<UnaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -4178,25 +4178,25 @@ module TypeScript {
             return returnType;
         }
 
-        public resolveNewExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
-
-            if (!additionalResults) {
-                var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
-                var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
-
-                if (previousResolutionSymbol) {
-                    //CompilerDiagnostics.Alert("New get hit");
-                    return previousResolutionSymbol;
-                }
+        public resolveNewExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): SymbolAndDiagnostics<PullSymbol> {
+            if (additionalResults) {
+                return this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
             }
 
+            var symbolAndDiagnotics = this.getSymbolAndDiagnosticsForAST(callEx);
+            if (!symbolAndDiagnotics) {
+                symbolAndDiagnotics = this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
+                this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnotics, context);
+            }
+
+            return symbolAndDiagnotics;
+        }
+
+        public computeNewExpressionSymbol(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): SymbolAndDiagnostics<PullSymbol> {
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context).symbol;
-
-            var diagnostic: SemanticDiagnostic;
-
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
 
             var targetAST = this.getLastIdentifierInTarget(callEx);
@@ -4213,12 +4213,10 @@ module TypeScript {
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
             var usedCallSignaturesInstead = false;
-            var lastConstraintFailureDiagnostic: Diagnostic = null;
             var couldNotAssignToConstraint: boolean;
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(targetTypeSymbol), context);
-                return targetTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(targetTypeSymbol);
             }
 
             if (!constructSignatures.length) {
@@ -4226,8 +4224,8 @@ module TypeScript {
                 usedCallSignaturesInstead = true;
             }
 
+            var diagnostics: Diagnostic[] = null;
             if (constructSignatures.length) {
-
                 // resolve the type arguments, specializing if necessary
                 if (callEx.typeArguments) {
                     // specialize the type arguments
@@ -4236,11 +4234,6 @@ module TypeScript {
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
                             var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context).symbol;
-
-                            if (typeArg.isError()) {
-                                return typeArg;
-                            }
-
                             typeArgs[i] = context.findSpecializationForType(typeArg);
                         }
                     }
@@ -4250,7 +4243,6 @@ module TypeScript {
                 // if any are generic, and we don't have type arguments, try to infer
                 // otherwise, try to specialize to the type arguments above
                 if (targetTypeSymbol.isGeneric()) {
-
                     var resolvedSignatures: PullSignatureSymbol[] = [];
                     var inferredTypeArgs: PullTypeSymbol[];
                     var specializedSignature: PullSignatureSymbol;
@@ -4300,7 +4292,8 @@ module TypeScript {
                                             }
 
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                lastConstraintFailureDiagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true);
+                                                diagnostics = this.addDiagnostic(diagnostics,
+                                                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl, true));
                                                 couldNotAssignToConstraint = true;
                                                 break;
                                             }
@@ -4368,21 +4361,23 @@ module TypeScript {
                     additionalResults.actualParametersContextTypeSymbols = [];
                 }
 
-                if (!constructSignatures.length && lastConstraintFailureDiagnostic) {
-                    return this.getNewErrorTypeSymbol(lastConstraintFailureDiagnostic);
+                if (!constructSignatures.length && diagnostics) {
+                    var result = this.getNewErrorTypeSymbol(diagnostics[0]);
+                    return SymbolAndDiagnostics.create(result, diagnostics);
                 }
 
                 var errorCondition: PullSymbol = null;
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
-                    diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__new__expression, null, enclosingDecl);
+                    diagnostics = this.addDiagnostic(diagnostics,
+                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__new__expression, null, enclosingDecl));
 
                     // Remember the error
-                    errorCondition = this.getNewErrorTypeSymbol(diagnostic);
+                    errorCondition = this.getNewErrorTypeSymbol(diagnostics[0]);
 
                     if (!constructSignatures.length) {
-                        return errorCondition;
+                        return SymbolAndDiagnostics.create(errorCondition, diagnostics);
                     }
 
                     // First, pick the first signature as the candidate signature
@@ -4423,8 +4418,9 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null, enclosingDecl);
-                        return this.getNewErrorTypeSymbol(diagnostic);
+                        diagnostics = this.addDiagnostic(diagnostics,
+                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null, enclosingDecl));
+                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
                     }
                     else {
                         returnType = this.semanticInfoChain.anyTypeSymbol;
@@ -4492,29 +4488,24 @@ module TypeScript {
                 }
 
                 if (errorCondition) {
-                    return errorCondition;
+                    return SymbolAndDiagnostics.create(errorCondition, diagnostics);
                 }
 
                 if (!returnType) {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
-
-                return returnType;
+                return SymbolAndDiagnostics.create(returnType, diagnostics);
             }
             else if (targetTypeSymbol.isClass()) {
-
-                this.setSymbolAndDiagnosticsForAST(callEx, SymbolAndDiagnostics.fromSymbol(returnType), context);
-
                 // implicit constructor
-                return returnType;
+                return SymbolAndDiagnostics.create(returnType, diagnostics);
             }
 
-            diagnostic = context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid__new__expression, null, enclosingDecl);
+            diagnostics = this.addDiagnostic(diagnostics,
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid__new__expression, null, enclosingDecl));
 
-            return this.getNewErrorTypeSymbol(diagnostic);
-
+            return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(diagnostics[0]), diagnostics);
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
