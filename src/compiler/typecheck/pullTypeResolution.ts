@@ -1253,7 +1253,7 @@ module TypeScript {
             return importDeclSymbol;
         }
 
-        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
 
             // get the identifier text
             var id = exportAssignmentAST.id.text;
@@ -1266,7 +1266,7 @@ module TypeScript {
                 // Export assignments may only be used at the top-level of external modules
                 enclosingDecl.addDiagnostic(
                     new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_in_External_modules, null));
-                return this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
@@ -1287,7 +1287,7 @@ module TypeScript {
                 // Could_not_find_symbol__0_
                 enclosingDecl.addDiagnostic(
                     new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [id]));
-                return this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             if (!nameSymbol.isResolved()) {
@@ -1320,8 +1320,7 @@ module TypeScript {
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
                 enclosingDecl.addDiagnostic(
                     new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_acceptable_kinds, null));
-                return this.semanticInfoChain.anyTypeSymbol;
-
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
             (<PullContainerTypeSymbol>parentSymbol).setExportAssignedSymbol(nameSymbol);
