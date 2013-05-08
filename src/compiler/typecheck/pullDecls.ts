@@ -115,13 +115,15 @@ module TypeScript {
         }
 
         public addDiagnostic(diagnostic: IDiagnostic) {
-            if (!this.diagnostics) {
-                this.diagnostics = [];
+            if (diagnostic) {
+                if (!this.diagnostics) {
+                    this.diagnostics = [];
+                }
+
+                //error.adjustOffset(this.span.start());
+
+                this.diagnostics[this.diagnostics.length] = diagnostic;
             }
-
-            //error.adjustOffset(this.span.start());
-
-            this.diagnostics[this.diagnostics.length] = diagnostic;
         }
 
         public getDiagnostics(): IDiagnostic[] {

@@ -2081,7 +2081,7 @@ module TypeScript {
     }
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
-        constructor(public diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol) {
+        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol) {
             super("error");
         }
 

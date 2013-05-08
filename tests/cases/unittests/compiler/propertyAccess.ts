@@ -17,11 +17,4 @@ describe('Property Access', function() {
             assert.equal(result.errors.length, 0);
         });
     });
-
-    it("Type of expression is boolean", function() {
-        var code = "var foo: boolean; foo.toBAZ();";
-        Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
-        });
-    });
 });

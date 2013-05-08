@@ -1585,8 +1585,8 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                var diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type, null, enclosingDecl);
-                var result = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = new SemanticDiagnostic(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type, null);
+                var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
