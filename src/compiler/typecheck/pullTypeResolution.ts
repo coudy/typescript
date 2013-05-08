@@ -1666,7 +1666,7 @@ module TypeScript {
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
-            var diagnostic: SemanticDiagnostic = null;
+            var diagnostic: Diagnostic = null;
 
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
@@ -2640,8 +2640,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
-                var result = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
+                var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
@@ -2740,8 +2740,8 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()], enclosingDecl);
-                    var result = this.getNewErrorTypeSymbol(diagnostic);
+                    var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()]);
+                    var result = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(result, [diagnostic]);
                 }
             }
@@ -2888,7 +2888,7 @@ module TypeScript {
         //}
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             var prevSearchTypeSpace = context.searchTypeSpace;
             context.searchTypeSpace = true;
