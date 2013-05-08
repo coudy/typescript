@@ -1973,7 +1973,8 @@ module TypeScript {
             if (!this.isNamedTypeSymbol()) {
                 return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
             }
-            var builder = new MemberNameArray();
+
+            var builder = new MemberNameArray();
             builder.prefix = super.getScopedName(scopeSymbol, useConstraintInName);
 
             var typars = this.getTypeArguments();

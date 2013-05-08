@@ -2367,7 +2367,10 @@ module TypeScript {
             // Type check the constraint
             this.typeCheckAST(ast.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var symbolAndDiagnostics = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
+
+            // TODO: report the diagnostics.
+            return (symbolAndDiagnostics && symbolAndDiagnostics.symbol).getType();
         }
 
         // Privacy checking
