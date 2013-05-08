@@ -432,17 +432,25 @@ module TypeScript {
             }
         }
 
+        private reportDiagnostics(symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            if (symbolAndDiagnostics && symbolAndDiagnostics.diagnostics) {
+                for (var i = 0, n = symbolAndDiagnostics.diagnostics.length; i < n; i++) {
+                    context.postDiagnostic(symbolAndDiagnostics.diagnostics[0], enclosingDecl, /*addToDecl:*/ true);
+                }
+            }
+        }
+
         private resolveSymbolAndReportDiagnostics(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var symbolAndDiagnostics = this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
-            // TODO: report the diagnostics.
+            this.reportDiagnostics(symbolAndDiagnostics, enclosingDecl, context);
             return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
         }
 
         private resolveTypeReferenceAndReportDiagnostics(ast: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var symbolAndDiagnostics = this.resolver.resolveTypeReference(ast, enclosingDecl, context);
 
-            // TODO: report the diagnostics.
+            this.reportDiagnostics(symbolAndDiagnostics, enclosingDecl, context);
             return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
         }
 

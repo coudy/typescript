@@ -174,7 +174,7 @@ module TypeScript {
         public isResolvingClassExtendedType = false; 
         public isSpecializingSignatureAtCallSite = false;
 
-        constructor (public emitting = false) {}
+        constructor() {}
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -280,20 +280,19 @@ module TypeScript {
         }
 
         public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[], enclosingDecl: PullDecl, addToDecl = false) {
-            if (this.emitting) {
-                return;
-            }
-
             var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
+            this.postDiagnostic(diagnostic, enclosingDecl, addToDecl);
 
+            return diagnostic;
+        }
+
+        public postDiagnostic(diagnostic: Diagnostic, enclosingDecl: PullDecl, addToDecl: boolean): void {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
             else if (!this.suppressErrors && enclosingDecl && addToDecl) {
                 enclosingDecl.addDiagnostic(diagnostic);
             }
-
-            return diagnostic;
         }
 
         public startResolvingTypeArguments(ast: AST) {
