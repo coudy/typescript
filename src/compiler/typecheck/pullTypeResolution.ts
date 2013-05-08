@@ -3634,40 +3634,45 @@ module TypeScript {
 
         private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(trinex);
-
             if (!symbolAndDiagnostics) {
-                var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
-                var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
-                var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
-
-                if (this.typesAreIdentical(leftType, rightType)) {
-                    symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(leftType);
-                }
-                else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
-                    var collection: IPullTypeCollection = {
-                        getLength: () => { return 2; },
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
-                        getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
-                    }
-
-                    var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
-
-                    if (bestCommonType) {
-                        symbolAndDiagnostics = SymbolAndDiagnostics.fromSymbol(bestCommonType);
-                    }
-                }
-
-                if (!symbolAndDiagnostics) {
-                    var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
-
-                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
-                    symbolAndDiagnostics = SymbolAndDiagnostics.create(symbol, [diagnostic]);
-                }
-
+                symbolAndDiagnostics = this.computeConditionalExpressionSymbol(trinex, enclosingDecl, context);
                 this.setSymbolAndDiagnosticsForAST(trinex, symbolAndDiagnostics, context);
             }
 
             return symbolAndDiagnostics;
+        }
+
+        private computeConditionalExpressionSymbol(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).getType();
+            var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).getType();
+            var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).getType();
+
+            var symbol: PullSymbol = null;
+            if (this.typesAreIdentical(leftType, rightType)) {
+                symbol = leftType;
+            }
+            else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
+                var collection: IPullTypeCollection = {
+                    getLength: () => { return 2; },
+                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
+                    getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
+                }
+
+                var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
+
+                if (bestCommonType) {
+                    symbol = bestCommonType;
+                }
+            }
+
+            if (!symbol) {
+                var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
+
+                symbol = this.getNewErrorTypeSymbol(diagnostic);
+                return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+            }
+
+            return SymbolAndDiagnostics.fromSymbol(symbol);
         }
 
         private resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
