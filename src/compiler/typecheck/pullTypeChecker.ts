@@ -196,8 +196,8 @@ module TypeScript {
                 case NodeType.AssignmentExpression:
                     return this.typeCheckAssignment(<BinaryExpression>ast, typeCheckContext);
 
-                case GenericType:
-                    return this.typeCheckGenericType(ast, typeCheckContext);
+                case NodeType.GenericType:
+                    return this.typeCheckGenericType(<GenericType>ast, typeCheckContext);
 
                 case NodeType.ObjectLiteralExpression:
                     return this.typeCheckObjectLiteral(ast, typeCheckContext, inContextuallyTypedAssignment);
@@ -380,6 +380,9 @@ module TypeScript {
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.booleanTypeSymbol;
+
+                case NodeType.TypeParameter:
+                    return this.typeCheckTypeParameter(<TypeParameter>ast, typeCheckContext);
 
                 default:
                     break;
@@ -577,7 +580,9 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
+            this.typeCheckAST(funcDeclAST.typeArguments, typeCheckContext, inContextuallyTypedAssignment);
             this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
+            this.typeCheckAST(funcDeclAST.returnTypeAnnotation, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(funcDeclAST.block, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
@@ -812,12 +817,18 @@ module TypeScript {
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
+            // In case of constructor signatures, type check constructor type arguments
+            this.typeCheckAST(funcDeclAST.typeArguments, typeCheckContext, inContextuallyTypedAssignment);
+
             typeCheckContext.inConstructorArguments = true;
             this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
             typeCheckContext.inConstructorArguments = false;
 
             // Reset the flag
             typeCheckContext.seenSuperConstructorCall = false;
+
+            // In case of constructor signatures, type check return annotation
+            this.typeCheckAST(funcDeclAST.returnTypeAnnotation, typeCheckContext,/*inContextuallyTypedAssignment:*/ false);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
@@ -874,6 +885,8 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
             this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
+
+            this.typeCheckAST(funcDeclAST.returnTypeAnnotation, typeCheckContext,/*inContextuallyTypedAssignment:*/ false);
 
             this.typeCheckAST(funcDeclAST.block, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
@@ -1144,6 +1157,16 @@ module TypeScript {
             var classDecl = typeCheckContext.semanticInfo.getDeclForAST(classAST);
             typeCheckContext.pushEnclosingDecl(classDecl);
 
+            // Type check the type paramter list if any exists
+            this.typeCheckAST(classAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the extends list if it exist
+            this.typeCheckAST(classAST.extendsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the implements list if it exist
+            this.typeCheckAST(classAST.implementsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the members
             this.typeCheckAST(classAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             typeCheckContext.popEnclosingDecl();
@@ -1169,6 +1192,16 @@ module TypeScript {
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
             typeCheckContext.pushEnclosingDecl(interfaceDecl);
 
+            // Type check the type paramter list if any exists
+            this.typeCheckAST(interfaceAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the extends list if it exist
+            //this.typeCheckAST(interfaceAST.extendsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the implements list if it exist
+            this.typeCheckAST(interfaceAST.implementsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+            // Type check the members
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             typeCheckContext.popEnclosingDecl();
@@ -1256,12 +1289,15 @@ module TypeScript {
         // Generic Type references
         // validate:
         //
-        private typeCheckGenericType(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckGenericType(ast: GenericType, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // validate:
             //  - mutually recursive type parameters and constraints
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var genericType = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment*/false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(genericType, enclosingDecl);
+
+            // Type check the arguments
+            this.typeCheckAST(ast.typeArguments, typeCheckContext, false);
 
             return genericType;
         }
@@ -1581,6 +1617,9 @@ module TypeScript {
                 typeCheckContext.seenSuperConstructorCall = true;
             }
 
+            // Type check the type arguments
+            this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
             // Type check the arguments
             var savedInSuperConstructorCall = typeCheckContext.inSuperConstructorCall;
             if (inSuperConstructorCall) {
@@ -1623,6 +1662,9 @@ module TypeScript {
             this.checkForResolutionError(resultType, enclosingDecl);
 
             this.typeCheckAST(callExpression.target, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+            this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
+            // Type check the type arguments
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             // Type check the arguments
@@ -1922,17 +1964,22 @@ module TypeScript {
             // a dotted name
             // an array of any of the above
 
-                // Make sure we report errors for the the object type and function type
-                var typeRef = <TypeReference>ast;
-                
-                // a function
-                if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
-                    type = this.typeCheckFunctionTypeSignature(<FunctionDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
-                }
-                // an interface
-                else if (typeRef.term.nodeType === NodeType.InterfaceDeclaration) {
-                    type = this.typeCheckInterfaceTypeReference(<NamedDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
-                }
+            // Make sure we report errors for the the object type and function type
+            var typeRef = <TypeReference>ast;
+            
+            // a function
+            if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
+                type = this.typeCheckFunctionTypeSignature(<FunctionDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+            }
+            // an interface
+            else if (typeRef.term.nodeType === NodeType.InterfaceDeclaration) {
+                type = this.typeCheckInterfaceTypeReference(<NamedDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+            }
+            // a generic type
+            else if (typeRef.term.nodeType === NodeType.GenericType) {
+                type = this.typeCheckGenericType(<GenericType>typeRef.term, typeCheckContext);
+            }
+
             // Rest of the cases dont need special type check action
 
             if (!type || !type.isError()) {
@@ -2314,6 +2361,13 @@ module TypeScript {
 
         private typeCheckLabeledStatement(labeledStatement: LabeledStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             return this.typeCheckAST(labeledStatement.statement, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+        }
+
+        private typeCheckTypeParameter(ast: TypeParameter, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            // Type check the constraint
+            this.typeCheckAST(ast.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
+            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
         }
 
         // Privacy checking
