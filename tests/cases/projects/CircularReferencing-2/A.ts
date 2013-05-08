@@ -1,4 +1,4 @@
-import C = module("C");
+import C = require("C");
  
 export class A {
     constructor () { }

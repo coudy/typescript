@@ -518,8 +518,8 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
-                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(1,25): error TS5008: Cannot resolve imported file: \'./foo/bar.js\'.',
-                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(3,25): error TS5008: Cannot resolve imported file: \'./baz\'.']
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(1,26): error TS5008: Cannot resolve imported file: \'./foo/bar.js\'.',
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(3,26): error TS5008: Cannot resolve imported file: \'./baz\'.']
                 });
 
             tests.push({

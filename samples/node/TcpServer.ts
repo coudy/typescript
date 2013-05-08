@@ -1,5 +1,5 @@
 ///<reference path='node.d.ts'/>
-import net = module('net');
+import net = require('net');
 
 var server = net.createServer(function (socket) {
     socket.write('Echo server\r\n');

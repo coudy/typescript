@@ -1,4 +1,4 @@
-import commands = module('./commands');
+import commands = require('./commands');
 
 export class RM {
 

@@ -65,7 +65,7 @@ module TypeScript {
         Modifiers_cannot_appear_here: DiagnosticInfo;
         Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: DiagnosticInfo;
         Enum_member_must_have_initializer: DiagnosticInfo;
-
+        _module_______is_deprecated__Use__require_______instead: DiagnosticInfo;
 
 
 
@@ -669,6 +669,11 @@ module TypeScript {
             code: 1061
         },
 
+        _module_______is_deprecated__Use__require_______instead: {
+            category: DiagnosticCategory.Warning,
+            message: "'module(...)' is deprecated. Use 'require(...)' instead.",
+            code: 1062
+        },
 
 
 
@@ -677,7 +682,8 @@ module TypeScript {
 
 
 
-        // Semantic errors start at 200.
+
+        // Semantic errors start at 2000.
         Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,
             message: "Duplicate identifier '{0}'.",

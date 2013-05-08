@@ -1,5 +1,5 @@
-//import A = module("./A/A");
-import B = module("B/B");
+//import A = require("./A/A");
+import B = require("B/B");
 
 var a = (new B.B()).Create();
 

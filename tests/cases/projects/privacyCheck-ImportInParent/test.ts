@@ -1,5 +1,5 @@
 export module m2 {
-    export import mExported = module("mExported");
+    export import mExported = require("mExported");
 
     module Internal_M1 {
         export var c1 = new mExported.me.class1;
@@ -39,7 +39,7 @@ export module m2 {
         }
     }
 
-    import mNonExported = module("mNonExported");
+    import mNonExported = require("mNonExported");
     module Internal_M3 {
         export var c3 = new mNonExported.mne.class1;
         export function f3() {

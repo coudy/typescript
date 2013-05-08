@@ -1,6 +1,6 @@
 module myModule {
  
- import foo = module("test2");
+ import foo = require("test2");
 
  console.log(foo.$);
 

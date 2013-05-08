@@ -1,6 +1,6 @@
 declare module "math" 
 {
-    import blah = module("blah");
+    import blah = require("blah");
     export function baz();
 }
 

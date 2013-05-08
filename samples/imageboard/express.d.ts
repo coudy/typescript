@@ -3,7 +3,7 @@
 declare module "express" {
     export function createServer(): ExpressServer;
     export function static(path: string): any;
-    import http = module("http");
+    import http = require("http");
     export var listen;
 
    // Connect middleware

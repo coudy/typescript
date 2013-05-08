@@ -2,7 +2,7 @@ export module m1 {
 }
 
 module m2 {
-    import mExported = module("mExported");
+    import mExported = require("mExported");
     export var c1 = new mExported.me.class1;
     export function f1() {
         return new mExported.me.class1();
@@ -21,7 +21,7 @@ module m2 {
     class class2 extends mExported.me.class1 {
     }
 
-    import mNonExported = module("mNonExported");
+    import mNonExported = require("mNonExported");
     export var c3 = new mNonExported.mne.class1;
     export function f3() {
         return new mNonExported.mne.class1();

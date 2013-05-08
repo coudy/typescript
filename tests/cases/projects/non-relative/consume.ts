@@ -1,6 +1,6 @@
-import mod = module("decl");
-import x = module("lib/foo/a");
-import y = module("lib/bar/a");
+import mod = require("decl");
+import x = require("lib/foo/a");
+import y = require("lib/bar/a");
 
 x.hello();
 y.hello();

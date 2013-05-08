@@ -70,6 +70,7 @@ module TypeScript {
         Enum_name_cannot_be__0_,
         Module_name_cannot_be__0_,
         Enum_member_must_have_initializer,
+        _module_______is_deprecated__Use__require_______instead,
 
 
 

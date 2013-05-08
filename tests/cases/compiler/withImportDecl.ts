@@ -38,6 +38,6 @@ declare module "m1" {
     }
 }
 
-import m3 = module ("m1");
+import m3 = require("m1");
 
 var b = new m3.A();

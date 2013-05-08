@@ -1,4 +1,4 @@
-import A = module("A");
+import A = require("A");
  
 export class B extends A.A { 
     constructor () { 

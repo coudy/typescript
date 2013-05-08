@@ -59,7 +59,7 @@ var definitions:ITypeDefinition[] = [
         name: 'ExternalModuleReferenceSyntax',
         baseType: 'ModuleReferenceSyntax',
         children: [
-            <any>{ name: 'moduleKeyword', isToken: true },
+            <any>{ name: 'moduleOrRequireKeyword', isToken: true, tokenKinds: ['ModuleKeyword', 'RequireKeyword'] },
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'stringLiteral', isToken: true },
             <any>{ name: 'closeParenToken', isToken: true }
@@ -2679,6 +2679,14 @@ function generateWalker(): string {
     return result;
 }
 
+function firstEnumName(e: any, value: number) {
+    for (var name in e) {
+        if (e[name] === value) {
+            return name;
+        }
+    }
+}
+
 function generateKeywordCondition(keywords: { text: string; kind: TypeScript.SyntaxKind; }[], currentCharacter: number, indent: string): string {
     var length = keywords[0].text.length;
 
@@ -2689,7 +2697,7 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
         var keyword = keywords[0];
         
         if (currentCharacter === length) {
-            return indent + "return SyntaxKind." + (<any>TypeScript.SyntaxKind)._map[keyword.kind] + ";\r\n";
+            return indent + "return SyntaxKind." + firstEnumName(TypeScript.SyntaxKind, keyword.kind) + ";\r\n";
         }
 
         var keywordText = keywords[0].text;
@@ -2704,7 +2712,7 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
 
-        result += ") ? SyntaxKind." + (<any>TypeScript.SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
+        result += ") ? SyntaxKind." + firstEnumName(TypeScript.SyntaxKind, keyword.kind) + " : SyntaxKind.IdentifierName;\r\n";
     }
     else {
         index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);

@@ -41,6 +41,7 @@ module TypeScript.SyntaxFacts {
         "private": SyntaxKind.PrivateKeyword,
         "protected": SyntaxKind.ProtectedKeyword,
         "public": SyntaxKind.PublicKeyword,
+        "require": SyntaxKind.RequireKeyword,
         "return": SyntaxKind.ReturnKeyword,
         "set": SyntaxKind.SetKeyword,
         "static": SyntaxKind.StaticKeyword,

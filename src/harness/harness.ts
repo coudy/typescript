@@ -1650,9 +1650,11 @@ module Harness {
 
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
+            var compilationSettings = new TypeScript.CompilationSettings();
+            var parseOptions = TypeScript.getParseOptions(compilationSettings);
             return TypeScript.SyntaxTreeToAstVisitor.visit(
-                TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5),
-                fileName, new TypeScript.CompilationSettings());
+                TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5, parseOptions),
+                fileName, compilationSettings);
         }
 
         /** Parse a file on disk given its fileName */

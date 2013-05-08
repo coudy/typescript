@@ -26,6 +26,8 @@ module TypeScript {
         public exec = false;
         public resolve = true;
         public disallowBool = false;
+        public allowAutomaticSemicolonInsertion = true;
+        public allowModuleKeywordInExternalModuleReference = true;
 
         public useDefaultLib = true;
 
@@ -121,7 +123,7 @@ module TypeScript {
                     if (token.tokenKind === SyntaxKind.EqualsToken) {
                         token = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
-                        if (token.tokenKind === SyntaxKind.ModuleKeyword) {
+                        if (token.tokenKind === SyntaxKind.ModuleKeyword || token.tokenKind === SyntaxKind.RequireKeyword) {
                             token = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
                             if (token.tokenKind === SyntaxKind.OpenParenToken) {
@@ -212,6 +214,10 @@ module TypeScript {
 
         scannerDiagnostics.length = 0;
         return { settings:settings, referencedFiles: referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib };
+    }
+
+    export function getParseOptions(settings: CompilationSettings): ParseOptions {
+        return new ParseOptions(settings.allowAutomaticSemicolonInsertion, settings.allowModuleKeywordInExternalModuleReference);
     }
 
 } // Tools

@@ -1,4 +1,4 @@
-import m1 = module("m1");
+import m1 = require("m1");
 export var a1 = 10;
 export class c1 {
     public p1: number;

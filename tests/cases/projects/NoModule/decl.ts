@@ -1,10 +1,10 @@
-import modErr  = module("./foo/bar.js");
-import modErr1 = module("baz");
-import modErr2 = module("./baz");
+import modErr  = require("./foo/bar.js");
+import modErr1 = require("baz");
+import modErr2 = require("./baz");
 
-//import modErr1 = module("\bar");
+//import modErr1 = require("\bar");
 
-//import mod  = module("./foo/bar");
-//import mod1 = module("../module paths/foo/bar");
-//import mod2 = module("foo/bar");
+//import mod  = require("./foo/bar");
+//import mod1 = require("../module paths/foo/bar");
+//import mod2 = require("foo/bar");
 

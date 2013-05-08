@@ -1,4 +1,4 @@
-import mod = module("decl");
+import mod = require("decl");
 var str = mod.call();
 
 declare function fail();

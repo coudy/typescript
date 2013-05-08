@@ -6,68 +6,88 @@ var TypeScript;
         ArrayUtilities.isArray = function (value) {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         };
+
         ArrayUtilities.sequenceEquals = function (array1, array2, equals) {
             if (array1 === array2) {
                 return true;
             }
+
             if (array1 === null || array2 === null) {
                 return false;
             }
+
             if (array1.length !== array2.length) {
                 return false;
             }
+
             for (var i = 0, n = array1.length; i < n; i++) {
                 if (!equals(array1[i], array2[i])) {
                     return false;
                 }
             }
+
             return true;
         };
+
         ArrayUtilities.contains = function (array, value) {
             for (var i = 0; i < array.length; i++) {
                 if (array[i] === value) {
                     return true;
                 }
             }
+
             return false;
         };
+
         ArrayUtilities.groupBy = function (array, func) {
             var result = {};
+
             for (var i = 0, n = array.length; i < n; i++) {
                 var v = array[i];
                 var k = func(v);
+
                 var list = result[k] || [];
                 list.push(v);
                 result[k] = list;
             }
+
             return result;
         };
+
         ArrayUtilities.min = function (array, func) {
             var min = func(array[0]);
+
             for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
                 if (next < min) {
                     min = next;
                 }
             }
+
             return min;
         };
+
         ArrayUtilities.max = function (array, func) {
             var max = func(array[0]);
+
             for (var i = 1; i < array.length; i++) {
                 var next = func(array[i]);
                 if (next > max) {
                     max = next;
                 }
             }
+
             return max;
         };
+
         ArrayUtilities.last = function (array) {
             if (array.length === 0) {
                 throw TypeScript.Errors.argumentOutOfRange('array');
             }
+
             return array[array.length - 1];
         };
+
         ArrayUtilities.firstOrDefault = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];
@@ -75,15 +95,20 @@ var TypeScript;
                     return value;
                 }
             }
+
             return null;
         };
+
         ArrayUtilities.sum = function (array, func) {
             var result = 0;
+
             for (var i = 0, n = array.length; i < n; i++) {
                 result += func(array[i]);
             }
+
             return result;
         };
+
         ArrayUtilities.whereNotNull = function (array) {
             var result = [];
             for (var i = 0; i < array.length; i++) {
@@ -92,46 +117,60 @@ var TypeScript;
                     result.push(value);
                 }
             }
+
             return result;
         };
+
         ArrayUtilities.select = function (values, func) {
             var result = [];
+
             for (var i = 0; i < values.length; i++) {
                 result.push(func(values[i]));
             }
+
             return result;
         };
+
         ArrayUtilities.where = function (values, func) {
             var result = [];
+
             for (var i = 0; i < values.length; i++) {
                 if (func(values[i])) {
                     result.push(values[i]);
                 }
             }
+
             return result;
         };
+
         ArrayUtilities.any = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (func(array[i])) {
                     return true;
                 }
             }
+
             return false;
         };
+
         ArrayUtilities.all = function (array, func) {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (!func(array[i])) {
                     return false;
                 }
             }
+
             return true;
         };
+
         ArrayUtilities.binarySearch = function (array, value) {
             var low = 0;
             var high = array.length - 1;
+
             while (low <= high) {
                 var middle = low + ((high - low) >> 1);
                 var midValue = array[middle];
+
                 if (midValue === value) {
                     return middle;
                 } else if (midValue > value) {
@@ -140,21 +179,26 @@ var TypeScript;
                     low = middle + 1;
                 }
             }
+
             return ~low;
         };
+
         ArrayUtilities.createArray = function (length, defaultvalue) {
             var result = [];
             for (var i = 0; i < length; i++) {
                 result.push(defaultvalue);
             }
+
             return result;
         };
+
         ArrayUtilities.grow = function (array, length, defaultValue) {
             var count = length - array.length;
             for (var i = 0; i < count; i++) {
                 array.push(defaultValue);
             }
         };
+
         ArrayUtilities.copy = function (sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
             for (var i = 0; i < length; i++) {
                 destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
@@ -167,9 +211,8 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (Constants) {
-        Constants._map = [];
-        Constants.Max31BitInteger = 1073741823;
-        Constants.Min31BitInteger = -1073741824;
+        Constants[Constants["Max31BitInteger"] = 1073741823] = "Max31BitInteger";
+        Constants[Constants["Min31BitInteger"] = -1073741824] = "Min31BitInteger";
     })(TypeScript.Constants || (TypeScript.Constants = {}));
     var Constants = TypeScript.Constants;
 })(TypeScript || (TypeScript = {}));
@@ -183,11 +226,13 @@ var TypeScript;
                 throw new Error("Contract violated. False expression.");
             }
         };
+
         Contract.throwIfFalse = function (expression) {
             if (!expression) {
                 throw new Error("Contract violated. False expression.");
             }
         };
+
         Contract.throwIfNull = function (value) {
             if (value === null) {
                 throw new Error("Contract violated. Null value.");
@@ -214,522 +259,282 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (DiagnosticCategory) {
-        DiagnosticCategory._map = [];
-        DiagnosticCategory._map[0] = "Warning";
-        DiagnosticCategory.Warning = 0;
-        DiagnosticCategory._map[1] = "Error";
-        DiagnosticCategory.Error = 1;
-        DiagnosticCategory._map[2] = "NoPrefix";
-        DiagnosticCategory.NoPrefix = 2;
+        DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
+        DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
+        DiagnosticCategory[DiagnosticCategory["Message"] = 2] = "Message";
+        DiagnosticCategory[DiagnosticCategory["NoPrefix"] = 3] = "NoPrefix";
     })(TypeScript.DiagnosticCategory || (TypeScript.DiagnosticCategory = {}));
     var DiagnosticCategory = TypeScript.DiagnosticCategory;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     (function (DiagnosticCode) {
-        DiagnosticCode._map = [];
-        DiagnosticCode._map[0] = "error_TS_0__1";
-        DiagnosticCode.error_TS_0__1 = 0;
-        DiagnosticCode._map[1] = "warning_TS_0__1";
-        DiagnosticCode.warning_TS_0__1 = 1;
-        DiagnosticCode._map[2] = "_0__NL__1_TB__2";
-        DiagnosticCode._0__NL__1_TB__2 = 2;
-        DiagnosticCode._map[3] = "_0_TB__1";
-        DiagnosticCode._0_TB__1 = 3;
-        DiagnosticCode._map[4] = "Unrecognized_escape_sequence";
-        DiagnosticCode.Unrecognized_escape_sequence = 4;
-        DiagnosticCode._map[5] = "Unexpected_character_0";
-        DiagnosticCode.Unexpected_character_0 = 5;
-        DiagnosticCode._map[6] = "Missing_closing_quote_character";
-        DiagnosticCode.Missing_closing_quote_character = 6;
-        DiagnosticCode._map[7] = "Identifier_expected";
-        DiagnosticCode.Identifier_expected = 7;
-        DiagnosticCode._map[8] = "_0_keyword_expected";
-        DiagnosticCode._0_keyword_expected = 8;
-        DiagnosticCode._map[9] = "_0_expected";
-        DiagnosticCode._0_expected = 9;
-        DiagnosticCode._map[10] = "Identifier_expected__0__is_a_keyword";
-        DiagnosticCode.Identifier_expected__0__is_a_keyword = 10;
-        DiagnosticCode._map[11] = "Automatic_semicolon_insertion_not_allowed";
-        DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 11;
-        DiagnosticCode._map[12] = "Unexpected_token__0_expected";
-        DiagnosticCode.Unexpected_token__0_expected = 12;
-        DiagnosticCode._map[13] = "Trailing_separator_not_allowed";
-        DiagnosticCode.Trailing_separator_not_allowed = 13;
-        DiagnosticCode._map[14] = "_StarSlash__expected";
-        DiagnosticCode._StarSlash__expected = 14;
-        DiagnosticCode._map[15] = "_public_or_private_modifier_must_precede__static_";
-        DiagnosticCode._public_or_private_modifier_must_precede__static_ = 15;
-        DiagnosticCode._map[16] = "Unexpected_token_";
-        DiagnosticCode.Unexpected_token_ = 16;
-        DiagnosticCode._map[17] = "A_catch_clause_variable_cannot_have_a_type_annotation";
-        DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation = 17;
-        DiagnosticCode._map[18] = "Rest_parameter_must_be_last_in_list";
-        DiagnosticCode.Rest_parameter_must_be_last_in_list = 18;
-        DiagnosticCode._map[19] = "Parameter_cannot_have_question_mark_and_initializer";
-        DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer = 19;
-        DiagnosticCode._map[20] = "Required_parameter_cannot_follow_optional_parameter";
-        DiagnosticCode.Required_parameter_cannot_follow_optional_parameter = 20;
-        DiagnosticCode._map[21] = "Index_signatures_cannot_have_rest_parameters";
-        DiagnosticCode.Index_signatures_cannot_have_rest_parameters = 21;
-        DiagnosticCode._map[22] = "Index_signature_parameter_cannot_have_accessibility_modifierss";
-        DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss = 22;
-        DiagnosticCode._map[23] = "Index_signature_parameter_cannot_have_a_question_mark";
-        DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark = 23;
-        DiagnosticCode._map[24] = "Index_signature_parameter_cannot_have_an_initializer";
-        DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer = 24;
-        DiagnosticCode._map[25] = "Index_signature_must_have_a_type_annotation";
-        DiagnosticCode.Index_signature_must_have_a_type_annotation = 25;
-        DiagnosticCode._map[26] = "Index_signature_parameter_must_have_a_type_annotation";
-        DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation = 26;
-        DiagnosticCode._map[27] = "Index_signature_parameter_type_must_be__string__or__number_";
-        DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_ = 27;
-        DiagnosticCode._map[28] = "_extends__clause_already_seen";
-        DiagnosticCode._extends__clause_already_seen = 28;
-        DiagnosticCode._map[29] = "_extends__clause_must_precede__implements__clause";
-        DiagnosticCode._extends__clause_must_precede__implements__clause = 29;
-        DiagnosticCode._map[30] = "Class_can_only_extend_single_type";
-        DiagnosticCode.Class_can_only_extend_single_type = 30;
-        DiagnosticCode._map[31] = "_implements__clause_already_seen";
-        DiagnosticCode._implements__clause_already_seen = 31;
-        DiagnosticCode._map[32] = "Accessibility_modifier_already_seen";
-        DiagnosticCode.Accessibility_modifier_already_seen = 32;
-        DiagnosticCode._map[33] = "_0__modifier_must_precede__1__modifier";
-        DiagnosticCode._0__modifier_must_precede__1__modifier = 33;
-        DiagnosticCode._map[34] = "_0__modifier_already_seen";
-        DiagnosticCode._0__modifier_already_seen = 34;
-        DiagnosticCode._map[35] = "_0__modifier_cannot_appear_on_a_class_element";
-        DiagnosticCode._0__modifier_cannot_appear_on_a_class_element = 35;
-        DiagnosticCode._map[36] = "Interface_declaration_cannot_have__implements__clause";
-        DiagnosticCode.Interface_declaration_cannot_have__implements__clause = 36;
-        DiagnosticCode._map[37] = "Enum_element_must_have_initializer";
-        DiagnosticCode.Enum_element_must_have_initializer = 37;
-        DiagnosticCode._map[38] = "_super__invocation_cannot_have_type_arguments";
-        DiagnosticCode._super__invocation_cannot_have_type_arguments = 38;
-        DiagnosticCode._map[39] = "Non_ambient_modules_cannot_use_quoted_names";
-        DiagnosticCode.Non_ambient_modules_cannot_use_quoted_names = 39;
-        DiagnosticCode._map[40] = "Statements_are_not_allowed_in_ambient_contexts";
-        DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts = 40;
-        DiagnosticCode._map[41] = "Implementations_are_not_allowed_in_ambient_contexts";
-        DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts = 41;
-        DiagnosticCode._map[42] = "_declare__modifier_not_allowed_for_code_already_in_an_ambient_context";
-        DiagnosticCode._declare__modifier_not_allowed_for_code_already_in_an_ambient_context = 42;
-        DiagnosticCode._map[43] = "Initializers_are_not_allowed_in_ambient_contexts";
-        DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts = 43;
-        DiagnosticCode._map[44] = "Overload_and_ambient_signatures_cannot_specify_parameter_properties";
-        DiagnosticCode.Overload_and_ambient_signatures_cannot_specify_parameter_properties = 44;
-        DiagnosticCode._map[45] = "Function_implementation_expected";
-        DiagnosticCode.Function_implementation_expected = 45;
-        DiagnosticCode._map[46] = "Constructor_implementation_expected";
-        DiagnosticCode.Constructor_implementation_expected = 46;
-        DiagnosticCode._map[47] = "Function_overload_name_must_be__0_";
-        DiagnosticCode.Function_overload_name_must_be__0_ = 47;
-        DiagnosticCode._map[48] = "_0__modifier_cannot_appear_on_a_module_element";
-        DiagnosticCode._0__modifier_cannot_appear_on_a_module_element = 48;
-        DiagnosticCode._map[49] = "_declare__modifier_cannot_appear_on_an_interface_declaration";
-        DiagnosticCode._declare__modifier_cannot_appear_on_an_interface_declaration = 49;
-        DiagnosticCode._map[50] = "_declare__modifier_required_for_top_level_element";
-        DiagnosticCode._declare__modifier_required_for_top_level_element = 50;
-        DiagnosticCode._map[51] = "_set__accessor_must_have_only_one_parameter";
-        DiagnosticCode._set__accessor_must_have_only_one_parameter = 51;
-        DiagnosticCode._map[52] = "_set__accessor_parameter_cannot_have_accessibility_modifier";
-        DiagnosticCode._set__accessor_parameter_cannot_have_accessibility_modifier = 52;
-        DiagnosticCode._map[53] = "_set__accessor_parameter_cannot_be_optional";
-        DiagnosticCode._set__accessor_parameter_cannot_be_optional = 53;
-        DiagnosticCode._map[54] = "_set__accessor_parameter_cannot_have_initializer";
-        DiagnosticCode._set__accessor_parameter_cannot_have_initializer = 54;
-        DiagnosticCode._map[55] = "_set__accessor_cannot_have_rest_parameter";
-        DiagnosticCode._set__accessor_cannot_have_rest_parameter = 55;
-        DiagnosticCode._map[56] = "_get__accessor_cannot_have_parameters";
-        DiagnosticCode._get__accessor_cannot_have_parameters = 56;
-        DiagnosticCode._map[57] = "Rest_parameter_cannot_be_optional";
-        DiagnosticCode.Rest_parameter_cannot_be_optional = 57;
-        DiagnosticCode._map[58] = "Rest_parameter_cannot_have_initializer";
-        DiagnosticCode.Rest_parameter_cannot_have_initializer = 58;
-        DiagnosticCode._map[59] = "Modifiers_cannot_appear_here";
-        DiagnosticCode.Modifiers_cannot_appear_here = 59;
-        DiagnosticCode._map[60] = "Accessors_are_only_available_when_targeting_EcmaScript5_and_higher";
-        DiagnosticCode.Accessors_are_only_available_when_targeting_EcmaScript5_and_higher = 60;
-        DiagnosticCode._map[61] = "A_generic_type_may_not_reference_itself_with_its_own_type_parameters";
-        DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters = 61;
-        DiagnosticCode._map[62] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 62;
-        DiagnosticCode._map[63] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 63;
-        DiagnosticCode._map[64] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 64;
-        DiagnosticCode._map[65] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 65;
-        DiagnosticCode._map[66] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 66;
-        DiagnosticCode._map[67] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 67;
-        DiagnosticCode._map[68] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 68;
-        DiagnosticCode._map[69] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 69;
-        DiagnosticCode._map[70] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 70;
-        DiagnosticCode._map[71] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 71;
-        DiagnosticCode._map[72] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 72;
-        DiagnosticCode._map[73] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 73;
-        DiagnosticCode._map[74] = "Cannot_convert__0__to__1__NL__2";
-        DiagnosticCode.Cannot_convert__0__to__1__NL__2 = 74;
-        DiagnosticCode._map[75] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 75;
-        DiagnosticCode._map[76] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 76;
-        DiagnosticCode._map[77] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 77;
-        DiagnosticCode._map[78] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 78;
-        DiagnosticCode._map[79] = "Accessor_cannot_have_type_parameters";
-        DiagnosticCode.Accessor_cannot_have_type_parameters = 79;
-        DiagnosticCode._map[80] = "Exported_class__0__extends_private_class__1_";
-        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 80;
-        DiagnosticCode._map[81] = "Exported_class__0__implements_private_interface__1_";
-        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 81;
-        DiagnosticCode._map[82] = "Exported_interface__0__extends_private_interface__1_";
-        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 82;
-        DiagnosticCode._map[83] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__extends_class_from_inaccessible_module__1_ = 83;
-        DiagnosticCode._map[84] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_class__0__implements_interface_from_inaccessible_module__1_ = 84;
-        DiagnosticCode._map[85] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
-        DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_ = 85;
-        DiagnosticCode._map[86] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 86;
-        DiagnosticCode._map[87] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 87;
-        DiagnosticCode._map[88] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 88;
-        DiagnosticCode._map[89] = "Exported_variable__0__has_or_is_using_private_type__1_";
-        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 89;
-        DiagnosticCode._map[90] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 90;
-        DiagnosticCode._map[91] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 91;
-        DiagnosticCode._map[92] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 92;
-        DiagnosticCode._map[93] = "Exported_variable__0__is_using_inaccessible_module__1_";
-        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 93;
-        DiagnosticCode._map[94] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 94;
-        DiagnosticCode._map[95] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 95;
-        DiagnosticCode._map[96] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 96;
-        DiagnosticCode._map[97] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 97;
-        DiagnosticCode._map[98] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 98;
-        DiagnosticCode._map[99] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 99;
-        DiagnosticCode._map[100] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 100;
-        DiagnosticCode._map[101] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 101;
-        DiagnosticCode._map[102] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 102;
-        DiagnosticCode._map[103] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 103;
-        DiagnosticCode._map[104] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 104;
-        DiagnosticCode._map[105] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 105;
-        DiagnosticCode._map[106] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 106;
-        DiagnosticCode._map[107] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 107;
-        DiagnosticCode._map[108] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 108;
-        DiagnosticCode._map[109] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 109;
-        DiagnosticCode._map[110] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 110;
-        DiagnosticCode._map[111] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
-        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 111;
-        DiagnosticCode._map[112] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 112;
-        DiagnosticCode._map[113] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 113;
-        DiagnosticCode._map[114] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 114;
-        DiagnosticCode._map[115] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 115;
-        DiagnosticCode._map[116] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 116;
-        DiagnosticCode._map[117] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 117;
-        DiagnosticCode._map[118] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 118;
-        DiagnosticCode._map[119] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 119;
-        DiagnosticCode._map[120] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
-        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 120;
-        DiagnosticCode._map[121] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 121;
-        DiagnosticCode._map[122] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 122;
-        DiagnosticCode._map[123] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 123;
-        DiagnosticCode._map[124] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 124;
-        DiagnosticCode._map[125] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 125;
-        DiagnosticCode._map[126] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 126;
-        DiagnosticCode._map[127] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 127;
-        DiagnosticCode._map[128] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 128;
-        DiagnosticCode._map[129] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
-        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 129;
-        DiagnosticCode._map[130] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
-        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 130;
-        DiagnosticCode._map[131] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
-        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 131;
-        DiagnosticCode._map[132] = "Multiple_constructor_implementations_are_not_allowed";
-        DiagnosticCode.Multiple_constructor_implementations_are_not_allowed = 132;
-        DiagnosticCode._map[133] = "Unable_to_resolve_external_module__0_";
-        DiagnosticCode.Unable_to_resolve_external_module__0_ = 133;
-        DiagnosticCode._map[134] = "Module_cannot_be_aliased_to_a_non_module_type";
-        DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type = 134;
-        DiagnosticCode._map[135] = "A_class_may_only_extend_another_class";
-        DiagnosticCode.A_class_may_only_extend_another_class = 135;
-        DiagnosticCode._map[136] = "A_class_may_only_implement_another_class_or_interface";
-        DiagnosticCode.A_class_may_only_implement_another_class_or_interface = 136;
-        DiagnosticCode._map[137] = "An_interface_may_only_extend_another_class_or_interface";
-        DiagnosticCode.An_interface_may_only_extend_another_class_or_interface = 137;
-        DiagnosticCode._map[138] = "An_interface_cannot_implement_another_type";
-        DiagnosticCode.An_interface_cannot_implement_another_type = 138;
-        DiagnosticCode._map[139] = "Unable_to_resolve_type";
-        DiagnosticCode.Unable_to_resolve_type = 139;
-        DiagnosticCode._map[140] = "Unable_to_resolve_type_of__0_";
-        DiagnosticCode.Unable_to_resolve_type_of__0_ = 140;
-        DiagnosticCode._map[141] = "Unable_to_resolve_type_parameter_constraint";
-        DiagnosticCode.Unable_to_resolve_type_parameter_constraint = 141;
-        DiagnosticCode._map[142] = "Type_parameter_constraint_cannot_be_a_primitive_type";
-        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type = 142;
-        DiagnosticCode._map[143] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target = 143;
-        DiagnosticCode._map[144] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
-        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0 = 144;
-        DiagnosticCode._map[145] = "Invalid__new__expression";
-        DiagnosticCode.Invalid__new__expression = 145;
-        DiagnosticCode._map[146] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
-        DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type = 146;
-        DiagnosticCode._map[147] = "Could_not_select_overload_for__new__expression";
-        DiagnosticCode.Could_not_select_overload_for__new__expression = 147;
-        DiagnosticCode._map[148] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
-        DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_ = 148;
-        DiagnosticCode._map[149] = "Could_not_select_overload_for__call__expression";
-        DiagnosticCode.Could_not_select_overload_for__call__expression = 149;
-        DiagnosticCode._map[150] = "Unable_to_invoke_type_with_no_call_signatures";
-        DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures = 150;
-        DiagnosticCode._map[151] = "Calls_to__super__are_only_valid_inside_a_class";
-        DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class = 151;
-        DiagnosticCode._map[152] = "Generic_type__0__requires_1_type_argument_s_";
-        DiagnosticCode.Generic_type__0__requires_1_type_argument_s_ = 152;
-        DiagnosticCode._map[153] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
-        DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_ = 153;
-        DiagnosticCode._map[154] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
-        DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements = 154;
-        DiagnosticCode._map[155] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
-        DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_ = 155;
-        DiagnosticCode._map[156] = "The_property__0__does_not_exist_on_value_of_type__1__";
-        DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__ = 156;
-        DiagnosticCode._map[157] = "Could_not_find_symbol__0_";
-        DiagnosticCode.Could_not_find_symbol__0_ = 157;
-        DiagnosticCode._map[158] = "_get__and__set__accessor_must_have_the_same_type";
-        DiagnosticCode._get__and__set__accessor_must_have_the_same_type = 158;
-        DiagnosticCode._map[159] = "_this__cannot_be_referenced_in_current_location";
-        DiagnosticCode._this__cannot_be_referenced_in_current_location = 159;
-        DiagnosticCode._map[160] = "Use_of_deprecated__bool__type__Use__boolean__instead";
-        DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead = 160;
-        DiagnosticCode._map[161] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Class__0__is_recursively_referenced_as_a_base_type_of_itself = 161;
-        DiagnosticCode._map[162] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
-        DiagnosticCode.Interface__0__is_recursively_referenced_as_a_base_type_of_itself = 162;
-        DiagnosticCode._map[163] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
-        DiagnosticCode._super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class = 163;
-        DiagnosticCode._map[164] = "_super__cannot_be_referenced_in_non_derived_classes";
-        DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes = 164;
-        DiagnosticCode._map[165] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
-        DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties = 165;
-        DiagnosticCode._map[166] = "Constructors_for_derived_classes_must_contain_a__super__call";
-        DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call = 166;
-        DiagnosticCode._map[167] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
-        DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors = 167;
-        DiagnosticCode._map[168] = "_0_1__is_inaccessible";
-        DiagnosticCode._0_1__is_inaccessible = 168;
-        DiagnosticCode._map[169] = "_this__cannot_be_referenced_within_module_bodies";
-        DiagnosticCode._this__cannot_be_referenced_within_module_bodies = 169;
-        DiagnosticCode._map[170] = "_this__must_only_be_used_inside_a_function_or_script_context";
-        DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context = 170;
-        DiagnosticCode._map[171] = "Invalid__addition__expression___types_do_not_agree";
-        DiagnosticCode.Invalid__addition__expression___types_do_not_agree = 171;
-        DiagnosticCode._map[172] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 172;
-        DiagnosticCode._map[173] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type = 173;
-        DiagnosticCode._map[174] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
-        DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type = 174;
-        DiagnosticCode._map[175] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation = 175;
-        DiagnosticCode._map[176] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
-        DiagnosticCode.Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_ = 176;
-        DiagnosticCode._map[177] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter = 177;
-        DiagnosticCode._map[178] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
-        DiagnosticCode.The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_ = 178;
-        DiagnosticCode._map[179] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 179;
-        DiagnosticCode._map[180] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
-        DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter = 180;
-        DiagnosticCode._map[181] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
-        DiagnosticCode.The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type = 181;
-        DiagnosticCode._map[182] = "Setters_cannot_return_a_value";
-        DiagnosticCode.Setters_cannot_return_a_value = 182;
-        DiagnosticCode._map[183] = "Tried_to_set_variable_type_to_uninitialized_module_type";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type = 183;
-        DiagnosticCode._map[184] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
-        DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__ = 184;
-        DiagnosticCode._map[185] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function__0__declared_a_non_void_return_type__but_has_no_return_expression = 185;
-        DiagnosticCode._map[186] = "Getters_must_return_a_value";
-        DiagnosticCode.Getters_must_return_a_value = 186;
-        DiagnosticCode._map[187] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
-        DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility = 187;
-        DiagnosticCode._map[188] = "Invalid_left_hand_side_of_assignment_expression";
-        DiagnosticCode.Invalid_left_hand_side_of_assignment_expression = 188;
-        DiagnosticCode._map[189] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
-        DiagnosticCode.Function_declared_a_non_void_return_type__but_has_no_return_expression = 189;
-        DiagnosticCode._map[190] = "Cannot_resolve_return_type_reference";
-        DiagnosticCode.Cannot_resolve_return_type_reference = 190;
-        DiagnosticCode._map[191] = "Constructors_cannot_have_a_return_type_of__void_";
-        DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_ = 191;
-        DiagnosticCode._map[192] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
-        DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_ = 192;
-        DiagnosticCode._map[193] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
-        DiagnosticCode.All_symbols_within_a__with__block_will_be_resolved_to__any__ = 193;
-        DiagnosticCode._map[194] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
-        DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module = 194;
-        DiagnosticCode._map[195] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_interface__1__but_does_not_implement_it__NL__2 = 195;
-        DiagnosticCode._map[196] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
-        DiagnosticCode.Class__0__declares_class__1__but_does_not_implement_it__NL__2 = 196;
-        DiagnosticCode._map[197] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer = 197;
-        DiagnosticCode._map[198] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
-        DiagnosticCode._this__cannot_be_referenced_in_initializers_in_a_class_body = 198;
-        DiagnosticCode._map[199] = "Class__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Class__0__cannot_extend_class__1__NL__2 = 199;
-        DiagnosticCode._map[200] = "Interface__0__cannot_extend_class__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_class__1__NL__2 = 200;
-        DiagnosticCode._map[201] = "Interface__0__cannot_extend_interface__1__NL__2";
-        DiagnosticCode.Interface__0__cannot_extend_interface__1__NL__2 = 201;
-        DiagnosticCode._map[202] = "Duplicate_overload_signature_for__0_";
-        DiagnosticCode.Duplicate_overload_signature_for__0_ = 202;
-        DiagnosticCode._map[203] = "Duplicate_constructor_overload_signature";
-        DiagnosticCode.Duplicate_constructor_overload_signature = 203;
-        DiagnosticCode._map[204] = "Duplicate_overload_call_signature";
-        DiagnosticCode.Duplicate_overload_call_signature = 204;
-        DiagnosticCode._map[205] = "Duplicate_overload_construct_signature";
-        DiagnosticCode.Duplicate_overload_construct_signature = 205;
-        DiagnosticCode._map[206] = "Overload_signature_is_not_compatible_with_function_definition";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition = 206;
-        DiagnosticCode._map[207] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
-        DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition__NL__0 = 207;
-        DiagnosticCode._map[208] = "Overload_signatures_must_all_be_public_or_private";
-        DiagnosticCode.Overload_signatures_must_all_be_public_or_private = 208;
-        DiagnosticCode._map[209] = "Overload_signatures_must_all_be_exported_or_local";
-        DiagnosticCode.Overload_signatures_must_all_be_exported_or_local = 209;
-        DiagnosticCode._map[210] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
-        DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient = 210;
-        DiagnosticCode._map[211] = "Overload_signatures_must_all_be_optional_or_required";
-        DiagnosticCode.Overload_signatures_must_all_be_optional_or_required = 211;
-        DiagnosticCode._map[212] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
-        DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature = 212;
-        DiagnosticCode._map[213] = "_this__cannot_be_referenced_in_constructor_arguments";
-        DiagnosticCode._this__cannot_be_referenced_in_constructor_arguments = 213;
-        DiagnosticCode._map[214] = "Static_member_cannot_be_accessed_off_an_instance_variable";
-        DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable = 214;
-        DiagnosticCode._map[215] = "Instance_member_cannot_be_accessed_off_a_class";
-        DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class = 215;
-        DiagnosticCode._map[216] = "Untyped_function_calls_may_not_accept_type_arguments";
-        DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments = 216;
-        DiagnosticCode._map[217] = "Non_generic_functions_may_not_accept_type_arguments";
-        DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments = 217;
-        DiagnosticCode._map[218] = "Static_methods_cannot_reference_class_type_parameters";
-        DiagnosticCode.Static_methods_cannot_reference_class_type_parameters = 218;
-        DiagnosticCode._map[219] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___ = 219;
-        DiagnosticCode._map[220] = "Rest_parameters_must_be_array_types";
-        DiagnosticCode.Rest_parameters_must_be_array_types = 220;
-        DiagnosticCode._map[221] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode.Type__0__is_missing_property__1__from_type__2_ = 221;
-        DiagnosticCode._map[222] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible = 222;
-        DiagnosticCode._map[223] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 = 223;
-        DiagnosticCode._map[224] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ = 224;
-        DiagnosticCode._map[225] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode.Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ = 225;
-        DiagnosticCode._map[226] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode.Types__0__and__1__define_property__2__as_private = 226;
-        DiagnosticCode._map[227] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible = 227;
-        DiagnosticCode._map[228] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2 = 228;
-        DiagnosticCode._map[229] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one = 229;
-        DiagnosticCode._map[230] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible = 230;
-        DiagnosticCode._map[231] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 = 231;
-        DiagnosticCode._map[232] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one = 232;
-        DiagnosticCode._map[233] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible = 233;
-        DiagnosticCode._map[234] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2 = 234;
-        DiagnosticCode._map[235] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode.Call_signature_expects__0__or_fewer_parameters = 235;
-        DiagnosticCode._map[236] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ = 236;
-        DiagnosticCode._map[237] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function = 237;
-        DiagnosticCode._map[238] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode.Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function = 238;
-        DiagnosticCode._map[239] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor = 239;
-        DiagnosticCode._map[240] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode.Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property = 240;
-        DiagnosticCode._map[241] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible = 241;
-        DiagnosticCode._map[242] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
-        DiagnosticCode.Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 = 242;
-        DiagnosticCode._map[243] = "Current_host_does_not_support__w_atch_option";
-        DiagnosticCode.Current_host_does_not_support__w_atch_option = 243;
-        DiagnosticCode._map[244] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation = 244;
-        DiagnosticCode._map[245] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation = 245;
-        DiagnosticCode._map[246] = "Could_not_find_file___0_";
-        DiagnosticCode.Could_not_find_file___0_ = 246;
-        DiagnosticCode._map[247] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode.Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed = 247;
-        DiagnosticCode._map[248] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode.A_file_cannot_have_a_reference_itself = 248;
-        DiagnosticCode._map[249] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode.Cannot_resolve_referenced_file___0_ = 249;
-        DiagnosticCode._map[250] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode.Cannot_resolve_imported_file___0_ = 250;
+        DiagnosticCode[DiagnosticCode["error_TS_0__1"] = 0] = "error_TS_0__1";
+        DiagnosticCode[DiagnosticCode["warning_TS_0__1"] = 1] = "warning_TS_0__1";
+
+        DiagnosticCode[DiagnosticCode["_0__NL__1_TB__2"] = 2] = "_0__NL__1_TB__2";
+        DiagnosticCode[DiagnosticCode["_0_TB__1"] = 3] = "_0_TB__1";
+
+        DiagnosticCode[DiagnosticCode["Unrecognized_escape_sequence"] = 4] = "Unrecognized_escape_sequence";
+        DiagnosticCode[DiagnosticCode["Unexpected_character_0"] = 5] = "Unexpected_character_0";
+        DiagnosticCode[DiagnosticCode["Missing_closing_quote_character"] = 6] = "Missing_closing_quote_character";
+        DiagnosticCode[DiagnosticCode["Identifier_expected"] = 7] = "Identifier_expected";
+        DiagnosticCode[DiagnosticCode["_0_keyword_expected"] = 8] = "_0_keyword_expected";
+        DiagnosticCode[DiagnosticCode["_0_expected"] = 9] = "_0_expected";
+        DiagnosticCode[DiagnosticCode["Identifier_expected__0__is_a_keyword"] = 10] = "Identifier_expected__0__is_a_keyword";
+        DiagnosticCode[DiagnosticCode["Automatic_semicolon_insertion_not_allowed"] = 11] = "Automatic_semicolon_insertion_not_allowed";
+        DiagnosticCode[DiagnosticCode["Unexpected_token__0_expected"] = 12] = "Unexpected_token__0_expected";
+        DiagnosticCode[DiagnosticCode["Trailing_separator_not_allowed"] = 13] = "Trailing_separator_not_allowed";
+        DiagnosticCode[DiagnosticCode["_StarSlash__expected"] = 14] = "_StarSlash__expected";
+        DiagnosticCode[DiagnosticCode["_public_or_private_modifier_must_precede__static_"] = 15] = "_public_or_private_modifier_must_precede__static_";
+        DiagnosticCode[DiagnosticCode["Unexpected_token_"] = 16] = "Unexpected_token_";
+        DiagnosticCode[DiagnosticCode["A_catch_clause_variable_cannot_have_a_type_annotation"] = 17] = "A_catch_clause_variable_cannot_have_a_type_annotation";
+        DiagnosticCode[DiagnosticCode["Rest_parameter_must_be_last_in_list"] = 18] = "Rest_parameter_must_be_last_in_list";
+        DiagnosticCode[DiagnosticCode["Parameter_cannot_have_question_mark_and_initializer"] = 19] = "Parameter_cannot_have_question_mark_and_initializer";
+        DiagnosticCode[DiagnosticCode["Required_parameter_cannot_follow_optional_parameter"] = 20] = "Required_parameter_cannot_follow_optional_parameter";
+        DiagnosticCode[DiagnosticCode["Index_signatures_cannot_have_rest_parameters"] = 21] = "Index_signatures_cannot_have_rest_parameters";
+        DiagnosticCode[DiagnosticCode["Index_signature_parameter_cannot_have_accessibility_modifiers"] = 22] = "Index_signature_parameter_cannot_have_accessibility_modifiers";
+        DiagnosticCode[DiagnosticCode["Index_signature_parameter_cannot_have_a_question_mark"] = 23] = "Index_signature_parameter_cannot_have_a_question_mark";
+        DiagnosticCode[DiagnosticCode["Index_signature_parameter_cannot_have_an_initializer"] = 24] = "Index_signature_parameter_cannot_have_an_initializer";
+        DiagnosticCode[DiagnosticCode["Index_signature_must_have_a_type_annotation"] = 25] = "Index_signature_must_have_a_type_annotation";
+        DiagnosticCode[DiagnosticCode["Index_signature_parameter_must_have_a_type_annotation"] = 26] = "Index_signature_parameter_must_have_a_type_annotation";
+        DiagnosticCode[DiagnosticCode["Index_signature_parameter_type_must_be__string__or__number_"] = 27] = "Index_signature_parameter_type_must_be__string__or__number_";
+        DiagnosticCode[DiagnosticCode["_extends__clause_already_seen"] = 28] = "_extends__clause_already_seen";
+        DiagnosticCode[DiagnosticCode["_extends__clause_must_precede__implements__clause"] = 29] = "_extends__clause_must_precede__implements__clause";
+        DiagnosticCode[DiagnosticCode["Class_can_only_extend_single_type"] = 30] = "Class_can_only_extend_single_type";
+        DiagnosticCode[DiagnosticCode["_implements__clause_already_seen"] = 31] = "_implements__clause_already_seen";
+        DiagnosticCode[DiagnosticCode["Accessibility_modifier_already_seen"] = 32] = "Accessibility_modifier_already_seen";
+        DiagnosticCode[DiagnosticCode["_0__modifier_must_precede__1__modifier"] = 33] = "_0__modifier_must_precede__1__modifier";
+        DiagnosticCode[DiagnosticCode["_0__modifier_already_seen"] = 34] = "_0__modifier_already_seen";
+        DiagnosticCode[DiagnosticCode["_0__modifier_cannot_appear_on_a_class_element"] = 35] = "_0__modifier_cannot_appear_on_a_class_element";
+        DiagnosticCode[DiagnosticCode["Interface_declaration_cannot_have__implements__clause"] = 36] = "Interface_declaration_cannot_have__implements__clause";
+        DiagnosticCode[DiagnosticCode["_super__invocation_cannot_have_type_arguments"] = 37] = "_super__invocation_cannot_have_type_arguments";
+        DiagnosticCode[DiagnosticCode["Non_ambient_modules_cannot_use_quoted_names"] = 38] = "Non_ambient_modules_cannot_use_quoted_names";
+        DiagnosticCode[DiagnosticCode["Statements_are_not_allowed_in_ambient_contexts"] = 39] = "Statements_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode[DiagnosticCode["Implementations_are_not_allowed_in_ambient_contexts"] = 40] = "Implementations_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode[DiagnosticCode["_declare__modifier_not_allowed_for_code_already_in_an_ambient_context"] = 41] = "_declare__modifier_not_allowed_for_code_already_in_an_ambient_context";
+        DiagnosticCode[DiagnosticCode["Initializers_are_not_allowed_in_ambient_contexts"] = 42] = "Initializers_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode[DiagnosticCode["Overload_and_ambient_signatures_cannot_specify_parameter_properties"] = 43] = "Overload_and_ambient_signatures_cannot_specify_parameter_properties";
+        DiagnosticCode[DiagnosticCode["Function_implementation_expected"] = 44] = "Function_implementation_expected";
+        DiagnosticCode[DiagnosticCode["Constructor_implementation_expected"] = 45] = "Constructor_implementation_expected";
+        DiagnosticCode[DiagnosticCode["Function_overload_name_must_be__0_"] = 46] = "Function_overload_name_must_be__0_";
+        DiagnosticCode[DiagnosticCode["_0__modifier_cannot_appear_on_a_module_element"] = 47] = "_0__modifier_cannot_appear_on_a_module_element";
+        DiagnosticCode[DiagnosticCode["_declare__modifier_cannot_appear_on_an_interface_declaration"] = 48] = "_declare__modifier_cannot_appear_on_an_interface_declaration";
+        DiagnosticCode[DiagnosticCode["_declare__modifier_required_for_top_level_element"] = 49] = "_declare__modifier_required_for_top_level_element";
+        DiagnosticCode[DiagnosticCode["_set__accessor_must_have_only_one_parameter"] = 50] = "_set__accessor_must_have_only_one_parameter";
+        DiagnosticCode[DiagnosticCode["_set__accessor_parameter_cannot_have_accessibility_modifier"] = 51] = "_set__accessor_parameter_cannot_have_accessibility_modifier";
+        DiagnosticCode[DiagnosticCode["_set__accessor_parameter_cannot_be_optional"] = 52] = "_set__accessor_parameter_cannot_be_optional";
+        DiagnosticCode[DiagnosticCode["_set__accessor_parameter_cannot_have_initializer"] = 53] = "_set__accessor_parameter_cannot_have_initializer";
+        DiagnosticCode[DiagnosticCode["_set__accessor_cannot_have_rest_parameter"] = 54] = "_set__accessor_cannot_have_rest_parameter";
+        DiagnosticCode[DiagnosticCode["_get__accessor_cannot_have_parameters"] = 55] = "_get__accessor_cannot_have_parameters";
+        DiagnosticCode[DiagnosticCode["Rest_parameter_cannot_be_optional"] = 56] = "Rest_parameter_cannot_be_optional";
+        DiagnosticCode[DiagnosticCode["Rest_parameter_cannot_have_initializer"] = 57] = "Rest_parameter_cannot_have_initializer";
+        DiagnosticCode[DiagnosticCode["Modifiers_cannot_appear_here"] = 58] = "Modifiers_cannot_appear_here";
+        DiagnosticCode[DiagnosticCode["Accessors_are_only_available_when_targeting_EcmaScript5_and_higher"] = 59] = "Accessors_are_only_available_when_targeting_EcmaScript5_and_higher";
+        DiagnosticCode[DiagnosticCode["Class_name_cannot_be__0_"] = 60] = "Class_name_cannot_be__0_";
+        DiagnosticCode[DiagnosticCode["Interface_name_cannot_be__0_"] = 61] = "Interface_name_cannot_be__0_";
+        DiagnosticCode[DiagnosticCode["Enum_name_cannot_be__0_"] = 62] = "Enum_name_cannot_be__0_";
+        DiagnosticCode[DiagnosticCode["Module_name_cannot_be__0_"] = 63] = "Module_name_cannot_be__0_";
+        DiagnosticCode[DiagnosticCode["Enum_member_must_have_initializer"] = 64] = "Enum_member_must_have_initializer";
+        DiagnosticCode[DiagnosticCode["_module_______is_deprecated___Use__require_______instead"] = 65] = "_module_______is_deprecated___Use__require_______instead";
+
+        DiagnosticCode[DiagnosticCode["Duplicate_identifier__0_"] = 66] = "Duplicate_identifier__0_";
+        DiagnosticCode[DiagnosticCode["The_name__0__does_not_exist_in_the_current_scope"] = 67] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode[DiagnosticCode["The_name__0__does_not_refer_to_a_value"] = 68] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode[DiagnosticCode["Keyword__super__can_only_be_used_inside_a_class_instance_method"] = 69] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode[DiagnosticCode["The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer"] = 70] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode[DiagnosticCode["Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__"] = 71] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode[DiagnosticCode["Value_of_type__0__is_not_callable"] = 72] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode[DiagnosticCode["Value_of_type__0__is_not_newable"] = 73] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode[DiagnosticCode["Value_of_type__0__is_not_indexable_by_type__1_"] = 74] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode[DiagnosticCode["Operator__0__cannot_be_applied_to_types__1__and__2_"] = 75] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode[DiagnosticCode["Operator__0__cannot_be_applied_to_types__1__and__2__3"] = 76] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode[DiagnosticCode["Cannot_convert__0__to__1_"] = 77] = "Cannot_convert__0__to__1_";
+        DiagnosticCode[DiagnosticCode["Cannot_convert__0__to__1__NL__2"] = 78] = "Cannot_convert__0__to__1__NL__2";
+        DiagnosticCode[DiagnosticCode["Expected_var__class__interface__or_module"] = 79] = "Expected_var__class__interface__or_module";
+        DiagnosticCode[DiagnosticCode["Operator__0__cannot_be_applied_to_type__1_"] = 80] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode[DiagnosticCode["Getter__0__already_declared"] = 81] = "Getter__0__already_declared";
+        DiagnosticCode[DiagnosticCode["Setter__0__already_declared"] = 82] = "Setter__0__already_declared";
+        DiagnosticCode[DiagnosticCode["Accessor_cannot_have_type_parameters"] = 83] = "Accessor_cannot_have_type_parameters";
+        DiagnosticCode[DiagnosticCode["Exported_class__0__extends_private_class__1_"] = 84] = "Exported_class__0__extends_private_class__1_";
+        DiagnosticCode[DiagnosticCode["Exported_class__0__implements_private_interface__1_"] = 85] = "Exported_class__0__implements_private_interface__1_";
+        DiagnosticCode[DiagnosticCode["Exported_interface__0__extends_private_interface__1_"] = 86] = "Exported_interface__0__extends_private_interface__1_";
+        DiagnosticCode[DiagnosticCode["Exported_class__0__extends_class_from_inaccessible_module__1_"] = 87] = "Exported_class__0__extends_class_from_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Exported_class__0__implements_interface_from_inaccessible_module__1_"] = 88] = "Exported_class__0__implements_interface_from_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Exported_interface__0__extends_interface_from_inaccessible_module__1_"] = 89] = "Exported_interface__0__extends_interface_from_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_"] = 90] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Public_property__0__of__exported_class_has_or_is_using_private_type__1_"] = 91] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Property__0__of__exported_interface_has_or_is_using_private_type__1_"] = 92] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Exported_variable__0__has_or_is_using_private_type__1_"] = 93] = "Exported_variable__0__has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_"] = 94] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Public_property__0__of__exported_class_is_using_inaccessible_module__1_"] = 95] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Property__0__of__exported_interface_is_using_inaccessible_module__1_"] = 96] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Exported_variable__0__is_using_inaccessible_module__1_"] = 97] = "Exported_variable__0__is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_"] = 98] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_"] = 99] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_"] = 100] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_"] = 101] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_"] = 102] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_"] = 103] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_"] = 104] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_"] = 105] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_exported_function_has_or_is_using_private_type__1_"] = 106] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_"] = 107] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_"] = 108] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_"] = 109] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_"] = 110] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_"] = 111] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_"] = 112] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_"] = 113] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_"] = 114] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Parameter__0__of_exported_function_is_using_inaccessible_module__1_"] = 115] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_"] = 116] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_"] = 117] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_"] = 118] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_"] = 119] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_"] = 120] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_"] = 121] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_"] = 122] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_"] = 123] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_exported_function_has_or_is_using_private_type__0_"] = 124] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_"] = 125] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_"] = 126] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_"] = 127] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_"] = 128] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_"] = 129] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_"] = 130] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_"] = 131] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_"] = 132] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["Return_type_of_exported_function_is_using_inaccessible_module__0_"] = 133] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
+        DiagnosticCode[DiagnosticCode["_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead"] = 134] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
+        DiagnosticCode[DiagnosticCode["A_parameter_list_must_follow_a_generic_type_argument_list______expected"] = 135] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
+        DiagnosticCode[DiagnosticCode["Multiple_constructor_implementations_are_not_allowed"] = 136] = "Multiple_constructor_implementations_are_not_allowed";
+        DiagnosticCode[DiagnosticCode["Unable_to_resolve_external_module__0_"] = 137] = "Unable_to_resolve_external_module__0_";
+        DiagnosticCode[DiagnosticCode["Module_cannot_be_aliased_to_a_non_module_type"] = 138] = "Module_cannot_be_aliased_to_a_non_module_type";
+        DiagnosticCode[DiagnosticCode["A_class_may_only_extend_another_class"] = 139] = "A_class_may_only_extend_another_class";
+        DiagnosticCode[DiagnosticCode["A_class_may_only_implement_another_class_or_interface"] = 140] = "A_class_may_only_implement_another_class_or_interface";
+        DiagnosticCode[DiagnosticCode["An_interface_may_only_extend_another_class_or_interface"] = 141] = "An_interface_may_only_extend_another_class_or_interface";
+        DiagnosticCode[DiagnosticCode["An_interface_cannot_implement_another_type"] = 142] = "An_interface_cannot_implement_another_type";
+        DiagnosticCode[DiagnosticCode["Unable_to_resolve_type"] = 143] = "Unable_to_resolve_type";
+        DiagnosticCode[DiagnosticCode["Unable_to_resolve_type_of__0_"] = 144] = "Unable_to_resolve_type_of__0_";
+        DiagnosticCode[DiagnosticCode["Unable_to_resolve_type_parameter_constraint"] = 145] = "Unable_to_resolve_type_parameter_constraint";
+        DiagnosticCode[DiagnosticCode["Type_parameter_constraint_cannot_be_a_primitive_type"] = 146] = "Type_parameter_constraint_cannot_be_a_primitive_type";
+        DiagnosticCode[DiagnosticCode["Supplied_parameters_do_not_match_any_signature_of_call_target"] = 147] = "Supplied_parameters_do_not_match_any_signature_of_call_target";
+        DiagnosticCode[DiagnosticCode["Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0"] = 148] = "Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0";
+        DiagnosticCode[DiagnosticCode["Invalid__new__expression"] = 149] = "Invalid__new__expression";
+        DiagnosticCode[DiagnosticCode["Call_signatures_used_in_a__new__expression_must_have_a__void__return_type"] = 150] = "Call_signatures_used_in_a__new__expression_must_have_a__void__return_type";
+        DiagnosticCode[DiagnosticCode["Could_not_select_overload_for__new__expression"] = 151] = "Could_not_select_overload_for__new__expression";
+        DiagnosticCode[DiagnosticCode["Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_"] = 152] = "Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_";
+        DiagnosticCode[DiagnosticCode["Could_not_select_overload_for__call__expression"] = 153] = "Could_not_select_overload_for__call__expression";
+        DiagnosticCode[DiagnosticCode["Unable_to_invoke_type_with_no_call_signatures"] = 154] = "Unable_to_invoke_type_with_no_call_signatures";
+        DiagnosticCode[DiagnosticCode["Calls_to__super__are_only_valid_inside_a_class"] = 155] = "Calls_to__super__are_only_valid_inside_a_class";
+        DiagnosticCode[DiagnosticCode["Generic_type__0__requires_1_type_argument_s_"] = 156] = "Generic_type__0__requires_1_type_argument_s_";
+        DiagnosticCode[DiagnosticCode["Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_"] = 157] = "Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_";
+        DiagnosticCode[DiagnosticCode["Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements"] = 158] = "Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements";
+        DiagnosticCode[DiagnosticCode["Could_not_find_enclosing_symbol_for_dotted_name__0_"] = 159] = "Could_not_find_enclosing_symbol_for_dotted_name__0_";
+        DiagnosticCode[DiagnosticCode["The_property__0__does_not_exist_on_value_of_type__1__"] = 160] = "The_property__0__does_not_exist_on_value_of_type__1__";
+        DiagnosticCode[DiagnosticCode["Could_not_find_symbol__0_"] = 161] = "Could_not_find_symbol__0_";
+        DiagnosticCode[DiagnosticCode["_get__and__set__accessor_must_have_the_same_type"] = 162] = "_get__and__set__accessor_must_have_the_same_type";
+        DiagnosticCode[DiagnosticCode["_this__cannot_be_referenced_in_current_location"] = 163] = "_this__cannot_be_referenced_in_current_location";
+        DiagnosticCode[DiagnosticCode["Use_of_deprecated__bool__type__Use__boolean__instead"] = 164] = "Use_of_deprecated__bool__type__Use__boolean__instead";
+
+        DiagnosticCode[DiagnosticCode["Class__0__is_recursively_referenced_as_a_base_type_of_itself"] = 165] = "Class__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode[DiagnosticCode["Interface__0__is_recursively_referenced_as_a_base_type_of_itself"] = 166] = "Interface__0__is_recursively_referenced_as_a_base_type_of_itself";
+        DiagnosticCode[DiagnosticCode["_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class"] = 167] = "_super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class";
+        DiagnosticCode[DiagnosticCode["_super__cannot_be_referenced_in_non_derived_classes"] = 168] = "_super__cannot_be_referenced_in_non_derived_classes";
+        DiagnosticCode[DiagnosticCode["A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties"] = 169] = "A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties";
+        DiagnosticCode[DiagnosticCode["Constructors_for_derived_classes_must_contain_a__super__call"] = 170] = "Constructors_for_derived_classes_must_contain_a__super__call";
+        DiagnosticCode[DiagnosticCode["Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors"] = 171] = "Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors";
+        DiagnosticCode[DiagnosticCode["_0_1__is_inaccessible"] = 172] = "_0_1__is_inaccessible";
+        DiagnosticCode[DiagnosticCode["_this__cannot_be_referenced_within_module_bodies"] = 173] = "_this__cannot_be_referenced_within_module_bodies";
+        DiagnosticCode[DiagnosticCode["_this__must_only_be_used_inside_a_function_or_script_context"] = 174] = "_this__must_only_be_used_inside_a_function_or_script_context";
+        DiagnosticCode[DiagnosticCode["Invalid__addition__expression___types_do_not_agree"] = 175] = "Invalid__addition__expression___types_do_not_agree";
+        DiagnosticCode[DiagnosticCode["The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type"] = 176] = "The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode[DiagnosticCode["The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type"] = 177] = "The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode[DiagnosticCode["The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type"] = 178] = "The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type";
+        DiagnosticCode[DiagnosticCode["Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation"] = 179] = "Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation";
+        DiagnosticCode[DiagnosticCode["Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_"] = 180] = "Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_";
+        DiagnosticCode[DiagnosticCode["The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter"] = 181] = "The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter";
+        DiagnosticCode[DiagnosticCode["The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_"] = 182] = "The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_";
+        DiagnosticCode[DiagnosticCode["The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter"] = 183] = "The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode[DiagnosticCode["The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter"] = 184] = "The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter";
+        DiagnosticCode[DiagnosticCode["The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type"] = 185] = "The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type";
+        DiagnosticCode[DiagnosticCode["Setters_cannot_return_a_value"] = 186] = "Setters_cannot_return_a_value";
+        DiagnosticCode[DiagnosticCode["Tried_to_set_variable_type_to_uninitialized_module_type"] = 187] = "Tried_to_set_variable_type_to_uninitialized_module_type";
+        DiagnosticCode[DiagnosticCode["Tried_to_set_variable_type_to_uninitialized_module_type__0__"] = 188] = "Tried_to_set_variable_type_to_uninitialized_module_type__0__";
+        DiagnosticCode[DiagnosticCode["Function__0__declared_a_non_void_return_type__but_has_no_return_expression"] = 189] = "Function__0__declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode[DiagnosticCode["Getters_must_return_a_value"] = 190] = "Getters_must_return_a_value";
+        DiagnosticCode[DiagnosticCode["Getter_and_setter_accessors_do_not_agree_in_visibility"] = 191] = "Getter_and_setter_accessors_do_not_agree_in_visibility";
+        DiagnosticCode[DiagnosticCode["Invalid_left_hand_side_of_assignment_expression"] = 192] = "Invalid_left_hand_side_of_assignment_expression";
+        DiagnosticCode[DiagnosticCode["Function_declared_a_non_void_return_type__but_has_no_return_expression"] = 193] = "Function_declared_a_non_void_return_type__but_has_no_return_expression";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_return_type_reference"] = 194] = "Cannot_resolve_return_type_reference";
+        DiagnosticCode[DiagnosticCode["Constructors_cannot_have_a_return_type_of__void_"] = 195] = "Constructors_cannot_have_a_return_type_of__void_";
+        DiagnosticCode[DiagnosticCode["Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_"] = 196] = "Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_";
+        DiagnosticCode[DiagnosticCode["All_symbols_within_a__with__block_will_be_resolved_to__any__"] = 197] = "All_symbols_within_a__with__block_will_be_resolved_to__any__";
+        DiagnosticCode[DiagnosticCode["Import_declarations_in_an_internal_module_cannot_reference_an_external_module"] = 198] = "Import_declarations_in_an_internal_module_cannot_reference_an_external_module";
+        DiagnosticCode[DiagnosticCode["Class__0__declares_interface__1__but_does_not_implement_it__NL__2"] = 199] = "Class__0__declares_interface__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode[DiagnosticCode["Class__0__declares_class__1__but_does_not_implement_it__NL__2"] = 200] = "Class__0__declares_class__1__but_does_not_implement_it__NL__2";
+        DiagnosticCode[DiagnosticCode["The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer"] = 201] = "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer";
+        DiagnosticCode[DiagnosticCode["_this__cannot_be_referenced_in_initializers_in_a_class_body"] = 202] = "_this__cannot_be_referenced_in_initializers_in_a_class_body";
+        DiagnosticCode[DiagnosticCode["Class__0__cannot_extend_class__1__NL__2"] = 203] = "Class__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode[DiagnosticCode["Interface__0__cannot_extend_class__1__NL__2"] = 204] = "Interface__0__cannot_extend_class__1__NL__2";
+        DiagnosticCode[DiagnosticCode["Interface__0__cannot_extend_interface__1__NL__2"] = 205] = "Interface__0__cannot_extend_interface__1__NL__2";
+        DiagnosticCode[DiagnosticCode["Duplicate_overload_signature_for__0_"] = 206] = "Duplicate_overload_signature_for__0_";
+        DiagnosticCode[DiagnosticCode["Duplicate_constructor_overload_signature"] = 207] = "Duplicate_constructor_overload_signature";
+        DiagnosticCode[DiagnosticCode["Duplicate_overload_call_signature"] = 208] = "Duplicate_overload_call_signature";
+        DiagnosticCode[DiagnosticCode["Duplicate_overload_construct_signature"] = 209] = "Duplicate_overload_construct_signature";
+        DiagnosticCode[DiagnosticCode["Overload_signature_is_not_compatible_with_function_definition"] = 210] = "Overload_signature_is_not_compatible_with_function_definition";
+        DiagnosticCode[DiagnosticCode["Overload_signature_is_not_compatible_with_function_definition__NL__0"] = 211] = "Overload_signature_is_not_compatible_with_function_definition__NL__0";
+        DiagnosticCode[DiagnosticCode["Overload_signatures_must_all_be_public_or_private"] = 212] = "Overload_signatures_must_all_be_public_or_private";
+        DiagnosticCode[DiagnosticCode["Overload_signatures_must_all_be_exported_or_local"] = 213] = "Overload_signatures_must_all_be_exported_or_local";
+        DiagnosticCode[DiagnosticCode["Overload_signatures_must_all_be_ambient_or_non_ambient"] = 214] = "Overload_signatures_must_all_be_ambient_or_non_ambient";
+        DiagnosticCode[DiagnosticCode["Overload_signatures_must_all_be_optional_or_required"] = 215] = "Overload_signatures_must_all_be_optional_or_required";
+        DiagnosticCode[DiagnosticCode["Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature"] = 216] = "Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature";
+        DiagnosticCode[DiagnosticCode["_this__cannot_be_referenced_in_constructor_arguments"] = 217] = "_this__cannot_be_referenced_in_constructor_arguments";
+        DiagnosticCode[DiagnosticCode["Static_member_cannot_be_accessed_off_an_instance_variable"] = 218] = "Static_member_cannot_be_accessed_off_an_instance_variable";
+        DiagnosticCode[DiagnosticCode["Instance_member_cannot_be_accessed_off_a_class"] = 219] = "Instance_member_cannot_be_accessed_off_a_class";
+        DiagnosticCode[DiagnosticCode["Untyped_function_calls_may_not_accept_type_arguments"] = 220] = "Untyped_function_calls_may_not_accept_type_arguments";
+        DiagnosticCode[DiagnosticCode["Non_generic_functions_may_not_accept_type_arguments"] = 221] = "Non_generic_functions_may_not_accept_type_arguments";
+        DiagnosticCode[DiagnosticCode["A_generic_type_may_not_reference_itself_with_its_own_type_parameters"] = 222] = "A_generic_type_may_not_reference_itself_with_its_own_type_parameters";
+        DiagnosticCode[DiagnosticCode["Static_methods_cannot_reference_class_type_parameters"] = 223] = "Static_methods_cannot_reference_class_type_parameters";
+        DiagnosticCode[DiagnosticCode["Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___"] = 224] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___";
+        DiagnosticCode[DiagnosticCode["Rest_parameters_must_be_array_types"] = 225] = "Rest_parameters_must_be_array_types";
+        DiagnosticCode[DiagnosticCode["Overload_signature_implementation_cannot_use_specialized_type"] = 226] = "Overload_signature_implementation_cannot_use_specialized_type";
+
+        DiagnosticCode[DiagnosticCode["Type__0__is_missing_property__1__from_type__2_"] = 227] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible"] = 228] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3"] = 229] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode[DiagnosticCode["Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_"] = 230] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode[DiagnosticCode["Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_"] = 231] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode[DiagnosticCode["Types__0__and__1__define_property__2__as_private"] = 232] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible"] = 233] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 234] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Type__0__requires_a_call_signature__but_Type__1__lacks_one"] = 235] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible"] = 236] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 237] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Type__0__requires_a_construct_signature__but_Type__1__lacks_one"] = 238] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible"] = 239] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 240] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Call_signature_expects__0__or_fewer_parameters"] = 241] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode[DiagnosticCode["Could_not_apply_type__0__to_argument__1__which_is_of_type__2_"] = 242] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function"] = 243] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function"] = 244] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor"] = 245] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property"] = 246] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible"] = 247] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3"] = 248] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+
+        DiagnosticCode[DiagnosticCode["Current_host_does_not_support__w_atch_option"] = 249] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 250] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 251] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 252] = "Could_not_find_file___0_";
+        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 253] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 254] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 255] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 256] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 257] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
+        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 258] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
+        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 259] = "Emit_Error__0";
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -737,22 +542,22 @@ var TypeScript;
 (function (TypeScript) {
     TypeScript.diagnosticMessages = {
         error_TS_0__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "error TS{0}: {1}",
             code: 0
         },
         warning_TS_0__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "warning TS{0}: {1}",
             code: 1
         },
         _0__NL__1_TB__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "{0}{NL}{{1}TB}{2}",
             code: 21
         },
         _0_TB__1: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "{{0}TB}{1}",
             code: 22
         },
@@ -838,7 +643,7 @@ var TypeScript;
         },
         Required_parameter_cannot_follow_optional_parameter: {
             category: 1 /* Error */,
-            message: "required parameter cannot follow optional parameter.",
+            message: "Required parameter cannot follow optional parameter.",
             code: 1016
         },
         Index_signatures_cannot_have_rest_parameters: {
@@ -920,11 +725,6 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Interface declaration cannot have 'implements' clause.",
             code: 1032
-        },
-        Enum_element_must_have_initializer: {
-            category: 1 /* Error */,
-            message: "Enum element must have initializer.",
-            code: 1033
         },
         _super__invocation_cannot_have_type_arguments: {
             category: 1 /* Error */,
@@ -1040,6 +840,36 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Accessors are only when targeting EcmaScript5 and higher.",
             code: 1056
+        },
+        Class_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Class name cannot be '{0}'.",
+            code: 1057
+        },
+        Interface_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Interface name cannot be '{0}'.",
+            code: 1058
+        },
+        Enum_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Enum name cannot be '{0}'.",
+            code: 1059
+        },
+        Module_name_cannot_be__0_: {
+            category: 1 /* Error */,
+            message: "Module name cannot be '{0}'.",
+            code: 1060
+        },
+        Enum_member_must_have_initializer: {
+            category: 1 /* Error */,
+            message: "Enum member must have initializer.",
+            code: 1061
+        },
+        _module_______is_deprecated___Use__require_______instead: {
+            category: 1 /* Error */,
+            message: "'module(...)' is deprecated.  Use 'require(...)' instead.",
+            code: 1062
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */,
@@ -1593,7 +1423,7 @@ var TypeScript;
         },
         Invalid__addition__expression___types_do_not_agree: {
             category: 1 /* Error */,
-            message: "Invalid '+' expression - types do not agree.",
+            message: "Invalid '+' expression - types not known to support the addition operator.",
             code: 2111
         },
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: {
@@ -1828,7 +1658,7 @@ var TypeScript;
         },
         A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
             category: 1 /* Error */,
-            message: "A generic type may not reference itself with its own type parameters",
+            message: "A generic type may not reference itself with its own type parameters.",
             code: 2160
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
@@ -1838,116 +1668,121 @@ var TypeScript;
         },
         Rest_parameters_must_be_array_types: {
             category: 1 /* Error */,
-            message: "Rest parameters must be array types",
+            message: "Rest parameters must be array types.",
             code: 2162
         },
+        Overload_signature_implementation_cannot_use_specialized_type: {
+            category: 1 /* Error */,
+            message: "Overload signature implementation cannot use specialized type.",
+            code: 2163
+        },
         Type__0__is_missing_property__1__from_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' is missing property '{1}' from type '{2}'.",
             code: 4000
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
             code: 4001
         },
         Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
             code: 4002
         },
         Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.",
             code: 4003
         },
         Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.",
             code: 4004
         },
         Types__0__and__1__define_property__2__as_private: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types '{0}' and '{1}' define property '{2}' as private.",
             code: 4005
         },
         Call_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible.",
             code: 4006
         },
         Call_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4007
         },
         Type__0__requires_a_call_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' requires a call signature, but type '{1}' lacks one.",
             code: 4008
         },
         Construct_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible.",
             code: 4009
         },
         Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 40010
         },
         Type__0__requires_a_construct_signature__but_Type__1__lacks_one: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Type '{0}' requires a construct signature, but type '{1}' lacks one.",
             code: 4011
         },
         Index_signatures_of_types__0__and__1__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible.",
             code: 4012
         },
         Index_signatures_of_types__0__and__1__are_incompatible__NL__2: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Index signatures of types '{0}' and '{1}' are incompatible:{NL}{2}",
             code: 4013
         },
         Call_signature_expects__0__or_fewer_parameters: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Call signature expects {0} or fewer parameters.",
             code: 4014
         },
         Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Could not apply type'{0}' to argument {1} which is of type '{2}'.",
             code: 4015
         },
         Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4016
         },
         Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.",
             code: 4017
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.",
             code: 4018
         },
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.",
             code: 4019
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.",
             code: 4020
         },
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: {
-            category: 2 /* NoPrefix */,
+            category: 3 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
@@ -1990,8 +1825,24 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Cannot resolve imported file: '{0}'.",
             code: 5008
+        },
+        Cannot_find_the_common_subdirectory_path_for_the_input_files: {
+            category: 1 /* Error */,
+            message: "Cannot find the common subdirectory path for the input files",
+            code: 5009
+        },
+        Cannot_compile_dynamic_modules_when_emitting_into_single_file: {
+            category: 1 /* Error */,
+            message: "Cannot compile dynamic modules when emitting into single file",
+            code: 5010
+        },
+        Emit_Error__0: {
+            category: 1 /* Error */,
+            message: "Emit Error: {0}.",
+            code: 5011
         }
     };
+
     var seenCodes = [];
     for (var name in TypeScript.diagnosticMessages) {
         if (TypeScript.diagnosticMessages.hasOwnProperty(name)) {
@@ -2000,6 +1851,7 @@ var TypeScript;
             if (value) {
                 throw new Error("Duplicate diagnostic code: " + diagnosticMessage.code);
             }
+
             seenCodes[diagnosticMessage.code] = diagnosticMessage;
         }
     }
@@ -2012,18 +1864,23 @@ var TypeScript;
         Errors.argument = function (argument, message) {
             return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
         };
+
         Errors.argumentOutOfRange = function (argument) {
             return new Error("Argument out of range: " + argument + ".");
         };
+
         Errors.argumentNull = function (argument) {
             return new Error("Argument null: " + argument + ".");
         };
+
         Errors.abstract = function () {
             return new Error("Operation not implemented properly by subclass.");
         };
+
         Errors.notYetImplemented = function () {
             return new Error("Not yet implemented.");
         };
+
         Errors.invalidOperation = function (message) {
             return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
         };
@@ -2039,85 +1896,118 @@ var TypeScript;
         Hash.computeFnv1aCharArrayHashCode = function (text, start, len) {
             var hashCode = Hash.FNV_BASE;
             var end = start + len;
+
             for (var i = start; i < end; i++) {
                 hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
             }
+
             return hashCode;
         };
+
         Hash.computeSimple31BitCharArrayHashCode = function (key, start, len) {
             var hash = 0;
+
             for (var i = 0; i < len; i++) {
                 var ch = key[start + i];
+
                 hash = (((hash << 5) + hash) + ch) | 0;
             }
+
             return hash & 0x7FFFFFFF;
         };
+
         Hash.computeSimple31BitStringHashCode = function (key) {
             var hash = 0;
+
             var start = 0;
             var len = key.length;
+
             for (var i = 0; i < len; i++) {
                 var ch = key.charCodeAt(start + i);
+
                 hash = (((hash << 5) + hash) + ch) | 0;
             }
+
             return hash & 0x7FFFFFFF;
         };
+
         Hash.computeMurmur2CharArrayHashCode = function (key, start, len) {
             var m = 0x5bd1e995;
             var r = 24;
+
             var numberOfCharsLeft = len;
             var h = (0 ^ numberOfCharsLeft);
+
             var index = start;
             while (numberOfCharsLeft >= 2) {
                 var c1 = key[index];
                 var c2 = key[index + 1];
+
                 var k = c1 | (c2 << 16);
+
                 k *= m;
                 k ^= k >> r;
                 k *= m;
+
                 h *= m;
                 h ^= k;
+
                 index += 2;
                 numberOfCharsLeft -= 2;
             }
+
             if (numberOfCharsLeft === 1) {
                 h ^= key[index];
                 h *= m;
             }
+
             h ^= h >> 13;
             h *= m;
             h ^= h >> 15;
+
             return h;
         };
+
         Hash.computeMurmur2StringHashCode = function (key) {
             var m = 0x5bd1e995;
             var r = 24;
+
             var start = 0;
             var len = key.length;
             var numberOfCharsLeft = len;
+
             var h = (0 ^ numberOfCharsLeft);
+
             var index = start;
             while (numberOfCharsLeft >= 2) {
                 var c1 = key.charCodeAt(index);
                 var c2 = key.charCodeAt(index + 1);
+
                 var k = c1 | (c2 << 16);
+
                 k *= m;
                 k ^= k >> r;
                 k *= m;
+
                 h *= m;
                 h ^= k;
+
                 index += 2;
                 numberOfCharsLeft -= 2;
             }
+
             if (numberOfCharsLeft === 1) {
                 h ^= key.charCodeAt(index);
                 h *= m;
             }
+
             h ^= h >> 13;
             h *= m;
             h ^= h >> 15;
+
             return h;
         };
+
         Hash.getPrime = function (min) {
             for (var i = 0; i < Hash.primes.length; i++) {
                 var num = Hash.primes[i];
@@ -2125,8 +2015,10 @@ var TypeScript;
                     return num;
                 }
             }
+
             throw TypeScript.Errors.notYetImplemented();
         };
+
         Hash.expandPrime = function (oldSize) {
             var num = oldSize << 1;
             if (num > 2146435069 && 2146435069 > oldSize) {
@@ -2134,11 +2026,13 @@ var TypeScript;
             }
             return Hash.getPrime(num);
         };
+
         Hash.combine = function (value, currentHash) {
             return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
         };
         Hash.FNV_BASE = 2166136261;
         Hash.FNV_PRIME = 16777619;
+
         Hash.primes = [
             3,
             7,
@@ -2221,6 +2115,7 @@ var TypeScript;
 (function (TypeScript) {
     (function (Collections) {
         Collections.DefaultHashTableCapacity = 256;
+
         var HashTableEntry = (function () {
             function HashTableEntry(Key, Value, HashCode, Next) {
                 this.Key = Key;
@@ -2230,6 +2125,7 @@ var TypeScript;
             }
             return HashTableEntry;
         })();
+
         var HashTable = (function () {
             function HashTable(capacity, hash, equals) {
                 this.hash = hash;
@@ -2244,66 +2140,90 @@ var TypeScript;
             HashTable.prototype.set = function (key, value) {
                 this.addOrSet(key, value, false);
             };
+
             HashTable.prototype.add = function (key, value) {
                 this.addOrSet(key, value, true);
             };
+
             HashTable.prototype.containsKey = function (key) {
                 var hashCode = this.computeHashCode(key);
                 var entry = this.findEntry(key, hashCode);
                 return entry !== null;
             };
+
             HashTable.prototype.get = function (key) {
                 var hashCode = this.computeHashCode(key);
                 var entry = this.findEntry(key, hashCode);
+
                 return entry === null ? null : entry.Value;
             };
+
             HashTable.prototype.computeHashCode = function (key) {
                 var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
+
                 hashCode = hashCode & 0x7FFFFFFF;
                 TypeScript.Debug.assert(hashCode > 0);
+
                 return hashCode;
             };
+
             HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
                 var hashCode = this.computeHashCode(key);
+
                 var entry = this.findEntry(key, hashCode);
                 if (entry !== null) {
                     if (throwOnExistingEntry) {
                         throw TypeScript.Errors.argument('key', 'Key was already in table.');
                     }
+
                     entry.Key = key;
                     entry.Value = value;
                     return;
                 }
+
                 return this.addEntry(key, value, hashCode);
             };
+
             HashTable.prototype.findEntry = function (key, hashCode) {
                 for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
                     if (e.HashCode === hashCode) {
                         var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
+
                         if (equals) {
                             return e;
                         }
                     }
                 }
+
                 return null;
             };
+
             HashTable.prototype.addEntry = function (key, value, hashCode) {
                 var index = hashCode % this.entries.length;
+
                 var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
+
                 this.entries[index] = e;
+
                 if (this.count === this.entries.length) {
                     this.grow();
                 }
+
                 this.count++;
                 return e.Key;
             };
+
             HashTable.prototype.grow = function () {
                 var newSize = TypeScript.Hash.expandPrime(this.entries.length);
+
                 var oldEntries = this.entries;
                 var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
+
                 this.entries = newEntries;
+
                 for (var i = 0; i < oldEntries.length; i++) {
                     var e = oldEntries[i];
+
                     while (e !== null) {
                         var newIndex = e.HashCode % newSize;
                         var tmp = e.Next;
@@ -2316,6 +2236,7 @@ var TypeScript;
             return HashTable;
         })();
         Collections.HashTable = HashTable;
+
         function createHashTable(capacity, hash, equals) {
             if (typeof capacity === "undefined") { capacity = Collections.DefaultHashTableCapacity; }
             if (typeof hash === "undefined") { hash = null; }
@@ -2323,12 +2244,14 @@ var TypeScript;
             return new HashTable(capacity, hash, equals);
         }
         Collections.createHashTable = createHashTable;
+
         var currentHashCode = 1;
         function identityHashCode(value) {
             if (value.__hash === undefined) {
                 value.__hash = currentHashCode;
                 currentHashCode++;
             }
+
             return value.__hash;
         }
         Collections.identityHashCode = identityHashCode;
@@ -2338,27 +2261,149 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Diagnostic = (function () {
-        function Diagnostic(start, length, fileName, message) {
+        function Diagnostic(fileName, start, length, diagnosticCode, arguments) {
+            this._diagnosticCode = diagnosticCode;
+            this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
-            this._start = start;
+            this._originalStart = this._start = start;
             this._length = length;
-            this._message = message;
         }
+        Diagnostic.prototype.toJSON = function (key) {
+            var result = {};
+            result.start = this.start();
+            result.length = this.length();
+
+            result.diagnosticCode = TypeScript.DiagnosticCode[this.diagnosticCode()];
+
+            var arguments = (this).arguments();
+            if (arguments && arguments.length > 0) {
+                result.arguments = arguments;
+            }
+
+            return result;
+        };
+
         Diagnostic.prototype.fileName = function () {
             return this._fileName;
         };
+
         Diagnostic.prototype.start = function () {
             return this._start;
         };
+
         Diagnostic.prototype.length = function () {
             return this._length;
         };
+
+        Diagnostic.prototype.diagnosticCode = function () {
+            return this._diagnosticCode;
+        };
+
+        Diagnostic.prototype.arguments = function () {
+            return this._arguments;
+        };
+
+        Diagnostic.prototype.text = function () {
+            return TypeScript.getDiagnosticText(this._diagnosticCode, this._arguments);
+        };
+
         Diagnostic.prototype.message = function () {
-            return this._message;
+            return TypeScript.getDiagnosticMessage(this._diagnosticCode, this._arguments);
+        };
+
+        Diagnostic.prototype.adjustOffset = function (pos) {
+            this._start = this._originalStart + pos;
+        };
+
+        Diagnostic.prototype.additionalLocations = function () {
+            return [];
+        };
+
+        Diagnostic.equals = function (diagnostic1, diagnostic2) {
+            return diagnostic1._fileName === diagnostic2._fileName && diagnostic1._start === diagnostic2._start && diagnostic1._length === diagnostic2._length && diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && TypeScript.ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
+                return v1 === v2;
+            });
         };
         return Diagnostic;
     })();
     TypeScript.Diagnostic = Diagnostic;
+
+    function getLargestIndex(diagnostic) {
+        var largest = -1;
+        var stringComponents = diagnostic.split("_");
+
+        for (var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
+            if (!isNaN(val) && val > largest) {
+                largest = val;
+            }
+        }
+
+        return largest;
+    }
+
+    function getDiagnosticInfoFromCode(diagnosticCode) {
+        var diagnosticName = TypeScript.DiagnosticCode[diagnosticCode];
+        return TypeScript.diagnosticMessages[diagnosticName];
+    }
+    TypeScript.getDiagnosticInfoFromCode = getDiagnosticInfoFromCode;
+
+    function getDiagnosticText(diagnosticCode, args) {
+        var diagnosticName = TypeScript.DiagnosticCode[diagnosticCode];
+
+        var diagnostic = TypeScript.diagnosticMessages[diagnosticName];
+
+        var actualCount = args ? args.length : 0;
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        } else {
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
+
+            if (expectedCount !== actualCount) {
+                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
+            }
+        }
+
+        var diagnosticMessageText = diagnostic.message.replace(/{({(\d+)})?TB}/g, function (match, p1, num) {
+            var tabChar = "\t";
+            var result = tabChar;
+            if (num && args[num]) {
+                for (var i = 1; i < args[num]; i++) {
+                    result += tabChar;
+                }
+            }
+
+            return result;
+        });
+
+        diagnosticMessageText = diagnosticMessageText.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined' ? args[num] : match;
+        });
+
+        diagnosticMessageText = diagnosticMessageText.replace(/{(NL)}/g, function (match) {
+            return "\r\n";
+        });
+
+        return diagnosticMessageText;
+    }
+    TypeScript.getDiagnosticText = getDiagnosticText;
+
+    function getDiagnosticMessage(diagnosticCode, args) {
+        var diagnostic = getDiagnosticInfoFromCode(diagnosticCode);
+        var diagnosticMessageText = getDiagnosticText(diagnosticCode, args);
+
+        var message;
+        if (diagnostic.category === 1 /* Error */) {
+            message = getDiagnosticText(0 /* error_TS_0__1 */, [diagnostic.code, diagnosticMessageText]);
+        } else if (diagnostic.category === 0 /* Warning */) {
+            message = getDiagnosticText(1 /* warning_TS_0__1 */, [diagnostic.code, diagnosticMessageText]);
+        } else {
+            message = diagnosticMessageText;
+        }
+
+        return message;
+    }
+    TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
@@ -2367,7 +2412,9 @@ var Environment = (function () {
         } catch (e) {
             return null;
         }
+
         var streamObjectPool = [];
+
         function getStreamObject() {
             if (streamObjectPool.length > 0) {
                 return streamObjectPool.pop();
@@ -2375,13 +2422,16 @@ var Environment = (function () {
                 return new ActiveXObject("ADODB.Stream");
             }
         }
+
         function releaseStreamObject(obj) {
             streamObjectPool.push(obj);
         }
+
         var args = [];
         for (var i = 0; i < WScript.Arguments.length; i++) {
             args[i] = WScript.Arguments.Item(i);
         }
+
         return {
             currentDirectory: function () {
                 return (WScript).CreateObject("WScript.Shell").CurrentDirectory;
@@ -2403,6 +2453,7 @@ var Environment = (function () {
                     } else {
                         streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
                     }
+
                     var str = streamObj.ReadText(-1);
                     streamObj.Close();
                     releaseStreamObject(streamObj);
@@ -2433,22 +2484,29 @@ var Environment = (function () {
                 function filesInFolder(folder, root) {
                     var paths = [];
                     var fc;
+
                     if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
+
                         for (; !fc.atEnd(); fc.moveNext()) {
                             paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
                         }
                     }
+
                     fc = new Enumerator(folder.files);
+
                     for (; !fc.atEnd(); fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
                             paths.push(root + "\\" + fc.item().Name);
                         }
                     }
+
                     return paths;
                 }
+
                 var folder = fso.GetFolder(path);
                 var paths = [];
+
                 return filesInFolder(folder, path);
             },
             createFile: function (path, useUTF8) {
@@ -2480,10 +2538,12 @@ var Environment = (function () {
         };
     }
     ;
+
     function getNodeEnvironment() {
         var _fs = require('fs');
         var _path = require('path');
         var _module = require('module');
+
         return {
             currentDirectory: function () {
                 return (process).cwd();
@@ -2513,6 +2573,7 @@ var Environment = (function () {
                             return buffer.toString("utf8", 3);
                         }
                 }
+
                 return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
             },
             writeFile: function (path, contents, useUTF) {
@@ -2532,12 +2593,14 @@ var Environment = (function () {
                 }
             },
             directoryExists: function (path) {
-                return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
+                return _fs.existsSync(path) && _fs.statSync(path).isDirectory();
             },
             listFiles: function dir(path, spec, options) {
                 options = options || {};
+
                 function filesInFolder(folder) {
                     var paths = [];
+
                     var files = _fs.readdirSync(folder);
                     for (var i = 0; i < files.length; i++) {
                         var stat = _fs.statSync(folder + "\\" + files[i]);
@@ -2547,8 +2610,10 @@ var Environment = (function () {
                             paths.push(folder + "\\" + files[i]);
                         }
                     }
+
                     return paths;
                 }
+
                 return filesInFolder(path);
             },
             createFile: function (path, useUTF8) {
@@ -2564,6 +2629,7 @@ var Environment = (function () {
                     }
                 }
                 mkdirRecursiveSync(_path.dirname(path));
+
                 var fd = _fs.openSync(path, 'w');
                 return {
                     Write: function (str) {
@@ -2592,6 +2658,7 @@ var Environment = (function () {
         };
     }
     ;
+
     if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     } else if (typeof require === "function") {
@@ -2608,19 +2675,25 @@ var TypeScript;
         IntegerUtilities.integerDivide = function (numerator, denominator) {
             return (numerator / denominator) >> 0;
         };
+
         IntegerUtilities.integerMultiplyLow32Bits = function (n1, n2) {
             var n1Low16 = n1 & 0x0000ffff;
             var n1High16 = n1 >>> 16;
+
             var n2Low16 = n2 & 0x0000ffff;
             var n2High16 = n2 >>> 16;
+
             var resultLow32 = (((n1 & 0xffff0000) * n2) >>> 0) + (((n1 & 0x0000ffff) * n2) >>> 0) >>> 0;
             return resultLow32;
         };
+
         IntegerUtilities.integerMultiplyHigh32Bits = function (n1, n2) {
             var n1Low16 = n1 & 0x0000ffff;
             var n1High16 = n1 >>> 16;
+
             var n2Low16 = n2 & 0x0000ffff;
             var n2High16 = n2 >>> 16;
+
             var resultHigh32 = n1High16 * n2High16 + ((((n1Low16 * n2Low16) >>> 17) + n1Low16 * n2High16) >>> 15);
             return resultHigh32;
         };
@@ -2636,6 +2709,7 @@ var TypeScript;
         MathPrototype.max = function (a, b) {
             return a >= b ? a : b;
         };
+
         MathPrototype.min = function (a, b) {
             return a <= b ? a : b;
         };
@@ -2647,6 +2721,7 @@ var TypeScript;
 (function (TypeScript) {
     (function (Collections) {
         Collections.DefaultStringTableCapacity = 256;
+
         var StringTableEntry = (function () {
             function StringTableEntry(Text, HashCode, Next) {
                 this.Text = Text;
@@ -2655,6 +2730,7 @@ var TypeScript;
             }
             return StringTableEntry;
         })();
+
         var StringTable = (function () {
             function StringTable(capacity) {
                 this.entries = [];
@@ -2664,36 +2740,49 @@ var TypeScript;
             }
             StringTable.prototype.addCharArray = function (key, start, len) {
                 var hashCode = TypeScript.Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 0x7FFFFFFF;
+
                 var entry = this.findCharArrayEntry(key, start, len, hashCode);
                 if (entry !== null) {
                     return entry.Text;
                 }
+
                 var slice = key.slice(start, start + len);
                 return this.addEntry(TypeScript.StringUtilities.fromCharCodeArray(slice), hashCode);
             };
+
             StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
                 for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
                     if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
                         return e;
                     }
                 }
+
                 return null;
             };
+
             StringTable.prototype.addEntry = function (text, hashCode) {
                 var index = hashCode % this.entries.length;
+
                 var e = new StringTableEntry(text, hashCode, this.entries[index]);
+
                 this.entries[index] = e;
+
                 if (this.count === this.entries.length) {
                     this.grow();
                 }
+
                 this.count++;
                 return e.Text;
             };
+
             StringTable.prototype.grow = function () {
                 var newSize = TypeScript.Hash.expandPrime(this.entries.length);
+
                 var oldEntries = this.entries;
                 var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
+
                 this.entries = newEntries;
+
                 for (var i = 0; i < oldEntries.length; i++) {
                     var e = oldEntries[i];
                     while (e !== null) {
@@ -2705,22 +2794,27 @@ var TypeScript;
                     }
                 }
             };
+
             StringTable.textCharArrayEquals = function (text, array, start, length) {
                 if (text.length !== length) {
                     return false;
                 }
+
                 var s = start;
                 for (var i = 0; i < length; i++) {
                     if (text.charCodeAt(i) !== array[s]) {
                         return false;
                     }
+
                     s++;
                 }
+
                 return true;
             };
             return StringTable;
         })();
         Collections.StringTable = StringTable;
+
         Collections.DefaultStringTable = new StringTable(Collections.DefaultStringTableCapacity);
     })(TypeScript.Collections || (TypeScript.Collections = {}));
     var Collections = TypeScript.Collections;
@@ -2730,23 +2824,32 @@ var TypeScript;
     var StringUtilities = (function () {
         function StringUtilities() {
         }
+        StringUtilities.isString = function (value) {
+            return Object.prototype.toString.apply(value, []) === '[object String]';
+        };
+
         StringUtilities.fromCharCodeArray = function (array) {
             return String.fromCharCode.apply(null, array);
         };
+
         StringUtilities.endsWith = function (string, value) {
             return string.substring(string.length - value.length, string.length) === value;
         };
+
         StringUtilities.startsWith = function (string, value) {
             return string.substr(0, value.length) === value;
         };
+
         StringUtilities.copyTo = function (source, sourceIndex, destination, destinationIndex, count) {
             for (var i = 0; i < count; i++) {
                 destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
             }
         };
+
         StringUtilities.repeat = function (value, count) {
             return Array(count + 1).join(value);
         };
+
         StringUtilities.stringEquals = function (val1, val2) {
             return val1 === val2;
         };
@@ -2755,25 +2858,31 @@ var TypeScript;
     TypeScript.StringUtilities = StringUtilities;
 })(TypeScript || (TypeScript = {}));
 var global = Function("return this").call(null);
+
 var TypeScript;
 (function (TypeScript) {
     var Clock;
     (function (Clock) {
         Clock.now;
         Clock.resolution;
+
         if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
             global['WScript'].InitializeProjection();
+
             Clock.now = function () {
                 return TestUtilities.QueryPerformanceCounter();
             };
+
             Clock.resolution = TestUtilities.QueryPerformanceFrequency();
         } else {
             Clock.now = function () {
                 return Date.now();
             };
+
             Clock.resolution = 1000;
         }
     })(Clock || (Clock = {}));
+
     var Timer = (function () {
         function Timer() {
             this.time = 0;
@@ -2782,6 +2891,7 @@ var TypeScript;
             this.time = 0;
             this.startTime = Clock.now();
         };
+
         Timer.prototype.end = function () {
             this.time = (Clock.now() - this.startTime);
         };
@@ -2792,515 +2902,300 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (SyntaxKind) {
-        SyntaxKind._map = [];
-        SyntaxKind._map[0] = "None";
-        SyntaxKind.None = 0;
-        SyntaxKind._map[1] = "List";
-        SyntaxKind.List = 1;
-        SyntaxKind._map[2] = "SeparatedList";
-        SyntaxKind.SeparatedList = 2;
-        SyntaxKind._map[3] = "TriviaList";
-        SyntaxKind.TriviaList = 3;
-        SyntaxKind._map[4] = "WhitespaceTrivia";
-        SyntaxKind.WhitespaceTrivia = 4;
-        SyntaxKind._map[5] = "NewLineTrivia";
-        SyntaxKind.NewLineTrivia = 5;
-        SyntaxKind._map[6] = "MultiLineCommentTrivia";
-        SyntaxKind.MultiLineCommentTrivia = 6;
-        SyntaxKind._map[7] = "SingleLineCommentTrivia";
-        SyntaxKind.SingleLineCommentTrivia = 7;
-        SyntaxKind._map[8] = "SkippedTokenTrivia";
-        SyntaxKind.SkippedTokenTrivia = 8;
-        SyntaxKind._map[9] = "ErrorToken";
-        SyntaxKind.ErrorToken = 9;
-        SyntaxKind._map[10] = "EndOfFileToken";
-        SyntaxKind.EndOfFileToken = 10;
-        SyntaxKind._map[11] = "IdentifierName";
-        SyntaxKind.IdentifierName = 11;
-        SyntaxKind._map[12] = "RegularExpressionLiteral";
-        SyntaxKind.RegularExpressionLiteral = 12;
-        SyntaxKind._map[13] = "NumericLiteral";
-        SyntaxKind.NumericLiteral = 13;
-        SyntaxKind._map[14] = "StringLiteral";
-        SyntaxKind.StringLiteral = 14;
-        SyntaxKind._map[15] = "BreakKeyword";
-        SyntaxKind.BreakKeyword = 15;
-        SyntaxKind._map[16] = "CaseKeyword";
-        SyntaxKind.CaseKeyword = 16;
-        SyntaxKind._map[17] = "CatchKeyword";
-        SyntaxKind.CatchKeyword = 17;
-        SyntaxKind._map[18] = "ContinueKeyword";
-        SyntaxKind.ContinueKeyword = 18;
-        SyntaxKind._map[19] = "DebuggerKeyword";
-        SyntaxKind.DebuggerKeyword = 19;
-        SyntaxKind._map[20] = "DefaultKeyword";
-        SyntaxKind.DefaultKeyword = 20;
-        SyntaxKind._map[21] = "DeleteKeyword";
-        SyntaxKind.DeleteKeyword = 21;
-        SyntaxKind._map[22] = "DoKeyword";
-        SyntaxKind.DoKeyword = 22;
-        SyntaxKind._map[23] = "ElseKeyword";
-        SyntaxKind.ElseKeyword = 23;
-        SyntaxKind._map[24] = "FalseKeyword";
-        SyntaxKind.FalseKeyword = 24;
-        SyntaxKind._map[25] = "FinallyKeyword";
-        SyntaxKind.FinallyKeyword = 25;
-        SyntaxKind._map[26] = "ForKeyword";
-        SyntaxKind.ForKeyword = 26;
-        SyntaxKind._map[27] = "FunctionKeyword";
-        SyntaxKind.FunctionKeyword = 27;
-        SyntaxKind._map[28] = "IfKeyword";
-        SyntaxKind.IfKeyword = 28;
-        SyntaxKind._map[29] = "InKeyword";
-        SyntaxKind.InKeyword = 29;
-        SyntaxKind._map[30] = "InstanceOfKeyword";
-        SyntaxKind.InstanceOfKeyword = 30;
-        SyntaxKind._map[31] = "NewKeyword";
-        SyntaxKind.NewKeyword = 31;
-        SyntaxKind._map[32] = "NullKeyword";
-        SyntaxKind.NullKeyword = 32;
-        SyntaxKind._map[33] = "ReturnKeyword";
-        SyntaxKind.ReturnKeyword = 33;
-        SyntaxKind._map[34] = "SwitchKeyword";
-        SyntaxKind.SwitchKeyword = 34;
-        SyntaxKind._map[35] = "ThisKeyword";
-        SyntaxKind.ThisKeyword = 35;
-        SyntaxKind._map[36] = "ThrowKeyword";
-        SyntaxKind.ThrowKeyword = 36;
-        SyntaxKind._map[37] = "TrueKeyword";
-        SyntaxKind.TrueKeyword = 37;
-        SyntaxKind._map[38] = "TryKeyword";
-        SyntaxKind.TryKeyword = 38;
-        SyntaxKind._map[39] = "TypeOfKeyword";
-        SyntaxKind.TypeOfKeyword = 39;
-        SyntaxKind._map[40] = "VarKeyword";
-        SyntaxKind.VarKeyword = 40;
-        SyntaxKind._map[41] = "VoidKeyword";
-        SyntaxKind.VoidKeyword = 41;
-        SyntaxKind._map[42] = "WhileKeyword";
-        SyntaxKind.WhileKeyword = 42;
-        SyntaxKind._map[43] = "WithKeyword";
-        SyntaxKind.WithKeyword = 43;
-        SyntaxKind._map[44] = "ClassKeyword";
-        SyntaxKind.ClassKeyword = 44;
-        SyntaxKind._map[45] = "ConstKeyword";
-        SyntaxKind.ConstKeyword = 45;
-        SyntaxKind._map[46] = "EnumKeyword";
-        SyntaxKind.EnumKeyword = 46;
-        SyntaxKind._map[47] = "ExportKeyword";
-        SyntaxKind.ExportKeyword = 47;
-        SyntaxKind._map[48] = "ExtendsKeyword";
-        SyntaxKind.ExtendsKeyword = 48;
-        SyntaxKind._map[49] = "ImportKeyword";
-        SyntaxKind.ImportKeyword = 49;
-        SyntaxKind._map[50] = "SuperKeyword";
-        SyntaxKind.SuperKeyword = 50;
-        SyntaxKind._map[51] = "ImplementsKeyword";
-        SyntaxKind.ImplementsKeyword = 51;
-        SyntaxKind._map[52] = "InterfaceKeyword";
-        SyntaxKind.InterfaceKeyword = 52;
-        SyntaxKind._map[53] = "LetKeyword";
-        SyntaxKind.LetKeyword = 53;
-        SyntaxKind._map[54] = "PackageKeyword";
-        SyntaxKind.PackageKeyword = 54;
-        SyntaxKind._map[55] = "PrivateKeyword";
-        SyntaxKind.PrivateKeyword = 55;
-        SyntaxKind._map[56] = "ProtectedKeyword";
-        SyntaxKind.ProtectedKeyword = 56;
-        SyntaxKind._map[57] = "PublicKeyword";
-        SyntaxKind.PublicKeyword = 57;
-        SyntaxKind._map[58] = "StaticKeyword";
-        SyntaxKind.StaticKeyword = 58;
-        SyntaxKind._map[59] = "YieldKeyword";
-        SyntaxKind.YieldKeyword = 59;
-        SyntaxKind._map[60] = "AnyKeyword";
-        SyntaxKind.AnyKeyword = 60;
-        SyntaxKind._map[61] = "BooleanKeyword";
-        SyntaxKind.BooleanKeyword = 61;
-        SyntaxKind._map[62] = "BoolKeyword";
-        SyntaxKind.BoolKeyword = 62;
-        SyntaxKind._map[63] = "ConstructorKeyword";
-        SyntaxKind.ConstructorKeyword = 63;
-        SyntaxKind._map[64] = "DeclareKeyword";
-        SyntaxKind.DeclareKeyword = 64;
-        SyntaxKind._map[65] = "GetKeyword";
-        SyntaxKind.GetKeyword = 65;
-        SyntaxKind._map[66] = "ModuleKeyword";
-        SyntaxKind.ModuleKeyword = 66;
-        SyntaxKind._map[67] = "NumberKeyword";
-        SyntaxKind.NumberKeyword = 67;
-        SyntaxKind._map[68] = "SetKeyword";
-        SyntaxKind.SetKeyword = 68;
-        SyntaxKind._map[69] = "StringKeyword";
-        SyntaxKind.StringKeyword = 69;
-        SyntaxKind._map[70] = "OpenBraceToken";
-        SyntaxKind.OpenBraceToken = 70;
-        SyntaxKind._map[71] = "CloseBraceToken";
-        SyntaxKind.CloseBraceToken = 71;
-        SyntaxKind._map[72] = "OpenParenToken";
-        SyntaxKind.OpenParenToken = 72;
-        SyntaxKind._map[73] = "CloseParenToken";
-        SyntaxKind.CloseParenToken = 73;
-        SyntaxKind._map[74] = "OpenBracketToken";
-        SyntaxKind.OpenBracketToken = 74;
-        SyntaxKind._map[75] = "CloseBracketToken";
-        SyntaxKind.CloseBracketToken = 75;
-        SyntaxKind._map[76] = "DotToken";
-        SyntaxKind.DotToken = 76;
-        SyntaxKind._map[77] = "DotDotDotToken";
-        SyntaxKind.DotDotDotToken = 77;
-        SyntaxKind._map[78] = "SemicolonToken";
-        SyntaxKind.SemicolonToken = 78;
-        SyntaxKind._map[79] = "CommaToken";
-        SyntaxKind.CommaToken = 79;
-        SyntaxKind._map[80] = "LessThanToken";
-        SyntaxKind.LessThanToken = 80;
-        SyntaxKind._map[81] = "GreaterThanToken";
-        SyntaxKind.GreaterThanToken = 81;
-        SyntaxKind._map[82] = "LessThanEqualsToken";
-        SyntaxKind.LessThanEqualsToken = 82;
-        SyntaxKind._map[83] = "GreaterThanEqualsToken";
-        SyntaxKind.GreaterThanEqualsToken = 83;
-        SyntaxKind._map[84] = "EqualsEqualsToken";
-        SyntaxKind.EqualsEqualsToken = 84;
-        SyntaxKind._map[85] = "EqualsGreaterThanToken";
-        SyntaxKind.EqualsGreaterThanToken = 85;
-        SyntaxKind._map[86] = "ExclamationEqualsToken";
-        SyntaxKind.ExclamationEqualsToken = 86;
-        SyntaxKind._map[87] = "EqualsEqualsEqualsToken";
-        SyntaxKind.EqualsEqualsEqualsToken = 87;
-        SyntaxKind._map[88] = "ExclamationEqualsEqualsToken";
-        SyntaxKind.ExclamationEqualsEqualsToken = 88;
-        SyntaxKind._map[89] = "PlusToken";
-        SyntaxKind.PlusToken = 89;
-        SyntaxKind._map[90] = "MinusToken";
-        SyntaxKind.MinusToken = 90;
-        SyntaxKind._map[91] = "AsteriskToken";
-        SyntaxKind.AsteriskToken = 91;
-        SyntaxKind._map[92] = "PercentToken";
-        SyntaxKind.PercentToken = 92;
-        SyntaxKind._map[93] = "PlusPlusToken";
-        SyntaxKind.PlusPlusToken = 93;
-        SyntaxKind._map[94] = "MinusMinusToken";
-        SyntaxKind.MinusMinusToken = 94;
-        SyntaxKind._map[95] = "LessThanLessThanToken";
-        SyntaxKind.LessThanLessThanToken = 95;
-        SyntaxKind._map[96] = "GreaterThanGreaterThanToken";
-        SyntaxKind.GreaterThanGreaterThanToken = 96;
-        SyntaxKind._map[97] = "GreaterThanGreaterThanGreaterThanToken";
-        SyntaxKind.GreaterThanGreaterThanGreaterThanToken = 97;
-        SyntaxKind._map[98] = "AmpersandToken";
-        SyntaxKind.AmpersandToken = 98;
-        SyntaxKind._map[99] = "BarToken";
-        SyntaxKind.BarToken = 99;
-        SyntaxKind._map[100] = "CaretToken";
-        SyntaxKind.CaretToken = 100;
-        SyntaxKind._map[101] = "ExclamationToken";
-        SyntaxKind.ExclamationToken = 101;
-        SyntaxKind._map[102] = "TildeToken";
-        SyntaxKind.TildeToken = 102;
-        SyntaxKind._map[103] = "AmpersandAmpersandToken";
-        SyntaxKind.AmpersandAmpersandToken = 103;
-        SyntaxKind._map[104] = "BarBarToken";
-        SyntaxKind.BarBarToken = 104;
-        SyntaxKind._map[105] = "QuestionToken";
-        SyntaxKind.QuestionToken = 105;
-        SyntaxKind._map[106] = "ColonToken";
-        SyntaxKind.ColonToken = 106;
-        SyntaxKind._map[107] = "EqualsToken";
-        SyntaxKind.EqualsToken = 107;
-        SyntaxKind._map[108] = "PlusEqualsToken";
-        SyntaxKind.PlusEqualsToken = 108;
-        SyntaxKind._map[109] = "MinusEqualsToken";
-        SyntaxKind.MinusEqualsToken = 109;
-        SyntaxKind._map[110] = "AsteriskEqualsToken";
-        SyntaxKind.AsteriskEqualsToken = 110;
-        SyntaxKind._map[111] = "PercentEqualsToken";
-        SyntaxKind.PercentEqualsToken = 111;
-        SyntaxKind._map[112] = "LessThanLessThanEqualsToken";
-        SyntaxKind.LessThanLessThanEqualsToken = 112;
-        SyntaxKind._map[113] = "GreaterThanGreaterThanEqualsToken";
-        SyntaxKind.GreaterThanGreaterThanEqualsToken = 113;
-        SyntaxKind._map[114] = "GreaterThanGreaterThanGreaterThanEqualsToken";
-        SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken = 114;
-        SyntaxKind._map[115] = "AmpersandEqualsToken";
-        SyntaxKind.AmpersandEqualsToken = 115;
-        SyntaxKind._map[116] = "BarEqualsToken";
-        SyntaxKind.BarEqualsToken = 116;
-        SyntaxKind._map[117] = "CaretEqualsToken";
-        SyntaxKind.CaretEqualsToken = 117;
-        SyntaxKind._map[118] = "SlashToken";
-        SyntaxKind.SlashToken = 118;
-        SyntaxKind._map[119] = "SlashEqualsToken";
-        SyntaxKind.SlashEqualsToken = 119;
-        SyntaxKind._map[120] = "SourceUnit";
-        SyntaxKind.SourceUnit = 120;
-        SyntaxKind._map[121] = "QualifiedName";
-        SyntaxKind.QualifiedName = 121;
-        SyntaxKind._map[122] = "ObjectType";
-        SyntaxKind.ObjectType = 122;
-        SyntaxKind._map[123] = "FunctionType";
-        SyntaxKind.FunctionType = 123;
-        SyntaxKind._map[124] = "ArrayType";
-        SyntaxKind.ArrayType = 124;
-        SyntaxKind._map[125] = "ConstructorType";
-        SyntaxKind.ConstructorType = 125;
-        SyntaxKind._map[126] = "GenericType";
-        SyntaxKind.GenericType = 126;
-        SyntaxKind._map[127] = "InterfaceDeclaration";
-        SyntaxKind.InterfaceDeclaration = 127;
-        SyntaxKind._map[128] = "FunctionDeclaration";
-        SyntaxKind.FunctionDeclaration = 128;
-        SyntaxKind._map[129] = "ModuleDeclaration";
-        SyntaxKind.ModuleDeclaration = 129;
-        SyntaxKind._map[130] = "ClassDeclaration";
-        SyntaxKind.ClassDeclaration = 130;
-        SyntaxKind._map[131] = "EnumDeclaration";
-        SyntaxKind.EnumDeclaration = 131;
-        SyntaxKind._map[132] = "ImportDeclaration";
-        SyntaxKind.ImportDeclaration = 132;
-        SyntaxKind._map[133] = "ExportAssignment";
-        SyntaxKind.ExportAssignment = 133;
-        SyntaxKind._map[134] = "MemberFunctionDeclaration";
-        SyntaxKind.MemberFunctionDeclaration = 134;
-        SyntaxKind._map[135] = "MemberVariableDeclaration";
-        SyntaxKind.MemberVariableDeclaration = 135;
-        SyntaxKind._map[136] = "ConstructorDeclaration";
-        SyntaxKind.ConstructorDeclaration = 136;
-        SyntaxKind._map[137] = "GetMemberAccessorDeclaration";
-        SyntaxKind.GetMemberAccessorDeclaration = 137;
-        SyntaxKind._map[138] = "SetMemberAccessorDeclaration";
-        SyntaxKind.SetMemberAccessorDeclaration = 138;
-        SyntaxKind._map[139] = "PropertySignature";
-        SyntaxKind.PropertySignature = 139;
-        SyntaxKind._map[140] = "CallSignature";
-        SyntaxKind.CallSignature = 140;
-        SyntaxKind._map[141] = "ConstructSignature";
-        SyntaxKind.ConstructSignature = 141;
-        SyntaxKind._map[142] = "IndexSignature";
-        SyntaxKind.IndexSignature = 142;
-        SyntaxKind._map[143] = "MethodSignature";
-        SyntaxKind.MethodSignature = 143;
-        SyntaxKind._map[144] = "Block";
-        SyntaxKind.Block = 144;
-        SyntaxKind._map[145] = "IfStatement";
-        SyntaxKind.IfStatement = 145;
-        SyntaxKind._map[146] = "VariableStatement";
-        SyntaxKind.VariableStatement = 146;
-        SyntaxKind._map[147] = "ExpressionStatement";
-        SyntaxKind.ExpressionStatement = 147;
-        SyntaxKind._map[148] = "ReturnStatement";
-        SyntaxKind.ReturnStatement = 148;
-        SyntaxKind._map[149] = "SwitchStatement";
-        SyntaxKind.SwitchStatement = 149;
-        SyntaxKind._map[150] = "BreakStatement";
-        SyntaxKind.BreakStatement = 150;
-        SyntaxKind._map[151] = "ContinueStatement";
-        SyntaxKind.ContinueStatement = 151;
-        SyntaxKind._map[152] = "ForStatement";
-        SyntaxKind.ForStatement = 152;
-        SyntaxKind._map[153] = "ForInStatement";
-        SyntaxKind.ForInStatement = 153;
-        SyntaxKind._map[154] = "EmptyStatement";
-        SyntaxKind.EmptyStatement = 154;
-        SyntaxKind._map[155] = "ThrowStatement";
-        SyntaxKind.ThrowStatement = 155;
-        SyntaxKind._map[156] = "WhileStatement";
-        SyntaxKind.WhileStatement = 156;
-        SyntaxKind._map[157] = "TryStatement";
-        SyntaxKind.TryStatement = 157;
-        SyntaxKind._map[158] = "LabeledStatement";
-        SyntaxKind.LabeledStatement = 158;
-        SyntaxKind._map[159] = "DoStatement";
-        SyntaxKind.DoStatement = 159;
-        SyntaxKind._map[160] = "DebuggerStatement";
-        SyntaxKind.DebuggerStatement = 160;
-        SyntaxKind._map[161] = "WithStatement";
-        SyntaxKind.WithStatement = 161;
-        SyntaxKind._map[162] = "PlusExpression";
-        SyntaxKind.PlusExpression = 162;
-        SyntaxKind._map[163] = "NegateExpression";
-        SyntaxKind.NegateExpression = 163;
-        SyntaxKind._map[164] = "BitwiseNotExpression";
-        SyntaxKind.BitwiseNotExpression = 164;
-        SyntaxKind._map[165] = "LogicalNotExpression";
-        SyntaxKind.LogicalNotExpression = 165;
-        SyntaxKind._map[166] = "PreIncrementExpression";
-        SyntaxKind.PreIncrementExpression = 166;
-        SyntaxKind._map[167] = "PreDecrementExpression";
-        SyntaxKind.PreDecrementExpression = 167;
-        SyntaxKind._map[168] = "DeleteExpression";
-        SyntaxKind.DeleteExpression = 168;
-        SyntaxKind._map[169] = "TypeOfExpression";
-        SyntaxKind.TypeOfExpression = 169;
-        SyntaxKind._map[170] = "VoidExpression";
-        SyntaxKind.VoidExpression = 170;
-        SyntaxKind._map[171] = "CommaExpression";
-        SyntaxKind.CommaExpression = 171;
-        SyntaxKind._map[172] = "AssignmentExpression";
-        SyntaxKind.AssignmentExpression = 172;
-        SyntaxKind._map[173] = "AddAssignmentExpression";
-        SyntaxKind.AddAssignmentExpression = 173;
-        SyntaxKind._map[174] = "SubtractAssignmentExpression";
-        SyntaxKind.SubtractAssignmentExpression = 174;
-        SyntaxKind._map[175] = "MultiplyAssignmentExpression";
-        SyntaxKind.MultiplyAssignmentExpression = 175;
-        SyntaxKind._map[176] = "DivideAssignmentExpression";
-        SyntaxKind.DivideAssignmentExpression = 176;
-        SyntaxKind._map[177] = "ModuloAssignmentExpression";
-        SyntaxKind.ModuloAssignmentExpression = 177;
-        SyntaxKind._map[178] = "AndAssignmentExpression";
-        SyntaxKind.AndAssignmentExpression = 178;
-        SyntaxKind._map[179] = "ExclusiveOrAssignmentExpression";
-        SyntaxKind.ExclusiveOrAssignmentExpression = 179;
-        SyntaxKind._map[180] = "OrAssignmentExpression";
-        SyntaxKind.OrAssignmentExpression = 180;
-        SyntaxKind._map[181] = "LeftShiftAssignmentExpression";
-        SyntaxKind.LeftShiftAssignmentExpression = 181;
-        SyntaxKind._map[182] = "SignedRightShiftAssignmentExpression";
-        SyntaxKind.SignedRightShiftAssignmentExpression = 182;
-        SyntaxKind._map[183] = "UnsignedRightShiftAssignmentExpression";
-        SyntaxKind.UnsignedRightShiftAssignmentExpression = 183;
-        SyntaxKind._map[184] = "ConditionalExpression";
-        SyntaxKind.ConditionalExpression = 184;
-        SyntaxKind._map[185] = "LogicalOrExpression";
-        SyntaxKind.LogicalOrExpression = 185;
-        SyntaxKind._map[186] = "LogicalAndExpression";
-        SyntaxKind.LogicalAndExpression = 186;
-        SyntaxKind._map[187] = "BitwiseOrExpression";
-        SyntaxKind.BitwiseOrExpression = 187;
-        SyntaxKind._map[188] = "BitwiseExclusiveOrExpression";
-        SyntaxKind.BitwiseExclusiveOrExpression = 188;
-        SyntaxKind._map[189] = "BitwiseAndExpression";
-        SyntaxKind.BitwiseAndExpression = 189;
-        SyntaxKind._map[190] = "EqualsWithTypeConversionExpression";
-        SyntaxKind.EqualsWithTypeConversionExpression = 190;
-        SyntaxKind._map[191] = "NotEqualsWithTypeConversionExpression";
-        SyntaxKind.NotEqualsWithTypeConversionExpression = 191;
-        SyntaxKind._map[192] = "EqualsExpression";
-        SyntaxKind.EqualsExpression = 192;
-        SyntaxKind._map[193] = "NotEqualsExpression";
-        SyntaxKind.NotEqualsExpression = 193;
-        SyntaxKind._map[194] = "LessThanExpression";
-        SyntaxKind.LessThanExpression = 194;
-        SyntaxKind._map[195] = "GreaterThanExpression";
-        SyntaxKind.GreaterThanExpression = 195;
-        SyntaxKind._map[196] = "LessThanOrEqualExpression";
-        SyntaxKind.LessThanOrEqualExpression = 196;
-        SyntaxKind._map[197] = "GreaterThanOrEqualExpression";
-        SyntaxKind.GreaterThanOrEqualExpression = 197;
-        SyntaxKind._map[198] = "InstanceOfExpression";
-        SyntaxKind.InstanceOfExpression = 198;
-        SyntaxKind._map[199] = "InExpression";
-        SyntaxKind.InExpression = 199;
-        SyntaxKind._map[200] = "LeftShiftExpression";
-        SyntaxKind.LeftShiftExpression = 200;
-        SyntaxKind._map[201] = "SignedRightShiftExpression";
-        SyntaxKind.SignedRightShiftExpression = 201;
-        SyntaxKind._map[202] = "UnsignedRightShiftExpression";
-        SyntaxKind.UnsignedRightShiftExpression = 202;
-        SyntaxKind._map[203] = "MultiplyExpression";
-        SyntaxKind.MultiplyExpression = 203;
-        SyntaxKind._map[204] = "DivideExpression";
-        SyntaxKind.DivideExpression = 204;
-        SyntaxKind._map[205] = "ModuloExpression";
-        SyntaxKind.ModuloExpression = 205;
-        SyntaxKind._map[206] = "AddExpression";
-        SyntaxKind.AddExpression = 206;
-        SyntaxKind._map[207] = "SubtractExpression";
-        SyntaxKind.SubtractExpression = 207;
-        SyntaxKind._map[208] = "PostIncrementExpression";
-        SyntaxKind.PostIncrementExpression = 208;
-        SyntaxKind._map[209] = "PostDecrementExpression";
-        SyntaxKind.PostDecrementExpression = 209;
-        SyntaxKind._map[210] = "MemberAccessExpression";
-        SyntaxKind.MemberAccessExpression = 210;
-        SyntaxKind._map[211] = "InvocationExpression";
-        SyntaxKind.InvocationExpression = 211;
-        SyntaxKind._map[212] = "ArrayLiteralExpression";
-        SyntaxKind.ArrayLiteralExpression = 212;
-        SyntaxKind._map[213] = "ObjectLiteralExpression";
-        SyntaxKind.ObjectLiteralExpression = 213;
-        SyntaxKind._map[214] = "ObjectCreationExpression";
-        SyntaxKind.ObjectCreationExpression = 214;
-        SyntaxKind._map[215] = "ParenthesizedExpression";
-        SyntaxKind.ParenthesizedExpression = 215;
-        SyntaxKind._map[216] = "ParenthesizedArrowFunctionExpression";
-        SyntaxKind.ParenthesizedArrowFunctionExpression = 216;
-        SyntaxKind._map[217] = "SimpleArrowFunctionExpression";
-        SyntaxKind.SimpleArrowFunctionExpression = 217;
-        SyntaxKind._map[218] = "CastExpression";
-        SyntaxKind.CastExpression = 218;
-        SyntaxKind._map[219] = "ElementAccessExpression";
-        SyntaxKind.ElementAccessExpression = 219;
-        SyntaxKind._map[220] = "FunctionExpression";
-        SyntaxKind.FunctionExpression = 220;
-        SyntaxKind._map[221] = "OmittedExpression";
-        SyntaxKind.OmittedExpression = 221;
-        SyntaxKind._map[222] = "VariableDeclaration";
-        SyntaxKind.VariableDeclaration = 222;
-        SyntaxKind._map[223] = "VariableDeclarator";
-        SyntaxKind.VariableDeclarator = 223;
-        SyntaxKind._map[224] = "ArgumentList";
-        SyntaxKind.ArgumentList = 224;
-        SyntaxKind._map[225] = "ParameterList";
-        SyntaxKind.ParameterList = 225;
-        SyntaxKind._map[226] = "TypeArgumentList";
-        SyntaxKind.TypeArgumentList = 226;
-        SyntaxKind._map[227] = "TypeParameterList";
-        SyntaxKind.TypeParameterList = 227;
-        SyntaxKind._map[228] = "HeritageClause";
-        SyntaxKind.HeritageClause = 228;
-        SyntaxKind._map[229] = "EqualsValueClause";
-        SyntaxKind.EqualsValueClause = 229;
-        SyntaxKind._map[230] = "CaseSwitchClause";
-        SyntaxKind.CaseSwitchClause = 230;
-        SyntaxKind._map[231] = "DefaultSwitchClause";
-        SyntaxKind.DefaultSwitchClause = 231;
-        SyntaxKind._map[232] = "ElseClause";
-        SyntaxKind.ElseClause = 232;
-        SyntaxKind._map[233] = "CatchClause";
-        SyntaxKind.CatchClause = 233;
-        SyntaxKind._map[234] = "FinallyClause";
-        SyntaxKind.FinallyClause = 234;
-        SyntaxKind._map[235] = "TypeParameter";
-        SyntaxKind.TypeParameter = 235;
-        SyntaxKind._map[236] = "Constraint";
-        SyntaxKind.Constraint = 236;
-        SyntaxKind._map[237] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 237;
-        SyntaxKind._map[238] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 238;
-        SyntaxKind._map[239] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 239;
-        SyntaxKind._map[240] = "FunctionPropertyAssignment";
-        SyntaxKind.FunctionPropertyAssignment = 240;
-        SyntaxKind._map[241] = "Parameter";
-        SyntaxKind.Parameter = 241;
-        SyntaxKind._map[242] = "EnumElement";
-        SyntaxKind.EnumElement = 242;
-        SyntaxKind._map[243] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 243;
-        SyntaxKind._map[244] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 244;
-        SyntaxKind._map[245] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 245;
-        SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
-        SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
-        SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
-        SyntaxKind.LastFutureReservedKeyword = SyntaxKind.SuperKeyword;
-        SyntaxKind.FirstFutureReservedStrictKeyword = SyntaxKind.ImplementsKeyword;
-        SyntaxKind.LastFutureReservedStrictKeyword = SyntaxKind.YieldKeyword;
-        SyntaxKind.FirstTypeScriptKeyword = SyntaxKind.AnyKeyword;
-        SyntaxKind.LastTypeScriptKeyword = SyntaxKind.StringKeyword;
-        SyntaxKind.FirstKeyword = SyntaxKind.FirstStandardKeyword;
-        SyntaxKind.LastKeyword = SyntaxKind.LastTypeScriptKeyword;
-        SyntaxKind.FirstToken = SyntaxKind.ErrorToken;
-        SyntaxKind.LastToken = SyntaxKind.SlashEqualsToken;
-        SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
-        SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
-        SyntaxKind.FirstFixedWidth = SyntaxKind.FirstKeyword;
-        SyntaxKind.LastFixedWidth = SyntaxKind.LastPunctuation;
+        SyntaxKind[SyntaxKind["None"] = 0] = "None";
+        SyntaxKind[SyntaxKind["List"] = 1] = "List";
+        SyntaxKind[SyntaxKind["SeparatedList"] = 2] = "SeparatedList";
+        SyntaxKind[SyntaxKind["TriviaList"] = 3] = "TriviaList";
+
+        SyntaxKind[SyntaxKind["WhitespaceTrivia"] = 4] = "WhitespaceTrivia";
+        SyntaxKind[SyntaxKind["NewLineTrivia"] = 5] = "NewLineTrivia";
+        SyntaxKind[SyntaxKind["MultiLineCommentTrivia"] = 6] = "MultiLineCommentTrivia";
+        SyntaxKind[SyntaxKind["SingleLineCommentTrivia"] = 7] = "SingleLineCommentTrivia";
+        SyntaxKind[SyntaxKind["SkippedTokenTrivia"] = 8] = "SkippedTokenTrivia";
+
+        SyntaxKind[SyntaxKind["ErrorToken"] = 9] = "ErrorToken";
+        SyntaxKind[SyntaxKind["EndOfFileToken"] = 10] = "EndOfFileToken";
+
+        SyntaxKind[SyntaxKind["IdentifierName"] = 11] = "IdentifierName";
+
+        SyntaxKind[SyntaxKind["RegularExpressionLiteral"] = 12] = "RegularExpressionLiteral";
+        SyntaxKind[SyntaxKind["NumericLiteral"] = 13] = "NumericLiteral";
+        SyntaxKind[SyntaxKind["StringLiteral"] = 14] = "StringLiteral";
+
+        SyntaxKind[SyntaxKind["BreakKeyword"] = 15] = "BreakKeyword";
+        SyntaxKind[SyntaxKind["CaseKeyword"] = 16] = "CaseKeyword";
+        SyntaxKind[SyntaxKind["CatchKeyword"] = 17] = "CatchKeyword";
+        SyntaxKind[SyntaxKind["ContinueKeyword"] = 18] = "ContinueKeyword";
+        SyntaxKind[SyntaxKind["DebuggerKeyword"] = 19] = "DebuggerKeyword";
+        SyntaxKind[SyntaxKind["DefaultKeyword"] = 20] = "DefaultKeyword";
+        SyntaxKind[SyntaxKind["DeleteKeyword"] = 21] = "DeleteKeyword";
+        SyntaxKind[SyntaxKind["DoKeyword"] = 22] = "DoKeyword";
+        SyntaxKind[SyntaxKind["ElseKeyword"] = 23] = "ElseKeyword";
+        SyntaxKind[SyntaxKind["FalseKeyword"] = 24] = "FalseKeyword";
+        SyntaxKind[SyntaxKind["FinallyKeyword"] = 25] = "FinallyKeyword";
+        SyntaxKind[SyntaxKind["ForKeyword"] = 26] = "ForKeyword";
+        SyntaxKind[SyntaxKind["FunctionKeyword"] = 27] = "FunctionKeyword";
+        SyntaxKind[SyntaxKind["IfKeyword"] = 28] = "IfKeyword";
+        SyntaxKind[SyntaxKind["InKeyword"] = 29] = "InKeyword";
+        SyntaxKind[SyntaxKind["InstanceOfKeyword"] = 30] = "InstanceOfKeyword";
+        SyntaxKind[SyntaxKind["NewKeyword"] = 31] = "NewKeyword";
+        SyntaxKind[SyntaxKind["NullKeyword"] = 32] = "NullKeyword";
+        SyntaxKind[SyntaxKind["ReturnKeyword"] = 33] = "ReturnKeyword";
+        SyntaxKind[SyntaxKind["SwitchKeyword"] = 34] = "SwitchKeyword";
+        SyntaxKind[SyntaxKind["ThisKeyword"] = 35] = "ThisKeyword";
+        SyntaxKind[SyntaxKind["ThrowKeyword"] = 36] = "ThrowKeyword";
+        SyntaxKind[SyntaxKind["TrueKeyword"] = 37] = "TrueKeyword";
+        SyntaxKind[SyntaxKind["TryKeyword"] = 38] = "TryKeyword";
+        SyntaxKind[SyntaxKind["TypeOfKeyword"] = 39] = "TypeOfKeyword";
+        SyntaxKind[SyntaxKind["VarKeyword"] = 40] = "VarKeyword";
+        SyntaxKind[SyntaxKind["VoidKeyword"] = 41] = "VoidKeyword";
+        SyntaxKind[SyntaxKind["WhileKeyword"] = 42] = "WhileKeyword";
+        SyntaxKind[SyntaxKind["WithKeyword"] = 43] = "WithKeyword";
+
+        SyntaxKind[SyntaxKind["ClassKeyword"] = 44] = "ClassKeyword";
+        SyntaxKind[SyntaxKind["ConstKeyword"] = 45] = "ConstKeyword";
+        SyntaxKind[SyntaxKind["EnumKeyword"] = 46] = "EnumKeyword";
+        SyntaxKind[SyntaxKind["ExportKeyword"] = 47] = "ExportKeyword";
+        SyntaxKind[SyntaxKind["ExtendsKeyword"] = 48] = "ExtendsKeyword";
+        SyntaxKind[SyntaxKind["ImportKeyword"] = 49] = "ImportKeyword";
+        SyntaxKind[SyntaxKind["SuperKeyword"] = 50] = "SuperKeyword";
+
+        SyntaxKind[SyntaxKind["ImplementsKeyword"] = 51] = "ImplementsKeyword";
+        SyntaxKind[SyntaxKind["InterfaceKeyword"] = 52] = "InterfaceKeyword";
+        SyntaxKind[SyntaxKind["LetKeyword"] = 53] = "LetKeyword";
+        SyntaxKind[SyntaxKind["PackageKeyword"] = 54] = "PackageKeyword";
+        SyntaxKind[SyntaxKind["PrivateKeyword"] = 55] = "PrivateKeyword";
+        SyntaxKind[SyntaxKind["ProtectedKeyword"] = 56] = "ProtectedKeyword";
+        SyntaxKind[SyntaxKind["PublicKeyword"] = 57] = "PublicKeyword";
+        SyntaxKind[SyntaxKind["StaticKeyword"] = 58] = "StaticKeyword";
+        SyntaxKind[SyntaxKind["YieldKeyword"] = 59] = "YieldKeyword";
+
+        SyntaxKind[SyntaxKind["AnyKeyword"] = 60] = "AnyKeyword";
+        SyntaxKind[SyntaxKind["BooleanKeyword"] = 61] = "BooleanKeyword";
+        SyntaxKind[SyntaxKind["BoolKeyword"] = 62] = "BoolKeyword";
+        SyntaxKind[SyntaxKind["ConstructorKeyword"] = 63] = "ConstructorKeyword";
+        SyntaxKind[SyntaxKind["DeclareKeyword"] = 64] = "DeclareKeyword";
+        SyntaxKind[SyntaxKind["GetKeyword"] = 65] = "GetKeyword";
+        SyntaxKind[SyntaxKind["ModuleKeyword"] = 66] = "ModuleKeyword";
+        SyntaxKind[SyntaxKind["RequireKeyword"] = 67] = "RequireKeyword";
+        SyntaxKind[SyntaxKind["NumberKeyword"] = 68] = "NumberKeyword";
+        SyntaxKind[SyntaxKind["SetKeyword"] = 69] = "SetKeyword";
+        SyntaxKind[SyntaxKind["StringKeyword"] = 70] = "StringKeyword";
+
+        SyntaxKind[SyntaxKind["OpenBraceToken"] = 71] = "OpenBraceToken";
+        SyntaxKind[SyntaxKind["CloseBraceToken"] = 72] = "CloseBraceToken";
+        SyntaxKind[SyntaxKind["OpenParenToken"] = 73] = "OpenParenToken";
+        SyntaxKind[SyntaxKind["CloseParenToken"] = 74] = "CloseParenToken";
+        SyntaxKind[SyntaxKind["OpenBracketToken"] = 75] = "OpenBracketToken";
+        SyntaxKind[SyntaxKind["CloseBracketToken"] = 76] = "CloseBracketToken";
+        SyntaxKind[SyntaxKind["DotToken"] = 77] = "DotToken";
+        SyntaxKind[SyntaxKind["DotDotDotToken"] = 78] = "DotDotDotToken";
+        SyntaxKind[SyntaxKind["SemicolonToken"] = 79] = "SemicolonToken";
+        SyntaxKind[SyntaxKind["CommaToken"] = 80] = "CommaToken";
+        SyntaxKind[SyntaxKind["LessThanToken"] = 81] = "LessThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanToken"] = 82] = "GreaterThanToken";
+        SyntaxKind[SyntaxKind["LessThanEqualsToken"] = 83] = "LessThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanEqualsToken"] = 84] = "GreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsEqualsToken"] = 85] = "EqualsEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsGreaterThanToken"] = 86] = "EqualsGreaterThanToken";
+        SyntaxKind[SyntaxKind["ExclamationEqualsToken"] = 87] = "ExclamationEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsEqualsEqualsToken"] = 88] = "EqualsEqualsEqualsToken";
+        SyntaxKind[SyntaxKind["ExclamationEqualsEqualsToken"] = 89] = "ExclamationEqualsEqualsToken";
+        SyntaxKind[SyntaxKind["PlusToken"] = 90] = "PlusToken";
+        SyntaxKind[SyntaxKind["MinusToken"] = 91] = "MinusToken";
+        SyntaxKind[SyntaxKind["AsteriskToken"] = 92] = "AsteriskToken";
+        SyntaxKind[SyntaxKind["PercentToken"] = 93] = "PercentToken";
+        SyntaxKind[SyntaxKind["PlusPlusToken"] = 94] = "PlusPlusToken";
+        SyntaxKind[SyntaxKind["MinusMinusToken"] = 95] = "MinusMinusToken";
+        SyntaxKind[SyntaxKind["LessThanLessThanToken"] = 96] = "LessThanLessThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanToken"] = 97] = "GreaterThanGreaterThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanToken"] = 98] = "GreaterThanGreaterThanGreaterThanToken";
+        SyntaxKind[SyntaxKind["AmpersandToken"] = 99] = "AmpersandToken";
+        SyntaxKind[SyntaxKind["BarToken"] = 100] = "BarToken";
+        SyntaxKind[SyntaxKind["CaretToken"] = 101] = "CaretToken";
+        SyntaxKind[SyntaxKind["ExclamationToken"] = 102] = "ExclamationToken";
+        SyntaxKind[SyntaxKind["TildeToken"] = 103] = "TildeToken";
+        SyntaxKind[SyntaxKind["AmpersandAmpersandToken"] = 104] = "AmpersandAmpersandToken";
+        SyntaxKind[SyntaxKind["BarBarToken"] = 105] = "BarBarToken";
+        SyntaxKind[SyntaxKind["QuestionToken"] = 106] = "QuestionToken";
+        SyntaxKind[SyntaxKind["ColonToken"] = 107] = "ColonToken";
+        SyntaxKind[SyntaxKind["EqualsToken"] = 108] = "EqualsToken";
+        SyntaxKind[SyntaxKind["PlusEqualsToken"] = 109] = "PlusEqualsToken";
+        SyntaxKind[SyntaxKind["MinusEqualsToken"] = 110] = "MinusEqualsToken";
+        SyntaxKind[SyntaxKind["AsteriskEqualsToken"] = 111] = "AsteriskEqualsToken";
+        SyntaxKind[SyntaxKind["PercentEqualsToken"] = 112] = "PercentEqualsToken";
+        SyntaxKind[SyntaxKind["LessThanLessThanEqualsToken"] = 113] = "LessThanLessThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanEqualsToken"] = 114] = "GreaterThanGreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanEqualsToken"] = 115] = "GreaterThanGreaterThanGreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["AmpersandEqualsToken"] = 116] = "AmpersandEqualsToken";
+        SyntaxKind[SyntaxKind["BarEqualsToken"] = 117] = "BarEqualsToken";
+        SyntaxKind[SyntaxKind["CaretEqualsToken"] = 118] = "CaretEqualsToken";
+        SyntaxKind[SyntaxKind["SlashToken"] = 119] = "SlashToken";
+        SyntaxKind[SyntaxKind["SlashEqualsToken"] = 120] = "SlashEqualsToken";
+
+        SyntaxKind[SyntaxKind["SourceUnit"] = 121] = "SourceUnit";
+
+        SyntaxKind[SyntaxKind["QualifiedName"] = 122] = "QualifiedName";
+
+        SyntaxKind[SyntaxKind["ObjectType"] = 123] = "ObjectType";
+        SyntaxKind[SyntaxKind["FunctionType"] = 124] = "FunctionType";
+        SyntaxKind[SyntaxKind["ArrayType"] = 125] = "ArrayType";
+        SyntaxKind[SyntaxKind["ConstructorType"] = 126] = "ConstructorType";
+        SyntaxKind[SyntaxKind["GenericType"] = 127] = "GenericType";
+
+        SyntaxKind[SyntaxKind["InterfaceDeclaration"] = 128] = "InterfaceDeclaration";
+        SyntaxKind[SyntaxKind["FunctionDeclaration"] = 129] = "FunctionDeclaration";
+        SyntaxKind[SyntaxKind["ModuleDeclaration"] = 130] = "ModuleDeclaration";
+        SyntaxKind[SyntaxKind["ClassDeclaration"] = 131] = "ClassDeclaration";
+        SyntaxKind[SyntaxKind["EnumDeclaration"] = 132] = "EnumDeclaration";
+        SyntaxKind[SyntaxKind["ImportDeclaration"] = 133] = "ImportDeclaration";
+        SyntaxKind[SyntaxKind["ExportAssignment"] = 134] = "ExportAssignment";
+
+        SyntaxKind[SyntaxKind["MemberFunctionDeclaration"] = 135] = "MemberFunctionDeclaration";
+        SyntaxKind[SyntaxKind["MemberVariableDeclaration"] = 136] = "MemberVariableDeclaration";
+        SyntaxKind[SyntaxKind["ConstructorDeclaration"] = 137] = "ConstructorDeclaration";
+        SyntaxKind[SyntaxKind["GetMemberAccessorDeclaration"] = 138] = "GetMemberAccessorDeclaration";
+        SyntaxKind[SyntaxKind["SetMemberAccessorDeclaration"] = 139] = "SetMemberAccessorDeclaration";
+
+        SyntaxKind[SyntaxKind["PropertySignature"] = 140] = "PropertySignature";
+        SyntaxKind[SyntaxKind["CallSignature"] = 141] = "CallSignature";
+        SyntaxKind[SyntaxKind["ConstructSignature"] = 142] = "ConstructSignature";
+        SyntaxKind[SyntaxKind["IndexSignature"] = 143] = "IndexSignature";
+        SyntaxKind[SyntaxKind["MethodSignature"] = 144] = "MethodSignature";
+
+        SyntaxKind[SyntaxKind["Block"] = 145] = "Block";
+        SyntaxKind[SyntaxKind["IfStatement"] = 146] = "IfStatement";
+        SyntaxKind[SyntaxKind["VariableStatement"] = 147] = "VariableStatement";
+        SyntaxKind[SyntaxKind["ExpressionStatement"] = 148] = "ExpressionStatement";
+        SyntaxKind[SyntaxKind["ReturnStatement"] = 149] = "ReturnStatement";
+        SyntaxKind[SyntaxKind["SwitchStatement"] = 150] = "SwitchStatement";
+        SyntaxKind[SyntaxKind["BreakStatement"] = 151] = "BreakStatement";
+        SyntaxKind[SyntaxKind["ContinueStatement"] = 152] = "ContinueStatement";
+        SyntaxKind[SyntaxKind["ForStatement"] = 153] = "ForStatement";
+        SyntaxKind[SyntaxKind["ForInStatement"] = 154] = "ForInStatement";
+        SyntaxKind[SyntaxKind["EmptyStatement"] = 155] = "EmptyStatement";
+        SyntaxKind[SyntaxKind["ThrowStatement"] = 156] = "ThrowStatement";
+        SyntaxKind[SyntaxKind["WhileStatement"] = 157] = "WhileStatement";
+        SyntaxKind[SyntaxKind["TryStatement"] = 158] = "TryStatement";
+        SyntaxKind[SyntaxKind["LabeledStatement"] = 159] = "LabeledStatement";
+        SyntaxKind[SyntaxKind["DoStatement"] = 160] = "DoStatement";
+        SyntaxKind[SyntaxKind["DebuggerStatement"] = 161] = "DebuggerStatement";
+        SyntaxKind[SyntaxKind["WithStatement"] = 162] = "WithStatement";
+
+        SyntaxKind[SyntaxKind["PlusExpression"] = 163] = "PlusExpression";
+        SyntaxKind[SyntaxKind["NegateExpression"] = 164] = "NegateExpression";
+        SyntaxKind[SyntaxKind["BitwiseNotExpression"] = 165] = "BitwiseNotExpression";
+        SyntaxKind[SyntaxKind["LogicalNotExpression"] = 166] = "LogicalNotExpression";
+        SyntaxKind[SyntaxKind["PreIncrementExpression"] = 167] = "PreIncrementExpression";
+        SyntaxKind[SyntaxKind["PreDecrementExpression"] = 168] = "PreDecrementExpression";
+        SyntaxKind[SyntaxKind["DeleteExpression"] = 169] = "DeleteExpression";
+        SyntaxKind[SyntaxKind["TypeOfExpression"] = 170] = "TypeOfExpression";
+        SyntaxKind[SyntaxKind["VoidExpression"] = 171] = "VoidExpression";
+        SyntaxKind[SyntaxKind["CommaExpression"] = 172] = "CommaExpression";
+        SyntaxKind[SyntaxKind["AssignmentExpression"] = 173] = "AssignmentExpression";
+        SyntaxKind[SyntaxKind["AddAssignmentExpression"] = 174] = "AddAssignmentExpression";
+        SyntaxKind[SyntaxKind["SubtractAssignmentExpression"] = 175] = "SubtractAssignmentExpression";
+        SyntaxKind[SyntaxKind["MultiplyAssignmentExpression"] = 176] = "MultiplyAssignmentExpression";
+        SyntaxKind[SyntaxKind["DivideAssignmentExpression"] = 177] = "DivideAssignmentExpression";
+        SyntaxKind[SyntaxKind["ModuloAssignmentExpression"] = 178] = "ModuloAssignmentExpression";
+        SyntaxKind[SyntaxKind["AndAssignmentExpression"] = 179] = "AndAssignmentExpression";
+        SyntaxKind[SyntaxKind["ExclusiveOrAssignmentExpression"] = 180] = "ExclusiveOrAssignmentExpression";
+        SyntaxKind[SyntaxKind["OrAssignmentExpression"] = 181] = "OrAssignmentExpression";
+        SyntaxKind[SyntaxKind["LeftShiftAssignmentExpression"] = 182] = "LeftShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["SignedRightShiftAssignmentExpression"] = 183] = "SignedRightShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["UnsignedRightShiftAssignmentExpression"] = 184] = "UnsignedRightShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["ConditionalExpression"] = 185] = "ConditionalExpression";
+        SyntaxKind[SyntaxKind["LogicalOrExpression"] = 186] = "LogicalOrExpression";
+        SyntaxKind[SyntaxKind["LogicalAndExpression"] = 187] = "LogicalAndExpression";
+        SyntaxKind[SyntaxKind["BitwiseOrExpression"] = 188] = "BitwiseOrExpression";
+        SyntaxKind[SyntaxKind["BitwiseExclusiveOrExpression"] = 189] = "BitwiseExclusiveOrExpression";
+        SyntaxKind[SyntaxKind["BitwiseAndExpression"] = 190] = "BitwiseAndExpression";
+        SyntaxKind[SyntaxKind["EqualsWithTypeConversionExpression"] = 191] = "EqualsWithTypeConversionExpression";
+        SyntaxKind[SyntaxKind["NotEqualsWithTypeConversionExpression"] = 192] = "NotEqualsWithTypeConversionExpression";
+        SyntaxKind[SyntaxKind["EqualsExpression"] = 193] = "EqualsExpression";
+        SyntaxKind[SyntaxKind["NotEqualsExpression"] = 194] = "NotEqualsExpression";
+        SyntaxKind[SyntaxKind["LessThanExpression"] = 195] = "LessThanExpression";
+        SyntaxKind[SyntaxKind["GreaterThanExpression"] = 196] = "GreaterThanExpression";
+        SyntaxKind[SyntaxKind["LessThanOrEqualExpression"] = 197] = "LessThanOrEqualExpression";
+        SyntaxKind[SyntaxKind["GreaterThanOrEqualExpression"] = 198] = "GreaterThanOrEqualExpression";
+        SyntaxKind[SyntaxKind["InstanceOfExpression"] = 199] = "InstanceOfExpression";
+        SyntaxKind[SyntaxKind["InExpression"] = 200] = "InExpression";
+        SyntaxKind[SyntaxKind["LeftShiftExpression"] = 201] = "LeftShiftExpression";
+        SyntaxKind[SyntaxKind["SignedRightShiftExpression"] = 202] = "SignedRightShiftExpression";
+        SyntaxKind[SyntaxKind["UnsignedRightShiftExpression"] = 203] = "UnsignedRightShiftExpression";
+        SyntaxKind[SyntaxKind["MultiplyExpression"] = 204] = "MultiplyExpression";
+        SyntaxKind[SyntaxKind["DivideExpression"] = 205] = "DivideExpression";
+        SyntaxKind[SyntaxKind["ModuloExpression"] = 206] = "ModuloExpression";
+        SyntaxKind[SyntaxKind["AddExpression"] = 207] = "AddExpression";
+        SyntaxKind[SyntaxKind["SubtractExpression"] = 208] = "SubtractExpression";
+        SyntaxKind[SyntaxKind["PostIncrementExpression"] = 209] = "PostIncrementExpression";
+        SyntaxKind[SyntaxKind["PostDecrementExpression"] = 210] = "PostDecrementExpression";
+        SyntaxKind[SyntaxKind["MemberAccessExpression"] = 211] = "MemberAccessExpression";
+        SyntaxKind[SyntaxKind["InvocationExpression"] = 212] = "InvocationExpression";
+        SyntaxKind[SyntaxKind["ArrayLiteralExpression"] = 213] = "ArrayLiteralExpression";
+        SyntaxKind[SyntaxKind["ObjectLiteralExpression"] = 214] = "ObjectLiteralExpression";
+        SyntaxKind[SyntaxKind["ObjectCreationExpression"] = 215] = "ObjectCreationExpression";
+        SyntaxKind[SyntaxKind["ParenthesizedExpression"] = 216] = "ParenthesizedExpression";
+        SyntaxKind[SyntaxKind["ParenthesizedArrowFunctionExpression"] = 217] = "ParenthesizedArrowFunctionExpression";
+        SyntaxKind[SyntaxKind["SimpleArrowFunctionExpression"] = 218] = "SimpleArrowFunctionExpression";
+        SyntaxKind[SyntaxKind["CastExpression"] = 219] = "CastExpression";
+        SyntaxKind[SyntaxKind["ElementAccessExpression"] = 220] = "ElementAccessExpression";
+        SyntaxKind[SyntaxKind["FunctionExpression"] = 221] = "FunctionExpression";
+        SyntaxKind[SyntaxKind["OmittedExpression"] = 222] = "OmittedExpression";
+
+        SyntaxKind[SyntaxKind["VariableDeclaration"] = 223] = "VariableDeclaration";
+        SyntaxKind[SyntaxKind["VariableDeclarator"] = 224] = "VariableDeclarator";
+
+        SyntaxKind[SyntaxKind["ArgumentList"] = 225] = "ArgumentList";
+        SyntaxKind[SyntaxKind["ParameterList"] = 226] = "ParameterList";
+        SyntaxKind[SyntaxKind["TypeArgumentList"] = 227] = "TypeArgumentList";
+        SyntaxKind[SyntaxKind["TypeParameterList"] = 228] = "TypeParameterList";
+
+        SyntaxKind[SyntaxKind["HeritageClause"] = 229] = "HeritageClause";
+        SyntaxKind[SyntaxKind["EqualsValueClause"] = 230] = "EqualsValueClause";
+        SyntaxKind[SyntaxKind["CaseSwitchClause"] = 231] = "CaseSwitchClause";
+        SyntaxKind[SyntaxKind["DefaultSwitchClause"] = 232] = "DefaultSwitchClause";
+        SyntaxKind[SyntaxKind["ElseClause"] = 233] = "ElseClause";
+        SyntaxKind[SyntaxKind["CatchClause"] = 234] = "CatchClause";
+        SyntaxKind[SyntaxKind["FinallyClause"] = 235] = "FinallyClause";
+
+        SyntaxKind[SyntaxKind["TypeParameter"] = 236] = "TypeParameter";
+        SyntaxKind[SyntaxKind["Constraint"] = 237] = "Constraint";
+
+        SyntaxKind[SyntaxKind["SimplePropertyAssignment"] = 238] = "SimplePropertyAssignment";
+        SyntaxKind[SyntaxKind["GetAccessorPropertyAssignment"] = 239] = "GetAccessorPropertyAssignment";
+        SyntaxKind[SyntaxKind["SetAccessorPropertyAssignment"] = 240] = "SetAccessorPropertyAssignment";
+        SyntaxKind[SyntaxKind["FunctionPropertyAssignment"] = 241] = "FunctionPropertyAssignment";
+
+        SyntaxKind[SyntaxKind["Parameter"] = 242] = "Parameter";
+        SyntaxKind[SyntaxKind["EnumElement"] = 243] = "EnumElement";
+        SyntaxKind[SyntaxKind["TypeAnnotation"] = 244] = "TypeAnnotation";
+        SyntaxKind[SyntaxKind["ExternalModuleReference"] = 245] = "ExternalModuleReference";
+        SyntaxKind[SyntaxKind["ModuleNameModuleReference"] = 246] = "ModuleNameModuleReference";
+
+        SyntaxKind[SyntaxKind["FirstStandardKeyword"] = SyntaxKind.BreakKeyword] = "FirstStandardKeyword";
+        SyntaxKind[SyntaxKind["LastStandardKeyword"] = SyntaxKind.WithKeyword] = "LastStandardKeyword";
+
+        SyntaxKind[SyntaxKind["FirstFutureReservedKeyword"] = SyntaxKind.ClassKeyword] = "FirstFutureReservedKeyword";
+        SyntaxKind[SyntaxKind["LastFutureReservedKeyword"] = SyntaxKind.SuperKeyword] = "LastFutureReservedKeyword";
+
+        SyntaxKind[SyntaxKind["FirstFutureReservedStrictKeyword"] = SyntaxKind.ImplementsKeyword] = "FirstFutureReservedStrictKeyword";
+        SyntaxKind[SyntaxKind["LastFutureReservedStrictKeyword"] = SyntaxKind.YieldKeyword] = "LastFutureReservedStrictKeyword";
+
+        SyntaxKind[SyntaxKind["FirstTypeScriptKeyword"] = SyntaxKind.AnyKeyword] = "FirstTypeScriptKeyword";
+        SyntaxKind[SyntaxKind["LastTypeScriptKeyword"] = SyntaxKind.StringKeyword] = "LastTypeScriptKeyword";
+
+        SyntaxKind[SyntaxKind["FirstKeyword"] = SyntaxKind.FirstStandardKeyword] = "FirstKeyword";
+        SyntaxKind[SyntaxKind["LastKeyword"] = SyntaxKind.LastTypeScriptKeyword] = "LastKeyword";
+
+        SyntaxKind[SyntaxKind["FirstToken"] = SyntaxKind.ErrorToken] = "FirstToken";
+        SyntaxKind[SyntaxKind["LastToken"] = SyntaxKind.SlashEqualsToken] = "LastToken";
+
+        SyntaxKind[SyntaxKind["FirstPunctuation"] = SyntaxKind.OpenBraceToken] = "FirstPunctuation";
+        SyntaxKind[SyntaxKind["LastPunctuation"] = SyntaxKind.SlashEqualsToken] = "LastPunctuation";
+
+        SyntaxKind[SyntaxKind["FirstFixedWidth"] = SyntaxKind.FirstKeyword] = "FirstFixedWidth";
+        SyntaxKind[SyntaxKind["LastFixedWidth"] = SyntaxKind.LastPunctuation] = "LastFixedWidth";
     })(TypeScript.SyntaxKind || (TypeScript.SyntaxKind = {}));
     var SyntaxKind = TypeScript.SyntaxKind;
 })(TypeScript || (TypeScript = {}));
@@ -3342,15 +3237,16 @@ var TypeScript;
             "module": 66 /* ModuleKeyword */,
             "new": 31 /* NewKeyword */,
             "null": 32 /* NullKeyword */,
-            "number": 67 /* NumberKeyword */,
+            "number": 68 /* NumberKeyword */,
             "package": 54 /* PackageKeyword */,
             "private": 55 /* PrivateKeyword */,
             "protected": 56 /* ProtectedKeyword */,
             "public": 57 /* PublicKeyword */,
+            "require": 67 /* RequireKeyword */,
             "return": 33 /* ReturnKeyword */,
-            "set": 68 /* SetKeyword */,
+            "set": 69 /* SetKeyword */,
             "static": 58 /* StaticKeyword */,
-            "string": 69 /* StringKeyword */,
+            "string": 70 /* StringKeyword */,
             "super": 50 /* SuperKeyword */,
             "switch": 34 /* SwitchKeyword */,
             "this": 35 /* ThisKeyword */,
@@ -3363,231 +3259,287 @@ var TypeScript;
             "while": 42 /* WhileKeyword */,
             "with": 43 /* WithKeyword */,
             "yield": 59 /* YieldKeyword */,
-            "{": 70 /* OpenBraceToken */,
-            "}": 71 /* CloseBraceToken */,
-            "(": 72 /* OpenParenToken */,
-            ")": 73 /* CloseParenToken */,
-            "[": 74 /* OpenBracketToken */,
-            "]": 75 /* CloseBracketToken */,
-            ".": 76 /* DotToken */,
-            "...": 77 /* DotDotDotToken */,
-            ";": 78 /* SemicolonToken */,
-            ",": 79 /* CommaToken */,
-            "<": 80 /* LessThanToken */,
-            ">": 81 /* GreaterThanToken */,
-            "<=": 82 /* LessThanEqualsToken */,
-            ">=": 83 /* GreaterThanEqualsToken */,
-            "==": 84 /* EqualsEqualsToken */,
-            "=>": 85 /* EqualsGreaterThanToken */,
-            "!=": 86 /* ExclamationEqualsToken */,
-            "===": 87 /* EqualsEqualsEqualsToken */,
-            "!==": 88 /* ExclamationEqualsEqualsToken */,
-            "+": 89 /* PlusToken */,
-            "-": 90 /* MinusToken */,
-            "*": 91 /* AsteriskToken */,
-            "%": 92 /* PercentToken */,
-            "++": 93 /* PlusPlusToken */,
-            "--": 94 /* MinusMinusToken */,
-            "<<": 95 /* LessThanLessThanToken */,
-            ">>": 96 /* GreaterThanGreaterThanToken */,
-            ">>>": 97 /* GreaterThanGreaterThanGreaterThanToken */,
-            "&": 98 /* AmpersandToken */,
-            "|": 99 /* BarToken */,
-            "^": 100 /* CaretToken */,
-            "!": 101 /* ExclamationToken */,
-            "~": 102 /* TildeToken */,
-            "&&": 103 /* AmpersandAmpersandToken */,
-            "||": 104 /* BarBarToken */,
-            "?": 105 /* QuestionToken */,
-            ":": 106 /* ColonToken */,
-            "=": 107 /* EqualsToken */,
-            "+=": 108 /* PlusEqualsToken */,
-            "-=": 109 /* MinusEqualsToken */,
-            "*=": 110 /* AsteriskEqualsToken */,
-            "%=": 111 /* PercentEqualsToken */,
-            "<<=": 112 /* LessThanLessThanEqualsToken */,
-            ">>=": 113 /* GreaterThanGreaterThanEqualsToken */,
-            ">>>=": 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */,
-            "&=": 115 /* AmpersandEqualsToken */,
-            "|=": 116 /* BarEqualsToken */,
-            "^=": 117 /* CaretEqualsToken */,
-            "/": 118 /* SlashToken */,
-            "/=": 119 /* SlashEqualsToken */
+            "{": 71 /* OpenBraceToken */,
+            "}": 72 /* CloseBraceToken */,
+            "(": 73 /* OpenParenToken */,
+            ")": 74 /* CloseParenToken */,
+            "[": 75 /* OpenBracketToken */,
+            "]": 76 /* CloseBracketToken */,
+            ".": 77 /* DotToken */,
+            "...": 78 /* DotDotDotToken */,
+            ";": 79 /* SemicolonToken */,
+            ",": 80 /* CommaToken */,
+            "<": 81 /* LessThanToken */,
+            ">": 82 /* GreaterThanToken */,
+            "<=": 83 /* LessThanEqualsToken */,
+            ">=": 84 /* GreaterThanEqualsToken */,
+            "==": 85 /* EqualsEqualsToken */,
+            "=>": 86 /* EqualsGreaterThanToken */,
+            "!=": 87 /* ExclamationEqualsToken */,
+            "===": 88 /* EqualsEqualsEqualsToken */,
+            "!==": 89 /* ExclamationEqualsEqualsToken */,
+            "+": 90 /* PlusToken */,
+            "-": 91 /* MinusToken */,
+            "*": 92 /* AsteriskToken */,
+            "%": 93 /* PercentToken */,
+            "++": 94 /* PlusPlusToken */,
+            "--": 95 /* MinusMinusToken */,
+            "<<": 96 /* LessThanLessThanToken */,
+            ">>": 97 /* GreaterThanGreaterThanToken */,
+            ">>>": 98 /* GreaterThanGreaterThanGreaterThanToken */,
+            "&": 99 /* AmpersandToken */,
+            "|": 100 /* BarToken */,
+            "^": 101 /* CaretToken */,
+            "!": 102 /* ExclamationToken */,
+            "~": 103 /* TildeToken */,
+            "&&": 104 /* AmpersandAmpersandToken */,
+            "||": 105 /* BarBarToken */,
+            "?": 106 /* QuestionToken */,
+            ":": 107 /* ColonToken */,
+            "=": 108 /* EqualsToken */,
+            "+=": 109 /* PlusEqualsToken */,
+            "-=": 110 /* MinusEqualsToken */,
+            "*=": 111 /* AsteriskEqualsToken */,
+            "%=": 112 /* PercentEqualsToken */,
+            "<<=": 113 /* LessThanLessThanEqualsToken */,
+            ">>=": 114 /* GreaterThanGreaterThanEqualsToken */,
+            ">>>=": 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */,
+            "&=": 116 /* AmpersandEqualsToken */,
+            "|=": 117 /* BarEqualsToken */,
+            "^=": 118 /* CaretEqualsToken */,
+            "/": 119 /* SlashToken */,
+            "/=": 120 /* SlashEqualsToken */
         };
+
         var kindToText = [];
+
         for (var name in textToKeywordKind) {
             if (textToKeywordKind.hasOwnProperty(name)) {
                 kindToText[textToKeywordKind[name]] = name;
             }
         }
+
         kindToText[63 /* ConstructorKeyword */] = "constructor";
+
         function getTokenKind(text) {
             if (textToKeywordKind.hasOwnProperty(text)) {
                 return textToKeywordKind[text];
             }
+
             return 0 /* None */;
         }
         SyntaxFacts.getTokenKind = getTokenKind;
+
         function getText(kind) {
             var result = kindToText[kind];
             return result !== undefined ? result : null;
         }
         SyntaxFacts.getText = getText;
+
         function isTokenKind(kind) {
-            return kind >= 9 /* FirstToken */ && kind <= 119 /* LastToken */;
+            return kind >= 9 /* FirstToken */ && kind <= 120 /* LastToken */;
         }
         SyntaxFacts.isTokenKind = isTokenKind;
+
         function isAnyKeyword(kind) {
             return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
+
         function isStandardKeyword(kind) {
             return kind >= 15 /* FirstStandardKeyword */ && kind <= 43 /* LastStandardKeyword */;
         }
         SyntaxFacts.isStandardKeyword = isStandardKeyword;
+
         function isFutureReservedKeyword(kind) {
             return kind >= 44 /* FirstFutureReservedKeyword */ && kind <= 50 /* LastFutureReservedKeyword */;
         }
         SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
+
         function isFutureReservedStrictKeyword(kind) {
             return kind >= 51 /* FirstFutureReservedStrictKeyword */ && kind <= 59 /* LastFutureReservedStrictKeyword */;
         }
         SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
+
         function isAnyPunctuation(kind) {
-            return kind >= 70 /* FirstPunctuation */ && kind <= 119 /* LastPunctuation */;
+            return kind >= 71 /* FirstPunctuation */ && kind <= 120 /* LastPunctuation */;
         }
         SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
+
         function isPrefixUnaryExpressionOperatorToken(tokenKind) {
             return getPrefixUnaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */;
         }
         SyntaxFacts.isPrefixUnaryExpressionOperatorToken = isPrefixUnaryExpressionOperatorToken;
+
         function isBinaryExpressionOperatorToken(tokenKind) {
             return getBinaryExpressionFromOperatorToken(tokenKind) !== 0 /* None */;
         }
         SyntaxFacts.isBinaryExpressionOperatorToken = isBinaryExpressionOperatorToken;
+
         function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 89 /* PlusToken */:
-                    return 162 /* PlusExpression */;
-                case 90 /* MinusToken */:
-                    return 163 /* NegateExpression */;
-                case 102 /* TildeToken */:
-                    return 164 /* BitwiseNotExpression */;
-                case 101 /* ExclamationToken */:
-                    return 165 /* LogicalNotExpression */;
-                case 93 /* PlusPlusToken */:
-                    return 166 /* PreIncrementExpression */;
-                case 94 /* MinusMinusToken */:
-                    return 167 /* PreDecrementExpression */;
+                case 90 /* PlusToken */:
+                    return 163 /* PlusExpression */;
+                case 91 /* MinusToken */:
+                    return 164 /* NegateExpression */;
+                case 103 /* TildeToken */:
+                    return 165 /* BitwiseNotExpression */;
+                case 102 /* ExclamationToken */:
+                    return 166 /* LogicalNotExpression */;
+                case 94 /* PlusPlusToken */:
+                    return 167 /* PreIncrementExpression */;
+                case 95 /* MinusMinusToken */:
+                    return 168 /* PreDecrementExpression */;
+
                 default:
                     return 0 /* None */;
             }
         }
         SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = getPrefixUnaryExpressionFromOperatorToken;
+
         function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 93 /* PlusPlusToken */:
-                    return 208 /* PostIncrementExpression */;
-                case 94 /* MinusMinusToken */:
-                    return 209 /* PostDecrementExpression */;
+                case 94 /* PlusPlusToken */:
+                    return 209 /* PostIncrementExpression */;
+                case 95 /* MinusMinusToken */:
+                    return 210 /* PostDecrementExpression */;
                 default:
                     return 0 /* None */;
             }
         }
         SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = getPostfixUnaryExpressionFromOperatorToken;
+
         function getBinaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 91 /* AsteriskToken */:
-                    return 203 /* MultiplyExpression */;
-                case 118 /* SlashToken */:
-                    return 204 /* DivideExpression */;
-                case 92 /* PercentToken */:
-                    return 205 /* ModuloExpression */;
-                case 89 /* PlusToken */:
-                    return 206 /* AddExpression */;
-                case 90 /* MinusToken */:
-                    return 207 /* SubtractExpression */;
-                case 95 /* LessThanLessThanToken */:
-                    return 200 /* LeftShiftExpression */;
-                case 96 /* GreaterThanGreaterThanToken */:
-                    return 201 /* SignedRightShiftExpression */;
-                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
-                    return 202 /* UnsignedRightShiftExpression */;
-                case 80 /* LessThanToken */:
-                    return 194 /* LessThanExpression */;
-                case 81 /* GreaterThanToken */:
-                    return 195 /* GreaterThanExpression */;
-                case 82 /* LessThanEqualsToken */:
-                    return 196 /* LessThanOrEqualExpression */;
-                case 83 /* GreaterThanEqualsToken */:
-                    return 197 /* GreaterThanOrEqualExpression */;
+                case 92 /* AsteriskToken */:
+                    return 204 /* MultiplyExpression */;
+
+                case 119 /* SlashToken */:
+                    return 205 /* DivideExpression */;
+
+                case 93 /* PercentToken */:
+                    return 206 /* ModuloExpression */;
+
+                case 90 /* PlusToken */:
+                    return 207 /* AddExpression */;
+
+                case 91 /* MinusToken */:
+                    return 208 /* SubtractExpression */;
+
+                case 96 /* LessThanLessThanToken */:
+                    return 201 /* LeftShiftExpression */;
+
+                case 97 /* GreaterThanGreaterThanToken */:
+                    return 202 /* SignedRightShiftExpression */;
+
+                case 98 /* GreaterThanGreaterThanGreaterThanToken */:
+                    return 203 /* UnsignedRightShiftExpression */;
+
+                case 81 /* LessThanToken */:
+                    return 195 /* LessThanExpression */;
+
+                case 82 /* GreaterThanToken */:
+                    return 196 /* GreaterThanExpression */;
+
+                case 83 /* LessThanEqualsToken */:
+                    return 197 /* LessThanOrEqualExpression */;
+
+                case 84 /* GreaterThanEqualsToken */:
+                    return 198 /* GreaterThanOrEqualExpression */;
+
                 case 30 /* InstanceOfKeyword */:
-                    return 198 /* InstanceOfExpression */;
+                    return 199 /* InstanceOfExpression */;
+
                 case 29 /* InKeyword */:
-                    return 199 /* InExpression */;
-                case 84 /* EqualsEqualsToken */:
-                    return 190 /* EqualsWithTypeConversionExpression */;
-                case 86 /* ExclamationEqualsToken */:
-                    return 191 /* NotEqualsWithTypeConversionExpression */;
-                case 87 /* EqualsEqualsEqualsToken */:
-                    return 192 /* EqualsExpression */;
-                case 88 /* ExclamationEqualsEqualsToken */:
-                    return 193 /* NotEqualsExpression */;
-                case 98 /* AmpersandToken */:
-                    return 189 /* BitwiseAndExpression */;
-                case 100 /* CaretToken */:
-                    return 188 /* BitwiseExclusiveOrExpression */;
-                case 99 /* BarToken */:
-                    return 187 /* BitwiseOrExpression */;
-                case 103 /* AmpersandAmpersandToken */:
-                    return 186 /* LogicalAndExpression */;
-                case 104 /* BarBarToken */:
-                    return 185 /* LogicalOrExpression */;
-                case 116 /* BarEqualsToken */:
-                    return 180 /* OrAssignmentExpression */;
-                case 115 /* AmpersandEqualsToken */:
-                    return 178 /* AndAssignmentExpression */;
-                case 117 /* CaretEqualsToken */:
-                    return 179 /* ExclusiveOrAssignmentExpression */;
-                case 112 /* LessThanLessThanEqualsToken */:
-                    return 181 /* LeftShiftAssignmentExpression */;
-                case 113 /* GreaterThanGreaterThanEqualsToken */:
-                    return 182 /* SignedRightShiftAssignmentExpression */;
-                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
-                    return 183 /* UnsignedRightShiftAssignmentExpression */;
-                case 108 /* PlusEqualsToken */:
-                    return 173 /* AddAssignmentExpression */;
-                case 109 /* MinusEqualsToken */:
-                    return 174 /* SubtractAssignmentExpression */;
-                case 110 /* AsteriskEqualsToken */:
-                    return 175 /* MultiplyAssignmentExpression */;
-                case 119 /* SlashEqualsToken */:
-                    return 176 /* DivideAssignmentExpression */;
-                case 111 /* PercentEqualsToken */:
-                    return 177 /* ModuloAssignmentExpression */;
-                case 107 /* EqualsToken */:
-                    return 172 /* AssignmentExpression */;
-                case 79 /* CommaToken */:
-                    return 171 /* CommaExpression */;
+                    return 200 /* InExpression */;
+
+                case 85 /* EqualsEqualsToken */:
+                    return 191 /* EqualsWithTypeConversionExpression */;
+
+                case 87 /* ExclamationEqualsToken */:
+                    return 192 /* NotEqualsWithTypeConversionExpression */;
+
+                case 88 /* EqualsEqualsEqualsToken */:
+                    return 193 /* EqualsExpression */;
+
+                case 89 /* ExclamationEqualsEqualsToken */:
+                    return 194 /* NotEqualsExpression */;
+
+                case 99 /* AmpersandToken */:
+                    return 190 /* BitwiseAndExpression */;
+
+                case 101 /* CaretToken */:
+                    return 189 /* BitwiseExclusiveOrExpression */;
+
+                case 100 /* BarToken */:
+                    return 188 /* BitwiseOrExpression */;
+
+                case 104 /* AmpersandAmpersandToken */:
+                    return 187 /* LogicalAndExpression */;
+
+                case 105 /* BarBarToken */:
+                    return 186 /* LogicalOrExpression */;
+
+                case 117 /* BarEqualsToken */:
+                    return 181 /* OrAssignmentExpression */;
+
+                case 116 /* AmpersandEqualsToken */:
+                    return 179 /* AndAssignmentExpression */;
+
+                case 118 /* CaretEqualsToken */:
+                    return 180 /* ExclusiveOrAssignmentExpression */;
+
+                case 113 /* LessThanLessThanEqualsToken */:
+                    return 182 /* LeftShiftAssignmentExpression */;
+
+                case 114 /* GreaterThanGreaterThanEqualsToken */:
+                    return 183 /* SignedRightShiftAssignmentExpression */;
+
+                case 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
+                    return 184 /* UnsignedRightShiftAssignmentExpression */;
+
+                case 109 /* PlusEqualsToken */:
+                    return 174 /* AddAssignmentExpression */;
+
+                case 110 /* MinusEqualsToken */:
+                    return 175 /* SubtractAssignmentExpression */;
+
+                case 111 /* AsteriskEqualsToken */:
+                    return 176 /* MultiplyAssignmentExpression */;
+
+                case 120 /* SlashEqualsToken */:
+                    return 177 /* DivideAssignmentExpression */;
+
+                case 112 /* PercentEqualsToken */:
+                    return 178 /* ModuloAssignmentExpression */;
+
+                case 108 /* EqualsToken */:
+                    return 173 /* AssignmentExpression */;
+
+                case 80 /* CommaToken */:
+                    return 172 /* CommaExpression */;
+
                 default:
                     return 0 /* None */;
             }
         }
         SyntaxFacts.getBinaryExpressionFromOperatorToken = getBinaryExpressionFromOperatorToken;
+
         function isAnyDivideToken(kind) {
             switch (kind) {
-                case 118 /* SlashToken */:
-                case 119 /* SlashEqualsToken */:
+                case 119 /* SlashToken */:
+                case 120 /* SlashEqualsToken */:
                     return true;
                 default:
                     return false;
             }
         }
         SyntaxFacts.isAnyDivideToken = isAnyDivideToken;
+
         function isAnyDivideOrRegularExpressionToken(kind) {
             switch (kind) {
-                case 118 /* SlashToken */:
-                case 119 /* SlashEqualsToken */:
+                case 119 /* SlashToken */:
+                case 120 /* SlashEqualsToken */:
                 case 12 /* RegularExpressionLiteral */:
                     return true;
                 default:
@@ -3595,59 +3547,62 @@ var TypeScript;
             }
         }
         SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
+
         function isParserGenerated(kind) {
             switch (kind) {
-                case 96 /* GreaterThanGreaterThanToken */:
-                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
-                case 83 /* GreaterThanEqualsToken */:
-                case 113 /* GreaterThanGreaterThanEqualsToken */:
-                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
+                case 97 /* GreaterThanGreaterThanToken */:
+                case 98 /* GreaterThanGreaterThanGreaterThanToken */:
+                case 84 /* GreaterThanEqualsToken */:
+                case 114 /* GreaterThanGreaterThanEqualsToken */:
+                case 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
                     return true;
                 default:
                     return false;
             }
         }
         SyntaxFacts.isParserGenerated = isParserGenerated;
+
         function isAnyBinaryExpression(kind) {
             switch (kind) {
-                case 171 /* CommaExpression */:
-                case 172 /* AssignmentExpression */:
-                case 173 /* AddAssignmentExpression */:
-                case 174 /* SubtractAssignmentExpression */:
-                case 175 /* MultiplyAssignmentExpression */:
-                case 176 /* DivideAssignmentExpression */:
-                case 177 /* ModuloAssignmentExpression */:
-                case 178 /* AndAssignmentExpression */:
-                case 179 /* ExclusiveOrAssignmentExpression */:
-                case 180 /* OrAssignmentExpression */:
-                case 181 /* LeftShiftAssignmentExpression */:
-                case 182 /* SignedRightShiftAssignmentExpression */:
-                case 183 /* UnsignedRightShiftAssignmentExpression */:
-                case 185 /* LogicalOrExpression */:
-                case 186 /* LogicalAndExpression */:
-                case 187 /* BitwiseOrExpression */:
-                case 188 /* BitwiseExclusiveOrExpression */:
-                case 189 /* BitwiseAndExpression */:
-                case 190 /* EqualsWithTypeConversionExpression */:
-                case 191 /* NotEqualsWithTypeConversionExpression */:
-                case 192 /* EqualsExpression */:
-                case 193 /* NotEqualsExpression */:
-                case 194 /* LessThanExpression */:
-                case 195 /* GreaterThanExpression */:
-                case 196 /* LessThanOrEqualExpression */:
-                case 197 /* GreaterThanOrEqualExpression */:
-                case 198 /* InstanceOfExpression */:
-                case 199 /* InExpression */:
-                case 200 /* LeftShiftExpression */:
-                case 201 /* SignedRightShiftExpression */:
-                case 202 /* UnsignedRightShiftExpression */:
-                case 203 /* MultiplyExpression */:
-                case 204 /* DivideExpression */:
-                case 205 /* ModuloExpression */:
-                case 206 /* AddExpression */:
-                case 207 /* SubtractExpression */:
+                case 172 /* CommaExpression */:
+                case 173 /* AssignmentExpression */:
+                case 174 /* AddAssignmentExpression */:
+                case 175 /* SubtractAssignmentExpression */:
+                case 176 /* MultiplyAssignmentExpression */:
+                case 177 /* DivideAssignmentExpression */:
+                case 178 /* ModuloAssignmentExpression */:
+                case 179 /* AndAssignmentExpression */:
+                case 180 /* ExclusiveOrAssignmentExpression */:
+                case 181 /* OrAssignmentExpression */:
+                case 182 /* LeftShiftAssignmentExpression */:
+                case 183 /* SignedRightShiftAssignmentExpression */:
+                case 184 /* UnsignedRightShiftAssignmentExpression */:
+                case 186 /* LogicalOrExpression */:
+                case 187 /* LogicalAndExpression */:
+                case 188 /* BitwiseOrExpression */:
+                case 189 /* BitwiseExclusiveOrExpression */:
+                case 190 /* BitwiseAndExpression */:
+                case 191 /* EqualsWithTypeConversionExpression */:
+                case 192 /* NotEqualsWithTypeConversionExpression */:
+                case 193 /* EqualsExpression */:
+                case 194 /* NotEqualsExpression */:
+                case 195 /* LessThanExpression */:
+                case 196 /* GreaterThanExpression */:
+                case 197 /* LessThanOrEqualExpression */:
+                case 198 /* GreaterThanOrEqualExpression */:
+                case 199 /* InstanceOfExpression */:
+                case 200 /* InExpression */:
+                case 201 /* LeftShiftExpression */:
+                case 202 /* SignedRightShiftExpression */:
+                case 203 /* UnsignedRightShiftExpression */:
+                case 204 /* MultiplyExpression */:
+                case 205 /* DivideExpression */:
+                case 206 /* ModuloExpression */:
+                case 207 /* AddExpression */:
+                case 208 /* SubtractExpression */:
                     return true;
             }
+
             return false;
         }
         SyntaxFacts.isAnyBinaryExpression = isAnyBinaryExpression;
@@ -3656,6 +3611,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var argumentChecks = false;
 var forPrettyPrinter = false;
+
 var interfaces = {
     IMemberDeclarationSyntax: 'IClassElementSyntax',
     IStatementSyntax: 'IModuleElementSyntax',
@@ -3663,6 +3619,7 @@ var interfaces = {
     ITypeSyntax: 'IUnaryExpressionSyntax',
     IUnaryExpressionSyntax: 'IExpressionSyntax'
 };
+
 var definitions = [
     {
         name: 'SourceUnitSyntax',
@@ -3684,7 +3641,7 @@ var definitions = [
         name: 'ExternalModuleReferenceSyntax',
         baseType: 'ModuleReferenceSyntax',
         children: [
-            { name: 'moduleKeyword', isToken: true },
+            { name: 'moduleOrRequireKeyword', isToken: true, tokenKinds: ['ModuleKeyword', 'RequireKeyword'] },
             { name: 'openParenToken', isToken: true },
             { name: 'stringLiteral', isToken: true },
             { name: 'closeParenToken', isToken: true }
@@ -4666,15 +4623,19 @@ var definitions = [
         ]
     }
 ];
+
 function getStringWithoutSuffix(definition) {
     if (TypeScript.StringUtilities.endsWith(definition, "Syntax")) {
         return definition.substring(0, definition.length - "Syntax".length);
     }
+
     return definition;
 }
+
 function getNameWithoutSuffix(definition) {
     return getStringWithoutSuffix(definition.name);
 }
+
 function getType(child) {
     if (child.isToken) {
         return "ISyntaxToken";
@@ -4686,56 +4647,77 @@ function getType(child) {
         return child.type;
     }
 }
+
 var hasKind = false;
+
 function pascalCase(value) {
     return value.substr(0, 1).toUpperCase() + value.substr(1);
 }
+
 function camelCase(value) {
     return value.substr(0, 1).toLowerCase() + value.substr(1);
 }
+
 function getSafeName(child) {
     if (child.name === "arguments") {
         return "_" + child.name;
     }
+
     return child.name;
 }
+
 function getPropertyAccess(child) {
     if (child.type === "SyntaxKind") {
         return "this._kind";
     }
+
     return "this." + child.name;
 }
+
 function generateProperties(definition) {
     var result = "";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
+
         if (getType(child) === "SyntaxKind") {
             result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
         }
+
         hasKind = hasKind || (getType(child) === "SyntaxKind");
     }
+
     if (definition.children.length > 0) {
         result += "\r\n";
     }
+
     return result;
 }
+
 function generateNullChecks(definition) {
     var result = "";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
+
         if (!child.isOptional && !child.isToken) {
             result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
         }
     }
+
     return result;
 }
+
 function generateIfKindCheck(child, tokenKinds, indent) {
     var result = "";
+
     result += indent + "        if (";
+
     for (var j = 0; j < tokenKinds.length; j++) {
         if (j > 0) {
             result += " && ";
         }
+
         var tokenKind = tokenKinds[j];
         if (tokenKind === "IdentifierName") {
             result += "!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)";
@@ -4743,43 +4725,57 @@ function generateIfKindCheck(child, tokenKinds, indent) {
             result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
         }
     }
+
     result += ") { throw Errors.argument('" + child.name + "'); }\r\n";
     return result;
 }
+
 function generateSwitchCase(tokenKind, indent) {
     return indent + "            case SyntaxKind." + tokenKind + ":\r\n";
 }
+
 function generateBreakStatement(indent) {
     return indent + "                break;\r\n";
 }
+
 function generateSwitchCases(tokenKinds, indent) {
     var result = "";
     for (var j = 0; j < tokenKinds.length; j++) {
         var tokenKind = tokenKinds[j];
+
         result += generateSwitchCase(tokenKind, indent);
     }
+
     if (tokenKinds.length > 0) {
         result += generateBreakStatement(indent);
     }
+
     return result;
 }
+
 function generateDefaultCase(child, indent) {
     var result = "";
+
     result += indent + "            default:\r\n";
     result += indent + "                throw Errors.argument('" + child.name + "');\r\n";
+
     return result;
 }
+
 function generateSwitchKindCheck(child, tokenKinds, indent) {
     if (tokenKinds.length === 0) {
         return "";
     }
+
     var result = "";
+
     var identifierName = TypeScript.ArrayUtilities.where(tokenKinds, function (v) {
         return v.indexOf("IdentifierName") >= 0;
     });
     var notIdentifierName = TypeScript.ArrayUtilities.where(tokenKinds, function (v) {
         return v.indexOf("IdentifierName") < 0;
     });
+
     if (identifierName.length > 0) {
         result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
         if (notIdentifierName.length === 0) {
@@ -4787,8 +4783,10 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
             result += indent + "        }\r\n";
             return result;
         }
+
         indent += "    ";
     }
+
     if (notIdentifierName.length <= 2) {
         result += generateIfKindCheck(child, notIdentifierName, indent);
     } else if (notIdentifierName.length > 2) {
@@ -4797,56 +4795,76 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
         result += generateDefaultCase(child, indent);
         result += indent + "        }\r\n";
     }
+
     if (identifierName.length > 0) {
         result += indent + "    }\r\n";
     }
+
     return result;
 }
+
 function tokenKinds(child) {
     return child.tokenKinds ? child.tokenKinds : [pascalCase(child.name)];
 }
+
 function generateKindCheck(child) {
     var indent = "";
     var result = "";
+
     if (child.isOptional) {
         indent = "    ";
+
         result += "        if (" + child.name + " !== null) {\r\n";
     }
+
     var kinds = tokenKinds(child);
+
     if (kinds.length <= 2) {
         result += generateIfKindCheck(child, kinds, indent);
     } else {
         result += generateSwitchKindCheck(child, kinds, indent);
     }
+
     if (child.isOptional) {
         result += "        }\r\n";
     }
+
     return result;
 }
+
 function generateKindChecks(definition) {
     var result = "";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
+
         if (child.isToken) {
             result += generateKindCheck(child);
         }
     }
+
     return result;
 }
+
 function generateArgumentChecks(definition) {
     var result = "";
+
     if (argumentChecks) {
         result += generateNullChecks(definition);
         result += generateKindChecks(definition);
+
         if (definition.children.length > 0) {
             result += "\r\n";
         }
     }
+
     return result;
 }
+
 function generateConstructor(definition) {
     if (definition.isAbstract) {
     }
+
     var i;
     var child;
     var base = baseType(definition);
@@ -4855,51 +4873,70 @@ function generateConstructor(definition) {
     var baseSubchildrenNames = TypeScript.ArrayUtilities.select(baseSubchildren, function (c) {
         return c.name;
     });
+
     var result = "";
     result += "        constructor(";
+
     var children = definition.children;
     if (subchildren.length > 0) {
         children = subchildren;
     }
+
     for (i = 0; i < children.length; i++) {
         child = children[i];
+
         if (getType(child) !== "SyntaxKind" && !TypeScript.ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
         }
+
         result += child.name + ": " + getType(child);
         result += ",\r\n                    ";
     }
+
     result += "parsedInStrictMode: boolean) {\r\n";
+
     result += "            super(";
+
     for (i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
     }
+
     result += "parsedInStrictMode); \r\n";
     if (definition.children.length > 0) {
         result += "\r\n";
     }
+
     result += generateArgumentChecks(definition);
+
     for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
+
         if (child.type === "SyntaxKind") {
             result += "            " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
         }
     }
+
     result += "        }\r\n";
+
     return result;
 }
+
 function isOptional(child) {
     if (child.isOptional) {
         return true;
     }
+
     if (child.isList && !child.requiresAtLeastOneItem) {
         return true;
     }
+
     if (child.isSeparatedList && !child.requiresAtLeastOneItem) {
         return true;
     }
+
     return false;
 }
+
 function generateFactory1Method(definition) {
     var mandatoryChildren = TypeScript.ArrayUtilities.where(definition.children, function (c) {
         return !isOptional(c);
@@ -4907,20 +4944,28 @@ function generateFactory1Method(definition) {
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
+
     var result = "\r\n    public static create(";
     var i;
     var child;
+
     for (i = 0; i < mandatoryChildren.length; i++) {
         child = mandatoryChildren[i];
+
         result += child.name + ": " + getType(child);
+
         if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                         ";
         }
     }
+
     result += "): " + definition.name + " {\r\n";
+
     result += "        return new " + definition.name + "(";
+
     for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
+
         if (!isOptional(child)) {
             result += child.name;
         } else if (child.isList) {
@@ -4930,65 +4975,87 @@ function generateFactory1Method(definition) {
         } else {
             result += "null";
         }
+
         result += ", ";
     }
+
     result += "/*parsedInStrictMode:*/ false);\r\n";
     result += "    }\r\n";
+
     return result;
 }
+
 function isKeywordOrPunctuation(kind) {
     if (TypeScript.StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
+
     if (TypeScript.StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierName" && kind !== "EndOfFileToken") {
         return true;
     }
+
     return false;
 }
+
 function isDefaultConstructable(definition) {
     if (definition === null || definition.isAbstract) {
         return false;
     }
+
     for (var i = 0; i < definition.children.length; i++) {
         if (isMandatory(definition.children[i])) {
             return false;
         }
     }
+
     return true;
 }
+
 function isMandatory(child) {
     if (isOptional(child)) {
         return false;
     }
+
     if (child.type === "SyntaxKind" || child.isList || child.isSeparatedList) {
         return true;
     }
+
     if (child.isToken) {
         var kinds = tokenKinds(child);
         var isFixed = kinds.length === 1 && isKeywordOrPunctuation(kinds[0]);
+
         return !isFixed;
     }
+
     return !isDefaultConstructable(memberDefinitionType(child));
 }
+
 function generateFactory2Method(definition) {
     var mandatoryChildren = TypeScript.ArrayUtilities.where(definition.children, isMandatory);
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
+
     var i;
     var child;
     var result = "\r\n    public static create1(";
+
     for (i = 0; i < mandatoryChildren.length; i++) {
         child = mandatoryChildren[i];
+
         result += child.name + ": " + getType(child);
+
         if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                          ";
         }
     }
+
     result += "): " + definition.name + " {\r\n";
     result += "        return new " + definition.name + "(";
+
     for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
+
         if (isMandatory(child)) {
             result += child.name;
         } else if (child.isList) {
@@ -5002,55 +5069,71 @@ function generateFactory2Method(definition) {
         } else {
             result += child.type + ".create1()";
         }
+
         result += ", ";
     }
+
     result += "/*parsedInStrictMode:*/ false);\r\n";
     result += "    }\r\n";
+
     return result;
 }
+
 function generateFactoryMethod(definition) {
     return generateFactory1Method(definition) + generateFactory2Method(definition);
 }
+
 function generateAcceptMethods(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public accept(visitor: ISyntaxVisitor): any {\r\n";
         result += "        return visitor.visit" + getNameWithoutSuffix(definition) + "(this);\r\n";
         result += "    }\r\n";
     }
+
     return result;
 }
+
 function generateIsMethod(definition) {
     var result = "";
+
     if (definition.interfaces) {
         var ifaces = definition.interfaces.slice(0);
         var i;
         for (i = 0; i < ifaces.length; i++) {
             var current = ifaces[i];
+
             while (current !== undefined) {
                 if (!TypeScript.ArrayUtilities.contains(ifaces, current)) {
                     ifaces.push(current);
                 }
+
                 current = interfaces[current];
             }
         }
+
         for (i = 0; i < ifaces.length; i++) {
             var type = ifaces[i];
             type = getStringWithoutSuffix(type);
             if (isInterface(type)) {
                 type = type.substr(1);
             }
+
             result += "\r\n";
             result += "    public is" + type + "(): boolean {\r\n";
             result += "        return true;\r\n";
             result += "    }\r\n";
         }
     }
+
     return result;
 }
+
 function generateKindMethod(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         if (!hasKind) {
             result += "\r\n";
@@ -5059,55 +5142,74 @@ function generateKindMethod(definition) {
             result += "    }\r\n";
         }
     }
+
     return result;
 }
+
 function generateSlotMethods(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public childCount(): number {\r\n";
         var slotCount = hasKind ? (definition.children.length - 1) : definition.children.length;
+
         result += "        return " + slotCount + ";\r\n";
         result += "    }\r\n\r\n";
+
         result += "    public childAt(slot: number): ISyntaxElement {\r\n";
+
         if (slotCount === 0) {
             result += "        throw Errors.invalidOperation();\r\n";
         } else {
             result += "        switch (slot) {\r\n";
+
             var index = 0;
             for (var i = 0; i < definition.children.length; i++) {
                 var child = definition.children[i];
                 if (child.type === "SyntaxKind") {
                     continue;
                 }
+
                 result += "            case " + index + ": return this." + definition.children[i].name + ";\r\n";
                 index++;
             }
+
             result += "            default: throw Errors.invalidOperation();\r\n";
             result += "        }\r\n";
         }
+
         result += "    }\r\n";
     }
+
     return result;
 }
+
 function generateFirstTokenMethod(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public firstToken(): ISyntaxToken {\r\n";
         result += "        var token = null;\r\n";
+
         for (var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
+
             if (getType(child) === "SyntaxKind") {
                 continue;
             }
+
             if (child.name === "endOfFileToken") {
                 continue;
             }
+
             result += "        if (";
+
             if (child.isOptional) {
                 result += getPropertyAccess(child) + " !== null && ";
             }
+
             if (child.isToken) {
                 result += getPropertyAccess(child) + ".width() > 0";
                 result += ") { return " + getPropertyAccess(child) + "; }\r\n";
@@ -5116,36 +5218,48 @@ function generateFirstTokenMethod(definition) {
                 result += ") { return token; }\r\n";
             }
         }
+
         if (definition.name === "SourceUnitSyntax") {
             result += "        return this._endOfFileToken;\r\n";
         } else {
             result += "        return null;\r\n";
         }
+
         result += "    }\r\n";
     }
+
     return result;
 }
+
 function generateLastTokenMethod(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public lastToken(): ISyntaxToken {\r\n";
+
         if (definition.name === "SourceUnitSyntax") {
             result += "        return this._endOfFileToken;\r\n";
         } else {
             result += "        var token = null;\r\n";
+
             for (var i = definition.children.length - 1; i >= 0; i--) {
                 var child = definition.children[i];
+
                 if (getType(child) === "SyntaxKind") {
                     continue;
                 }
+
                 if (child.name === "endOfFileToken") {
                     continue;
                 }
+
                 result += "        if (";
+
                 if (child.isOptional) {
                     result += getPropertyAccess(child) + " !== null && ";
                 }
+
                 if (child.isToken) {
                     result += getPropertyAccess(child) + ".width() > 0";
                     result += ") { return " + getPropertyAccess(child) + "; }\r\n";
@@ -5154,22 +5268,30 @@ function generateLastTokenMethod(definition) {
                     result += ") { return token; }\r\n";
                 }
             }
+
             result += "        return null;\r\n";
         }
+
         result += "    }\r\n";
     }
+
     return result;
 }
+
 function generateInsertChildrenIntoMethod(definition) {
     var result = "";
+
     if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public insertChildrenInto(array: ISyntaxElement[], index: number) {\r\n";
+
         for (var i = definition.children.length - 1; i >= 0; i--) {
             var child = definition.children[i];
+
             if (child.type === "SyntaxKind") {
                 continue;
             }
+
             if (child.isList || child.isSeparatedList) {
                 result += "        " + getPropertyAccess(child) + ".insertChildrenInto(array, index);\r\n";
             } else if (child.isOptional) {
@@ -5178,20 +5300,25 @@ function generateInsertChildrenIntoMethod(definition) {
                 result += "        array.splice(index, 0, " + getPropertyAccess(child) + ");\r\n";
             }
         }
+
         result += "    }\r\n";
     }
+
     return result;
 }
+
 function baseType(definition) {
     return TypeScript.ArrayUtilities.firstOrDefault(definitions, function (d) {
         return d.name === definition.baseType;
     });
 }
+
 function memberDefinitionType(child) {
     return TypeScript.ArrayUtilities.firstOrDefault(definitions, function (d) {
         return d.name === child.type;
     });
 }
+
 function derivesFrom(def1, def2) {
     var current = def1;
     while (current !== null) {
@@ -5199,25 +5326,33 @@ function derivesFrom(def1, def2) {
         if (base === def2) {
             return true;
         }
+
         current = base;
     }
+
     return false;
 }
+
 function contains(definition, child) {
     return TypeScript.ArrayUtilities.any(definition.children, function (c) {
         return c.name === child.name && c.isList === child.isList && c.isSeparatedList === child.isSeparatedList && c.isToken === child.isToken && c.type === child.type;
     });
 }
+
 function childrenInAllSubclasses(definition) {
     var result = [];
+
     if (definition !== null && definition.isAbstract) {
         var subclasses = TypeScript.ArrayUtilities.where(definitions, function (d) {
             return !d.isAbstract && derivesFrom(d, definition);
         });
+
         if (subclasses.length > 0) {
             var firstSubclass = subclasses[0];
+
             for (var i = 0; i < firstSubclass.children.length; i++) {
                 var child = firstSubclass.children[i];
+
                 if (TypeScript.ArrayUtilities.all(subclasses, function (s) {
                     return contains(s, child);
                 })) {
@@ -5226,12 +5361,16 @@ function childrenInAllSubclasses(definition) {
             }
         }
     }
+
     return result;
 }
+
 function generateAccessors(definition) {
     var result = "";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
+
         if (child.type === "SyntaxKind") {
             result += "\r\n";
             result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
@@ -5239,53 +5378,68 @@ function generateAccessors(definition) {
             result += "    }\r\n";
         }
     }
+
     return result;
 }
+
 function generateWithMethod(definition, child) {
     var result = "";
     result += "\r\n";
     result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";
     result += "        return this.update(";
+
     for (var i = 0; i < definition.children.length; i++) {
         if (i > 0) {
             result += ", ";
         }
+
         if (definition.children[i] === child) {
             result += getSafeName(child);
         } else {
             result += getPropertyAccess(definition.children[i]);
         }
     }
+
     result += ");\r\n";
     result += "    }\r\n";
+
     if (child.isList || child.isSeparatedList) {
         if (TypeScript.StringUtilities.endsWith(child.name, "s")) {
             var pascalName = pascalCase(child.name);
             pascalName = pascalName.substring(0, pascalName.length - 1);
+
             var argName = getSafeName(child);
             argName = argName.substring(0, argName.length - 1);
+
             result += "\r\n";
             result += "    public with" + pascalName + "(" + argName + ": " + child.elementType + "): " + definition.name + " {\r\n";
             result += "        return this.with" + pascalCase(child.name) + "(";
+
             if (child.isList) {
                 result += "Syntax.list([" + argName + "])";
             } else {
                 result += "Syntax.separatedList([" + argName + "])";
             }
+
             result += ");\r\n";
             result += "    }\r\n";
         }
     }
+
     return result;
 }
+
 function generateWithMethods(definition) {
     var result = "";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         result += generateWithMethod(definition, child);
     }
+
     return result;
 }
+
 function generateTriviaMethods(definition) {
     var result = "\r\n";
     result += "    public withLeadingTrivia(trivia: ISyntaxTriviaList): " + definition.name + " {\r\n";
@@ -5294,94 +5448,129 @@ function generateTriviaMethods(definition) {
     result += "    public withTrailingTrivia(trivia: ISyntaxTriviaList): " + definition.name + " {\r\n";
     result += "        return <" + definition.name + ">super.withTrailingTrivia(trivia);\r\n";
     result += "    }\r\n";
+
     return result;
 }
+
 function generateUpdateMethod(definition) {
     if (definition.isAbstract) {
         return "";
     }
+
     var result = "";
+
     result += "\r\n";
+
     result += "    public ";
+
     result += "update(";
     var i;
     var child;
+
     for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
+
         result += getSafeName(child) + ": " + getType(child);
+
         if (i < definition.children.length - 1) {
             result += ",\r\n                  ";
         }
     }
+
     result += "): " + definition.name + " {\r\n";
+
     if (definition.children.length === 0) {
         result += "        return this;\r\n";
     } else {
         result += "        if (";
+
         for (i = 0; i < definition.children.length; i++) {
             child = definition.children[i];
+
             if (i !== 0) {
                 result += " && ";
             }
+
             result += getPropertyAccess(child) + " === " + getSafeName(child);
         }
+
         result += ") {\r\n";
         result += "            return this;\r\n";
         result += "        }\r\n\r\n";
+
         result += "        return new " + definition.name + "(";
+
         for (i = 0; i < definition.children.length; i++) {
             child = definition.children[i];
+
             result += getSafeName(child);
             result += ", ";
         }
+
         result += "/*parsedInStrictMode:*/ this.parsedInStrictMode());\r\n";
     }
+
     result += "    }\r\n";
+
     return result;
 }
+
 function generateIsTypeScriptSpecificMethod(definition) {
     var result = "\r\n    public isTypeScriptSpecific(): boolean {\r\n";
+
     if (definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
     } else {
         for (var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
+
             if (child.type === "SyntaxKind") {
                 continue;
             }
+
             if (child.isTypeScriptSpecific) {
                 result += "        if (" + getPropertyAccess(child) + " !== null) { return true; }\r\n";
                 continue;
             }
+
             if (child.isToken) {
                 continue;
             }
+
             if (child.isOptional) {
                 result += "        if (" + getPropertyAccess(child) + " !== null && " + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             } else {
                 result += "        if (" + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             }
         }
+
         result += "        return false;\r\n";
     }
+
     result += "    }\r\n";
+
     return result;
 }
+
 function couldBeRegularExpressionToken(child) {
     var kinds = tokenKinds(child);
     return TypeScript.ArrayUtilities.contains(kinds, "SlashToken") || TypeScript.ArrayUtilities.contains(kinds, "SlashEqualsToken") || TypeScript.ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
 }
+
 function generateStructuralEqualsMethod(definition) {
     if (definition.isAbstract) {
         return "";
     }
+
     var result = "\r\n    private structuralEquals(node: SyntaxNode): boolean {\r\n";
     result += "        if (this === node) { return true; }\r\n";
     result += "        if (node === null) { return false; }\r\n";
     result += "        if (this.kind() !== node.kind()) { return false; }\r\n";
     result += "        var other = <" + definition.name + ">node;\r\n";
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
+
         if (child.type !== "SyntaxKind") {
             if (child.isList) {
                 result += "        if (!Syntax.listStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
@@ -5396,17 +5585,22 @@ function generateStructuralEqualsMethod(definition) {
             }
         }
     }
+
     result += "        return true;\r\n";
     result += "    }\r\n";
     return result;
 }
+
 function generateNode(definition) {
     var result = "    export class " + definition.name + " extends " + definition.baseType;
+
     if (definition.interfaces) {
         result += " implements " + definition.interfaces.join(", ");
     }
+
     result += " {\r\n";
     hasKind = false;
+
     result += generateProperties(definition);
     result += generateConstructor(definition);
     result += generateAcceptMethods(definition);
@@ -5415,56 +5609,77 @@ function generateNode(definition) {
     result += generateIsMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
+
     if (!forPrettyPrinter) {
         result += generateFactoryMethod(definition);
         result += generateTriviaMethods(definition);
         result += generateWithMethods(definition);
         result += generateIsTypeScriptSpecificMethod(definition);
     }
+
     result += "    }";
+
     return result;
 }
+
 function generateNodes() {
     var result = "///<reference path='references.ts' />\r\n\r\n";
+
     result += "module TypeScript {\r\n";
+
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
+
         if (i > 0) {
             result += "\r\n\r\n";
         }
+
         result += generateNode(definition);
     }
+
     result += "\r\n}";
+
     return result;
 }
+
 function isInterface(name) {
     return name.substr(0, 1) === "I" && name.substr(1, 1).toUpperCase() === name.substr(1, 1);
 }
+
 function isNodeOrToken(child) {
     return child.type && isInterface(child.type);
 }
+
 function generateRewriter() {
     var result = "///<reference path='references.ts' />\r\n\r\n";
+
     result += "module TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
+
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
+
         result += "\r\n";
         result += "        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+
         if (definition.children.length === 0) {
             result += "            return node;\r\n";
             result += "        }\r\n";
             continue;
         }
+
         result += "            return node.update(\r\n";
+
         for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
+
             result += "                ";
             if (child.isOptional) {
                 result += "node." + child.name + " === null ? null : ";
             }
+
             if (child.isToken) {
                 result += "this.visitToken(node." + child.name + ")";
             } else if (child.isList) {
@@ -5478,96 +5693,135 @@ function generateRewriter() {
             } else {
                 result += "<" + child.type + ">this.visitNode(node." + child.name + ")";
             }
+
             if (j < definition.children.length - 1) {
                 result += ",\r\n";
             }
         }
+
         result += ");\r\n";
         result += "        }\r\n";
     }
+
     result += "    }";
     result += "\r\n}";
     return result;
 }
+
 function generateToken(isFixedWidth, leading, trailing) {
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
+
     var result = "    export class ";
+
     var needsSourcetext = hasAnyTrivia || isVariableWidth;
+
     var className = isFixedWidth ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" : leading && !trailing ? "WithLeadingTrivia" : !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
+
     result += className;
+
     result += " implements ISyntaxToken {\r\n";
+
     if (needsSourcetext) {
         result += "        private _sourceText: ISimpleText;\r\n";
         result += "        private _fullStart: number;\r\n";
     }
+
     result += "        public tokenKind: SyntaxKind;\r\n";
+
     if (leading) {
         result += "        private _leadingTriviaInfo: number;\r\n";
     }
+
     if (isVariableWidth) {
         result += "        private _textOrWidth: any;\r\n";
     }
+
     if (trailing) {
         result += "        private _trailingTriviaInfo: number;\r\n";
     }
+
     result += "\r\n";
+
     if (needsSourcetext) {
         result += "        constructor(sourceText: ISimpleText, fullStart: number,";
     } else {
         result += "        constructor(";
     }
+
     result += "kind: SyntaxKind";
+
     if (leading) {
         result += ", leadingTriviaInfo: number";
     }
+
     if (isVariableWidth) {
         result += ", textOrWidth: any";
     }
+
     if (trailing) {
         result += ", trailingTriviaInfo: number";
     }
+
     result += ") {\r\n";
+
     if (needsSourcetext) {
         result += "            this._sourceText = sourceText;\r\n";
         result += "            this._fullStart = fullStart;\r\n";
     }
+
     result += "            this.tokenKind = kind;\r\n";
+
     if (leading) {
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
     }
+
     if (isVariableWidth) {
         result += "            this._textOrWidth = textOrWidth;\r\n";
     }
+
     if (trailing) {
         result += "            this._trailingTriviaInfo = trailingTriviaInfo;\r\n";
     }
+
     result += "        }\r\n\r\n";
+
     result += "        public clone(): ISyntaxToken {\r\n";
     result += "            return new " + className + "(\r\n";
+
     if (needsSourcetext) {
         result += "                this._sourceText,\r\n";
         result += "                this._fullStart,\r\n";
     }
+
     result += "                this.tokenKind";
+
     if (leading) {
         result += ",\r\n                this._leadingTriviaInfo";
     }
+
     if (isVariableWidth) {
         result += ",\r\n                this._textOrWidth";
     }
+
     if (trailing) {
         result += ",\r\n                this._trailingTriviaInfo";
     }
+
     result += ");\r\n";
     result += "        }\r\n\r\n";
+
     result += "        public isNode(): boolean { return false; }\r\n" + "        public isToken(): boolean { return true; }\r\n" + "        public isList(): boolean { return false; }\r\n" + "        public isSeparatedList(): boolean { return false; }\r\n\r\n";
+
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n\r\n";
+
     result += "        public childCount(): number { return 0; }\r\n";
     result += "        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }\r\n\r\n";
+
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
+
     if (leading && trailing) {
         result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width() + " + trailingTriviaWidth + "; }\r\n";
     } else if (leading) {
@@ -5577,19 +5831,23 @@ function generateToken(isFixedWidth, leading, trailing) {
     } else {
         result += "        public fullWidth(): number { return this.width(); }\r\n";
     }
+
     if (needsSourcetext) {
         if (leading) {
             result += "        private start(): number { return this._fullStart + " + leadingTriviaWidth + "; }\r\n";
         } else {
             result += "        private start(): number { return this._fullStart; }\r\n";
         }
+
         result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
     }
+
     if (isFixedWidth) {
         result += "        public width(): number { return this.text().length; }\r\n";
     } else {
         result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
     }
+
     if (isFixedWidth) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     } else {
@@ -5603,11 +5861,13 @@ function generateToken(isFixedWidth, leading, trailing) {
         result += "            return this._textOrWidth;\r\n";
         result += "        }\r\n\r\n";
     }
+
     if (needsSourcetext) {
         result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }\r\n\r\n";
     } else {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
+
     if (isFixedWidth) {
         result += "        public value(): any { return value(this); }\r\n";
         result += "        public valueText(): string { return valueText(this); }\r\n";
@@ -5615,12 +5875,14 @@ function generateToken(isFixedWidth, leading, trailing) {
         result += "        public value(): any {\r\n" + "            if ((<any>this)._value === undefined) {\r\n" + "                (<any>this)._value = value(this);\r\n" + "            }\r\n" + "\r\n" + "            return (<any>this)._value;\r\n" + "        }\r\n\r\n";
         result += "        public valueText(): string {\r\n" + "            if ((<any>this)._valueText === undefined) {\r\n" + "                (<any>this)._valueText = valueText(this);\r\n" + "            }\r\n" + "\r\n" + "            return (<any>this)._valueText;\r\n" + "        }\r\n\r\n";
     }
+
     result += "        public hasLeadingTrivia(): boolean { return " + (leading ? "true" : "false") + "; }\r\n";
     result += "        public hasLeadingComment(): boolean { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasLeadingNewLine(): boolean { return " + (leading ? "hasTriviaNewLine(this._leadingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasLeadingSkippedText(): boolean { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
+
     result += "        public hasTrailingTrivia(): boolean { return " + (trailing ? "true" : "false") + "; }\r\n";
     result += "        public hasTrailingComment(): boolean { return " + (trailing ? "hasTriviaComment(this._trailingTriviaInfo)" : "false") + "; }\r\n";
     result += "        public hasTrailingNewLine(): boolean { return " + (trailing ? "hasTriviaNewLine(this._trailingTriviaInfo)" : "false") + "; }\r\n";
@@ -5628,14 +5890,21 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedToken(): boolean { return false; }\r\n";
+
     result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
+
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
+
     result += "    }\r\n";
+
     return result;
 }
+
 function generateTokens() {
     var result = "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript.Syntax {\r\n";
+
     result += generateToken(false, false, false);
     result += "\r\n";
     result += generateToken(false, true, false);
@@ -5644,6 +5913,7 @@ function generateTokens() {
     result += "\r\n";
     result += generateToken(false, true, true);
     result += "\r\n";
+
     result += generateToken(true, false, false);
     result += "\r\n";
     result += generateToken(true, true, false);
@@ -5652,23 +5922,33 @@ function generateTokens() {
     result += "\r\n";
     result += generateToken(true, true, true);
     result += "\r\n";
+
     result += "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" + "        token.leadingTrivia().collectTextElements(elements);\r\n" + "        elements.push(token.text());\r\n" + "        token.trailingTrivia().collectTextElements(elements);\r\n" + "    }\r\n" + "\r\n" + "    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new FixedWidthTokenWithNoTrivia(kind);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    export function variableWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n\r\n";
+
     result += "    function getTriviaWidth(value: number): number {\r\n" + "        return value >>> SyntaxConstants.TriviaFullWidthShift;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaComment(value: number): boolean {\r\n" + "        return (value & SyntaxConstants.TriviaCommentMask) !== 0;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaNewLine(value: number): boolean {\r\n" + "        return (value & SyntaxConstants.TriviaNewLineMask) !== 0;\r\n" + "    }\r\n";
+
     result += "}";
+
     return result;
 }
+
 function generateWalker() {
     var result = "";
+
     result += "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): void {\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): void {\r\n" + "            node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken.isToken()) { \r\n" + "                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "            if (token === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitToken(token);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNode(node: SyntaxNode): void {\r\n" + "            if (node === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNode(node);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNodeOrToken(nodeOrToken);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "               this.visitNodeOrToken(list.childAt(i));\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                this.visitNodeOrToken(item);\r\n" + "            }\r\n" + "        }\r\n";
+
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
+
         result += "\r\n";
         result += "        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
+
         for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
+
             if (child.isToken) {
                 if (child.isOptional) {
                     result += "            this.visitOptionalToken(node." + child.name + ");\r\n";
@@ -5693,37 +5973,57 @@ function generateWalker() {
                 }
             }
         }
+
         result += "        }\r\n";
     }
+
     result += "    }";
     result += "\r\n}";
     return result;
 }
+
+function firstEnumName(e, value) {
+    for (var name in e) {
+        if (e[name] === value) {
+            return name;
+        }
+    }
+}
+
 function generateKeywordCondition(keywords, currentCharacter, indent) {
     var length = keywords[0].text.length;
+
     var result = "";
     var index;
+
     if (keywords.length === 1) {
         var keyword = keywords[0];
+
         if (currentCharacter === length) {
-            return indent + "return SyntaxKind." + (TypeScript.SyntaxKind)._map[keyword.kind] + ";\r\n";
+            return indent + "return SyntaxKind." + firstEnumName(TypeScript.SyntaxKind, keyword.kind) + ";\r\n";
         }
+
         var keywordText = keywords[0].text;
         result = indent + "return (";
+
         for (var i = currentCharacter; i < length; i++) {
             if (i > currentCharacter) {
                 result += " && ";
             }
+
             index = i === 0 ? "startIndex" : ("startIndex + " + i);
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
-        result += ") ? SyntaxKind." + (TypeScript.SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
+
+        result += ") ? SyntaxKind." + firstEnumName(TypeScript.SyntaxKind, keyword.kind) + " : SyntaxKind.IdentifierName;\r\n";
     } else {
         index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
         result += indent + "switch(array[" + index + "]) {\r\n";
+
         var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, function (k) {
             return k.text.substr(currentCharacter, 1);
         });
+
         for (var c in groupedKeywords) {
             if (groupedKeywords.hasOwnProperty(c)) {
                 result += indent + "case CharacterCodes." + c + ":\r\n";
@@ -5733,20 +6033,27 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
                 result += generateKeywordCondition(groupedKeywords[c], currentCharacter + 1, indent + "    ");
             }
         }
+
         result += indent + "default:\r\n";
         result += indent + "    return SyntaxKind.IdentifierName;\r\n";
         result += indent + "}\r\n\r\n";
     }
+
     return result;
 }
+
 function generateScannerUtilities() {
     var result = "///<reference path='references.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class ScannerUtilities {\r\n";
+
     var i;
     var keywords = [];
+
     for (i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
         keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
     }
+
     result += "        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n";
+
     var minTokenLength = TypeScript.ArrayUtilities.min(keywords, function (k) {
         return k.text.length;
     });
@@ -5754,6 +6061,7 @@ function generateScannerUtilities() {
         return k.text.length;
     });
     result += "            switch (length) {\r\n";
+
     for (i = minTokenLength; i <= maxTokenLength; i++) {
         var keywordsOfLengthI = TypeScript.ArrayUtilities.where(keywords, function (k) {
             return k.text.length === i;
@@ -5763,32 +6071,42 @@ function generateScannerUtilities() {
             result += "                // " + TypeScript.ArrayUtilities.select(keywordsOfLengthI, function (k) {
                 return k.text;
             }).join(", ") + "\r\n";
+
             result += generateKeywordCondition(keywordsOfLengthI, 0, "            ");
         }
     }
+
     result += "            default:\r\n";
     result += "                return SyntaxKind.IdentifierName;\r\n";
     result += "            }\r\n";
     result += "        }\r\n";
+
     result += "    }\r\n";
     result += "}";
+
     return result;
 }
+
 function generateVisitor() {
     var i;
     var definition;
     var result = "";
+
     result += "///<reference path='references.ts' />\r\n\r\n";
+
     result += "module TypeScript {\r\n";
     result += "    export interface ISyntaxVisitor {\r\n";
     result += "        visitToken(token: ISyntaxToken): any;\r\n";
+
     for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (!definition.isAbstract) {
             result += "        visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
         }
     }
+
     result += "    }\r\n\r\n";
+
     if (!forPrettyPrinter) {
         result += "    export class SyntaxVisitor implements ISyntaxVisitor {\r\n";
         result += "        public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
@@ -5798,98 +6116,131 @@ function generateVisitor() {
         result += "        public visitToken(token: ISyntaxToken): any {\r\n";
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
+
         for (i = 0; i < definitions.length; i++) {
             definition = definitions[i];
+
             if (!definition.isAbstract) {
                 result += "\r\n        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
                 result += "            return this.defaultVisit(node);\r\n";
                 result += "        }\r\n";
             }
         }
+
         result += "    }";
     }
+
     result += "\r\n}";
+
     return result;
 }
+
 function generateFactory() {
     var result = "///<reference path='references.ts' />\r\n";
+
     result += "\r\nmodule TypeScript.Syntax {\r\n";
     result += "    export interface IFactory {\r\n";
+
     var i;
     var j;
     var definition;
     var child;
+
     for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
         for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
+
             child = definition.children[j];
             result += child.name + ": " + getType(child);
         }
+
         result += "): " + definition.name + ";\r\n";
     }
+
     result += "    }\r\n\r\n";
+
     result += "    export class NormalModeFactory implements IFactory {\r\n";
+
     for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
         for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
+
             child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
+
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
+
         for (j = 0; j < definition.children.length; j++) {
             child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }
+
         result += "/*parsedInStrictMode:*/ false);\r\n";
         result += "        }\r\n";
     }
+
     result += "    }\r\n\r\n";
+
     result += "    export class StrictModeFactory implements IFactory {\r\n";
+
     for (i = 0; i < definitions.length; i++) {
         definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
         for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
+
             child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
+
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
+
         for (j = 0; j < definition.children.length; j++) {
             child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }
+
         result += "/*parsedInStrictMode:*/ true);\r\n";
+
         result += "        }\r\n";
     }
+
     result += "    }\r\n\r\n";
+
     result += "    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n";
     result += "    export var strictModeFactory: IFactory = new StrictModeFactory();\r\n";
     result += "}";
+
     return result;
 }
+
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
@@ -5897,6 +6248,7 @@ var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
+
 Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxNodes.generated.ts", syntaxNodes, true);
 Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxRewriter.generated.ts", rewriter, true);
 Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\syntax\\syntaxToken.generated.ts", tokens, true);

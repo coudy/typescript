@@ -6,7 +6,7 @@ declare module bar {
 
 }
  
-import f = module('foo');
+import f = require('foo');
 
 module bar {
 

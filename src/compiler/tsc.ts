@@ -522,6 +522,13 @@ class BatchCompiler {
             }
         }, 'b');
 
+        opts.flag('require', {
+            usage: 'Throw error for use of deprecated "module" keyword when referencing an external module. Only allow "require" keyword.',
+            set: () => {
+                this.compilationSettings.allowModuleKeywordInExternalModuleReference = false;
+            }
+        }, 'r');
+
         opts.parse(this.ioHost.arguments);
         
         if (this.compilationSettings.useDefaultLib) {

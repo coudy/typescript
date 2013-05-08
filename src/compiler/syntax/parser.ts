@@ -1718,19 +1718,23 @@ module TypeScript.Parser {
         }
 
         private isExternalModuleReference(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.ModuleKeyword &&
-                   this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
+            var token0 = this.currentToken();
+            if (token0.tokenKind === SyntaxKind.ModuleKeyword || token0.tokenKind === SyntaxKind.RequireKeyword) {
+                return this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
+            }
+
+            return false;
         }
 
         private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
             // Debug.assert(this.isExternalModuleReference());
 
-            var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
+            var moduleOrRequireKeyword = this.eatAnyToken();
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return this.factory.externalModuleReference(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
+            return this.factory.externalModuleReference(moduleOrRequireKeyword, openParenToken, stringLiteral, closeParenToken);
         }
 
         private parseModuleNameModuleReference(): ModuleNameModuleReferenceSyntax {
@@ -5587,9 +5591,8 @@ module TypeScript.Parser {
                           text: ISimpleText,
                           isDeclaration: boolean,
                           languageVersion: LanguageVersion,
-                          options: ParseOptions = null): SyntaxTree {
+                          options: ParseOptions): SyntaxTree {
         var source = new NormalParserSource(fileName, text, languageVersion);
-        options = options || new ParseOptions();
 
         return new ParserImpl(fileName, text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
     }

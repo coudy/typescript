@@ -1311,5 +1311,16 @@ module TypeScript {
 
             super.visitSourceUnit(node);
         }
+
+        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void {
+            if (node.moduleOrRequireKeyword.tokenKind === SyntaxKind.ModuleKeyword && !this.syntaxTree.parseOptions().allowModuleKeywordInExternalModuleReference()) {
+                this.pushDiagnostic1(this.position(), node.moduleOrRequireKeyword,
+                    DiagnosticCode._module_______is_deprecated__Use__require_______instead);
+                this.skip(node);
+                return;
+            }
+
+            super.visitExternalModuleReference(node);
+        }
     }
 }

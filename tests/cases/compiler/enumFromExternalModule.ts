@@ -3,6 +3,6 @@ declare module 'filexx'{
 export enum Mode{ Open }
 }
 
-import f = module ('filexx');
+import f = require('filexx');
 
 var x = f.Mode.Open;

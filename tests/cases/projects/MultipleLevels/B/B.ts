@@ -1,5 +1,5 @@
-import A = module("../A/A");
-import AA = module("../A/AA/AA");
+import A = require("../A/A");
+import AA = require("../A/AA/AA");
 
 export class B
 {

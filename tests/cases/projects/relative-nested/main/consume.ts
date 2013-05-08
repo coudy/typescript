@@ -1,4 +1,4 @@
-import decl = module("../decl");
+import decl = require("../decl");
 
 declare function fail();
 

@@ -117,6 +117,6 @@ export declare module m4 {
 }
 ////[comments_ExternalModules_1.d.ts]
 /**This is on import declaration*/
-import extMod = module ("comments_ExternalModules_0");
+import extMod = require("comments_ExternalModules_0");
 export declare var newVar: extMod.m1.m2.c;
 export declare var newVar2: extMod.m4.m2.c;

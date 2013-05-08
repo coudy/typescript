@@ -1,4 +1,4 @@
-import b = module('B');
+import b = require('B');
 
 export function A(): void {
     b.B();

@@ -1,4 +1,4 @@
-import model = module("greeter")
+import model = require("greeter")
 
 var el = document.getElementById('content');
 var greeter = new model.Greeter(el);

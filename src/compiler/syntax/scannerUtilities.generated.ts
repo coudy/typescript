@@ -202,7 +202,7 @@ module TypeScript {
             }
 
             case 7:
-                // default, finally, extends, package, private, boolean, declare
+                // default, finally, extends, package, private, boolean, declare, require
             switch(array[startIndex]) {
             case CharacterCodes.d:
                 // default, declare
@@ -246,6 +246,9 @@ module TypeScript {
             case CharacterCodes.b:
                 // boolean
                 return (array[startIndex + 1] === CharacterCodes.o && array[startIndex + 2] === CharacterCodes.o && array[startIndex + 3] === CharacterCodes.l && array[startIndex + 4] === CharacterCodes.e && array[startIndex + 5] === CharacterCodes.a && array[startIndex + 6] === CharacterCodes.n) ? SyntaxKind.BooleanKeyword : SyntaxKind.IdentifierName;
+            case CharacterCodes.r:
+                // require
+                return (array[startIndex + 1] === CharacterCodes.e && array[startIndex + 2] === CharacterCodes.q && array[startIndex + 3] === CharacterCodes.u && array[startIndex + 4] === CharacterCodes.i && array[startIndex + 5] === CharacterCodes.r && array[startIndex + 6] === CharacterCodes.e) ? SyntaxKind.RequireKeyword : SyntaxKind.IdentifierName;
             default:
                 return SyntaxKind.IdentifierName;
             }

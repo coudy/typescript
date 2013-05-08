@@ -292,17 +292,17 @@ class Parser extends SlidingWindow {
     private diagnostics: SyntaxDiagnostic[] = [];
 
     constructor(text: IText,
+                options: ParseOptions,
                 languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                 stringTable: StringTable = null,
                 oldTree?: SyntaxTree = null,
-                changes?: TextChangeRange[] = null,
-                options?: ParseOptions = null) {
+                changes?: TextChangeRange[] = null) {
         super(32, null);
 
         this.scanner = new Scanner(text, languageVersion, stringTable);
 
         this.oldTree = oldTree;
-        this.options = options || new ParseOptions();
+        this.options = options;
     }
 
     private isIncremental(): boolean {

@@ -1,5 +1,5 @@
-import fs = module('fs');
-import server = module('server');
+import fs = require('fs');
+import server = require('server');
 
 export interface IConfiguration {
     workspace: server.IWorkspace;

@@ -3,7 +3,7 @@ declare module "fs" {
     export function mkdirSync(path: string, mode?: string): void;
 }
 
-import fs = module("fs");
+import fs = require("fs");
 
 function main() {
  fs.mkdirSync('test'); // should not error - return types are the same

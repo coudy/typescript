@@ -216,9 +216,9 @@ declare module "events" {
 }
 
 declare module "http" {
-    import events = module("events");
-    import net = module("net");
-    import stream = module("stream");
+    import events = require("events");
+    import net = require("net");
+    import stream = require("stream");
 
     export class Server extends events.EventEmitter {
         listen(port: number, hostname?: string, backlog?: number, callback?: Function): void;
@@ -287,7 +287,7 @@ declare module "http" {
 }
 
 declare module "cluster" {
-    import child_process = module("child_process");
+    import child_process = require("child_process");
 
     export interface ClusterSettings {
         exec: string;
@@ -324,7 +324,7 @@ declare module "cluster" {
 }
 
 declare module "zlib" {
-    import stream = module("stream");
+    import stream = require("stream");
     export interface ZlibOptions { chunkSize?: number; windowBits?: number; level?: number; memLevel?: number; strategy?: number; dictionary?: any; }
 
     export class Gzip extends stream.ReadWriteStream { }
@@ -402,9 +402,9 @@ declare module "os" {
 }
 
 declare module "https" {
-    import tls = module("tls");
-    import events = module("events");
-    import http = module("http");
+    import tls = require("tls");
+    import events = require("events");
+    import http = require("http");
 
     export interface ServerOptions {
         pfx?: any;
@@ -468,8 +468,8 @@ declare module "punycode" {
 }
 
 declare module "repl" {
-    import stream = module("stream");
-    import events = module("events");
+    import stream = require("stream");
+    import events = require("events");
 
     export interface ReplOptions {
         prompt?: string;
@@ -486,8 +486,8 @@ declare module "repl" {
 }
 
 declare module "readline" {
-    import events = module("events");
-    import stream = module("stream");
+    import events = require("events");
+    import stream = require("stream");
 
     export class ReadLine extends events.EventEmitter {
         setPrompt(prompt: string, length: number): void;
@@ -521,8 +521,8 @@ declare module "vm" {
 }
 
 declare module "child_process" {
-    import events = module("events");
-    import stream = module("stream");
+    import events = require("events");
+    import stream = require("stream");
 
     export class ChildProcess extends events.EventEmitter {
         stdin: stream.WritableStream;
@@ -605,7 +605,7 @@ declare module "dns" {
 }
 
 declare module "net" {
-    import stream = module("stream");
+    import stream = require("stream");
 
     export class NodeSocket extends stream.ReadWriteStream {
         // Extended base methods
@@ -658,7 +658,7 @@ declare module "net" {
 }
 
 declare module "dgram" {
-    import events = module("events");
+    import events = require("events");
 
     export function createSocket(type: string, callback?: Function): Socket;
 
@@ -676,7 +676,7 @@ declare module "dgram" {
 }
 
 declare module "fs" {
-    import stream = module("stream");
+    import stream = require("stream");
 
     export interface Stats {
         isFile(): boolean;
@@ -822,9 +822,9 @@ declare module "string_decoder" {
 }
 
 declare module "tls" {
-    import crypto = module("crypto");
-    import net = module("net");
-    import stream = module("stream");
+    import crypto = require("crypto");
+    import net = require("net");
+    import stream = require("stream");
 
     export var CLIENT_RENEG_LIMIT: number;
     export var CLIENT_RENEG_WINDOW: number;
@@ -969,7 +969,7 @@ declare module "crypto" {
 }
 
 declare module "stream" {
-    import events = module("events");
+    import events = require("events");
 
     export interface WriteStream {
         writable: boolean;
@@ -1051,7 +1051,7 @@ declare module "assert" {
 }
 
 declare module "tty" {
-    import net = module("net");
+    import net = require("net");
 
     export function isatty(fd: string): boolean;
     export class ReadStream extends net.NodeSocket {
@@ -1065,7 +1065,7 @@ declare module "tty" {
 }
 
 declare module "domain" {
-    import events = module("events");
+    import events = require("events");
 
     export class Domain extends events.EventEmitter { }
 

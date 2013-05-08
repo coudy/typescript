@@ -1,4 +1,4 @@
-import m4 = module("m4"); // Emit used
+import m4 = require("m4"); // Emit used
 export var x4 = m4.x;
 export var d4 = m4.d;
 export var f4 = m4.foo();

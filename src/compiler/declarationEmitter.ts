@@ -729,7 +729,7 @@ module TypeScript {
 
                     this.declFile.Write(importDecl.id.actualText + " = ");
                     if (importDecl.isDynamicImport) {
-                        this.declFile.WriteLine("module (" + importDecl.getAliasName() + ");");
+                        this.declFile.WriteLine("require(" + importDecl.getAliasName() + ");");
                     }
                     else {
                         this.declFile.WriteLine(importDecl.getAliasName() + ";");

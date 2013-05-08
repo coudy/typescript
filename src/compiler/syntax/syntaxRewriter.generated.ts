@@ -68,7 +68,7 @@ module TypeScript {
 
         public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
             return node.update(
-                this.visitToken(node.moduleKeyword),
+                this.visitToken(node.moduleOrRequireKeyword),
                 this.visitToken(node.openParenToken),
                 this.visitToken(node.stringLiteral),
                 this.visitToken(node.closeParenToken));

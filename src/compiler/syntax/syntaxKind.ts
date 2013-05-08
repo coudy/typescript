@@ -89,6 +89,7 @@ module TypeScript {
         DeclareKeyword,
         GetKeyword,
         ModuleKeyword,
+        RequireKeyword,
         NumberKeyword,
         SetKeyword,
         StringKeyword,

@@ -1,4 +1,4 @@
-import m4 = module("m4"); // Emit used
+import m4 = require("m4"); // Emit used
 export var x4 = m4.x;
 export var d4 = m4.d;
 export var f4 = m4.foo();
@@ -14,5 +14,5 @@ export module m1 {
 }
 
 // Do not emit unused import
-import m5 = module("m5");
+import m5 = require("m5");
 export var d = m5.foo2();

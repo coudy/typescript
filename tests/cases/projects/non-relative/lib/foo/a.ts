@@ -1,2 +1,2 @@
-import b = module("lib/foo/b");
+import b = require("lib/foo/b");
 export function hello() { }

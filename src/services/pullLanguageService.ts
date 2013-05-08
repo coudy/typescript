@@ -1475,7 +1475,8 @@ module Services {
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), this.compilerState.getHostCompilationSettings().codeGenTarget);
+            var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), this.compilerState.getHostCompilationSettings().codeGenTarget,
+                                                     TypeScript.getParseOptions(this.compilerState.getHostCompilationSettings()));
 
             return syntaxTree
         }

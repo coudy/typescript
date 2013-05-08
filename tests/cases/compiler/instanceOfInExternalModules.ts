@@ -6,7 +6,7 @@ declare module "FS"
 
 }
  
-import Bar = module("FS");
+import Bar = require("FS");
  
 function IsFoo(value: any): boolean
 

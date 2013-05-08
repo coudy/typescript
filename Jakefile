@@ -164,7 +164,7 @@ var useDebugMode = false;
 function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 	file(outFile, prereqs, function() {
 		var dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
-		var cmd = (process.env.TYPESCRIPT_HOST || "node") + " " + dir + "tsc.js -const -declaration -disallowbool " + sources.join(" ") + " -out " + outFile;
+		var cmd = (process.env.TYPESCRIPT_HOST || "node") + " " + dir + "tsc.js -const -declaration -disallowbool -require " + sources.join(" ") + " -out " + outFile;
 		if (useDebugMode) {
 			cmd = cmd + " -sourcemap -fullSourceMapPath";
 		}
@@ -177,7 +177,7 @@ function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 			}
 			complete();
 		},
-		{printStdout: true, printStderror: true});
+		{printStdout: true, printStderr: true});
 	}, {async: true});
 }
 
