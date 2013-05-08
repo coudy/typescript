@@ -2241,17 +2241,16 @@ module TypeScript {
 
         private typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var typeAndDiagnostics = this.resolver.resolveNameExpression(<Identifier>ast, enclosingDecl, this.context);
-            var type = typeAndDiagnostics.symbol.getType();
+            var type = this.resolveSymbolAndReportDiagnostics(ast, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(type, enclosingDecl);
             return type;
         }
 
         private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var resolvedNameAndDiagnostics = this.resolver.resolveDottedNameExpression(memberAccessExpression, enclosingDecl, this.context);
-            var resolvedName = resolvedNameAndDiagnostics.symbol;
+            var resolvedName = this.resolveSymbolAndReportDiagnostics(memberAccessExpression, false, enclosingDecl, this.context);
             var type = resolvedName.getType();
+
             this.checkForResolutionError(type, enclosingDecl);
             var prevCanUseTypeSymbol = this.context.canUseTypeSymbol;
             this.context.canUseTypeSymbol = true;
