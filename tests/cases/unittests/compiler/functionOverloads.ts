@@ -66,17 +66,6 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     //    });
     //});
 
-    it("Overloading static functions in functions should work", function() {
-        var code  = 'function boo{ ';
-            code += '   static test()';
-            code += '   static test(name:string)';
-            code += '   static test(name?:any){ }';
-            code += '}';
-        Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.arrayLengthIs(result.errors, 12);
-        });
-    });
-
     it("Overloading static functions in classes should work", function() {
         var code  = 'class foo { ';
             code += '   static fnOverload();';
