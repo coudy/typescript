@@ -58,13 +58,6 @@
 ////var r8a/*23*/ = _.map<number, B, string>(c5, (x/*8a*/,y/*8b*/) => { return y.foo() }); 
 ////var r8b/*24*/ = _.map<number, B, string>(c5, rf4); 
 
-goTo.marker('1a');
-verify.quickInfoIs('number');
-goTo.marker('1b');
-verify.quickInfoIs('string');
-goTo.marker('1c');
-verify.quickInfoIs('<T, U, V>(c: Collection<number, string>, f: (x: number, y: string) => string): Collection<number, string> (+ 1 overload(s))');
-
 goTo.marker('2a');
 verify.quickInfoIs('Collection<number, number>');
 goTo.marker('2b');
