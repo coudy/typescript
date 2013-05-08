@@ -1554,7 +1554,7 @@ module TypeScript {
             var inSuperConstructorCall = (callExpression.target.nodeType === NodeType.SuperExpression);
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultType = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).getType();
+            var resultType = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).symbol.getType();
 
             this.checkForResolutionError(resultType, enclosingDecl);
 
