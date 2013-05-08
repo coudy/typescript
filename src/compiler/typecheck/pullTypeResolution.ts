@@ -2512,11 +2512,13 @@ module TypeScript {
 
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
-
-                // PULLREVIEW: until further notice, search out for modules or enums
+                // Type aliases may have an associated export value symbol
                 if (!nameSymbol) {
-                    nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-                    nameSymbol = this.resolveNameSymbol(nameSymbol, context);
+                    nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
+
+                    if (nameSymbol && !(nameSymbol.isType() && nameSymbol.isAlias())) {
+                        nameSymbol = null;
+                    }
                 }
 
                 if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {

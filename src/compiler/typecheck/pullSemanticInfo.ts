@@ -176,7 +176,7 @@ module TypeScript {
         public elementTypeSymbol: PullTypeSymbol = null;
         public voidTypeSymbol: PullTypeSymbol = null;
 
-        public addPrimitive(name: string, globalDecl: PullDecl) {
+        public addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
             var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
@@ -186,9 +186,24 @@ module TypeScript {
 
             symbol.setResolved();
 
-            globalDecl.addChildDecl(decl);
+            if (globalDecl) {
+                globalDecl.addChildDecl(decl);
+            }
 
             return symbol;
+        }
+
+        public addPrimitiveValue(name: string, type: PullTypeSymbol, globalDecl: PullDecl) {
+            var span = new TextSpan(0, 0);
+            var decl = new PullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, span, "");
+            var symbol = new PullSymbol(name, PullElementKind.Variable);
+
+            symbol.addDeclaration(decl);
+            decl.setSymbol(symbol);
+            symbol.setType(type);
+            symbol.setResolved();
+
+            globalDecl.addChildDecl(decl);
         }
 
         constructor() {
@@ -198,14 +213,18 @@ module TypeScript {
             globalInfo.addTopLevelDecl(globalDecl);
 
             // add primitive types
-            this.anyTypeSymbol = this.addPrimitive("any", globalDecl);
-            this.booleanTypeSymbol = this.addPrimitive("boolean", globalDecl);
-            this.numberTypeSymbol = this.addPrimitive("number", globalDecl);
-            this.stringTypeSymbol = this.addPrimitive("string", globalDecl);
-            this.nullTypeSymbol = this.addPrimitive("null", globalDecl);
-            this.undefinedTypeSymbol = this.addPrimitive("undefined", globalDecl);
-            this.voidTypeSymbol = this.addPrimitive("void", globalDecl);
-            this.elementTypeSymbol = this.addPrimitive("_element", globalDecl);
+            this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
+            this.booleanTypeSymbol = this.addPrimitiveType("boolean", globalDecl);
+            this.numberTypeSymbol = this.addPrimitiveType("number", globalDecl);
+            this.stringTypeSymbol = this.addPrimitiveType("string", globalDecl);
+            this.voidTypeSymbol = this.addPrimitiveType("void", globalDecl);
+            this.elementTypeSymbol = this.addPrimitiveType("_element", globalDecl);
+
+            // add the global primitive values for "null" and "undefined"
+            this.nullTypeSymbol = this.addPrimitiveType("null", null);
+            this.undefinedTypeSymbol = this.addPrimitiveType("undefined", null);
+            this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
+            this.addPrimitiveValue("null", this.nullTypeSymbol, globalDecl);
         }
 
         public addUnit(unit: SemanticInfo) {

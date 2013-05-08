@@ -2,7 +2,9 @@ interface Utils {
    fold<T, S>(c?: Array<T>, folder?: (s: S, t: T) => T, init?: S): T;
 }
 
-Utils.fold(); // no error
-Utils.fold(null); // no error
-Utils.fold(null, null); // no error
-Utils.fold(null, null, null); // error: Unable to invoke type with no call signatures
+var utils: Utils;
+
+utils.fold(); // no error
+utils.fold(null); // no error
+utils.fold(null, null); // no error
+utils.fold(null, null, null); // error: Unable to invoke type with no call signatures
