@@ -1118,7 +1118,7 @@ module TypeScript {
         },
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: {
             category: DiagnosticCategory.Error,
-            message: "Call sigantures used in a 'new' expression must have a 'void' return type.",
+            message: "Call signatures used in a 'new' expression must have a 'void' return type.",
             code: 2084
         },
         Could_not_select_overload_for__new__expression: {
