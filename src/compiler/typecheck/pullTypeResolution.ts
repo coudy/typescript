@@ -1253,7 +1253,7 @@ module TypeScript {
             return importDeclSymbol;
         }
 
-        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
             // get the identifier text
             var id = exportAssignmentAST.id.text;
@@ -1326,7 +1326,7 @@ module TypeScript {
 
             (<PullContainerTypeSymbol>parentSymbol).setExportAssignedSymbol(nameSymbol);
 
-            return nameSymbol;
+            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
