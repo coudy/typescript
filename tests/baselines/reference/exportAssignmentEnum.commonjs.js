@@ -7,10 +7,10 @@ var E;
 })(E || (E = {}));
 
 
-    module.exports = E;
+module.exports = E;
 
 ////[exportEqualsEnum_B.js]
-
+var EnumE = require("./exportEqualsEnum_A");
 
 var a = EnumE.A;
 var b = EnumE.B;

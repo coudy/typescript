@@ -6,4 +6,4 @@ var M;
 var M2 = M;
 
 
-    module.exports = M2;
+module.exports = M2;

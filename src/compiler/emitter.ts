@@ -827,9 +827,11 @@ module TypeScript {
             // epilogue
             if (isDynamicMod) {
                 var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
+                var exportAssignmentSymbol = (<PullContainerTypeSymbol>pullDecl.getSymbol()).getExportAssignedSymbol();
 
                 if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                    if (exportAssignmentIdentifier) {
+                    if (exportAssignmentIdentifier && exportAssignmentSymbol && !(exportAssignmentSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                        // indent was decreased for AMD above
                         this.indenter.increaseIndent();
                         this.emitIndent();
                         this.writeLineToOutput("return " + exportAssignmentIdentifier + ";");
@@ -837,11 +839,9 @@ module TypeScript {
                     }
                     this.writeToOutput("});");
                 }
-                else if (exportAssignmentIdentifier) {
-                    this.indenter.increaseIndent();
+                else if (exportAssignmentIdentifier && exportAssignmentSymbol && !(exportAssignmentSymbol.getKind() & PullElementKind.SomeTypeReference)) {
                     this.emitIndent();
                     this.writeLineToOutput("module.exports = " + exportAssignmentIdentifier + ";");
-                    this.indenter.decreaseIndent();
                 }
 
                 if (!isWholeFile) {

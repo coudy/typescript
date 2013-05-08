@@ -5,7 +5,6 @@ define(["require", "exports"], function(require, exports) {
     }
 
     
-    return foo;
 });
 ////[exportEqualsFunction_B.js]
 define(["require", "exports"], function(require, exports) {

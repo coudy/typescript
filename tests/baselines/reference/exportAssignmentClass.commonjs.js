@@ -7,10 +7,10 @@ var C = (function () {
 })();
 
 
-    module.exports = C;
+module.exports = C;
 
 ////[exportEqualsClass_B.js]
-
+var D = require("./exportEqualsClass_A");
 
 var d = new D();
 var x = d.p;

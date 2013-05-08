@@ -8,7 +8,6 @@ define(["require", "exports"], function(require, exports) {
     })();
 
     
-    return C;
 });
 ////[exportEqualsClass_B.js]
 define(["require", "exports"], function(require, exports) {

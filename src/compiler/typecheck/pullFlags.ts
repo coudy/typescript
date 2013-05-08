@@ -106,6 +106,8 @@ module TypeScript {
 
         SomeAccessor = GetAccessor | SetAccessor,
 
+        SomeTypeReference = Interface | ObjectType | FunctionType | ConstructorType,
+
         SomeLHS = Variable | Property | Parameter | SetAccessor | Method,
     }
 

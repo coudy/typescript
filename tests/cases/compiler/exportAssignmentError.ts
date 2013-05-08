@@ -5,4 +5,4 @@ module M {
 
 import M2 = M;
 
-export = M2; // should error
+export = M2; // should not error

@@ -1237,6 +1237,9 @@ module TypeScript {
                     
                     if (exportedAssignmentSymbol) {
                         importDeclSymbol.setExportAssignmentSymbol(exportedAssignmentSymbol);
+                        if (!(exportedAssignmentSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                            importDeclSymbol.setIsUsedAsValue();
+                        }
                     }
                 }
 
@@ -1291,8 +1294,28 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
+            var nameSymbolKind = nameSymbol.getKind();
+            var acceptableAlias = (nameSymbolKind & PullElementKind.AcceptableAlias) != 0;
+
+            if (!acceptableAlias && nameSymbolKind == PullElementKind.TypeAlias) {
+                var aliasedType = (<PullTypeAliasSymbol>nameSymbol).getType();
+
+                // It's ok if the import statement aliases an internal module
+                if (aliasedType.getKind() != PullElementKind.DynamicModule) {
+                    acceptableAlias = true;
+                }
+                else {
+                    // If the import statement aliases an external module, see if there's an export assignment
+                    var exportAssignedSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol();
+                    
+                    if (exportAssignedSymbol) {
+                        acceptableAlias = true;
+                    }
+                }
+            }
+
             // check for valid export assignment type (variable, function, class, interface, enum, internal module)
-            if (!(nameSymbol.getKind() & PullElementKind.AcceptableAlias)) {
+            if (!acceptableAlias) {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
                 enclosingDecl.addDiagnostic(
