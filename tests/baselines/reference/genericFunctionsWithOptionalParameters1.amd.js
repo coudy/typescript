@@ -1,4 +1,6 @@
-Utils.fold();
-Utils.fold(null);
-Utils.fold(null, null);
-Utils.fold(null, null, null);
+var utils;
+
+utils.fold();
+utils.fold(null);
+utils.fold(null, null);
+utils.fold(null, null, null);

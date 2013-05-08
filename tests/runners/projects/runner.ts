@@ -144,7 +144,7 @@ class HarnessBatch {
                     // Log any bugs associated with the test
                     var bugs = code.content.match(/\bbug (\d+)/i);
                     if (bugs) {
-                        bugs.forEach(bug => assert.bug(bug));
+                        bugs.forEach(bug => Harness.Assert.bug(bug));
                     }
                     
                     compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ true);
@@ -315,10 +315,10 @@ class ProjectRunner extends RunnerBase {
                     generatedFiles: { fname: string; file: Harness.Compiler.WriterAggregator; }[],
                     expectedFiles: string[]
                     ) => {
-                    assert.equal(generatedFiles.length, expectedFiles.length);
+                    Harness.Assert.equal(generatedFiles.length, expectedFiles.length);
                     for (var i = 0; i < expectedFiles.length; i++) {
                         var expectedFName = baseFileName + expectedFiles[i];
-                        assert.equal(IO.resolvePath(generatedFiles[i].fname), IO.resolvePath(expectedFName));
+                        Harness.Assert.equal(IO.resolvePath(generatedFiles[i].fname), IO.resolvePath(expectedFName));
                         if (spec.verifyFileNamesOnly) {
                             continue;
                         }
@@ -328,7 +328,7 @@ class ProjectRunner extends RunnerBase {
                         var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
                         localFile.Write(fileContents);
                         localFile.Close();
-                        assert.noDiff(fileContents, IO.readFile(referenceFileName));
+                        Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName));
                     }
                 }
 
@@ -338,7 +338,7 @@ class ProjectRunner extends RunnerBase {
 
                 describe("with " + spec.scenario + " - Node Codegen", function () {
                     if (spec.bug && spec.bug !== '') {
-                        assert.bug(spec.bug)
+                        Harness.Assert.bug(spec.bug)
                     }
 
                     cleanProjectDirectory(spec.projectRoot);
@@ -354,16 +354,16 @@ class ProjectRunner extends RunnerBase {
                     it("collects the right files", function () {
                         var resolvedFiles = batch.getResolvedFilePaths();
                         assertRelativePathsInArray(resolvedFiles, spec.collectedFiles);
-                        assert.equal(resolvedFiles.length, spec.collectedFiles.length);
+                        Harness.Assert.equal(resolvedFiles.length, spec.collectedFiles.length);
                     }); 
 
                     if (!spec.negative) {
                         it("compiles without error", function () {
-                            assert.equal(batch.errout.lines.join("\n"), '');
+                            Harness.Assert.equal(batch.errout.lines.join("\n"), '');
                         });
                     } else {
                         it("compiles with errors", function () {
-                            assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
+                            Harness.Assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
                         });
                     }
 
@@ -380,8 +380,8 @@ class ProjectRunner extends RunnerBase {
                     if (testExec && !spec.skipRun && !spec.skipNodeRun) {
                         it("runs without error", function (done) {
                             Exec.exec("node.exe", ['"' + outputFiles[0] + '"'], function (res) {
-                                assert.equal(res.stdout, "");
-                                assert.equal(res.stderr, "");
+                                Harness.Assert.equal(res.stdout, "");
+                                Harness.Assert.equal(res.stderr, "");
                                 done();
                             })
                         });
@@ -389,7 +389,7 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
                                  Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType));
                         });
                     }
@@ -405,7 +405,7 @@ class ProjectRunner extends RunnerBase {
 
                 describe("with " + spec.scenario + " - AMD Codegen", function () {
                     if (spec.bug && spec.bug !== '') {
-                        assert.bug(spec.bug)
+                        Harness.Assert.bug(spec.bug)
                     }
 
                     cleanProjectDirectory(spec.projectRoot);
@@ -422,18 +422,18 @@ class ProjectRunner extends RunnerBase {
                     it("collects the right files", function () {
                         var resolvedFiles = batch.getResolvedFilePaths();
 
-                        assert.equal(resolvedFiles.length, spec.collectedFiles.length);
+                        Harness.Assert.equal(resolvedFiles.length, spec.collectedFiles.length);
                         assertRelativePathsInArray(resolvedFiles, spec.collectedFiles);
                     });
 
                     if (!spec.negative) {
                         it("compiles without error", function () {
-                            assert.equal(batch.errout.lines.join("\n"), '');
+                            Harness.Assert.equal(batch.errout.lines.join("\n"), '');
                         });
                     }
                     else {
                         it("compiles with errors", function () {
-                            assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
+                            Harness.Assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
                         });
                     }
 
@@ -453,8 +453,8 @@ class ProjectRunner extends RunnerBase {
 
                         it("runs without error", function (done) {
                             Exec.exec("node.exe", ['"' + spec.projectRoot + '/driver.js"'], function (res) {
-                                assert.equal(res.stdout, "");
-                                assert.equal(res.stderr, "");
+                                Harness.Assert.equal(res.stdout, "");
+                                Harness.Assert.equal(res.stderr, "");
                                 done();
                             })
                         });
@@ -462,7 +462,7 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
                                  Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType));
                         });
                     }
@@ -592,7 +592,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true /* this requires a host which is able to resolve the script in the reference tag */
             });
 
-            assert.bug('No error for importing an external module in illegal scope');
+            Harness.Assert.bug('No error for importing an external module in illegal scope');
             //tests.push({
             //    scenario: 'int referencing ext and int'
             //        , projectRoot: 'tests/cases/projects/ext-int-ext'
@@ -692,7 +692,7 @@ class ProjectRunner extends RunnerBase {
                     ]
             });
 
-            assert.bug('No error for importing an external module in illegal scope');
+            Harness.Assert.bug('No error for importing an external module in illegal scope');
             //tests.push({
             //    scenario: "privacy Check on imported module - declarations inside non exported module"
             //        , projectRoot: 'tests/cases/projects/privacyCheck-InsideModule'
@@ -705,7 +705,7 @@ class ProjectRunner extends RunnerBase {
             //            , '// ' + TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + '/tests/cases/projects/privacyCheck-InsideModule/test.ts (24,33): Import declaration of external module is permitted only in global or top level dynamic modules']
             //});
 
-            assert.bug('No error for importing an external module in illegal scope');
+            Harness.Assert.bug('No error for importing an external module in illegal scope');
             //tests.push({
             //    scenario: "privacy Check on imported module - import statement in parent module"
             //        , projectRoot: 'tests/cases/projects/privacyCheck-ImportInParent'
@@ -777,7 +777,7 @@ class ProjectRunner extends RunnerBase {
                 , skipRun: true
             });
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "declarations_SimpleImport"
             //        , projectRoot: 'tests/cases/projects/declarations_SimpleImport'
@@ -788,7 +788,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "declarations_GlobalImport"
             //        , projectRoot: 'tests/cases/projects/declarations_GlobalImport'
@@ -819,7 +819,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
             });
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "declarations_MultipleTimesImport"
             //        , projectRoot: 'tests/cases/projects/declarations_MultipleTimesImport'
@@ -830,7 +830,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "declarations_MultipleTimesMultipleImport"
             //        , projectRoot: 'tests/cases/projects/declarations_MultipleTimesMultipleImport'
@@ -851,7 +851,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
             });
 
-            assert.bug('Exported types cannot flow across multiple external module boundaries');
+            Harness.Assert.bug('Exported types cannot flow across multiple external module boundaries');
             //tests.push({
             //    scenario: "declarations_IndirectImport should result in error"
             //        , projectRoot: 'tests/cases/projects/declarations_IndirectImport'
@@ -1166,7 +1166,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
             });
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "outputdir_module_simple: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_simple'
@@ -1191,7 +1191,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "outputdir_module_simple: specify outputDirectory"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_simple'
@@ -1204,7 +1204,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_module_simple: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_simple'
@@ -1231,7 +1231,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_module_simple: specify outputDirectory"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_simple'
@@ -1245,7 +1245,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "outputdir_module_subfolder: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_subfolder'
@@ -1270,7 +1270,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "outputdir_module_subfolder: specify outputDirectory"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_subfolder'
@@ -1283,7 +1283,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_module_subfolder: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_subfolder'
@@ -1310,7 +1310,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
+            Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_module_subfolder: specify outputDirectory"
             //        , projectRoot: 'tests/cases/projects/outputdir_module_subfolder'
@@ -1408,7 +1408,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
             });
 
-            assert.bug('Bad emit for file without export triple slash referencing a file with exports');
+            Harness.Assert.bug('Bad emit for file without export triple slash referencing a file with exports');
             //tests.push({
             //    scenario: "outputdir_mixed_subfolder: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_mixed_subfolder'
@@ -1433,7 +1433,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Bad emit for file without export triple slash referencing a file with exports');
+            Harness.Assert.bug('Bad emit for file without export triple slash referencing a file with exports');
             // TODO: shouldn't this have an error even after the bug fix? --out + files with external modules (m2.ts)?
             //tests.push({
             //    scenario: "outputdir_mixed_subfolder: specify outputDirectory"
@@ -1447,7 +1447,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Bad emit for file without export triple slash referencing a file with exports');
+            Harness.Assert.bug('Bad emit for file without export triple slash referencing a file with exports');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_mixed_subfolder: no outdir"
             //        , projectRoot: 'tests/cases/projects/outputdir_mixed_subfolder'
@@ -1474,7 +1474,7 @@ class ProjectRunner extends RunnerBase {
             //        , skipRun: true
             //});
 
-            assert.bug('Bad emit for file without export triple slash referencing a file with exports');
+            Harness.Assert.bug('Bad emit for file without export triple slash referencing a file with exports');
             //tests.push({
             //    scenario: "[Sourcemap]: outputdir_mixed_subfolder: specify outputDirectory"
             //        , projectRoot: 'tests/cases/projects/outputdir_mixed_subfolder'
@@ -1493,7 +1493,7 @@ class ProjectRunner extends RunnerBase {
             // TODO: since the precompiled info about the referenced files is not passed the declare files 
             //       generated using this runner isnt emitting updated reference tag.
 
-            assert.bug("Not emitting a JS file for a TS file whose JS would be 'empty'")
+            Harness.Assert.bug("Not emitting a JS file for a TS file whose JS would be 'empty'")
             //tests.push({
             //    scenario: "Visibility of type used across modules"
             //        , projectRoot: 'tests/cases/projects/VisibilityOfCrosssModuleTypeUsage'

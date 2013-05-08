@@ -65,7 +65,7 @@ class UnitTestRunner extends RunnerBase {
                     process: process,
                     describe: describe,
                     it: it,
-                    assert: assert,
+                    assert: Harness.Assert,
                     Harness: Harness,
                     IO: IO,
                     Exec: Exec,

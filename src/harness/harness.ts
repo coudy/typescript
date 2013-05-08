@@ -18,7 +18,6 @@
 ///<reference path='..\services\typescriptServices.ts' />
 ///<reference path='diff.ts'/>
 
-declare var assert: Harness.Assert;
 declare var it;
 declare var describe;
 declare var run;
@@ -78,6 +77,7 @@ module Harness {
 
     // Assert functions
     export module Assert {
+        import assert = Harness.Assert;
         export var bugIds: string[] = [];
         export var throwAssertError = (error: Error) => {
             throw error;
@@ -193,6 +193,8 @@ module Harness {
             }
         }
     }
+
+    import assert = Harness.Assert;
 
     /** Splits the given string on \r\n or on only \n if that fails */
     export function splitContentByNewlines(content: string) {

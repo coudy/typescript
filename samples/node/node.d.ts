@@ -296,7 +296,7 @@ declare module "cluster" {
     }
     export interface Worker {
         id: string;
-        process: child_process;
+        process: child_process.ChildProcess;
         suicide: boolean;
         send(message: any, sendHandle?: any): void;
         destroy(): void;

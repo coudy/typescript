@@ -1670,8 +1670,8 @@ module TypeScript {
                     if (typeExprSymbol.isContainer()) {
                         var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
 
-                        if (!instanceSymbol) {
-                            diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [typeExprSymbol.toString()], decl);
+                        if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
+                            diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], decl);
                             typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                             hadError = true;
                         }

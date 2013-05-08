@@ -70,7 +70,7 @@ class CompilerBaselineRunner extends RunnerBase {
 
         var lastUnit = units[units.length - 1];
         describe('JS output and errors for ' + fileName, function () {
-            assert.bugs(content);
+            Harness.Assert.bugs(content);
 
             var jsOutputAsync = '';
             var jsOutputSync = '';

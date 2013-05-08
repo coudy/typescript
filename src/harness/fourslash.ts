@@ -17,6 +17,9 @@
 /// <reference path='harness.ts' />
 
 module FourSlash {
+
+    import assert = Harness.Assert;
+
     // Represents a parsed source file with metadata
     export interface FourSlashFile {
         // The contents of the file (with markers, etc stripped out)

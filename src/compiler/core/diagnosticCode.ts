@@ -196,7 +196,7 @@ module TypeScript {
         The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter,
         The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type,
         Setters_cannot_return_a_value,
-        Tried_to_set_variable_type_to_uninitialized_module_type,
+        Tried_to_set_variable_type_to_module_type__0__,
         Tried_to_set_variable_type_to_uninitialized_module_type__0__,
         Function__0__declared_a_non_void_return_type__but_has_no_return_expression,
         Getters_must_return_a_value,

@@ -18,6 +18,8 @@
 
 module DumpAST {
 
+    import assert = Harness.Assert;
+
     class DumpEntry {
         public nodeType: string;
         public minChar: number;
