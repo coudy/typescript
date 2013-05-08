@@ -2252,7 +2252,7 @@ module TypeScript {
                     return this.resolveObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ArrayLiteralExpression:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveArrayLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context));
+                    return this.resolveArrayLiteralExpression(<UnaryExpression>expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ThisExpression:
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
@@ -3283,16 +3283,17 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(typeSymbol);
         }
 
-        private resolveArrayLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var previousResolutionSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
-            var previousResolutionSymbol = previousResolutionSymbolAndDiagnostics && previousResolutionSymbolAndDiagnostics.symbol;
-
-            if (previousResolutionSymbol) {
-                return <PullTypeSymbol>previousResolutionSymbol;
+        private resolveArrayLiteralExpression(arrayLit: UnaryExpression, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(arrayLit);
+            if (!symbolAndDiagnostics) {
+                symbolAndDiagnostics = this.computeArrayLiteralExpressionSymbol(arrayLit, inContextuallyTypedAssignment, enclosingDecl, context);
+                this.setSymbolAndDiagnosticsForAST(arrayLit, symbolAndDiagnostics, context);
             }
 
-            var arrayLit = <UnaryExpression>expressionAST;
+            return symbolAndDiagnostics;
+        }
 
+        private computeArrayLiteralExpressionSymbol(arrayLit: UnaryExpression, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var elements = <ASTList>arrayLit.operand;
             var elementType = this.semanticInfoChain.anyTypeSymbol;
             var elementTypes: PullTypeSymbol[] = [];
@@ -3314,7 +3315,6 @@ module TypeScript {
             }
 
             if (elements) {
-
                 for (var i = 0; i < elements.members.length; i++) {
                     elementTypes[elementTypes.length] = this.resolveStatementOrExpression(elements.members[i], inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
                 }
@@ -3341,7 +3341,8 @@ module TypeScript {
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
-            } else if (inContextuallyTypedAssignment) {
+            }
+            else if (inContextuallyTypedAssignment) {
                 context.popContextualType();
             }
 
@@ -3376,9 +3377,7 @@ module TypeScript {
                 }
             }
 
-            this.setSymbolAndDiagnosticsForAST(expressionAST, SymbolAndDiagnostics.fromSymbol(arraySymbol), context);
-
-            return arraySymbol;
+            return SymbolAndDiagnostics.fromSymbol(arraySymbol);
         }
 
         private resolveIndexExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5860,7 +5859,7 @@ module TypeScript {
                         }
 
                         context.pushContextualType(memberType, true, null);
-                        argSym = this.resolveArrayLiteralExpression(args.members[j], true, enclosingDecl, context);
+                        var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context).symbol;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
