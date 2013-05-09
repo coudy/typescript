@@ -78,3 +78,63 @@ verify.memberListContains("y1");
 goTo.marker("8");
 verify.not.memberListContains("x1");
 verify.memberListContains("y1");
+
+
+////interface Foo {
+////    x: { a: number };
+////}
+////var aaa: Foo;
+
+////aaa = {/*9*/
+
+goTo.marker("9");
+verify.memberListContains("x");
+verify.memberListCount(1);
+
+
+////aaa.x = { /*10*/
+
+goTo.marker("10");
+verify.memberListContains("a");
+verify.memberListCount(1);
+
+
+////var bbb = <Foo>{ /*11*/ 
+
+goTo.marker("11");
+verify.memberListContains("x");
+verify.memberListCount(1);
+
+
+////var bbb = <Foo>{ x: { /*12*/
+
+goTo.marker("12");
+verify.memberListContains("a");
+verify.memberListCount(1);
+
+
+////var ccc: Foo = { func: () => ({ /*13*/ }) 
+
+goTo.marker("13");
+verify.memberListCount(0);
+
+
+////var ddd: Foo = {
+////
+////    /*14*/
+
+goTo.marker("14");
+verify.memberListContains("x");
+verify.memberListCount(1);
+
+
+
+////var p15: MyPoint = {
+////    "x1": 5,
+////    /*15*/
+////};
+
+goTo.marker("15");
+verify.not.memberListContains("x1");
+verify.memberListContains("y1");
+verify.memberListCount(1);

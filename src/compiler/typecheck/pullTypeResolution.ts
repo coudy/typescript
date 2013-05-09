@@ -121,6 +121,10 @@ module TypeScript {
         public actualParametersContextTypeSymbols: PullTypeSymbol[] = null;
     }
 
+    export class PullAdditionalObjectLiteralResolutionData {
+        public membersContextTypeSymbols: PullTypeSymbol[] = null;
+    }
+
     // The resolver associates types with a given AST
     export class PullTypeResolver {
         private cachedArrayInterfaceType: PullTypeSymbol = null;
@@ -3292,11 +3296,11 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
         }
 
-        private resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+        public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
 
-            if (!symbolAndDiagnostics) {
-                symbolAndDiagnostics = this.computeObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context);
+            if (!symbolAndDiagnostics || additionalResults) {
+                symbolAndDiagnostics = this.computeObjectLiteralExpression(expressionAST, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
                 this.setSymbolAndDiagnosticsForAST(expressionAST, symbolAndDiagnostics, context);
             }
 
@@ -3305,7 +3309,7 @@ module TypeScript {
 
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
-        private computeObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+        private computeObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): SymbolAndDiagnostics<PullSymbol> {
             // PULLTODO: Create a decl for the object literal
 
             // walk the members of the object literal,
@@ -3341,6 +3345,10 @@ module TypeScript {
                 var memberSymbol: PullSymbol;
                 var assigningSymbol: PullSymbol = null;
                 var acceptedContextualType = false;
+
+                if (additionalResults) {
+                    additionalResults.membersContextTypeSymbols = [];
+                }
 
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
                     binex = <BinaryExpression>memberDecls.members[i];
@@ -3388,6 +3396,10 @@ module TypeScript {
                             context.pushContextualType(assigningSymbol.getType(), context.inProvisionalResolution(), null);
 
                             acceptedContextualType = true;
+
+                            if (additionalResults) {
+                                additionalResults.membersContextTypeSymbols[i] = assigningSymbol.getType();
+                            }
                         }
                     }
 

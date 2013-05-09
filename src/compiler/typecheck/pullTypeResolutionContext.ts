@@ -207,9 +207,13 @@ module TypeScript {
 
         public getContextualType(): PullTypeSymbol {
             var context = !this.contextStack.length ? null : this.contextStack[this.contextStack.length - 1];
-
+            
             if (context) {
                 var type = context.contextualType;
+
+                if (!type) {
+                    return null;
+                }
 
                 // if it's a type parameter, return the upper bound
                 if (type.isTypeParameter() && (<PullTypeParameterSymbol>type).getConstraint()) {

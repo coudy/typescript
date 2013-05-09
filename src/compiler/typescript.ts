@@ -1121,10 +1121,12 @@ module TypeScript {
                         var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
                         var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
 
+                        var contextualType: PullTypeSymbol = null;
                         if (varSymbol && inContextuallyTypedAssignment) {
-                            var contextualType = varSymbol.getType();
-                            resolutionContext.pushContextualType(contextualType, false, null);
+                            contextualType = varSymbol.getType();
                         }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
 
                         if (assigningAST.init) {
                             this.pullTypeChecker.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
@@ -1136,6 +1138,7 @@ module TypeScript {
                     case NodeType.ObjectCreationExpression:
                         var isNew = current.nodeType === NodeType.ObjectCreationExpression;
                         var callExpression = <CallExpression>current;
+                        var contextualType: PullTypeSymbol = null;
 
                         // Check if we are in an argumnt for a call, propagate the contextual typing
                         if ((i + 1 < n) && callExpression.arguments === path.asts[i + 1]) {
@@ -1149,13 +1152,15 @@ module TypeScript {
 
                             // Find the index in the arguments list
                             if (callResolutionResults.actualParametersContextTypeSymbols) {
-                                var argExpression = path.asts[i + 1].nodeType === NodeType.List ? path.asts[i + 2] : path.asts[i + 1];
-                                for (var j = 0, m = callExpression.arguments.members.length; j < m; j++) {
-                                    if (callExpression.arguments.members[j] === argExpression) {
-                                        var callContextualType = callResolutionResults.actualParametersContextTypeSymbols[j];
-                                        if (callContextualType) {
-                                            resolutionContext.pushContextualType(callContextualType, false, null);
-                                            break;
+                                var argExpression = (path.asts[i + 1] && path.asts[i + 1].nodeType === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                                if (argExpression) {
+                                    for (var j = 0, m = callExpression.arguments.members.length; j < m; j++) {
+                                        if (callExpression.arguments.members[j] === argExpression) {
+                                            var callContextualType = callResolutionResults.actualParametersContextTypeSymbols[j];
+                                            if (callContextualType) {
+                                                contextualType = callContextualType;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -1171,29 +1176,73 @@ module TypeScript {
                             }
                         }
 
+                        resolutionContext.pushContextualType(contextualType, false, null);
+
                         break;
 
                     case NodeType.ArrayLiteralExpression:
                         this.pullTypeChecker.resolver.resolveAST(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
                         // Propagate the child element type
+                        var contextualType: PullTypeSymbol = null;
                         var currentContextualType = resolutionContext.getContextualType();
                         if (currentContextualType && currentContextualType.isArray()) {
-                            resolutionContext.pushContextualType(currentContextualType.getElementType(), false, null);
+                            contextualType = currentContextualType.getElementType();
                         }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
 
                         break;
 
                     case NodeType.ObjectLiteralExpression:
-                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        var objectLiteralExpression = <UnaryExpression>current;
+                        var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
+                        this.pullTypeChecker.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
+
+                       // find the member in the path
+                        var memeberAST = (path.asts[i + 1] && path.asts[i + 1].nodeType === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                        if (memeberAST) {
+                            // Propagate the member contextual type
+                            var contextualType: PullTypeSymbol = null;
+                            var memberDecls = <ASTList>objectLiteralExpression.operand;
+                            if (memberDecls && objectLiteralResolutionContext.membersContextTypeSymbols) {
+                                for (var j = 0, m = memberDecls.members.length; j < m; j++) {
+                                    if (memberDecls.members[j] === memeberAST) {
+                                        var memberContextualType = objectLiteralResolutionContext.membersContextTypeSymbols[j];
+                                        if (memberContextualType) {
+                                            contextualType = memberContextualType;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            resolutionContext.pushContextualType(contextualType, false, null);
+                        }
+
                         break;
 
                     case NodeType.AssignmentExpression:
-                        this.pullTypeChecker.resolver.resolveAST((<BinaryExpression>current), inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        var assignmentExpression = <BinaryExpression>current;
+                        var contextualType: PullTypeSymbol = null;
+
+                        if (path.asts[i + 1] && path.asts[i + 1] === assignmentExpression.operand2) {
+                            // propagate the left hand side type as a contextual type
+                            var leftType = this.pullTypeChecker.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol.getType();
+                            if (leftType) {
+                                inContextuallyTypedAssignment = true;
+                                contextualType = leftType;
+                            }
+                        }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
+
                         break;
 
                     case NodeType.CastExpression:
                         var castExpression = <UnaryExpression>current;
+                        var contextualType: PullTypeSymbol = null;
+
                         if (i + 1 < n && path.asts[i + 1] === castExpression.castTerm) {
                             // We are inside the cast term
                             resolutionContext.resolvingTypeReference = true;
@@ -1203,8 +1252,11 @@ module TypeScript {
 
                         // Set the context type
                         if (typeSymbol) {
-                            resolutionContext.pushContextualType(typeSymbol, false, null);
+                            inContextuallyTypedAssignment = true;
+                            contextualType = typeSymbol;
                         }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
 
                         break;
 

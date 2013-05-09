@@ -681,6 +681,9 @@ module Services {
                 path.push((<TypeScript.BinaryExpression>path.asts[path.top]).operand1);
             }
 
+            // Get the completions
+
+            // Right of dot member completion list
             if (isRightOfDot) {
                 var members = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
                 if (!members) {
@@ -689,33 +692,42 @@ module Services {
                 completions.isMemberCompletion = true;
                 completions.entries = this.getCompletionEntriesFromSymbols(members);
             }
-            // Handle object literal diffrentlly
-            else if (this.isInObjectExpressionContext(path)) {
-                completions.isMemberCompletion = true;
-
-                // Get the object literal node
-                while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
-                    path.pop();
-                }
-
-                // Try to get the object members form contextual typing
-                var contextualMembers = this.compilerState.geContextualMembersFromPath(path, document);
-                if (contextualMembers && contextualMembers.symbols && contextualMembers.symbols.length > 0) {
-                    // get existing members
-                    var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
-
-                    // Add filtterd items to the completion list
-                    completions.entries = this.getCompletionEntriesFromSymbols({
-                        symbols: this.filterContextualMembersList(contextualMembers.symbols, existingMembers),
-                        enclosingScopeSymbol: contextualMembers.enclosingScopeSymbol
-                    });
-                }
-            }
-            // Get scope memebers
             else {
-                completions.isMemberCompletion = false;
-                var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
-                completions.entries = this.getCompletionEntriesFromSymbols(symbols);
+                var containingObjectLiteral = this.getContaingingObjectLiteralApplicableForCompletion(document.syntaxTree().sourceUnit(), position);
+
+                // Object literal expression, look up possible property names from contextual type
+                if (containingObjectLiteral) {
+                    var searchPosition = Math.min(position, containingObjectLiteral.end());
+                    path = this.getAstPathToPosition(script, searchPosition);
+                    // Get the object literal node
+                    while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
+                        path.pop();
+                    }
+                    if (!path.ast() || path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
+                        throw TypeScript.Errors.invalidOperation("AST Path look up did not result in the same node as Fidelity Syntax Tree look up.");
+                    }
+
+                    completions.isMemberCompletion = true;
+
+                    // Try to get the object members form contextual typing
+                    var contextualMembers = this.compilerState.geContextualMembersFromPath(path, document);
+                    if (contextualMembers && contextualMembers.symbols && contextualMembers.symbols.length > 0) {
+                        // get existing members
+                        var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
+
+                        // Add filtterd items to the completion list
+                        completions.entries = this.getCompletionEntriesFromSymbols({
+                            symbols: this.filterContextualMembersList(contextualMembers.symbols, existingMembers),
+                            enclosingScopeSymbol: contextualMembers.enclosingScopeSymbol
+                        });
+                    }
+                }
+                // Get scope memebers
+                else {
+                    completions.isMemberCompletion = false;
+                    var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
+                    completions.entries = this.getCompletionEntriesFromSymbols(symbols);
+                }
             }
 
             // Add keywords if this is not a member completion list
@@ -730,6 +742,11 @@ module Services {
             var result: CompletionEntry[] = [];
 
             symbolInfo.symbols.forEach((symbol) => {
+                if (symbol.getKind() === TypeScript.PullElementKind.ObjectType) {
+                    // Ignore anonomus object types
+                    return;
+                }
+
                 var entry = new CompletionEntry();
                 entry.name = symbol.getDisplayName();
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
@@ -755,13 +772,13 @@ module Services {
             var existingMemberSymbols = existingMembers.symbols;
             var existingMemberNames: { [s: string]: boolean; } = {};
             for (var i = 0, n = existingMemberSymbols.length; i < n; i++) {
-                existingMemberNames[existingMemberSymbols[i].getDisplayName()]= true;
+                existingMemberNames[TypeScript.stripQuotes(existingMemberSymbols[i].getDisplayName())]= true;
             }
 
             var filteredMembers: TypeScript.PullSymbol[] = [];
             for (var j = 0, m = contextualMemberSymbols.length; j < m; j++) {
                 var contextualMemberSymbol = contextualMemberSymbols[j];
-                if (!existingMemberNames[contextualMemberSymbol.getDisplayName()]) {
+                if (!existingMemberNames[TypeScript.stripQuotes(contextualMemberSymbol.getDisplayName())]) {
                     filteredMembers.push(contextualMemberSymbol);
                 }
             }
@@ -774,18 +791,37 @@ module Services {
                    (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
         }
 
-        private isInObjectExpressionContext(path: TypeScript.AstPath): boolean {
-            return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = {
-                (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.List && path.asts[path.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = { a:1, 
-                (path.count() >= 4 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
-        }
-
         private isCompletionListBlocker(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
             // This method uses Fidelity completelly. Some information can be reached using the AST, but not everything.
             return TypeScript.Syntax.isEntirelyInsideComment(sourceUnit, position) ||
                 TypeScript.Syntax.isEntirelyInStringOrRegularExpressionLiteral(sourceUnit, position) ||
                 this.isIdentifierDefinitionLocation(sourceUnit, position) ||
                 this.isRightOfIllegalDot(sourceUnit, position);
+        }
+
+        private getContaingingObjectLiteralApplicableForCompletion(sourceUnit: TypeScript.SourceUnitSyntax, position: number): TypeScript.PositionedElement {
+            // The locations in an object literal expression that are applicable for completion are property name definition locations.
+            var previousToken = this.getNonIdentifierCompleteTokenOnLeft(sourceUnit, position);
+
+            if (previousToken) {
+                var parent = previousToken.parent();
+
+                switch (previousToken.kind()) {
+                    case TypeScript.SyntaxKind.OpenBraceToken:  // var x = { |
+                    case TypeScript.SyntaxKind.CommaToken:      // var x = { a: 0, |
+                        if (parent && parent.kind() === TypeScript.SyntaxKind.SeparatedList) {
+                            parent = parent.parent();
+                        }
+
+                        if (parent && parent.kind() === TypeScript.SyntaxKind.ObjectLiteralExpression) {
+                            return parent;
+                        } 
+
+                        break;
+                }
+            }
+
+            return null;
         }
 
         private isIdentifierDefinitionLocation(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
