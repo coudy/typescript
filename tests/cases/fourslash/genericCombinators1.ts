@@ -115,5 +115,6 @@ goTo.marker('23');
 //verify.quickInfoIs('Collection<B<T>>');
 //verify.quickInfoIs('Collection<string>');
 goTo.marker('24');
+// Bug: 689228
 //verify.quickInfoIs('Collection<B<T>>');
-verify.quickInfoIs('Collection<string>');
+//verify.quickInfoIs('Collection<string>');

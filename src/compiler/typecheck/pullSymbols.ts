@@ -568,7 +568,7 @@ module TypeScript {
             if (fromIsExternallyVisibleSymbol === symbol) {
                 return true;
             }
-            inIsExternallyVisibleSymbols = inIsExternallyVisibleSymbols.concat(fromIsExternallyVisibleSymbol);
+            inIsExternallyVisibleSymbols = inIsExternallyVisibleSymbols.concat(<any>fromIsExternallyVisibleSymbol);
 
             return symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
         }
