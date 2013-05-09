@@ -129,12 +129,11 @@ module TypeScript {
             var boundDeclAST: AST;
 
             for (var i = 0; i < declGroups.length; i++) {
-
                 for (var j = 0; j < declGroups[i].length; j++) {
                     decl = declGroups[i][j];
                     symbol = decl.getSymbol();
                     boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolver.resolveDeclaration(boundDeclAST, this.context, enclosingDecl);
+                    this.resolver.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl, this.context);
                     if (!j) {
                         firstSymbol = decl.getSymbol();
 
@@ -2782,7 +2781,7 @@ module TypeScript {
 
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
-                                var returnExpressionSymbol = this.resolver.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).symbol.getType();
+                                var returnExpressionSymbol = this.resolver.resolveAST(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).symbol.getType();
                                 // Check if return statement's type matches the one that we concluded
                                 if (returnExpressionSymbol === funcReturnType) {
                                     this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);

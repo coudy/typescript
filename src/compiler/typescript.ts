@@ -801,7 +801,7 @@ module TypeScript {
             } );
         }
 
-        public getSymbolOfDeclaration(decl: PullDecl) {
+        public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {
             if (!decl) {
                 return null;
             }
@@ -814,7 +814,7 @@ module TypeScript {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
             var resolutionContext = new PullTypeResolutionContext();
-            return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
+            return this.pullTypeChecker.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, resolutionContext).symbol;
         }
 
         public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -986,7 +986,7 @@ module TypeScript {
                             assigningAST = declarationInitASTs[i];
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
-                            this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
+                            this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
                             var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
                             var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
 
@@ -1117,7 +1117,7 @@ module TypeScript {
                         var assigningAST = <VariableDeclarator> current;
                         inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
 
-                        this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
+                        this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
                         var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
                         var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
 
