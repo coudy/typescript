@@ -53,16 +53,17 @@ describe("Generic assignment compatibility", function () {
     "   }" +
     "}";
 
-    describe("Generic Array specialization", function() {
-        typeFactory.isOfType(genericMapCode, "number[]");
+    // BUG: 689228
+    //describe("Generic Array specialization", function() {
+    //    typeFactory.isOfType(genericMapCode, "number[]");
 
-        it("re-specialization of Arrays 1", function () {
-            var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
-            var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
-            t1.isAssignmentCompatibleWith(t2);
-            t2.isAssignmentCompatibleWith(t1);
-        });
-    } );
+    //    it("re-specialization of Arrays 1", function () {
+    //        var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
+    //        var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
+    //        t1.isAssignmentCompatibleWith(t2);
+    //        t2.isAssignmentCompatibleWith(t1);
+    //    });
+    //} );
 
 
     describe("Test generic interface in modules (knockout)", function() {
