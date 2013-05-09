@@ -449,12 +449,12 @@ module TypeScript {
             return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
         }
 
-        private resolveTypeReferenceAndReportDiagnostics(ast: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var symbolAndDiagnostics = this.resolver.resolveTypeReference(ast, enclosingDecl, context);
+        //private resolveTypeReferenceAndReportDiagnostics(ast: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        //    var symbolAndDiagnostics = this.resolver.resolveTypeReference(ast, enclosingDecl, context);
 
-            this.reportDiagnostics(symbolAndDiagnostics, enclosingDecl, context);
-            return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
-        }
+        //    this.reportDiagnostics(symbolAndDiagnostics, enclosingDecl, context);
+        //    return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
+        //}
 
         // variable and argument declarations
         // validate:
@@ -1074,7 +1074,7 @@ module TypeScript {
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
 
-            var baseType = this.resolveTypeReferenceAndReportDiagnostics(new TypeReference(baseDeclAST, 0), typeDecl, contextForBaseTypeResolution);
+            var baseType = <PullTypeSymbol>this.typeCheckAST(new TypeReference(baseDeclAST, 0), typeCheckContext, /*inContextuallyTypedAssignment*/ false);
             contextForBaseTypeResolution.isResolvingClassExtendedType = false;
 
             var typeDeclIsClass = typeSymbol.isClass();
@@ -1130,11 +1130,13 @@ module TypeScript {
             for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {
                 this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, typeCheckContext);
             }
+
             if (typeSymbol.isClass()) {
                 for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
                     this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
                 }
-            } else if (typeDeclAst.implementsList) {
+            }
+            else if (typeDeclAst.implementsList) {
                 this.postError(typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), typeCheckContext.scriptName, DiagnosticCode.An_interface_cannot_implement_another_type, null, typeCheckContext.getEnclosingDecl());
             }
         }
