@@ -227,7 +227,7 @@ module TypeScript {
 
             var spanToFind = decl.getSpan();
             var candidateSpan: TextSpan = null;
-            var searchKinds = PullElementKind.SomeType | PullElementKind.SomeFunction | PullElementKind.SomeBlock;
+            var searchKinds = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeFunction | PullElementKind.SomeBlock;
             var found = false;
 
             while (true) {
@@ -370,7 +370,7 @@ module TypeScript {
                 if (pathDeclKind & (PullElementKind.Container | PullElementKind.DynamicModule)) {
 
                     // first check locally
-                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
+                    childDecls = decl.searchChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -378,7 +378,7 @@ module TypeScript {
 
                     if (declSearchKind & PullElementKind.SomeValue) {
 
-                        childDecls = decl.searchChildDecls(symbolName, true);
+                        childDecls = decl.searchChildDecls(symbolName, declSearchKind);
 
                         if (childDecls.length) {
                             valDecl = childDecls[0];
@@ -411,7 +411,7 @@ module TypeScript {
                     }
 
                 }
-                else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
+                else if ((declSearchKind & (PullElementKind.SomeType | PullElementKind.SomeContainer)) || !(pathDeclKind & PullElementKind.Class)) {
                     var candidateSymbol: PullSymbol = null;
 
                     // If the decl is a function expression, we still want to check its children since it may be shadowed by one
@@ -420,7 +420,7 @@ module TypeScript {
                         candidateSymbol = decl.getSymbol();
                     }
 
-                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
+                    childDecls = decl.searchChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -572,7 +572,7 @@ module TypeScript {
                 declPath = [enclosingDecl];
             }
 
-            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
 
             return this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
         }
@@ -583,7 +583,7 @@ module TypeScript {
                 return null;
             }
 
-            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
             var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
 
             return members;
@@ -625,7 +625,7 @@ module TypeScript {
                 }
             }
 
-            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
 
             var members: PullSymbol[] = [];
 
@@ -1221,7 +1221,7 @@ module TypeScript {
 
                     importStatementAST.isDynamicImport = true;
 
-                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeType));
+                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeContainer));
 
                     if (aliasedType) {
                         this.currentUnit.addDynamicModuleImport(importDeclSymbol);
@@ -1283,6 +1283,10 @@ module TypeScript {
             }
 
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeContainer);
+            }
 
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
@@ -2828,7 +2832,13 @@ module TypeScript {
                     declPath = [enclosingDecl];
                 }
 
-                var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                // First, check for the container
+                typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeContainer);
+
+                // If no container could be found, look for a proper type
+                if (!typeNameSymbol) {
+                    typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                }
 
                 if (!typeNameSymbol) {
                     return SymbolAndDiagnostics.create(

@@ -183,14 +183,14 @@ module TypeScript {
 
             if (parent) {
                 if (isExported) {
-                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeType);
+                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeContainer);
                 }
                 else {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
                 }
             }
             else if (!isExported || moduleContainerDecl.getKind() === PullElementKind.DynamicModule) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeContainer, []);
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() !== moduleKind) {
@@ -340,7 +340,7 @@ module TypeScript {
                 }
             }
             else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
-                importSymbol = <PullTypeAliasSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                importSymbol = <PullTypeAliasSymbol>this.findSymbolInContext(declName, PullElementKind.SomeContainer, []);
             }
 
             if (importSymbol) {
@@ -1141,7 +1141,7 @@ module TypeScript {
                         var parentDecl = variableDeclaration.getParentDecl();
 
                         if (parentDecl) {
-                            var childDecls = parentDecl.searchChildDecls(declName, true);
+                            var childDecls = parentDecl.searchChildDecls(declName, PullElementKind.SomeType);
 
                             if (childDecls.length) {
 
@@ -1216,7 +1216,12 @@ module TypeScript {
                         var parentDecl = variableDeclaration.getParentDecl();
 
                         if (parentDecl) {
-                            var childDecls = parentDecl.searchChildDecls(declName, true);
+                            var childDecls = parentDecl.searchChildDecls(declName, PullElementKind.SomeContainer);
+
+                            // Could be an enum
+                            if (!childDecls.length) {
+                                childDecls = parentDecl.searchChildDecls(declName, PullElementKind.SomeType);
+                            }
 
                             if (childDecls.length) {
 
@@ -1228,7 +1233,7 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeContainer, []);
                         }
                     }
 

@@ -28,6 +28,7 @@ module TypeScript {
         // Mappings from names to decls.  Public only for diffing purposes.
         public childDeclTypeCache: any = new BlockIntrinsics();
         public childDeclValueCache: any = new BlockIntrinsics();
+        public childDeclNamespaceCache: any = new BlockIntrinsics();
         public childDeclTypeParameterCache: any = new BlockIntrinsics();
 
         private declID = pullDeclID++;
@@ -149,9 +150,11 @@ module TypeScript {
         private getChildDeclCache(declKind: PullElementKind): any {
             return declKind === PullElementKind.TypeParameter
                 ? this.childDeclTypeParameterCache
-                : hasFlag(declKind, PullElementKind.SomeType)
-                    ? this.childDeclTypeCache
-                    : this.childDeclValueCache;
+                : hasFlag(declKind, PullElementKind.SomeContainer)
+                ? this.childDeclNamespaceCache
+                    : hasFlag(declKind, PullElementKind.SomeType)
+                        ? this.childDeclTypeCache
+                        : this.childDeclValueCache;
         }
 
         // returns 'true' if the child decl was successfully added
@@ -191,20 +194,23 @@ module TypeScript {
 
         // Search for a child decl with the given name.  'isType' is used to specify whether or 
         // not child types or child values are returned.
-        public searchChildDecls(declName: string, isType: boolean): PullDecl[]{
-             // find the decl with the optional type
-             // if necessary, cache the decl
-             // may be wise to return a chain of decls, or take a parent decl as a parameter
-            var cache = isType ? this.childDeclTypeCache : this.childDeclValueCache;
+        public searchChildDecls(declName: string, searchKind: PullElementKind): PullDecl[]{
+            // find the decl with the optional type
+            // if necessary, cache the decl
+            // may be wise to return a chain of decls, or take a parent decl as a parameter
+            var cache = (searchKind & PullElementKind.SomeType) ? this.childDeclTypeCache :
+                (searchKind & PullElementKind.SomeContainer) ? this.childDeclNamespaceCache :
+                this.childDeclValueCache;
+            
             var cacheVal = <PullDecl[]>cache[declName];
 
             if (cacheVal) {
                 return cacheVal;
             }
             else {
-                // If we didn't find it, and they were searchign for types, then also check the 
+                // If we didn't find it, and they were searching for types, then also check the 
                 // type parameter cache.
-                if (isType) {
+                if (searchKind & PullElementKind.SomeType) {
                     cacheVal = this.childDeclTypeParameterCache[declName];
 
                     if (cacheVal) {

@@ -93,8 +93,8 @@ module TypeScript {
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
         SomeValue = Variable | Parameter | Property | EnumMember | SomeFunction,
 
-        SomeType = Script | Global | Primitive | Container | Class | Interface | DynamicModule |
-                    Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
+        SomeType = Script | Global | Primitive | Class | Interface |
+                    Enum | Array | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
 
         AcceptableAlias = Variable | SomeFunction | Class | Interface | Enum | Container | ObjectType | FunctionType | ConstructorType,
 
