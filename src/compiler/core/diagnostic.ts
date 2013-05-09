@@ -18,7 +18,7 @@ module TypeScript {
         private _diagnosticCode: DiagnosticCode;
         private _arguments: any[];
 
-        constructor(fileName: string, start: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[]) {
+        constructor(fileName: string, start: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[] = null) {
             this._diagnosticCode = diagnosticCode;
             this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;

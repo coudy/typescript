@@ -282,7 +282,7 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[], enclosingDecl: PullDecl, addToDecl = false): Diagnostic {
+        public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
             var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
             this.postDiagnostic(diagnostic, enclosingDecl, addToDecl);
 

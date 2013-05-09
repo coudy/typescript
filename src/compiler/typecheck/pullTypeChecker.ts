@@ -442,7 +442,7 @@ module TypeScript {
         private reportDiagnostics(symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, enclosingDecl: PullDecl): void {
             if (symbolAndDiagnostics && symbolAndDiagnostics.diagnostics) {
                 for (var i = 0, n = symbolAndDiagnostics.diagnostics.length; i < n; i++) {
-                    this.context.postDiagnostic(symbolAndDiagnostics.diagnostics[0], enclosingDecl, /*addToDecl:*/ true);
+                    this.context.postDiagnostic(symbolAndDiagnostics.diagnostics[i], enclosingDecl, /*addToDecl:*/ true);
                 }
             }
         }
@@ -1618,10 +1618,11 @@ module TypeScript {
             var inSuperConstructorCall = (callExpression.target.nodeType === NodeType.SuperExpression);
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultType = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).symbol.getType();
+            var resultTypeAndDiagnostics = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
+            this.reportDiagnostics(resultTypeAndDiagnostics, enclosingDecl);
+            var resultType = resultTypeAndDiagnostics.symbol.getType();
 
-            this.checkForResolutionError(resultType, enclosingDecl);
-            
+            // Type check the type arguments
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             // Type check the target
@@ -1639,9 +1640,6 @@ module TypeScript {
             if (inSuperConstructorCall && enclosingDecl.getKind() === PullElementKind.ConstructorMethod) {
                 typeCheckContext.seenSuperConstructorCall = true;
             }
-
-            // Type check the type arguments
-            this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             // Type check the arguments
             var savedInSuperConstructorCall = typeCheckContext.inSuperConstructorCall;

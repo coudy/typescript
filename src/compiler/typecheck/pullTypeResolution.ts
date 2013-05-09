@@ -1203,7 +1203,7 @@ module TypeScript {
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
                     importDecl.addDiagnostic(
-                        new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type, null));
+                        new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type));
                 }
                 else {
                     var exportedAssignmentSymbol = (<PullContainerTypeSymbol>aliasedType).getExportAssignedSymbol();
@@ -1238,7 +1238,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be used at the top-level of external modules
                 enclosingDecl.addDiagnostic(
-                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_in_External_modules, null));
+                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_in_External_modules));
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
@@ -1292,7 +1292,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
                 enclosingDecl.addDiagnostic(
-                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_acceptable_kinds, null));
+                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_acceptable_kinds));
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
@@ -1555,7 +1555,7 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                var diagnostic = new SemanticDiagnostic(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type, null);
+                var diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type);
                 var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
@@ -2541,7 +2541,7 @@ module TypeScript {
             }
 
             if (!nameSymbol) {
-                var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
+                var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
                 nameSymbol = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
             }
@@ -2633,7 +2633,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
                 var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
@@ -2733,7 +2733,7 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()]);
+                    var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()]);
                     var result = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(result, [diagnostic]);
                 }
@@ -2784,7 +2784,7 @@ module TypeScript {
                 // Warn for using bool
                 if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
                     this.currentUnit.getProperties().unitContainsBool = true;
-                    var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, null);
+                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead);
                     return SymbolAndDiagnostics.create(this.semanticInfoChain.booleanTypeSymbol, [diagnostic]);
                 }
                 else {
@@ -2816,7 +2816,7 @@ module TypeScript {
                 var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
                 if (!typeNameSymbol) {
-                    var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
+                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
                     typeNameSymbol = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                 }
@@ -2835,7 +2835,7 @@ module TypeScript {
                             typeNameSymbol = <PullTypeSymbol>exportAssignmentSymbol;
                         }
                         else {
-                            var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
+                            var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
                             return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                         }
                     }
@@ -2846,7 +2846,7 @@ module TypeScript {
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl != enclosingDecl) {
-                            var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters, null);
+                            var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters);
 
                             typeNameSymbol = this.getNewErrorTypeSymbol(null);
                             return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
@@ -2914,7 +2914,7 @@ module TypeScript {
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                var diagnostic = new Diagnostic(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]);
+                var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]);
                 var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
@@ -2944,7 +2944,7 @@ module TypeScript {
                         return SymbolAndDiagnostics.fromSymbol(specializedSymbol);
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        var diagnostic = new Diagnostic(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]);
+                        var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]);
                         diagnostics = this.addDiagnostic(diagnostics, diagnostic);
                     }
                 }
@@ -2996,7 +2996,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
                 var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
@@ -3028,7 +3028,7 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()]);
+                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()]);
                 var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
@@ -3186,12 +3186,12 @@ module TypeScript {
                 var diagnostics: Diagnostic[];
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                    var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies, null);
+                    var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies);
                     var symbol = this.getNewErrorTypeSymbol(diagnostic);
                     return SymbolAndDiagnostics.create(symbol, [diagnostic]);
                 }
                 else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                    var diagnostic = new SemanticDiagnostic(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context, null);
+                    var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context);
                     var symbol = this.getNewErrorTypeSymbol(diagnostic);
                     return SymbolAndDiagnostics.create(symbol, [diagnostic]);
                 }
@@ -3630,7 +3630,7 @@ module TypeScript {
             }
             // otherwise, the property acess is invalid and a compile-time error occurs
             else {
-                var diagnostic = new Diagnostic(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)]);
+                var diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)]);
                 var returnType = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(returnType, [diagnostic]);
             }
@@ -3807,7 +3807,7 @@ module TypeScript {
             }
 
             if (!symbol) {
-                var diagnostic = new Diagnostic(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]);
+                var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]);
 
                 symbol = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(symbol, [diagnostic]);
@@ -3863,8 +3863,8 @@ module TypeScript {
 
                 if (callEx.typeArguments) {
                     diagnostics = this.addDiagnostic(diagnostics,
-                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null, enclosingDecl));
-                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
+                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments));
+                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), diagnostics);
                 }
 
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
@@ -3881,8 +3881,8 @@ module TypeScript {
                 }
                 else {
                     diagnostics = this.addDiagnostic(diagnostics,
-                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class, null, enclosingDecl));
-                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
+                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Calls_to__super__are_only_valid_inside_a_class));
+                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), diagnostics);
                 }
             }
 
@@ -3890,7 +3890,7 @@ module TypeScript {
 
             if (!signatures.length && (targetTypeSymbol.getKind() == PullElementKind.ConstructorType)) {
                 diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___, [targetTypeSymbol.toString()], enclosingDecl, true));
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___, [targetTypeSymbol.toString()]));
             }
 
             var typeArgs: PullTypeSymbol[] = null;
@@ -3966,7 +3966,7 @@ module TypeScript {
                                         }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                             diagnostics = this.addDiagnostic(diagnostics,
-                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)], enclosingDecl));
+                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]));
                                             couldNotAssignToConstraint = true;
                                             break;
                                         }
@@ -4046,12 +4046,12 @@ module TypeScript {
                         return SymbolAndDiagnostics.create(this.semanticInfoChain.anyTypeSymbol, diagnostics);
                     }
 
-                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures, null, enclosingDecl));
-                    errorCondition = this.getNewErrorTypeSymbol(diagnostics[0]);
+                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures));
+                    errorCondition = this.getNewErrorTypeSymbol(null);
                 }
                 else {
-                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl));
-                    errorCondition = this.getNewErrorTypeSymbol(diagnostics[0]);
+                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression));
+                    errorCondition = this.getNewErrorTypeSymbol(null);
                 }
 
                 return SymbolAndDiagnostics.create(errorCondition, diagnostics);
@@ -4062,10 +4062,10 @@ module TypeScript {
             
             if (!signature) {
                 diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression, null, enclosingDecl));
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__call__expression));
 
                 // Remember the error state
-                errorCondition = this.getNewErrorTypeSymbol(diagnostics[0]);
+                errorCondition = this.getNewErrorTypeSymbol(null);
 
                 if (!signatures.length) {
                     return SymbolAndDiagnostics.create(errorCondition, diagnostics);
@@ -4098,7 +4098,7 @@ module TypeScript {
 
             if (!signature.isGeneric() && callEx.typeArguments) {
                 diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments, null, enclosingDecl));
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments));
             }
 
             var returnType = signature.getReturnType();
