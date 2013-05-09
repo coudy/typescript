@@ -2919,8 +2919,6 @@ module TypeScript {
         //}
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
-            var diagnostic: Diagnostic;
-
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = true;
             var genericTypeSymbol = this.resolveStatementOrExpression(genericTypeAST.name, false, enclosingDecl, context).symbol.getType();
@@ -2950,15 +2948,11 @@ module TypeScript {
                 context.doneResolvingTypeArguments();
             }
 
-            //if (genericTypeSymbol.isResolving()) {
-            //    return genericTypeSymbol;
-            //}
-
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length], enclosingDecl);
-                var result = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = new Diagnostic(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]);
+                var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
@@ -2987,7 +2981,7 @@ module TypeScript {
                         return SymbolAndDiagnostics.fromSymbol(specializedSymbol);
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)], enclosingDecl, true);
+                        var diagnostic = new Diagnostic(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]);
                         diagnostics = this.addDiagnostic(diagnostics, diagnostic);
                     }
                 }
