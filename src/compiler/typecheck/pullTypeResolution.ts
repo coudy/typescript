@@ -2248,7 +2248,7 @@ module TypeScript {
             }
             else {
                 accessorSymbol.setType(accessorType);
-            }            
+            }
 
             return accessorSymbol;
         }
@@ -3184,12 +3184,12 @@ module TypeScript {
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
                     var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies);
-                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    var symbol = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(symbol, [diagnostic]);
                 }
                 else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
                     var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context);
-                    var symbol = this.getNewErrorTypeSymbol(diagnostic);
+                    var symbol = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(symbol, [diagnostic]);
                 }
                 else {
