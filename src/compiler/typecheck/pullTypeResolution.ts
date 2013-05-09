@@ -3630,8 +3630,8 @@ module TypeScript {
             }
             // otherwise, the property acess is invalid and a compile-time error occurs
             else {
-                var diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)], enclosingDecl);
-                var returnType = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = new Diagnostic(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)]);
+                var returnType = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(returnType, [diagnostic]);
             }
         }
