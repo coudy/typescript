@@ -1712,7 +1712,7 @@ module TypeScript {
 
             // Interface extending non interface or class 
             // or class implementing non interface or class - are invalid
-            return !!(baseType.getKind() & (PullElementKind.Interface | PullElementKind.Class));
+            return !!(baseType.getKind() & (PullElementKind.Interface | PullElementKind.Class | PullElementKind.Array));
         }
 
         public removeExtendedType(extendedType: PullTypeSymbol) {
@@ -3037,33 +3037,45 @@ module TypeScript {
         var typeDecl: PullDecl;
         var typeAST: TypeDeclaration;
         var unitPath: string;
+        var decls: PullDecl[] = typeToSpecialize.getDeclarations();
 
         if (extendedTypesToSpecialize.length) {
-            typeDecl = typeToSpecialize.getDeclarations()[0];
-            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
-            unitPath = resolver.getUnitPath();
-            resolver.setUnitPath(typeDecl.getScriptName());
-            context.pushTypeSpecializationCache(typeReplacementMap);
-            var extendTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.extendsList.members[0], 0), typeDecl, context).symbol;
-            resolver.setUnitPath(unitPath);
-            context.popTypeSpecializationCache();
+            for (var i = 0; i < decls.length; i++) {
+                typeDecl = decls[i];
+                typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
 
-            newType.addExtendedType(extendTypeSymbol);
+                // if this is an 'extended' interface declaration, the AST's extends list may not match
+                if (typeAST.extendsList) {
+                    unitPath = resolver.getUnitPath();
+                    resolver.setUnitPath(typeDecl.getScriptName());
+                    context.pushTypeSpecializationCache(typeReplacementMap);
+                    var extendTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.extendsList.members[0], 0), typeDecl, context).symbol;
+                    resolver.setUnitPath(unitPath);
+                    context.popTypeSpecializationCache();
+
+                    newType.addExtendedType(extendTypeSymbol);
+                }
+            }
         }
 
         var implementedTypesToSpecialize = typeToSpecialize.getImplementedTypes();
 
         if (implementedTypesToSpecialize.length) {
-            typeDecl = typeToSpecialize.getDeclarations()[0];
-            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
-            unitPath = resolver.getUnitPath();
-            resolver.setUnitPath(typeDecl.getScriptName());
-            context.pushTypeSpecializationCache(typeReplacementMap);
-            var implementedTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.implementsList.members[0], 0), typeDecl, context).symbol;
-            resolver.setUnitPath(unitPath);
-            context.popTypeSpecializationCache();
+            for (var i = 0; i < decls.length; i++) {
+                typeDecl = decls[i];
+                typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
 
-            newType.addImplementedType(implementedTypeSymbol);
+                if (typeAST.implementsList) {
+                    unitPath = resolver.getUnitPath();
+                    resolver.setUnitPath(typeDecl.getScriptName());
+                    context.pushTypeSpecializationCache(typeReplacementMap);
+                    var implementedTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.implementsList.members[0], 0), typeDecl, context).symbol;
+                    resolver.setUnitPath(unitPath);
+                    context.popTypeSpecializationCache();
+
+                    newType.addImplementedType(implementedTypeSymbol);
+                }
+            }
         }
 
         var callSignatures = typeToSpecialize.getCallSignatures();
@@ -3076,7 +3088,6 @@ module TypeScript {
         var signature: PullSignatureSymbol;
 
         var decl: PullDecl = null;
-        var decls: PullDecl[] = null;
         var declAST: AST = null;
         var parameters: PullSymbol[];
         var newParameters: PullSymbol[];

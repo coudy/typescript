@@ -1,6 +1,5 @@
 /// <reference path="fourslash.ts" />
 
-//// interface Array<T>{}
 //// interface Foo {
 ////     extend<T>(...objs: any[]): T;
 ////     extend<T>(deep, target: T): T;
