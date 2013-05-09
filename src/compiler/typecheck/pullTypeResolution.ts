@@ -751,6 +751,10 @@ module TypeScript {
             return false;
         }
 
+        public isArrayOrEquivalent(type: PullTypeSymbol) {
+            return type.isArray() || type == this.cachedArrayInterfaceType;
+        }
+
         private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
             var originalIdText = idText;
             var symbol = search(idText);
@@ -1340,7 +1344,7 @@ module TypeScript {
 
             (<PullContainerTypeSymbol>parentSymbol).setExportAssignedSymbol(nameSymbol);
 
-            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
+            return nameSymbol;
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -1699,7 +1703,7 @@ module TypeScript {
                 }
                 else {
 
-                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized() && this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
+                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && !this.isArrayOrEquivalent(typeExprSymbol) && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized() && this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
                         typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
                     }
 
@@ -1816,7 +1820,7 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context).symbol;
 
-                if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && constraintTypeSymbol.isResolved && this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
+                if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && !this.isArrayOrEquivalent(constraintTypeSymbol) && constraintTypeSymbol.isResolved && this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
                 }
 
@@ -2373,7 +2377,7 @@ module TypeScript {
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
 
                 case NodeType.ExportAssignment:
-                    return this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context);
+                    return SymbolAndDiagnostics.fromSymbol(this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context));
 
                 // primitives
                 case NodeType.NumericLiteral:
@@ -4684,12 +4688,33 @@ module TypeScript {
                 type === this.semanticInfoChain.undefinedTypeSymbol;
         }
 
+        private canApplyContextualType(type: PullTypeSymbol) {
+
+            if (!type) {
+                return true;
+            }
+
+            var kind = type.getKind();
+
+            if ((kind & PullElementKind.ObjectType) != 0) {
+                return true;
+            }
+            else if ((kind & PullElementKind.SomeFunction) != 0) {
+                return this.canApplyContextualTypeToFunction(type, <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(type.getDeclarations[0]), true);
+            }
+            else if ((kind & PullElementKind.Array) != 0) {
+                return true;
+            }
+
+            return false;
+        }
+
         public findBestCommonType(initialType: PullTypeSymbol, targetType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
             var nlastChecked = 0;
             var bestCommonType = initialType;
 
-            if (targetType) {
+            if (targetType && this.canApplyContextualType(bestCommonType)) {
                 if (bestCommonType) {
                     bestCommonType = this.mergeOrdered(bestCommonType, targetType, context);
                 }
@@ -5167,6 +5192,12 @@ module TypeScript {
                 }
 
                 return ret;
+            }
+            else if (source.isArray() && target == this.cachedArrayInterfaceType) {
+                return true;
+            }
+            else if (target.isArray() && source == this.cachedArrayInterfaceType) {
+                return true;
             }
 
             if (target.isTypeParameter()) {
