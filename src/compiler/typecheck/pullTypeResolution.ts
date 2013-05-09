@@ -1354,7 +1354,7 @@ module TypeScript {
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.arguments.members[i], null, signature, enclosingDecl, context);
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.arguments.members[i], signature, enclosingDecl, context);
                 }
             }
 
@@ -1370,7 +1370,7 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
-        private resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST).symbol;
 
             if (argDeclAST.typeExpr) {
@@ -1396,9 +1396,6 @@ module TypeScript {
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.getType());
                     }
-                }
-                else if (contextParam) {
-                    context.setTypeInContext(paramSymbol, contextParam.getType());
                 }
                 else {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);

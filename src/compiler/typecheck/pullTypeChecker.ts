@@ -2023,10 +2023,8 @@ module TypeScript {
 
             var functionSignature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
             var parameters = functionSignature.getParameters();
-            if (parameters.length) {
-                for (var i = 0; i < parameters.length; i++) {
-                    this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
-                }
+            for (var i = 0; i < parameters.length; i++) {
+                this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
             }
 
             if (funcDeclAST.returnTypeAnnotation) {
