@@ -192,6 +192,9 @@ module TypeScript {
                 case NodeType.TypeParameter:
                     return this.typeCheckTypeParameter(<TypeParameter>ast, typeCheckContext);
 
+                case NodeType.ImportDeclaration:
+                    return this.typeCheckImportDeclaration(<ImportDeclaration>ast, typeCheckContext);
+
                 // expressions
 
                 // assignment
@@ -544,6 +547,13 @@ module TypeScript {
             }
 
             return varTypeSymbol;
+        }
+
+        private typeCheckImportDeclaration(importDeclaration: ImportDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var result = <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(importDeclaration, /*inContextuallyTypedAssignment:*/ false, typeCheckContext.getEnclosingDecl());
+            this.typeCheckAST(importDeclaration.alias, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
+            return result;
         }
 
         // functions 

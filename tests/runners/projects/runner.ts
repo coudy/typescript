@@ -518,8 +518,14 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
-                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(1,26): error TS5008: Cannot resolve imported file: \'./foo/bar.js\'.',
-                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\NoModule\\decl.ts(3,26): error TS5008: Cannot resolve imported file: \'./baz\'.']
+                        IO.resolvePath(Harness.userSpecifiedroot) + "\\tests\\cases\\projects\\NoModule\\decl.ts(1,26): error TS5008: Cannot resolve imported file: './foo/bar.js'.",
+                        IO.resolvePath(Harness.userSpecifiedroot) + "\\tests\\cases\\projects\\NoModule\\decl.ts(3,26): error TS5008: Cannot resolve imported file: './baz'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(1,1): error TS2071: Unable to resolve external module '\"./foo/bar.js\"'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(1,1): error TS2072: Module cannot be aliased to a non-module type.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(2,1): error TS2071: Unable to resolve external module '\"baz\"'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(2,1): error TS2072: Module cannot be aliased to a non-module type.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(3,1): error TS2071: Unable to resolve external module '\"./baz\"'.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(3,1): error TS2072: Module cannot be aliased to a non-module type." ]
                 });
 
             tests.push({
