@@ -606,14 +606,14 @@ module FourSlash {
             this.currentCaretPosition = offset;
 
             this.fixCaretPosition();
-            this.checkSyntacticErrors();
+            this.checkPostEditInvariants();
         }
 
         public replace(start: number, length: number, text: string) {
             this.languageServiceShimHost.editScript(this.activeFile.fileName, start, start + length, text);
             this.updateMarkersForEdit(this.activeFile.fileName, start, start + length, text);
 
-            this.checkSyntacticErrors();
+            this.checkPostEditInvariants();
         }
 
         public deleteCharBehindMarker(count = 1) {
@@ -638,7 +638,7 @@ module FourSlash {
 
             this.fixCaretPosition();
 
-            this.checkSyntacticErrors();
+            this.checkPostEditInvariants();
         }
 
         // Enters lines of text at the current caret position
@@ -663,10 +663,32 @@ module FourSlash {
 
             this.fixCaretPosition();
 
-            this.checkSyntacticErrors();
+            this.checkPostEditInvariants();
         }
 
-        private checkSyntacticErrors() {
+        // Enters text as if the user had pasted it
+        public paste(text: string) {
+            var start = this.currentCaretPosition;
+            var offset = this.currentCaretPosition;
+            this.languageServiceShimHost.editScript(this.activeFile.fileName, offset, offset, text);
+            this.updateMarkersForEdit(this.activeFile.fileName, offset, offset, text);
+            offset += text.length;
+
+            // Handle formatting
+            if (this.enableFormatting) {
+                // this.languageService.
+                var edits = this.languageService.getFormattingEditsOnPaste(this.activeFile.fileName, start, offset, this.formatCodeOptions);
+                offset += this.applyEdits(this.activeFile.fileName, edits);
+            }
+
+            // Move the caret to wherever we ended up
+            this.currentCaretPosition = offset;
+            this.fixCaretPosition();
+
+            this.checkPostEditInvariants();
+        }
+
+        private checkPostEditInvariants() {
             // Get syntactic errors (to force a refresh)
             var incrSyntaxErrs = JSON2.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
 

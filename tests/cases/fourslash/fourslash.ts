@@ -294,6 +294,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.replace(start, length, text);
         }
 
+        public paste(text: string) {
+            FourSlash.currentTestState.paste(text);
+        }
+
         public insert(text: string) {
             this.insertLines(text);
         }
