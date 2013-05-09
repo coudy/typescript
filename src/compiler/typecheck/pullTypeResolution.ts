@@ -3785,7 +3785,6 @@ module TypeScript {
         }
 
         private computeConditionalExpressionSymbol(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
-            var condType = this.resolveAST(trinex.operand1, false, enclosingDecl, context).symbol.getType();
             var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).symbol.getType();
             var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).symbol.getType();
 
@@ -3808,9 +3807,9 @@ module TypeScript {
             }
 
             if (!symbol) {
-                var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)], enclosingDecl);
+                var diagnostic = new Diagnostic(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]);
 
-                symbol = this.getNewErrorTypeSymbol(diagnostic);
+                symbol = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(symbol, [diagnostic]);
             }
 

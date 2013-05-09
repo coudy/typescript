@@ -2063,12 +2063,7 @@ module TypeScript {
             this.typeCheckAST(conditionalExpression.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(conditionalExpression.operand3, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var type = this.resolveSymbolAndReportDiagnostics(conditionalExpression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
-            this.checkForResolutionError(type, enclosingDecl);
-
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(conditionalExpression, /*inContextuallyTypedAssignment:*/ false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         // new expression types
