@@ -1122,9 +1122,6 @@ module TypeScript {
             }
 
             this.resolveReferenceTypeDeclaration(classDeclAST, context);
-            if (!classDeclSymbol.isResolved()) {
-                return classDeclSymbol;
-            }
 
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             var extendedTypes = classDeclSymbol.getExtendedTypes();
@@ -1170,6 +1167,10 @@ module TypeScript {
                         constructorTypeSymbol.addConstructSignature(constructorSignature);
                         constructorSignature.addDeclaration(classDecl);
                     }
+                }
+
+                if (!classDeclSymbol.isResolved()) {
+                    return classDeclSymbol;
                 }
 
                 var constructorMembers = constructorTypeSymbol.getMembers();
@@ -1344,7 +1345,7 @@ module TypeScript {
 
             (<PullContainerTypeSymbol>parentSymbol).setExportAssignedSymbol(nameSymbol);
 
-            return nameSymbol;
+            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -1564,6 +1565,7 @@ module TypeScript {
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var diagnostic: SemanticDiagnostic = null;
+            var symbolAndDiagnostic: SymbolAndDiagnostics<PullTypeSymbol> = null;
 
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
@@ -1571,7 +1573,8 @@ module TypeScript {
                 
                 var prevResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = true;
-                typeDeclSymbol = this.resolveTypeNameExpression(typeName, enclosingDecl, context).symbol;
+                symbolAndDiagnostic = this.resolveTypeNameExpression(typeName, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             // a function
@@ -1583,7 +1586,8 @@ module TypeScript {
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
             }
             else if (typeRef.term.nodeType === NodeType.GenericType) {
-                typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context).symbol;
+                symbolAndDiagnostic = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
             }
             // a dotted name
             else if (typeRef.term.nodeType === NodeType.MemberAccessExpression) {
@@ -1592,7 +1596,8 @@ module TypeScript {
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
-                typeDeclSymbol = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context).symbol;
+                symbolAndDiagnostic = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
@@ -1613,6 +1618,7 @@ module TypeScript {
                 // TODO(cyrusn): We shouldn't be returning early here.  Even if we couldn't resolve 
                 // the type name, we still want to be able to create an array from it if it had
                 // array parameters.
+                // 
                 return SymbolAndDiagnostics.fromSymbol(typeDeclSymbol);
             }
 
@@ -2377,7 +2383,7 @@ module TypeScript {
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
 
                 case NodeType.ExportAssignment:
-                    return SymbolAndDiagnostics.fromSymbol(this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context));
+                    return this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context);
 
                 // primitives
                 case NodeType.NumericLiteral:
