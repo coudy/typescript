@@ -36,6 +36,7 @@ module Services {
             "new",
             "private",
             "public",
+            "require",
             "return",
             "set",
             "static",
