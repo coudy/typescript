@@ -42,7 +42,6 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
         public inConstructorArguments = false;
-        public inTypeReference = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
         }
@@ -2320,8 +2319,7 @@ module TypeScript {
         // Privacy checking
 
         private checkTypePrivacy(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
-            if (typeCheckContext.inTypeReference ||
-                (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive)) {
+            if (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive) {
                 return;
             }
 
