@@ -1569,12 +1569,12 @@ module TypeScript {
 
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
-                var typeName = <Identifier>typeRef.term;
-                
                 var prevResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = true;
-                symbolAndDiagnostic = this.resolveTypeNameExpression(typeName, enclosingDecl, context);
+
+                symbolAndDiagnostic = this.resolveTypeNameExpression(<Identifier>typeRef.term, enclosingDecl, context);
                 typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
+
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             // a function
@@ -1836,7 +1836,9 @@ module TypeScript {
                 else if (constraintTypeSymbol.isPrimitive()) {
                     if (constraintTypeSymbol.isError()) {
                         var errorSymbol = (<PullErrorTypeSymbol>constraintTypeSymbol).getDiagnostic();
-                        context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), errorSymbol.diagnosticCode(), errorSymbol.arguments(), enclosingDecl, true);
+                        if (errorSymbol) {
+                            context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), errorSymbol.diagnosticCode(), errorSymbol.arguments(), enclosingDecl, true);
+                        }
                     }
                     else {
                         context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null, enclosingDecl, true);
@@ -2809,40 +2811,41 @@ module TypeScript {
 
             var id = nameAST.text;
 
-            var typeNameSymbol: PullTypeSymbol = null;
-
             // if it's a known primitive name, cheat
             if (id === "any") {
-                typeNameSymbol = this.semanticInfoChain.anyTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
             else if (id === "string") {
-                typeNameSymbol = this.semanticInfoChain.stringTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.stringTypeSymbol);
             }
             else if (id === "number") {
-                typeNameSymbol = this.semanticInfoChain.numberTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.numberTypeSymbol);
             }
             else if (id === "bool") {
                 // Warn for using bool
                 if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
                     this.currentUnit.getProperties().unitContainsBool = true;
-                    diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, [], enclosingDecl, true);
+                    var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead, null);
+                    return SymbolAndDiagnostics.create(this.semanticInfoChain.booleanTypeSymbol, [diagnostic]);
                 }
-                typeNameSymbol = this.semanticInfoChain.booleanTypeSymbol;
+                else {
+                    return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
+                }
             }
             else if (id === "boolean") {
-                typeNameSymbol = this.semanticInfoChain.booleanTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
             }
             else if (id === "null") {
-                typeNameSymbol = this.semanticInfoChain.nullTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.nullTypeSymbol);
             }
             else if (id === "undefined") {
-                typeNameSymbol = this.semanticInfoChain.undefinedTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.undefinedTypeSymbol);
             }
             else if (id === "void") {
-                typeNameSymbol = this.semanticInfoChain.voidTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.voidTypeSymbol);
             }
             else if (id === "_element") {
-                typeNameSymbol = this.semanticInfoChain.elementTypeSymbol;
+                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.elementTypeSymbol);
             }
             else {
                 var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
@@ -2851,11 +2854,11 @@ module TypeScript {
                     declPath = [enclosingDecl];
                 }
 
-                typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
                 if (!typeNameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
-                    typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                    var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
+                    typeNameSymbol = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                 }
 
@@ -2873,7 +2876,7 @@ module TypeScript {
                             typeNameSymbol = <PullTypeSymbol>exportAssignmentSymbol;
                         }
                         else {
-                            diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText], enclosingDecl);
+                            var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
                             return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                         }
                     }
@@ -2884,9 +2887,9 @@ module TypeScript {
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl != enclosingDecl) {
-                            diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters, null, enclosingDecl);
+                            var diagnostic = new Diagnostic(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters, null);
 
-                            typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                            typeNameSymbol = this.getNewErrorTypeSymbol(null);
                             return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
                         }
                     }

@@ -221,7 +221,7 @@ module TypeScript {
                     return this.typeCheckTypeAssertion(ast, typeCheckContext);
 
                 case NodeType.TypeRef:
-                    return this.typeCheckTypeReference(ast, typeCheckContext);
+                    return this.typeCheckTypeReference(<TypeReference>ast, typeCheckContext);
 
                 case NodeType.ExportAssignment:
                     return this.typeCheckExportAssignment(ast, typeCheckContext);
@@ -1083,7 +1083,9 @@ module TypeScript {
                 // Report error about invalid base kind
                 if (baseType.isError()) {
                     var error = (<PullErrorTypeSymbol>baseType).getDiagnostic();
-                    this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, error.diagnosticCode(), error.arguments(), typeCheckContext.getEnclosingDecl());
+                    if (error) {
+                        this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, error.diagnosticCode(), error.arguments(), typeCheckContext.getEnclosingDecl());
+                    }
                 } else if (isExtendedType) {
                     if (typeDeclIsClass) {
                         this.postError(baseDeclAST.minChar, baseDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.A_class_may_only_extend_another_class, null, typeCheckContext.getEnclosingDecl());
@@ -1600,6 +1602,8 @@ module TypeScript {
             var resultType = this.resolver.resolveCallExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).symbol.getType();
 
             this.checkForResolutionError(resultType, enclosingDecl);
+            
+            this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             // Type check the target
             if (!resultType.isError()) {
@@ -1954,9 +1958,7 @@ module TypeScript {
         // Type reference expression
         // validate:
         //  -
-        private typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var type: PullTypeSymbol;
-
+        private typeCheckTypeReference(typeRef: TypeReference, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // the type reference can be
             // a name
             // a function
@@ -1965,29 +1967,22 @@ module TypeScript {
             // an array of any of the above
 
             // Make sure we report errors for the the object type and function type
-            var typeRef = <TypeReference>ast;
-            
             // a function
             if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
-                type = this.typeCheckFunctionTypeSignature(<FunctionDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+                this.typeCheckFunctionTypeSignature(<FunctionDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
             }
             // an interface
             else if (typeRef.term.nodeType === NodeType.InterfaceDeclaration) {
-                type = this.typeCheckInterfaceTypeReference(<NamedDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
+                this.typeCheckInterfaceTypeReference(<NamedDeclaration>typeRef.term, typeCheckContext.getEnclosingDecl(), typeCheckContext);
             }
-            // a generic type
-            else if (typeRef.term.nodeType === NodeType.GenericType) {
-                type = this.typeCheckGenericType(<GenericType>typeRef.term, typeCheckContext);
-            }
-
-            // Rest of the cases dont need special type check action
-
-            if (!type || !type.isError()) {
-                var type = this.resolveSymbolAndReportDiagnostics(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-                this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            else {
+                var savedResolvingTypeReference = this.context.resolvingTypeReference;
+                this.context.resolvingTypeReference = true;
+                this.typeCheckAST(typeRef.term, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+                this.context.resolvingTypeReference = savedResolvingTypeReference;
             }
 
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(typeRef, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
         }
 
         
