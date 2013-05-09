@@ -2996,8 +2996,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
-                var result = this.getNewErrorTypeSymbol(diagnostic);
+                var diagnostic = new Diagnostic(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
+                var result = this.getNewErrorTypeSymbol(null);
                 return SymbolAndDiagnostics.create(result, [diagnostic]);
             }
 
