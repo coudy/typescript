@@ -6,18 +6,18 @@ module TypeScript {
             As per ECMAScript Language Specification 3th Edition, Section 7.6: Identifiers
             IdentifierStart ::
                 Can contain Unicode 3.0.0  categories:
-                “Uppercase letter (Lu)”,
-                “Lowercase letter (Ll)”,
-                “Titlecase letter (Lt)”,
-                “Modifier letter (Lm)”,
-                “Other letter (Lo)”, or
-                “Letter number (Nl)”.
+                â€œUppercase letter (Lu)â€,
+                â€œLowercase letter (Ll)â€,
+                â€œTitlecase letter (Lt)â€,
+                â€œModifier letter (Lm)â€,
+                â€œOther letter (Lo)â€, or
+                â€œLetter number (Nl)â€.
             IdentifierPart :: =
                 Can contain IdentifierStart + Unicode 3.0.0  categories:
-                “Non-spacing mark (Mn)”,
-                “Combining spacing mark (Mc)”,
-                “Decimal number (Nd)”, or
-                “Connector punctuation (Pc)”.
+                â€œNon-spacing mark (Mn)â€,
+                â€œCombining spacing mark (Mc)â€,
+                â€œDecimal number (Nd)â€, or
+                â€œConnector punctuation (Pc)â€.
 
             Codepoint ranges for ES3 Identifiers are extracted from the Unicode 3.0.0 specification at:
             http://www.unicode.org/Public/3.0-Update/UnicodeData-3.0.0.txt
@@ -29,18 +29,18 @@ module TypeScript {
             As per ECMAScript Language Specification 5th Edition, Section 7.6: Identifier Names and Identifiers
             IdentifierStart ::
                 Can contain Unicode 6.2  categories:
-                “Uppercase letter (Lu)”,
-                “Lowercase letter (Ll)”,
-                “Titlecase letter (Lt)”,
-                “Modifier letter (Lm)”,
-                “Other letter (Lo)”, or
-                “Letter number (Nl)”.
+                â€œUppercase letter (Lu)â€,
+                â€œLowercase letter (Ll)â€,
+                â€œTitlecase letter (Lt)â€,
+                â€œModifier letter (Lm)â€,
+                â€œOther letter (Lo)â€, or
+                â€œLetter number (Nl)â€.
             IdentifierPart ::
                 Can contain IdentifierStart + Unicode 6.2  categories:
-                “Non-spacing mark (Mn)”,
-                “Combining spacing mark (Mc)”,
-                “Decimal number (Nd)”,
-                “Connector punctuation (Pc)”,
+                â€œNon-spacing mark (Mn)â€,
+                â€œCombining spacing mark (Mc)â€,
+                â€œDecimal number (Nd)â€,
+                â€œConnector punctuation (Pc)â€,
                 <ZWNJ>, or
                 <ZWJ>.
 

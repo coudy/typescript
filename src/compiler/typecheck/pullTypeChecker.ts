@@ -856,8 +856,8 @@ module TypeScript {
                         DiagnosticCode.Constructors_for_derived_classes_must_contain_a__super__call, null, enclosingDecl);
                 }
                 // The first statement in the body of a constructor must be a super call if both of the following are true:
-                //  • The containing class is a derived class.
-                //  • The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                //  â€¢ The containing class is a derived class.
+                //  â€¢ The constructor declares parameter properties or the containing class declares instance member variables with initializers.
                 else if (this.superCallMustBeFirstStatementInConstructor(functionDecl, enclosingDecl)) {
                     var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST)
                     if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
@@ -1454,8 +1454,8 @@ module TypeScript {
         private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
             /*
             The first statement in the body of a constructor must be a super call if both of the following are true:
-                •	The containing class is a derived class.
-                •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                â€¢	The containing class is a derived class.
+                â€¢	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
             if (enclosingConstructor && enclosingClass) {
