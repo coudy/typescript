@@ -190,6 +190,9 @@ module TypeScript {
                 case NodeType.ModuleDeclaration:
                     return this.typeCheckModule(ast, typeCheckContext);
 
+                case NodeType.TypeParameter:
+                    return this.typeCheckTypeParameter(<TypeParameter>ast, typeCheckContext);
+
                 // expressions
 
                 // assignment
@@ -745,6 +748,11 @@ module TypeScript {
             }
         }
 
+        private typeCheckTypeParameter(typeParameter: TypeParameter, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(typeParameter.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/false);
+            return <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(typeParameter, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl(), this.context);
+        }
+
         private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
             var funcDeclAST = <FunctionDeclaration>ast;
 
@@ -1157,6 +1165,8 @@ module TypeScript {
             // resolving the class also resolves its members...
             var classSymbol = <PullClassTypeSymbol>this.resolveSymbolAndReportDiagnostics(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkForResolutionError(classSymbol, typeCheckContext.getEnclosingDecl());
+
+            this.typeCheckAST(classAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             var classDecl = typeCheckContext.semanticInfo.getDeclForAST(classAST);
             typeCheckContext.pushEnclosingDecl(classDecl);
@@ -2358,16 +2368,6 @@ module TypeScript {
 
         private typeCheckLabeledStatement(labeledStatement: LabeledStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             return this.typeCheckAST(labeledStatement.statement, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
-        }
-
-        private typeCheckTypeParameter(ast: TypeParameter, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            // Type check the constraint
-            this.typeCheckAST(ast.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
-
-            var symbolAndDiagnostics = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
-
-            // TODO: report the diagnostics.
-            return (symbolAndDiagnostics && symbolAndDiagnostics.symbol).getType();
         }
 
         // Privacy checking
