@@ -1945,6 +1945,14 @@ module TypeScript {
 
                     signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
 
+                    if (this.isTypeArgumentOrWrapper(returnType)) {
+                        var functionSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDeclAST, enclosingDecl.getScriptName());
+
+                        if (functionSymbol) {
+                            functionSymbol.symbol.getType().setHasGenericSignature();
+                        }
+                    }
+
                     // link return expressions to signature type to denote inference
                     for (var i = 0; i < returnExpressionSymbols.length; i++) {
                         returnExpressionSymbols[i].addOutgoingLink(signature, SymbolLinkKind.ProvidesInferredType);
@@ -4265,7 +4273,7 @@ module TypeScript {
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
                             var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context).symbol;
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
+                            typeArgs[i] = context.findSpecializationForType(typeArg);                            
                         }
                     }
                 }
