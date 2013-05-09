@@ -8,5 +8,5 @@
 
 goTo.marker();
 edit.deleteAtCaret('declare '.length);
-verify.numberOfErrorsInCurrentFile(2); // Expected 1: 'a' is not exported
+verify.numberOfErrorsInCurrentFile(1); // Expected 1: 'a' is not exported
 

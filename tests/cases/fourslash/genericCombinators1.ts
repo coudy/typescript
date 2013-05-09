@@ -75,7 +75,8 @@ goTo.marker('8');
 verify.quickInfoIs('B<T>');
 
 goTo.marker('9');
-verify.quickInfoIs('Collection<string>');
+// Bug: 689228
+// verify.quickInfoIs('Collection<string>');
 goTo.marker('10');
 verify.quickInfoIs('Collection<string>');
 goTo.marker('11');
@@ -94,21 +95,25 @@ verify.quickInfoIs('Collection<B<T>>');
 */
 // BUG 684803
 goTo.marker('17');
-verify.quickInfoIs('Collection<string>');
+// Bug: 689228
+// verify.quickInfoIs('Collection<string>');
+
 goTo.marker('19');
-// BUG 684805
-verify.quickInfoIs('Collection<string>');
+// BUG: 684805, 689228
+// verify.quickInfoIs('Collection<string>');
 goTo.marker('20');
 verify.quickInfoIs('Collection<any>');
 goTo.marker('21');
+// Bug: 689228
 //verify.quickInfoIs('Collection<A>');
-verify.quickInfoIs('Collection<string>');
+//verify.quickInfoIs('Collection<string>');
 goTo.marker('22');
-//verify.quickInfoIs('Collection<A>');
-verify.quickInfoIs('Collection<any>');
+// BUG: 689228
+//verify.quickInfoIs('Collection<any>');
 goTo.marker('23');
+// Bug: 689228
 //verify.quickInfoIs('Collection<B<T>>');
-verify.quickInfoIs('Collection<string>');
+//verify.quickInfoIs('Collection<string>');
 goTo.marker('24');
 //verify.quickInfoIs('Collection<B<T>>');
 verify.quickInfoIs('Collection<string>');
