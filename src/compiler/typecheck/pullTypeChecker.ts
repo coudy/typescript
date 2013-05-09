@@ -1303,17 +1303,22 @@ module TypeScript {
         // Generic Type references
         // validate:
         //
-        private typeCheckGenericType(ast: GenericType, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckGenericType(genericType: GenericType, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // validate:
             //  - mutually recursive type parameters and constraints
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var genericType = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment*/false, enclosingDecl, this.context).getType();
-            this.checkForResolutionError(genericType, enclosingDecl);
+            var type = this.resolveSymbolAndReportDiagnostics(genericType, /*inContextuallyTypedAssignment*/false, enclosingDecl, this.context).getType();
 
-            // Type check the arguments
-            this.typeCheckAST(ast.typeArguments, typeCheckContext, false);
 
-            return genericType;
+            var savedResolvingTypeReference = this.context.resolvingTypeReference;
+            this.context.resolvingTypeReference = true;
+            this.typeCheckAST(genericType.name, typeCheckContext, /*inContextuallyTypedAssignment*/false);
+            this.context.resolvingTypeReference = savedResolvingTypeReference;
+
+            this.typeCheckAST(genericType.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment*/false);
+            this.checkForResolutionError(type, enclosingDecl);
+
+            return type;
         }
 
         // Object literals
