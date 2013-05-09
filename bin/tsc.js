@@ -55302,12 +55302,12 @@ var BatchCompiler = (function () {
             }
         }, 'b');
 
-        opts.flag('require', {
+        opts.flag('disallowimportmodule', {
             usage: 'Throw error for use of deprecated "module" keyword when referencing an external module. Only allow "require" keyword.',
             set: function () {
                 _this.compilationSettings.allowModuleKeywordInExternalModuleReference = false;
             }
-        }, 'r');
+        }, 'm');
 
         opts.parse(this.ioHost.arguments);
 
