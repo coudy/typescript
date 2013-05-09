@@ -168,16 +168,28 @@ function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 		if (useDebugMode) {
 			cmd = cmd + " -sourcemap -fullSourceMapPath";
 		}
-		console.log(cmd);
-		jake.exec([cmd], function() {
-			if (!useDebugMode && prefixes) {
+		console.log(cmd + "\n");
+		var ex = jake.createExec([cmd]);
+		// Add listeners for output and error
+		ex.addListener("stdout", function(output) {
+			process.stdout.write(output);
+		});
+		ex.addListener("stderr", function(error) {
+			process.stderr.write(error);
+		});
+		ex.addListener("cmdEnd", function() {
+			if (!useDebugMode && prefixes && fs.existsSync(outFile)) {
 				for (var i in prefixes) {
 					prependFile(prefixes[i], outFile);
 				}
 			}
 			complete();
-		},
-		{printStdout: true, printStderr: true});
+		});
+		ex.addListener("error", function() {
+			fs.unlinkSync(outFile);
+			console.log("Compilation of " + outFile + " unsuccessful");
+		});
+		ex.run();	
 	}, {async: true});
 }
 
