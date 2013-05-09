@@ -856,7 +856,18 @@ module TypeScript {
         // Right now, the assumption is that the declaration's parse tree is still in memory
         // we need to add a cache-in/cache-out mechanism so that we can break the dependency on in-memory ASTs
         public resolveDeclaredSymbol(symbol: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            // This is called while we're resolving type references.  Make sure we're no longer
+            // considered to be in that state when we resolve the actual declaration.
+            var savedResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = false;
 
+            var result = this.resolveDeclaredSymbolWorker(symbol, enclosingDecl, context);
+            context.resolvingTypeReference = savedResolvingTypeReference;
+
+            return result;
+        }
+
+        private resolveDeclaredSymbolWorker(symbol: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (!symbol || symbol.isResolved()) {
                 return symbol;
             }
@@ -2302,7 +2313,7 @@ module TypeScript {
         public resolveStatementOrExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             switch (expressionAST.nodeType) {
                 case NodeType.Name:
-                    if (context.searchTypeSpace) {
+                    if (context.resolvingTypeReference) {
                         return this.resolveTypeNameExpression(<Identifier>expressionAST, enclosingDecl, context);
                     }
                     else {
@@ -2311,7 +2322,7 @@ module TypeScript {
                 case GenericType:
                     return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context);
                 case NodeType.MemberAccessExpression:
-                    if (context.searchTypeSpace) {
+                    if (context.resolvingTypeReference) {
                         return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
                     }
                     else {
@@ -2493,7 +2504,6 @@ module TypeScript {
 
         private resolveNameSymbol(nameSymbol: PullSymbol, context: PullTypeResolutionContext) {
             if (nameSymbol &&
-                !context.searchTypeSpace &&
                 !context.canUseTypeSymbol && 
                 nameSymbol != this.semanticInfoChain.undefinedTypeSymbol &&
                 nameSymbol != this.semanticInfoChain.nullTypeSymbol &&
@@ -2890,10 +2900,10 @@ module TypeScript {
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
             var diagnostic: Diagnostic;
 
-            var prevSearchTypeSpace = context.searchTypeSpace;
-            context.searchTypeSpace = true;
+            var savedResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
             var genericTypeSymbol = this.resolveStatementOrExpression(genericTypeAST.name, false, enclosingDecl, context).symbol.getType();
-            context.searchTypeSpace = prevSearchTypeSpace;
+            context.resolvingTypeReference = savedResolvingTypeReference;
 
             if (genericTypeSymbol.isError()) {
                 return SymbolAndDiagnostics.fromSymbol(genericTypeSymbol);
@@ -2988,12 +2998,12 @@ module TypeScript {
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).text;
 
-            var prevSearchTypeSpace = context.searchTypeSpace;
-            context.searchTypeSpace = true;
-
+            // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
+            // gotten into this code path if it was already set.
+            var savedResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
             var lhs = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context).symbol;
-
-            context.searchTypeSpace = prevSearchTypeSpace;
+            context.resolvingTypeReference = savedResolvingTypeReference;
 
             var lhsType = lhs.getType();
 

@@ -974,7 +974,7 @@ module TypeScript {
                         }
                     }
 
-                    resolutionContext.searchTypeSpace = inTypeReference;
+                    resolutionContext.resolvingTypeReference = inTypeReference;
 
                     var inContextuallyTypedAssignment = false;
 
@@ -1196,7 +1196,7 @@ module TypeScript {
                         var castExpression = <UnaryExpression>current;
                         if (i + 1 < n && path.asts[i + 1] === castExpression.castTerm) {
                             // We are inside the cast term
-                            resolutionContext.searchTypeSpace = true;
+                            resolutionContext.resolvingTypeReference = true;
                         }
 
                         var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol;
@@ -1210,7 +1210,7 @@ module TypeScript {
 
                     case NodeType.TypeRef:
                     case NodeType.TypeParameter:
-                        resolutionContext.searchTypeSpace = true;
+                        resolutionContext.resolvingTypeReference = true;
                         break;
                 }
 
@@ -1223,7 +1223,7 @@ module TypeScript {
 
             // Other possible type space references
             if (path.isNameOfInterface() || path.isInClassImplementsList() || path.isInInterfaceExtendsList()) {
-                resolutionContext.searchTypeSpace = true;
+                resolutionContext.resolvingTypeReference = true;
             }
 
             // if the found AST is a named, we want to check for previous dotted expressions,

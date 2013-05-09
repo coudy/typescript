@@ -167,7 +167,6 @@ module TypeScript {
 
         public resolveAggressively = false;
 
-        public searchTypeSpace = false;
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;
