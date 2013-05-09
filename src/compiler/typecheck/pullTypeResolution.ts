@@ -1564,17 +1564,12 @@ module TypeScript {
             // an array of any of the above
 
             var typeDeclSymbol: PullTypeSymbol = null;
-            var diagnostic: SemanticDiagnostic = null;
-            var symbolAndDiagnostic: SymbolAndDiagnostics<PullTypeSymbol> = null;
 
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
                 var prevResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = true;
-
-                symbolAndDiagnostic = this.resolveTypeNameExpression(<Identifier>typeRef.term, enclosingDecl, context);
-                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
-
+                typeDeclSymbol = <PullTypeSymbol>this.resolveTypeNameExpression(<Identifier>typeRef.term, enclosingDecl, context).symbol;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             // a function
@@ -1586,8 +1581,7 @@ module TypeScript {
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
             }
             else if (typeRef.term.nodeType === NodeType.GenericType) {
-                symbolAndDiagnostic = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
-                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
+                typeDeclSymbol = <PullTypeSymbol>this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context).symbol;
             }
             // a dotted name
             else if (typeRef.term.nodeType === NodeType.MemberAccessExpression) {
@@ -1596,8 +1590,7 @@ module TypeScript {
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
-                symbolAndDiagnostic = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
-                typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
+                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context).symbol;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
@@ -2328,6 +2321,9 @@ module TypeScript {
                     else {
                         return SymbolAndDiagnostics.fromSymbol(this.resolveDeclaration(ast, context, enclosingDecl));
                     }
+
+                case NodeType.GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
 
                 default:
                     return this.resolveStatementOrExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
