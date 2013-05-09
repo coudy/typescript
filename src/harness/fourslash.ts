@@ -120,7 +120,7 @@ module FourSlash {
             for (var i = 0; i < testData.files.length; i++) {
                 this.languageServiceShimHost.addScript(testData.files[i].fileName, testData.files[i].content);
             }
-            this.languageServiceShimHost.addScript('lib.d.ts', IO.readFile('tests/cases/fourslash/minimal.lib.d.ts'));
+            this.languageServiceShimHost.addScript('lib.d.ts', IO.readFile('tests/minimal.lib.d.ts'));
 
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;

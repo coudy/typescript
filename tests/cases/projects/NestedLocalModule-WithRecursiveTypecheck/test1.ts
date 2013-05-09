@@ -2,7 +2,7 @@ module myModule {
  
  import foo = require("test2");
 
- console.log(foo.$);
+ //console.log(foo.$);
 
  var z = foo.Yo.y();
 

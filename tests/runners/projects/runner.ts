@@ -96,7 +96,7 @@ class HarnessBatch {
             TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } }
 
             this.errout.reset();
-            files.unshift(Harness.userSpecifiedroot + 'typings\\lib.d.ts');
+            files.unshift(Harness.userSpecifiedroot + 'tests/minimal.lib.d.ts');
             
             for (var i = 0; i < files.length; i++) {
                 var code = new TypeScript.SourceUnit(files[i], null);
@@ -630,7 +630,6 @@ class ProjectRunner extends RunnerBase {
                     , outputFiles: ['A.js', 'B.js', 'C.js']
             });
 
-            // TODO: no errors now?
             tests.push({
                 scenario: 'nested local module - with recursive typecheck'
                     , projectRoot: 'tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck'
@@ -645,7 +644,6 @@ class ProjectRunner extends RunnerBase {
                     ]
             });
 
-            // TODO: no errors now?
             tests.push({
                 scenario: 'nested local module - simple case'
                     , projectRoot: 'tests/cases/projects/NestedLocalModule-SimpleCase'
