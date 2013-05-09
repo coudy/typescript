@@ -12,6 +12,12 @@ module Services {
     }
 
     export class SignatureInfoHelpers {
+
+        // A partially written generic type expression is not guaranteed to have the correct syntax tree. the expression could be parsed as less than/greater than expression or a comma expression
+        // or some other combination depending on what the user has typed so far. For the purposes of signature help we need to consider any location after "<" as a possible generic type reference. 
+        // To do this, the method will back parse the expression starting at the position required. it will try to parse the current expression as a generic type expression, if it did succeed it 
+        // will return the generic identifier that started the expression (e.g. "foo" in "foo<any, |"). It is then up to the caller to ensure that this is a valid generic expression through 
+        // looking up the type. The method will also keep track of the parameter index inside the expression.
         public static isInPartiallyWrittenTypeArgumentList(syntaxTree: TypeScript.SyntaxTree, position: number): IPartiallyWrittenTypeArgumentListInformation {
             var token = syntaxTree.sourceUnit().findTokenOnLeft(position, /*includeSkippedTokens*/ true);
 

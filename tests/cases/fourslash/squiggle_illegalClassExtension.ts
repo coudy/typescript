@@ -5,5 +5,5 @@
 verify.errorExistsBetweenMarkers("1", "2");
 
 // currentlly getting duplicate errors
-verify.numberOfErrorsInCurrentFile(2);
+verify.numberOfErrorsInCurrentFile(3);
 //verify.numberOfErrorsInCurrentFile(1);

@@ -370,7 +370,7 @@ module TypeScript.Syntax {
         return false;
     }
 
-    function findSkippedTokenInTriviaList(positionedToken: PositionedToken, position: number, lookInLeadingTriviaList): PositionedSkippedToken {
+    function findSkippedTokenInTriviaList(positionedToken: PositionedToken, position: number, lookInLeadingTriviaList: boolean): PositionedSkippedToken {
         var triviaList: TypeScript.ISyntaxTriviaList = null;
         var fullStart: number;
 
