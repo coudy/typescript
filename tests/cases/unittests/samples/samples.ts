@@ -146,6 +146,7 @@ describe('Compiling samples', function ()
     /*  this sample clobbers on the shared compiler in an unexpected way
         temporarily disable */
     debugger;
+    // Bug: 689526
     //it('compiles the win8 sample without error', function ()
     //{
     //    var units = [
