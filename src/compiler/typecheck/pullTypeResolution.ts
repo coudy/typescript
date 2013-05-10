@@ -1552,9 +1552,9 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                var diagnostic = context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type);
-                var result = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(result, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, typeRef.term.minChar, typeRef.term.getLength(), DiagnosticCode.Unable_to_resolve_type)]);
             }
 
             if (typeDeclSymbol.isError()) {
@@ -2517,54 +2517,52 @@ module TypeScript {
             }
 
             if (!nameSymbol) {
-                var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
-                nameSymbol = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(nameSymbol, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText])]);
             }
-            else {
 
-                if (nameSymbol.isType() && nameSymbol.isAlias()) {
+            if (nameSymbol.isType() && nameSymbol.isAlias()) {
 
-                    if (!nameSymbol.isResolved()) {
-                        this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
-                    }
+                if (!nameSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+                }
 
-                    var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
+                var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
 
                     if (exportAssignmentSymbol) {
 
-                        if (exportAssignmentSymbol.isType()) {
-                            var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+                    if (exportAssignmentSymbol.isType()) {
+                        var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
 
-                            if (exportedTypeSymbol.isClass()) {
-                                var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
+                        if (exportedTypeSymbol.isClass()) {
+                            var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
 
-                                if (constructorMethod) {
-                                    nameSymbol = constructorMethod;
-                                }
-                                else {
-                                    nameSymbol = exportedTypeSymbol;
-                                }
+                            if (constructorMethod) {
+                                nameSymbol = constructorMethod;
                             }
-                            else if (exportedTypeSymbol.isContainer()) {
-                                var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
-
-                                if (instanceSymbol) {
-                                    nameSymbol = instanceSymbol;
-                                }
-                                else {
-                                    nameSymbol = exportedTypeSymbol;
-                                }
+                            else {
+                                nameSymbol = exportedTypeSymbol;
                             }
                         }
-                        else {
-                            nameSymbol = exportAssignmentSymbol;
+                        else if (exportedTypeSymbol.isContainer()) {
+                            var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
+
+                            if (instanceSymbol) {
+                                nameSymbol = instanceSymbol;
+                            }
+                            else {
+                                nameSymbol = exportedTypeSymbol;
+                            }
                         }
                     }
+                    else {
+                        nameSymbol = exportAssignmentSymbol;
+                    }
                 }
-
-                return SymbolAndDiagnostics.fromSymbol(nameSymbol);
             }
+
+            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
@@ -2609,9 +2607,9 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
-                var result = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(result, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText])]);
             }
 
             if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType) {
@@ -2709,9 +2707,9 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()]);
-                    var result = this.getNewErrorTypeSymbol(null);
-                    return SymbolAndDiagnostics.create(result, [diagnostic]);
+                    return SymbolAndDiagnostics.create(
+                        this.getNewErrorTypeSymbol(null),
+                        [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()])]);
                 }
             }
 
@@ -2760,8 +2758,9 @@ module TypeScript {
                 // Warn for using bool
                 if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
                     this.currentUnit.getProperties().unitContainsBool = true;
-                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead);
-                    return SymbolAndDiagnostics.create(this.semanticInfoChain.booleanTypeSymbol, [diagnostic]);
+                    return SymbolAndDiagnostics.create(
+                        this.semanticInfoChain.booleanTypeSymbol,
+                        [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead)]);
                 }
                 else {
                     return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
@@ -2792,9 +2791,9 @@ module TypeScript {
                 var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
                 if (!typeNameSymbol) {
-                    var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
-                    typeNameSymbol = this.getNewErrorTypeSymbol(null);
-                    return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
+                    return SymbolAndDiagnostics.create(
+                        this.getNewErrorTypeSymbol(null),
+                        [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText])]);
                 }
 
                 if (typeNameSymbol.isAlias()) {
@@ -2811,8 +2810,9 @@ module TypeScript {
                             typeNameSymbol = <PullTypeSymbol>exportAssignmentSymbol;
                         }
                         else {
-                            var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText]);
-                            return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
+                            return SymbolAndDiagnostics.create(
+                                typeNameSymbol,
+                                [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText])]);
                         }
                     }
                 }
@@ -2822,10 +2822,9 @@ module TypeScript {
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl != enclosingDecl) {
-                            var diagnostic = context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters);
-
-                            typeNameSymbol = this.getNewErrorTypeSymbol(null);
-                            return SymbolAndDiagnostics.create(typeNameSymbol, [diagnostic]);
+                            return SymbolAndDiagnostics.create(
+                                this.getNewErrorTypeSymbol(null),
+                                [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters)]);
                         }
                     }
                 }
@@ -2890,9 +2889,9 @@ module TypeScript {
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]);
-                var result = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(result, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length])]);
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
@@ -2972,9 +2971,9 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText]);
-                var result = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(result, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText])]);
             }
 
             // now for the name...
@@ -3004,9 +3003,9 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                var diagnostic = context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()]);
-                var result = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(result, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()])]);
             }
 
             return SymbolAndDiagnostics.fromSymbol(childTypeSymbol);
@@ -3162,14 +3161,14 @@ module TypeScript {
                 var diagnostics: Diagnostic[];
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                    var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies);
-                    var symbol = this.getNewErrorTypeSymbol(null);
-                    return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                    return SymbolAndDiagnostics.create(
+                        this.getNewErrorTypeSymbol(null),
+                        [context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__cannot_be_referenced_within_module_bodies)]);
                 }
                 else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                    var diagnostic = context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context);
-                    var symbol = this.getNewErrorTypeSymbol(null);
-                    return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                    return SymbolAndDiagnostics.create(
+                        this.getNewErrorTypeSymbol(null),
+                        [context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context)]);
                 }
                 else {
                     var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
@@ -3606,9 +3605,9 @@ module TypeScript {
             }
             // otherwise, the property acess is invalid and a compile-time error occurs
             else {
-                var diagnostic = context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)]);
-                var returnType = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(returnType, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.getUnitPath(), callEx.minChar, callEx.getLength(), DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_, [targetTypeSymbol.toString(false), indexType.toString(false)])]);
             }
         }
 
@@ -3783,10 +3782,9 @@ module TypeScript {
             }
 
             if (!symbol) {
-                var diagnostic = context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]);
-
-                symbol = this.getNewErrorTypeSymbol(null);
-                return SymbolAndDiagnostics.create(symbol, [diagnostic]);
+                return SymbolAndDiagnostics.create(
+                    this.getNewErrorTypeSymbol(null),
+                    [context.postError(this.getUnitPath(), trinex.minChar, trinex.getLength(), DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)])]);
             }
 
             return SymbolAndDiagnostics.fromSymbol(symbol);
@@ -3834,18 +3832,18 @@ module TypeScript {
             //}
 
             var targetTypeSymbol = targetSymbol.getType();
-            var diagnostics: Diagnostic[] = null;
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
 
                 if (callEx.typeArguments) {
-                    diagnostics = this.addDiagnostic(diagnostics,
-                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments));
-                    return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), diagnostics);
+                    return SymbolAndDiagnostics.create(
+                        this.getNewErrorTypeSymbol(null),
+                        [context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments)]);
                 }
 
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
-
+            
+            var diagnostics: Diagnostic[] = null;
             var isSuperCall = false;
 
             if (callEx.target.nodeType === NodeType.SuperExpression) {
