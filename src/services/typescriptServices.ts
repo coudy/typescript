@@ -28,6 +28,7 @@
 ///<reference path='outliningElementsCollector.ts' />
 ///<reference path='braceMatcher.ts' />
 ///<reference path='indenter.ts' />
+///<reference path='breakpoints.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {

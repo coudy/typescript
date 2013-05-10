@@ -50,24 +50,44 @@ module TypeScript {
             return this.element().kind();
         }
 
+        public childIndex(child: ISyntaxElement) {
+            return Syntax.childIndex(this.element(), child);
+        }
+        
         public childCount(): number {
             return this.element().childCount();
         }
 
         public childAt(index: number): PositionedElement {
-            var offset = 0;
+            var offset = Syntax.childOffsetAt(this.element(), index);
+            return PositionedElement.create(this, this.element().childAt(index), this.fullStart() + offset);
+        }
 
-            for (var i = 0; i < index; i++) {
-                offset += this.element().childAt(i).fullWidth();
-            }
+        public childStart(child: ISyntaxElement): number {
+            var offset = Syntax.childOffset(this.element(), child);
+            return this.fullStart() + offset + child.leadingTriviaWidth();
+        }
 
-            return PositionedElement.create(this, this.element().childAt(index), offset);
+        public childEnd(child: ISyntaxElement): number {
+            var offset = Syntax.childOffset(this.element(), child);
+            return this.fullStart() + offset + child.leadingTriviaWidth() + child.width();
+        }
+
+        public childStartAt(index: number): number {
+            var offset = Syntax.childOffsetAt(this.element(), index);
+            var child = this.element().childAt(index);
+            return this.fullStart() + offset + child.leadingTriviaWidth();
+        }
+
+        public childEndAt(index: number): number {
+            var offset = Syntax.childOffsetAt(this.element(), index);
+            var child = this.element().childAt(index);
+            return this.fullStart() + offset + child.leadingTriviaWidth() + child.width();
         }
 
         public getPositionedChild(child: ISyntaxElement) {
             var offset = Syntax.childOffset(this.element(), child);
-
-            return PositionedElement.create(this, child, offset);
+            return PositionedElement.create(this, child, this.fullStart() + offset);
         }
 
         public fullStart(): number {

@@ -112,21 +112,6 @@ module TypeScript {
             return this.childFullStart(parent, child) + child.leadingTriviaWidth();
         }
 
-        private getToken(list: ISyntaxList, kind: SyntaxKind): ISyntaxToken {
-            for (var i = 0, n = list.childCount(); i < n; i++) {
-                var token = <ISyntaxToken>list.childAt(i);
-                if (token.tokenKind === kind) {
-                    return token;
-                }
-            }
-
-            return null;
-        }
-
-        private containsToken(list: ISyntaxList, kind: SyntaxKind): boolean {
-            return this.getToken(list, kind) !== null;
-        }
-
         private pushDiagnostic(start: number, length: number, diagnosticCode: DiagnosticCode, args: any[] = null): void {
             this.diagnostics.push(new SyntaxDiagnostic(
                 this.syntaxTree.fileName(), start, length, diagnosticCode, args));
@@ -446,7 +431,7 @@ module TypeScript {
         private checkForDisallowedDeclareModifier(modifiers: ISyntaxList): boolean {
             if (this.inAmbientDeclaration) {
                 // If we're already in an ambient declaration, then 'declare' is not allowed.
-                var declareToken = this.getToken(modifiers, SyntaxKind.DeclareKeyword);
+                var declareToken = SyntaxUtilities.getToken(modifiers, SyntaxKind.DeclareKeyword);
 
                 if (declareToken) {
                     this.pushDiagnostic1(this.childFullStart(modifiers, declareToken), declareToken,
@@ -464,7 +449,7 @@ module TypeScript {
             if (!this.inAmbientDeclaration && this.syntaxTree.isDeclaration()) {
                 // We're at the top level in a declaration file, a 'declare' modifiers is required
                 // on most module elements.
-                if (!this.containsToken(modifiers, SyntaxKind.DeclareKeyword)) {
+                if (!SyntaxUtilities.containsToken(modifiers, SyntaxKind.DeclareKeyword)) {
                     this.pushDiagnostic1(this.childFullStart(moduleElement, typeKeyword), typeKeyword.firstToken(),
                         DiagnosticCode._declare__modifier_required_for_top_level_element);
                     return true;
@@ -501,7 +486,7 @@ module TypeScript {
 
                     if (moduleElement.kind() === SyntaxKind.FunctionDeclaration) {
                         functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
-                        if (!this.containsToken(functionDeclaration.modifiers, SyntaxKind.DeclareKeyword)) {
+                        if (!SyntaxUtilities.containsToken(functionDeclaration.modifiers, SyntaxKind.DeclareKeyword)) {
                             inFunctionOverloadChain = functionDeclaration.block === null;
                             functionOverloadChainName = functionDeclaration.identifier.valueText();
 
@@ -525,7 +510,7 @@ module TypeScript {
         }
 
         private checkClassOverloads(node: ClassDeclarationSyntax): boolean {
-            if (!this.inAmbientDeclaration && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
+            if (!this.inAmbientDeclaration && !SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
 
                 var inFunctionOverloadChain = false;
@@ -638,7 +623,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitClassDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -881,7 +866,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitEnumDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -999,13 +984,13 @@ module TypeScript {
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkForDisallowedImportDeclaration(node) ||
-                (!this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements))) {
+                (!SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements))) {
 
                 this.skip(node);
                 return;
             }
 
-            if (node.stringLiteral && !this.inAmbientDeclaration && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
+            if (node.stringLiteral && !this.inAmbientDeclaration && !SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
                 this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
                     DiagnosticCode.Non_ambient_modules_cannot_use_quoted_names);
@@ -1014,7 +999,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitModuleDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -1212,7 +1197,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitFunctionDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -1228,7 +1213,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitVariableStatement(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }

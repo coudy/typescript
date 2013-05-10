@@ -71,7 +71,7 @@ module TypeScript.Syntax {
         return false;
     }
 
-    export function childOffset(parent: ISyntaxElement, child: ISyntaxElement): number {
+    export function childOffset(parent: ISyntaxElement, child: ISyntaxElement) {
         var offset = 0;
         for (var i = 0, n = parent.childCount(); i < n; i++) {
             var current = parent.childAt(i);
@@ -81,6 +81,29 @@ module TypeScript.Syntax {
 
             if (current !== null) {
                 offset += current.fullWidth();
+            }
+        }
+
+        throw Errors.invalidOperation();
+    }
+
+    export function childOffsetAt(parent: ISyntaxElement, index: number) {
+        var offset = 0;
+        for (var i = 0; i < index; i++) {
+            var current = parent.childAt(i);
+            if (current !== null) {
+                offset += current.fullWidth();
+            }
+        }
+
+        return offset;
+    }
+
+    export function childIndex(parent: ISyntaxElement, child: ISyntaxElement) {
+        for (var i = 0, n = parent.childCount(); i < n; i++) {
+            var current = parent.childAt(i);
+            if (current === child) {
+                return i;
             }
         }
 

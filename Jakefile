@@ -99,6 +99,7 @@ var servicesSources = [
 	"outliningElementsCollector.ts",
 	"braceMatcher.ts",
 	"indenter.ts",
+	"breakpoints.ts",
 	"typescriptServices.ts"
 ].map(function (f) {
 	return path.join(servicesDirectory, f);

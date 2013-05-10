@@ -16,5 +16,55 @@ module TypeScript {
 
             return false;
         }
+
+        public static getToken(list: ISyntaxList, kind: SyntaxKind): ISyntaxToken {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var token = <ISyntaxToken>list.childAt(i);
+                if (token.tokenKind === kind) {
+                    return token;
+                }
+            }
+
+            return null;
+        }
+
+        public static containsToken(list: ISyntaxList, kind: SyntaxKind): boolean {
+            return SyntaxUtilities.getToken(list, kind) !== null;
+        }
+
+        public static isAmbientDeclarationSyntax(positionNode: PositionedNode) {
+            if (!positionNode) {
+                return false;
+            }
+
+            var node = positionNode.node();
+            switch (node.kind()) {
+                case SyntaxKind.ModuleDeclaration:
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.FunctionDeclaration:
+                case SyntaxKind.VariableStatement:
+                case SyntaxKind.EnumDeclaration:
+                    if (SyntaxUtilities.containsToken(<ISyntaxList>(<any>node).modifiers, SyntaxKind.DeclareKeyword)) {
+                        return true;
+                    }
+                    // Fall through to check if syntax container is ambient
+
+                case SyntaxKind.ImportDeclaration:
+                case SyntaxKind.ConstructorDeclaration:
+                case SyntaxKind.MemberFunctionDeclaration:
+                case SyntaxKind.GetMemberAccessorDeclaration:
+                case SyntaxKind.SetMemberAccessorDeclaration:
+                case SyntaxKind.MemberVariableDeclaration:
+                    if (node.isClassElement() || node.isModuleElement()) {
+                        return SyntaxUtilities.isAmbientDeclarationSyntax(positionNode.containingNode());
+                    }
+
+                case SyntaxKind.EnumElement:
+                    return SyntaxUtilities.isAmbientDeclarationSyntax(positionNode.containingNode().containingNode());
+
+                default: 
+                    return SyntaxUtilities.isAmbientDeclarationSyntax(positionNode.containingNode());
+            }
+        }
     }
 }
