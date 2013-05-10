@@ -223,7 +223,7 @@ module TypeScript {
                     return this.typeCheckObjectCreationExpression(<CallExpression>ast, typeCheckContext);
 
                 case NodeType.CastExpression:
-                    return this.typeCheckTypeAssertion(ast, typeCheckContext);
+                    return this.typeCheckTypeAssertion(<UnaryExpression>ast, typeCheckContext);
 
                 case NodeType.TypeRef:
                     return this.typeCheckTypeReference(<TypeReference>ast, typeCheckContext);
@@ -240,10 +240,10 @@ module TypeScript {
                 case NodeType.LessThanOrEqualExpression:
                 case NodeType.GreaterThanOrEqualExpression:
                 case NodeType.GreaterThanExpression:
-                    return this.typeCheckLogicalOperation(ast, typeCheckContext);
+                    return this.typeCheckLogicalOperation(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.CommaExpression:
-                    return this.typeCheckCommaExpression(ast, typeCheckContext);
+                    return this.typeCheckCommaExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
@@ -288,7 +288,7 @@ module TypeScript {
 
                 case NodeType.LogicalOrExpression:
                 case NodeType.LogicalAndExpression:
-                    return this.typeCheckLogicalAndOrExpression(ast, typeCheckContext);
+                    return this.typeCheckLogicalAndOrExpression(<BinaryExpression>ast, typeCheckContext);
 
                 case NodeType.TypeOfExpression:
                     return this.typeCheckTypeOf(ast, typeCheckContext);
@@ -1306,19 +1306,14 @@ module TypeScript {
         private typeCheckGenericType(genericType: GenericType, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // validate:
             //  - mutually recursive type parameters and constraints
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var type = this.resolveSymbolAndReportDiagnostics(genericType, /*inContextuallyTypedAssignment*/false, enclosingDecl).getType();
-
-
             var savedResolvingTypeReference = this.context.resolvingTypeReference;
             this.context.resolvingTypeReference = true;
             this.typeCheckAST(genericType.name, typeCheckContext, /*inContextuallyTypedAssignment*/false);
             this.context.resolvingTypeReference = savedResolvingTypeReference;
 
             this.typeCheckAST(genericType.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment*/false);
-            this.checkForResolutionError(type, enclosingDecl);
 
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(genericType, /*inContextuallyTypedAssignment*/false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         // Object literals
@@ -1573,9 +1568,7 @@ module TypeScript {
 
             this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
 
-            var type = this.resolveSymbolAndReportDiagnostics(thisExpressionAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
-            this.checkForResolutionError(type, enclosingDecl);
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(thisExpressionAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
         }
 
         // 'Super' expressions 
@@ -1586,8 +1579,6 @@ module TypeScript {
             var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
             var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();
             var inSuperConstructorTarget = typeCheckContext.inSuperConstructorTarget;
-
-            var type = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
 
             // Super calls are not permitted outside constructors or in local functions inside constructors.
             if (inSuperConstructorTarget && enclosingDecl.getKind() !== PullElementKind.ConstructorMethod) {
@@ -1603,8 +1594,7 @@ module TypeScript {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes, null, enclosingDecl);
             }
 
-            this.checkForResolutionError(type, enclosingDecl);
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
         }
 
         // Call expressions 
@@ -1676,9 +1666,10 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultType = this.resolver.resolveNewExpression(callExpression, false, enclosingDecl, this.context, callResolutionData).symbol.getType();
+            var resultAndDiagnostics = this.resolver.resolveNewExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
+            this.reportDiagnostics(resultAndDiagnostics, typeCheckContext.getEnclosingDecl());
 
-            this.checkForResolutionError(resultType, enclosingDecl);
+            var result = resultAndDiagnostics.symbol.getType();
 
             this.typeCheckAST(callExpression.target, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -1705,21 +1696,19 @@ module TypeScript {
                 }
             }
 
-            return resultType;
+            return result;
         }
 
         // Type assertion expressions 
         // validate:
         //  - the type assertion and the expression it's applied to are assignment compatible
-        private typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckTypeAssertion(ast: UnaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var returnType = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
 
-            this.checkForResolutionError(returnType, enclosingDecl);
-
             this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
-            var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext, true);
+            var exprType = this.typeCheckAST(ast.operand, typeCheckContext, true);
             this.context.popContextualType();
 
             var comparisonInfo = new TypeComparisonInfo();
@@ -1741,64 +1730,42 @@ module TypeScript {
         // Logical operations
         // validate:
         //  - lhs and rhs are compatible
-        private typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            
-            var type = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
-
-            this.checkForResolutionError(type, enclosingDecl);
-
+        private typeCheckLogicalOperation(binex: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var leftType = this.typeCheckAST(binex.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             var rightType = this.typeCheckAST(binex.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             var comparisonInfo = new TypeComparisonInfo();
             if (!this.resolver.sourceIsAssignableToTarget(leftType, rightType, this.context, comparisonInfo) &&
                 !this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo)) {
-
-                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName,DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_, [BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()], enclosingDecl);
+                    this.postError(binex.minChar, binex.getLength(), typeCheckContext.scriptName,
+                        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_, [BinaryExpression.getTextForBinaryToken(binex.nodeType), leftType.toString(), rightType.toString()], typeCheckContext.getEnclosingDecl());
             }
-            return type;
+
+            return this.resolveSymbolAndReportDiagnostics(binex, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         // Logical 'And' and 'Or' expressions 
         // validate:
         // - lhs and rhs are compatible
-        private typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var type = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
-
-            this.checkForResolutionError(type, enclosingDecl);
-
+        private typeCheckLogicalAndOrExpression(binex: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(binex.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(binex.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(binex, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
 
-        private typeCheckCommaExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var type = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
-
-            this.checkForResolutionError(type, enclosingDecl);
-
+        private typeCheckCommaExpression(binex: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(binex.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(binex.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(binex, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         private typeCheckBinaryAdditionOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var type = this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
-
-            this.checkForResolutionError(type, enclosingDecl);
+            this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
 
             var lhsType = this.typeCheckAST(binaryExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -1864,8 +1831,7 @@ module TypeScript {
         private typeCheckBinaryArithmeticOperation(binaryExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var type = this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
-            this.checkForResolutionError(type, enclosingDecl);
+            this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
 
             var lhsType = this.typeCheckAST(binaryExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -1956,9 +1922,7 @@ module TypeScript {
             this.typeCheckAST(binaryExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(binaryExpression.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            var type = this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
-            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
-            return type;
+            return this.resolveSymbolAndReportDiagnostics(binaryExpression, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         // 'typeof' expression 

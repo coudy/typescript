@@ -4330,7 +4330,7 @@ module TypeScript {
                 }
 
                 if (!constructSignatures.length && diagnostics) {
-                    var result = this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics));
+                    var result = this.getNewErrorTypeSymbol(null);
                     return SymbolAndDiagnostics.create(result, diagnostics);
                 }
 
@@ -4342,7 +4342,7 @@ module TypeScript {
                         context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for__new__expression));
 
                     // Remember the error
-                    errorCondition = this.getNewErrorTypeSymbol(diagnostics[0]);
+                    errorCondition = this.getNewErrorTypeSymbol(null);
 
                     if (!constructSignatures.length) {
                         return SymbolAndDiagnostics.create(errorCondition, diagnostics);
@@ -4388,7 +4388,7 @@ module TypeScript {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
                         diagnostics = this.addDiagnostic(diagnostics,
                             context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type));
-                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
+                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), diagnostics);
                     }
                     else {
                         returnType = this.semanticInfoChain.anyTypeSymbol;
@@ -4473,7 +4473,7 @@ module TypeScript {
             diagnostics = this.addDiagnostic(diagnostics,
                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid__new__expression));
 
-            return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(ArrayUtilities.last(diagnostics)), diagnostics);
+            return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), diagnostics);
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
