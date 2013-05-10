@@ -4752,7 +4752,7 @@ module TypeScript {
                 return true;
             }
 
-            var comboId = (t2.getSymbolID() << 16) | t1.getSymbolID();
+            var comboId = t2.getSymbolID().toString() + "#" + t1.getSymbolID().toString();
 
             if (this.identicalCache[comboId] != undefined) {
                 return true;
@@ -4815,7 +4815,7 @@ module TypeScript {
                     t2MemberType = t2MemberSymbol.getType();
 
                     // catch the mutually recursive or cached cases
-                    if (t1MemberType && t2MemberType && (this.identicalCache[(t2MemberType.getSymbolID() << 16) | t1MemberType.getSymbolID()] != undefined)) {
+                    if (t1MemberType && t2MemberType && (this.identicalCache[t2MemberType.getSymbolID().toString() + "#" + t1MemberType.getSymbolID().toString()] != undefined)) {
                         continue;
                     }
 
@@ -5050,7 +5050,7 @@ module TypeScript {
                 return true;
             }
 
-            var comboId = (source.getSymbolID() << 16) | target.getSymbolID();
+            var comboId = source.getSymbolID().toString() + "#" + target.getSymbolID().toString();
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
             if (comparisonCache[comboId] != undefined) {
@@ -5340,7 +5340,7 @@ module TypeScript {
             var targetPropType = targetProp.getType();
 
             // catch the mutually recursive or cached cases
-            if (targetPropType && sourcePropType && (comparisonCache[(sourcePropType.getSymbolID() << 16) | targetPropType.getSymbolID()] != undefined)) {
+            if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.getSymbolID().toString() + "#" + targetPropType.getSymbolID().toString()] != undefined)) {
                 return true;
             }
 

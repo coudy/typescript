@@ -216,9 +216,9 @@ var opts = new OptionsParser(IO);
 
 opts.flag('compiler', {
     set: function () {
-        runners.push(new UnitTestRunner('compiler'));
+        //runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new ProjectRunner());
+        //runners.push(new ProjectRunner());
     }
 });
 
