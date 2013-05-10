@@ -143,27 +143,29 @@ describe('Compiling samples', function ()
 
     // win8
 
-    /*  this sample clobbers on the shared compiler in an unexpected way
-        temporarily disable */
-    debugger;
-    // Bug: 689526
-    //it('compiles the win8 sample without error', function ()
-    //{
-    //    var units = [
-    //        "../typings/winrt.d.ts",
-    //        "../typings/winjs.d.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/data.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/default.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/navigator.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/topic.ts",
-    //        "win8/encyclopedia/Encyclopedia/js/win.ts"
-    //    ]
+    it('compiles the win8 sample without error', function ()
+    {
+       var units = [
+           "../typings/winrt.d.ts",
+           "../typings/winjs.d.ts",
+           "win8/encyclopedia/Encyclopedia/js/data.ts",
+           "win8/encyclopedia/Encyclopedia/js/default.ts",
+           "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/navigator.ts",
+           "win8/encyclopedia/Encyclopedia/js/topic.ts",
+           "win8/encyclopedia/Encyclopedia/js/win.ts"
+       ]
 
-    //    addUnitsAndCompile(units);
-    //    var errLines = Harness.Compiler.reportCompilationErrors(units);
-    //    assert.equal(errLines.length, 0);
-    //});
+       Harness.Compiler.recreate();
+       Harness.Compiler.reset();       
+
+       addUnitsAndCompile(units);
+       var errLines = Harness.Compiler.reportCompilationErrors(units);
+       // if (errLines.length) {
+       //  WScript.Echo("Errors: " + errLines);
+       // }       
+       assert.equal(errLines.length, 0);
+    });
 });

@@ -1184,17 +1184,12 @@ module TypeScript {
             // Type check the type paramter list if any exists
             this.typeCheckAST(classAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
 
-            // Type check the extends list if it exist
-            this.typeCheckAST(classAST.extendsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
-
-            // Type check the implements list if it exist
-            this.typeCheckAST(classAST.implementsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+            this.typeCheckBases(classAST, classSymbol, typeCheckContext);
 
             // Type check the members
             this.typeCheckAST(classAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             typeCheckContext.popEnclosingDecl();
-            this.typeCheckBases(classAST, classSymbol, typeCheckContext);
 
             return classSymbol;
         }
@@ -1219,17 +1214,12 @@ module TypeScript {
             // Type check the type paramter list if any exists
             this.typeCheckAST(interfaceAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
 
-            // Type check the extends list if it exist
-            //this.typeCheckAST(interfaceAST.extendsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
-
-            // Type check the implements list if it exist
-            this.typeCheckAST(interfaceAST.implementsList, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+            this.typeCheckBases(<InterfaceDeclaration>ast, interfaceType, typeCheckContext);
 
             // Type check the members
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             typeCheckContext.popEnclosingDecl();
-            this.typeCheckBases(<InterfaceDeclaration>ast, interfaceType, typeCheckContext);
 
             return interfaceType;
         }

@@ -680,20 +680,9 @@ class ProjectRunner extends RunnerBase {
                     , inputFiles: ['testGlo.ts']
                     , collectedFiles: ['testGlo.ts', 'mExported.ts', 'mNonExported.ts']
                     , outputFiles: ['mExported.js', 'mNonExported.js']
-                    , negative: true
+                    , negative: false
                     , skipRun: true
-                    , errors: [
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(2,5): error TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(21,5): error TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(3,16): error TS2027: Exported variable 'm2.c1' has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(5,9): error TS2058: Return type of exported function has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(7,16): error TS2027: Exported variable 'm2.x1' has or is using private type 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(9,33): error TS2018: Exported class 'm2.class1' extends private class 'me.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(22,16): error TS2027: Exported variable 'm2.c3' has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(24,9): error TS2058: Return type of exported function has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(26,16): error TS2027: Exported variable 'm2.x3' has or is using private type 'mne.class1'.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-InsideModule/testGlo.ts(28,33): error TS2018: Exported class 'm2.class3' extends private class 'mne.class1'. "
-                    ]
+                    , errors: []
             });
 
             Harness.Assert.bug('No error for importing an external module in illegal scope');
