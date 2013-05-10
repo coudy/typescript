@@ -42,6 +42,7 @@ module FourSlashInterface {
         fileName: string;
         start: number;
         end: number;
+        marker?: Marker;
     }
 
     export interface TextSpan {
@@ -278,6 +279,10 @@ module FourSlashInterface {
 
         public navigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
             FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
+        }
+
+        public occurancesAtPositionContains(range: Range, isWriteAccess?: boolean) {
+            FourSlash.currentTestState.verifyOccurancesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
         }
     }
    

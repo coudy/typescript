@@ -415,8 +415,7 @@ module Services {
             return this.forwardJSONCall(
                 "getReferencesAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
-                    var entries = this.languageService.getReferencesAtPosition(fileName, pos);
-                    return this._referencesToResult(entries);
+                    return this.languageService.getReferencesAtPosition(fileName, pos);
                 });
         }
 
@@ -424,8 +423,7 @@ module Services {
             return this.forwardJSONCall(
                 "getOccurrencesAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
-                    var entries = this.languageService.getOccurrencesAtPosition(fileName, pos);
-                    return this._referencesToResult(entries);
+                    return this.languageService.getOccurrencesAtPosition(fileName, pos);
                 });
         }
 
@@ -434,20 +432,10 @@ module Services {
             return this.forwardJSONCall(
                 "getImplementorsAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
-                    var entries = this.languageService.getImplementorsAtPosition(fileName, pos);
-                    return this._referencesToResult(entries);
+                    return this.languageService.getImplementorsAtPosition(fileName, pos);
                 });
         }
 
-        private _referencesToResult(entries: Services.ReferenceEntry[]): any {
-            var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean; }[] = [];
-            for (var i = 0; i < entries.length; i++) {
-                var entry = entries[i];
-                result.push({ fileName: entry.fileName, minChar: entry.ast.minChar, limChar: entry.ast.limChar, isWriteAccess: entry.isWriteAccess });
-            }
-
-            return result;
-        }
 
         /// COMPLETION LISTS
         /// Get a string based representation of the completions 

@@ -73,6 +73,7 @@ module FourSlash {
         fileName: string;
         start: number;
         end: number;
+        marker?: Marker;
     }
 
     interface ILocationInformation {
@@ -80,6 +81,10 @@ module FourSlash {
         sourcePosition: number;
         sourceLine: number;
         sourceColumn: number;
+    }
+
+    interface IRangeLocationInformation  extends ILocationInformation {
+        marker?: Marker;
     }
 
     export interface TextSpan {
@@ -1046,6 +1051,27 @@ module FourSlash {
             throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
         }
 
+        public verifyOccurancesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
+            var occurances = this.languageService.getOccurrencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+
+            if (!occurances || occurances.length === 0) {
+                throw new Error('verifyOccurancesAtPositionListContains failed - found 0 references, expected at least one.');
+            }
+
+            for (var i = 0; i < occurances.length; i++) {
+                var occurance = occurances[i];
+                if (occurance && occurance.fileName === fileName && occurance.minChar === start && occurance.limChar === end) {
+                    if (typeof isWriteAccess !== "undefined" && occurance.isWriteAccess !== isWriteAccess) {
+                        throw new Error('verifyOccurancesAtPositionListContains failed - item isWriteAccess value doe not match, actual: ' + occurance.isWriteAccess + ', expected: ' + isWriteAccess + '.');
+                    }
+                    return;
+                }
+            }
+
+            var missingItem = { fileName: fileName, start: start, end: end, isWriteAccess: isWriteAccess };
+            throw new Error('verifyOccurancesAtPositionListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(occurances) + ')');
+        }
+
         private getBOF(): number {
             return 0;
         }
@@ -1397,7 +1423,7 @@ module FourSlash {
     //    return !!(text !== null && text.match(markerTextRegexp));
     //}
 
-    function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]) {
+    function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]): Marker {
         var markerValue = undefined;
         try {
             // Attempt to parse the marker value as JSON
@@ -1408,7 +1434,7 @@ module FourSlash {
 
         if (markerValue === undefined) {
             reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty");
-            return;
+            return null;
         }
 
         var marker: Marker = {
@@ -1423,9 +1449,11 @@ module FourSlash {
         }
 
         markers.push(marker);
+
+        return marker;
     }
 
-    function recordMarker(fileName: string, location: ILocationInformation, name: string, markerMap: MarkerMap, markers: Marker[]) {
+    function recordMarker(fileName: string, location: ILocationInformation, name: string, markerMap: MarkerMap, markers: Marker[]): Marker {
         var marker: Marker = {
             fileName: fileName,
             position: location.position
@@ -1435,9 +1463,11 @@ module FourSlash {
         if (markerMap[name] !== undefined) {
             var message = "Marker '" + name + "' is duplicated in the source file contents.";
             reportError(marker.fileName, location.sourceLine, location.sourceColumn, message);
+            return null;
         } else {
             markerMap[name] = marker;
             markers.push(marker);
+            return marker;
         }
     }
 
@@ -1454,7 +1484,7 @@ module FourSlash {
         var openMarker: ILocationInformation = null;
 
         /** A stack of the open range markers that are still unclosed */
-        var openRanges: ILocationInformation[] = [];
+        var openRanges: IRangeLocationInformation[] = [];
 
         /** A list of ranges we've collected so far */
         var localRanges: Range[] = [];
@@ -1508,7 +1538,8 @@ module FourSlash {
                             var range: Range = {
                                 fileName: fileName,
                                 start: rangeStart.position,
-                                end: (i - 1) - difference
+                                end: (i - 1) - difference,
+                                marker: rangeStart.marker
                             };
                             localRanges.push(range);
 
@@ -1543,7 +1574,11 @@ module FourSlash {
                         if (previousChar === "|" && currentChar === "}") {
                             // Record the marker
                             var objectMarkerNameText = content.substring(openMarker.sourcePosition + 2, i - 1).trim();
-                            recordObjectMarker(fileName, openMarker, objectMarkerNameText, markerMap, markers);
+                            var marker = recordObjectMarker(fileName, openMarker, objectMarkerNameText, markerMap, markers);
+
+                            if (openRanges.length > 0) {
+                                openRanges[openRanges.length - 1].marker = marker;
+                            }
 
                             // Set the current start to point to the end of the current marker to ignore its text
                             lastNormalCharPosition = i + 1;
@@ -1560,7 +1595,11 @@ module FourSlash {
                             // Record the marker
                             // start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
                             var markerNameText = content.substring(openMarker.sourcePosition + 2, i - 1).trim();
-                            recordMarker(fileName, openMarker, markerNameText, markerMap, markers);
+                            var marker = recordMarker(fileName, openMarker, markerNameText, markerMap, markers);
+
+                            if (openRanges.length > 0) {
+                                openRanges[openRanges.length - 1].marker = marker;
+                            }
 
                             // Set the current start to point to the end of the current marker to ignore its text
                             flush(openMarker.sourcePosition);

@@ -109,14 +109,64 @@ module Services {
 
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
                     if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
-                        var isWriteAccess = false; // this.isWriteAccess(searchSymbolInfoAtPosition.ast, searchSymbolInfoAtPosition.parentAST);
-                        result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast, isWriteAccess));
+                        var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                        result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast.minChar, searchSymbolInfoAtPosition.ast.limChar, isWriteAccess));
                     }
                 });
             }
-            
 
             return result;
+        }
+
+        private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
+            if (parent !== null) {
+                var parentNodeType = parent.nodeType;
+                switch (parentNodeType) {
+                    case TypeScript.NodeType.ClassDeclaration:
+                        return (<TypeScript.ClassDeclaration>parent).name === current;
+
+                    case TypeScript.NodeType.InterfaceDeclaration:
+                        return (<TypeScript.InterfaceDeclaration>parent).name === current;
+
+                    case TypeScript.NodeType.ModuleDeclaration:
+                        return (<TypeScript.ModuleDeclaration>parent).name === current;
+
+                    case TypeScript.NodeType.FunctionDeclaration:
+                        return (<TypeScript.FunctionDeclaration>parent).name === current;
+
+                    case TypeScript.NodeType.ImportDeclaration:
+                        return (<TypeScript.ImportDeclaration>parent).id === current;
+
+                    case TypeScript.NodeType.VariableDeclarator:
+                        var varDeclarator = <TypeScript.VariableDeclarator>parent;
+                        return !!(varDeclarator.init && varDeclarator.id === current);
+
+                    case TypeScript.NodeType.Parameter:
+                        return true;
+
+                    case TypeScript.NodeType.AssignmentExpression:
+                    case TypeScript.NodeType.AddAssignmentExpression:
+                    case TypeScript.NodeType.SubtractAssignmentExpression:
+                    case TypeScript.NodeType.MultiplyAssignmentExpression:
+                    case TypeScript.NodeType.DivideAssignmentExpression:
+                    case TypeScript.NodeType.ModuloAssignmentExpression:
+                    case TypeScript.NodeType.OrAssignmentExpression:
+                    case TypeScript.NodeType.AndAssignmentExpression:
+                    case TypeScript.NodeType.ExclusiveOrAssignmentExpression:
+                    case TypeScript.NodeType.LeftShiftAssignmentExpression:
+                    case TypeScript.NodeType.UnsignedRightShiftAssignmentExpression:
+                    case TypeScript.NodeType.SignedRightShiftAssignmentExpression:
+                        return (<TypeScript.BinaryExpression>parent).operand1 === current;
+
+                    case TypeScript.NodeType.PreIncrementExpression:
+                    case TypeScript.NodeType.PostIncrementExpression:
+                    case TypeScript.NodeType.PreDecrementExpression:
+                    case TypeScript.NodeType.PostDecrementExpression:
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private getPossibleSymbolReferencePositions(fileName: string, symbol: TypeScript.PullSymbol): number []{

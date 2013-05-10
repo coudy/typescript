@@ -74,22 +74,16 @@ module Services {
     }
 
     export class ReferenceEntry {
-        constructor(public fileName: string, public ast: TypeScript.AST, public isWriteAccess: boolean) {
-        }
+        public fileName: string = ""
+        public minChar: number = -1;
+        public limChar: number = -1;
+        public isWriteAccess: boolean = false;
 
-        public getHashCode(): number {
-            return TypeScript.Hash.combine(
-                    TypeScript.Hash.computeSimple31BitStringHashCode(this.fileName),
-                    TypeScript.Hash.combine(this.ast.minChar, this.ast.limChar));
-        }
-
-        public equals(other: ReferenceEntry): boolean {
-            if (other === null || other === undefined)
-                return false;
-
-            return (this.fileName === other.fileName) &&
-                (this.ast.minChar === other.ast.minChar) &&
-                (this.ast.limChar === other.ast.limChar);
+        constructor(fileName: string, minChar: number, limChar: number, isWriteAccess: boolean) {
+            this.fileName = fileName;
+            this.minChar = minChar;
+            this.limChar = limChar;
+            this.isWriteAccess = isWriteAccess;
         }
     }
 
