@@ -2919,8 +2919,8 @@ module TypeScript {
                         return SymbolAndDiagnostics.fromSymbol(specializedSymbol);
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        var diagnostic = context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]);
-                        diagnostics = this.addDiagnostic(diagnostics, diagnostic);
+                        diagnostics = this.addDiagnostic(diagnostics,
+                            context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [typeArg.toString(true), typeConstraint.toString(true), typeParameters[iArg].toString(true)]));
                     }
                 }
             }
@@ -3843,7 +3843,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
             
-            var diagnostics: Diagnostic[] = null;
+            var diagnostics: Diagnostic[] = [];
             var isSuperCall = false;
 
             if (callEx.target.nodeType === NodeType.SuperExpression) {
@@ -4031,7 +4031,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.create(errorCondition, diagnostics);
             }
 
-            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
+            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
             var useBeforeResolutionSignatures = signature == null;
             
             if (!signature) {
@@ -4192,7 +4192,7 @@ module TypeScript {
                 usedCallSignaturesInstead = true;
             }
 
-            var diagnostics: Diagnostic[] = null;
+            var diagnostics: Diagnostic[] = [];
             if (constructSignatures.length) {
                 // resolve the type arguments, specializing if necessary
                 if (callEx.typeArguments) {
@@ -4318,7 +4318,7 @@ module TypeScript {
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
 
-                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context);
+                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
 
                 // Store any additional resolution results if needed before we return
                 if (additionalResults) {
@@ -5697,7 +5697,12 @@ module TypeScript {
 
         // Overload resolution
 
-        private resolveOverloads(application: AST, group: PullSignatureSymbol[], enclosingDecl: PullDecl, haveTypeArgumentsAtCallSite: boolean, context: PullTypeResolutionContext): PullSignatureSymbol {
+        private resolveOverloads(
+                application: AST, group: PullSignatureSymbol[],
+                enclosingDecl: PullDecl,
+                haveTypeArgumentsAtCallSite: boolean,
+                context: PullTypeResolutionContext,
+                diagnostics: Diagnostic[]): PullSignatureSymbol {
             var rd = this.resolutionDataCache.getResolutionData();
             var actuals = rd.actuals;
             var exactCandidates = rd.exactCandidates;
@@ -5758,17 +5763,16 @@ module TypeScript {
                 }
                 else {
                     if (comparisonInfo.message) {
-                        //this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
-                        context.postError(this.unitPath, target.minChar, target.getLength(), DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0, [comparisonInfo.message], enclosingDecl, true);
+                        diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),
+                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0, [comparisonInfo.message]));
                     }
                     else {
-                        context.postError(this.unitPath, target.minChar, target.getLength(), DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null, enclosingDecl, true);
-                        //this.checker.errorReporter.simpleError(target, emsg);
+                        diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),
+                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null));
                     }
                 }
             }
             else {
-
                 if (exactCandidates.length > 1) {
                     var applicableSigs: PullApplicableSignature[] = [];
                     for (var i = 0; i < exactCandidates.length; i++) {
