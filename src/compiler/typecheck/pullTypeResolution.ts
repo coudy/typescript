@@ -1614,7 +1614,6 @@ module TypeScript {
             var decl: PullDecl = this.getDeclForAST(varDecl);
             var declSymbol = decl.getSymbol();
             var declParameterSymbol: PullSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
-            var hadError = false;
 
             if (declSymbol.isResolved()) {
                 return declSymbol.getType();
@@ -1626,7 +1625,7 @@ module TypeScript {
                     declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     declSymbol.setResolved();
                     return declSymbol;//this.semanticInfoChain.anyTypeSymbol;
-                }               
+                }
             }
 
             declSymbol.startResolving();
@@ -1647,8 +1646,6 @@ module TypeScript {
                     if (declParameterSymbol) {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
-
-                    hadError = true;
                 }
                 else {
 
@@ -1663,7 +1660,6 @@ module TypeScript {
                         if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
                             diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], decl);
                             typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                            hadError = true;
                         }
                         else {
                             typeExprSymbol = instanceSymbol.getType();
@@ -1672,7 +1668,6 @@ module TypeScript {
                     else if (declSymbol.getIsVarArg() && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType) && this.cachedArrayInterfaceType) {
                         var diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
                         typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                        hadError = true;
                     }
 
                     context.setTypeInContext(declSymbol, typeExprSymbol);
@@ -1705,8 +1700,6 @@ module TypeScript {
                     if (declParameterSymbol) {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
-
-                    hadError = true;
                 }
                 else {
 
