@@ -1773,21 +1773,7 @@ module TypeScript {
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
                 }
 
-                if (!constraintTypeSymbol) {
-                    context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Unable_to_resolve_type_parameter_constraint, null, enclosingDecl, true);
-                }
-                else if (constraintTypeSymbol.isPrimitive()) {
-                    if (constraintTypeSymbol.isError()) {
-                        var errorSymbol = (<PullErrorTypeSymbol>constraintTypeSymbol).getDiagnostic();
-                        if (errorSymbol) {
-                            context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), errorSymbol.diagnosticCode(), errorSymbol.arguments(), enclosingDecl, true);
-                        }
-                    }
-                    else {
-                        context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null, enclosingDecl, true);
-                    }
-                }
-                else {
+                if (constraintTypeSymbol) {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
                 }
             }

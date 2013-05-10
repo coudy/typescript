@@ -751,7 +751,15 @@ module TypeScript {
         }
 
         private typeCheckTypeParameter(typeParameter: TypeParameter, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.typeCheckAST(typeParameter.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/false);
+            if (typeParameter.constraint) {
+                var constraintType = this.typeCheckAST(typeParameter.constraint, typeCheckContext, /*inContextuallyTypedAssignment:*/false);
+
+                if (constraintType && !constraintType.isError() && constraintType.isPrimitive()) {
+                    this.postError(typeParameter.constraint.minChar, typeParameter.constraint.getLength(), typeCheckContext.scriptName,
+                        DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null, typeCheckContext.getEnclosingDecl());
+                }
+            }
+
             return <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(typeParameter, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl());
         }
 
