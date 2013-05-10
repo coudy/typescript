@@ -92,6 +92,7 @@ var servicesSources = [
 	"emitOutputTextWriter.ts",
 	"compilerState.ts",
 	"languageService.ts",
+	"completionHelpers.ts",
 	"keywordCompletions.ts",
 	"signatureInfoHelpers.ts",
 	"pullLanguageService.ts",

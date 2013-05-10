@@ -20,6 +20,7 @@
 ///<reference path='emitOutputTextWriter.ts' />
 ///<reference path='compilerState.ts' />
 ///<reference path='languageService.ts' />
+///<reference path='completionHelpers.ts' />
 ///<reference path='keywordCompletions.ts' />
 ///<reference path='signatureInfoHelpers.ts' />
 ///<reference path='pullLanguageService.ts' />
