@@ -1,4 +1,4 @@
-﻿/// <reference path='ast.ts' />
+/// <reference path='ast.ts' />
 
 module TypeScript {
     var incrementalAst = true;
