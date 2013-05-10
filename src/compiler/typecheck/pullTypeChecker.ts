@@ -1966,9 +1966,7 @@ module TypeScript {
 
         
         private typeCheckExportAssignment(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var exportSymbol = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
-
-            return exportSymbol.symbol.getType();
+            return this.resolveSymbolAndReportDiagnostics(ast, false, typeCheckContext.getEnclosingDecl()).getType();
         }
 
         private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {

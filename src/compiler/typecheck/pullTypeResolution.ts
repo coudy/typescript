@@ -1257,10 +1257,9 @@ module TypeScript {
 
             if (!nameSymbol) {
                 // Error
-                // Could_not_find_symbol__0_
-                enclosingDecl.addDiagnostic(
-                    new SemanticDiagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [id]));
-                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
+                return SymbolAndDiagnostics.create(
+                    this.semanticInfoChain.anyTypeSymbol,
+                    [context.postError(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [id])]);
             }
 
             if (!nameSymbol.isResolved()) {
