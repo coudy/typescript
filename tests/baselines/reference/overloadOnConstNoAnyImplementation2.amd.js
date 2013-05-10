@@ -18,6 +18,9 @@ c.x1(1, function (x) {
 c.x1(1, function (x) {
     return 1;
 });
+c.x1(1, function (x) {
+    return 1;
+});
 
 c.x1(1, function (x) {
     return 1;
