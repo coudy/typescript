@@ -198,7 +198,7 @@ class BatchCompiler {
 
         compiler.pullTypeCheck();
         var fileNames = compiler.fileNameToDocument.getAllKeys();
-        var typeCheckStart = (new Date()).getTime();
+        
         for (var i = 0, n = fileNames.length; i < n; i++) {
             var fileName = fileNames[i];
             var semanticDiagnostics = compiler.getSemanticDiagnostics(fileName);
@@ -206,12 +206,7 @@ class BatchCompiler {
                 anySemanticErrors = true;
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }
-        }
-        var typeCheckEnd = (new Date()).getTime();
-
-        if (this.compilationSettings.gatherDiagnostics) {
-            this.ioHost.printLine("Type check time: " + (typeCheckEnd - typeCheckStart));
-        }
+        }  
 
         var emitterIOHost = {
             createFile: (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),

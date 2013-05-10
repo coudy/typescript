@@ -52,7 +52,7 @@ class BatchCompiler {
     }
 
     public newParse(): TypeScript.SyntaxTree {
-        return TypeScript.Parser.parse("compiler.ts", this.simpleText, false, TypeScript.LanguageVersion.EcmaScript5);
+        return TypeScript.Parser.parse("compiler.ts", this.simpleText, false, TypeScript.LanguageVersion.EcmaScript5, TypeScript.getParseOptions(new TypeScript.CompilationSettings()));
     }
 
     public newIncrementalParse(tree: TypeScript.SyntaxTree): TypeScript.SyntaxTree {

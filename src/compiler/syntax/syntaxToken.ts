@@ -138,8 +138,10 @@ module TypeScript.Syntax {
     }
 
     var characterArray: number[] = [];
+
     function convertEscapes(text: string): string {
         characterArray.length = 0;
+        var result = "";
 
         for (var i = 0, n = text.length; i < n; i++) {
             var ch = text.charCodeAt(i);
@@ -199,9 +201,18 @@ module TypeScript.Syntax {
             }
 
             characterArray.push(ch);
+
+            if (i && !(i % 1024)) {
+                result = result.concat(String.fromCharCode.apply(null, characterArray));
+                characterArray.length = 0;
+            }
         }
 
-        return String.fromCharCode.apply(null, characterArray);
+        if (characterArray.length) {
+            result = result.concat(String.fromCharCode.apply(null, characterArray));
+        }
+
+        return result
     }
 
     function massageEscapes(text: string): string {

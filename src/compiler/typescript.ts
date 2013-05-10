@@ -635,24 +635,22 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
-            return this.timeFunction("getSemanticDiagnostics - " + fileName + ": ", () => {
-                var errors: IDiagnostic[] = [];
+            var errors: IDiagnostic[] = [];
 
-                var unit = this.semanticInfoChain.getUnit(fileName);
+            var unit = this.semanticInfoChain.getUnit(fileName);
 
-                if (unit) {
-                    var document = this.getDocument(fileName);
-                    var script = document.script;
+            if (unit) {
+                var document = this.getDocument(fileName);
+                var script = document.script;
 
-                    if (script) {
-                        this.pullTypeChecker.typeCheckScript(script, fileName, this);
+                if (script) {
+                    this.pullTypeChecker.typeCheckScript(script, fileName, this);
 
-                        unit.getDiagnostics(errors);
-                    }
+                    unit.getDiagnostics(errors);
                 }
+            }
 
-                return errors;
-            } );
+            return errors;
         }
 
         public pullTypeCheck() {

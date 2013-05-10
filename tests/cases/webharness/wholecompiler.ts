@@ -20175,8 +20175,10 @@ module TypeScript.Syntax {
     }
 
     var characterArray: number[] = [];
+
     function convertEscapes(text: string): string {
         characterArray.length = 0;
+        var result = "";
 
         for (var i = 0, n = text.length; i < n; i++) {
             var ch = text.charCodeAt(i);
@@ -20236,9 +20238,18 @@ module TypeScript.Syntax {
             }
 
             characterArray.push(ch);
+
+            if (i && !(i % 1024)) {
+                result = result.concat(String.fromCharCode.apply(null, characterArray));
+                characterArray.length = 0;
+            }
         }
 
-        return String.fromCharCode.apply(null, characterArray);
+        if (characterArray.length) {
+            result = result.concat(String.fromCharCode.apply(null, characterArray));
+        }
+
+        return result
     }
 
     function massageEscapes(text: string): string {
@@ -59573,24 +59584,22 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
-            return this.timeFunction("getSemanticDiagnostics - " + fileName + ": ", () => {
-                var errors: IDiagnostic[] = [];
+            var errors: IDiagnostic[] = [];
 
-                var unit = this.semanticInfoChain.getUnit(fileName);
+            var unit = this.semanticInfoChain.getUnit(fileName);
 
-                if (unit) {
-                    var document = this.getDocument(fileName);
-                    var script = document.script;
+            if (unit) {
+                var document = this.getDocument(fileName);
+                var script = document.script;
 
-                    if (script) {
-                        this.pullTypeChecker.typeCheckScript(script, fileName, this);
+                if (script) {
+                    this.pullTypeChecker.typeCheckScript(script, fileName, this);
 
-                        unit.getDiagnostics(errors);
-                    }
+                    unit.getDiagnostics(errors);
                 }
+            }
 
-                return errors;
-            } );
+            return errors;
         }
 
         public pullTypeCheck() {
@@ -61360,7 +61369,7 @@ class BatchCompiler {
 
         compiler.pullTypeCheck();
         var fileNames = compiler.fileNameToDocument.getAllKeys();
-        var typeCheckStart = (new Date()).getTime();
+        
         for (var i = 0, n = fileNames.length; i < n; i++) {
             var fileName = fileNames[i];
             var semanticDiagnostics = compiler.getSemanticDiagnostics(fileName);
@@ -61368,12 +61377,7 @@ class BatchCompiler {
                 anySemanticErrors = true;
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }
-        }
-        var typeCheckEnd = (new Date()).getTime();
-
-        if (this.compilationSettings.gatherDiagnostics) {
-            this.ioHost.printLine("Type check time: " + (typeCheckEnd - typeCheckStart));
-        }
+        }  
 
         var emitterIOHost = {
             createFile: (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
