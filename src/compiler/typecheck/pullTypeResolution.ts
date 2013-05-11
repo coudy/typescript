@@ -4642,10 +4642,16 @@ module TypeScript {
             if ((kind & PullElementKind.ObjectType) != 0) {
                 return true;
             }
+            if ((kind & PullElementKind.Interface) != 0) {
+                return true;
+            }
             else if ((kind & PullElementKind.SomeFunction) != 0) {
                 return this.canApplyContextualTypeToFunction(type, <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(type.getDeclarations[0]), true);
             }
             else if ((kind & PullElementKind.Array) != 0) {
+                return true;
+            }
+            else if (type == this.semanticInfoChain.anyTypeSymbol || kind != PullElementKind.Primitive) {
                 return true;
             }
 
