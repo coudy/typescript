@@ -817,7 +817,7 @@ module TypeScript {
                 }
 
                 this.cleanInterfaceSignatures(interfaceSymbol);
-                interfaceSymbol.setUnresolved();
+                interfaceSymbol.invalidate();
             }
 
             this.pushParent(interfaceSymbol, interfaceDecl);

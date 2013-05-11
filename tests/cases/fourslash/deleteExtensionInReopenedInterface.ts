@@ -7,11 +7,18 @@
 //// interface I extends B { }
 //// 
 //// var i: I;
-//// 
+//// class C /*delImplements*/implements A { }
+//// var c: C;
+//// c.a;
 
 goTo.marker('del');
 edit.deleteAtCaret('extends A'.length);
 
 goTo.eof();
-// Bug: 679479 Removing the re-extending the interface for a second time keeps the stale members around
-// edit.insert("var a = i.a;");
+edit.insert("var a = i.a;");
+
+goTo.marker('delImplements');
+edit.deleteAtCaret('implements A'.length);
+
+goTo.marker('del');
+edit.insert('extends A');

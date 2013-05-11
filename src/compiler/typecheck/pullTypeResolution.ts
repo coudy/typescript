@@ -957,6 +957,7 @@ module TypeScript {
                 return typeDeclSymbol;
             }
 
+            var wasResolving = typeDeclSymbol.isResolving();
             typeDeclSymbol.startResolving();
 
             // Resolve Type Parameters
@@ -1001,6 +1002,17 @@ module TypeScript {
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
+            // Remove any extends links that are not in the AST extendsList IF this is the first pass
+            if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
+                for (var i = 0; i < baseTypeSymbols.length; i++) {
+                    var baseType = baseTypeSymbols[i];
+                    if (!(typeDeclAST.extendsList && this.baseListHasBase(typeDeclAST.extendsList, baseType.getName()))) {
+                        typeDeclSymbol.removeExtendedType(baseTypeSymbols[i]);
+                    }
+                }
+            }
+
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); (i - extendsCount) < typeDeclAST.implementsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
@@ -1021,6 +1033,18 @@ module TypeScript {
                     }
                 }
             }
+
+            // Remove any implements links that are not in the AST implementsList
+            if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
+                for (var i = 0; i < baseTypeSymbols.length; i++) {
+                    var baseType = baseTypeSymbols[i];
+                    if (!(typeDeclAST.implementsList && this.baseListHasBase(typeDeclAST.implementsList, baseType.getName()))) {
+                        typeDeclSymbol.removeImplementedType(baseTypeSymbols[i]);
+                    }
+                }
+            }
+
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
             if (wasInBaseTypeResolution) {
                 // Do not resolve members as yet
@@ -1059,6 +1083,16 @@ module TypeScript {
             typeDeclSymbol.setResolved();
 
             return typeDeclSymbol;
+        }
+
+        private baseListHasBase(list: ASTList, baseName: string): boolean {
+            for (var i = 0; i < list.members.length; i++) {
+                var baseSymbol = this.getSymbolAndDiagnosticsForAST(list.members[i]);
+                if (baseSymbol && baseSymbol.symbol.getName() === baseName) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         //
