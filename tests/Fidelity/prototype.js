@@ -43423,7 +43423,7 @@ var TypeScript;
                     return this.typeCheckThisExpression(ast, typeCheckContext);
 
                 case 30 /* SuperExpression */:
-                    return this.typeCheckSuper(ast, typeCheckContext);
+                    return this.typeCheckSuperExpression(ast, typeCheckContext);
 
                 case 36 /* InvocationExpression */:
                     return this.typeCheckCallExpression(ast, typeCheckContext);
@@ -44557,7 +44557,7 @@ var TypeScript;
             return false;
         };
 
-        PullTypeChecker.prototype.checkForThisCaptureInArrowFunction = function (thisExpressionAST, typeCheckContext) {
+        PullTypeChecker.prototype.checkForThisOrSuperCaptureInArrowFunction = function (expression, typeCheckContext) {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var declPath = typeCheckContext.enclosingDeclStack;
@@ -44608,12 +44608,12 @@ var TypeScript;
                 }
             }
 
-            this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
+            this.checkForThisOrSuperCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
 
             return this.resolveSymbolAndReportDiagnostics(thisExpressionAST, false, enclosingDecl).getType();
         };
 
-        PullTypeChecker.prototype.typeCheckSuper = function (ast, typeCheckContext) {
+        PullTypeChecker.prototype.typeCheckSuperExpression = function (ast, typeCheckContext) {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
             var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();
@@ -44626,6 +44626,8 @@ var TypeScript;
             } else if (!this.enclosingClassIsDerived(typeCheckContext)) {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, 168 /* _super__cannot_be_referenced_in_non_derived_classes */, null, enclosingDecl);
             }
+
+            this.checkForThisOrSuperCaptureInArrowFunction(ast, typeCheckContext);
 
             return this.resolveSymbolAndReportDiagnostics(ast, false, enclosingDecl).getType();
         };
@@ -57864,7 +57866,7 @@ var timer = new TypeScript.Timer();
 
 var specificFile = undefined;
 
-var generate = true;
+var generate = false;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
