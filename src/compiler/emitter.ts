@@ -738,34 +738,6 @@ module TypeScript {
                 // if the external module has an "export =" identifier, we'll
                 // set it in the ExportAssignment emit method
                 this.setExportAssignmentIdentifier(null);
-
-                // create the new outfile for this module
-                var tsModFileName = stripQuotes(moduleDecl.name.actualText);
-                var modFilePath = trimModName(tsModFileName) + ".js";
-                modFilePath = this.emitOptions.mapOutputFileName(modFilePath, TypeScriptCompiler.mapToJSFileName);
-
-                if (this.emitOptions.ioHost) {
-                    // Ensure that the slashes are normalized so that the comparison is fair
-                    // REVIEW: Note that modFilePath is normalized to forward slashes in Parser.parse, so the 
-                    // first call to switchToForwardSlashes is technically a no-op, but it will prevent us from
-                    // regressing if the parser changes
-                    if (switchToForwardSlashes(modFilePath) !== switchToForwardSlashes(this.emittingFileName)) {
-                        this.emittingFileName = modFilePath;
-                        var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
-                        this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
-                        if (prevSourceMapper !== null) {
-                            this.allSourceMappers = [];
-                            var sourceMapFile = this.emittingFileName + SourceMapper.MapFileExtension;
-                            var sourceMappingFile = this.createFile(sourceMapFile, false);
-                            this.setSourceMappings(new SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.emitOptions.compilationSettings.emitFullSourceMapPath));
-                            this.emitState.column = 0;
-                            this.emitState.line = 0;
-                        }
-                    } else {
-                        CompilerDiagnostics.assert(this.emitOptions.outputMany, "Cannot have dynamic modules compiling into single file");
-                    }
-                }
-
                 this.setContainer(EmitContainer.DynamicModule); // discard the previous 'Module' container
 
                 this.recordSourceMappingStart(moduleDecl);
@@ -779,12 +751,8 @@ module TypeScript {
 
                     this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
                 }
-                else { // Node
-
-                }
             }
             else {
-
                 if (!isExported) {
                     this.recordSourceMappingStart(moduleDecl);
                     this.writeToOutput("var ");
