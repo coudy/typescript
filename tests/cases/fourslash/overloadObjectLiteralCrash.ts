@@ -9,5 +9,4 @@
 //// 
 
 goTo.marker();
-// Bug 679481: Error "Cannot call method 'isPrimitive' of null" getting quick info in object literal property name in generic function overload invoke
 verify.quickInfoExists();
