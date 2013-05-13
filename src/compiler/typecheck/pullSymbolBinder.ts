@@ -1067,7 +1067,7 @@ module TypeScript {
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
-                if (!isImplicit || (!variableSymbol.hasFlag(PullElementFlags.ImplicitVariable) && (variableSymbol.getKind() !== declKind))) {
+                if (!isImplicit || !variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
@@ -1509,7 +1509,7 @@ module TypeScript {
 
             // PULLREVIEW: On a re-bind, there's no need to search far-and-wide: just look in the parent's member list
             var functionSymbol: PullSymbol = null;
-            var functionTypeSymbol: PullFunctionTypeSymbol = null;
+            var functionTypeSymbol: PullTypeSymbol = null;
 
             if (parent) {
                 functionSymbol = parent.findMember(funcName, false);
@@ -1599,7 +1599,17 @@ module TypeScript {
             }
 
             if (!functionTypeSymbol) {
-                functionTypeSymbol = new PullFunctionTypeSymbol();
+                //if (parent) {
+                //    functionTypeSymbol = parent.findNestedType(funcName);
+                //}
+                //else if (!(functionDeclaration.getFlags() & PullElementFlags.Exported)) {
+                //    functionTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(funcName, PullElementKind.SomeType, []);
+                //}
+
+                //if (!functionTypeSymbol) {
+                    functionTypeSymbol = new PullFunctionTypeSymbol();
+                //}
+
                 functionSymbol.setType(functionTypeSymbol);
             }
 
@@ -1685,7 +1695,7 @@ module TypeScript {
             }
 
             // add the implicit call member for this function type
-            functionTypeSymbol.addSignature(signature);
+            functionTypeSymbol.addCallSignature(signature);
 
             if (!isSignature) {
                 var childDecls = functionDeclaration.getChildDecls();

@@ -33,7 +33,7 @@ var M;
             result += ((Color._map[z[i].color]) + "\r\n");
         }
 
-        var eeks = new IFrenchEye[]();
+        var eeks = [];
         for (var j = z.length = 1; j >= 0; j--) {
             eeks[j] = z[j];
         }

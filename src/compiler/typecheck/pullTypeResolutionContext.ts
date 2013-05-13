@@ -164,6 +164,7 @@ module TypeScript {
         private genericASTResolutionStack: AST[] = [];
 
         public resolvingTypeReference = false;
+        public resolvingNamespaceMemberAccess = false;
 
         public resolveAggressively = false;
 

@@ -860,8 +860,6 @@ module TypeScript {
                 // if it's an object literal member, just return the symbol and wait for
                 // the object lit to be resolved
                 if (!ast || ast.nodeType === NodeType.Member) {
-                    //var span = decl.getSpan();
-                    //context.postError(span.minChar, span.limChar - span.minChar, this.unitPath, "Could not resolve location for symbol '" + symbol.getName() +"'", enclosingDecl);
 
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
                     this.setUnitPath(thisUnit);
@@ -1557,8 +1555,8 @@ module TypeScript {
             // a name
             if (typeRef.term.nodeType === NodeType.Name) {
                 var prevResolvingTypeReference = context.resolvingTypeReference;
-                contex-t.resolvingTypeReference = true;
-                symbolAndDiagnostic = this.resolveTypeNameExpression(typeName, enclosingDecl, context);
+                context.resolvingTypeReference = true;
+                symbolAndDiagnostic = this.resolveTypeNameExpression(<Identifier>typeRef.term, enclosingDecl, context);
                 typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
@@ -2371,7 +2369,7 @@ module TypeScript {
                     return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
 
                 case NodeType.ExportAssignment:
-                    return this.resolveExportAssignmentStatement(<ExportAssignment>expressionAST, enclosingDecl, context);
+                    return this.resolveExportAssignmentStatement(<ExportAssignment>ast, enclosingDecl, context);
 
                 // primitives
                 case NodeType.NumericLiteral:
@@ -2832,12 +2830,16 @@ module TypeScript {
                     declPath = [enclosingDecl];
                 }
 
-                // First, check for the container
-                typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeContainer);
+                // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
+                // first if need be, and then fall back to type names.  Otherwise, only fall back to searching for a container symbol if
+                // we're *not* resolving a container type name, since we don't want to look up container symbols from a strictly type position
+                var kindToCheckFirst = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+                var kindToCheckSecond = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeType : PullElementKind.SomeContainer;
+                
+                var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckFirst);
 
-                // If no container could be found, look for a proper type
-                if (!typeNameSymbol) {
-                    typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+                if (!typeNameSymbol && !context.resolvingNamespaceMemberAccess) {
+                    typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckSecond);
                 }
 
                 if (!typeNameSymbol) {
@@ -2849,7 +2851,10 @@ module TypeScript {
                 if (typeNameSymbol.isAlias()) {
 
                     if (!typeNameSymbol.isResolved()) {
+                        var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
+                        context.resolvingNamespaceMemberAccess = false;
                         this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
+                        context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
                     }
 
                     var exportAssignmentSymbol = (<PullTypeAliasSymbol>typeNameSymbol).getExportAssignedSymbol()
@@ -3004,9 +3009,12 @@ module TypeScript {
             // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
             // gotten into this code path if it was already set.
             var savedResolvingTypeReference = context.resolvingTypeReference;
+            var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
+            context.resolvingNamespaceMemberAccess = true;
             context.resolvingTypeReference = true;
             var lhs = this.resolveAST(dottedNameAST.operand1, false, enclosingDecl, context).symbol;
             context.resolvingTypeReference = savedResolvingTypeReference;
+            context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
 
             var lhsType = lhs.getType();
 
