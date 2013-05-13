@@ -162,25 +162,6 @@ class CompilerBaselineRunner extends RunnerBase {
                         return jsOutputAsync;
                     });
                 }
-
-                if (that.output) {
-                    // check runtime output
-                    Harness.Baseline.runBaseline('Correct runtime output for ' + fileName, justName.replace(/\.ts/, '.output.txt'), () => {
-                        var runResult = null;
-                        Harness.Runner.runJSString(jsOutputSync, (error, result) => {
-                            if (error === null) {
-                                runResult = result;
-                            }
-                        });
-
-                        if (typeof runResult === 'string') {
-                            // Some interesting runtime result to report
-                            return runResult;
-                        } else {
-                            return null;
-                        }
-                    });
-                }
             }
         });
     }
