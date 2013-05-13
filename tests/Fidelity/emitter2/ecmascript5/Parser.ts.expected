@@ -225,16 +225,15 @@ var Parser = (function(_super) {
     __extends(Parser, _super);
 
     function Parser(text,
+                    options,
                     languageVersion,
                     stringTable,
                     oldTree,
-                    changes,
-                    options) {
+                    changes) {
         if (typeof languageVersion === "undefined") { languageVersion = LanguageVersion.EcmaScript5; }
         if (typeof stringTable === "undefined") { stringTable = null; }
         if (typeof oldTree === "undefined") { oldTree = null; }
         if (typeof changes === "undefined") { changes = null; }
-        if (typeof options === "undefined") { options = null; }
         _super.call(this, 32, null);
 
         // Parsing options.
@@ -285,7 +284,7 @@ var Parser = (function(_super) {
         this.scanner = new Scanner(text, languageVersion, stringTable);
 
         this.oldTree = oldTree;
-        this.options = options || new ParseOptions();
+        this.options = options;
     }
 
     Parser.prototype.isIncremental = function() {

@@ -2,7 +2,8 @@
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
-        "allowAutomaticSemicolonInsertion": true
+        "allowAutomaticSemicolonInsertion": true,
+        "allowModuleKeywordInExternalModuleReference": true
     },
     "diagnostics": [
         {
@@ -714,7 +715,7 @@
                 "moduleReference": {
                     "kind": "ExternalModuleReference",
                     "fullWidth": 12,
-                    "moduleKeyword": {
+                    "moduleOrRequireKeyword": {
                         "kind": "ModuleKeyword",
                         "width": 6,
                         "text": "module",

@@ -2,7 +2,8 @@
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
-        "allowAutomaticSemicolonInsertion": true
+        "allowAutomaticSemicolonInsertion": true,
+        "allowModuleKeywordInExternalModuleReference": true
     },
     "sourceUnit": {
         "kind": "SourceUnit",
@@ -39,11 +40,13 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 36,
+                "isIncrementallyUnusable": true,
                 "parsedInStrictMode": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 33,
+                    "isIncrementallyUnusable": true,
                     "parsedInStrictMode": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
@@ -64,6 +67,7 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 29,
+                            "isIncrementallyUnusable": true,
                             "parsedInStrictMode": true,
                             "identifier": {
                                 "kind": "IdentifierName",
@@ -83,6 +87,7 @@
                             "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 22,
+                                "isIncrementallyUnusable": true,
                                 "parsedInStrictMode": true,
                                 "equalsToken": {
                                     "kind": "EqualsToken",
@@ -102,6 +107,7 @@
                                 "value": {
                                     "kind": "InvocationExpression",
                                     "fullWidth": 20,
+                                    "isIncrementallyUnusable": true,
                                     "parsedInStrictMode": true,
                                     "expression": {
                                         "kind": "IdentifierName",
