@@ -171,7 +171,7 @@ class BatchCompiler {
             // if file resolving is disabled, the file's content will not yet be loaded
 
             if (!this.compilationSettings.resolve) {
-                code.content = this.ioHost.readFile(code.path);
+                code.fileInformation = this.ioHost.readFile(code.path);
                 // If declaration files are going to be emitted, 
                 // preprocess the file contents and add in referenced files as well
                 if (this.compilationSettings.generateDeclarationFiles) {
@@ -180,8 +180,9 @@ class BatchCompiler {
                 }
             }
 
-            if (code.content != null) {
-                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ false, code.referencedFiles);
+            if (code.fileInformation != null) {
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.fileInformation.contents()),
+                    code.fileInformation.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ false, code.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
@@ -266,7 +267,7 @@ class BatchCompiler {
             // if file resolving is disabled, the file's content will not yet be loaded
 
             if (!this.compilationSettings.resolve) {
-                code.content = this.ioHost.readFile(code.path);
+                code.fileInformation = this.ioHost.readFile(code.path);
                 // If declaration files are going to be emitted, 
                 // preprocess the file contents and add in referenced files as well
                 if (this.compilationSettings.generateDeclarationFiles) {
@@ -275,8 +276,9 @@ class BatchCompiler {
                 }
             }
 
-            if (code.content != null) {
-                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ true, code.referencedFiles);
+            if (code.fileInformation != null) {
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.fileInformation.contents()),
+                    code.fileInformation.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true, code.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
@@ -329,7 +331,7 @@ class BatchCompiler {
             var outputFileName: string = this.compilationEnvironment.inputFileNameToOutputFileName.lookup(i);
             if (this.ioHost.fileExists(outputFileName)) {
                 var unitRes = this.ioHost.readFile(outputFileName)
-                this.ioHost.run(unitRes, outputFileName);
+                this.ioHost.run(unitRes.contents(), outputFileName);
             }
         }
     }

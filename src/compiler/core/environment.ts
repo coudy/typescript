@@ -2,8 +2,33 @@
 ///<reference path='..\enumerator.ts' />
 ///<reference path='..\process.ts' />
 
+enum ByteOrderMark {
+    None,
+    Utf8,
+    Utf16BigEndian,
+    Utf16LittleEndian,
+}
+
+class FileInformation {
+    private _contents: string;
+    private _byteOrderMark: ByteOrderMark;
+
+    constructor(contents: string, byteOrderMark: ByteOrderMark) {
+        this._contents = contents;
+        this._byteOrderMark = byteOrderMark;
+    }
+
+    public contents(): string {
+        return this._contents;
+    }
+
+    public byteOrderMark(): ByteOrderMark {
+        return this._byteOrderMark;
+    }
+}
+
 interface IEnvironment {
-    readFile(path: string, useUTF8?: boolean): string;
+    readFile(path: string): FileInformation;
     writeFile(path: string, contents: string, useUTF8?: boolean): void;
     deleteFile(path: string): void;
     fileExists(path: string): boolean;
@@ -50,30 +75,42 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
-            readFile: function (path, useUTF8: boolean = false) {
+            readFile: function (path): FileInformation {
                 try {
+                    // Initially just read the first two bytes of the file to see if there's a bom.
                     var streamObj = getStreamObject();
                     streamObj.Open();
                     streamObj.Type = 2; // Text data
-                    streamObj.Charset = 'x-ansi'; // Assume we are reading ansi text
+                    streamObj.Charset = 'x-ansi'; 
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2); // Read the BOM char
-                    streamObj.Position = 0; // Position has to be at 0 before changing the encoding
-                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) ||
-                        (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
+
+                     // Position has to be at 0 before changing the encoding
+                    streamObj.Position = 0;
+
+                    var byteOrderMark = ByteOrderMark.None;
+
+                    if (bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) {
                         streamObj.Charset = 'unicode';
+                        byteOrderMark = ByteOrderMark.Utf16BigEndian;
+                    }
+                    else if (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE) {
+                        streamObj.Charset = 'unicode';
+                        byteOrderMark = ByteOrderMark.Utf16LittleEndian;
                     } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
                         streamObj.Charset = 'utf-8';
+                        byteOrderMark = ByteOrderMark.Utf8;
                     }
                     else {
-                        streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
+                        // Always read a file as utf8 if it has no bom.
+                        streamObj.Charset = 'utf-8';
                     }
 
                 // Read the whole file
-                    var str = streamObj.ReadText(-1 /* read from the current position to EOS */);
+                    var contents = streamObj.ReadText(-1 /* read from the current position to EOS */);
                     streamObj.Close();
                     releaseStreamObject(streamObj);
-                    return <string>str;
+                    return new FileInformation(contents, byteOrderMark);
                 }
                 catch (err) {
                     throw new Error("Error reading file \"" + path + "\": " + err.message);
@@ -167,7 +204,7 @@ var Environment = (function () {
                 return (<any>process).cwd();
             },
 
-            readFile: function (file: string, useUTF8?: boolean) {
+            readFile: function (file: string): FileInformation {
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
@@ -181,24 +218,24 @@ var Environment = (function () {
                                 buffer[i + 1] = temp;
                                 i += 2;
                             }
-                            return buffer.toString("ucs2", 2);
+                            return new FileInformation(buffer.toString("ucs2", 2), ByteOrderMark.Utf16BigEndian);
                         }
                         break;
                     case 0xFF:
                         if (buffer[1] === 0xFE) {
                             // utf16-le 
-                            return buffer.toString("ucs2", 2);
+                            return new FileInformation(buffer.toString("ucs2", 2), ByteOrderMark.Utf16LittleEndian);
                         }
                         break;
                     case 0xEF:
                         if (buffer[1] === 0xBB) {
                             // utf-8
-                            return buffer.toString("utf8", 3);
+                            return new FileInformation(buffer.toString("utf8", 3), ByteOrderMark.Utf8);
                         }
                 }
 
                 // Default behaviour
-                return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
+                return new FileInformation(buffer.toString("utf8", 0), ByteOrderMark.None);
             },
 
             writeFile: function (path: string, contents: string, useUTF?: boolean) {

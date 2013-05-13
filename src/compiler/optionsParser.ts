@@ -212,7 +212,7 @@ class OptionsParser {
 
             if (match) {
                 if (match[1] === '@') {
-                    this.parseString(this.host.readFile(match[2]));
+                    this.parseString(this.host.readFile(match[2]).contents());
                 } else {
                     var arg = match[2];
                     var option = this.findOption(arg);

@@ -127,6 +127,7 @@ module Services {
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             compiler.addSourceUnit(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
+                ByteOrderMark.None,
                 this.hostCache.getVersion(fileName),
                 this.hostCache.isOpen(fileName));
         }

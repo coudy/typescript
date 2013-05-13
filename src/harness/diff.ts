@@ -800,7 +800,7 @@ module Diff {
 
             if (Environment.fileExists(this.reportFileName)) {
                 // Suck in the existing baseline if we have one.
-                this.reportContent = Environment.readFile(this.reportFileName);
+                this.reportContent = Environment.readFile(this.reportFileName).contents();
             } else {
                 // Otherwise, set the content to the default.
                 this.reportContent = HtmlBaselineReport.htmlLeader;

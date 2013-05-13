@@ -24,7 +24,7 @@ class CompilerBaselineRunner extends RunnerBase {
     public checkTestCodeOutput(fileName: string) {
         // strips the fileName from the path.
         var justName = fileName.replace(/^.*[\\\/]/, '');
-        var content = IO.readFile(fileName);
+        var content = IO.readFile(fileName).contents();
         var testCaseContent = Harness.TestCaseParser.makeUnitsFromTest(content, justName);
 
         var units = testCaseContent.testUnitData;

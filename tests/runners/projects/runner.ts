@@ -138,16 +138,17 @@ class HarnessBatch {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
                 if (!(_self.compilationSettings.resolve)) {
-                    code.content = this.host.readFile(code.path);
+                    code.fileInformation = this.host.readFile(code.path);
                 }
-                if (code.content != null) {
+                if (code.fileInformation != null) {
                     // Log any bugs associated with the test
-                    var bugs = code.content.match(/\bbug (\d+)/i);
+                    var bugs = code.fileInformation.contents().match(/\bbug (\d+)/i);
                     if (bugs) {
                         bugs.forEach(bug => Harness.Assert.bug(bug));
                     }
                     
-                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ true);
+                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.fileInformation.contents()),
+                        code.fileInformation.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true);
                 }
             }
             catch (err) {
@@ -203,7 +204,7 @@ class HarnessBatch {
         for (var i = 0; i < this.resolvedEnvironment.code.length; i++) {
             var unit = this.resolvedEnvironment.code[i];
             var outputFileName = unit.path.replace(/\.ts$/, ".js");
-            var unitRes = this.host.readFile(outputFileName)
+            var unitRes = this.host.readFile(outputFileName).contents();
             this.host.run(unitRes, outputFileName);
         }
     }
@@ -328,7 +329,7 @@ class ProjectRunner extends RunnerBase {
                         var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
                         localFile.Write(fileContents);
                         localFile.Close();
-                        Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName));
+                        Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName).contents());
                     }
                 }
 
@@ -389,8 +390,8 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
-                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType));
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents(),
+                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents());
                         });
                     }
 
@@ -462,8 +463,8 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + ""),
-                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType));
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents(),
+                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents());
                         });
                     }
 

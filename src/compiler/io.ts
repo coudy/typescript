@@ -18,7 +18,7 @@
 ///<reference path='core\references.ts' />
 
 interface IResolvedFile {
-    content: string;
+    fileInformation: FileInformation;
     path: string;
 }
 
@@ -27,7 +27,7 @@ interface IFileWatcher {
 }
 
 interface IIO {
-    readFile(path: string): string;
+    readFile(path: string): FileInformation;
     writeFile(path: string, contents: string): void;
     createFile(path: string, useUTF8?: boolean): ITextWriter;
     deleteFile(path: string): void;
@@ -130,31 +130,8 @@ var IO = (function() {
         }
 
         return {
-            readFile: function(path) {
-                try {
-                    var streamObj = getStreamObject();
-                    streamObj.Open();
-                    streamObj.Type = 2; // Text data
-                    streamObj.Charset = 'x-ansi'; // Assume we are reading ansi text
-                    streamObj.LoadFromFile(path);
-                    var bomChar = streamObj.ReadText(2); // Read the BOM char
-                    streamObj.Position = 0; // Position has to be at 0 before changing the encoding
-                    if ((bomChar.charCodeAt(0) == 0xFE && bomChar.charCodeAt(1) == 0xFF)
-                        || (bomChar.charCodeAt(0) == 0xFF && bomChar.charCodeAt(1) == 0xFE)) {
-                        streamObj.Charset = 'unicode';
-                    } else if (bomChar.charCodeAt(0) == 0xEF && bomChar.charCodeAt(1) == 0xBB) {
-                        streamObj.Charset = 'utf-8'; 
-                    }
-
-                    // Read the whole file
-                    var str = streamObj.ReadText(-1 /* read from the current position to EOS */);
-                    streamObj.Close();
-                    releaseStreamObject(streamObj);
-                    return <string>str;
-                }
-                catch (err) {
-                    IOUtils.throwIOError("Error reading file \"" + path + "\".", err);
-                }
+            readFile: function (path): FileInformation {
+                return Environment.readFile(path);
             },
 
             writeFile: function(path, contents) {
@@ -181,8 +158,7 @@ var IO = (function() {
                 while (true) {
                     if (fso.FileExists(path)) {
                         try {
-                            var content = this.readFile(path);
-                            return { content: content, path: path };
+                            return { fileInformation: this.readFile(path), path: path };
                         }
                         catch (err) {
                             //Tools.CompilerDiagnostics.debugPrint("Could not find " + path + ", trying parent");
@@ -324,41 +300,8 @@ var IO = (function() {
         var _module = require('module');
 
         return {
-            readFile: function(file) {
-                try {
-                    var buffer = _fs.readFileSync(file);
-                    switch (buffer[0]) {
-                        case 0xFE:
-                            if (buffer[1] == 0xFF) {
-                                // utf16-be. Reading the buffer as big endian is not supported, so convert it to 
-                                // Little Endian first
-                                var i = 0;
-                                while ((i + 1) < buffer.length) {
-                                    var temp = buffer[i]
-                                    buffer[i] = buffer[i + 1];
-                                    buffer[i + 1] = temp;
-                                    i += 2;
-                                }
-                                return buffer.toString("ucs2", 2);
-                            }
-                            break;
-                        case 0xFF:
-                            if (buffer[1] == 0xFE) {
-                                // utf16-le 
-                                return buffer.toString("ucs2", 2);
-                            }
-                            break;
-                        case 0xEF:
-                            if (buffer[1] == 0xBB) {
-                                // utf-8
-                                return buffer.toString("utf8", 3);
-                            }
-                    }
-                    // Default behaviour
-                    return buffer.toString();
-                } catch (e) {
-                    IOUtils.throwIOError("Error reading file \"" + file + "\".", e);
-                }
+            readFile: function (file): FileInformation {
+                return Environment.readFile(file);
             },
 
             writeFile: <(path: string, contents: string) => void >_fs.writeFileSync,
@@ -450,8 +393,7 @@ var IO = (function() {
                 while (true) {
                     if (_fs.existsSync(path)) {
                         try {
-                            var content = this.readFile(path);
-                            return { content: content, path: path };
+                            return { fileInformation: this.readFile(path), path: path };
                         } catch (err) {
                             //Tools.CompilerDiagnostics.debugPrint(("Could not find " + path) + ", trying parent");
                         }

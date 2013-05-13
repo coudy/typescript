@@ -702,8 +702,10 @@ module FourSlash {
             var fullSyntaxErrs = JSON2.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings);
             var compiler = new TypeScript.TypeScriptCompiler();
-            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), 0, true);
-            compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), 0, true);
+
+            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
+            compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), ByteOrderMark.None,0, true);
+
             compiler.pullTypeCheck();
             var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.activeFile.fileName));
             var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.activeFile.fileName));
@@ -1224,7 +1226,7 @@ module FourSlash {
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(fileName: string) {
         var content = IO.readFile(fileName);
-        runFourSlashTestContent(content, fileName)
+        runFourSlashTestContent(content.contents(), fileName)
     }
 
     export function runFourSlashTestContent(content: string, fileName: string) {
@@ -1252,8 +1254,8 @@ module FourSlash {
 
         fsOutput.reset();
         fsErrors.reset();
-        
-        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn), tsFn);
+
+        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents(), tsFn);
         Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
         Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
 

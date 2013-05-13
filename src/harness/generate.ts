@@ -25,7 +25,7 @@ module CollateralGenerator {
         options.generateCodeBaseline = options.generateCodeBaseline || true;
         options.logMethod = options.logMethod || function() {};
         
-        var fileContents = IO.readFile(path);
+        var fileContents = IO.readFile(path).contents();
         
         var pathParts = path.match(/^(.*\/|)compiler\/testCode\/([^\/]*)\.(\w+)$/);
         var prefix    = pathParts[1];

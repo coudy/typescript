@@ -18,7 +18,7 @@
 module TypeScript {
 
     export interface IResolvedFile {
-        content: string;
+        fileInformation: FileInformation;
         path: string;
     }
 
@@ -29,20 +29,20 @@ module TypeScript {
         private lineStarts: number[] = null;
 
         constructor(public path: string,
-                    public content: string) {
+                    public fileInformation: FileInformation) {
         }
 
         public getText(start: number, end: number): string {
-            return this.content.substring(start, end);
+            return this.fileInformation.contents().substring(start, end);
         }
 
         public getLength(): number {
-            return this.content.length;
+            return this.fileInformation.contents().length;
         }
 
         public getLineStartPositions(): number[]{
             if (this.lineStarts === null) {
-                this.lineStarts = LineMap.fromString(this.content).lineStarts();
+                this.lineStarts = LineMap.fromString(this.fileInformation.contents()).lineStarts();
             }
 
             return this.lineStarts;
@@ -65,7 +65,7 @@ module TypeScript {
     /// Limited API for file system manipulation
     export interface IFileSystemObject {
         resolvePath(path: string): string;
-        readFile(path: string): string;
+        readFile(path: string): FileInformation;
         findFile(rootPath: string, partialFilePath: string): IResolvedFile;
         dirName(path: string): string;
     }
@@ -108,7 +108,7 @@ module TypeScript {
 
         public resolveCode(referencePath: string, parentPath: string, performSearch: boolean, resolutionDispatcher: TypeScript.IResolutionDispatcher): boolean {
             
-            var resolvedFile: IResolvedFile = { content: null, path: referencePath };
+            var resolvedFile: IResolvedFile = { fileInformation: null, path: referencePath };
             
             var ioHost = this.environment.ioHost;
             
@@ -137,13 +137,13 @@ module TypeScript {
                             
                         // Look for the .ts file first - if not present, the .d.ts
                         try {
-                            resolvedFile.content = ioHost.readFile(normalizedPath);
+                            resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                         }
                         catch (err1) {
                             if (isTSFile(normalizedPath)) {
                                 normalizedPath = changePathToDTS(normalizedPath);
                                 CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-                                resolvedFile.content = ioHost.readFile(normalizedPath);
+                                resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                             }
                         }
                         CompilerDiagnostics.debugPrint("   Found code at " + normalizedPath);
@@ -172,7 +172,7 @@ module TypeScript {
                     if (resolvedFile) {
                         resolvedFile.path = switchToForwardSlashes(TypeScript.stripQuotes(resolvedFile.path));
                         CompilerDiagnostics.debugPrint(referencePath + " resolved to: " + resolvedFile.path);
-                        resolvedFile.content = resolvedFile.content;
+                        resolvedFile.fileInformation = resolvedFile.fileInformation;
                         this.visited[absoluteModuleID] = true;
                     }
                     else {
@@ -180,10 +180,10 @@ module TypeScript {
                     }
                 }
 
-                if (resolvedFile && resolvedFile.content !== null) {
+                if (resolvedFile && resolvedFile.fileInformation !== null) {
                     // preprocess the file, to gather dependencies
                     var rootDir = ioHost.dirName(resolvedFile.path);
-                    var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
+                    var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.fileInformation);
                     var preProcessedFileInfo = preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     var resolutionResult: boolean;

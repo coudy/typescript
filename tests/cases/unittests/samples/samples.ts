@@ -2,14 +2,15 @@
 
 describe('Compiling samples', function ()
 {
-    function loadSample(path: string)
+    function loadSample(path: string): string
     {
-        return IO.readFile(Harness.userSpecifiedroot + "samples/" + path);
+        return IO.readFile(Harness.userSpecifiedroot + "samples/" + path).contents();
     }
 
     function addUnitsAndCompile(units: string[]) {
         units.forEach(unit => {
-            var code = IO.readFile(Harness.userSpecifiedroot + "samples/" + unit);
+            var code = IO.readFile(Harness.userSpecifiedroot + "samples/" + unit).contents();
+
             Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, code, unit, TypeScript.isDTSFile(unit));
         });
         Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime);

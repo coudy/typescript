@@ -36,7 +36,7 @@ function filePath(fullPath: string) {
 }
 
 var typescriptServiceFileName = filePath(IO.getExecutingFilePath()) + "typescriptServices.js";
-var typescriptServiceFile = IO.readFile(typescriptServiceFileName);
+var typescriptServiceFile = IO.readFile(typescriptServiceFileName).contents();
 if (typeof ActiveXObject === "function") {
     eval(typescriptServiceFile);
 } else if (typeof require === "function") {
@@ -141,7 +141,7 @@ module Harness {
             }
         }
 
-        export function noDiff(text1, text2) {
+        export function noDiff(text1: string, text2: string) {
             text1 = text1.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n");
             text2 = text2.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n");
 
@@ -755,8 +755,9 @@ module Harness {
         }
 
         var libFolder: string = global['WScript'] ? TypeScript.filePath(global['WScript'].ScriptFullName) : (__dirname + '/');
-        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts") : '';
-        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts") : '';
+
+        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts").contents() : '';
+        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts").contents() : '';
 
         var stdout = new EmitterIOHost();
         var stderr = new WriterAggregator();
@@ -771,7 +772,8 @@ module Harness {
             }
 
             var libCode = useMinimalDefaultLib ? libTextMinimal : libText;
-            compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), /*version:*/ 0, /*isOpen:*/ false);
+            compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
+
             compiler.pullTypeCheck();
 
             return compiler;
@@ -855,7 +857,7 @@ module Harness {
                 return [arg];
             }
 
-            public compilesOk(testCode): boolean {
+            public compilesOk(testCode: string): boolean {
                 var errors = null;
                 compileString(testCode, '0.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -1172,7 +1174,8 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
-                var document = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, references);
+                var document = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code),
+                    ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, references);
                 script = document.script;
                 needsFullTypeCheck = true;
             }
@@ -1189,7 +1192,7 @@ module Harness {
             var compiler = getCompiler(compilerInstance);
             path = switchToForwardSlashes(path);
             var fileName = path.match(/[^\/]*$/)[0];
-            var code = readFile(path);
+            var code = readFile(path).contents();
 
             compileUnit(compilerInstance, code, fileName, callback, settingsCallback, context, references);
         }
@@ -1683,7 +1686,7 @@ module Harness {
         }
 
         public addFile(fileName: string) {
-            var code: string = readFile(name);
+            var code = readFile(name).contents();
             this.addScript(name, code);
         }
 
@@ -1779,7 +1782,7 @@ module Harness {
 
         /** Parse a file on disk given its fileName */
         public parseFile(fileName: string) {
-            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName))
+            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName).contents())
             return this.parseSourceText(fileName, sourceText);
         }
 
@@ -1814,8 +1817,8 @@ module Harness {
         /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */
         public checkEdits(sourceFileName: string, baselineFileName: string, edits: Services.TextEdit[]) {
             var script = readFile(sourceFileName);
-            var formattedScript = this.applyEdits(script, edits);
-            var baseline = readFile(baselineFileName);
+            var formattedScript = this.applyEdits(script.contents(), edits);
+            var baseline = readFile(baselineFileName).contents();
 
             assert.noDiff(formattedScript, baseline);
             assert.equal(formattedScript, baseline);
@@ -1933,7 +1936,7 @@ module Harness {
     export module Runner {
         export function runCollateral(path: string, callback: (error: Error, result: any) => void ) {
             path = switchToForwardSlashes(path);
-            runString(Compiler.CompilerInstance.RunTime, readFile(path), path.match(/[^\/]*$/)[0], callback);
+            runString(Compiler.CompilerInstance.RunTime, readFile(path).contents(), path.match(/[^\/]*$/)[0], callback);
         }
 
         export function runJSString(code: string, callback: (error: Error, result: any) => void ) {
@@ -2033,7 +2036,7 @@ module Harness {
 
             var expected = '<no content>';
             if (IO.fileExists(refFilename)) {
-                expected = IO.readFile(refFilename);
+                expected = IO.readFile(refFilename).contents();
             }
 
             var lineEndingSensitive = opts && opts.LineEndingSensitive;

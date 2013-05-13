@@ -36,8 +36,9 @@ class UnitTestRunner extends RunnerBase {
 
         for (var i = 0; i < this.tests.length; i++) {
             try {
-                Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.DesignTime, IO.readFile(this.tests[i]), this.tests[i]);
-            } catch (e) {
+                Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.DesignTime, IO.readFile(this.tests[i]).contents(), this.tests[i]);
+            }
+            catch (e) {
                 IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
                 throw e;
             }

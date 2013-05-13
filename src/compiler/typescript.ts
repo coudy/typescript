@@ -106,6 +106,7 @@ module TypeScript {
         constructor(public fileName: string,
                     private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
+                    public byteOrderMark: ByteOrderMark,
                     public version: number,
                     public isOpen: boolean,
                     syntaxTree: SyntaxTree) {
@@ -155,15 +156,15 @@ module TypeScript {
                 ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), settings.codeGenTarget, getParseOptions(this.compilationSettings))
                 : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
-            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
+            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         }
 
-        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
+        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
 
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, getParseOptions(compilationSettings));
 
-            var document = new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree);
+            var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;
 
             return document;
@@ -202,11 +203,12 @@ module TypeScript {
 
         public addSourceUnit(fileName: string,
                              scriptSnapshot: IScriptSnapshot,
+                             byteOrderMark: ByteOrderMark,
                              version: number,
                              isOpen: boolean,
                              referencedFiles: IFileReference[] = []): Document {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var document = Document.create(fileName, scriptSnapshot, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
+                var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
                 this.fileNameToDocument.addOrUpdate(fileName, document);
 
                 return document;
