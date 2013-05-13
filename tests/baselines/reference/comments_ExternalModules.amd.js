@@ -83,38 +83,6 @@ define(["require", "exports", "comments_ExternalModules_0"], function(require, e
     extMod.m4.fooExport();
     exports.newVar2 = new extMod.m4.m2.c();
 });
-////[comments_ExternalModules_0.d.ts]
-/** Module comment*/
-export declare module m1 {
-    /** b's comment*/
-    var b: number;
-    /** m2 comments*/
-    module m2 {
-        /** class comment;*/
-        class c {
-        }
-        /** i*/
-        var i;
-    }
-    /** exported function*/
-    function fooExport(): number;
-}
-/** Module comment */
-export declare module m4 {
-    /** b's comment */
-    var b: number;
-    /** m2 comments
-    */
-    module m2 {
-        /** class comment; */
-        class c {
-        }
-        /** i */
-        var i;
-    }
-    /** exported function */
-    function fooExport(): number;
-}
 ////[comments_ExternalModules_1.d.ts]
 /**This is on import declaration*/
 import extMod = require("comments_ExternalModules_0");

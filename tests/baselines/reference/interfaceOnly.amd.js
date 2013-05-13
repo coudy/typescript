@@ -1,3 +1,4 @@
+
 ////[0.d.ts]
 interface foo {
     foo();

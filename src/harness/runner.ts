@@ -193,14 +193,13 @@ class JSONLogger extends Harness.Logger {
 }
 
 function runTests(tests: RunnerBase[]) {
-
     if (reverse) {
         tests = tests.reverse();
     }
 
     for (var i = iterations; i > 0; i--) {
         for (var j = 0; j < tests.length; j++) {
-            tests[j].runTests();
+            tests[j].initializeTests();
         }
     }
 
@@ -216,9 +215,9 @@ var opts = new OptionsParser(IO);
 
 opts.flag('compiler', {
     set: function () {
-        //runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        //runners.push(new ProjectRunner());
+        runners.push(new UnitTestRunner('compiler'));        
+        runners.push(new ProjectRunner());
     }
 });
 
@@ -251,8 +250,6 @@ opts.option('fourslash-all', {
 opts.flag('unittests', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
-        runners.push(new UnitTestRunner('ls'));
-        runners.push(new UnitTestRunner('services'));
         runners.push(new UnitTestRunner('samples'));
     }
 });
@@ -323,17 +320,13 @@ opts.parse(IO.arguments)
 if (runners.length === 0) {
     if (opts.unnamed.length === 0) {
         // compiler
-        runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
+        runners.push(new UnitTestRunner('compiler'));        
         runners.push(new ProjectRunner());
 
         // language services
-        //runners.push(new UnitTestRunner('ls'));
         runners.push(new FourslashRunner());
         runners.push(new GeneratedFourslashRunner());
-
-        // services
-        //runners.push(new UnitTestRunner('services'));
 
         // samples
         runners.push(new UnitTestRunner('samples'));

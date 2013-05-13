@@ -66,7 +66,7 @@ describe('importedJavaScriptFormatting - formatting rules', function() {
 			var opts = new Services.FormatCodeOptions();
 
 			var rules = new Formatting.Rules();
-			var activeRuleNames = new string[];
+			var activeRuleNames: string[] = [];
 
 			rules.HighPriorityCommonRules.forEach(r => activeRuleNames.push(rules.getRuleName(r)));
 			for (var i = 0; i < test.rules.length; i++) {

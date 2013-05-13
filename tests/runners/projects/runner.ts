@@ -222,7 +222,7 @@ class HarnessBatch {
 }
 
 class ProjectRunner extends RunnerBase {
-    public runTests() {
+    public initializeTests() {
         describe("Compiling a project", function (done) {
             var rPath = Harness.userSpecifiedroot + 'tests\\cases\\projects\\r.js';
             var testExec = true;

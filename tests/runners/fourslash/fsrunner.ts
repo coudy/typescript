@@ -14,7 +14,7 @@ class FourslashRunner extends RunnerBase {
         }
     }
 
-    public runTests() {
+    public initializeTests() {
         var runSingleFourslashTest = (fn: string) => {
             var justName = fn.replace(/^.*[\\\/]/, '');
 
@@ -31,7 +31,10 @@ class FourslashRunner extends RunnerBase {
             this.tests = this.enumerateFiles(this.basePath);
         }
 
-        Harness.Compiler.recreate();
+        describe("Setup compiler for compiler baselines", () => {
+            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime);
+        });
+
         this.tests.forEach(runSingleFourslashTest);
     }
 }

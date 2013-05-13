@@ -113,8 +113,6 @@ module FourSlash {
 
         public formatCodeOptions: Services.FormatCodeOptions = null;
 
-        static minimalLib: string;
-
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
@@ -122,8 +120,8 @@ module FourSlash {
             for (var i = 0; i < testData.files.length; i++) {
                 this.languageServiceShimHost.addScript(testData.files[i].fileName, testData.files[i].content);
             }
-            TestState.minimalLib = TestState.minimalLib || IO.readFile('tests/minimal.lib.d.ts');
-            this.languageServiceShimHost.addScript('lib.d.ts', TestState.minimalLib);
+
+            this.languageServiceShimHost.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
 
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
@@ -704,7 +702,7 @@ module FourSlash {
             var fullSyntaxErrs = JSON2.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings);
             var compiler = new TypeScript.TypeScriptCompiler();
-            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(TestState.minimalLib), 0, true);
+            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), 0, true);
             compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), 0, true);
             compiler.pullTypeCheck();
             var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.activeFile.fileName));
@@ -1254,9 +1252,10 @@ module FourSlash {
 
         fsOutput.reset();
         fsErrors.reset();
-        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);
-        Harness.Compiler.addUnit(content, mockFilename);
-        Harness.Compiler.compile(content, mockFilename);
+        
+        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn), tsFn);
+        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
+        Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
             createFile: (s) => fsOutput,
@@ -1265,7 +1264,7 @@ module FourSlash {
             resolvePath: (s: string)=>s
         }
 
-        Harness.Compiler.emitAll(emitterIOHost);
+        Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.RunTime, emitterIOHost);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }

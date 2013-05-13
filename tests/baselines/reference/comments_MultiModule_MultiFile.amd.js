@@ -54,20 +54,6 @@ var multiM;
     multiM.f = f;
 })(multiM || (multiM = {}));
 new multiM.d();
-////[comments_MultiModule_MultiFile_0.d.ts]
-/** this is multi declare module*/
-declare module multiM {
-    class b {
-    }
-}
-/** thi is multi module 2*/
-declare module multiM {
-    /** class c comment*/
-    class c {
-    }
-    class e {
-    }
-}
 ////[comments_MultiModule_MultiFile_1.d.ts]
 /** this is multi module 3 comment*/
 declare module multiM {

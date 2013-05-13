@@ -7,7 +7,7 @@ class UnitTestRunner extends RunnerBase {
         super(testType);
     }
 
-    public runTests() {
+    public initializeTests() {
         switch (this.testType) {
             case 'compiler':
                 this.tests = this.enumerateFiles('tests/cases/unittests/compiler');
@@ -34,27 +34,28 @@ class UnitTestRunner extends RunnerBase {
         var outfile = new Harness.Compiler.WriterAggregator()
         var outerr = new Harness.Compiler.WriterAggregator();
 
-        Harness.Compiler.recreate();
-
         for (var i = 0; i < this.tests.length; i++) {
             try {
-                Harness.Compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
+                Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.DesignTime, IO.readFile(this.tests[i]), this.tests[i]);
             } catch (e) {
                 IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
                 throw e;
             }
         }
 
-        Harness.Compiler.compile();
+        Harness.Compiler.compile(Harness.Compiler.CompilerInstance.DesignTime);
         
         var stdout = new Harness.Compiler.EmitterIOHost();
-        var emitDiagnostics = Harness.Compiler.emitAll(stdout);
+        var emitDiagnostics = Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.DesignTime, stdout);
         var results = stdout.toArray();
         var lines = [];
         results.forEach(v => lines = lines.concat(v.file.lines));
         var code = lines.join("\n")
-        //Harness.Compiler.emitToOutfile(outfile);
-        //code = outfile.lines.join("\n") + ";";
+
+        describe("Setup compiler for compiler unittests", () => {
+            var useMinimalDefaultLib = this.testType !== 'samples'
+            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, useMinimalDefaultLib);
+        });
 
         if (typeof require !== "undefined") {
             var vm = require('vm');
@@ -81,7 +82,7 @@ class UnitTestRunner extends RunnerBase {
             eval(code);
         }
 
-        // clean up 
-        Harness.Compiler.recreate();
+        // make sure the next unittestrunner doesn't include the previous one's stuff
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.DesignTime);
     }
 }

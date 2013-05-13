@@ -6,6 +6,7 @@ define(["require", "exports"], function(require, exports) {
     })(M || (M = {}));
 
     
+    return M;
 });
 ////[exportEqualsModule_B.js]
 define(["require", "exports", "exportEqualsModule_A"], function(require, exports, __modM__) {

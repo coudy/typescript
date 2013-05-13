@@ -103,8 +103,3 @@ var MyClass = (function () {
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[bin/importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
-////[bin/0.d.ts]
-declare class MyClass {
-    public Count(): number;
-    public SetCount(value: number): void;
-}

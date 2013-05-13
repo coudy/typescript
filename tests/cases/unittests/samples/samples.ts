@@ -10,21 +10,21 @@ describe('Compiling samples', function ()
     function addUnitsAndCompile(units: string[]) {
         units.forEach(unit => {
             var code = IO.readFile(Harness.userSpecifiedroot + "samples/" + unit);
-            Harness.Compiler.addUnit(code, unit, TypeScript.isDTSFile(unit));
+            Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, code, unit, TypeScript.isDTSFile(unit));
         });
-        Harness.Compiler.compile();
+        Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime);
     }
 
     // d3
     it('compiles the d3 sample without error', function ()
     {
         // clean the world before our first sample runs
-        Harness.Compiler.recreate();
-        Harness.Compiler.reset();
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+        Harness.Compiler.reset(Harness.Compiler.CompilerInstance.RunTime);
 
         var units = ["d3/data.ts", "d3/d3.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -44,7 +44,7 @@ describe('Compiling samples', function ()
         var units = ["node\\node.d.ts", "imageboard\\app.ts", "imageboard\\db.ts", "imageboard\\express.d.ts", "imageboard\\mongodb.ts", "imageboard\\routes\\index.ts"];
     
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -59,8 +59,8 @@ describe('Compiling samples', function ()
         });
 
         // Necessary because of some compiler bug that will make the raytracer test fail
-        Harness.Compiler.recreate();
-        Harness.Compiler.reset();
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+        Harness.Compiler.reset(Harness.Compiler.CompilerInstance.RunTime);
     });
 
     // jquery
@@ -68,7 +68,7 @@ describe('Compiling samples', function ()
     {
         var units = ["jquery/parallax.ts", "jquery/jquery.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -77,7 +77,7 @@ describe('Compiling samples', function ()
     {
         var units = ["mankala/Base.ts", "mankala/Driver.ts", "mankala/Features.ts", "mankala/Game.ts", "mankala/geometry.ts", "mankala/Position.ts" ];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -86,7 +86,7 @@ describe('Compiling samples', function ()
     {
         var units = ["node/HttpServer.ts", "node/node.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -94,7 +94,7 @@ describe('Compiling samples', function ()
     {
         var units = ["node/TcpServer.ts", "node/node.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
@@ -128,8 +128,8 @@ describe('Compiling samples', function ()
         });
 
         // Necessary because both todomvc and warship declare var $
-        Harness.Compiler.recreate();
-        Harness.Compiler.reset();
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+        Harness.Compiler.reset(Harness.Compiler.CompilerInstance.RunTime);
     });  
 
     // warship
@@ -137,12 +137,11 @@ describe('Compiling samples', function ()
     {
         var units = ["warship/warship.ts", "warship/jquery.d.ts", "warship/jqueryui.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
         assert.equal(errLines.length, 0);
     });
 
     // win8
-
     it('compiles the win8 sample without error', function ()
     {
        var units = [
@@ -162,7 +161,7 @@ describe('Compiling samples', function ()
        Harness.Compiler.reset();       
 
        addUnitsAndCompile(units);
-       var errLines = Harness.Compiler.reportCompilationErrors(units);
+        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
        // if (errLines.length) {
        //  WScript.Echo("Errors: " + errLines);
        // }       

@@ -8,6 +8,7 @@ define(["require", "exports"], function(require, exports) {
     })(E || (E = {}));
 
     
+    return E;
 });
 ////[exportEqualsEnum_B.js]
 define(["require", "exports", "exportEqualsEnum_A"], function(require, exports, __EnumE__) {
