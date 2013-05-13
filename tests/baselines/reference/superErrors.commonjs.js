@@ -5,6 +5,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 function foo() {
+    var _this = this;
     var x = _super.prototype;
     var y = function () {
         return _super.prototype;
@@ -39,12 +40,14 @@ var RegisteredUser = (function (_super) {
         }
 
         function inner2() {
+            var _this = this;
             var x = function () {
                 return _super.prototype.sayHello.call(_this);
             };
         }
 
         (function () {
+            var _this = this;
             return function () {
                 return _super.prototype;
             };
@@ -54,18 +57,21 @@ var RegisteredUser = (function (_super) {
         _super.prototype.sayHello.call(this);
 
         function inner() {
+            var _this = this;
             var x = function () {
                 return _super.prototype.sayHello.call(_this);
             };
         }
 
         (function () {
+            var _this = this;
             return function () {
                 return _super.prototype;
             };
         })();
     };
     RegisteredUser.staticFunction = function () {
+        var _this = this;
         var s = _super.prototype;
         var x = function () {
             return _super.prototype;

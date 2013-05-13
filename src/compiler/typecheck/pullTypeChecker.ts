@@ -214,7 +214,7 @@ module TypeScript {
                     return this.typeCheckThisExpression(<ThisExpression>ast, typeCheckContext);
 
                 case NodeType.SuperExpression:
-                    return this.typeCheckSuper(ast, typeCheckContext);
+                    return this.typeCheckSuperExpression(<Expression>ast, typeCheckContext);
 
                 case NodeType.InvocationExpression:
                     return this.typeCheckCallExpression(<CallExpression>ast, typeCheckContext);
@@ -1494,7 +1494,7 @@ module TypeScript {
             return false;
         }
 
-        private checkForThisCaptureInArrowFunction(thisExpressionAST: ThisExpression, typeCheckContext: PullTypeCheckContext): void {
+        private checkForThisOrSuperCaptureInArrowFunction(expression: Expression, typeCheckContext: PullTypeCheckContext): void {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var declPath: PullDecl[] = typeCheckContext.enclosingDeclStack;
@@ -1566,7 +1566,7 @@ module TypeScript {
                 }
             }
 
-            this.checkForThisCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
+            this.checkForThisOrSuperCaptureInArrowFunction(thisExpressionAST, typeCheckContext);
 
             return this.resolveSymbolAndReportDiagnostics(thisExpressionAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
         }
@@ -1574,7 +1574,7 @@ module TypeScript {
         // 'Super' expressions 
         // validate:
         //
-        private typeCheckSuper(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckSuperExpression(ast: Expression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
             var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();
@@ -1593,6 +1593,8 @@ module TypeScript {
             else if (!this.enclosingClassIsDerived(typeCheckContext)) {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode._super__cannot_be_referenced_in_non_derived_classes, null, enclosingDecl);
             }
+
+            this.checkForThisOrSuperCaptureInArrowFunction(ast, typeCheckContext);
 
             return this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/ false, enclosingDecl).getType();
         }

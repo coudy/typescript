@@ -17,6 +17,7 @@ var User = (function () {
 var RegisteredUser = (function (_super) {
     __extends(RegisteredUser, _super);
     function RegisteredUser() {
+        var _this = this;
         _super.call(this);
         this.name = "Frank";
 
@@ -27,6 +28,7 @@ var RegisteredUser = (function (_super) {
         };
     }
     RegisteredUser.prototype.sayHello = function () {
+        var _this = this;
         _super.prototype.sayHello.call(this);
 
         var x = function () {
@@ -38,6 +40,7 @@ var RegisteredUser = (function (_super) {
 var RegisteredUser2 = (function (_super) {
     __extends(RegisteredUser2, _super);
     function RegisteredUser2() {
+        var _this = this;
         _super.call(this);
         this.name = "Joe";
 
@@ -50,6 +53,7 @@ var RegisteredUser2 = (function (_super) {
         };
     }
     RegisteredUser2.prototype.sayHello = function () {
+        var _this = this;
         var x = function () {
             return function () {
                 return function () {
@@ -64,6 +68,7 @@ var RegisteredUser2 = (function (_super) {
 var RegisteredUser3 = (function (_super) {
     __extends(RegisteredUser3, _super);
     function RegisteredUser3() {
+        var _this = this;
         _super.call(this);
         this.name = "Sam";
 
@@ -76,6 +81,7 @@ var RegisteredUser3 = (function (_super) {
         };
     }
     RegisteredUser3.prototype.sayHello = function () {
+        var _this = this;
         var superName = function () {
             return function () {
                 return function () {
@@ -90,6 +96,7 @@ var RegisteredUser3 = (function (_super) {
 var RegisteredUser4 = (function (_super) {
     __extends(RegisteredUser4, _super);
     function RegisteredUser4() {
+        var _this = this;
         _super.call(this);
         this.name = "Mark";
 
@@ -100,6 +107,7 @@ var RegisteredUser4 = (function (_super) {
         };
     }
     RegisteredUser4.prototype.sayHello = function () {
+        var _this = this;
         var x = function () {
             return function () {
                 return _super.prototype;
