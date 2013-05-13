@@ -2744,6 +2744,7 @@ module TypeScript {
 
                 functionDeclaration.hint = left.text;
                 functionDeclaration.block = block;
+                functionDeclaration.setFunctionFlags(FunctionFlags.IsFunctionProperty);
 
                 result = new BinaryExpression(NodeType.Member, left, functionDeclaration);
             }

@@ -84,6 +84,7 @@ module TypeScript {
         IsFatArrowFunction = 1 << 11,
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
+        IsFunctionProperty = 1 << 14,       // function property in an object literal expression
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;

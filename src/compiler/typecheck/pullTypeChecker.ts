@@ -2514,7 +2514,9 @@ module TypeScript {
         }
 
         private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, typeCheckContext: PullTypeCheckContext) {
-            if (inContextuallyTypedAssignment || (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+            if (inContextuallyTypedAssignment ||
+                (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
                 return;
             }
 

@@ -2329,8 +2329,9 @@ module TypeScript {
                             return SymbolAndDiagnostics.fromSymbol(this.resolveSetAccessorDeclaration(funcDecl, context));
                         }
                         else if (inContextuallyTypedAssignment ||
-                                 (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                                 (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction)) {
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
                             return SymbolAndDiagnostics.fromSymbol(this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context));
                         }
                         else {
