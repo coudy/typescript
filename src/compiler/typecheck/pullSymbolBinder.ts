@@ -178,19 +178,20 @@ module TypeScript {
 
             var isExported = moduleContainerDecl.getFlags() & PullElementFlags.Exported;
             var isEnum = (moduleKind & PullElementKind.Enum) != 0;
+            var searchKind = isEnum ? PullElementKind.Enum : PullElementKind.SomeContainer;
 
             var createdNewSymbol = false;
 
             if (parent) {
                 if (isExported) {
-                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeContainer);
+                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, searchKind);
                 }
                 else {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
                 }
             }
             else if (!isExported || moduleContainerDecl.getKind() === PullElementKind.DynamicModule) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeContainer, []);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, searchKind, []);
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() !== moduleKind) {

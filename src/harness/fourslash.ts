@@ -274,15 +274,28 @@ module FourSlash {
 
         public verifyMemberListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             var members = this.getMemberListAtCaret();
-            this.assertItemInCompletionList(members.entries, symbol, type, docComment, fullSymbolName, kind);
+
+            if (members) {
+                this.assertItemInCompletionList(members.entries, symbol, type, docComment, fullSymbolName, kind);
+            }
+            else {
+                throw new Error("Expected a member list, but none was provided")
+            }
+
         }
 
         public verifyMemberListCount(expectedCount: number, negative: boolean) {
             var members = this.getMemberListAtCaret();
-            var match = members.entries.length === expectedCount;
 
-            if ((!match && !negative) || (match && negative)) {
-                throw new Error("Member list count was " + members.entries.length + ". Expected " + expectedCount);
+            if (members) {
+                var match = members.entries.length === expectedCount;
+
+                if ((!match && !negative) || (match && negative)) {
+                    throw new Error("Member list count was " + members.entries.length + ". Expected " + expectedCount);
+                }
+            }
+            else if (expectedCount) {
+                throw new Error("Member list count was 0. Expected " + expectedCount);
             }
         }
         
