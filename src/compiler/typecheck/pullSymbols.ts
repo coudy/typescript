@@ -1079,8 +1079,14 @@ module TypeScript {
 
         private associatedContainerTypeSymbol: PullTypeSymbol = null;
 
+        private constructorMethod: PullSymbol = null;
+        private hasDefaultConstructor = false;
+
         public isType() { return true; }
-        public isClass() { return false; }
+        public isClass() {
+            return this.getKind() == PullElementKind.Class;
+        }
+
         public hasMembers() {
             var thisHasMembers = this.memberLinks && this.memberLinks.length != 0;
 
@@ -1253,6 +1259,22 @@ module TypeScript {
 
                 return members;
             }
+        }
+
+        public setHasDefaultConstructor(hasOne= true) {
+            this.hasDefaultConstructor = hasOne;
+        }
+
+        public getHasDefaultConstructor() {
+            return this.hasDefaultConstructor;
+        }
+
+        public getConstructorMethod() {
+            return this.constructorMethod;
+        }
+
+        public setConstructorMethod(constructorMethod: PullSymbol) {
+            this.constructorMethod = constructorMethod;
         }
 
         public getTypeParameters(): PullTypeParameterSymbol[] {
@@ -1913,6 +1935,10 @@ module TypeScript {
 
         public invalidate() {
 
+            if (this.constructorMethod) {
+                this.constructorMethod.invalidate();
+            }
+
             this.memberNameCache = null;
             this.memberCache = null;
             this.memberTypeNameCache = null;
@@ -2156,40 +2182,8 @@ module TypeScript {
     // type instance types
     export class PullClassTypeSymbol extends PullTypeSymbol {
 
-        private constructorMethod: PullSymbol = null;
-        private hasDefaultConstructor = false;
-
         constructor(name: string) {
             super(name, PullElementKind.Class);
-        }
-
-        public isClass() {
-            return true;
-        }
-
-        public setHasDefaultConstructor(hasOne= true) {
-            this.hasDefaultConstructor = hasOne;
-        }
-
-        public getHasDefaultConstructor() {
-            return this.hasDefaultConstructor;
-        }
-
-        public getConstructorMethod() {
-            return this.constructorMethod;
-        }
-
-        public setConstructorMethod(constructorMethod: PullSymbol) {
-            this.constructorMethod = constructorMethod;
-        }
-
-        public invalidate() {
-
-            if (this.constructorMethod) {
-                this.constructorMethod.invalidate();
-            }
-
-            super.invalidate();
         }
     }
 

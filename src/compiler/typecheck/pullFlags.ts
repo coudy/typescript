@@ -109,6 +109,10 @@ module TypeScript {
         SomeTypeReference = Interface | ObjectType | FunctionType | ConstructorType,
 
         SomeLHS = Variable | Property | Parameter | SetAccessor | Method,
+
+        InterfaceTypeExtension = Interface | Class | Enum,
+        ClassTypeExtension = Interface | Class,
+        EnumTypeExtension = Interface | Enum,
     }
 
     export enum SymbolLinkKind {
