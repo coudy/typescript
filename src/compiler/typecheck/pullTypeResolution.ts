@@ -212,61 +212,39 @@ module TypeScript {
                 return [];
             }
 
-            //var parentDecl: PullDecl = decl.getParentDecl();
-            //var decls: PullDecl[] = [];
+            var decls: PullDecl[] = decl.getParentPath();
 
-            //while (parentDecl) {
-            //    decls[decls.length] = parentDecl;
-            //    parentDecl = parentDecl.getParentDecl();
+            if (decls) {
+                return decls;
+            }
+            else {
+                decls = [decl];
+            }
+
+            var parentDecl: PullDecl = decl.getParentDecl();
+
+            //// if the decl is a function expression, it would not have been parented during binding
+            //if (decls.length && (decl.getKind() & (PullElementKind.SomeFunction |
+            //    PullElementKind.ObjectType |
+            //    PullElementKind.FunctionType |
+            //    PullElementKind.ConstructorType)) &&
+            //    (decls[decls.length - 1] != decl)) {
+
+
+
+            //    decls[decls.length] = decl;
             //}
 
-            //return decls;
-
-            var decls: PullDecl[] = [];
-            var searchDecls = this.semanticInfoChain.getUnit(decl.getScriptName()).getTopLevelDecls();
-
-            var spanToFind = decl.getSpan();
-            var candidateSpan: TextSpan = null;
-            var searchKinds = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeFunction | PullElementKind.SomeBlock;
-            var found = false;
-
-            while (true) {
-                // Of the top-level decls, find the one to search off of
-                found = false;
-                for (var i = 0; i < searchDecls.length; i++) {
-                    candidateSpan = searchDecls[i].getSpan();
-
-                    if (spanToFind.start() >= candidateSpan.start() && spanToFind.end() <= candidateSpan.end()) {
-                        if (searchDecls[i].getKind() & searchKinds) { // only consider types, which have scopes
-                            if (!(searchDecls[i].getKind() & PullElementKind.ObjectLiteral)) {
-                                decls[decls.length] = searchDecls[i];
-                            }
-                            searchDecls = searchDecls[i].getChildDecls();
-                            found = true;
-                        }
-                    }
+            while (parentDecl) {
+                if (parentDecl && decls[decls.length - 1] != parentDecl && !(parentDecl.getKind() & PullElementKind.ObjectLiteral)) {
+                    decls[decls.length] = parentDecl;
                 }
-
-                if (!found) {
-                    break;
-                }
+                parentDecl = parentDecl.getParentDecl();
             }
 
-            var parent = decl.getParentDecl();
+            decls = decls.reverse();
 
-            // if the decl is a function expression, it would not have been parented during binding
-            if (decls.length && (decl.getKind() & (PullElementKind.SomeFunction |
-                PullElementKind.ObjectType |
-                PullElementKind.FunctionType |
-                PullElementKind.ConstructorType)) &&
-                (decls[decls.length - 1] != decl)) {
-
-                if (parent && decls[decls.length - 1] != parent && !(parent.getKind() & PullElementKind.ObjectLiteral)) {
-                    decls[decls.length] = parent;
-                }
-
-                decls[decls.length] = decl;
-            }
+            decl.setParentPath(decls);
 
             return decls;
         }

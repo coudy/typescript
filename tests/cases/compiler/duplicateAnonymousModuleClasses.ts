@@ -1,4 +1,4 @@
-module {
+module F {
 
     class Helper {
 
@@ -7,9 +7,9 @@ module {
 }
 
 
-module {
+module F {
     
-    // Should be an error
+    // Should not be an error
     class Helper {
 
     }

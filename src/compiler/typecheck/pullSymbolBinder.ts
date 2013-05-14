@@ -1022,6 +1022,7 @@ module TypeScript {
             var parentDecl = variableDeclaration.getParentDecl();
 
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
+            var isModuleValue = (declFlags & (PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule | PullElementFlags.InitializedEnum)) != 0;
 
             if (parentDecl && !isImplicit) {
                 parentDecl.addVariableDeclToGroup(variableDeclaration);
@@ -1066,9 +1067,10 @@ module TypeScript {
 
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
+
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
-                if (!isImplicit || !variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
+                if (!isModuleValue /*|| !variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)*/) {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {

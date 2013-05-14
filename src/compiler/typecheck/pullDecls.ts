@@ -42,6 +42,7 @@ module TypeScript {
         private diagnostics: IDiagnostic[] = null;
 
         private parentDecl: PullDecl = null;
+        private _parentPath: PullDecl[] = null;
 
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
@@ -247,6 +248,14 @@ module TypeScript {
             }
 
             return declGroups;
+        }
+
+        public getParentPath() {
+            return this._parentPath;
+        }
+
+        public setParentPath(path: PullDecl[]) {
+            this._parentPath = path;
         }
     }
 

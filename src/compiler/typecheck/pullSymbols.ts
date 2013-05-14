@@ -43,6 +43,7 @@ module TypeScript {
 
         private isSpecialized = false;
         private isBeingSpecialized = false;
+        private decls: PullDecl[] = null;
 
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
@@ -142,11 +143,26 @@ module TypeScript {
         public addDeclaration(decl: PullDecl) {
             Debug.assert(!!decl);
             this.declarations.addItem(decl);
+
+            if (!this.decls) {
+                this.decls = [decl];
+            }
+            else {
+                this.decls[this.decls.length] = decl;
+            }
         }
 
-        public getDeclarations() { return <PullDecl[]>this.declarations.find(d => d); }
+        public getDeclarations() {
+            if (!this.decls) {
+                this.decls = [];
+            }
+            return this.decls;
+        }
 
-        public removeDeclaration(decl: PullDecl) { this.declarations.remove(d => d === decl); }
+        public removeDeclaration(decl: PullDecl) {
+            this.declarations.remove(d => d === decl);
+            this.decls = <PullDecl[]>this.declarations.find(d => d);
+        }
 
         public updateDeclarations(map: (item: PullDecl, context: any) => void , context: any) {
             this.declarations.update(map, context);
@@ -211,28 +227,12 @@ module TypeScript {
                 return <PullTypeSymbol>this.cachedContainerLink.end;
             }
 
-            var containerList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.ContainedBy);
-
-            if (containerList.length) {
-                this.cachedContainerLink = containerList[0];
-                return <PullTypeSymbol>this.cachedContainerLink.end;
-            }
-
             return null;
         }
 
         public unsetContainer() {
             if (this.cachedContainerLink) {
                 this.removeOutgoingLink(this.cachedContainerLink);
-            }
-            else {
-
-                // PULLTODO: If we can guarantee that no link will exist without caching, we won't need to search
-                var containerList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.ContainedBy);
-
-                if (containerList.length) {
-                    this.removeOutgoingLink(containerList[0]);
-                }
             }
 
             this.invalidate();
@@ -249,8 +249,8 @@ module TypeScript {
                 this.unsetType();
             }
 
-            var link = this.addOutgoingLink(typeRef, SymbolLinkKind.TypedAs);
-            this.cachedTypeLink = link;
+            this.cachedTypeLink  = this.addOutgoingLink(typeRef, SymbolLinkKind.TypedAs);
+
         }
 
         public getType(): PullTypeSymbol {
@@ -258,12 +258,12 @@ module TypeScript {
                 return <PullTypeSymbol>this.cachedTypeLink.end;
             }
 
-            var typeList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.TypedAs);
+            //var typeList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.TypedAs);
 
-            if (typeList.length) {
-                this.cachedTypeLink = typeList[0];
-                return <PullTypeSymbol>this.cachedTypeLink.end;
-            }
+            //if (typeList.length) {
+            //    this.cachedTypeLink = typeList[0];
+            //    return <PullTypeSymbol>this.cachedTypeLink.end;
+            //}
 
             return null;
         }
@@ -275,15 +275,15 @@ module TypeScript {
                 this.removeOutgoingLink(this.cachedTypeLink);
                 foundType = true;
             }
-            else {
-                var typeList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.TypedAs);
+            //else {
+            //    var typeList = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.TypedAs);
 
-                if (typeList.length) {
-                    this.removeOutgoingLink(typeList[0]);
-                }
+            //    if (typeList.length) {
+            //        this.removeOutgoingLink(typeList[0]);
+            //    }
 
-                foundType = true;
-            }
+            //    foundType = true;
+            //}
 
             if (foundType) {
                 this.invalidate();
@@ -314,11 +314,6 @@ module TypeScript {
         }
 
         public invalidate() {
-
-            //this.removeOutgoingLink(this.cachedContainerLink);
-            //this.removeOutgoingLink(this.cachedTypeLink);
-
-            //this.cachedContainerLink = null;
 
             this.docComments = null;
 

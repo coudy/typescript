@@ -1,22 +1,20 @@
-module;
- {
-}
+var F;
+(function (F) {
+    var Helper = (function () {
+        function Helper() {
+        }
+        return Helper;
+    })();
+})(F || (F = {}));
 
-var Helper = (function () {
-    function Helper() {
-    }
-    return Helper;
-})();
-
-module;
- {
-}
-
-var Helper = (function () {
-    function Helper() {
-    }
-    return Helper;
-})();
+var F;
+(function (F) {
+    var Helper = (function () {
+        function Helper() {
+        }
+        return Helper;
+    })();
+})(F || (F = {}));
 
 var Foo;
 (function (Foo) {
