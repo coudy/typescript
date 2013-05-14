@@ -2790,7 +2790,7 @@ var Environment = (function () {
 
     if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
-    } else if (typeof require === "function") {
+    } else if (typeof module !== 'undefined' && module.exports) {
         return getNodeEnvironment();
     } else {
         return null;
@@ -31381,20 +31381,24 @@ var TypeScript;
     TypeScript.filePath = filePath;
 
     function normalizePath(path) {
-        path = switchToForwardSlashes(path);
-        var startedWithSep = path.charAt(0) === "/";
-        var parts = this.getPathComponents(path);
+        var parts = this.getPathComponents(switchToForwardSlashes(path));
+        var normalizedParts = [];
+
         for (var i = 0; i < parts.length; i++) {
-            if (parts[i] === "." || parts[i] === "") {
-                parts.splice(i, 1);
-                i--;
+            var part = parts[i];
+            if (part === ".") {
+                continue;
             }
-            if (i > 0 && parts[i] === ".." && parts[i - 1] !== "..") {
-                parts.splice(i - 1, 2);
-                i -= 2;
+
+            if (normalizedParts.length > 0 && TypeScript.ArrayUtilities.last(normalizedParts) !== ".." && part === "..") {
+                normalizedParts.pop();
+                continue;
             }
+
+            normalizedParts.push(part);
         }
-        return (startedWithSep ? "/" : "") + parts.join("/");
+
+        return (path.charAt(0) === "/" ? "/" : "") + normalizedParts.join("/");
     }
     TypeScript.normalizePath = normalizePath;
 })(TypeScript || (TypeScript = {}));
@@ -33045,6 +33049,7 @@ var TypeScript;
             this.cachedPathIDs = {};
             this.cachedContainerLink = null;
             this.cachedTypeLink = null;
+            this.cachedDeclarations = null;
             this.hasBeenResolved = false;
             this.isOptional = false;
             this.inResolution = false;
@@ -33054,7 +33059,6 @@ var TypeScript;
             this.isVarArg = false;
             this.isSpecialized = false;
             this.isBeingSpecialized = false;
-            this.decls = null;
             this.typeChangeUpdateVersion = -1;
             this.addUpdateVersion = -1;
             this.removeUpdateVersion = -1;
@@ -33178,25 +33182,25 @@ var TypeScript;
             TypeScript.Debug.assert(!!decl);
             this.declarations.addItem(decl);
 
-            if (!this.decls) {
-                this.decls = [decl];
+            if (!this.cachedDeclarations) {
+                this.cachedDeclarations = [decl];
             } else {
-                this.decls[this.decls.length] = decl;
+                this.cachedDeclarations[this.cachedDeclarations.length] = decl;
             }
         };
 
         PullSymbol.prototype.getDeclarations = function () {
-            if (!this.decls) {
-                this.decls = [];
+            if (!this.cachedDeclarations) {
+                this.cachedDeclarations = [];
             }
-            return this.decls;
+            return this.cachedDeclarations;
         };
 
         PullSymbol.prototype.removeDeclaration = function (decl) {
             this.declarations.remove(function (d) {
                 return d === decl;
             });
-            this.decls = this.declarations.find(function (d) {
+            this.cachedDeclarations = this.declarations.find(function (d) {
                 return d;
             });
         };
