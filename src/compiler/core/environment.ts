@@ -133,6 +133,9 @@ var Environment = (function () {
                 if (!writeByteOrderMark) {
                     textStream.Position = 3;
                 }
+                else {
+                    textStream.Position = 0;
+                }
 
                 // Now, write all those bytes out to a file.
                 var fileStream = getStreamObject();
