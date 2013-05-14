@@ -44,16 +44,23 @@ module Services {
         getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
 
         getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo;
+
         getTypeAtPosition(fileName: string, position: number): TypeInfo;
+
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
+
         getBreakpointStatementAtPosition(fileName: string, position: number): SpanInfo;
+
         getSignatureAtPosition(fileName: string, position: number): SignatureInfo;
+
         getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[];
         getReferencesAtPosition(fileName: string, position: number): ReferenceEntry[];
         getOccurrencesAtPosition(fileName: string, position: number): ReferenceEntry[];
         getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[];
+
         getNavigateToItems(searchValue: string): NavigateToItem[];
         getScriptLexicalStructure(fileName: string): NavigateToItem[];
+
         getOutliningRegions(fileName: string): TypeScript.TextSpan[];
         getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[];
         getIndentationAtPosition(fileName: string, position: number, options: Services.EditorOptions): number;
@@ -62,9 +69,6 @@ module Services {
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
-
-        getAstPathToPosition(script: TypeScript.AST, position: number, useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
-        getIdentifierPathToPosition(script: TypeScript.AST, position: number): TypeScript.AstPath;
 
         getEmitOutput(fileName: string): EmitOutput;
 

@@ -511,26 +511,12 @@ module Services {
         ///
         /// Return the stack of AST nodes containing "position"
         ///
-        public getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
+        private getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
             if (this.logger.information()) {
                 this.logger.log("getAstPathToPosition(" + script + ", " + pos + ")");
             }
 
             return TypeScript.getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, options);
-        }
-
-        public getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath {
-            this.logger.log("getIdentifierPathToPosition(" + script + ", " + pos + ")");
-
-            var path = this.getAstPathToPosition(script, pos, true, TypeScript.GetAstPathOptions.EdgeInclusive);
-            if (path.count() == 0)
-                return null;
-
-            if (path.nodeType() !== TypeScript.NodeType.Name) {
-                return null;
-            }
-
-            return path;
         }
 
         private getFullNameOfSymbol(symbol: TypeScript.PullSymbol, enclosingScopeSymbol: TypeScript.PullSymbol) {

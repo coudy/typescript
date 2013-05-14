@@ -292,29 +292,6 @@ module Services {
 
         }
 
-        
-        public getAstPathToPosition(script: TypeScript.AST, pos: number,useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions): TypeScript.AstPath {
-
-            var args = "script: " + this.stringify(script) + " pos: " + this.stringify(pos) + " options: " + this.stringify(options);
-            var result = this.internal.getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, options);
-
-            this.writeFile("getAstPathToPosition: " + args + " result: " + this.stringify(result) + "\n");
-
-            return result;
-
-        }
-
-        
-        public getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath {
-
-            var args = "script: " + this.stringify(script) + " pos: " + this.stringify(pos);
-            var result = this.internal.getIdentifierPathToPosition(script, pos);
-
-            this.writeFile("getIdentifierPathToPosition: " + args + " result: " + this.stringify(result) + "\n");
-
-            return result;
-        }
-
         public getEmitOutput(fileName: string): Services.EmitOutput {
 
             var args = "fileName: " + this.stringify(fileName);
