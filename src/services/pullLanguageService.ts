@@ -1000,7 +1000,7 @@ module Services {
 
         public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
             this.minimalRefresh();
-            var syntaxtree = this.getSyntaxTree(fileName);
+            var syntaxtree = this.getSyntaxTreeInternal(fileName);
             return Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
         }
 
@@ -1055,7 +1055,7 @@ module Services {
             this.formattingRulesProvider.ensureUpToDate(options);
 
             // Get the Syntax Tree
-            var syntaxTree = this.getSyntaxTree(fileName);
+            var syntaxTree = this.getSyntaxTreeInternal(fileName);
 
             // Convert IScriptSnapshot to ITextSnapshot
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
@@ -1097,15 +1097,21 @@ module Services {
         public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
             this.minimalRefresh();
 
-            var syntaxTree = this.getSyntaxTree(fileName);
+            var syntaxTree = this.getSyntaxTreeInternal(fileName);
 
             return BraceMatcher.getMatchSpans(syntaxTree, position);
+        }
+
+        public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+            this.minimalRefresh();
+
+            return this.getSyntaxTreeInternal(fileName);
         }
 
         //
         // Manage Single file syntax tree state
         //
-        private getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+        private getSyntaxTreeInternal(fileName: string): TypeScript.SyntaxTree {
             var version = this.compilerState.getScriptVersion(fileName);
             var syntaxTree: TypeScript.SyntaxTree = null;
 

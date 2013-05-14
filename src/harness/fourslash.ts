@@ -848,17 +848,17 @@ module FourSlash {
             return this.languageService.getIndentationAtPosition(fileName, position, this.formatCodeOptions);
         }
 
-        public verifyIndentationAtCurrentPosition(numberOfSpacess: number) {
+        public verifyIndentationAtCurrentPosition(numberOfSpaces: number) {
             var actual = this.getIndentation(this.activeFile.fileName, this.currentCaretPosition);
-            if (actual != numberOfSpacess) {
-                throw new Error('verifyIndentationAtCurrentPosition failed - expected: ' + numberOfSpacess + ', actual: ' + actual);
+            if (actual != numberOfSpaces) {
+                throw new Error('verifyIndentationAtCurrentPosition failed - expected: ' + numberOfSpaces + ', actual: ' + actual);
             }
         }
 
-        public verifyIndentationAtPosition(fileName: string, position: number, numberOfSpacess: number) {
+        public verifyIndentationAtPosition(fileName: string, position: number, numberOfSpaces: number) {
             var actual = this.getIndentation(fileName, position);
-            if (actual !== numberOfSpacess) {
-                throw new Error('verifyIndentationAtPosition failed - expected: ' + numberOfSpacess + ', actual: ' + actual);
+            if (actual !== numberOfSpaces) {
+                throw new Error('verifyIndentationAtPosition failed - expected: ' + numberOfSpaces + ', actual: ' + actual);
             }
         }
 

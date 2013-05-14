@@ -67,6 +67,8 @@ module Services {
         getIdentifierPathToPosition(script: TypeScript.AST, position: number): TypeScript.AstPath;
 
         getEmitOutput(fileName: string): EmitOutput;
+
+        getSyntaxTree(fileName: string): TypeScript.SyntaxTree;
     }
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {

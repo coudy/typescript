@@ -325,6 +325,16 @@ module Services {
             return result;
         }
 
+        public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+
+            var args = "fileName: " + this.stringify(fileName);
+            var result = this.internal.getSyntaxTree(fileName);
+
+            this.writeFile("getSyntaxTree: " + args + " result: " + this.stringify(result) + "\n");
+
+            return result;
+        }
+
         private stringify(object: any): string {
 
             var returnString: string = "";
