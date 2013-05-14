@@ -175,19 +175,23 @@ module TypeScript {
     }
 
     export function normalizePath(path: string): string {
-        path = switchToForwardSlashes(path);
-        var startedWithSep = path.charAt(0) === "/";
-        var parts = this.getPathComponents(path);
+        var parts = this.getPathComponents(switchToForwardSlashes(path));
+        var normalizedParts: string[] = [];
+
         for (var i = 0; i < parts.length; i++) {
-            if (parts[i] === "." || parts[i] === "") {
-                parts.splice(i, 1);
-                i--;
+            var part = parts[i];
+            if (part === ".") {
+                continue;
             }
-            if (i > 0 && parts[i] === ".." && parts[i - 1] !== "..") {
-                parts.splice(i - 1, 2);
-                i -= 2;
+
+            if (normalizedParts.length > 0 && ArrayUtilities.last(normalizedParts) !== ".." && part === "..") {
+                normalizedParts.pop();
+                continue;
             }
+
+            normalizedParts.push(part);
         }
-        return (startedWithSep ? "/" : "") + parts.join("/");
+
+        return (path.charAt(0) === "/" ? "/" : "") + normalizedParts.join("/");
     }
 }
