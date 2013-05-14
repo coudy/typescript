@@ -223,18 +223,6 @@ module TypeScript {
 
             var parentDecl: PullDecl = decl.getParentDecl();
 
-            //// if the decl is a function expression, it would not have been parented during binding
-            //if (decls.length && (decl.getKind() & (PullElementKind.SomeFunction |
-            //    PullElementKind.ObjectType |
-            //    PullElementKind.FunctionType |
-            //    PullElementKind.ConstructorType)) &&
-            //    (decls[decls.length - 1] != decl)) {
-
-
-
-            //    decls[decls.length] = decl;
-            //}
-
             while (parentDecl) {
                 if (parentDecl && decls[decls.length - 1] != parentDecl && !(parentDecl.getKind() & PullElementKind.ObjectLiteral)) {
                     decls[decls.length] = parentDecl;
