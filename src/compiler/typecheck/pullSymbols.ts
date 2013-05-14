@@ -75,6 +75,10 @@ module TypeScript {
             return false;
         }
 
+        public isError() {
+            return false;
+        }
+
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.declKind = declKind;

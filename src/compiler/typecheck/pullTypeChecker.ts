@@ -2287,19 +2287,24 @@ module TypeScript {
             this.context.canUseTypeSymbol = true;
             var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
-            if (resolvedName && resolvedName.hasFlag(PullElementFlags.Private)) {
-                var memberContainer = resolvedName.getContainer();
-                if (memberContainer && memberContainer.getKind() === PullElementKind.ConstructorType) {
-                    memberContainer = memberContainer.getAssociatedContainerType();
+            if (resolvedName) {
+                if (memberAccessExpression.operand1.nodeType === NodeType.SuperExpression && !resolvedName.isError() && resolvedName.getKind() !== PullElementKind.Method) {
+                    this.postError(memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(), typeCheckContext.scriptName, DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, [], enclosingDecl);
                 }
+                else if (resolvedName.hasFlag(PullElementFlags.Private)) {
+                    var memberContainer = resolvedName.getContainer();
+                    if (memberContainer && memberContainer.getKind() === PullElementKind.ConstructorType) {
+                        memberContainer = memberContainer.getAssociatedContainerType();
+                    }
 
-                if (memberContainer && memberContainer.isClass()) {
-                    // We're accessing a private member of a class.  We can only do that if we're 
-                    // actually contained within that class.
-                    var containingClass = typeCheckContext.getEnclosingClassDecl();
-                    if (!containingClass || containingClass.getSymbol() !== memberContainer) {
-                        var name = <Identifier>memberAccessExpression.operand2;
-                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                    if (memberContainer && memberContainer.isClass()) {
+                        // We're accessing a private member of a class.  We can only do that if we're 
+                        // actually contained within that class.
+                        var containingClass = typeCheckContext.getEnclosingClassDecl();
+                        if (!containingClass || containingClass.getSymbol() !== memberContainer) {
+                            var name = <Identifier>memberAccessExpression.operand2;
+                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                        }
                     }
                 }
             }

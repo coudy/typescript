@@ -239,6 +239,7 @@ module TypeScript {
         Overload_signature_implementation_cannot_use_specialized_type,
         Export_assignments_may_only_be_used_in_External_modules,
         Export_assignments_may_only_be_made_with_acceptable_kinds,
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword,
 
 
         // Extra information that is used as part of other error message

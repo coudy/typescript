@@ -238,6 +238,7 @@ module TypeScript {
         Overload_signature_implementation_cannot_use_specialized_type: DiagnosticInfo;
         Export_assignments_may_only_be_used_in_External_modules;
         Export_assignments_may_only_be_made_with_acceptable_kinds;
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1514,11 +1515,15 @@ module TypeScript {
             message: "Export assignments may only be used at the top-level of external modules",
             code: 2164
         },
-
         Export_assignments_may_only_be_made_with_acceptable_kinds: {
             category: DiagnosticCategory.Error,
             message: "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules",
             code: 2165
+        },
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: {
+            category: DiagnosticCategory.Error,
+            message: "Only public instance methods of the base class are accessible via the super keyword",
+            code: 2166
         },
 
 
