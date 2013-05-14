@@ -127,7 +127,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -188,7 +188,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -318,7 +318,7 @@ class Program {
                 Environment.writeFile(expectedFile, "", false);
             }
             else {
-                expectedResult = Environment.readFile(expectedFile, /*useUTF8:*/ true);
+                expectedResult = Environment.readFile(expectedFile).contents();
             }
 
             if (expectedResult !== actualResult) {
@@ -355,7 +355,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -383,7 +383,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -411,7 +411,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -450,7 +450,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -474,7 +474,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -535,7 +535,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -561,7 +561,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -624,7 +624,7 @@ class Program {
 
             // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
             // as UTF8.
-            var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
+            var contents = Environment.readFile(fileName).contents();
 
             var isNegative = contents.indexOf("@negative") >= 0
 
