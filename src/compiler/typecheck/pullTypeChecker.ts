@@ -902,11 +902,9 @@ module TypeScript {
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, inContextuallyTypedAssignment);
+            this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             this.typeCheckAST(funcDeclAST.returnTypeAnnotation, typeCheckContext,/*inContextuallyTypedAssignment:*/ false);
-
-            this.typeCheckAST(funcDeclAST.block, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -923,6 +921,39 @@ module TypeScript {
 
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
             this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
+
+            // Make sure that a numeric index signature is a subtype of the string indexer, or vice versa
+            var allIndexSignatures = enclosingDecl.getSymbol().getType().getIndexSignatures();
+            for (var i = 0; i < allIndexSignatures.length; i++) {
+                if (allIndexSignatures[i].getParameters()[0].getType() !== parameters[0].getType()) {
+                    var stringIndexSignature: PullSignatureSymbol;
+                    var numberIndexSignature: PullSignatureSymbol;
+                    if (parameters[0].getType() === this.semanticInfoChain.numberTypeSymbol) {
+                        numberIndexSignature = indexSignature;
+                        stringIndexSignature = allIndexSignatures[i];
+                    }
+                    else {
+                        numberIndexSignature = allIndexSignatures[i];
+                        stringIndexSignature = indexSignature;
+
+                        // If we are a string indexer sharing a container with a number index signature, the number will report the error
+                        // TODO: make this check cleaner once the symbol container relationship stabilizes
+                        if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
+                            break;
+                        }
+                    }
+                    var comparisonInfo = new TypeComparisonInfo();
+                    var resolutionContext = new PullTypeResolutionContext();
+                    if (!this.resolver.sourceIsSubtypeOfTarget(numberIndexSignature.getReturnType(), stringIndexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+                        if (comparisonInfo.message) {
+                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0, [comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                        } else {
+                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type, null, typeCheckContext.getEnclosingDecl());
+                        }
+                    }
+                    break;
+                }
+            }
 
             return null;
         }

@@ -236,9 +236,11 @@ module TypeScript {
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: DiagnosticInfo;
         Rest_parameters_must_be_array_types: DiagnosticInfo;
         Overload_signature_implementation_cannot_use_specialized_type: DiagnosticInfo;
-        Export_assignments_may_only_be_used_in_External_modules;
-        Export_assignments_may_only_be_made_with_acceptable_kinds;
-        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword;
+        Export_assignments_may_only_be_used_in_External_modules: DiagnosticInfo;
+        Export_assignments_may_only_be_made_with_acceptable_kinds: DiagnosticInfo;
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: DiagnosticInfo;
+        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type: DiagnosticInfo;
+        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1525,6 +1527,16 @@ module TypeScript {
             message: "Only public instance methods of the base class are accessible via the super keyword",
             code: 2166
         },
+        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type: {
+            category: DiagnosticCategory.Error,
+            message: "Numeric indexer type must be a subtype of string indexer type",
+            code: 2167
+        },
+        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0: {
+            category: DiagnosticCategory.Error,
+            message: "Numeric indexer type must be a subtype of string indexer type:{NL}{0}",
+            code: 2168
+        },
 
 
 
@@ -1645,7 +1657,7 @@ module TypeScript {
 
 
 
-        // Batch compiler errors start 500
+        // Batch compiler errors start 5000
         Current_host_does_not_support__w_atch_option: {
             category: DiagnosticCategory.Error,
             message: "Current host does not support -w[atch] option.",

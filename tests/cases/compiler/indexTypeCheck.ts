@@ -19,13 +19,13 @@ interface Orange {
 }
 
 interface Green {
-	[n:number]: Orange; // ok
-	[s:string]: Yellow; // error
+	[n:number]: Orange; // error
+	[s:string]: Yellow; // ok
 }
 
 interface Cyan {
-	[n:number]: number; // ok
-	[s:string]: string; // error
+	[n:number]: number; // error
+	[s:string]: string; // ok
 }
 
 interface Purple {
