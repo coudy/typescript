@@ -24,6 +24,7 @@
 ///<reference path='keywordCompletions.ts' />
 ///<reference path='signatureInfoHelpers.ts' />
 ///<reference path='pullLanguageService.ts' />
+///<reference path='findReferenceHelpers.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
 ///<reference path='outliningElementsCollector.ts' />
@@ -33,7 +34,6 @@
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {
-
         for (var e in dst) {
             if (typeof dst[e] == "object") {
                 copyDataObject(dst[e], src[e]);
