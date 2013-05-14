@@ -533,6 +533,19 @@ constructor(name) { }\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
+
+        public static testInsertAboveComment() {
+            var source =
+"\
+// foo\
+1;";
+
+            var oldText = TextFactory.createText(source);
+            var index = 0;
+            var newTextAndChange = withInsert(oldText, index, "var x;\r\n");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
         
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");

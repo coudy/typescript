@@ -701,41 +701,42 @@ var TypeScript;
         DiagnosticCode[DiagnosticCode["Overload_signature_implementation_cannot_use_specialized_type"] = 226] = "Overload_signature_implementation_cannot_use_specialized_type";
         DiagnosticCode[DiagnosticCode["Export_assignments_may_only_be_used_in_External_modules"] = 227] = "Export_assignments_may_only_be_used_in_External_modules";
         DiagnosticCode[DiagnosticCode["Export_assignments_may_only_be_made_with_acceptable_kinds"] = 228] = "Export_assignments_may_only_be_made_with_acceptable_kinds";
+        DiagnosticCode[DiagnosticCode["Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword"] = 229] = "Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword";
 
-        DiagnosticCode[DiagnosticCode["Type__0__is_missing_property__1__from_type__2_"] = 229] = "Type__0__is_missing_property__1__from_type__2_";
-        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible"] = 230] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
-        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3"] = 231] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
-        DiagnosticCode[DiagnosticCode["Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_"] = 232] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
-        DiagnosticCode[DiagnosticCode["Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_"] = 233] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
-        DiagnosticCode[DiagnosticCode["Types__0__and__1__define_property__2__as_private"] = 234] = "Types__0__and__1__define_property__2__as_private";
-        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible"] = 235] = "Call_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 236] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode[DiagnosticCode["Type__0__requires_a_call_signature__but_Type__1__lacks_one"] = 237] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
-        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible"] = 238] = "Construct_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 239] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode[DiagnosticCode["Type__0__requires_a_construct_signature__but_Type__1__lacks_one"] = 240] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
-        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible"] = 241] = "Index_signatures_of_types__0__and__1__are_incompatible";
-        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 242] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
-        DiagnosticCode[DiagnosticCode["Call_signature_expects__0__or_fewer_parameters"] = 243] = "Call_signature_expects__0__or_fewer_parameters";
-        DiagnosticCode[DiagnosticCode["Could_not_apply_type__0__to_argument__1__which_is_of_type__2_"] = 244] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
-        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function"] = 245] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function"] = 246] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
-        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor"] = 247] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
-        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property"] = 248] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
-        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible"] = 249] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
-        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3"] = 250] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode[DiagnosticCode["Type__0__is_missing_property__1__from_type__2_"] = 230] = "Type__0__is_missing_property__1__from_type__2_";
+        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible"] = 231] = "Types_of_property__0__of_types__1__and__2__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3"] = 232] = "Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3";
+        DiagnosticCode[DiagnosticCode["Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_"] = 233] = "Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_";
+        DiagnosticCode[DiagnosticCode["Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_"] = 234] = "Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_";
+        DiagnosticCode[DiagnosticCode["Types__0__and__1__define_property__2__as_private"] = 235] = "Types__0__and__1__define_property__2__as_private";
+        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible"] = 236] = "Call_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Call_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 237] = "Call_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Type__0__requires_a_call_signature__but_Type__1__lacks_one"] = 238] = "Type__0__requires_a_call_signature__but_Type__1__lacks_one";
+        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible"] = 239] = "Construct_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Construct_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 240] = "Construct_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Type__0__requires_a_construct_signature__but_Type__1__lacks_one"] = 241] = "Type__0__requires_a_construct_signature__but_Type__1__lacks_one";
+        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible"] = 242] = "Index_signatures_of_types__0__and__1__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Index_signatures_of_types__0__and__1__are_incompatible__NL__2"] = 243] = "Index_signatures_of_types__0__and__1__are_incompatible__NL__2";
+        DiagnosticCode[DiagnosticCode["Call_signature_expects__0__or_fewer_parameters"] = 244] = "Call_signature_expects__0__or_fewer_parameters";
+        DiagnosticCode[DiagnosticCode["Could_not_apply_type__0__to_argument__1__which_is_of_type__2_"] = 245] = "Could_not_apply_type__0__to_argument__1__which_is_of_type__2_";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function"] = 246] = "Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function"] = 247] = "Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor"] = 248] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor";
+        DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property"] = 249] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
+        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible"] = 250] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
+        DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3"] = 251] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
 
-        DiagnosticCode[DiagnosticCode["Current_host_does_not_support__w_atch_option"] = 251] = "Current_host_does_not_support__w_atch_option";
-        DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 252] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 253] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 254] = "Could_not_find_file___0_";
-        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 255] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 256] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 257] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 258] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 259] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
-        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 260] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
-        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 261] = "Emit_Error__0";
+        DiagnosticCode[DiagnosticCode["Current_host_does_not_support__w_atch_option"] = 252] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 253] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 254] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 255] = "Could_not_find_file___0_";
+        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 256] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 257] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 258] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 259] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 260] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
+        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 261] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
+        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 262] = "Emit_Error__0";
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1887,6 +1888,11 @@ var TypeScript;
             message: "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules",
             code: 2165
         },
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: {
+            category: 1 /* Error */,
+            message: "Only public instance methods of the base class are accessible via the super keyword",
+            code: 2166
+        },
         Type__0__is_missing_property__1__from_type__2_: {
             category: 3 /* NoPrefix */,
             message: "Type '{0}' is missing property '{1}' from type '{2}'.",
@@ -2617,6 +2623,29 @@ var TypeScript;
     }
     TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
+var ByteOrderMark;
+(function (ByteOrderMark) {
+    ByteOrderMark[ByteOrderMark["None"] = 0] = "None";
+    ByteOrderMark[ByteOrderMark["Utf8"] = 1] = "Utf8";
+    ByteOrderMark[ByteOrderMark["Utf16BigEndian"] = 2] = "Utf16BigEndian";
+    ByteOrderMark[ByteOrderMark["Utf16LittleEndian"] = 3] = "Utf16LittleEndian";
+})(ByteOrderMark || (ByteOrderMark = {}));
+
+var FileInformation = (function () {
+    function FileInformation(contents, byteOrderMark) {
+        this._contents = contents;
+        this._byteOrderMark = byteOrderMark;
+    }
+    FileInformation.prototype.contents = function () {
+        return this._contents;
+    };
+
+    FileInformation.prototype.byteOrderMark = function () {
+        return this._byteOrderMark;
+    };
+    return FileInformation;
+})();
+
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
         try  {
@@ -2648,37 +2677,64 @@ var Environment = (function () {
             currentDirectory: function () {
                 return (WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
-            readFile: function (path, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
+            readFile: function (path) {
                 try  {
                     var streamObj = getStreamObject();
                     streamObj.Open();
                     streamObj.Type = 2;
+
                     streamObj.Charset = 'x-ansi';
+
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2);
+
                     streamObj.Position = 0;
-                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
+
+                    var byteOrderMark = 0 /* None */;
+
+                    if (bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) {
                         streamObj.Charset = 'unicode';
+                        byteOrderMark = 2 /* Utf16BigEndian */;
+                    } else if (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE) {
+                        streamObj.Charset = 'unicode';
+                        byteOrderMark = 3 /* Utf16LittleEndian */;
                     } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
                         streamObj.Charset = 'utf-8';
+                        byteOrderMark = 1 /* Utf8 */;
                     } else {
-                        streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
+                        streamObj.Charset = 'utf-8';
                     }
 
-                    var str = streamObj.ReadText(-1);
+                    var contents = streamObj.ReadText(-1);
                     streamObj.Close();
                     releaseStreamObject(streamObj);
-                    return str;
+                    return new FileInformation(contents, byteOrderMark);
                 } catch (err) {
                     throw new Error("Error reading file \"" + path + "\": " + err.message);
                 }
             },
-            writeFile: function (path, contents, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
-                var file = this.createFile(path, useUTF8);
-                file.Write(contents);
-                file.Close();
+            writeFile: function (path, contents, writeByteOrderMark) {
+                var textStream = getStreamObject();
+                textStream.Charset = 'utf-8';
+                textStream.Open();
+                textStream.WriteText(contents, 0);
+
+                if (!writeByteOrderMark) {
+                    textStream.Position = 3;
+                }
+
+                var fileStream = getStreamObject();
+                fileStream.Type = 1;
+                fileStream.Open();
+
+                textStream.CopyTo(fileStream);
+
+                fileStream.Flush();
+                fileStream.SaveToFile(path, 2);
+                fileStream.Close();
+
+                textStream.Flush();
+                textStream.Close();
             },
             fileExists: function (path) {
                 return fso.FileExists(path);
@@ -2721,30 +2777,6 @@ var Environment = (function () {
 
                 return filesInFolder(folder, path);
             },
-            createFile: function (path, useUTF8) {
-                if (typeof useUTF8 === "undefined") { useUTF8 = false; }
-                try  {
-                    var streamObj = getStreamObject();
-                    streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-                    streamObj.Open();
-                    return {
-                        Write: function (str) {
-                            streamObj.WriteText(str, 0);
-                        },
-                        WriteLine: function (str) {
-                            streamObj.WriteText(str, 1);
-                        },
-                        Close: function () {
-                            streamObj.SaveToFile(path, 2);
-                            streamObj.Close();
-                            releaseStreamObject(streamObj);
-                        }
-                    };
-                } catch (ex) {
-                    WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
-                    throw ex;
-                }
-            },
             arguments: args,
             standardOut: WScript.StdOut
         };
@@ -2760,7 +2792,7 @@ var Environment = (function () {
             currentDirectory: function () {
                 return (process).cwd();
             },
-            readFile: function (file, useUTF8) {
+            readFile: function (file) {
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
@@ -2772,28 +2804,40 @@ var Environment = (function () {
                                 buffer[i + 1] = temp;
                                 i += 2;
                             }
-                            return buffer.toString("ucs2", 2);
+                            return new FileInformation(buffer.toString("ucs2", 2), 2 /* Utf16BigEndian */);
                         }
                         break;
                     case 0xFF:
                         if (buffer[1] === 0xFE) {
-                            return buffer.toString("ucs2", 2);
+                            return new FileInformation(buffer.toString("ucs2", 2), 3 /* Utf16LittleEndian */);
                         }
                         break;
                     case 0xEF:
                         if (buffer[1] === 0xBB) {
-                            return buffer.toString("utf8", 3);
+                            return new FileInformation(buffer.toString("utf8", 3), 1 /* Utf8 */);
                         }
                 }
 
-                return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
+                return new FileInformation(buffer.toString("utf8", 0), 0 /* None */);
             },
-            writeFile: function (path, contents, useUTF) {
-                if (useUTF) {
-                    _fs.writeFileSync(path, contents, "utf8");
-                } else {
-                    _fs.writeFileSync(path, contents);
+            writeFile: function (path, contents, writeByteOrderMark) {
+                function mkdirRecursiveSync(path) {
+                    var stats = _fs.statSync(path);
+                    if (stats.isFile()) {
+                        throw "\"" + path + "\" exists but isn't a directory.";
+                    } else if (stats.isDirectory()) {
+                        return;
+                    } else {
+                        mkdirRecursiveSync(_path.dirname(path));
+                        _fs.mkdirSync(path, 0775);
+                    }
                 }
+                mkdirRecursiveSync(_path.dirname(path));
+
+                if (writeByteOrderMark) {
+                    contents = '\uFEFF' + contents;
+                }
+                _fs.writeFileSync(path, contents, "utf8");
             },
             fileExists: function (path) {
                 return _fs.existsSync(path);
@@ -2828,34 +2872,6 @@ var Environment = (function () {
 
                 return filesInFolder(path);
             },
-            createFile: function (path, useUTF8) {
-                function mkdirRecursiveSync(path) {
-                    var stats = _fs.statSync(path);
-                    if (stats.isFile()) {
-                        throw "\"" + path + "\" exists but isn't a directory.";
-                    } else if (stats.isDirectory()) {
-                        return;
-                    } else {
-                        mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 0775);
-                    }
-                }
-                mkdirRecursiveSync(_path.dirname(path));
-
-                var fd = _fs.openSync(path, 'w');
-                return {
-                    Write: function (str) {
-                        _fs.writeSync(fd, str);
-                    },
-                    WriteLine: function (str) {
-                        _fs.writeSync(fd, str + '\r\n');
-                    },
-                    Close: function () {
-                        _fs.closeSync(fd);
-                        fd = null;
-                    }
-                };
-            },
             arguments: process.argv.slice(2),
             standardOut: {
                 Write: function (str) {
@@ -2873,7 +2889,7 @@ var Environment = (function () {
 
     if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
-    } else if (typeof require === "function") {
+    } else if (typeof module !== 'undefined' && module.exports) {
         return getNodeEnvironment();
     } else {
         return null;
@@ -28672,6 +28688,7 @@ var TypeScript;
         FunctionFlags[FunctionFlags["IsFatArrowFunction"] = 1 << 11] = "IsFatArrowFunction";
         FunctionFlags[FunctionFlags["IndexerMember"] = 1 << 12] = "IndexerMember";
         FunctionFlags[FunctionFlags["IsFunctionExpression"] = 1 << 13] = "IsFunctionExpression";
+        FunctionFlags[FunctionFlags["IsFunctionProperty"] = 1 << 14] = "IsFunctionProperty";
     })(TypeScript.FunctionFlags || (TypeScript.FunctionFlags = {}));
     var FunctionFlags = TypeScript.FunctionFlags;
 
@@ -30720,29 +30737,6 @@ var TypeScript;
 
             if (isDynamicMod) {
                 this.setExportAssignmentIdentifier(null);
-
-                var tsModFileName = TypeScript.stripQuotes(moduleDecl.name.actualText);
-                var modFilePath = TypeScript.trimModName(tsModFileName) + ".js";
-                modFilePath = this.emitOptions.mapOutputFileName(modFilePath, TypeScript.TypeScriptCompiler.mapToJSFileName);
-
-                if (this.emitOptions.ioHost) {
-                    if (TypeScript.switchToForwardSlashes(modFilePath) !== TypeScript.switchToForwardSlashes(this.emittingFileName)) {
-                        this.emittingFileName = modFilePath;
-                        var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
-                        this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
-                        if (prevSourceMapper !== null) {
-                            this.allSourceMappers = [];
-                            var sourceMapFile = this.emittingFileName + TypeScript.SourceMapper.MapFileExtension;
-                            var sourceMappingFile = this.createFile(sourceMapFile, false);
-                            this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.emitOptions.compilationSettings.emitFullSourceMapPath));
-                            this.emitState.column = 0;
-                            this.emitState.line = 0;
-                        }
-                    } else {
-                        TypeScript.CompilerDiagnostics.assert(this.emitOptions.outputMany, "Cannot have dynamic modules compiling into single file");
-                    }
-                }
-
                 this.setContainer(2 /* DynamicModule */);
 
                 this.recordSourceMappingStart(moduleDecl);
@@ -30755,7 +30749,6 @@ var TypeScript;
                     dependencyList += importAndDependencyList.dependencyList + "]";
 
                     this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
-                } else {
                 }
             } else {
                 if (!isExported) {
@@ -31738,18 +31731,10 @@ var TypeScript;
 
         Emitter.handleEmitterError = function (fileName, e) {
             if ((e).isEmitterError === true) {
-                return [new TypeScript.Diagnostic(fileName, 0, 0, 261 /* Emit_Error__0 */, [e.message])];
+                return [new TypeScript.Diagnostic(fileName, 0, 0, 262 /* Emit_Error__0 */, [e.message])];
             }
 
             throw e;
-        };
-
-        Emitter.prototype.createFile = function (fileName, useUTF8) {
-            try  {
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
-            } catch (e) {
-                Emitter.throwEmitterError(e);
-            }
         };
         return Emitter;
     })();
@@ -32032,43 +32017,47 @@ var TypeScript;
     TypeScript.filePath = filePath;
 
     function normalizePath(path) {
-        path = switchToForwardSlashes(path);
-        var startedWithSep = path.charAt(0) === "/";
-        var parts = this.getPathComponents(path);
+        var parts = this.getPathComponents(switchToForwardSlashes(path));
+        var normalizedParts = [];
+
         for (var i = 0; i < parts.length; i++) {
-            if (parts[i] === "." || parts[i] === "") {
-                parts.splice(i, 1);
-                i--;
+            var part = parts[i];
+            if (part === ".") {
+                continue;
             }
-            if (i > 0 && parts[i] === ".." && parts[i - 1] !== "..") {
-                parts.splice(i - 1, 2);
-                i -= 2;
+
+            if (normalizedParts.length > 0 && TypeScript.ArrayUtilities.last(normalizedParts) !== ".." && part === "..") {
+                normalizedParts.pop();
+                continue;
             }
+
+            normalizedParts.push(part);
         }
-        return (startedWithSep ? "/" : "") + parts.join("/");
+
+        return (path.charAt(0) === "/" ? "/" : "") + normalizedParts.join("/");
     }
     TypeScript.normalizePath = normalizePath;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     var SourceUnit = (function () {
-        function SourceUnit(path, content) {
+        function SourceUnit(path, fileInformation) {
             this.path = path;
-            this.content = content;
+            this.fileInformation = fileInformation;
             this.referencedFiles = null;
             this.lineStarts = null;
         }
         SourceUnit.prototype.getText = function (start, end) {
-            return this.content.substring(start, end);
+            return this.fileInformation.contents().substring(start, end);
         };
 
         SourceUnit.prototype.getLength = function () {
-            return this.content.length;
+            return this.fileInformation.contents().length;
         };
 
         SourceUnit.prototype.getLineStartPositions = function () {
             if (this.lineStarts === null) {
-                this.lineStarts = TypeScript.LineMap.fromString(this.content).lineStarts();
+                this.lineStarts = TypeScript.LineMap.fromString(this.fileInformation.contents()).lineStarts();
             }
 
             return this.lineStarts;
@@ -32110,7 +32099,7 @@ var TypeScript;
             this.visited = {};
         }
         CodeResolver.prototype.resolveCode = function (referencePath, parentPath, performSearch, resolutionDispatcher) {
-            var resolvedFile = { content: null, path: referencePath };
+            var resolvedFile = { fileInformation: null, path: referencePath };
 
             var ioHost = this.environment.ioHost;
 
@@ -32131,12 +32120,12 @@ var TypeScript;
                         TypeScript.CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
 
                         try  {
-                            resolvedFile.content = ioHost.readFile(normalizedPath);
+                            resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                         } catch (err1) {
                             if (TypeScript.isTSFile(normalizedPath)) {
                                 normalizedPath = TypeScript.changePathToDTS(normalizedPath);
                                 TypeScript.CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-                                resolvedFile.content = ioHost.readFile(normalizedPath);
+                                resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                             }
                         }
                         TypeScript.CompilerDiagnostics.debugPrint("   Found code at " + normalizedPath);
@@ -32161,16 +32150,16 @@ var TypeScript;
                     if (resolvedFile) {
                         resolvedFile.path = TypeScript.switchToForwardSlashes(TypeScript.stripQuotes(resolvedFile.path));
                         TypeScript.CompilerDiagnostics.debugPrint(referencePath + " resolved to: " + resolvedFile.path);
-                        resolvedFile.content = resolvedFile.content;
+                        resolvedFile.fileInformation = resolvedFile.fileInformation;
                         this.visited[absoluteModuleID] = true;
                     } else {
                         TypeScript.CompilerDiagnostics.debugPrint("Could not find " + referencePath);
                     }
                 }
 
-                if (resolvedFile && resolvedFile.content !== null) {
+                if (resolvedFile && resolvedFile.fileInformation !== null) {
                     var rootDir = ioHost.dirName(resolvedFile.path);
-                    var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
+                    var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.fileInformation);
                     var preProcessedFileInfo = TypeScript.preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     var resolutionResult;
@@ -32184,14 +32173,14 @@ var TypeScript;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 256 /* A_file_cannot_have_a_reference_itself */, null));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 257 /* A_file_cannot_have_a_reference_itself */, null));
                             continue;
                         }
 
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 257 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 258 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
                         }
                     }
 
@@ -32201,7 +32190,7 @@ var TypeScript;
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 258 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 259 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
                         }
                     }
 
@@ -32401,37 +32390,42 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var DeclFileWriter = (function () {
-        function DeclFileWriter(declFile) {
-            this.declFile = declFile;
+    var TextWriter = (function () {
+        function TextWriter(ioHost, path, writeByteOrderMark) {
+            this.ioHost = ioHost;
+            this.path = path;
+            this.writeByteOrderMark = writeByteOrderMark;
+            this.contents = "";
             this.onNewLine = true;
         }
-        DeclFileWriter.prototype.Write = function (s) {
-            this.declFile.Write(s);
+        TextWriter.prototype.Write = function (s) {
+            this.contents += s;
             this.onNewLine = false;
         };
 
-        DeclFileWriter.prototype.WriteLine = function (s) {
-            this.declFile.WriteLine(s);
+        TextWriter.prototype.WriteLine = function (s) {
+            this.contents += s;
+            this.contents += "\r\n";
             this.onNewLine = true;
         };
 
-        DeclFileWriter.prototype.Close = function () {
+        TextWriter.prototype.Close = function () {
             try  {
-                this.declFile.Close();
+                this.ioHost.writeFile(this.path, this.contents, this.writeByteOrderMark);
             } catch (e) {
                 TypeScript.Emitter.throwEmitterError(e);
             }
         };
-        return DeclFileWriter;
+        return TextWriter;
     })();
-    TypeScript.DeclFileWriter = DeclFileWriter;
+    TypeScript.TextWriter = TextWriter;
 
     var DeclarationEmitter = (function () {
-        function DeclarationEmitter(emittingFileName, isUTF8, semanticInfoChain, emitOptions) {
+        function DeclarationEmitter(emittingFileName, semanticInfoChain, emitOptions, writeByteOrderMark) {
             this.emittingFileName = emittingFileName;
             this.semanticInfoChain = semanticInfoChain;
             this.emitOptions = emitOptions;
+            this.writeByteOrderMark = writeByteOrderMark;
             this.fileName = null;
             this.declFile = null;
             this.indenter = new TypeScript.Indenter();
@@ -32440,8 +32434,7 @@ var TypeScript;
             this.ignoreCallbackAst = null;
             this.singleDeclFile = null;
             this.varListCount = 0;
-            var file = this.createFile(emittingFileName, isUTF8);
-            this.declFile = new DeclFileWriter(file);
+            this.declFile = new TextWriter(emitOptions.ioHost, emittingFileName, writeByteOrderMark);
         }
         DeclarationEmitter.prototype.widenType = function (type) {
             if (type === this.semanticInfoChain.undefinedTypeSymbol || type === this.semanticInfoChain.nullTypeSymbol) {
@@ -32454,14 +32447,6 @@ var TypeScript;
         DeclarationEmitter.prototype.close = function () {
             try  {
                 this.declFile.Close();
-            } catch (e) {
-                TypeScript.Emitter.throwEmitterError(e);
-            }
-        };
-
-        DeclarationEmitter.prototype.createFile = function (fileName, useUTF8) {
-            try  {
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             } catch (e) {
                 TypeScript.Emitter.throwEmitterError(e);
             }
@@ -33119,7 +33104,7 @@ var TypeScript;
                             var declareFileName = this.emitOptions.mapOutputFileName(this.fileName, TypeScript.TypeScriptCompiler.mapToDTSFileName);
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
 
-                            this.declFile = new DeclFileWriter(this.createFile(declareFileName, useUTF8InOutputfile));
+                            this.declFile = new TextWriter(this.emitOptions.ioHost, declareFileName, this.writeByteOrderMark);
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
@@ -33727,6 +33712,10 @@ var TypeScript;
         };
 
         PullSymbol.prototype.isAccessor = function () {
+            return false;
+        };
+
+        PullSymbol.prototype.isError = function () {
             return false;
         };
 
@@ -39616,7 +39605,7 @@ var TypeScript;
                         return SymbolAndDiagnostics.fromSymbol(this.resolveGetAccessorDeclaration(funcDecl, context));
                     } else if (funcDecl.isSetAccessor()) {
                         return SymbolAndDiagnostics.fromSymbol(this.resolveSetAccessorDeclaration(funcDecl, context));
-                    } else if (inContextuallyTypedAssignment || (funcDecl.getFunctionFlags() & 8192 /* IsFunctionExpression */) || (funcDecl.getFunctionFlags() & 2048 /* IsFatArrowFunction */)) {
+                    } else if (inContextuallyTypedAssignment || (funcDecl.getFunctionFlags() & 8192 /* IsFunctionExpression */) || (funcDecl.getFunctionFlags() & 2048 /* IsFatArrowFunction */) || (funcDecl.getFunctionFlags() & 16384 /* IsFunctionProperty */)) {
                         return SymbolAndDiagnostics.fromSymbol(this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context));
                     } else {
                         return SymbolAndDiagnostics.fromSymbol(this.resolveFunctionDeclaration(funcDecl, context));
@@ -42186,7 +42175,7 @@ var TypeScript;
                             if (!(targetProp.getIsOptional())) {
                                 if (comparisonInfo) {
                                     comparisonInfo.flags |= 2 /* RequiredPropertyIsMissing */;
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(229 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
+                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(230 /* Type__0__is_missing_property__1__from_type__2_ */, [source.toString(), targetProp.getScopedNameEx().toString(), target.toString()]));
                                 }
                                 return false;
                             }
@@ -42210,9 +42199,9 @@ var TypeScript;
             if (targetPropIsPrivate != sourcePropIsPrivate) {
                 if (comparisonInfo) {
                     if (targetPropIsPrivate) {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(233 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(234 /* Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     } else {
-                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(232 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(233 /* Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_ */, [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
                     }
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
                 }
@@ -42223,7 +42212,7 @@ var TypeScript;
 
                 if (!targetDecl.isEqual(sourceDecl)) {
                     comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(234 /* Types__0__and__1__define_property__2__as_private */, [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(235 /* Types__0__and__1__define_property__2__as_private */, [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
                     return false;
                 }
             }
@@ -42248,9 +42237,9 @@ var TypeScript;
                     comparisonInfo.flags |= 32 /* IncompatiblePropertyTypes */;
                     var message;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = TypeScript.getDiagnosticMessage(231 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
+                        message = TypeScript.getDiagnosticMessage(232 /* Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3 */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
                     } else {
-                        message = TypeScript.getDiagnosticMessage(230 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
+                        message = TypeScript.getDiagnosticMessage(231 /* Types_of_property__0__of_types__1__and__2__are_incompatible */, [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
                     }
                     comparisonInfo.addMessage(message);
                 }
@@ -42276,14 +42265,14 @@ var TypeScript;
                         var message;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(236 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(237 /* Call_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(235 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(236 /* Call_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(237 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(238 /* Type__0__requires_a_call_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -42309,14 +42298,14 @@ var TypeScript;
                         var message;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = TypeScript.getDiagnosticMessage(239 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                                message = TypeScript.getDiagnosticMessage(240 /* Construct_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
-                                message = TypeScript.getDiagnosticMessage(238 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                                message = TypeScript.getDiagnosticMessage(239 /* Construct_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                             }
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = TypeScript.getDiagnosticMessage(240 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
+                            message = TypeScript.getDiagnosticMessage(241 /* Type__0__requires_a_construct_signature__but_Type__1__lacks_one */, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -42409,9 +42398,9 @@ var TypeScript;
                     if (comparisonInfo) {
                         var message;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = TypeScript.getDiagnosticMessage(242 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
+                            message = TypeScript.getDiagnosticMessage(243 /* Index_signatures_of_types__0__and__1__are_incompatible__NL__2 */, [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                         } else {
-                            message = TypeScript.getDiagnosticMessage(241 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
+                            message = TypeScript.getDiagnosticMessage(242 /* Index_signatures_of_types__0__and__1__are_incompatible */, [source.toString(), target.toString()]);
                         }
                         comparisonInfo.flags |= 4 /* IncompatibleSignatures */;
                         comparisonInfo.addMessage(message);
@@ -42491,7 +42480,7 @@ var TypeScript;
             if (sourceVarArgCount > targetVarArgCount && !targetSig.hasVariableParamList()) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= 3 /* SourceSignatureHasTooManyParameters */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(243 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(244 /* Call_signature_expects__0__or_fewer_parameters */, [targetVarArgCount]));
                 }
                 return false;
             }
@@ -42757,7 +42746,7 @@ var TypeScript;
 
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(244 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(245 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
                                 miss = true;
                             }
@@ -42779,7 +42768,7 @@ var TypeScript;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(244 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(245 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
 
                             miss = true;
@@ -42802,7 +42791,7 @@ var TypeScript;
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(244 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                                comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(245 /* Could_not_apply_type__0__to_argument__1__which_is_of_type__2_ */, [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }
@@ -44091,15 +44080,15 @@ var TypeScript;
             var errorCode;
             if (typeMemberKind === 8192 /* Property */) {
                 if (typeMember.isAccessor()) {
-                    errorCode = 245 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 246 /* Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 } else {
-                    errorCode = 246 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
+                    errorCode = 247 /* Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function */;
                 }
             } else if (typeMemberKind === 131072 /* Method */) {
                 if (extendedTypeMember.isAccessor()) {
-                    errorCode = 247 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
+                    errorCode = 248 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor */;
                 } else {
-                    errorCode = 248 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
+                    errorCode = 249 /* Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property */;
                 }
             }
 
@@ -44165,9 +44154,9 @@ var TypeScript;
                             if (!this.resolver.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
                                 var propMessage;
                                 if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = TypeScript.getDiagnosticMessage(250 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
+                                    propMessage = TypeScript.getDiagnosticMessage(251 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3 */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
                                 } else {
-                                    propMessage = TypeScript.getDiagnosticMessage(249 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
+                                    propMessage = TypeScript.getDiagnosticMessage(250 /* Types_of_static_property__0__of_class__1__and_class__2__are_incompatible */, [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
                                 }
                                 comparisonInfo.addMessage(propMessage);
                                 foundError = true;
@@ -45245,17 +45234,21 @@ var TypeScript;
             this.context.canUseTypeSymbol = true;
             var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext, false);
             this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
-            if (resolvedName && resolvedName.hasFlag(2 /* Private */)) {
-                var memberContainer = resolvedName.getContainer();
-                if (memberContainer && memberContainer.getKind() === 67108864 /* ConstructorType */) {
-                    memberContainer = memberContainer.getAssociatedContainerType();
-                }
+            if (resolvedName) {
+                if (memberAccessExpression.operand1.nodeType === 30 /* SuperExpression */ && !resolvedName.isError() && resolvedName.getKind() !== 131072 /* Method */) {
+                    this.postError(memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(), typeCheckContext.scriptName, 229 /* Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword */, [], enclosingDecl);
+                } else if (resolvedName.hasFlag(2 /* Private */)) {
+                    var memberContainer = resolvedName.getContainer();
+                    if (memberContainer && memberContainer.getKind() === 67108864 /* ConstructorType */) {
+                        memberContainer = memberContainer.getAssociatedContainerType();
+                    }
 
-                if (memberContainer && memberContainer.isClass()) {
-                    var containingClass = typeCheckContext.getEnclosingClassDecl();
-                    if (!containingClass || containingClass.getSymbol() !== memberContainer) {
-                        var name = memberAccessExpression.operand2;
-                        this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, 172 /* _0_1__is_inaccessible */, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                    if (memberContainer && memberContainer.isClass()) {
+                        var containingClass = typeCheckContext.getEnclosingClassDecl();
+                        if (!containingClass || containingClass.getSymbol() !== memberContainer) {
+                            var name = memberAccessExpression.operand2;
+                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, 172 /* _0_1__is_inaccessible */, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                        }
                     }
                 }
             }
@@ -45456,7 +45449,7 @@ var TypeScript;
 
         PullTypeChecker.prototype.checkFunctionTypePrivacy = function (funcDeclAST, inContextuallyTypedAssignment, typeCheckContext) {
             var _this = this;
-            if (inContextuallyTypedAssignment || (funcDeclAST.getFunctionFlags() & 8192 /* IsFunctionExpression */)) {
+            if (inContextuallyTypedAssignment || (funcDeclAST.getFunctionFlags() & 8192 /* IsFunctionExpression */) || (funcDeclAST.getFunctionFlags() & 16384 /* IsFunctionProperty */)) {
                 return;
             }
 
@@ -47247,7 +47240,7 @@ var TypeScript;
             return createFunctionTypeDeclaration(funcDecl, context);
         } else if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), 256 /* Method */)) {
             return createMemberFunctionDeclaration(funcDecl, context);
-        } else if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), (8192 /* IsFunctionExpression */ | 2048 /* IsFatArrowFunction */))) {
+        } else if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), (8192 /* IsFunctionExpression */ | 2048 /* IsFatArrowFunction */ | 16384 /* IsFunctionProperty */))) {
             return createFunctionExpressionDeclaration(funcDecl, context);
         }
 
@@ -50666,10 +50659,11 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Document = (function () {
-        function Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree) {
+        function Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
             this.fileName = fileName;
             this.compilationSettings = compilationSettings;
             this.scriptSnapshot = scriptSnapshot;
+            this.byteOrderMark = byteOrderMark;
             this.version = version;
             this.isOpen = isOpen;
             this._diagnostics = null;
@@ -50707,13 +50701,13 @@ var TypeScript;
 
             var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), settings.codeGenTarget, TypeScript.getParseOptions(this.compilationSettings)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
-            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
+            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         };
 
-        Document.create = function (fileName, scriptSnapshot, version, isOpen, referencedFiles, compilationSettings) {
+        Document.create = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, compilationSettings) {
             var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, TypeScript.getParseOptions(compilationSettings));
 
-            var document = new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree);
+            var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;
 
             return document;
@@ -50747,11 +50741,11 @@ var TypeScript;
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         };
 
-        TypeScriptCompiler.prototype.addSourceUnit = function (fileName, scriptSnapshot, version, isOpen, referencedFiles) {
+        TypeScriptCompiler.prototype.addSourceUnit = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles) {
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
             var _this = this;
             return this.timeFunction("addSourceUnit(" + fileName + ")", function () {
-                var document = Document.create(fileName, scriptSnapshot, version, isOpen, referencedFiles, _this.emitOptions.compilationSettings);
+                var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, _this.emitOptions.compilationSettings);
                 _this.fileNameToDocument.addOrUpdate(fileName, document);
 
                 return document;
@@ -50807,7 +50801,7 @@ var TypeScript;
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    return new TypeScript.Diagnostic(null, 0, 0, 259 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
+                                    return new TypeScript.Diagnostic(null, 0, 0, 260 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
                                 }
 
                                 break;
@@ -50848,7 +50842,7 @@ var TypeScript;
             }
 
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new TypeScript.Diagnostic(null, 0, 0, 260 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
+                return new TypeScript.Diagnostic(null, 0, 0, 261 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
             }
 
             if (this.emitOptions.outputMany) {
@@ -50870,11 +50864,20 @@ var TypeScript;
             return result;
         };
 
-        TypeScriptCompiler.prototype.useUTF8ForFile = function (script) {
+        TypeScriptCompiler.prototype.writeByteOrderMarkForDocument = function (document) {
             if (this.emitOptions.outputMany) {
-                return this.outputScriptToUTF8(script);
+                return document.byteOrderMark !== 0 /* None */;
             } else {
-                return this.outputScriptsToUTF8(this.getScripts());
+                var fileNames = this.fileNameToDocument.getAllKeys();
+
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var document = this.getDocument(fileNames[i]);
+                    if (document.byteOrderMark !== 0 /* None */) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         };
 
@@ -50899,7 +50902,7 @@ var TypeScript;
             if (this.canEmitDeclarations(script)) {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(document.fileName, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
+                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, this.semanticInfoChain, this.emitOptions, document.byteOrderMark !== 0 /* None */);
                 }
 
                 declarationEmitter.fileName = document.fileName;
@@ -50985,7 +50988,7 @@ var TypeScript;
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = this.createFile(javaScriptFileName, this.useUTF8ForFile(script));
+                    var outFile = this.createFile(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
 
                     emitter = new TypeScript.Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
@@ -51076,22 +51079,8 @@ var TypeScript;
             }
         };
 
-        TypeScriptCompiler.prototype.outputScriptToUTF8 = function (script) {
-            return script.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && script.containsUnicodeCharInComment);
-        };
-
-        TypeScriptCompiler.prototype.outputScriptsToUTF8 = function (scripts) {
-            for (var i = 0, len = scripts.length; i < len; i++) {
-                var script = scripts[i];
-                if (this.outputScriptToUTF8(script)) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        TypeScriptCompiler.prototype.createFile = function (fileName, useUTF8) {
-            return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+        TypeScriptCompiler.prototype.createFile = function (fileName, writeByteOrderMark) {
+            return new TypeScript.TextWriter(this.emitOptions.ioHost, fileName, writeByteOrderMark);
         };
 
         TypeScriptCompiler.prototype.pullResolveFile = function (fileName) {
@@ -56369,6 +56358,7 @@ var TypeScript;
 
                 functionDeclaration.hint = left.text;
                 functionDeclaration.block = block;
+                functionDeclaration.setFunctionFlags(16384 /* IsFunctionProperty */);
 
                 result = new TypeScript.BinaryExpression(80 /* Member */, left, functionDeclaration);
             }
@@ -57186,6 +57176,19 @@ constructor(name) { }\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         };
+
+        IncrementalParserTests.testInsertAboveComment = function () {
+            throw new Error();
+            var source = "\
+// foo\
+1;";
+
+            var oldText = TypeScript.TextFactory.createText(source);
+            var index = 0;
+            var newTextAndChange = withInsert(oldText, index, "var x;\r\n");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
         return IncrementalParserTests;
     })();
     TypeScript.IncrementalParserTests = IncrementalParserTests;
@@ -57826,7 +57829,7 @@ var Diff;
             var htmlTrailer = '</body></html>';
 
             if (Environment.fileExists(this.reportFileName)) {
-                this.reportContent = Environment.readFile(this.reportFileName);
+                this.reportContent = Environment.readFile(this.reportFileName).contents();
             } else {
                 this.reportContent = HtmlBaselineReport.htmlLeader;
             }
@@ -57854,7 +57857,7 @@ var Diff;
             this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
             this.reportContent += HtmlBaselineReport.htmlTrailer;
 
-            Environment.writeFile(this.reportFileName, this.reportContent);
+            Environment.writeFile(this.reportFileName, this.reportContent, false);
         };
         HtmlBaselineReport.htmlTrailer = '</body></html>';
         HtmlBaselineReport.htmlLeader = '<html><head><title>Baseline Report</title>' + '\r\n' + ("<style>") + '\r\n' + (".code { font: 9pt 'Courier New'; }") + '\r\n' + (".old { background-color: #EE1111; }") + '\r\n' + (".new { background-color: #FFFF11; }") + '\r\n' + (".from { background-color: #EE1111; color: #1111EE; }") + '\r\n' + (".to { background-color: #EEEE11; color: #1111EE; }") + '\r\n' + ("h2 { margin-bottom: 0px; }") + '\r\n' + ("h2 { padding-bottom: 0px; }") + '\r\n' + ("h4 { font-weight: normal; }") + '\r\n' + ("</style>");
@@ -57982,7 +57985,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */, new TypeScript.ParseOptions(true, true));
@@ -58041,7 +58044,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */, new TypeScript.ParseOptions(true, true));
@@ -58157,7 +58160,7 @@ var Program = (function () {
             if (!Environment.fileExists(expectedFile)) {
                 Environment.writeFile(expectedFile, "", false);
             } else {
-                expectedResult = Environment.readFile(expectedFile, true);
+                expectedResult = Environment.readFile(expectedFile).contents();
             }
 
             if (expectedResult !== actualResult) {
@@ -58188,7 +58191,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         totalSize += contents.length;
 
@@ -58210,7 +58213,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         totalSize += contents.length;
 
@@ -58234,7 +58237,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         totalSize += contents.length;
 
@@ -58271,7 +58274,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
 
@@ -58290,7 +58293,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion, new TypeScript.ParseOptions(true, true));
@@ -58348,7 +58351,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -58374,7 +58377,7 @@ var Program = (function () {
             return;
         }
 
-        var contents = Environment.readFile(fileName, true);
+        var contents = Environment.readFile(fileName).contents();
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -58437,7 +58440,7 @@ var Program = (function () {
                 continue;
             }
 
-            var contents = Environment.readFile(fileName, true);
+            var contents = Environment.readFile(fileName).contents();
 
             var isNegative = contents.indexOf("@negative") >= 0;
 

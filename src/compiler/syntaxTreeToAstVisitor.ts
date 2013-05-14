@@ -138,8 +138,13 @@ module TypeScript {
         private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
             var desiredMinChar = fullStart + element.leadingTriviaWidth();
             var desiredLimChar = desiredMinChar + element.width();
-            Debug.assert(!isNaN(desiredMinChar));
-            Debug.assert(!isNaN(desiredLimChar));
+
+            this.setSpanExplicit(span, desiredMinChar, desiredLimChar);
+
+            span.trailingTriviaWidth = element.trailingTriviaWidth();
+        }
+
+        private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
 
             if (span.minChar !== -1) {
                 Debug.assert(span.limChar !== -1);
@@ -147,45 +152,22 @@ module TypeScript {
 
                 // Have an existing span.  We need to adjust it so that it starts at the provided
                 // desiredMinChar.
-                
-                var delta = desiredMinChar - span.minChar;
+
+                var delta = start - span.minChar;
                 this.applyDelta(<AST>span, delta);
 
-                span.limChar = desiredLimChar;
-                span.trailingTriviaWidth = element.trailingTriviaWidth();
+                span.limChar = end;
 
-                Debug.assert(span.minChar === desiredMinChar);
-                Debug.assert(span.limChar === desiredLimChar);
+                Debug.assert(span.minChar === start);
+                Debug.assert(span.limChar === end);
             }
             else {
                 Debug.assert(span.limChar === -1);
                 // Have a new span, just set it to the lim/min we were given.
-                span.minChar = desiredMinChar;
-                span.limChar = desiredLimChar;
-                span.trailingTriviaWidth = element.trailingTriviaWidth();
+                span.minChar = start;
+                span.limChar = end;
             }
 
-            Debug.assert(span.minChar !== -1);
-            Debug.assert(span.limChar !== -1);
-        }
-
-        private setSpan1(span: ASTSpan, fullStart: number, element: ISyntaxElement): void {
-            var desiredMinChar = fullStart + element.leadingTriviaWidth();
-            var desiredLimChar = desiredMinChar + element.width();
-            Debug.assert(!isNaN(desiredMinChar));
-            Debug.assert(!isNaN(desiredLimChar));
-
-            span.minChar = desiredMinChar;
-            span.limChar = desiredLimChar;
-            span.trailingTriviaWidth = element.trailingTriviaWidth();
-
-            Debug.assert(span.minChar !== -1);
-            Debug.assert(span.limChar !== -1);
-        }
-
-        private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
-            span.minChar = start;
-            span.limChar = end;
             Debug.assert(!isNaN(span.minChar));
             Debug.assert(!isNaN(span.limChar));
             Debug.assert(span.minChar !== -1);
@@ -2985,7 +2967,7 @@ module TypeScript {
                 this.movePast(node.doKeyword);
                 var statement = node.statement.accept(this);
                 var whileSpan = new ASTSpan();
-                this.setSpan1(whileSpan, this.position, node.whileKeyword);
+                this.setSpan(whileSpan, this.position, node.whileKeyword);
 
                 this.movePast(node.whileKeyword);
                 this.movePast(node.openParenToken);
