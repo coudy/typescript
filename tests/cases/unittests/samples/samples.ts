@@ -158,11 +158,11 @@ describe('Compiling samples', function ()
            "win8/encyclopedia/Encyclopedia/js/win.ts"
        ]
 
-       Harness.Compiler.recreate();
-       Harness.Compiler.reset();       
+       Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+       Harness.Compiler.reset(Harness.Compiler.CompilerInstance.RunTime);       
 
        addUnitsAndCompile(units);
-        var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
+       var errLines = Harness.Compiler.reportCompilationErrors(Harness.Compiler.CompilerInstance.RunTime, units);
        // if (errLines.length) {
        //  WScript.Echo("Errors: " + errLines);
        // }       
