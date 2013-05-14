@@ -8,6 +8,7 @@ var a;
 var b;
 
 a = b;
+
 ////[0.d.ts]
 declare class C<T> {
     private x;

@@ -281,6 +281,7 @@ var cProperties = (function () {
 var cProperties_i = new cProperties();
 cProperties_i.p2 = cProperties_i.p1;
 cProperties_i.nc_p2 = cProperties_i.nc_p1;
+
 ////[0.d.ts]
 /** This is comment for c1*/
 declare class c1 {

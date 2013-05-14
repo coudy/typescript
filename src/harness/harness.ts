@@ -717,19 +717,21 @@ module Harness {
 
         /** Mimics having multiple files, later concatenated to a single file. */
         export class EmitterIOHost implements TypeScript.EmitterIOHost {
-
             private fileCollection = {};
 
             /** create file gets the whole path to create, so this works as expected with the --out parameter */
-            public createFile(s: string, useUTF8?: boolean): ITextWriter {
-
+            public writeFile(s: string, contents: string, writeByteOrderMark: boolean): void {
+                var writer: ITextWriter;
                 if (this.fileCollection[s]) {
-                    return <ITextWriter>this.fileCollection[s];
+                    writer = <ITextWriter>this.fileCollection[s];
+                }
+                else {
+                    writer = new Harness.Compiler.WriterAggregator();
+                    this.fileCollection[s] = writer;
                 }
 
-                var writer = new Harness.Compiler.WriterAggregator();
-                this.fileCollection[s] = writer;
-                return writer;
+                writer.Write(contents);
+                writer.Close();
             }
 
             public directoryExists(s: string) { return false; }
@@ -1097,7 +1099,7 @@ module Harness {
             constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[], public scripts: TypeScript.Script[]) {
                 var lines = [];
                 fileResults.forEach(v => lines = lines.concat(v.file.lines));
-                this.code = lines.join("\n")
+                this.code = lines.join("\r\n")
 
                 this.errors = [];
 
@@ -2014,7 +2016,7 @@ module Harness {
             // Store the content in the 'local' folder so we
             // can accept it later (manually)
             if (actual !== null) {
-                IO.writeFile(actualFilename, actual);
+                IO.writeFile(actualFilename, actual, /*writeByteOrderMark:*/ false);
             }
 
             return actual;

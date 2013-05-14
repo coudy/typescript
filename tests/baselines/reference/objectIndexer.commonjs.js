@@ -4,3 +4,4 @@ var Emitter = (function () {
     }
     return Emitter;
 })();
+

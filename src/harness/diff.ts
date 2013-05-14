@@ -832,7 +832,7 @@ module Diff {
             this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
             this.reportContent += HtmlBaselineReport.htmlTrailer;
 
-            Environment.writeFile(this.reportFileName, this.reportContent);
+            Environment.writeFile(this.reportFileName, this.reportContent, /*writeByteOrderMark:*/ false);
         }
     }
 }

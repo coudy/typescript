@@ -15,6 +15,7 @@ var bar = (function () {
     };
     return bar;
 })();
+
 ////[0.d.ts]
 interface bar {
 }

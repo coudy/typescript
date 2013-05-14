@@ -1286,7 +1286,7 @@ module FourSlash {
         Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
-            createFile: (s) => fsOutput,
+            writeFile: (path: string, contents: string, writeByteOrderMark: boolean) => fsOutput.Write(contents),
             directoryExists: (s: string) => false,
             fileExists: (s: string) => true,
             resolvePath: (s: string)=>s

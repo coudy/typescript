@@ -188,7 +188,7 @@ class JSONLogger extends Harness.Logger {
     }
 
     public end() {
-        IO.writeFile(this.path, JSON.stringify(this.root));
+        IO.writeFile(this.path, JSON.stringify(this.root), /*writeByteOrderMark:*/ false);
     }
 }
 

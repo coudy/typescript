@@ -4,6 +4,7 @@ var v2;
 var v4;
 var v5;
 var v7;
+
 ////[0.d.ts]
 interface A {
     a: string;

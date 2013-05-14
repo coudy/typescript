@@ -24,3 +24,4 @@ exports.B = B;
 
 var reg;
 reg.register(B);
+

@@ -69,6 +69,7 @@ m2.foo(function () {
 var f2 = function () {
     return "string";
 };
+
 ////[0.d.ts]
 declare function simpleFunc(): string;
 declare var simpleFuncVar: () => string;

@@ -193,6 +193,7 @@ var m3cVar = new mAmbient.m3.C();
 var m3aVar = mAmbient.m3.aVar;
 var m3bB;
 var m3eVar;
+
 ////[0.d.ts]
 declare module a {
 }

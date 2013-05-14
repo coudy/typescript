@@ -7,6 +7,7 @@ var C = (function () {
 var v1;
 
 var y = v1.x;
+
 ////[0.d.ts]
 declare class C<T> {
     public x: T;

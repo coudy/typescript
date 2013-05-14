@@ -56,7 +56,7 @@ module TypeScript {
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
-        createFile(path: string, useUTF8?: boolean): ITextWriter;
+        writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
 
         // function to check if file exists on the disk
         fileExists(path: string): boolean;
@@ -338,11 +338,18 @@ module TypeScript {
             return result;
         }
 
-        private useUTF8ForFile(script: Script) {
+        private writeByteOrderMarkForDocument(document: Document) {
             if (this.emitOptions.outputMany) {
-                return this.outputScriptToUTF8(script);
+                return document.byteOrderMark !== ByteOrderMark.None;
             } else {
-                return this.outputScriptsToUTF8(this.getScripts());
+                var fileNames = this.fileNameToDocument.getAllKeys();
+
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var document = this.getDocument(fileNames[i]);
+                    return document.byteOrderMark !== ByteOrderMark.None;
+                }
+
+                return false;
             }
         }
 
@@ -370,7 +377,7 @@ module TypeScript {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(document.fileName, TypeScriptCompiler.mapToDTSFileName);
                     declarationEmitter = new DeclarationEmitter(
-                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
+                        declareFileName, this.semanticInfoChain, this.emitOptions, document.byteOrderMark !== ByteOrderMark.None);
                 }
 
                 declarationEmitter.fileName = document.fileName;
@@ -472,14 +479,14 @@ module TypeScript {
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = this.createFile(javaScriptFileName, this.useUTF8ForFile(script));
+                    var outFile = this.createFile(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
 
                     emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
                         var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
                         emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile,
-                        this.createFile(sourceMapFileName, /*isUTF8:*/ false), this.settings.emitFullSourceMapPath));
+                            this.createFile(sourceMapFileName, /*writeByteOrderMark:*/ false), this.settings.emitFullSourceMapPath));
                     }
 
                     if (inputOutputMapper) {
@@ -494,7 +501,7 @@ module TypeScript {
 
                 // Set location info
                 emitter.setDocument(document);
-                emitter.emitJavascript(script, false);
+                emitter.emitJavascript(script, /*startLine:*/false);
             }
 
             return emitter;
@@ -584,23 +591,8 @@ module TypeScript {
             }
         }
 
-        private outputScriptToUTF8(script: Script): boolean {
-            return script.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && script.containsUnicodeCharInComment);
-        }
-
-        private outputScriptsToUTF8(scripts: Script[]): boolean {
-            for (var i = 0, len = scripts.length; i < len; i++) {
-                var script = scripts[i];
-                if (this.outputScriptToUTF8(script)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
-            // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-            return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+        private createFile(fileName: string, writeByteOrderMark: boolean): ITextWriter {
+            return new TextWriter(this.emitOptions.ioHost, fileName, writeByteOrderMark);
         }
 
         //

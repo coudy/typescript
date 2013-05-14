@@ -24,3 +24,4 @@ var Test = (function () {
     return Test;
 })();
 exports.Test = Test;
+

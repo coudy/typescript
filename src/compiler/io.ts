@@ -28,8 +28,7 @@ interface IFileWatcher {
 
 interface IIO {
     readFile(path: string): FileInformation;
-    writeFile(path: string, contents: string): void;
-    createFile(path: string, useUTF8?: boolean): ITextWriter;
+    writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
     deleteFile(path: string): void;
     dir(path: string, re?: RegExp, options?: { recursive?: boolean; }): string[];
     fileExists(path: string): boolean;
@@ -64,11 +63,11 @@ module IOUtils {
     }
 
     // Creates a file including its directory structure if not already present
-    export function createFileAndFolderStructure(ioHost: IIO, fileName: string, useUTF8?: boolean) {
+    export function writeFileAndFolderStructure(ioHost: IIO, fileName: string, contents: string, writeByteOrderMark: boolean) {
         var path = ioHost.resolvePath(fileName);
         var dirName = ioHost.dirName(path);
         createDirectoryStructure(ioHost, dirName);
-        return ioHost.createFile(path, useUTF8);
+        return ioHost.writeFile(path, contents, writeByteOrderMark);
     }
 
     export function throwIOError(message: string, error: Error) {
@@ -134,10 +133,8 @@ var IO = (function() {
                 return Environment.readFile(path);
             },
 
-            writeFile: function(path, contents) {
-                var file = this.createFile(path);
-                file.Write(contents);
-                file.Close();
+            writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
+                Environment.writeFile(path, contents, writeByteOrderMark);
             },
 
             fileExists: function(path: string): boolean {
@@ -184,33 +181,6 @@ var IO = (function() {
                     }
                 } catch (e) {
                     IOUtils.throwIOError("Couldn't delete file '" + path + "'.", e);
-                }
-            },
-
-            createFile: function (path, useUTF8?) {
-                try {
-                    var streamObj = getStreamObject();
-                    streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-                    streamObj.Open();
-                    return {
-                        Write: function (str) { streamObj.WriteText(str, 0); },
-                        WriteLine: function (str) { streamObj.WriteText(str, 1); },
-                        Close: function() {
-                            try {
-                                streamObj.SaveToFile(path, 2);
-                            } catch (saveError) {
-                                IOUtils.throwIOError("Couldn't write to file '" + path + "'.", saveError);
-                            }
-                            finally {
-                                if (streamObj.State != 0 /*adStateClosed*/) {
-                                    streamObj.Close();
-                                }
-                                releaseStreamObject(streamObj);
-                            }
-                        }
-                    };
-                } catch (creationError) {
-                    IOUtils.throwIOError("Couldn't write to file '" + path + "'.", creationError);
                 }
             },
 
@@ -304,7 +274,10 @@ var IO = (function() {
                 return Environment.readFile(file);
             },
 
-            writeFile: <(path: string, contents: string) => void >_fs.writeFileSync,
+            writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
+                Environment.writeFile(path, contents, writeByteOrderMark);
+            },
+
             deleteFile: function(path) {
                 try {
                     _fs.unlinkSync(path);
@@ -315,32 +288,7 @@ var IO = (function() {
             fileExists: function(path): boolean {
                 return _fs.existsSync(path);
             },
-            createFile: function(path, useUTF8?) {
-                function mkdirRecursiveSync(path) {
-                    var stats = _fs.statSync(path);
-                    if (stats.isFile()) {
-                        IOUtils.throwIOError("\"" + path + "\" exists but isn't a directory.", null);
-                    } else if (stats.isDirectory()) {
-                        return;
-                    } else {
-                        mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 0775);
-                    }
-                }
 
-                mkdirRecursiveSync(_path.dirname(path));
-
-                try {
-                    var fd = _fs.openSync(path, 'w');
-                } catch (e) {
-                    IOUtils.throwIOError("Couldn't write to file '" + path + "'.", e);
-                }
-                // Writing to a buffer to improve performance
-                return new IOUtils.BufferedTextWriter({
-                    Write: function (str) { _fs.writeSync(fd, str); },
-                    Close: function () { _fs.closeSync(fd); fd = null; }
-                });
-            },
             dir: function dir(path, spec?, options?) {
                 options = options || <{ recursive?: boolean; }>{};
 

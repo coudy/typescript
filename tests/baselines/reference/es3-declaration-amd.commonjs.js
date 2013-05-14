@@ -6,6 +6,7 @@ var A = (function () {
     };
     return A;
 })();
+
 ////[0.d.ts]
 declare class A {
     constructor();

@@ -26,6 +26,7 @@ var lambddaNoVarComment = /** this is lambda multiplication*/ function (/**param
 };
 lambdaFoo(10, 20);
 lambddaNoVarComment(10, 20);
+
 ////[0.d.ts]
 /** This comment should appear for foo*/
 declare function foo(): void;

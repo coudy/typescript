@@ -1836,15 +1836,5 @@ module TypeScript {
 
             throw e;
         }
-
-        // Note: throws exception.  
-        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
-            try {
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
-            }
-            catch (e) {
-                Emitter.throwEmitterError(e);
-            }
-        }
     }
 }

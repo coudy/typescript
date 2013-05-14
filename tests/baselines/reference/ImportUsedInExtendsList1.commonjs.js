@@ -12,3 +12,4 @@ var Sub = (function (_super) {
     }
     return Sub;
 })(foo.Super);
+

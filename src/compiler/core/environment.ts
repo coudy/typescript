@@ -29,7 +29,7 @@ class FileInformation {
 
 interface IEnvironment {
     readFile(path: string): FileInformation;
-    writeFile(path: string, contents: string, useUTF8?: boolean): void;
+    writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
     deleteFile(path: string): void;
     fileExists(path: string): boolean;
     directoryExists(path: string): boolean;
@@ -81,7 +81,10 @@ var Environment = (function () {
                     var streamObj = getStreamObject();
                     streamObj.Open();
                     streamObj.Type = 2; // Text data
-                    streamObj.Charset = 'x-ansi'; 
+
+                    // Start reading individual chars without any interpretation.  That way we can check for a bom.
+                    streamObj.Charset = 'x-ansi';
+
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2); // Read the BOM char
 
@@ -97,7 +100,8 @@ var Environment = (function () {
                     else if (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE) {
                         streamObj.Charset = 'unicode';
                         byteOrderMark = ByteOrderMark.Utf16LittleEndian;
-                    } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
+                    }
+                    else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
                         streamObj.Charset = 'utf-8';
                         byteOrderMark = ByteOrderMark.Utf8;
                     }
@@ -117,10 +121,33 @@ var Environment = (function () {
                 }
             },
 
-            writeFile: function (path, contents, useUTF8: boolean = false) {
-                var file = this.createFile(path, useUTF8);
-                file.Write(contents);
-                file.Close();
+            writeFile: function (path, contents, writeByteOrderMark: boolean) {
+                // First, convert the text contents passed in to binary in UTF8 format.
+                var textStream = getStreamObject();
+                textStream.Charset = 'utf-8';
+                textStream.Open();
+                textStream.WriteText(contents, 0 /*do not add newline*/);
+
+                // If they don't want the BOM, then skip it (it will be added autoamtically
+                // when we write the utf8 bytes out above).
+                if (!writeByteOrderMark) {
+                    textStream.Position = 3;
+                }
+
+                // Now, write all those bytes out to a file.
+                var fileStream = getStreamObject();
+                fileStream.Type = 1; //binary data.
+                fileStream.Open();
+
+                textStream.CopyTo(fileStream);
+
+                // Flush and save the file.
+                fileStream.Flush();
+                fileStream.SaveToFile(path, 2 /*overwrite*/);
+                fileStream.Close();
+
+                textStream.Flush();
+                textStream.Close();
             },
 
             fileExists: function (path: string): boolean {
@@ -166,26 +193,6 @@ var Environment = (function () {
                 var paths = [];
 
                 return filesInFolder(folder, path);
-            },
-
-            createFile: function (path, useUTF8: boolean = false) {
-                try {
-                    var streamObj = getStreamObject();
-                    streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
-                    streamObj.Open();
-                    return {
-                        Write: function (str) { streamObj.WriteText(str, 0); },
-                        WriteLine: function (str) { streamObj.WriteText(str, 1); },
-                        Close: function () {
-                            streamObj.SaveToFile(path, 2);
-                            streamObj.Close();
-                            releaseStreamObject(streamObj);
-                        }
-                    };
-                } catch (ex) {
-                    WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
-                    throw ex;
-                }
             },
 
             arguments: <string[]>args,
@@ -238,13 +245,24 @@ var Environment = (function () {
                 return new FileInformation(buffer.toString("utf8", 0), ByteOrderMark.None);
             },
 
-            writeFile: function (path: string, contents: string, useUTF?: boolean) {
-                if (useUTF) {
-                    _fs.writeFileSync(path, contents, "utf8");
+            writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
+                function mkdirRecursiveSync(path) {
+                    var stats = _fs.statSync(path);
+                    if (stats.isFile()) {
+                        throw "\"" + path + "\" exists but isn't a directory.";
+                    } else if (stats.isDirectory()) {
+                        return;
+                    } else {
+                        mkdirRecursiveSync(_path.dirname(path));
+                        _fs.mkdirSync(path, 0775);
+                    }
                 }
-                else {
-                    _fs.writeFileSync(path, contents);
+                mkdirRecursiveSync(_path.dirname(path));
+
+                if (writeByteOrderMark) {
+                    contents = '\uFEFF' + contents;
                 }
+                _fs.writeFileSync(path, contents, "utf8");
             },
             
             fileExists: function(path): boolean {
@@ -282,28 +300,6 @@ var Environment = (function () {
                 }
 
                 return filesInFolder(path);
-            },
-
-            createFile: function(path, useUTF8?) {
-                function mkdirRecursiveSync(path) {
-                    var stats = _fs.statSync(path);
-                    if (stats.isFile()) {
-                        throw "\"" + path + "\" exists but isn't a directory.";
-                    } else if (stats.isDirectory()) {
-                        return;
-                    } else {
-                        mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 0775);
-                    }
-                }
-                mkdirRecursiveSync(_path.dirname(path));
-
-                var fd = _fs.openSync(path, 'w');
-                return {
-                    Write: function(str) { _fs.writeSync(fd, str); },
-                    WriteLine: function(str) { _fs.writeSync(fd, str + '\r\n'); },
-                    Close: function() { _fs.closeSync(fd); fd = null; }
-                };
             },
 
             arguments: process.argv.slice(2),

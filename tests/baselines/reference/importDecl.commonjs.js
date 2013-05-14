@@ -38,6 +38,7 @@ exports.useMultiImport_m4_x4 = multiImport_m4.x;
 exports.useMultiImport_m4_d4 = multiImport_m4.d;
 exports.useMultiImport_m4_f4 = multiImport_m4.foo();
 
+
 ////[0.d.ts]
 export declare var x4: m4.d;
 export declare var d4: new() => m4.d;

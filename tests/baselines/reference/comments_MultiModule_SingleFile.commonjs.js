@@ -39,6 +39,7 @@ var multiM;
 })(multiM || (multiM = {}));
 new multiM.b();
 new multiM.c();
+
 ////[0.d.ts]
 /** this is multi declare module*/
 declare module multiM {

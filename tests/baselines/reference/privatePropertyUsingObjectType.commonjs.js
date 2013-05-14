@@ -4,3 +4,4 @@ var FilterManager = (function () {
     return FilterManager;
 })();
 exports.FilterManager = FilterManager;
+

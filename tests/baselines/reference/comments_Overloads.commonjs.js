@@ -93,6 +93,7 @@ var c4_i_1 = new c4(10);
 var c4_i_2 = new c4("hello");
 var c5_i_1 = new c5(10);
 var c5_i_2 = new c5("hello");
+
 ////[0.d.ts]
 /** this is signature 1*/
 declare function f1(/**param a*/ a: number): number;

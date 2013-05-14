@@ -79,6 +79,7 @@ for (var k = 0; k < 30; k++) {
     k++;
 }
 var b = 10;
+
 ////[0.d.ts]
 declare var simpleVar;
 declare var anotherVar: any;

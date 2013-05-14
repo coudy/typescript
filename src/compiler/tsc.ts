@@ -210,7 +210,7 @@ class BatchCompiler {
         }  
 
         var emitterIOHost = {
-            createFile: (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
+            writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark),
             directoryExists: this.ioHost.directoryExists,
             fileExists: this.ioHost.fileExists,
             resolvePath: this.ioHost.resolvePath

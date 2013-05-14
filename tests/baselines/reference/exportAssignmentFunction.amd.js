@@ -7,6 +7,7 @@ define(["require", "exports"], function(require, exports) {
     
     return foo;
 });
+
 ////[exportEqualsFunction_B.js]
 define(["require", "exports", "exportEqualsFunction_A"], function(require, exports, __fooFunc__) {
     var fooFunc = __fooFunc__;

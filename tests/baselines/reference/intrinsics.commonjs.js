@@ -20,6 +20,7 @@ var Foo = (function () {
     return Foo;
 })();
 var foo;
+
 ////[0.d.ts]
 declare var hasOwnProperty: any;
 declare module m1 {

@@ -2,6 +2,7 @@
 define(["require", "exports"], function(require, exports) {
     
 });
+
 ////[exportEqualsInterface_B.js]
 define(["require", "exports"], function(require, exports) {
     

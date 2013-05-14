@@ -5,3 +5,4 @@ function log(n) {
 }
 
 void log(exports.foo).toString();
+

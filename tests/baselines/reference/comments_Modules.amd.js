@@ -181,6 +181,7 @@ var m7;
     var m8 = m7.m8;
 })(m7 || (m7 = {}));
 new m7.m8.m9.c();
+
 ////[0.d.ts]
 /** Module comment*/
 declare module m1 {

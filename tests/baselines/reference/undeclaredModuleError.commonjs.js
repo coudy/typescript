@@ -19,3 +19,4 @@ function instrumentFile(covFileDir, covFileName, originalFilePath) {
         });
     });
 }
+

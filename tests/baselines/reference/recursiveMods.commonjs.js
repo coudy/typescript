@@ -27,3 +27,4 @@ var Foo = exports.Foo;
     }
 })(exports.Foo || (exports.Foo = {}));
 var Foo = exports.Foo;
+

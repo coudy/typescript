@@ -61,6 +61,7 @@ var m1;
     })();
     m1.b = b;
 })(m1 || (m1 = {}));
+
 ////[0.d.ts]
 /** Variable comments*/
 declare var myVariable: number;

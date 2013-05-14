@@ -34,6 +34,7 @@ i3_i.f(10);
 i3_i.l(10);
 i3_i.nc_f(10);
 i3_i.nc_l(10);
+
 ////[0.d.ts]
 /** this is interface 1*/
 interface i1 {

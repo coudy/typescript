@@ -128,6 +128,7 @@ var i3_i;
 
 // assign to interface
 i2_i = i3_i;
+
 ////[0.d.ts]
 /** i1 is interface with properties*/
 interface i1 {

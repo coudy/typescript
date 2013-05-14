@@ -65,6 +65,7 @@ var c8 = (function () {
 })();
 var i8 = new c8();
 var i8_c = c8;
+
 ////[0.d.ts]
 /** This is class c2 without constuctor*/
 declare class c2 {

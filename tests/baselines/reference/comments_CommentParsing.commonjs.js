@@ -155,6 +155,7 @@ var NoQuickInfoClass = (function () {
     }
     return NoQuickInfoClass;
 })();
+
 ////[0.d.ts]
 declare function simple(): void;
 declare function multiLine(): void;

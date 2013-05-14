@@ -90,10 +90,10 @@ module CollateralGenerator {
         }
 
         options.logMethod("Writing test case to " + testFileLocation);
-        IO.writeFile(testFileLocation, testCase);
+        IO.writeFile(testFileLocation, testCase, /*writeByteOrderMark:*/ false);
         if(!!codeBaseline) {
             options.logMethod("Writing baseline file to " + codeBaselineLocation);
-            IO.writeFile(codeBaselineLocation, codeBaseline);
+            IO.writeFile(codeBaselineLocation, codeBaseline, /*writeByteOrderMark:*/ false);
         } else {
             options.logMethod("Using inline code baseline");
         }

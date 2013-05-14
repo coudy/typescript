@@ -268,10 +268,10 @@ module Services {
             }
 
             var emitterIOHost: TypeScript.EmitterIOHost = {
-                createFile: (fileName: string, useUTF8encoding: boolean = false) => {
-                    var outputFile = new EmitOutputTextWriter(fileName, useUTF8encoding);
+                writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
+                    var outputFile = new EmitOutputTextWriter(fileName, writeByteOrderMark);
+                    outputFile.Write(contents);
                     result.outputFiles.push(outputFile);
-                    return outputFile;
                 },
                 directoryExists: (fileName: string) => true,
                 fileExists: (fileName: string) => false,

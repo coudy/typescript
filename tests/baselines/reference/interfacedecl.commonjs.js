@@ -4,6 +4,7 @@ var c1 = (function () {
     return c1;
 })();
 var instance2 = new c1();
+
 ////[0.d.ts]
 interface a0 {
     (): string;

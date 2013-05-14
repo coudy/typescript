@@ -35,6 +35,7 @@ var M;
     })();
     M.D = D;
 })(M || (M = {}));
+
 ////[0.d.ts]
 declare module M {
     class E {

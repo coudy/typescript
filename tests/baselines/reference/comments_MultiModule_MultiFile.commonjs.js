@@ -33,6 +33,7 @@ var multiM;
 
 new multiM.b();
 new multiM.c();
+
 ////[comments_MultiModule_MultiFile_1.js]
 /** this is multi module 3 comment*/
 var multiM;
@@ -54,6 +55,7 @@ var multiM;
     multiM.f = f;
 })(multiM || (multiM = {}));
 new multiM.d();
+
 ////[comments_MultiModule_MultiFile_0.d.ts]
 /** this is multi declare module*/
 declare module multiM {
@@ -68,6 +70,7 @@ declare module multiM {
     class e {
     }
 }
+
 ////[comments_MultiModule_MultiFile_1.d.ts]
 /** this is multi module 3 comment*/
 declare module multiM {

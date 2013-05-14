@@ -91,8 +91,8 @@ class HarnessBatch {
 
         this.harnessCompile = function (
             files: string[],
-            createEmitFiles: (path: string, useUTF8?: boolean) => ITextWriter,
-            createDeclareFile: (path: string, useUTF8?: boolean) => ITextWriter) {
+            writeEmitFiles: (path: string, contents: string, writeByteOrderMark: boolean) => void,
+            writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
             TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } }
 
             this.errout.reset();
@@ -112,7 +112,7 @@ class HarnessBatch {
             // resolve file dependencies
             this.resolvedEnvironment = this.resolve();
 
-            this.compile(createEmitFiles, createDeclareFile);
+            this.compile(writeEmitFiles, writeDeclareFile);
         }
     }
 
@@ -124,8 +124,8 @@ class HarnessBatch {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     private compile(
-        createEmitFile: (path: string, useUTF8?: boolean) => ITextWriter,
-        createDeclareFile: (path: string, useUTF8?: boolean) => ITextWriter) {
+        writeEmitFile: (path: string, contents: string, writeByteOrderMark: boolean) => void,
+        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
         
         var compiler: TypeScript.TypeScriptCompiler;
         var _self = this;        
@@ -167,7 +167,7 @@ class HarnessBatch {
 
         compiler.pullTypeCheck();
         var emitterIOHost = {
-            createFile: createEmitFile,
+            writeFile: writeEmitFile,
             directoryExists: IO.directoryExists,
             fileExists: IO.fileExists,
             resolvePath: IO.resolvePath
@@ -187,7 +187,7 @@ class HarnessBatch {
         var emitDiagnostics = compiler.emitAll(emitterIOHost);
         compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);    
 
-        emitterIOHost.createFile = createDeclareFile;
+        emitterIOHost.writeFile = writeDeclareFile;
         compiler.emitOptions.ioHost = emitterIOHost;
 
         var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
@@ -291,7 +291,7 @@ class ProjectRunner extends RunnerBase {
                     return writeGeneratedFile(generatedEmitFiles, fn);
                 }
 
-                var writeEmitFile = (fileName: string, useUTF8?: boolean) => IOUtils.createFileAndFolderStructure(IO, fileName, useUTF8);
+                var writeEmitFile = (fileName: string, contents: string, writeByteOrderMark: boolean) => IOUtils.writeFileAndFolderStructure(IO, fileName, contents, writeByteOrderMark);
                 var verifyEmitFiles = false;
                 if (spec.verifyEmitFiles) {
                     verifyEmitFiles = true;
@@ -325,10 +325,8 @@ class ProjectRunner extends RunnerBase {
                         }
                         var fileContents = generatedFiles[i].file.lines.join("\n");
                         var localFileName = baseFileName + "local/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
-                        var localFile = IOUtils.createFileAndFolderStructure(IO, localFileName);
+                        var localFile = IOUtils.writeFileAndFolderStructure(IO, localFileName, fileContents, /*writeByteOrderMark:*/ false);
                         var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
-                        localFile.Write(fileContents);
-                        localFile.Close();
                         Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName).contents());
                     }
                 }
@@ -450,7 +448,7 @@ class ProjectRunner extends RunnerBase {
 
                     if (testExec && !spec.skipRun) {
                         var moduleName = spec.outputFiles[0].replace(/\.js$/, "");
-                        IO.writeFile(spec.projectRoot + '/driver.js', amdDriverTemplate.replace(/\{0}/g, moduleName));
+                        IO.writeFile(spec.projectRoot + '/driver.js', amdDriverTemplate.replace(/\{0}/g, moduleName), /*writeByteOrderMark:*/false);
 
                         it("runs without error", function (done) {
                             Exec.exec("node.exe", ['"' + spec.projectRoot + '/driver.js"'], function (res) {

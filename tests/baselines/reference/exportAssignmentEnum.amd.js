@@ -10,6 +10,7 @@ define(["require", "exports"], function(require, exports) {
     
     return E;
 });
+
 ////[exportEqualsEnum_B.js]
 define(["require", "exports", "exportEqualsEnum_A"], function(require, exports, __EnumE__) {
     var EnumE = __EnumE__;

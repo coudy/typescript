@@ -16,24 +16,26 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export class DeclFileWriter {
+    export class TextWriter implements ITextWriter {
+        private contents = "";
         public onNewLine = true;
-        constructor(private declFile: ITextWriter) {
+        constructor(private ioHost: EmitterIOHost, private path: string, private writeByteOrderMark: boolean) {
         }
 
         public Write(s: string) {
-            this.declFile.Write(s);
+            this.contents += s;
             this.onNewLine = false;
         }
 
         public WriteLine(s: string) {
-            this.declFile.WriteLine(s);
+            this.contents += s;
+            this.contents += "\r\n";
             this.onNewLine = true;
         }
 
         public Close() {
             try {
-                this.declFile.Close();
+                this.ioHost.writeFile(this.path, this.contents, this.writeByteOrderMark);
             }
             catch (e) {
                 Emitter.throwEmitterError(e);
@@ -43,22 +45,20 @@ module TypeScript {
     
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
         public fileName: string = null;
-        private declFile: DeclFileWriter = null;
+        private declFile: TextWriter = null;
         private indenter = new Indenter();
         private declarationContainerStack: AST[] = [];
         private isDottedModuleName: boolean[] = [];
         private dottedModuleEmit: string;
         private ignoreCallbackAst: AST = null;
-        private singleDeclFile: DeclFileWriter = null;
+        private singleDeclFile: TextWriter = null;
         private varListCount: number = 0;
 
         constructor(private emittingFileName: string,
-                    isUTF8: boolean,
                     private semanticInfoChain: SemanticInfoChain,
-                    public emitOptions: EmitOptions) {
-            // Creating files can cause exceptions, report them.   
-            var file = this.createFile(emittingFileName, isUTF8);
-            this.declFile = new DeclFileWriter(file);
+                    public emitOptions: EmitOptions,
+                    private writeByteOrderMark: boolean) {
+            this.declFile = new TextWriter(emitOptions.ioHost, emittingFileName, writeByteOrderMark);
         }
 
         public widenType(type: PullTypeSymbol) {
@@ -72,15 +72,6 @@ module TypeScript {
         public close() {
             try {
                 this.declFile.Close();
-            }
-            catch (e) {
-                Emitter.throwEmitterError(e);
-            }
-        }
-
-        private createFile(fileName: string, useUTF8: boolean): ITextWriter {
-            try {
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             }
             catch (e) {
                 Emitter.throwEmitterError(e);
@@ -782,7 +773,7 @@ module TypeScript {
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
 
                             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-                            this.declFile = new DeclFileWriter(this.createFile(declareFileName, useUTF8InOutputfile));
+                            this.declFile = new TextWriter(this.emitOptions.ioHost, declareFileName, this.writeByteOrderMark);
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     }

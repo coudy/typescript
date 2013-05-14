@@ -119,6 +119,7 @@ var e = (function () {
     };
     return e;
 })();
+
 ////[0.d.ts]
 declare class a {
     constructor(n: number);

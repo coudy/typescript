@@ -6,7 +6,9 @@ function foo() {
 
 module.exports = foo;
 
+
 ////[exportEqualsFunction_B.js]
 var fooFunc = require("./exportEqualsFunction_A");
 
 var n = fooFunc();
+

@@ -41,6 +41,7 @@ var x2 = z2;
 
 var n4;
 n4 = z2;
+
 ////[0.d.ts]
 /** Variable comments*/
 declare var myVariable: number;
