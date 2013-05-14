@@ -844,17 +844,21 @@ module FourSlash {
             }
         }
 
-        public verifySmartIndentLevel(numberOfTabs: number) {
-            var actual = this.languageService.getSmartIndentAtLineNumber(this.activeFile.fileName, this.currentCaretPosition, new Services.EditorOptions()) / 4;
-            if (actual != numberOfTabs) {
-                throw new Error('verifySmartIndentLevel failed - expected tab depth to be ' + numberOfTabs + ', but was ' + actual);
+        private getIndentation(fileName: string, position: number): number {
+            return this.languageService.getIndentationAtPosition(fileName, position, this.formatCodeOptions);
+        }
+
+        public verifyIndentationAtCurrentPosition(numberOfSpacess: number) {
+            var actual = this.getIndentation(this.activeFile.fileName, this.currentCaretPosition);
+            if (actual != numberOfSpacess) {
+                throw new Error('verifyIndentationAtCurrentPosition failed - expected: ' + numberOfSpacess + ', actual: ' + actual);
             }
         }
 
-        public verifyIndentationLevelAtPosition(position: number, numberOfTabs: number) {
-            var actual = this.languageService.getSmartIndentAtLineNumber(this.activeFile.fileName, position, new Services.EditorOptions());
-            if (actual !== numberOfTabs) {
-                throw new Error('verifyIndentationLevelAtPosition failed - expected: ' + numberOfTabs + ', actual: ' + actual);
+        public verifyIndentationAtPosition(fileName: string, position: number, numberOfSpacess: number) {
+            var actual = this.getIndentation(fileName, position);
+            if (actual !== numberOfSpacess) {
+                throw new Error('verifyIndentationAtPosition failed - expected: ' + numberOfSpacess + ', actual: ' + actual);
             }
         }
 
@@ -973,10 +977,6 @@ module FourSlash {
             if (actual.length !== 0) {
                 throw new Error('verifyNoMatchingBracePosition failed - expected: 0 spans, actual: ' + actual.length);
             }
-        }
-
-        public verifyIndentationLevelAtCurrentPosition(numberOfTabs: number) {
-            this.verifyIndentationLevelAtPosition(this.currentCaretPosition, numberOfTabs);
         }
 
         public verifyTypesAgainstFullCheckAtPositions(positions: number[]) {

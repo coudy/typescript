@@ -8,4 +8,4 @@
 
 goTo.marker();
 edit.insert('\n');
-verify.smartIndentLevelIs(1);
+verify.indentationIs(4);

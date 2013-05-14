@@ -281,12 +281,12 @@ module Services {
         }
 
         
-        public getSmartIndentAtLineNumber(fileName: string, position: number, options: Services.EditorOptions): number {
+        public getIndentationAtPosition(fileName: string, position: number, options: Services.EditorOptions): number {
 
             var args = "fileName: " + this.stringify(fileName) + " position: " + this.stringify(position) + " options: " + this.stringify(options);
-            var result = this.internal.getSmartIndentAtLineNumber(fileName, position, options);
+            var result = this.internal.getIndentationAtPosition(fileName, position, options);
 
-            this.writeFile("getSmartIndentAtLineNumber: " + args + " result: " + this.stringify(result) + "\n");
+            this.writeFile("getIndentationAtPosition: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
 

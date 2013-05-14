@@ -6,6 +6,6 @@
 
 goTo.marker();
 edit.insert("\n");
-verify.smartIndentLevelIs(1);
+verify.indentationIs(4);
 edit.insert("}");
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

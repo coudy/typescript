@@ -9,7 +9,7 @@
 ////}
 
 goTo.marker('insideStatement');
-verify.smartIndentLevelIs(2);
+verify.indentationIs(8);
 
 goTo.marker('afterStatement');
-verify.smartIndentLevelIs(1);
+verify.indentationIs(4);

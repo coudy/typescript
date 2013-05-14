@@ -1078,7 +1078,7 @@ module Services {
         // Given a script name and position in the script, return a string representing 
         // the desired smart indent text (assuming the line is empty).
         // Return "null" in case the smart indent cannot be determined.
-        public getSmartIndentAtLineNumber(fileName: string, position: number, editorOptions: EditorOptions): number {
+        public getIndentationAtPosition(fileName: string, position: number, editorOptions: EditorOptions): number {
             this.minimalRefresh();
 
             var syntaxTree = this.getSyntaxTree(fileName);
@@ -1087,7 +1087,7 @@ module Services {
             var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
             var textSnapshot = new TypeScript.Formatting.TextSnapshot(scriptText);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
-            
+
             return TypeScript.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
         }
 

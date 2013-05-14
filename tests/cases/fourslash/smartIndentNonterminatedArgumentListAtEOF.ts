@@ -5,4 +5,4 @@
 
 goTo.marker();
 // bug 665652: Cannot align the arguments of function
-//verify.smartIndentLevelIs(1);
+//verify.indentationIs(4);

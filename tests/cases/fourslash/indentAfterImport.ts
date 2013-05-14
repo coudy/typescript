@@ -3,4 +3,4 @@
 
 goTo.marker();
 edit.insert("\n");
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

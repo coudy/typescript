@@ -81,29 +81,29 @@ module Services {
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean);
-        getTypeAtPosition(fileName: string, pos: number): string;
+        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean);
+        getTypeAtPosition(fileName: string, position: number): string;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
-        getBreakpointStatementAtPosition(fileName: string, pos: number): string;
-        getSignatureAtPosition(fileName: string, pos: number): string;
+        getBreakpointStatementAtPosition(fileName: string, position: number): string;
+        getSignatureAtPosition(fileName: string, position: number): string;
 
         // Returns a JSON encoded value of the type:
         // { fileName: string; minChar: number; limChar: number; kind: string; name: string; containerKind: string; containerName: string }
         //
         // Or null value if no definition can be found.
-        getDefinitionAtPosition(fileName: string, pos: number): string;
+        getDefinitionAtPosition(fileName: string, position: number): string;
 
         // Returns a JSON encoded value of the type:
         // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
-        getReferencesAtPosition(fileName: string, pos: number): string;
+        getReferencesAtPosition(fileName: string, position: number): string;
 
         // Returns a JSON encoded value of the type:
         // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
-        getOccurrencesAtPosition(fileName: string, pos: number): string;
+        getOccurrencesAtPosition(fileName: string, position: number): string;
 
         // Returns a JSON encoded value of the type:
         // { fileName: string; minChar: number; limChar: number; isWriteAccess: boolean }[]
-        getImplementorsAtPosition(fileName: string, pos: number): string;
+        getImplementorsAtPosition(fileName: string, position: number): string;
 
         // Returns a JSON encoded value of the type:
         // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
@@ -117,8 +117,8 @@ module Services {
         // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
         getOutliningRegions(fileName: string): string;
 
-        getBraceMatchingAtPosition(fileName: string, pos: number): string;
-        getSmartIndentAtLineNumber(fileName: string, position: number, options: string/*Services.EditorOptions*/): string;
+        getBraceMatchingAtPosition(fileName: string, position: number): string;
+        getIndentationAtPosition(fileName: string, position: number, options: string/*Services.EditorOptions*/): string;
 
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
@@ -331,11 +331,11 @@ module Services {
         /// QUICKINFO
         /// Computes a string representation of the type at the requested position
         /// in the active file.
-        public getTypeAtPosition(fileName: string, pos: number): string {
+        public getTypeAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getTypeAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getTypeAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    var typeInfo = this.languageService.getTypeAtPosition(fileName, pos);
+                    var typeInfo = this.languageService.getTypeAtPosition(fileName, position);
                     return typeInfo;
                 });
         }
@@ -354,11 +354,11 @@ module Services {
 
         /// STATEMENTSPAN
         /// Computes span information of statement at the requested position in the active file.
-        public getBreakpointStatementAtPosition(fileName: string, pos: number): string {
+        public getBreakpointStatementAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getBreakpointStatementAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getBreakpointStatementAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    var spanInfo = this.languageService.getBreakpointStatementAtPosition(fileName, pos);
+                    var spanInfo = this.languageService.getBreakpointStatementAtPosition(fileName, position);
                     return spanInfo;
                 });
         }
@@ -366,11 +366,11 @@ module Services {
         /// SIGNATUREHELP
         /// Computes a string representation of the signatures at the requested position
         /// in the active file.
-        public getSignatureAtPosition(fileName: string, pos: number): string {
+        public getSignatureAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getSignatureAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getSignatureAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    var signatureInfo = this.languageService.getSignatureAtPosition(fileName, pos);
+                    var signatureInfo = this.languageService.getSignatureAtPosition(fileName, position);
                     return signatureInfo;
                 });
         }
@@ -378,31 +378,31 @@ module Services {
         /// GOTO DEFINITION
         /// Computes the definition location and file for the symbol
         /// at the requested position. 
-        public getDefinitionAtPosition(fileName: string, pos: number): string {
+        public getDefinitionAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getDefinitionAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    return this.languageService.getDefinitionAtPosition(fileName, pos);
+                    return this.languageService.getDefinitionAtPosition(fileName, position);
                 });
         }
 
         /// GET BRACE MATCHING
-        public getBraceMatchingAtPosition(fileName: string, pos: number): string {
+        public getBraceMatchingAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getBraceMatchingAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getBraceMatchingAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    var textRanges = this.languageService.getBraceMatchingAtPosition(fileName, pos);
+                    var textRanges = this.languageService.getBraceMatchingAtPosition(fileName, position);
                     return textRanges;
                 });
         }
 
         /// GET SMART INDENT
-        public getSmartIndentAtLineNumber(fileName: string, position: number, options: string /*Services.EditorOptions*/): string {
+        public getIndentationAtPosition(fileName: string, position: number, options: string /*Services.EditorOptions*/): string {
             return this.forwardJSONCall(
-                "getSmartIndentAtLineNumber(\"" + fileName + "\", " + position + ")",
+                "getIndentationAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
                     var localOptions: Services.EditorOptions = JSON.parse(options);
-                    var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, position, localOptions);
+                    var columnOffset = this.languageService.getIndentationAtPosition(fileName, position, localOptions);
                     return { value: columnOffset };
                 });
         }
@@ -411,28 +411,28 @@ module Services {
         ///  Return references to a symbol at the requested position.
         ///  References are separated by "\n".
         ///  Each reference is a "fileindex min lim" sub-string.
-        public getReferencesAtPosition(fileName: string, pos: number): string {
+        public getReferencesAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getReferencesAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getReferencesAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    return this.languageService.getReferencesAtPosition(fileName, pos);
+                    return this.languageService.getReferencesAtPosition(fileName, position);
                 });
         }
 
-        public getOccurrencesAtPosition(fileName: string, pos: number): string {
+        public getOccurrencesAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getOccurrencesAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getOccurrencesAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    return this.languageService.getOccurrencesAtPosition(fileName, pos);
+                    return this.languageService.getOccurrencesAtPosition(fileName, position);
                 });
         }
 
         /// GET IMPLEMENTORS
-        public getImplementorsAtPosition(fileName: string, pos: number): string {
+        public getImplementorsAtPosition(fileName: string, position: number): string {
             return this.forwardJSONCall(
-                "getImplementorsAtPosition(\"" + fileName + "\", " + pos + ")",
+                "getImplementorsAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    return this.languageService.getImplementorsAtPosition(fileName, pos);
+                    return this.languageService.getImplementorsAtPosition(fileName, position);
                 });
         }
 
@@ -441,11 +441,11 @@ module Services {
         /// Get a string based representation of the completions 
         /// to provide at the given source position and providing a member completion 
         /// list if requested.
-        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean) {
+        public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean) {
             return this.forwardJSONCall(
-                "getCompletionsAtPosition(\"" + fileName + "\", " + pos + ", " + isMemberCompletion + ")",
+                "getCompletionsAtPosition(\"" + fileName + "\", " + position + ", " + isMemberCompletion + ")",
                 () => {
-                    var completion = this.languageService.getCompletionsAtPosition(fileName, pos, isMemberCompletion);
+                    var completion = this.languageService.getCompletionsAtPosition(fileName, position, isMemberCompletion);
                     return completion;
                 });
         }

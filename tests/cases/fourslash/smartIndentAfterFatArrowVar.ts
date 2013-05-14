@@ -4,4 +4,4 @@
 //// /**/
 
 goTo.marker();
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

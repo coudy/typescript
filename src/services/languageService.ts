@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,28 +43,28 @@ module Services {
         getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
         getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
 
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: boolean): CompletionInfo;
-        getTypeAtPosition(fileName: string, pos: number): TypeInfo;
+        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo;
+        getTypeAtPosition(fileName: string, position: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
-        getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo;
-        getSignatureAtPosition(fileName: string, pos: number): SignatureInfo;
-        getDefinitionAtPosition(fileName: string, pos: number): DefinitionInfo[];
-        getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
-        getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
-        getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[];
+        getBreakpointStatementAtPosition(fileName: string, position: number): SpanInfo;
+        getSignatureAtPosition(fileName: string, position: number): SignatureInfo;
+        getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[];
+        getReferencesAtPosition(fileName: string, position: number): ReferenceEntry[];
+        getOccurrencesAtPosition(fileName: string, position: number): ReferenceEntry[];
+        getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[];
         getNavigateToItems(searchValue: string): NavigateToItem[];
         getScriptLexicalStructure(fileName: string): NavigateToItem[];
         getOutliningRegions(fileName: string): TypeScript.TextSpan[];
         getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[];
-        getSmartIndentAtLineNumber(fileName: string, position: number, options: Services.EditorOptions): number;
+        getIndentationAtPosition(fileName: string, position: number, options: Services.EditorOptions): number;
 
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
 
-        getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
-        getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath;
+        getAstPathToPosition(script: TypeScript.AST, position: number, useTrailingTriviaAsLimChar?: boolean, options?: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
+        getIdentifierPathToPosition(script: TypeScript.AST, position: number): TypeScript.AstPath;
 
         getEmitOutput(fileName: string): EmitOutput;
     }

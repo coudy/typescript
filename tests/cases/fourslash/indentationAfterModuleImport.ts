@@ -5,4 +5,4 @@
 goTo.marker();
 edit.insert("\n");
 // [Smart Indent] Auto indent after module import decl
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

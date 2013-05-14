@@ -10,5 +10,5 @@
 
 goTo.marker();
 edit.insert(";");
-verify.smartIndentLevelIs(3);
+verify.indentationIs(12);
 verify.currentLineContentIs("            console.log;");   // Ensure line is indented correctly and doesn't jump up to previous line on semi-colon

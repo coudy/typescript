@@ -6,7 +6,7 @@
 /////*afterModule*/
 
 goTo.marker('insideModule');
-verify.smartIndentLevelIs(1);
+verify.indentationIs(4);
 
 goTo.marker('afterModule');
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

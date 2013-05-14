@@ -15,4 +15,4 @@
 ////}
 
 goTo.marker();
-verify.smartIndentLevelIs(5);
+verify.indentationIs(20);

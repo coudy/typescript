@@ -4,4 +4,4 @@
 //// /**/
 goTo.marker();
 edit.insert('}');
-verify.smartIndentLevelIs(0);
+verify.indentationIs(0);

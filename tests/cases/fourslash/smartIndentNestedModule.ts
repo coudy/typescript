@@ -2,32 +2,17 @@
 
 ////module Foo {
 ////    module Foo2 {
-////        /*inNestedModule*/
+////        {| "indentation": 8 |}
 ////        function f() {
 ////        }
-////        /*afterFunction*/
+////        {| "indentation": 8 |}
 ////        var x: number;
-////        /*afterVariable*/
+////        {| "indentation": 8 |}
 ////    }
-////    /*afterNestedModule*/
+////    {| "indentation": 4 |}
 ////}
 
-var markAndSmartIndentLevelPair = <{ marker: string; smartIndentLevel: number; }[]>[
-    { marker: 'inNestedModule', smartIndentLevel: 2 },
-    { marker: 'afterFunction', smartIndentLevel: 2 },
-    { marker: 'afterVariable', smartIndentLevel: 2 },
-    { marker: 'afterNestedModule', smartIndentLevel: 1 },
-];
 
-markAndSmartIndentLevelPair.forEach(function (pair)
-{
-    goTo.marker(pair.marker);
-    try
-    {
-        verify.smartIndentLevelIs(pair.smartIndentLevel);
-    }
-    catch (e)
-    {
-        throw new Error(e.message + ' at marker: ' + pair.marker);
-    }
-} );
+test.markers().forEach((marker) => {
+    verify.indentationAtPositionIs(marker.fileName, marker.position, marker.data.indentation);
+});

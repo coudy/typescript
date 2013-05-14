@@ -185,8 +185,12 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCaretAtMarker(markerName);
         }
 
-        public smartIndentLevelIs(numberOfTabs: number) {
-            FourSlash.currentTestState.verifySmartIndentLevel(numberOfTabs);
+        public indentationIs(numberOfSpaces: number) {
+            FourSlash.currentTestState.verifyIndentationAtCurrentPosition(numberOfSpaces);
+        }
+
+        public indentationAtPositionIs(fileName: string, position: number, numberOfSpaces: number) {
+            FourSlash.currentTestState.verifyIndentationAtPosition(fileName, position, numberOfSpaces);
         }
 
         public textAtCaretIs(text: string) {
@@ -259,14 +263,6 @@ module FourSlashInterface {
     
         public noMatchingBracePositionInCurrentFile(bracePosition: number) {
             FourSlash.currentTestState.verifyNoMatchingBracePosition(bracePosition);
-        }
-
-        public indentationLevelAtPositionIs(position: number, numberOfTabs: number) {
-            FourSlash.currentTestState.verifyIndentationLevelAtPosition(position, numberOfTabs);
-        }
-
-        public indentationLevelIs(numberOfTabs: number) {
-            FourSlash.currentTestState.verifyIndentationLevelAtCurrentPosition(numberOfTabs);
         }
 
         public setVerifyDocComments(val: boolean) {

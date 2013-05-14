@@ -1,38 +1,23 @@
 /// <reference path='fourslash.ts'/>
 
+debugger;
+
 ////class Bar {
-////    /*insideClass*/
+////    {| "indentation": 4|}
 ////    private foo: string = "";
-////    /*afterProperty*/
+////    {| "indentation": 4|}
 ////    private f() {
 ////        var a: any[] = [[1, 2], [3, 4], 5];
-////        /*insideMethod*/
+////        {| "indentation": 8|}
 ////        return ((1 + 1));
 ////    }
-////    /*afterMethod*/
+////    {| "indentation": 4|}
 ////    private f2() {
 ////        if (true) { } { };
 ////    }
 ////}
-/////*afterClass*/
+////{| "indentation": 0|}
 
-var markAndSmartIndentLevelPair = <{ marker: string; smartIndentLevel: number; }[]>[
-    { marker: 'insideClass', smartIndentLevel: 1 },
-    { marker: 'afterProperty', smartIndentLevel: 1 },
-    { marker: 'insideMethod', smartIndentLevel: 2 },
-    { marker: 'afterMethod', smartIndentLevel: 1 },
-    { marker: 'afterClass', smartIndentLevel: 0 },
-];
-
-markAndSmartIndentLevelPair.forEach(function (pair)
-{
-    goTo.marker(pair.marker);
-    try
-    {
-        verify.smartIndentLevelIs(pair.smartIndentLevel);
-    }
-    catch (e)
-    {
-        throw new Error(e.message + ' at marker: ' + pair.marker);
-    }
-} );
+test.markers().forEach((marker) => {
+    verify.indentationAtPositionIs(marker.fileName, marker.position, marker.data.indentation);
+});

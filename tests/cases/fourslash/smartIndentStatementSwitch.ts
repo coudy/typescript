@@ -3,37 +3,19 @@
 ////function Foo() {
 ////    var x;
 ////    switch (x) {
-////        /*insideStatement*/
+////        {| "indentation": 8 |}
 ////    }
-////    /*afterStatement*/
+////    {| "indentation": 4 |}
 ////    switch (x) {
-////        /*insideStatement2*/
+////        {| "indentation": 8 |}
 ////        case 1:
-////            /*insideCase*/
+////            {| "indentation": 12 |}
 ////            break;
-////        /*afterBreak*/
+////        {| "indentation": 8 |}
 ////    }
-////    /*afterStatement2*/
+////    {| "indentation": 4 |}
 ////}
 
-var markAndSmartIndentLevelPair = <{ marker: string; smartIndentLevel: number; }[]>[
-    { marker: 'insideStatement', smartIndentLevel: 2 },
-    { marker: 'afterStatement', smartIndentLevel: 1 },
-    { marker: 'insideStatement2', smartIndentLevel: 2 },
-    { marker: 'insideCase', smartIndentLevel: 3 },
-    { marker: 'afterBreak', smartIndentLevel: 2 },
-    { marker: 'afterStatement2', smartIndentLevel: 1 },
-];
-
-markAndSmartIndentLevelPair.forEach(function (pair)
-{
-    goTo.marker(pair.marker);
-    try
-    {
-        verify.smartIndentLevelIs(pair.smartIndentLevel);
-    }
-    catch (e)
-    {
-        throw new Error(e.message + ' at marker: ' + pair.marker);
-    }
-} );
+test.markers().forEach((marker) => {
+    verify.indentationAtPositionIs(marker.fileName, marker.position, marker.data.indentation);
+});
