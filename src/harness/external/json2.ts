@@ -1,4 +1,4 @@
-﻿/* -----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
 This file is based on or incorporates material from the projects listed below 
 (collectively, "Third Party Code"). Microsoft is not the original author of the 
 Third Party Code. The original copyright notice and the license, under which 

@@ -699,10 +699,12 @@ module Services {
                 if (containingObjectLiteral) {
                     var searchPosition = Math.min(position, containingObjectLiteral.end());
                     path = this.getAstPathToPosition(script, searchPosition);
-                    // Get the object literal node
+                    // Get the object literal node
+
                     while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
                         path.pop();
-                    }
+                    }
+
                     if (!path.ast() || path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
                         throw TypeScript.Errors.invalidOperation("AST Path look up did not result in the same node as Fidelity Syntax Tree look up.");
                     }
