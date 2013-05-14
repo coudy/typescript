@@ -40,8 +40,8 @@ class BatchCompiler {
 
         this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 
-        this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, 0, true, []);
-        this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, 0, true, []);
+        this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, ByteOrderMark.None, 0, true, []);
+        this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, ByteOrderMark.None, 0, true, []);
 
         this.compiler.pullTypeCheck();
     }
