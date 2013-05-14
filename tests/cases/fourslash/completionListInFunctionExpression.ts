@@ -1,12 +1,5 @@
 /// <reference path="fourslash.ts"/>
 
-////interface Number {
-////    toString(radix?: number): string;
-////    toFixed(fractionDigits?: number): string;
-////    toExponential(fractionDigits?: number): string;
-////    toPrecision(precision: number): string;
-////}
-////
 ////() => {
 ////    var foo = 0;
 ////    /*requestCompletion*/
