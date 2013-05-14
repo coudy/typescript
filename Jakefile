@@ -267,11 +267,19 @@ directory(builtTestDirectory);
 var run = path.join(builtTestDirectory, "run.js");
 compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [], true);
 
+// Webharness
+var frontEndPath = "tests/cases/webharness/frontEnd.ts";
+var perfCompilerPath = "tests/cases/webharness/perfCompiler.js";
+compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], true);
+
+desc("Builds the web harness front end");
+task("test-harness", [perfCompilerPath]);
+
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile].concat(libraryTargets), function() {	
+task("tests", [run, serviceFile, perfCompilerPath].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);	
@@ -312,3 +320,51 @@ task("baseline-accept", function() {
 	jake.rmRf(refBaseline);
 	fs.renameSync(localBaseline, refBaseline);
 });
+
+// Fidelity Tests
+var fidelityTestsOutFile = "tests/Fidelity/program.js";
+var fidelityTestsInFile = "tests/Fidelity/Program.ts";
+compileFile(fidelityTestsOutFile, [fidelityTestsInFile], [tscFile], [], true);
+
+// Syntax Generator
+var syntaxGeneratorOutFile = compilerDirectory + "syntax/SyntaxGenerator.js";
+var syntaxGeneratorInFile = compilerDirectory + "syntax/SyntaxGenerator.ts";
+compileFile(syntaxGeneratorOutFile, [syntaxGeneratorInFile], [tscFile], [], true);
+
+desc("Builds and runs the syntax generator");
+task("run-syntax-generator", [syntaxGeneratorOutFile], function() {
+	host = process.env.TYPESCRIPT_HOST || "node";
+	var cmd = host + " " + syntaxGeneratorOutFile;
+	console.log(cmd);
+	var ex = jake.createExec([cmd]);
+	// Add listeners for output and error
+	ex.addListener("stdout", function(output) {
+		process.stdout.write(output);
+	});
+	ex.addListener("stderr", function(error) {
+		process.stderr.write(error);
+	});
+	ex.addListener("cmdEnd", function() {
+		complete();
+	});
+	ex.run();	
+}, {async: true});
+
+desc("Builds and runs the Fidelity tests");
+task("run-fidelity-tests", [fidelityTestsOutFile], function() {
+	host = process.env.host || process.env.TYPESCRIPT_HOST || "node";
+	var cmd = host + " " + fidelityTestsOutFile;
+	console.log(cmd);
+	var ex = jake.createExec([cmd]);
+	// Add listeners for output and error
+	ex.addListener("stdout", function(output) {
+		process.stdout.write(output);
+	});
+	ex.addListener("stderr", function(error) {
+		process.stderr.write(error);
+	});
+	ex.addListener("cmdEnd", function() {
+		complete();
+	});
+	ex.run();	
+}, {async: true});
