@@ -10,6 +10,5 @@
 
 goTo.marker('start');
 
-var length = test.markers()[1].position - test.markers()[0].position;
-// Bug 679478: "Cannot call method 'getDisplayName' of undefined" when deleting first declaration of re-opened module
-// edit.deleteAtCaret(length);
+var codeLength = test.markers()[1].position - test.markers()[0].position;
+edit.deleteAtCaret(codeLength);
