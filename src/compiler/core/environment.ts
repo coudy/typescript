@@ -315,7 +315,7 @@ var Environment = (function () {
     if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     }
-    else if (typeof require === "function") {
+    else if (typeof module !== 'undefined' && module.exports) {
         return getNodeEnvironment();
     }
     else {

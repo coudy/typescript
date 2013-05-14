@@ -416,7 +416,7 @@ var IO = (function() {
 
     if (typeof ActiveXObject === "function")
         return getWindowsScriptHostIO();
-    else if (typeof require === "function")
+    else if (typeof module !== 'undefined' && module.exports)
         return getNodeIO();
     else
         return null; // Unsupported host
