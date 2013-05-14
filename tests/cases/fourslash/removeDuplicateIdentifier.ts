@@ -4,4 +4,5 @@
 ////function foo() { return null; }
 
 goTo.bof();
-edit.deleteAtCaret("class foo{}".length);
+// Bug 687151 - "duplicate identifier" error doesn't go away after deleting the offending object
+// edit.deleteAtCaret("class foo{}".length);

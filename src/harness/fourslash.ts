@@ -1293,6 +1293,9 @@ module FourSlash {
         }
 
         Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.RunTime, emitterIOHost);
+        fsOutput.Close();
+        fsErrors.Close();
+
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }
