@@ -346,7 +346,9 @@ module TypeScript {
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     var document = this.getDocument(fileNames[i]);
-                    return document.byteOrderMark !== ByteOrderMark.None;
+                    if (document.byteOrderMark !== ByteOrderMark.None) {
+                        return true;
+                    }
                 }
 
                 return false;
