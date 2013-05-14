@@ -113,6 +113,8 @@ module FourSlash {
 
         public formatCodeOptions: Services.FormatCodeOptions = null;
 
+        static minimalLib: string;
+
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
@@ -120,7 +122,8 @@ module FourSlash {
             for (var i = 0; i < testData.files.length; i++) {
                 this.languageServiceShimHost.addScript(testData.files[i].fileName, testData.files[i].content);
             }
-            this.languageServiceShimHost.addScript('lib.d.ts', IO.readFile('tests/minimal.lib.d.ts'));
+            TestState.minimalLib = TestState.minimalLib || IO.readFile('tests/minimal.lib.d.ts');
+            this.languageServiceShimHost.addScript('lib.d.ts', TestState.minimalLib);
 
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
@@ -701,18 +704,11 @@ module FourSlash {
             var fullSyntaxErrs = JSON2.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings);
             var compiler = new TypeScript.TypeScriptCompiler();
+            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(TestState.minimalLib), 0, true);
             compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), 0, true);
             compiler.pullTypeCheck();
             var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.activeFile.fileName));
             var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.activeFile.fileName));
-
-            if (incrSyntaxErrs !== fullSyntaxErrs) {
-                throw new Error('Mismatched incremental/full syntactic errors.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
-            }
-
-            if (incrSemanticErrs !== refSemanticErrs) {
-                throw new Error('Mismatched incremental/full semantic errors.\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
-            }
 
             if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
@@ -720,6 +716,14 @@ module FourSlash {
 
             if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
+            }
+
+            if (incrSyntaxErrs !== fullSyntaxErrs) {
+                throw new Error('Mismatched incremental/full syntactic errors.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+            }
+
+            if (incrSemanticErrs !== refSemanticErrs) {
+                throw new Error('Mismatched incremental/full semantic errors.\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
             }
         }
 
