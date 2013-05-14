@@ -232,6 +232,7 @@ module TypeScript {
 
             decls = decls.reverse();
 
+            // PULLREVIEW: Only cache in batch compilation scenarios?
             decl.setParentPath(decls);
 
             return decls;

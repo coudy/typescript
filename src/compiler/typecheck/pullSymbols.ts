@@ -15,6 +15,7 @@ module TypeScript {
 
         private outgoingLinks: LinkList = new LinkList();
         private incomingLinks: LinkList = new LinkList();
+
         private declarations: LinkList = new LinkList();
 
         private name: string;
@@ -23,9 +24,13 @@ module TypeScript {
 
         private declKind: PullElementKind;
 
-        // caches - free these on invalidate
         private cachedContainerLink: PullSymbolLink = null;
         private cachedTypeLink: PullSymbolLink = null;
+
+        // We cache the declarations to improve look-up speed
+        // (but we re-create on edits because deletion from the linked list is
+        // much faster)
+        private cachedDeclarations: PullDecl[] = null;
 
         private hasBeenResolved = false;
 
@@ -43,7 +48,6 @@ module TypeScript {
 
         private isSpecialized = false;
         private isBeingSpecialized = false;
-        private decls: PullDecl[] = null;
 
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
@@ -144,24 +148,24 @@ module TypeScript {
             Debug.assert(!!decl);
             this.declarations.addItem(decl);
 
-            if (!this.decls) {
-                this.decls = [decl];
+            if (!this.cachedDeclarations) {
+                this.cachedDeclarations = [decl];
             }
             else {
-                this.decls[this.decls.length] = decl;
+                this.cachedDeclarations[this.cachedDeclarations.length] = decl;
             }
         }
 
         public getDeclarations() {
-            if (!this.decls) {
-                this.decls = [];
+            if (!this.cachedDeclarations) {
+                this.cachedDeclarations = [];
             }
-            return this.decls;
+            return this.cachedDeclarations;
         }
 
         public removeDeclaration(decl: PullDecl) {
             this.declarations.remove(d => d === decl);
-            this.decls = <PullDecl[]>this.declarations.find(d => d);
+            this.cachedDeclarations = <PullDecl[]>this.declarations.find(d => d);
         }
 
         public updateDeclarations(map: (item: PullDecl, context: any) => void , context: any) {
