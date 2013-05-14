@@ -260,6 +260,7 @@ class ProjectRunner extends RunnerBase {
             }
 
             function createTest(spec: any) {
+                debugger;
                 var inputFiles = [];
                 for (var i = 0; i < spec.inputFiles.length; i++) {
                     inputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.inputFiles[i]);
@@ -276,19 +277,21 @@ class ProjectRunner extends RunnerBase {
                     getDeclareFiles = true;
                 }
 
-                var writeGeneratedFile = (files: { fname: string; file: Harness.Compiler.WriterAggregator; }[], fn: string) => {
+                var writeGeneratedFile = (files: { fname: string; file: Harness.Compiler.WriterAggregator; }[], fn: string, contents: string, writeByteOrderMark: boolean) => {
                     var fnEntry = { fname: fn, file: new Harness.Compiler.WriterAggregator() };
                     files.push(fnEntry);
+                    fnEntry.file.Write(contents);
+                    fnEntry.file.Close();
                     return fnEntry.file;
                 }
 
-                var writeDeclareFile = (fn: string) => {
-                    return writeGeneratedFile(generatedDeclareFiles, fn);
+                var writeDeclareFile = (fn: string, contents: string, writeByteOrderMark: boolean) => {
+                    return writeGeneratedFile(generatedDeclareFiles, fn, contents, writeByteOrderMark);
                 }
 
                 var generatedEmitFiles: { fname: string; file: Harness.Compiler.WriterAggregator; }[] = [];
-                var writeGeneratedEmitFile = (fn: string) => {
-                    return writeGeneratedFile(generatedEmitFiles, fn);
+                var writeGeneratedEmitFile = (fn: string, contents: string, writeByteOrderMark: boolean) => {
+                    return writeGeneratedFile(generatedEmitFiles, fn, contents, writeByteOrderMark);
                 }
 
                 var writeEmitFile = (fileName: string, contents: string, writeByteOrderMark: boolean) => IOUtils.writeFileAndFolderStructure(IO, fileName, contents, writeByteOrderMark);
@@ -314,16 +317,20 @@ class ProjectRunner extends RunnerBase {
                 var codeGenType: string;
                 var compareGeneratedFiles = (
                     generatedFiles: { fname: string; file: Harness.Compiler.WriterAggregator; }[],
-                    expectedFiles: string[]
-                    ) => {
+                    expectedFiles: string[]) => {
+
                     Harness.Assert.equal(generatedFiles.length, expectedFiles.length);
                     for (var i = 0; i < expectedFiles.length; i++) {
                         var expectedFName = baseFileName + expectedFiles[i];
-                        Harness.Assert.equal(IO.resolvePath(generatedFiles[i].fname), IO.resolvePath(expectedFName));
+
+                        var generatedFile = TypeScript.ArrayUtilities.firstOrDefault(
+                            generatedFiles, f => IO.resolvePath(f.fname) === IO.resolvePath(expectedFName));
+
+                        Harness.Assert.notNull(generatedFile);
                         if (spec.verifyFileNamesOnly) {
                             continue;
                         }
-                        var fileContents = generatedFiles[i].file.lines.join("\n");
+                        var fileContents = generatedFile.file.lines.join("\n");
                         var localFileName = baseFileName + "local/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
                         var localFile = IOUtils.writeFileAndFolderStructure(IO, localFileName, fileContents, /*writeByteOrderMark:*/ false);
                         var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
