@@ -355,6 +355,17 @@ module TypeScript {
                             }
                         }
 
+                        // Maybe there's an import statement aliasing an initalized value?
+                        childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
+
+                        if (childDecls.length) {
+                            var sym = childDecls[0].getSymbol();
+
+                            if (sym.isAlias()) {
+                                return sym;
+                            }
+                        }
+
                         valDecl = decl.getValueDecl();
 
                         if (valDecl) {
@@ -395,6 +406,18 @@ module TypeScript {
 
                     if (candidateSymbol) {
                         return candidateSymbol;
+                    }
+
+                    if (declSearchKind & PullElementKind.SomeValue) {
+                        childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
+
+                        if (childDecls.length) {
+                            var sym = childDecls[0].getSymbol();
+
+                            if (sym.isAlias()) {
+                                return sym;
+                            }
+                        }
                     }
                 }
             }
@@ -2512,15 +2535,6 @@ module TypeScript {
 
             var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
-            // Type aliases may have an associated export value symbol
-            if (!nameSymbol) {
-                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
-
-                if (nameSymbol && !(nameSymbol.isType() && nameSymbol.isAlias())) {
-                    nameSymbol = null;
-                }
-            }
-
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol;
             }
@@ -2541,18 +2555,18 @@ module TypeScript {
 
                     if (exportAssignmentSymbol) {
 
-                    if (exportAssignmentSymbol.isType()) {
-                        var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+                        if (exportAssignmentSymbol.isType()) {
+                            var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
 
-                        if (exportedTypeSymbol.isClass()) {
-                            var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
+                            if (exportedTypeSymbol.isClass()) {
+                                var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
 
-                            if (constructorMethod) {
-                                nameSymbol = constructorMethod;
-                            }
-                            else {
-                                nameSymbol = exportedTypeSymbol;
-                            }
+                                if (constructorMethod) {
+                                    nameSymbol = constructorMethod;
+                                }
+                                else {
+                                    nameSymbol = exportedTypeSymbol;
+                                }
                         }
                         else if (exportedTypeSymbol.isContainer()) {
                             var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
