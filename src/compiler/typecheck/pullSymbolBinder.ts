@@ -149,7 +149,7 @@ module TypeScript {
 
         public symbolIsRedeclaration(sym: PullSymbol): boolean {
             var symID = sym.getSymbolID();
-            return (symID > this.startingSymbolForRebind) ||
+            return (symID >= this.startingSymbolForRebind) ||
                     ((sym.getRebindingID() === this.bindingPhase) && (symID !== this.startingSymbolForRebind));
         }
 
@@ -1068,9 +1068,10 @@ module TypeScript {
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
 
-                // if it's an implicit variable, then this variable symbol will actually be a class constructor
-                // or container type that was just defined, so we don't want to raise an error
-                if (!isModuleValue /*|| !variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)*/) {
+                var prevKind = variableSymbol.getKind();
+                var acceptableRedeclaration = isImplicit && ((prevKind == PullElementKind.Function) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
+
+                if (!isModuleValue || !acceptableRedeclaration) {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
@@ -1223,7 +1224,7 @@ module TypeScript {
 
                             // Could be an enum
                             if (!childDecls.length) {
-                                childDecls = parentDecl.searchChildDecls(declName, PullElementKind.SomeType);
+                                childDecls = parentDecl.searchChildDecls(declName, PullElementKind.Enum);
                             }
 
                             if (childDecls.length) {
@@ -1236,7 +1237,7 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeContainer, []);
+                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, (PullElementKind.SomeContainer | PullElementKind.Enum), []);
                         }
                     }
 
@@ -1267,8 +1268,7 @@ module TypeScript {
                         //parentHadSymbol = true;
                     }
                     else {
-                        // PULLTODO: Raise an Error here
-                        variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                        Debug.assert(false, "Attempted to bind invalid implicit variable symbol");
                     }
                 }
             }
