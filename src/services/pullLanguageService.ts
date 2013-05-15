@@ -116,9 +116,9 @@ module Services {
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
 
-                    if (searchSymbolInfoAtPosition !== null && findReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
+                    if (searchSymbolInfoAtPosition !== null && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
                         var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                        var referenceAST = findReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
+                        var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
 
                         result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
 
@@ -130,121 +130,6 @@ module Services {
         }
 
 
-        private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
-            if (parent !== null) {
-                var parentNodeType = parent.nodeType;
-                switch (parentNodeType) {
-                    case TypeScript.NodeType.ClassDeclaration:
-                        return (<TypeScript.ClassDeclaration>parent).name === current;
-
-                    case TypeScript.NodeType.InterfaceDeclaration:
-                        return (<TypeScript.InterfaceDeclaration>parent).name === current;
-
-                    case TypeScript.NodeType.ModuleDeclaration:
-                        return (<TypeScript.ModuleDeclaration>parent).name === current;
-
-                    case TypeScript.NodeType.FunctionDeclaration:
-                        return (<TypeScript.FunctionDeclaration>parent).name === current;
-
-                    case TypeScript.NodeType.ImportDeclaration:
-                        return (<TypeScript.ImportDeclaration>parent).id === current;
-
-                    case TypeScript.NodeType.VariableDeclarator:
-                        var varDeclarator = <TypeScript.VariableDeclarator>parent;
-                        return !!(varDeclarator.init && varDeclarator.id === current);
-
-                    case TypeScript.NodeType.Parameter:
-                        return true;
-
-                    case TypeScript.NodeType.AssignmentExpression:
-                    case TypeScript.NodeType.AddAssignmentExpression:
-                    case TypeScript.NodeType.SubtractAssignmentExpression:
-                    case TypeScript.NodeType.MultiplyAssignmentExpression:
-                    case TypeScript.NodeType.DivideAssignmentExpression:
-                    case TypeScript.NodeType.ModuloAssignmentExpression:
-                    case TypeScript.NodeType.OrAssignmentExpression:
-                    case TypeScript.NodeType.AndAssignmentExpression:
-                    case TypeScript.NodeType.ExclusiveOrAssignmentExpression:
-                    case TypeScript.NodeType.LeftShiftAssignmentExpression:
-                    case TypeScript.NodeType.UnsignedRightShiftAssignmentExpression:
-                    case TypeScript.NodeType.SignedRightShiftAssignmentExpression:
-                        return (<TypeScript.BinaryExpression>parent).operand1 === current;
-
-                    case TypeScript.NodeType.PreIncrementExpression:
-                    case TypeScript.NodeType.PostIncrementExpression:
-                    case TypeScript.NodeType.PreDecrementExpression:
-                    case TypeScript.NodeType.PostDecrementExpression:
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        private getCorrectASTForReferencedSymbolName(matchingAST: TypeScript.AST, symbolName: string): TypeScript.AST {
-
-            if (matchingAST.nodeType == TypeScript.NodeType.MemberAccessExpression) {
-                var binaryExpression: TypeScript.BinaryExpression = <TypeScript.BinaryExpression>matchingAST;
-                var identifierOperand1: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand1;
-                var identifierOperand2: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand2;
-                if (identifierOperand1.actualText === symbolName) {
-                    return binaryExpression.operand1;
-                }
-                else if (identifierOperand2.actualText === symbolName) {
-                    return binaryExpression.operand2;
-                }
-            }
-            return matchingAST;
-        }
-
-        private compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
-            if (firstSymbol.getKind() === secondSymbol.getKind())
-            {
-                return firstSymbol === secondSymbol;
-            }
-            else {
-                switch (firstSymbol.getKind()) {
-                    case TypeScript.PullElementKind.Class:{
-                        return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
-                    }
-                    case TypeScript.PullElementKind.Property: {
-                        if (firstSymbol.isAccessor()) {
-                            var getterSymbol = (<TypeScript.PullAccessorSymbol>firstSymbol).getGetter();
-                            var setterSymbol = (<TypeScript.PullAccessorSymbol>firstSymbol).getSetter();
-
-                            if (getterSymbol && getterSymbol === secondSymbol) {
-                                return true;
-                            }
-
-                            if (setterSymbol && setterSymbol === secondSymbol) {
-                                return true;
-                            }
-                        }
-                    }
-                    case TypeScript.PullElementKind.Function: {
-                        if (secondSymbol.isAccessor()) {
-                            var getterSymbol = (<TypeScript.PullAccessorSymbol>secondSymbol).getGetter();
-                            var setterSymbol = (<TypeScript.PullAccessorSymbol>secondSymbol).getSetter();
-
-                            if (getterSymbol && getterSymbol === firstSymbol) {
-                                return true;
-                            }
-
-                            if (setterSymbol && setterSymbol === firstSymbol) {
-                                return true;
-                            }
-                        }
-                    }
-                    case TypeScript.PullElementKind.ConstructorMethod: {
-                        return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
-                    }
-                }
-            }
-
-            return firstSymbol === secondSymbol;
-        }
-
-
 
         private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
             if (parent !== null) {
@@ -294,31 +179,6 @@ module Services {
                 }
             }
 
-            return false;
-        }
-
-        private checkSymbolsForDeclarationEquality(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
-            var firstSymbolDeclarations: TypeScript.PullDecl[] = firstSymbol.getDeclarations();
-            var secondSymbolDeclarations: TypeScript.PullDecl[] = secondSymbol.getDeclarations();
-            for (var i = 0, iLen = firstSymbolDeclarations.length; i < iLen; i++) {
-                for (var j = 0, jLen = secondSymbolDeclarations.length; j < jLen; j++) {
-                    if (this.declarationsAreSameOrParents(firstSymbolDeclarations[i], secondSymbolDeclarations[j])) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private declarationsAreSameOrParents(firstDecl: TypeScript.PullDecl, secondDecl: TypeScript.PullDecl): boolean {
-            var firstParent: TypeScript.PullDecl = firstDecl.getParentDecl();
-            var secondParent: TypeScript.PullDecl = secondDecl.getParentDecl();
-            if (firstDecl === secondDecl ||
-                firstDecl === secondParent ||
-                firstParent === secondDecl ||
-                firstParent === secondParent) {
-                return true;
-            }
             return false;
         }
 

@@ -1,7 +1,7 @@
 
 module Services {
 
-export class findReferenceHelpers {
+export class FindReferenceHelpers {
         public static getCorrectASTForReferencedSymbolName(matchingAST: TypeScript.AST, symbolName: string): TypeScript.AST {
 
             if (matchingAST.nodeType == TypeScript.NodeType.MemberAccessExpression) {
