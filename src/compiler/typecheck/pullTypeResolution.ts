@@ -4805,7 +4805,7 @@ module TypeScript {
 
             // If one is an enum, and they're not the same type, they're not identical
             if ((t1.getKind() & PullElementKind.Enum) || (t2.getKind() & PullElementKind.Enum)) {
-                return false;
+                return t1.getAssociatedContainerType() === t2 || t2.getAssociatedContainerType() === t1;
             }
 
             if (t1.isArray() || t2.isArray()) {
