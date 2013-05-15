@@ -2345,16 +2345,11 @@ module TypeScript {
             return type;
         }
 
-        private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private checkForPrivateMemberAccess(memberAccessExpression: BinaryExpression,
+                                            typeCheckContext: PullTypeCheckContext,
+                                            expressionType: PullTypeSymbol,
+                                            resolvedName: PullSymbol): void {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var resolvedName = this.resolveSymbolAndReportDiagnostics(memberAccessExpression, /*inContextuallyTypedAssignment:*/false, enclosingDecl);
-            var type = resolvedName.getType();
-
-            this.checkForResolutionError(type, enclosingDecl);
-            var prevCanUseTypeSymbol = this.context.canUseTypeSymbol;
-            this.context.canUseTypeSymbol = true;
-            var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
-            this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
             if (resolvedName) {
                 if (memberAccessExpression.operand1.nodeType === NodeType.SuperExpression && !resolvedName.isError() && resolvedName.getKind() !== PullElementKind.Method) {
                     this.postError(memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(), typeCheckContext.scriptName, DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, [], enclosingDecl);
@@ -2376,6 +2371,20 @@ module TypeScript {
                     }
                 }
             }
+        }
+
+        private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var resolvedName = this.resolveSymbolAndReportDiagnostics(memberAccessExpression, /*inContextuallyTypedAssignment:*/false, enclosingDecl);
+            var type = resolvedName.getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
+            var prevCanUseTypeSymbol = this.context.canUseTypeSymbol;
+            this.context.canUseTypeSymbol = true;
+            var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+            this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
+
+            this.checkForPrivateMemberAccess(memberAccessExpression, typeCheckContext, expressionType, resolvedName);
 
             return type;
         }
