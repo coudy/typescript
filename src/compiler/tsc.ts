@@ -372,7 +372,7 @@ class BatchCompiler {
             set: () => {
                 this.compilationSettings.generateDeclarationFiles = true;
             }
-        });
+        }, 'd');
 
         if (this.ioHost.watchFile) {
             opts.flag('watch', {
