@@ -40,48 +40,51 @@ module TypeScript {
 
     export enum PullElementKind {
         None = 0,
+        Global = 0,
 
         Script = 1,
-        Global = 1 << 1,
-        Primitive = 1 << 2,
+        Primitive = 1 << 1,
 
-        Container = 1 << 3,
-        Class = 1 << 4,
-        Interface = 1 << 5,
-        DynamicModule = 1 << 6,
-        Enum = 1 << 7,
-        Array = 1 << 8,
-        TypeAlias = 1 << 9,
-        ObjectLiteral = 1 << 10,
+        Container = 1 << 2,
+        Class = 1 << 3,
+        Interface = 1 << 4,
+        DynamicModule = 1 << 5,
+        Enum = 1 << 6,
+        Array = 1 << 7,
+        TypeAlias = 1 << 8,
+        ObjectLiteral = 1 << 9,
 
-        Variable = 1 << 11,
-        Parameter = 1 << 12,
-        Property = 1 << 13,
-        TypeParameter = 1 << 14,
+        Variable = 1 << 10,
+        Parameter = 1 << 11,
+        Property = 1 << 12,
+        TypeParameter = 1 << 13,
 
-        Function = 1 << 15,
-        ConstructorMethod = 1 << 16,
-        Method = 1 << 17,
-        FunctionExpression = 1 << 18,
+        Function = 1 << 14,
+        ConstructorMethod = 1 << 15,
+        Method = 1 << 16,
+        FunctionExpression = 1 << 17,
 
-        GetAccessor = 1 << 19,
-        SetAccessor = 1 << 20,
+        GetAccessor = 1 << 18,
+        SetAccessor = 1 << 19,
 
-        CallSignature = 1 << 21,
-        ConstructSignature = 1 << 22,
-        IndexSignature = 1 << 23,
+        CallSignature = 1 << 20,
+        ConstructSignature = 1 << 21,
+        IndexSignature = 1 << 22,
 
-        ObjectType = 1 << 24,
-        FunctionType = 1 << 25,
-        ConstructorType = 1 << 26,
+        ObjectType = 1 << 23,
+        FunctionType = 1 << 24,
+        ConstructorType = 1 << 25,
 
-        EnumMember = 1 << 27,
-        ErrorType = 1 << 28,
+        EnumMember = 1 << 26,
+        ErrorType = 1 << 27,
 
-        Expression = 1 << 29,
+        Expression = 1 << 28,
 
-        WithBlock = 1 << 30,
-        CatchBlock = 1 << 31,
+        WithBlock = 1 << 29,
+        CatchBlock = 1 << 30,
+
+        // WARNING: To prevent JS VMs from wrapping these values as floats, we don't want to utilize more than the 31 bits above.  (Doing so would
+        // seriously slow down bitwise operations
 
         All = Script | Global | Primitive | Container | Class | Interface | DynamicModule | Enum | Array | TypeAlias |
             ObjectLiteral | Variable | Parameter | Property | TypeParameter | Function | ConstructorMethod | Method |

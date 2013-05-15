@@ -211,17 +211,65 @@ module TypeScript {
             }
 
             if (!moduleInstanceSymbol && (moduleContainerDecl.getFlags() & PullElementFlags.SomeInitializedModule)) {
-                moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
+
+                // search for a complementary instance symbol first
+                var variableSymbol: PullSymbol = null;
+                if (parent) {
+                    if (isExported) {
+                        variableSymbol = parent.findMember(modName, false);
+                    }
+                    else {
+                        variableSymbol = parent.findContainedMember(modName);
+                    }
+
+                    if (variableSymbol) {
+                        var declarations = variableSymbol.getDeclarations();
+
+                        if (declarations.length) {
+                            var variableSymbolParent = declarations[0].getParentDecl();
+
+                            if ((this.getParentDecl() !== variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                variableSymbol = null;
+                            }
+                        }
+                    }
+                }
+                else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
+                    variableSymbol = this.findSymbolInContext(modName, PullElementKind.SomeValue, []);
+                }
+
+                if (variableSymbol) {
+                    var prevKind = variableSymbol.getKind();
+                    var acceptableRedeclaration = (prevKind == PullElementKind.Function) || (prevKind == PullElementKind.ConstructorMethod) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
+
+                    if (acceptableRedeclaration) {
+                        moduleInstanceTypeSymbol = variableSymbol.getType();
+                    }
+                    else {
+                        variableSymbol = null;
+                    }
+                }
+
+                if (!moduleInstanceTypeSymbol) {
+                    moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
+                }
+
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
 
                 moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
 
                 // The instance symbol is further set up in bindVariableDeclaration
                 // (We add the declaration there, invalidate previous decls on edit and add the instance symbol to the parent)
-                moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
-                moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
-
+                if (variableSymbol) {
+                    moduleInstanceSymbol = variableSymbol;
+                }
+                else {
+                    moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
+                    moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+                }
+                
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
+
             }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -472,6 +520,7 @@ module TypeScript {
             var cleanedPreviousDecls = false;
             var isExported = classDecl.getFlags() & PullElementFlags.Exported;
             var isGeneric = false;
+            var acceptableSharedKind = PullElementKind.Class;
 
             if (parent) {
                 if (isExported) {
@@ -484,7 +533,7 @@ module TypeScript {
                 else {
                     classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
 
-                    if (classSymbol && classSymbol.getKind() === PullElementKind.Class) {
+                    if (classSymbol && (classSymbol.getKind() & acceptableSharedKind)) {
 
                         var declarations = classSymbol.getDeclarations();
 
@@ -503,10 +552,10 @@ module TypeScript {
                 }
             }
             else {
-                classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
+                classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, acceptableSharedKind, []);
             }
 
-            if (classSymbol && (classSymbol.getKind() !== PullElementKind.Class || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
+            if (classSymbol && (!(classSymbol.getKind() & acceptableSharedKind) || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
                 classDecl.addDiagnostic(
                     new SemanticDiagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [classDecl.getDisplayName()]));
                 classSymbol = null;
@@ -746,15 +795,16 @@ module TypeScript {
             var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
             var parent = this.getParent();
+            var acceptableSharedKind = PullElementKind.Interface | PullElementKind.Class | PullElementKind.Enum;
 
             if (parent) {
                 interfaceSymbol = parent.findNestedType(interfaceName);
             }
             else if (!(interfaceDecl.getFlags() & PullElementFlags.Exported)) {
-                interfaceSymbol = <PullClassTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
+                interfaceSymbol = <PullClassTypeSymbol>this.findSymbolInContext(interfaceName, acceptableSharedKind, []);
             }
 
-            if (interfaceSymbol && (interfaceSymbol.getKind() !== PullElementKind.Interface)) {
+            if (interfaceSymbol && !(interfaceSymbol.getKind() & acceptableSharedKind)) {
                 interfaceDecl.addDiagnostic(
                     new SemanticDiagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [interfaceDecl.getDisplayName()]));
                 interfaceSymbol = null;
@@ -1069,7 +1119,7 @@ module TypeScript {
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
 
                 var prevKind = variableSymbol.getKind();
-                var acceptableRedeclaration = isImplicit && ((prevKind == PullElementKind.Function) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
+                var acceptableRedeclaration = isImplicit && ((prevKind == PullElementKind.Function) || (prevKind == PullElementKind.ConstructorMethod) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
 
                 if (!isModuleValue || !acceptableRedeclaration) {
                     span = variableDeclaration.getSpan();
@@ -1220,12 +1270,8 @@ module TypeScript {
                         var parentDecl = variableDeclaration.getParentDecl();
 
                         if (parentDecl) {
-                            var childDecls = parentDecl.searchChildDecls(declName, PullElementKind.SomeContainer);
-
-                            // Could be an enum
-                            if (!childDecls.length) {
-                                childDecls = parentDecl.searchChildDecls(declName, PullElementKind.Enum);
-                            }
+                            var searchKind = (declFlags & (PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule)) ? PullElementKind.SomeContainer : PullElementKind.Enum;
+                            var childDecls = parentDecl.searchChildDecls(declName, searchKind);
 
                             if (childDecls.length) {
 

@@ -1084,7 +1084,7 @@ module TypeScript {
 
         public isType() { return true; }
         public isClass() {
-            return this.getKind() == PullElementKind.Class;
+            return this.getKind() == PullElementKind.Class || (this.constructorMethod != null);
         }
 
         public hasMembers() {
