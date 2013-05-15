@@ -1296,10 +1296,15 @@ module TypeScript {
         private isValidLHS(ast: AST, expressionSymbol: PullSymbol): boolean {
             var expressionTypeSymbol = expressionSymbol.getType();
 
-            return ast.nodeType === NodeType.ElementAccessExpression ||
-                this.resolver.isAnyOrEquivalent(expressionTypeSymbol) ||
-                ((!expressionSymbol.isType() || expressionTypeSymbol.isArray()) &&
-                (expressionSymbol.getKind() & PullElementKind.SomeLHS) != 0);
+            if (ast.nodeType === NodeType.ElementAccessExpression ||
+                this.resolver.isAnyOrEquivalent(expressionTypeSymbol)) {
+                return true;
+            }
+            else if (!expressionSymbol.isType() || expressionTypeSymbol.isArray()) {
+                return ((expressionSymbol.getKind() & PullElementKind.SomeLHS) != 0) && !expressionSymbol.hasFlag(TypeScript.PullElementFlags.Enum);
+            }
+
+            return false;
         }
 
         // expressions
