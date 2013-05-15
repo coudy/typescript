@@ -231,6 +231,13 @@ module TypeScript {
                 return <PullTypeSymbol>this.cachedContainerLink.end;
             }
 
+            if (this.getIsSpecialized()) {
+                var specializations = this.findIncomingLinks((symbolLink) => symbolLink.kind == SymbolLinkKind.SpecializedTo);
+                if (specializations.length == 1) {
+                    return specializations[0].start.getContainer();
+                }
+            }
+
             return null;
         }
 
