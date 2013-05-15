@@ -2245,10 +2245,42 @@ module TypeScript {
 
         private typeCheckReturnStatement(returnAST: ReturnStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             typeCheckContext.setEnclosingDeclHasReturn();
-            var returnExpr = returnAST.returnExpression;
-            var returnType = this.typeCheckAST(returnExpr, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
+            var returnExpr = returnAST.returnExpression;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            // push contextual type
+            var inContextuallyTypedAssignment = false;
+
+            if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
+                var enclosingDeclAST = <FunctionDeclaration>this.resolver.getASTForDecl(enclosingDecl);
+                if (enclosingDeclAST.returnTypeAnnotation) {
+                    // The containing function has a type annotation, propagate it as the contextual type
+                    var returnTypeAnnotationSymbol = this.resolver.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, this.context).symbol;
+                    if (returnTypeAnnotationSymbol) {
+                        inContextuallyTypedAssignment = true;
+                        this.context.pushContextualType(returnTypeAnnotationSymbol, this.context.inProvisionalResolution(), null);
+                    }
+                }
+                else {
+                    // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                    var currentContextualType = this.context.getContextualType();
+                    if (currentContextualType && currentContextualType.isFunction()) {
+                        var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                        if (currentContextualTypeReturnTypeSymbol) {
+                            inContextuallyTypedAssignment = true;
+                            this.context.pushContextualType(currentContextualTypeReturnTypeSymbol, this.context.inProvisionalResolution(), null);
+                        }
+                    }
+                }
+            }
+
+            var returnType = this.typeCheckAST(returnExpr, typeCheckContext, inContextuallyTypedAssignment);
+
+            if (inContextuallyTypedAssignment) {
+                this.context.popContextualType();
+            }
 
             if (enclosingDecl.getKind() === PullElementKind.SetAccessor && returnExpr) {
                 this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Setters_cannot_return_a_value, null, typeCheckContext.getEnclosingDecl());

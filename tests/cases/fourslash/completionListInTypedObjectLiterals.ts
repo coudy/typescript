@@ -138,3 +138,38 @@ goTo.marker("15");
 verify.not.memberListContains("x1");
 verify.memberListContains("y1");
 verify.memberListCount(1);
+
+
+
+// return statements
+
+////function foo(): MyPoint {
+////    return {
+////        /*16*/ };
+////}
+
+goTo.marker("16");
+verify.memberListContains("x1");
+verify.memberListContains("y1");
+verify.memberListCount(2);
+
+
+////interface MyPointCreator {
+////    create(): MyPoint;
+////}
+////
+////function getMyPointCreator(): MyPointCreator {
+////    return {
+////        create: () => {
+////            return {
+////                x1: 5,
+////                /*17*/
+////            };
+////        },
+////    }
+////}
+
+goTo.marker("17");
+verify.not.memberListContains("x1");
+verify.memberListContains("y1");
+verify.memberListCount(1);

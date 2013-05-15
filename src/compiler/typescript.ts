@@ -1085,6 +1085,7 @@ module TypeScript {
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var enclosingDecl: PullDecl = null;
+            var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
 
             var resolutionContext = new PullTypeResolutionContext();
@@ -1255,6 +1256,41 @@ module TypeScript {
 
                         break;
 
+                    case NodeType.ReturnStatement:
+                        var returnStatement = <ReturnStatement>current;
+                        var contextualType: PullTypeSymbol = null;
+
+                        if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                            var functionDeclaration = <FunctionDeclaration>enclosingDeclAST;
+                            if (functionDeclaration.returnTypeAnnotation) {
+                                // The containing function has a type annotation, propagate it as the contextual type
+                                var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
+                                resolutionContext.resolvingTypeReference = true;
+                                var returnTypeSymbol = this.pullTypeChecker.resolver.resolveTypeReference(<TypeReference>functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext).symbol;
+                                resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
+                                if (returnTypeSymbol) {
+                                    inContextuallyTypedAssignment = true;
+                                    contextualType = returnTypeSymbol;
+                                }
+                            }
+                            else {
+                                // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                                var currentContextualType = resolutionContext.getContextualType();
+                                if (currentContextualType && currentContextualType.isFunction()) {
+                                    var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                                    var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                                    if (currentContextualTypeReturnTypeSymbol) {
+                                        inContextuallyTypedAssignment = true;
+                                        contextualType = currentContextualTypeReturnTypeSymbol;
+                                    }
+                                }
+                            }
+                        }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
+
+                        break;
+
                     case NodeType.TypeRef:
                     case NodeType.TypeParameter:
                         resolutionContext.resolvingTypeReference = true;
@@ -1265,6 +1301,7 @@ module TypeScript {
                 var decl = semanticInfo.getDeclForAST(current);
                 if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
                     enclosingDecl = decl;
+                    enclosingDeclAST = current;
                 }
             }
 
