@@ -39,6 +39,7 @@ module TypeScript {
                 case SyntaxKind.FunctionDeclaration:
                 case SyntaxKind.VariableStatement:
                 case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
                     return SyntaxUtilities.containsToken((<any>moduleElement).modifiers, SyntaxKind.ExportKeyword);
             }
 
