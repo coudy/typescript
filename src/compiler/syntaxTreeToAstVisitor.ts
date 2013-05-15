@@ -2334,16 +2334,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
             var result: ReturnStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
             else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+
                 this.movePast(node.returnKeyword);
                 var expression = node.expression ? node.expression.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
                 result = new ReturnStatement(expression);
+                result.preComments = preComments;
+                result.postComments = postComments;
             }
 
             this.setAST(node, result);
