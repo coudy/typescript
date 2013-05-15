@@ -391,8 +391,24 @@ module TypeScript {
                 for (var j = 0, bLen = bPath.length; j < bLen; j++) {
                     var bNode = bPath[j];
                     if (aNode === bNode) {
-                        commonNodeIndex = i;
-                        break;
+                        var aDecl: PullDecl = null;
+                        if (i > 0) {
+                            var decls = aPath[i - 1].getDeclarations();
+                            if (decls.length) {
+                                aDecl = decls[0].getParentDecl();
+                            }
+                        }
+                        var bDecl: PullDecl = null;
+                        if (j > 0) {
+                            var decls = bPath[j - 1].getDeclarations();
+                            if (decls.length) {
+                                bDecl = decls[0].getParentDecl();
+                            }
+                        }
+                        if (!aDecl|| !bDecl || aDecl == bDecl) {
+                            commonNodeIndex = i;
+                            break;
+                        }
                     }
                 }
                 if (commonNodeIndex >= 0) {
