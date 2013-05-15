@@ -490,7 +490,7 @@ module TypeScript {
             if (type) {
                 var memberName: MemberName = getPrettyTypeName ? this.getTypeNameForFunctionSignature("", scopeSymbol, getPrettyTypeName) : null;
                 if (!memberName) {
-                    memberName = type.getScopedNameEx(scopeSymbol, true, getPrettyTypeName);
+                    memberName = type.getScopedNameEx(scopeSymbol, /*useConstraintInName:*/ true, getPrettyTypeName);
                 }
 
                 return memberName;
@@ -946,7 +946,7 @@ module TypeScript {
                     signature = candidateSignature;
                 }
 
-                result.push(signature.getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol, undefined, undefined));
+                result.push(signature.getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol));
                 if (getPrettyTypeName) {
                     break;
                 }
