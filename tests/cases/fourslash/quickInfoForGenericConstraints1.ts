@@ -4,4 +4,4 @@
 ////function foo4<T extends Date>(test: any): any { return null; }
 
 goTo.marker();
-verify.quickInfoIs('T');
+verify.quickInfoIs('T extends Date');

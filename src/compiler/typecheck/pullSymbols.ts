@@ -490,7 +490,7 @@ module TypeScript {
             if (type) {
                 var memberName: MemberName = getPrettyTypeName ? this.getTypeNameForFunctionSignature("", scopeSymbol, getPrettyTypeName) : null;
                 if (!memberName) {
-                    memberName = type.getScopedNameEx(scopeSymbol, false, getPrettyTypeName);
+                    memberName = type.getScopedNameEx(scopeSymbol, true, getPrettyTypeName);
                 }
 
                 return memberName;
@@ -531,11 +531,11 @@ module TypeScript {
             return nameEx;
         }
 
-        static getTypeParameterString(typars: PullTypeSymbol[], scopeSymbol?: PullSymbol) {
-            return PullSymbol.getTypeParameterStringEx(typars, scopeSymbol).toString();
+        static getTypeParameterString(typars: PullTypeSymbol[], scopeSymbol?: PullSymbol, useContraintInName?: boolean) {
+            return PullSymbol.getTypeParameterStringEx(typars, scopeSymbol, /*getTypeParamMarkerInfo:*/ undefined, useContraintInName).toString();
         }
 
-        static getTypeParameterStringEx(typeParameters: PullTypeSymbol[], scopeSymbol?: PullSymbol, getTypeParamMarkerInfo?: boolean) {
+        static getTypeParameterStringEx(typeParameters: PullTypeSymbol[], scopeSymbol?: PullSymbol, getTypeParamMarkerInfo?: boolean, useContraintInName?: boolean) {
             var builder = new MemberNameArray();
             builder.prefix = "";
 
@@ -551,7 +551,7 @@ module TypeScript {
                         builder.add(new MemberName());
                     }
 
-                    builder.add(typeParameters[i].getScopedNameEx(scopeSymbol, true));
+                    builder.add(typeParameters[i].getScopedNameEx(scopeSymbol, useContraintInName));
 
                     if (getTypeParamMarkerInfo) {
                         builder.add(new MemberName());
@@ -915,7 +915,13 @@ module TypeScript {
             return allMemberNames;
         }
 
-        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean, candidateSignature?: PullSignatureSymbol) {
+        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[],
+                                       prefix: string,
+                                       shortform: boolean,
+                                       brackets: boolean,
+                                       scopeSymbol?: PullSymbol,
+                                       getPrettyTypeName?: boolean,
+                                       candidateSignature?: PullSignatureSymbol) {
             var result: MemberName[] = [];
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
@@ -940,7 +946,7 @@ module TypeScript {
                     signature = candidateSignature;
                 }
 
-                result.push(signature.getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol));
+                result.push(signature.getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol, undefined, undefined));
                 if (getPrettyTypeName) {
                     break;
                 }
@@ -962,14 +968,15 @@ module TypeScript {
         }
 
         public toString(useConstraintInName?: boolean) {
-            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false).toString();
+            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false, undefined, undefined, useConstraintInName).toString();
             return s;
         }
 
         public getSignatureTypeNameEx(prefix: string, shortform: boolean, brackets: boolean, scopeSymbol?: PullSymbol, getParamMarkerInfo?: boolean, getTypeParamMarkerInfo?: boolean) {
             var typeParamterBuilder = new MemberNameArray();
 
-            typeParamterBuilder.add(PullSymbol.getTypeParameterStringEx(this.getTypeParameters(), scopeSymbol, getTypeParamMarkerInfo));
+            typeParamterBuilder.add(PullSymbol.getTypeParameterStringEx(
+                this.getTypeParameters(), scopeSymbol, getTypeParamMarkerInfo, /*useConstraintInName*/true));
 
             if (brackets) {
                 typeParamterBuilder.add(MemberName.create("["));
@@ -1976,7 +1983,7 @@ module TypeScript {
                 typars = this.getTypeParameters();
             }
 
-            var typarString = PullSymbol.getTypeParameterString(typars, this);
+            var typarString = PullSymbol.getTypeParameterString(typars, this, /*useConstraintInName:*/ true);
             return name + typarString;
         }
 
@@ -2018,7 +2025,7 @@ module TypeScript {
                 typars = this.getTypeParameters();
             }
 
-            builder.add(PullSymbol.getTypeParameterStringEx(typars, this, getTypeParamMarkerInfo));
+            builder.add(PullSymbol.getTypeParameterStringEx(typars, this, getTypeParamMarkerInfo, useConstraintInName));
 
             return builder;
         }

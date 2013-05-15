@@ -6,4 +6,4 @@ goTo.marker('1');
 verify.quickInfoIs('Foo<TT extends Date>', null, 'Foo<TT extends Date>')
 
 goTo.marker('2');
-verify.quickInfoIs('TT', null, 'TT in Foo<TT extends Date>')
+verify.quickInfoIs('TT extends Date', null, 'TT in Foo<TT extends Date>')

@@ -56,7 +56,7 @@ verify.currentParameterSpanIs("M extends IFoo");
 ////new testClass</*construcor1*/
 
 goTo.marker("construcor1");
-verify.currentSignatureHelpIs("testClass<T extends IFoo, U, M extends IFoo>(a: T, b: U, c: M): testClass<T extends IFoo, U, M extends IFoo>");
+verify.currentSignatureHelpIs("testClass<T extends IFoo, U, M extends IFoo>(a: T, b: U, c: M): testClass<T, U, M>");
 verify.currentParameterHelpArgumentNameIs("T");
 verify.currentParameterSpanIs("T extends IFoo");
 

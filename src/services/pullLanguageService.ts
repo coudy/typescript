@@ -674,9 +674,9 @@ module Services {
                 }
             }
 
-            var memberName = isCallExpression ?
-            TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, enclosingScopeSymbol) :
-            symbol.getTypeNameEx(enclosingScopeSymbol, true);
+            var memberName = isCallExpression
+                ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, enclosingScopeSymbol)
+                : symbol.getTypeNameEx(enclosingScopeSymbol, true);
             var kind = this.mapPullElementKind(symbol.getKind(), symbol, !isCallExpression, isCallExpression, isConstructorCall);
             var docComment = this.compilerState.getDocComments(candidateSignature || symbol, !isCallExpression);
             var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
