@@ -984,8 +984,13 @@ module TypeScript {
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkForDisallowedImportDeclaration(node) ||
-                (!SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements))) {
+                this.checkForDisallowedExports(node, node.moduleElements)) {
 
+                this.skip(node);
+                return;
+            }
+
+            if (!SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements)) {
                 this.skip(node);
                 return;
             }
@@ -998,10 +1003,63 @@ module TypeScript {
                 return;
             }
 
+            if (!node.stringLiteral &&
+                this.checkForDisallowedExportAssignment(node)) {
+
+                this.skip(node);
+                return;
+            }
+
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
             this.inAmbientDeclaration = this.inAmbientDeclaration || this.syntaxTree.isDeclaration() || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitModuleDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private checkForDisallowedExports(node: ISyntaxElement, moduleElements: ISyntaxList): boolean {
+            var seenExportedElement = false;
+            for (var i = 0, n = moduleElements.childCount(); i < n; i++) {
+                var child = <IModuleElementSyntax>moduleElements.childAt(i);
+
+                if (SyntaxUtilities.hasExportKeyword(child)) {
+                    seenExportedElement = true;
+                    break;
+                }
+            }
+
+            var moduleElementFullStart = this.childFullStart(node, moduleElements);
+            if (seenExportedElement) {
+                for (var i = 0, n = moduleElements.childCount(); i < n; i++) {
+                    var child = <IModuleElementSyntax>moduleElements.childAt(i);
+
+                    if (child.kind() === SyntaxKind.ExportAssignment) {
+                        this.pushDiagnostic1(moduleElementFullStart, child, DiagnosticCode.Export_assignment_not_allowed_in_module_with_exported_element);
+                        return true;
+                    }
+
+                    moduleElementFullStart += child.fullWidth();
+                }
+            }
+
+            return false;
+        }
+
+        private checkForDisallowedExportAssignment(node: ModuleDeclarationSyntax): boolean {
+            var moduleElementFullStart = this.childFullStart(node, node.moduleElements);
+
+            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                var child = node.moduleElements.childAt(i);
+
+                if (child.kind() === SyntaxKind.ExportAssignment) {
+                    this.pushDiagnostic1(moduleElementFullStart, child, DiagnosticCode.Export_assignments_cannot_be_used_in_internal_modules);
+
+                    return true;
+                }
+
+                moduleElementFullStart += child.fullWidth();
+            }
+
+            return false;
         }
 
         public visitBlock(node: BlockSyntax): void {
@@ -1289,7 +1347,8 @@ module TypeScript {
         }
 
         public visitSourceUnit(node: SourceUnitSyntax): void {
-            if (this.checkFunctionOverloads(node, node.moduleElements)) {
+            if (this.checkFunctionOverloads(node, node.moduleElements) ||
+                this.checkForDisallowedExports(node, node.moduleElements)) {
                 this.skip(node);
                 return;
             }

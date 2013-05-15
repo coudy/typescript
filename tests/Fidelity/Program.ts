@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "ModuleDeclaration9.ts";
+    // "ExportAssignment5.ts";
     undefined;
 
 var generate = false;

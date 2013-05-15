@@ -32,7 +32,20 @@ module TypeScript {
             return SyntaxUtilities.getToken(list, kind) !== null;
         }
 
-        public static isAmbientDeclarationSyntax(positionNode: PositionedNode) {
+        public static hasExportKeyword(moduleElement: IModuleElementSyntax): boolean {
+            switch (moduleElement.kind()) {
+                case SyntaxKind.ModuleDeclaration:
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.FunctionDeclaration:
+                case SyntaxKind.VariableStatement:
+                case SyntaxKind.EnumDeclaration:
+                    return SyntaxUtilities.containsToken((<any>moduleElement).modifiers, SyntaxKind.ExportKeyword);
+            }
+
+            return false;
+        }
+
+        public static isAmbientDeclarationSyntax(positionNode: PositionedNode): boolean {
             if (!positionNode) {
                 return false;
             }

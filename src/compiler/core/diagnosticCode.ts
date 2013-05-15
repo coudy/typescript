@@ -71,6 +71,10 @@ module TypeScript {
         Module_name_cannot_be__0_,
         Enum_member_must_have_initializer,
         _module_______is_deprecated__Use__require_______instead,
+        Export_assignments_cannot_be_used_in_internal_modules,
+        Export_assignment_not_allowed_in_module_with_exported_element,
+
+
 
 
 

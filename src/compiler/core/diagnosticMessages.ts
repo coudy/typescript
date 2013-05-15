@@ -66,6 +66,9 @@ module TypeScript {
         Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: DiagnosticInfo;
         Enum_member_must_have_initializer: DiagnosticInfo;
         _module_______is_deprecated__Use__require_______instead: DiagnosticInfo;
+        Export_assignments_cannot_be_used_in_internal_modules: DiagnosticInfo;
+        Export_assignment_not_allowed_in_module_with_exported_element: DiagnosticInfo;
+
 
 
 
@@ -678,7 +681,17 @@ module TypeScript {
             code: 1062
         },
 
+        Export_assignments_cannot_be_used_in_internal_modules: {
+            category: DiagnosticCategory.Error,
+            message: "Export assignments cannot be used in internal modules.",
+            code: 1063
+        },
 
+        Export_assignment_not_allowed_in_module_with_exported_element: {
+            category: DiagnosticCategory.Error,
+            message: "Export assignment not allowed in module with exported element.",
+            code: 1064
+        },
 
 
 
