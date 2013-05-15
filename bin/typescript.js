@@ -44574,10 +44574,38 @@ var TypeScript;
 
         PullTypeChecker.prototype.typeCheckReturnStatement = function (returnAST, typeCheckContext) {
             typeCheckContext.setEnclosingDeclHasReturn();
-            var returnExpr = returnAST.returnExpression;
-            var returnType = this.typeCheckAST(returnExpr, typeCheckContext, false);
 
+            var returnExpr = returnAST.returnExpression;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var inContextuallyTypedAssignment = false;
+
+            if (enclosingDecl.getKind() & TypeScript.PullElementKind.SomeFunction) {
+                var enclosingDeclAST = this.resolver.getASTForDecl(enclosingDecl);
+                if (enclosingDeclAST.returnTypeAnnotation) {
+                    var returnTypeAnnotationSymbol = this.resolver.resolveTypeReference(enclosingDeclAST.returnTypeAnnotation, enclosingDecl, this.context).symbol;
+                    if (returnTypeAnnotationSymbol) {
+                        inContextuallyTypedAssignment = true;
+                        this.context.pushContextualType(returnTypeAnnotationSymbol, this.context.inProvisionalResolution(), null);
+                    }
+                } else {
+                    var currentContextualType = this.context.getContextualType();
+                    if (currentContextualType && currentContextualType.isFunction()) {
+                        var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                        if (currentContextualTypeReturnTypeSymbol) {
+                            inContextuallyTypedAssignment = true;
+                            this.context.pushContextualType(currentContextualTypeReturnTypeSymbol, this.context.inProvisionalResolution(), null);
+                        }
+                    }
+                }
+            }
+
+            var returnType = this.typeCheckAST(returnExpr, typeCheckContext, inContextuallyTypedAssignment);
+
+            if (inContextuallyTypedAssignment) {
+                this.context.popContextualType();
+            }
 
             if (enclosingDecl.getKind() === 524288 /* SetAccessor */ && returnExpr) {
                 this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, 188 /* Setters_cannot_return_a_value */, null, typeCheckContext.getEnclosingDecl());
@@ -53927,6 +53955,7 @@ var TypeScript;
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var enclosingDecl = null;
+            var enclosingDeclAST = null;
             var inContextuallyTypedAssignment = false;
 
             var resolutionContext = new TypeScript.PullTypeResolutionContext();
@@ -54084,6 +54113,38 @@ var TypeScript;
 
                         break;
 
+                    case 93 /* ReturnStatement */:
+                        var returnStatement = current;
+                        var contextualType = null;
+
+                        if (enclosingDecl && (enclosingDecl.getKind() & TypeScript.PullElementKind.SomeFunction)) {
+                            var functionDeclaration = enclosingDeclAST;
+                            if (functionDeclaration.returnTypeAnnotation) {
+                                var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
+                                resolutionContext.resolvingTypeReference = true;
+                                var returnTypeSymbol = this.pullTypeChecker.resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext).symbol;
+                                resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
+                                if (returnTypeSymbol) {
+                                    inContextuallyTypedAssignment = true;
+                                    contextualType = returnTypeSymbol;
+                                }
+                            } else {
+                                var currentContextualType = resolutionContext.getContextualType();
+                                if (currentContextualType && currentContextualType.isFunction()) {
+                                    var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                                    var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                                    if (currentContextualTypeReturnTypeSymbol) {
+                                        inContextuallyTypedAssignment = true;
+                                        contextualType = currentContextualTypeReturnTypeSymbol;
+                                    }
+                                }
+                            }
+                        }
+
+                        resolutionContext.pushContextualType(contextualType, false, null);
+
+                        break;
+
                     case 11 /* TypeRef */:
                     case 9 /* TypeParameter */:
                         resolutionContext.resolvingTypeReference = true;
@@ -54093,6 +54154,7 @@ var TypeScript;
                 var decl = semanticInfo.getDeclForAST(current);
                 if (decl && !(decl.getKind() & (1024 /* Variable */ | 2048 /* Parameter */ | 8192 /* TypeParameter */))) {
                     enclosingDecl = decl;
+                    enclosingDeclAST = current;
                 }
             }
 
