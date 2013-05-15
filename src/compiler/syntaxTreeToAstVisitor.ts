@@ -1244,7 +1244,22 @@ module TypeScript {
             }
             else {
                 var statements = new ASTList();
-                statements.append(new ReturnStatement(body.accept(this)));
+                var expression = body.accept(this);
+                var returnStatement = new ReturnStatement(expression);
+
+                // Copy any comments before the body of the arrow function to the return statement.
+                // This is necessary for emitting correctness so we don't emit something like this:
+                //
+                //      return
+                //          // foo
+                //          this.foo();
+                //
+                // Because of ASI, this gets parsed as "return;" which is *not* what we want for
+                // proper semantics.
+                returnStatement.preComments = expression.preComments;
+                expression.preComments = null;
+
+                statements.append(returnStatement);
                 var block = new Block(statements);
                 block.closeBraceSpan = statements.members[0];
                 return block;
