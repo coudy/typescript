@@ -18,4 +18,4 @@ var c2: C2;
 c = c2;
 c2 = c;
 c.bar(); // error
-c2.bar(); // should work
+c2.bar(); // should error

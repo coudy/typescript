@@ -2608,6 +2608,31 @@ module TypeScript {
             return symbolAndDiagnostics;
         }
 
+        public isPrototypeMember(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
+            var rhsName = (<Identifier>dottedNameAST.operand2).text;
+            if (rhsName === "prototype") {
+                var prevCanUseTypeSymbol = context.canUseTypeSymbol;
+                context.canUseTypeSymbol = true;
+                var lhsType = this.resolveAST(dottedNameAST.operand1, /*inContextuallyTypedAssignment*/false, enclosingDecl, context).symbol.getType();
+                context.canUseTypeSymbol = prevCanUseTypeSymbol;
+
+                if (lhsType) {
+                    if (lhsType.isClass() || lhsType.isConstructor()) {
+                        return true;
+                    }
+                    else {
+                        var classInstanceType = lhsType.getAssociatedContainerType();
+
+                        if (classInstanceType && classInstanceType.isClass()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private computeDottedNameExpressionSymbol(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             if ((<Identifier>dottedNameAST.operand2).isMissing()) {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
@@ -2657,7 +2682,7 @@ module TypeScript {
                 }
             }
 
-            if (rhsName === "prototype") {
+            if (this.isPrototypeMember(dottedNameAST, enclosingDecl, context)) {
                 if (lhsType.isClass()) {
                     return SymbolAndDiagnostics.fromSymbol(lhsType);
                 }

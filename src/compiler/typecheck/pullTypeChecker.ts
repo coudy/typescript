@@ -2345,16 +2345,31 @@ module TypeScript {
             return type;
         }
 
+        private checkForSuperMemberAccess(memberAccessExpression: BinaryExpression,
+                                          typeCheckContext: PullTypeCheckContext,
+                                          resolvedName: PullSymbol): boolean {
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            if (resolvedName) {
+                if (memberAccessExpression.operand1.nodeType === NodeType.SuperExpression &&
+                    !resolvedName.isError() &&
+                    resolvedName.getKind() !== PullElementKind.Method) {
+
+                    this.postError(memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(), typeCheckContext.scriptName,
+                        DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, [], enclosingDecl);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private checkForPrivateMemberAccess(memberAccessExpression: BinaryExpression,
                                             typeCheckContext: PullTypeCheckContext,
                                             expressionType: PullTypeSymbol,
-                                            resolvedName: PullSymbol): void {
+                                            resolvedName: PullSymbol): boolean {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             if (resolvedName) {
-                if (memberAccessExpression.operand1.nodeType === NodeType.SuperExpression && !resolvedName.isError() && resolvedName.getKind() !== PullElementKind.Method) {
-                    this.postError(memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(), typeCheckContext.scriptName, DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, [], enclosingDecl);
-                }
-                else if (resolvedName.hasFlag(PullElementFlags.Private)) {
+                 if (resolvedName.hasFlag(PullElementFlags.Private)) {
                     var memberContainer = resolvedName.getContainer();
                     if (memberContainer && memberContainer.getKind() === PullElementKind.ConstructorType) {
                         memberContainer = memberContainer.getAssociatedContainerType();
@@ -2367,10 +2382,44 @@ module TypeScript {
                         if (!containingClass || containingClass.getSymbol() !== memberContainer) {
                             var name = <Identifier>memberAccessExpression.operand2;
                             this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                            return true;
                         }
                     }
                 }
             }
+
+            return false;
+        }
+
+        private checkForStaticMemberAccess(memberAccessExpression: BinaryExpression,
+                                           typeCheckContext: PullTypeCheckContext,
+                                           expressionType: PullTypeSymbol,
+                                           resolvedName: PullSymbol): boolean {
+            if (expressionType && resolvedName && !resolvedName.isError()) {
+                if (expressionType.isClass() || expressionType.getKind() === PullElementKind.ConstructorType) {
+                    var name = <Identifier>memberAccessExpression.operand2;
+                    var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+                    if (resolvedName.hasFlag(PullElementFlags.Static) || this.resolver.isPrototypeMember(memberAccessExpression, enclosingDecl, this.context)) {
+                        if (expressionType.getKind() !== PullElementKind.ConstructorType) {
+                            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName,
+                                DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable, null, enclosingDecl);
+                            return true;
+                        }
+                    }
+                    else {
+                        if (expressionType.getKind() === PullElementKind.ConstructorType) {
+                            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName,
+                                DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class, null, enclosingDecl);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         private typeCheckMemberAccessExpression(memberAccessExpression: BinaryExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -2384,7 +2433,10 @@ module TypeScript {
             var expressionType = this.typeCheckAST(memberAccessExpression.operand1, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.context.canUseTypeSymbol = prevCanUseTypeSymbol;
 
-            this.checkForPrivateMemberAccess(memberAccessExpression, typeCheckContext, expressionType, resolvedName);
+            // Check for errors, but only report the first one we find to not spam the user.
+            this.checkForSuperMemberAccess(memberAccessExpression, typeCheckContext, resolvedName) ||
+            this.checkForPrivateMemberAccess(memberAccessExpression, typeCheckContext, expressionType, resolvedName) ||
+            this.checkForStaticMemberAccess(memberAccessExpression, typeCheckContext, expressionType, resolvedName);
 
             return type;
         }
