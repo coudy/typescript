@@ -179,6 +179,7 @@ module TypeScript {
             var isExported = moduleContainerDecl.getFlags() & PullElementFlags.Exported;
             var isEnum = (moduleKind & PullElementKind.Enum) != 0;
             var searchKind = isEnum ? PullElementKind.Enum : PullElementKind.SomeContainer;
+            var isInitializedModule = (moduleContainerDecl.getFlags() & PullElementFlags.SomeInitializedModule) != 0;
 
             var createdNewSymbol = false;
 
@@ -188,6 +189,10 @@ module TypeScript {
                 }
                 else {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
+
+                    if (moduleContainerTypeSymbol && !(moduleContainerTypeSymbol.getKind() & searchKind)) {
+                        moduleContainerTypeSymbol = null;
+                    }
                 }
             }
             else if (!isExported || moduleContainerDecl.getKind() === PullElementKind.DynamicModule) {
@@ -196,8 +201,10 @@ module TypeScript {
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() !== moduleKind) {
                 // duplicate symbol error
-                moduleContainerDecl.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [moduleContainerDecl.getDisplayName()]));
+                if (isInitializedModule) {
+                    moduleContainerDecl.addDiagnostic(
+                        new SemanticDiagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [moduleContainerDecl.getDisplayName()]));
+                }
 
                 moduleContainerTypeSymbol = null;
             }
@@ -210,7 +217,7 @@ module TypeScript {
                 createdNewSymbol = true;
             }
 
-            if (!moduleInstanceSymbol && (moduleContainerDecl.getFlags() & PullElementFlags.SomeInitializedModule)) {
+            if (!moduleInstanceSymbol && isInitializedModule) {
 
                 // search for a complementary instance symbol first
                 var variableSymbol: PullSymbol = null;
@@ -520,7 +527,9 @@ module TypeScript {
             var cleanedPreviousDecls = false;
             var isExported = classDecl.getFlags() & PullElementFlags.Exported;
             var isGeneric = false;
-            var acceptableSharedKind = PullElementKind.Class;
+
+            // We're not yet ready to support interfaces augmenting classes (or vice versa)
+            var acceptableSharedKind = PullElementKind.Class; // | PullElementKind.Interface;
 
             if (parent) {
                 if (isExported) {
@@ -795,7 +804,9 @@ module TypeScript {
             var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
             var parent = this.getParent();
-            var acceptableSharedKind = PullElementKind.Interface | PullElementKind.Class | PullElementKind.Enum;
+
+            // We're not yet ready to support interfaces augmenting classes (or vice versa)
+            var acceptableSharedKind = PullElementKind.Interface; // | PullElementKind.Class | PullElementKind.Enum;
 
             if (parent) {
                 interfaceSymbol = parent.findNestedType(interfaceName);
