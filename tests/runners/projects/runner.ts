@@ -777,15 +777,15 @@ class ProjectRunner extends RunnerBase {
             });
 
             Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
-            //tests.push({
-            //    scenario: "declarations_SimpleImport"
-            //        , projectRoot: 'tests/cases/projects/declarations_SimpleImport'
-            //        , inputFiles: ['useModule.ts']
-            //        , collectedFiles: ['useModule.ts', 'm4.ts']
-            //        , outputFiles: ['useModule.js', 'm4.js']
-            //        , declareFiles: ['m4.d.ts', 'useModule.d.ts']
-            //        , skipRun: true
-            //});
+            tests.push({
+                scenario: "declarations_SimpleImport"
+                    , projectRoot: 'tests/cases/projects/declarations_SimpleImport'
+                    , inputFiles: ['useModule.ts']
+                    , collectedFiles: ['useModule.ts', 'm4.ts']
+                    , outputFiles: ['useModule.js', 'm4.js']
+                    , declareFiles: ['m4.d.ts', 'useModule.d.ts']
+                    , skipRun: true
+            });
 
             Harness.Assert.bug('Wrong signature emitted in declaration file for class types imported from external modules');
             //tests.push({
