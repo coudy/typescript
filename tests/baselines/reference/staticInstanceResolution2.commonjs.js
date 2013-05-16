@@ -1,5 +1,3 @@
-var WinJS = require('winjs');
-
 var A = (function () {
     function A() {
     }
@@ -13,6 +11,3 @@ var B = (function () {
     return B;
 })();
 B.hasOwnProperty('foo');
-
-WinJS.Promise.timeout(10);
-
