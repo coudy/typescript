@@ -142,5 +142,27 @@ module Services {
 
             return false;
         }
+
+        public static getValidCompletionEntryDisplayName(symbol: TypeScript.PullSymbol, languageVersion: TypeScript.LanguageVersion): string {
+            var displayName = symbol.getDisplayName();
+
+            if (displayName && displayName.length > 0) {
+                var firstChar = displayName.charCodeAt(0);
+                if (firstChar === TypeScript.CharacterCodes.singleQuote || firstChar === TypeScript.CharacterCodes.doubleQuote) {
+                    // If the user entered name for the symbol was quoted, removing the quotes is not enough, as the name could be an
+                    // invalid identifer name. We need to check if whatever was inside the qouates is actually a valid identifier name.
+                    displayName = TypeScript.stripQuotes(displayName);
+
+                    if (TypeScript.Scanner.isValidIdentifier(TypeScript.SimpleText.fromString(displayName), languageVersion)) {
+                        return displayName;
+                    }
+                }
+                else {
+                    return displayName;
+                }
+            }
+
+            return null;
+        }
     }
 }

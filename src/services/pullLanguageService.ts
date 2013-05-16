@@ -779,26 +779,31 @@ module Services {
         private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo): CompletionEntry[] {
             var result: CompletionEntry[] = [];
 
-            symbolInfo.symbols.forEach((symbol) => {
-                if (symbol.getKind() === TypeScript.PullElementKind.ObjectType) {
-                    // Ignore anonomus object types
-                    return;
+            for (var i = 0, n = symbolInfo.symbols.length; i < n; i++) {
+                var symbol = symbolInfo.symbols[i];
+
+                var symboDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol, this.compilerState.compilationSettings().codeGenTarget);
+                if (!symboDisplaylName) {
+                    continue;
                 }
 
                 var entry = new CompletionEntry();
-                entry.name = symbol.getDisplayName();
+                entry.name = symboDisplaylName;
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 entry.kind = this.mapPullElementKind(symbol.getKind(), symbol, true);
                 entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+
                 var type = symbol.getType();
                 var symbolForDocComments = symbol;
                 if (type && type.hasOnlyOverloadCallSignatures()) {
                     symbolForDocComments = type.getCallSignatures()[0];
                 }
+
                 entry.docComment = this.compilerState.getDocComments(symbolForDocComments, true);
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
-            });
+            }
+
             return result;
         }
 

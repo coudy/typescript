@@ -1224,5 +1224,13 @@ module TypeScript {
             return new SyntaxDiagnostic(this.fileName, start, end - start,
                 DiagnosticCode.Unrecognized_escape_sequence, null);
         }
+
+        public static isValidIdentifier(text: ISimpleText, languageVersion: LanguageVersion): boolean {
+            var scanner = new Scanner(/*fileName:*/ null, text, LanguageVersion, Scanner.triviaWindow);
+            var errors: Diagnostic[] = [];
+            var token = scanner.scan(errors, false);
+
+            return errors.length === 0 && SyntaxFacts.isIdentifierNameOrAnyKeyword(token) && token.width() === text.length();
+        }
     }
 }
