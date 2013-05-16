@@ -2407,14 +2407,6 @@ module TypeScript {
                             return true;
                         }
                     }
-                    else {
-                        if (expressionType.getKind() === PullElementKind.ConstructorType) {
-                            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName,
-                                DiagnosticCode.Instance_member_cannot_be_accessed_off_a_class, null, enclosingDecl);
-                            return true;
-                        }
-                    }
                 }
             }
 
