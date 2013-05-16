@@ -161,6 +161,10 @@ module TypeScript {
             this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
             this.cachedFunctionArgumentsSymbol.setType(this.cachedIArgumentsInterfaceType ? this.cachedIArgumentsInterfaceType : this.semanticInfoChain.anyTypeSymbol);
             this.cachedFunctionArgumentsSymbol.setResolved();
+            var functionArgumentsDecl = new PullDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, new TextSpan(0, 0), unitPath);
+            functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
+            this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
+
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
@@ -2537,6 +2541,10 @@ module TypeScript {
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol;
+
+                if (this.cachedIArgumentsInterfaceType && !this.cachedIArgumentsInterfaceType.isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType, enclosingDecl, context);
+                }
             }
 
             if (!nameSymbol) {
