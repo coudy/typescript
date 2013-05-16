@@ -1168,10 +1168,13 @@ module TypeScript {
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 this.setTypeCheckerUnit(this.document.fileName);
-                var pullSymbol = this.resolvingContext.resolvingTypeReference
-                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext).symbol
-                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext).symbol;
+                var pullSymbolAndDiagnostics = this.resolvingContext.resolvingTypeReference
+                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
+                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
+                var pullSymbol = pullSymbolAndDiagnostics.symbol;
+                var pullSymbolAlias = pullSymbolAndDiagnostics.symbolAlias;
                 var pullSymbolKind = pullSymbol.getKind();
+                var isLocalAlias = pullSymbolAlias && (pullSymbolAlias.getDeclarations()[0].getParentDecl() == this.getEnclosingDecl());
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
 
@@ -1216,6 +1219,7 @@ module TypeScript {
                                 this.writeToOutput("exports.");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                                     !isLocalAlias &&
                                      !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
                                      pullSymbol.getKind() !== PullElementKind.ConstructorMethod &&
                                      pullSymbol.getKind() !== PullElementKind.Class &&

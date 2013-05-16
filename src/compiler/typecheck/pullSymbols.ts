@@ -2317,6 +2317,7 @@ module TypeScript {
         }
 
         public getType(): PullTypeSymbol {
+
             if (this.typeAliasLink) {
                 return <PullTypeSymbol>this.typeAliasLink.end;
             }

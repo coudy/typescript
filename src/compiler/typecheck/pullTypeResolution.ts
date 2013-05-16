@@ -5,14 +5,15 @@
 
 module TypeScript {
     export class SymbolAndDiagnostics<TSymbol extends PullSymbol> {
-        private static _empty = new SymbolAndDiagnostics(null, null);
+        private static _empty = new SymbolAndDiagnostics(null, null, null);
 
         constructor(public symbol: TSymbol,
+            public symbolAlias: TSymbol,
             public diagnostics: Diagnostic[]) {
         }
 
         public static create<TSymbol extends PullSymbol>(symbol: TSymbol, diagnostics: Diagnostic[]): SymbolAndDiagnostics<TSymbol> {
-            return new SymbolAndDiagnostics<TSymbol>(symbol, diagnostics);
+            return new SymbolAndDiagnostics<TSymbol>(symbol, null, diagnostics);
         }
 
         public static empty<TSymbol extends PullSymbol>(): SymbolAndDiagnostics<TSymbol> {
@@ -20,7 +21,11 @@ module TypeScript {
         }
 
         public static fromSymbol<TSymbol extends PullSymbol>(symbol: TSymbol): SymbolAndDiagnostics<TSymbol> {
-            return new SymbolAndDiagnostics<TSymbol>(symbol, null);
+            return new SymbolAndDiagnostics<TSymbol>(symbol, null, null);
+        }
+
+        public static fromAlias<TSymbol extends PullSymbol>(symbol: TSymbol, alias: TSymbol): SymbolAndDiagnostics<TSymbol> {
+            return new SymbolAndDiagnostics<TSymbol>(symbol, alias, null);
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
@@ -2537,6 +2542,7 @@ module TypeScript {
                 declPath = [enclosingDecl];
             }
 
+            var aliasSymbol: PullSymbol = null;
             var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
@@ -2554,6 +2560,7 @@ module TypeScript {
             }
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
+                aliasSymbol = nameSymbol;
 
                 if (!nameSymbol.isResolved()) {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
@@ -2561,20 +2568,20 @@ module TypeScript {
 
                 var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedSymbol()
 
-                    if (exportAssignmentSymbol) {
+                if (exportAssignmentSymbol) {
 
-                        if (exportAssignmentSymbol.isType()) {
-                            var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
+                    if (exportAssignmentSymbol.isType()) {
+                        var exportedTypeSymbol = <PullTypeSymbol>exportAssignmentSymbol;
 
-                            if (exportedTypeSymbol.isClass()) {
-                                var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
+                        if (exportedTypeSymbol.isClass()) {
+                            var constructorMethod = (<PullClassTypeSymbol>exportedTypeSymbol).getConstructorMethod();
 
-                                if (constructorMethod) {
-                                    nameSymbol = constructorMethod;
-                                }
-                                else {
-                                    nameSymbol = exportedTypeSymbol;
-                                }
+                            if (constructorMethod) {
+                                nameSymbol = constructorMethod;
+                            }
+                            else {
+                                nameSymbol = exportedTypeSymbol;
+                            }
                         }
                         else if (exportedTypeSymbol.isContainer()) {
                             var instanceSymbol = (<PullContainerTypeSymbol>exportedTypeSymbol).getInstanceSymbol();
@@ -2593,7 +2600,7 @@ module TypeScript {
                 }
             }
 
-            return SymbolAndDiagnostics.fromSymbol(nameSymbol);
+            return SymbolAndDiagnostics.fromAlias(nameSymbol, aliasSymbol);
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
