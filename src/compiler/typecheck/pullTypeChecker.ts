@@ -2584,7 +2584,6 @@ module TypeScript {
 
         private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
             var declAST = <VariableDeclarator>this.resolver.getASTForSymbol(declSymbol);
-            var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var isProperty = declSymbol.getKind() === PullElementKind.Property;
@@ -2602,7 +2601,7 @@ module TypeScript {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
 
-                if (decl.getFlags() & PullElementFlags.Static) {
+                if (declSymbol.hasFlag(PullElementFlags.Static)) {
                     messageCode = DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_;
                     messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {
@@ -2618,7 +2617,7 @@ module TypeScript {
                     messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 }
             } else {
-                if (decl.getFlags() & PullElementFlags.Static) {
+                if (declSymbol.hasFlag(PullElementFlags.Static)) {
                     messageCode = DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_;
                     messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {

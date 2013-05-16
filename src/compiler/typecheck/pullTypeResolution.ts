@@ -4777,7 +4777,13 @@ module TypeScript {
 
             if (!bestCommonType) {
                 // if no best common type can be determined, use "{}"
-                bestCommonType = new PullTypeSymbol("", PullElementKind.ObjectType);
+                var emptyTypeDecl = new PullDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, new TextSpan(0, 0), this.currentUnit.getPath());
+                var emptyType = new PullTypeSymbol("{}", PullElementKind.ObjectType);
+
+                emptyTypeDecl.setSymbol(emptyType);
+                emptyType.addDeclaration(emptyTypeDecl);
+
+                bestCommonType = emptyType;                
             }
 
             return bestCommonType
