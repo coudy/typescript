@@ -2197,7 +2197,10 @@ module TypeScript {
     // represents the module "namespace" type
     export class PullContainerTypeSymbol extends PullTypeSymbol {
         public instanceSymbol: PullSymbol = null;
-        private _exportAssignedSymbol: PullSymbol = null;
+
+        private _exportAssignedValueSymbol: PullSymbol = null;
+        private _exportAssignedTypeSymbol: PullTypeSymbol = null;
+        private _exportAssignedContainerSymbol: PullContainerTypeSymbol = null;
 
         constructor(name: string, kind = PullElementKind.Container) {
             super(name, kind);
@@ -2218,6 +2221,8 @@ module TypeScript {
             if (this.instanceSymbol) {
                 this.instanceSymbol.invalidate();
             }
+
+            this.resetExportAssignedSymbols();
 
             super.invalidate();
         }
@@ -2269,21 +2274,41 @@ module TypeScript {
             return super.getDisplayName();
         }
 
-        public setExportAssignedSymbol(symbol: PullSymbol): void {
-            this._exportAssignedSymbol = symbol;
+        public setExportAssignedValueSymbol(symbol: PullSymbol): void {
+
+            this._exportAssignedValueSymbol = symbol;
+        }
+        public getExportAssignedValueSymbol(): PullSymbol {
+            return this._exportAssignedValueSymbol;
         }
 
-        public getExportAssignedSymbol(): PullSymbol {
-            return this._exportAssignedSymbol;
+        public setExportAssignedTypeSymbol(type: PullTypeSymbol): void {
+            this._exportAssignedTypeSymbol = type;
+        }
+        public getExportAssignedTypeSymbol(): PullTypeSymbol {
+            return this._exportAssignedTypeSymbol;
+        }
+
+        public setExportAssignedContainerSymbol(container: PullContainerTypeSymbol): void {
+            this._exportAssignedContainerSymbol = container;
+        }
+        public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
+            return this._exportAssignedContainerSymbol;
+        }
+
+        public resetExportAssignedSymbols() {
+            this._exportAssignedContainerSymbol = null;
+            this._exportAssignedTypeSymbol = null;
+            this._exportAssignedValueSymbol = null;
         }
     }
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {
 
         private typeAliasLink: PullSymbolLink = null;
-        private _exportAssignmentLink: PullSymbolLink = null;
         private isUsedAsValue = false;
         private typeUsedExternally = false;
+        private retrievingExportAssignment = false;
 
         constructor(name: string) {
             super(name, PullElementKind.TypeAlias);
@@ -2293,6 +2318,7 @@ module TypeScript {
         public isContainer() { return true; }
 
         public setAliasedType(type: PullTypeSymbol) {
+            Debug.assert(!type.isError(), "Attempted to alias an error");
             if (this.typeAliasLink) {
                 this.removeOutgoingLink(this.typeAliasLink);
             }
@@ -2300,20 +2326,61 @@ module TypeScript {
             this.typeAliasLink = this.addOutgoingLink(type, SymbolLinkKind.Aliases);
         }
 
-        public setExportAssignmentSymbol(symbol: PullSymbol) {
-            if (this._exportAssignmentLink) {
-                this.removeOutgoingLink(this._exportAssignmentLink);
-            }
-
-            this._exportAssignmentLink = this.addOutgoingLink(symbol, SymbolLinkKind.ExportAliases);
-        }
-
-        public getExportAssignedSymbol(): PullSymbol {
-            if (!this._exportAssignmentLink) {
+        public getExportAssignedValueSymbol(): PullSymbol {
+            if (!this.typeAliasLink) {
                 return null;
             }
 
-            return this._exportAssignmentLink.end;
+            if (this.retrievingExportAssignment) {
+                return null;
+            }
+
+            if (this.typeAliasLink.end.isContainer()) {
+                this.retrievingExportAssignment = true;
+                var sym = (<PullContainerTypeSymbol>this.typeAliasLink.end).getExportAssignedValueSymbol();
+                this.retrievingExportAssignment = false;
+                return sym;
+            }
+
+            return null;
+        }
+
+        public getExportAssignedTypeSymbol(): PullTypeSymbol {
+            if (!this.typeAliasLink) {
+                return null;
+            }
+
+            if (this.retrievingExportAssignment) {
+                return null;
+            }
+
+            if (this.typeAliasLink.end.isContainer()) {
+                this.retrievingExportAssignment = true;
+                var sym = (<PullContainerTypeSymbol>this.typeAliasLink.end).getExportAssignedTypeSymbol();
+                this.retrievingExportAssignment = false;
+                return sym;
+            }
+
+            return null;
+        }
+
+        public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
+            if (!this.typeAliasLink) {
+                return null;
+            }
+
+            if (this.retrievingExportAssignment) {
+                return null;
+            }
+
+            if (this.typeAliasLink.end.isContainer()) {
+                this.retrievingExportAssignment = true;
+                var sym = (<PullContainerTypeSymbol>this.typeAliasLink.end).getExportAssignedContainerSymbol();
+                this.retrievingExportAssignment = false;
+                return sym;
+            }
+
+            return null;
         }
 
         public getType(): PullTypeSymbol {

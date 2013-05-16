@@ -795,10 +795,10 @@ module TypeScript {
             // epilogue
             if (isDynamicMod) {
                 var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
-                var exportAssignmentSymbol = (<PullContainerTypeSymbol>pullDecl.getSymbol()).getExportAssignedSymbol();
+                var exportAssignmentValueSymbol = (<PullContainerTypeSymbol>pullDecl.getSymbol()).getExportAssignedValueSymbol();
 
                 if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                    if (exportAssignmentIdentifier && exportAssignmentSymbol && !(exportAssignmentSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                    if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.getKind() & PullElementKind.SomeTypeReference)) {
                         // indent was decreased for AMD above
                         this.indenter.increaseIndent();
                         this.emitIndent();
@@ -807,7 +807,7 @@ module TypeScript {
                     }
                     this.writeToOutput("});");
                 }
-                else if (exportAssignmentIdentifier && exportAssignmentSymbol && !(exportAssignmentSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                else if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.getKind() & PullElementKind.SomeTypeReference)) {
                     this.emitIndent();
                     this.writeLineToOutput("module.exports = " + exportAssignmentIdentifier + ";");
                 }
