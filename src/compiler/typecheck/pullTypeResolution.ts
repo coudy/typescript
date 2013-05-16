@@ -5113,8 +5113,9 @@ module TypeScript {
             return this.signatureIsRelatableToTarget(s1, s2, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
-            return this.sourceIsRelatableToTarget(source, target, true, this.assignableCache, context, comparisonInfo);
+        public sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isInProvisionalResolution: boolean = false): boolean {
+            var cache = isInProvisionalResolution ? {} : this.assignableCache;
+            return this.sourceIsRelatableToTarget(source, target, true, cache, context, comparisonInfo);
         }
 
         private signatureGroupIsAssignableToTarget(sg1: PullSignatureSymbol[], sg2: PullSignatureSymbol[], context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
@@ -6013,7 +6014,7 @@ module TypeScript {
                         if (!this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], true)) {
                             // if it's just annotations that are blocking us, typecheck the function and add it to the list
                             if (this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], false)) {
-                                if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
+                                if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                                     break;
                                 }
                             }
@@ -6022,12 +6023,12 @@ module TypeScript {
                             }
                         }
                         else { // if it can be contextually typed, try it out...
-                            //argSym.invalidate();
+                            argSym.invalidate();
                             context.pushContextualType(memberType, true, null);
 
                             argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
 
-                            if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
+                            if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                                 if (comparisonInfo) {
                                     comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
                                         [memberType.toString(), (j + 1), argSym.getTypeName()]));
@@ -6037,8 +6038,6 @@ module TypeScript {
                             argSym.invalidate();
                             cxt = context.popContextualType();
                             hadProvisionalErrors = cxt.hadProvisionalErrors();
-
-                            //argSym.invalidate();
 
                             //this.resetProvisionalErrors();
                             if (miss) {
@@ -6055,7 +6054,7 @@ module TypeScript {
                         context.pushContextualType(memberType, true, null);
                         argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context).symbol;
 
-                        if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
+                        if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                             if (comparisonInfo) {
                                 comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
                                     [memberType.toString(), (j + 1), argSym.getTypeName()]));
@@ -6067,8 +6066,6 @@ module TypeScript {
                         argSym.invalidate();
                         cxt = context.popContextualType();
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
-
-                        //argSym.invalidate();
 
                         //this.resetProvisionalErrors();
                         if (miss) {
@@ -6084,19 +6081,18 @@ module TypeScript {
                         context.pushContextualType(memberType, true, null);
                         var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context).symbol;
 
-                        if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
+                        if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                             if (comparisonInfo) {
                                 comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
                                     [memberType.toString(), (j + 1), argSym.getTypeName()]));
                             }
                             break;
                         }
+
                         argSym.invalidate();
                         cxt = context.popContextualType();
 
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
-
-                        //argSym.invalidate();
 
                         if (miss) {
                             break;
@@ -6107,6 +6103,7 @@ module TypeScript {
                 if (j === args.members.length) {
                     applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors };
                 }
+
                 hadProvisionalErrors = false;
             }
 
