@@ -2222,8 +2222,6 @@ module TypeScript {
                 this.instanceSymbol.invalidate();
             }
 
-            this.resetExportAssignedSymbols();
-
             super.invalidate();
         }
 

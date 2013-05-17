@@ -215,6 +215,10 @@ module TypeScript {
             else { 
                 moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName, moduleKind);
                 createdNewSymbol = true;
+
+                if (!parent) {
+                    this.semanticInfoChain.cacheGlobalSymbol(moduleContainerTypeSymbol, searchKind);
+                }
             }
 
             if (!moduleInstanceSymbol && isInitializedModule) {
@@ -426,6 +430,10 @@ module TypeScript {
 
             if (!importSymbol) {
                 importSymbol = new PullTypeAliasSymbol(declName);
+
+                if (!parent) {
+                    this.semanticInfoChain.cacheGlobalSymbol(importSymbol, PullElementKind.SomeContainer);
+                }
             }
 
             importSymbol.addDeclaration(importDeclaration);
@@ -641,6 +649,10 @@ module TypeScript {
 
             if (!parentHadSymbol) {
                 classSymbol = new PullClassTypeSymbol(className);
+                
+                if (!parent) {
+                    this.semanticInfoChain.cacheGlobalSymbol(classSymbol, acceptableSharedKind);
+                }
             }
 
             classSymbol.addDeclaration(classDecl);
@@ -824,6 +836,10 @@ module TypeScript {
             if (!interfaceSymbol) {
                 interfaceSymbol = new PullTypeSymbol(interfaceName, PullElementKind.Interface);
                 createdNewSymbol = true;
+
+                if (!parent) {
+                    this.semanticInfoChain.cacheGlobalSymbol(interfaceSymbol, acceptableSharedKind);
+                }
             }
 
             interfaceSymbol.addDeclaration(interfaceDecl);
@@ -1707,6 +1723,23 @@ module TypeScript {
                 functionSymbol.invalidate();
                 functionTypeSymbol.invalidate();
                 functionTypeSymbol.recomputeCallSignatures();
+
+                if (isGeneric) {
+                    var specializations = functionTypeSymbol.getKnownSpecializations();
+
+                    for (var j = 0; j < specializations.length; j++) {
+                        callSigs = specializations[j].getCallSignatures();
+
+                        for (var i = 0; i < callSigs.length; i++) {
+                            specializations[j].removeCallSignature(callSigs[i], false);
+                        }
+
+                        specializations[j].invalidate();
+                        specializations[j].recomputeCallSignatures();
+                        specializations[j].recomputeConstructSignatures();
+                        specializations[j].recomputeIndexSignatures();
+                    }
+                }
             }
 
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -2086,6 +2119,31 @@ module TypeScript {
                 methodTypeSymbol.recomputeCallSignatures();
                 methodTypeSymbol.recomputeConstructSignatures();
                 methodTypeSymbol.recomputeIndexSignatures();
+
+                if (isGeneric) {
+                    var specializations = methodTypeSymbol.getKnownSpecializations();
+
+                    for (var j = 0; j < specializations.length; j++) {
+                        callSigs = specializations[j].getCallSignatures();
+                        constructSigs = specializations[j].getConstructSignatures();
+                        indexSigs = specializations[j].getIndexSignatures();
+
+                        for (var i = 0; i < callSigs.length; i++) {
+                            specializations[j].removeCallSignature(callSigs[i], false);
+                        }
+                        for (var i = 0; i < constructSigs.length; i++) {
+                            specializations[j].removeConstructSignature(constructSigs[i], false);
+                        }
+                        for (var i = 0; i < indexSigs.length; i++) {
+                            specializations[j].removeIndexSignature(indexSigs[i], false);
+                        }
+
+                        specializations[j].invalidate();
+                        specializations[j].recomputeCallSignatures();
+                        specializations[j].recomputeConstructSignatures();
+                        specializations[j].recomputeIndexSignatures();
+                    }
+                }
             }
 
             var sigKind = PullElementKind.CallSignature;
@@ -2191,7 +2249,7 @@ module TypeScript {
 
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||
-                (this.symbolIsRedeclaration(constructorSymbol) && !isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
 
                 constructorDeclaration.addDiagnostic(
                     new SemanticDiagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));

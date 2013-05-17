@@ -388,6 +388,9 @@ module TypeScript {
         else if (link.kind === SymbolLinkKind.IndexSignature) {
             update.updater.invalidateType(affectedSymbol);
         }
+        else if (link.kind === SymbolLinkKind.Aliases) {
+            update.updater.invalidateType(affectedSymbol);
+        }
         else if (link.kind === SymbolLinkKind.ExportAliases) {
             update.updater.invalidateType(affectedSymbol);
         }
@@ -480,6 +483,9 @@ module TypeScript {
         else if (link.kind === SymbolLinkKind.ReturnType) {
             update.updater.invalidateType(affectedSymbol);
         }
+        else if (link.kind === SymbolLinkKind.Aliases) {
+            update.updater.invalidateType(affectedSymbol);
+        }
         else if (link.kind === SymbolLinkKind.ExportAliases) {
             update.updater.invalidateType(affectedSymbol);
         }
@@ -566,6 +572,9 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind === SymbolLinkKind.ReturnType) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind === SymbolLinkKind.Aliases) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind === SymbolLinkKind.ExportAliases) {

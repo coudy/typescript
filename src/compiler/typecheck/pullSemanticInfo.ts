@@ -368,6 +368,21 @@ module TypeScript {
             return symbol;
         }
 
+        public cacheGlobalSymbol(symbol: PullSymbol, kind: PullElementKind) {
+            var cacheID1 = this.getDeclPathCacheID([symbol.getName()], kind);
+            var cacheID2 = this.getDeclPathCacheID([symbol.getName()], symbol.getKind());
+
+            if (!this.symbolCache[cacheID1]) {
+                this.symbolCache[cacheID1] = symbol;
+                symbol.addCacheID(cacheID1);
+            }
+
+            if (!this.symbolCache[cacheID2]) {
+                this.symbolCache[cacheID2] = symbol;
+                symbol.addCacheID(cacheID2);
+            }
+        }
+
         public update(compilationUnitPath: string) {
 
             // PULLTODO: Be less aggressive about clearing the cache

@@ -1720,14 +1720,22 @@ module TypeScript {
 
                     // PULLREVIEW: If the type annotation is a container type, use the module instance type
                     if (typeExprSymbol.isContainer()) {
-                        var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
 
-                        if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
-                            diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], decl);
-                            typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                        var exportedTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
+
+                        if (exportedTypeSymbol) {
+                            typeExprSymbol = exportedTypeSymbol;
                         }
                         else {
-                            typeExprSymbol = instanceSymbol.getType();
+                            var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
+
+                            if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
+                                diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], decl);
+                                typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                            }
+                            else {
+                                typeExprSymbol = instanceSymbol.getType();
+                            }
                         }
                     }
                     else if (declSymbol.getIsVarArg() && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType) && this.cachedArrayInterfaceType) {
@@ -2732,9 +2740,7 @@ module TypeScript {
                 }
                 // could be a function symbol
                 else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType) {
-                    lhsType = this.cachedFunctionInterfaceType;
-
-                    nameSymbol = lhsType.findMember(rhsName);
+                    nameSymbol = this.cachedFunctionInterfaceType.findMember(rhsName);
                 }
                 // could be a type parameter with a contraint
                 else if (lhsType.isTypeParameter()) {
