@@ -277,7 +277,7 @@ describe('Contextual typing tests', function() {
             it("Negative", function() {
                 var code = 'var foo = <{ id: number; }[]>[{ foo: "s" }, {  }];';
                 Harness.Compiler.compileString(code, 'Array Literal', function(result) {
-                    assert.equal(result.errors.length, 0);
+                    assert.equal(result.errors.length, 1); // Cannot convert '{ foo: string; }' to '{ id: number; }'
                 });
             });
         });

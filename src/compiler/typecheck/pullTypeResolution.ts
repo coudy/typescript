@@ -3498,24 +3498,24 @@ module TypeScript {
             var elementType = this.semanticInfoChain.anyTypeSymbol;
             var elementTypes: PullTypeSymbol[] = [];
             var comparisonInfo = new TypeComparisonInfo();
-            var contextualType: PullTypeSymbol = null;
+            var contextualElementType: PullTypeSymbol = null;
             comparisonInfo.onlyCaptureFirstError = true;
 
             // if the target type is an array type, extract the element type
             if (inContextuallyTypedAssignment) {
-                contextualType = context.getContextualType();
+                var contextualType = context.getContextualType();
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
 
                 if (contextualType.isArray()) {
-                    contextualType = contextualType.getElementType();
+                    contextualElementType = contextualType.getElementType();
                 }
             }
 
             // Resolve element types
             if (elements) {
                 if (inContextuallyTypedAssignment) {
-                    context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                    context.pushContextualType(contextualElementType, context.inProvisionalResolution(), null);
                 }
 
                 for (var i = 0; i < elements.members.length; i++) {
@@ -3528,21 +3528,21 @@ module TypeScript {
             }
 
             // Find the elment type
-            if (contextualType) {
+            if (contextualElementType) {
                 // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
-                elementType = contextualType;
+                elementType = contextualElementType;
 
                 // verify that this assumption is correct
                 for (var i = 0; i < elementTypes.length; i++) {
                     var comparisonInfo = new TypeComparisonInfo();
                     var currentElementType = elementTypes[i];
                     var currentElementAST = elements.members[i];
-                    if (!this.sourceIsAssignableToTarget(currentElementType, contextualType, context, comparisonInfo)) {
+                    if (!this.sourceIsAssignableToTarget(currentElementType, contextualElementType, context, comparisonInfo)) {
                         var message: Diagnostic;
                         if (comparisonInfo.message) {
-                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1__NL__2, [currentElementType.toString(), contextualType.toString(), comparisonInfo.message]);
+                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1__NL__2, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
                         } else {
-                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1_, [currentElementType.toString(), contextualType.toString()]);
+                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1_, [currentElementType.toString(), contextualElementType.toString()]);
                         }
 
                         return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), [message]);
