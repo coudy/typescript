@@ -1,3 +1,6 @@
 interface Array<T> {
-    foo(): void;
+    foo(): T;
 }
+
+var arr: string[] = [];
+var x: number = arr.foo();
