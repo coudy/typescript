@@ -246,8 +246,8 @@ module TypeScript {
 
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
-            var declarationPullSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declarationContainerAst, this.fileName);
-            var declarationPullSymbol = declarationPullSymbolAndDiagnostics && declarationPullSymbolAndDiagnostics.symbol;
+            var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(declarationContainerAst, this.fileName);
+            var declarationPullSymbol = declarationContainerDecl.getSymbol();
             var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
@@ -308,7 +308,8 @@ module TypeScript {
         }
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
-            var pullSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(boundDecl, this.fileName).symbol;
+            var decl = this.semanticInfoChain.getDeclForAST(boundDecl, this.fileName);
+            var pullSymbol = decl.getSymbol();
             var type = this.widenType(pullSymbol.getType());
             if (!type) {
                 // PULLTODO
@@ -402,7 +403,8 @@ module TypeScript {
         }
 
         public isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
-            var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.fileName);
+            var funcSymbol = functionDecl.getSymbol();
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             return signatures && signatures.length > 1;
@@ -418,6 +420,7 @@ module TypeScript {
             }
 
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
+
             var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
             var funcTypeSymbol = funcSymbol.getType();
             if (funcDecl.block) {
@@ -657,8 +660,8 @@ module TypeScript {
 
             this.declFile.Write("<");
             var containerAst = this.getAstDeclarationContainer();
-            var containerSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(containerAst, this.fileName);
-            var containerSymbol = containerSymbolAndDiagnostics && <PullTypeSymbol>containerSymbolAndDiagnostics.symbol;
+            var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst, this.fileName);
+            var containerSymbol = <PullTypeSymbol>containerDecl.getSymbol();
             var typars: PullTypeSymbol[];
             if (funcSignature) {
                 typars = funcSignature.getTypeParameters();
@@ -710,20 +713,21 @@ module TypeScript {
             return true;
         }
 
-        public ImportDeclarationCallback(pre: boolean, importDecl: ImportDeclaration): boolean {
+        public ImportDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
             if (pre) {
-                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolAndDiagnosticsForAST(importDecl, this.fileName).symbol;
+                var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
+                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                 if (importSymbol.getTypeUsedExternally()) {
-                    this.emitDeclarationComments(importDecl);
+                    this.emitDeclarationComments(importDeclAST);
                     this.emitIndent();
                     this.declFile.Write("import ");
 
-                    this.declFile.Write(importDecl.id.actualText + " = ");
-                    if (importDecl.isDynamicImport) {
-                        this.declFile.WriteLine("require(" + importDecl.getAliasName() + ");");
+                    this.declFile.Write(importDeclAST.id.actualText + " = ");
+                    if (importDeclAST.isDynamicImport) {
+                        this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
                     }
                     else {
-                        this.declFile.WriteLine(importDecl.getAliasName() + ";");
+                        this.declFile.WriteLine(importDeclAST.getAliasName() + ";");
                     }
                 }
             }
