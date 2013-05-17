@@ -2706,6 +2706,16 @@ module TypeScript {
                 }
             }
 
+            if (lhsType.isContainer() && !lhsType.isAlias()) {
+                // we're searching in the value space, so we should try to use the
+                // instance value type
+                var instanceSymbol = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
+
+                if (instanceSymbol) {
+                    lhsType = instanceSymbol.getType();
+                }
+            }
+
             if (this.isPrototypeMember(dottedNameAST, enclosingDecl, context)) {
                 if (lhsType.isClass()) {
                     return SymbolAndDiagnostics.fromSymbol(lhsType);
@@ -2839,17 +2849,8 @@ module TypeScript {
             else if (id === "boolean") {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
             }
-            else if (id === "null") {
-                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.nullTypeSymbol);
-            }
-            else if (id === "undefined") {
-                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.undefinedTypeSymbol);
-            }
             else if (id === "void") {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.voidTypeSymbol);
-            }
-            else if (id === "_element") {
-                return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.elementTypeSymbol);
             }
             else {
                 var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];

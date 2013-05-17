@@ -1506,7 +1506,7 @@ module TypeScript {
         },
         A_generic_type_may_not_reference_itself_with_its_own_type_parameters: {
             category: DiagnosticCategory.Error,
-            message: "A generic type may not reference itself with its own type parameters.",
+            message: "A generic type may not reference itself with a wrapped form of its own type parameters.",
             code: 2160
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: {
