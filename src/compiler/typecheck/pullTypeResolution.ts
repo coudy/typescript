@@ -4222,7 +4222,7 @@ module TypeScript {
                 returnType = this.semanticInfoChain.anyTypeSymbol;
             }
 
-            return SymbolAndDiagnostics.create(returnType, diagnostics);
+            return SymbolAndDiagnostics.fromSymbol(returnType);
         }
 
         public resolveNewExpression(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): SymbolAndDiagnostics<PullSymbol> {
@@ -4542,11 +4542,11 @@ module TypeScript {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                return SymbolAndDiagnostics.create(returnType, diagnostics);
+                return SymbolAndDiagnostics.fromSymbol(returnType);
             }
             else if (targetTypeSymbol.isClass()) {
                 // implicit constructor
-                return SymbolAndDiagnostics.create(returnType, diagnostics);
+                return SymbolAndDiagnostics.fromSymbol(returnType);
             }
 
             diagnostics = this.addDiagnostic(diagnostics,
