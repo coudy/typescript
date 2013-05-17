@@ -1522,23 +1522,6 @@ module TypeScript {
                 for (var i = 0; i < memberASTs.members.length; i++) {
                     elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inContextuallyTypedAssignment*/ false);
                 }
-
-                if (contextualMemberType) {
-                    this.context.popContextualType();
-
-                    // Check if all array members match the contextual Type
-                    var collection: IPullTypeCollection = {
-                        getLength: () => { return elementTypes.length; } ,
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; } ,
-                        getTypeAtIndex: (index: number) => { return elementTypes[index]; }
-                    };
-
-                    var comparisonInfo = new TypeScript.TypeComparisonInfo();
-                    var elementType = this.resolver.findBestCommonType(elementTypes[0], contextualMemberType, collection, this.context, comparisonInfo);
-                    if (!elementType) {
-                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements, null, enclosingDecl);
-                    }
-                }
             }
 
             this.checkForResolutionError(type, enclosingDecl);

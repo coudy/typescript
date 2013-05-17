@@ -3510,11 +3510,14 @@ module TypeScript {
                 if (contextualType.isArray()) {
                     contextualType = contextualType.getElementType();
                 }
-
-                context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
             }
 
+            // Resolve element types
             if (elements) {
+                if (inContextuallyTypedAssignment) {
+                    context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                }
+
                 for (var i = 0; i < elements.members.length; i++) {
                     elementTypes[elementTypes.length] = this.resolveAST(elements.members[i], inContextuallyTypedAssignment, enclosingDecl, context).symbol.getType();
                 }
@@ -3522,7 +3525,32 @@ module TypeScript {
                 if (inContextuallyTypedAssignment) {
                     context.popContextualType();
                 }
+            }
 
+            // Find the elment type
+            if (contextualType) {
+                // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
+                elementType = contextualType;
+
+                // verify that this assumption is correct
+                for (var i = 0; i < elementTypes.length; i++) {
+                    var comparisonInfo = new TypeComparisonInfo();
+                    var currentElementType = elementTypes[i];
+                    var currentElementAST = elements.members[i];
+                    if (!this.sourceIsAssignableToTarget(currentElementType, contextualType, context, comparisonInfo)) {
+                        var message: Diagnostic;
+                        if (comparisonInfo.message) {
+                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1__NL__2, [currentElementType.toString(), contextualType.toString(), comparisonInfo.message]);
+                        } else {
+                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1_, [currentElementType.toString(), contextualType.toString()]);
+                        }
+
+                        return SymbolAndDiagnostics.create(this.getNewErrorTypeSymbol(null), [message]);
+                    }
+                }
+            }
+            else {
+                // If there is no contextual type to apply attempt to find the best common type
                 if (elementTypes.length) {
                     elementType = elementTypes[0];
                 }
@@ -3531,9 +3559,9 @@ module TypeScript {
                     getLength: () => { return elements.members.length; },
                     setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; },
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
-                }
+                };
 
-                elementType = this.findBestCommonType(elementType, contextualType, collection, context, comparisonInfo);
+                elementType = this.findBestCommonType(elementType, null, collection, context, comparisonInfo);
 
                 // if the array type is the undefined type, we should widen it to any
                 // if it's of the null type, only widen it if it's not in a nested array element, so as not to 
@@ -3541,19 +3569,9 @@ module TypeScript {
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
-            }
-            else if (inContextuallyTypedAssignment) {
-                context.popContextualType();
-            }
 
-            if (!elementType) {
-                elementType = this.semanticInfoChain.anyTypeSymbol;
-            }
-            else if (contextualType) {
-                // for the case of zero-length 'any' arrays, we still want to set the contextual type, if
-                // need be
-                if (this.sourceIsAssignableToTarget(elementType, contextualType, context)) {
-                    elementType = contextualType;
+                if (!elementType) {
+                    elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
             }
 
