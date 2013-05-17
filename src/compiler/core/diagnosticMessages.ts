@@ -242,8 +242,12 @@ module TypeScript {
         Export_assignments_may_only_be_used_in_External_modules: DiagnosticInfo;
         Export_assignments_may_only_be_made_with_acceptable_kinds: DiagnosticInfo;
         Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: DiagnosticInfo;
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type: DiagnosticInfo;
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0: DiagnosticInfo;
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__: DiagnosticInfo;
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2: DiagnosticInfo;
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__: DiagnosticInfo;
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1: DiagnosticInfo;
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0__: DiagnosticInfo;
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1540,15 +1544,35 @@ module TypeScript {
             message: "Only public instance methods of the base class are accessible via the super keyword",
             code: 2166
         },
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type: {
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__: {
             category: DiagnosticCategory.Error,
-            message: "Numeric indexer type must be a subtype of string indexer type",
+            message: "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'",
             code: 2167
         },
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0: {
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2: {
             category: DiagnosticCategory.Error,
-            message: "Numeric indexer type must be a subtype of string indexer type:{NL}{0}",
+            message: "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}':{NL}{2}",
             code: 2168
+        },
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__: {
+            category: DiagnosticCategory.Error,
+            message: "All numerically named properties must be subtypes of numeric indexer type '{0}'",
+            code: 2169
+        },
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1: {
+            category: DiagnosticCategory.Error,
+            message: "All numerically named properties must be subtypes of numeric indexer type '{0}':{NL}{1}",
+            code: 2170
+        },
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0__: {
+            category: DiagnosticCategory.Error,
+            message: "All named properties must be subtypes of string indexer type '{0}'",
+            code: 2171
+        },
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1: {
+            category: DiagnosticCategory.Error,
+            message: "All named properties must be subtypes of string indexer type '{0}':{NL}{1}",
+            code: 2172
         },
 
 

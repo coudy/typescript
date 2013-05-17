@@ -584,7 +584,6 @@ interface JQuery {
 
     // Properties
     length: number;
-    [x: string]: HTMLElement;
     [x: number]: HTMLElement;
 
     // Traversing

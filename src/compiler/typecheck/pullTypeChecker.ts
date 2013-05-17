@@ -930,13 +930,18 @@ module TypeScript {
             this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
             this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
+            var isNumericIndexer = parameters[0].getType() === this.semanticInfoChain.numberTypeSymbol;
+
             // Make sure that a numeric index signature is a subtype of the string indexer, or vice versa
             var allIndexSignatures = enclosingDecl.getSymbol().getType().getIndexSignatures();
             for (var i = 0; i < allIndexSignatures.length; i++) {
+                if (!allIndexSignatures[i].isResolved()) {
+                    this.resolver.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), this.context);
+                }
                 if (allIndexSignatures[i].getParameters()[0].getType() !== parameters[0].getType()) {
                     var stringIndexSignature: PullSignatureSymbol;
                     var numberIndexSignature: PullSignatureSymbol;
-                    if (parameters[0].getType() === this.semanticInfoChain.numberTypeSymbol) {
+                    if (isNumericIndexer) {
                         numberIndexSignature = indexSignature;
                         stringIndexSignature = allIndexSignatures[i];
                     }
@@ -945,7 +950,7 @@ module TypeScript {
                         stringIndexSignature = indexSignature;
 
                         // If we are a string indexer sharing a container with a number index signature, the number will report the error
-                        // TODO: make this check cleaner once the symbol container relationship stabilizes
+                        // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
                         if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
                             break;
                         }
@@ -954,16 +959,89 @@ module TypeScript {
                     var resolutionContext = new PullTypeResolutionContext();
                     if (!this.resolver.sourceIsSubtypeOfTarget(numberIndexSignature.getReturnType(), stringIndexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
                         if (comparisonInfo.message) {
-                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0, [comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2,
+                                [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                         } else {
-                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type, null, typeCheckContext.getEnclosingDecl());
+                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__,
+                                [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
                         }
                     }
                     break;
                 }
             }
 
+            // Check that property names comply with indexer constraints (both string and numeric)
+            var allMembers = enclosingDecl.getSymbol().getType().getAllMembers(PullElementKind.All, /*includePrivate*/ true);
+            for (var i = 0; i < allMembers.length; i++) {
+                var name = allMembers[i].getName();
+                if (name) {
+                    if (!allMembers[i].isResolved()) {
+                        this.resolver.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), this.context);
+                    }
+                    // Skip members in the same container, they will be checked during their member type check
+                    if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
+                        // Check if the member name is numerical
+                        var isMemberNumeric = isFinite(+name);
+                        if (isNumericIndexer === isMemberNumeric) {
+                            this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, typeCheckContext, isNumericIndexer);
+                        }
+                    }
+                }
+            }
+
             return null;
+        }
+
+        private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+            // Check all the members defined in this symbol's declarations (no base classes)
+            var indexSignatures = containerType.getIndexSignatures();
+            if (indexSignatures.length > 0) {
+                var members = typeCheckContext.getEnclosingDecl().getChildDecls();
+                for (var i = 0; i < members.length; i++) {
+                    // Nothing to check if the member has no name or is a signature
+                    var member = members[i];
+                    if (!member.getName() || member.getKind() & PullElementKind.SomeSignature) {
+                        continue;
+                    }
+
+                    // Get all index signatures, and check against the first that matters for this field name (string vs number)
+                    var isMemberNumeric = isFinite(+member.getName());
+                    for (var j = 0; j < indexSignatures.length; j++) {
+                        if (!indexSignatures[j].isResolved()) {
+                            this.resolver.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), this.context);
+                        }
+                        if ((indexSignatures[j].getParameters()[0].getType() === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
+                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), typeCheckContext, isMemberNumeric);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private checkThatMemberIsSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, typeCheckContext: PullTypeCheckContext, isNumeric: boolean) {
+            var comparisonInfo = new TypeComparisonInfo();
+            var resolutionContext = new PullTypeResolutionContext();
+            if (!this.resolver.sourceIsSubtypeOfTarget(member.getType(), indexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+                if (isNumeric) {
+                    if (comparisonInfo.message) {
+                        this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1,
+                            [indexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                    } else {
+                        this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__,
+                            [indexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
+                    }
+                }
+                else {
+                    if (comparisonInfo.message) {
+                        this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1,
+                            [indexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                    } else {
+                        this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type___0__,
+                            [indexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
+                    }
+                }
+            }
         }
 
         private typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol: PullTypeSymbol, extendedType: PullTypeSymbol,
@@ -1228,6 +1306,8 @@ module TypeScript {
             // Type check the members
             this.typeCheckAST(classAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
+            this.typeCheckMembersAgainstIndexer(classSymbol, typeCheckContext);
+
             typeCheckContext.popEnclosingDecl();
 
             return classSymbol;
@@ -1257,6 +1337,8 @@ module TypeScript {
 
             // Type check the members
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
+            this.typeCheckMembersAgainstIndexer(interfaceType, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -2051,6 +2133,7 @@ module TypeScript {
             var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
             typeCheckContext.pushEnclosingDecl(interfaceDecl);
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+            this.typeCheckMembersAgainstIndexer(interfaceSymbol, typeCheckContext);
             typeCheckContext.popEnclosingDecl();
 
             return interfaceSymbol;

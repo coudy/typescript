@@ -244,8 +244,12 @@ module TypeScript {
         Export_assignments_may_only_be_used_in_External_modules,
         Export_assignments_may_only_be_made_with_acceptable_kinds,
         Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword,
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type,
-        Numeric_indexer_type_must_be_a_subtype_of_string_indexer_type__NL__0,
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__,
+        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2,
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__,
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1,
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0__,
+        All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1,
 
 
         // Extra information that is used as part of other error message

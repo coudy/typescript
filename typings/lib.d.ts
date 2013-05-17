@@ -2815,7 +2815,6 @@ interface HTMLCollection extends MSHTMLCollectionExtensions {
     (nameOrIndex: any, optionalIndex: any): Element;
     namedItem(name: string): Element;
     [index: number]: Element;
-    [name: string]: Element;
     (name: string): Element;
 }
 declare var HTMLCollection: {
@@ -5713,7 +5712,6 @@ interface NamedNodeMap {
     [index: number]: Node;
     removeNamedItem(name: string): Node;
     getNamedItem(name: string): Node;
-    [name: string]: Node;
     setNamedItem(arg: Node): Node;
     getNamedItemNS(namespaceURI: string, localName: string): Node;
     setNamedItemNS(arg: Node): Node;

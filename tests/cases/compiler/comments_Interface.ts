@@ -15,7 +15,7 @@ interface i2 {
     /** this is foo*/
     foo: (/**param help*/b: number) => string;
     /** this is indexer*/
-    [/**string param*/i: string]: number;
+    [/**string param*/i: string]: any;
     /**new method*/
     new (/** param*/i: i1);
     nc_x: number;

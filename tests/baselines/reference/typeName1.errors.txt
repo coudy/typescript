@@ -27,3 +27,7 @@
 0.ts line 22 col 5: error TS2012: Cannot convert 'number' to '{ f(x: number): boolean; p: any; q: any; (): string; }':
 	Type 'Number' is missing property 'f' from type '{ f(x: number): boolean; p: any; q: any; (): string; }'.
 0.ts line 23 col 5: error TS2011: Cannot convert '{ zeek: number; new(): C; }' to 'number'.
+0.ts line 16 col 10: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
+	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.
+0.ts line 20 col 50: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
+	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.

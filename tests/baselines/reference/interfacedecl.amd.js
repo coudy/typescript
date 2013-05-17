@@ -12,7 +12,7 @@ interface a0 {
     new(): string;
     new(s: string);
     [n: number]: () => string;
-    [s: string]: () => string;
+    [s: string]: any;
     p1;
     p2: string;
     p3?;

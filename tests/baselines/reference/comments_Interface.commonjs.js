@@ -50,7 +50,7 @@ interface i2 {
     /** this is foo*/
     foo: (b: number) => string;
     /** this is indexer*/
-    [i: string]: number;
+    [i: string]: any;
     /**new method*/
     new(/** param*/ i: i1);
     nc_x: number;
@@ -67,7 +67,7 @@ declare var i2_i: i2;
 declare var i2_i_x: number;
 declare var i2_i_foo: (b: number) => string;
 declare var i2_i_foo_r: string;
-declare var i2_i_i2_si: number;
+declare var i2_i_i2_si;
 declare var i2_i_i2_ii: number;
 declare var i2_i_n;
 declare var i2_i_nc_x: number;
