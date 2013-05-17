@@ -225,28 +225,30 @@ module TypeScript {
 
                 // search for a complementary instance symbol first
                 var variableSymbol: PullSymbol = null;
-                if (parent) {
-                    if (isExported) {
-                        variableSymbol = parent.findMember(modName, false);
-                    }
-                    else {
-                        variableSymbol = parent.findContainedMember(modName);
-                    }
+                if (!isEnum) {
+                    if (parent) {
+                        if (isExported) {
+                            variableSymbol = parent.findMember(modName, false);
+                        }
+                        else {
+                            variableSymbol = parent.findContainedMember(modName);
+                        }
 
-                    if (variableSymbol) {
-                        var declarations = variableSymbol.getDeclarations();
+                        if (variableSymbol) {
+                            var declarations = variableSymbol.getDeclarations();
 
-                        if (declarations.length) {
-                            var variableSymbolParent = declarations[0].getParentDecl();
+                            if (declarations.length) {
+                                var variableSymbolParent = declarations[0].getParentDecl();
 
-                            if ((this.getParentDecl() !== variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
-                                variableSymbol = null;
+                                if ((this.getParentDecl() !== variableSymbolParent) && (!this.reBindingAfterChange || (variableSymbolParent.getDeclID() >= this.startingDeclForRebind))) {
+                                    variableSymbol = null;
+                                }
                             }
                         }
                     }
-                }
-                else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
-                    variableSymbol = this.findSymbolInContext(modName, PullElementKind.SomeValue, []);
+                    else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
+                        variableSymbol = this.findSymbolInContext(modName, PullElementKind.SomeValue, []);
+                    }
                 }
 
                 if (variableSymbol) {
@@ -1100,6 +1102,7 @@ module TypeScript {
 
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
             var isModuleValue = (declFlags & (PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule | PullElementFlags.InitializedEnum)) != 0;
+            var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
 
             if (parentDecl && !isImplicit) {
                 parentDecl.addVariableDeclToGroup(variableDeclaration);
@@ -1146,9 +1149,28 @@ module TypeScript {
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
 
                 var prevKind = variableSymbol.getKind();
-                var acceptableRedeclaration = isImplicit && ((prevKind == PullElementKind.Function) || (prevKind == PullElementKind.ConstructorMethod) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
+                var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
+                var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.InitializedEnum);
+                var prevIsClass = prevKind == PullElementKind.ConstructorMethod;
+                var prevIsContainer = variableSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule);
+                var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
+                var isAmbient = (variableDeclaration.getFlags() & PullElementFlags.Ambient) != 0;
+                var isClass = variableDeclaration.getKind() == PullElementKind.ConstructorMethod;
 
-                if (!isModuleValue || !acceptableRedeclaration) {
+                var acceptableRedeclaration = isImplicit &&
+                    ((!isEnumValue && prevKind == PullElementKind.Function) || // Enums can't mix with functions
+                    (!isModuleValue && prevIsContainer && isAmbient) || // an ambient class can be declared after a module
+                    (!isModuleValue && prevIsClass) || // the module instance variable can't come after the class instance variable
+                    variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
+
+                // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
+                if (acceptableRedeclaration && prevIsClass && !prevIsAmbient) {
+                    if (variableSymbol.getDeclarations()[0].getScriptName() != variableDeclaration.getScriptName()) {
+                        acceptableRedeclaration = false;
+                    }
+                }
+
+                if ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum) {
                     span = variableDeclaration.getSpan();
 
                     if (!parent || variableSymbol.getIsSynthesized()) {
