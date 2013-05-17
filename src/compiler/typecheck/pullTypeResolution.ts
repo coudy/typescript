@@ -2595,6 +2595,8 @@ module TypeScript {
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = nameSymbol;
 
+                (<PullTypeAliasSymbol>aliasSymbol).setIsUsedAsValue();
+
                 if (!nameSymbol.isResolved()) {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
                 }
