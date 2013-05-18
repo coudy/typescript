@@ -283,7 +283,7 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyNavigationItemsCount(count);
         }
 
-        public navigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
+        public navigationItemsListContains(name: string, kind: string, fileName?: string, parentName?: string) {
             FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
         }
 
@@ -385,6 +385,9 @@ module FourSlashInterface {
         }
         public printErrorList() {
             FourSlash.currentTestState.printErrorList();
+        }
+        public printNavigationItems() {
+            FourSlash.currentTestState.printNavigationItems();
         }
     }
 

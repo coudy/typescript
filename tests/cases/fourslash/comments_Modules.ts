@@ -130,7 +130,7 @@ verify.memberListContains("i", "m1.m2.c", "i", "m1.m2.i", "var");
 
 goTo.marker('9');
 verify.completionListContains("m2", "m2", "", "m2", "module");
-verify.quickInfoIs("m2", "", "m2", "var");
+verify.quickInfoIs("m2", "", "m2", "module");
 
 goTo.marker('10');
 verify.memberListContains("m3", "m2.m3");
@@ -142,11 +142,11 @@ verify.memberListContains("c", undefined, "Exported class comment", "m2.m3.c", "
 
 goTo.marker('12');
 verify.completionListContains("m3", "m3", "", "m3", "module");
-verify.quickInfoIs("m3", "", "m3", "var");
+verify.quickInfoIs("m3", "", "m3", "module");
 
 goTo.marker('13');
-verify.memberListContains("m4", "m3.m4", "", "m3.m4", "var");
-verify.quickInfoIs("m3.m4", "", "m3.m4", "var");
+verify.memberListContains("m4", "m3.m4", "", "m3.m4", "module");
+verify.quickInfoIs("m3.m4", "", "m3.m4", "module");
 
 goTo.marker('14');
 verify.memberListContains("m5", "m3.m4.m5");

@@ -838,11 +838,15 @@ module Services {
         }
 
         private isModule(symbol: TypeScript.PullSymbol) {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Container);
+            var symbolType = symbol.getType();
+            var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
+            return associatedSymbol && associatedSymbol.getKind() === TypeScript.PullElementKind.Container;
         }
 
         private isDynamicModule(symbol: TypeScript.PullSymbol) {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.DynamicModule);
+            var symbolType = symbol.getType();
+            var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
+            return associatedSymbol && associatedSymbol.getKind() === TypeScript.PullElementKind.Container;
         }
 
         private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {

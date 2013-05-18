@@ -1082,7 +1082,7 @@ module FourSlash {
             }
         }
 
-        public verifyNavigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
+        public verifyNavigationItemsListContains(name: string, kind: string, fileName?: string, parentName?: string) {
             var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
 
             if (!items || items.length === 0) {
@@ -1091,13 +1091,27 @@ module FourSlash {
 
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                if (item && item.name === name && item.kind === kind && item.fileName === fileName) {
+                if (item && item.name === name && item.kind === kind &&
+                    (fileName === undefined || item.fileName === fileName) &&
+                    (parentName === undefined || item.containerName === parentName)) {
                     return;
                 }
             }
 
             var missingItem = { name: name, kind: kind, fileName: fileName, parentName: parentName };
             throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
+        }
+
+        public printNavigationItems() {
+            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+            var length = items && items.length;
+
+            IO.printLine('NavigationItems list (' + length + ' items)');
+
+            for (var i = 0; i < length; i++) {
+                var item = items[i];
+                IO.printLine('name: ' + item.name + ', kind: ' + item.kind + ', parentName: ' + item.containerName + ', fileName: ' + item.fileName);
+            }
         }
 
         public verifyOccurancesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
