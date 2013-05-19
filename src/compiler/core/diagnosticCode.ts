@@ -250,7 +250,7 @@ module TypeScript {
         All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1,
         All_named_properties_must_be_subtypes_of_string_indexer_type___0__,
         All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1,
-
+        Generic_type_references_must_include_all_type_arguments,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

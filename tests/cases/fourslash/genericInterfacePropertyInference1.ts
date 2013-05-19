@@ -26,7 +26,7 @@
 ////    ofC4: C<{ x: T }>
 ////}
 
-////var f: Foo;
+////var f: Foo<any>;
 ////var f2: Foo<number>;
 ////var f3: Foo<I>;
 ////var f4: Foo<{ x: number }>;

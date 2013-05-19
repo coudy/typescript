@@ -441,7 +441,7 @@ module TypeScript {
             return null;
         }
 
-        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics, unitPath: string): void {
+        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {

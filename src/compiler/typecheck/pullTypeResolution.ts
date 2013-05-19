@@ -921,11 +921,11 @@ module TypeScript {
             return containerSymbol;
         }
 
-        private isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
+        public isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
             if (typeRef.nodeType != NodeType.TypeRef) {
                 return false;
             }
-
+            
             if (typeRef.term.nodeType == NodeType.Name) {
                 return true;
             }
@@ -988,6 +988,7 @@ module TypeScript {
                         var resolvedParentType = parentType;
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
+                            typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             this.setSymbolAndDiagnosticsForAST(typeDeclAST.extendsList.members[i], SymbolAndDiagnostics.fromSymbol(resolvedParentType), context);
@@ -1020,9 +1021,12 @@ module TypeScript {
                         var resolvedImplementedType = implementedType;
                         if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
+                            typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                            this.setSymbolAndDiagnosticsForAST(
+                                typeDeclAST.implementsList.members[i - extendsCount], SymbolAndDiagnostics.fromSymbol(implementedType), context);
+                            typeDeclSymbol.addImplementedType(implementedType);
                         }
-
-                        if (!typeDeclSymbol.hasBase(implementedType)) {
+                        else if (!typeDeclSymbol.hasBase(implementedType)) {
                             this.setSymbolAndDiagnosticsForAST(
                                 typeDeclAST.implementsList.members[i - extendsCount], SymbolAndDiagnostics.fromSymbol(resolvedImplementedType), context);
                             typeDeclSymbol.addImplementedType(implementedType);
@@ -1714,7 +1718,16 @@ module TypeScript {
                 }
                 else {
 
-                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && !this.isArrayOrEquivalent(typeExprSymbol) && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized() && this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
+                    if (typeExprSymbol.isNamedTypeSymbol() &&
+                        typeExprSymbol.isGeneric() &&
+                        !typeExprSymbol.isTypeParameter() &&
+                        !this.isArrayOrEquivalent(typeExprSymbol) &&
+                        typeExprSymbol.isResolved() &&
+                        !typeExprSymbol.getIsSpecialized() &&
+                        typeExprSymbol.getTypeArguments() != null &&
+                        this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
+
+                        context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
                         typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
                     }
 
@@ -1835,7 +1848,15 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context).symbol;
 
-                if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && !this.isArrayOrEquivalent(constraintTypeSymbol) && constraintTypeSymbol.isResolved() && this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
+                if (constraintTypeSymbol.isNamedTypeSymbol() &&
+                    constraintTypeSymbol.isGeneric() &&
+                    !constraintTypeSymbol.isTypeParameter() &&
+                    !this.isArrayOrEquivalent(constraintTypeSymbol) &&
+                    constraintTypeSymbol.getTypeArguments != null &&
+                    constraintTypeSymbol.isResolved() &&
+                    this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
+
+                    context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
                 }
 
@@ -4792,9 +4813,9 @@ module TypeScript {
                         break;
                     }
                     // set the element type to the target type
-                    // If the contextual type is a type variable, but the BCT is not, we won't set the BCT
+                    // If the contextual type is a type parameter, but the BCT is not, we won't set the BCT
                     // to the contextual type, so as not to short-circuit type argument inference calculations
-                    else if (targetType && !(bestCommonType.isTypeVariable() || targetType.isTypeVariable())) {
+                    else if (targetType && !(bestCommonType.isTypeParameter() || targetType.isTypeParameter())) {
                         collection.setTypeAtIndex(i, targetType);
                     }
                 }
@@ -4861,6 +4882,25 @@ module TypeScript {
 
             if (t1.isError() && t2.isError()) {
                 return true;
+            }
+
+            if (t1.isTypeParameter()) {
+
+                if (!t2.isTypeParameter()) {
+                    return false;
+                }
+
+                // We compare parent declarations instead of container symbols because type parameter symbols are shared
+                // accross overload groups
+                var t1ParentDeclaration = t1.getDeclarations()[0].getParentDecl();
+                var t2ParentDeclaration = t2.getDeclarations()[0].getParentDecl();
+
+                if (t1ParentDeclaration === t2ParentDeclaration) {
+                    return this.symbolsShareDeclaration(t1, t2);
+                }
+                else {
+                    return true;
+                }
             }
 
             var comboId = t2.getSymbolID().toString() + "#" + t1.getSymbolID().toString();
@@ -5058,6 +5098,10 @@ module TypeScript {
                 return this.substituteUpperBoundForType(constraint);
             }
 
+            if (this.cachedObjectInterfaceType) {
+                return this.cachedObjectInterfaceType;
+            }
+
             return type;
         }
 
@@ -5146,8 +5190,40 @@ module TypeScript {
 
         private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
 
-            source = this.substituteUpperBoundForType(source);
-            target = this.substituteUpperBoundForType(target);
+            //source = this.substituteUpperBoundForType(source);
+            //target = this.substituteUpperBoundForType(target);
+
+            var sourceSubstitution: PullTypeSymbol = source;
+
+            // We substitute for the source in the following ways:
+            //  - When source is the primitive type Number, Boolean, or String, sourceSubstitution is the global interface type
+            //      'Number', 'Boolean', or 'String'
+            //  - When source is an enum type, sourceSubstitution is the global interface type 'Number'
+            //  - When source is a type parameter, sourceSubstituion is the constraint of that type parameter
+            if (source == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
+                if (!this.cachedStringInterfaceType.isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedStringInterfaceType, null, context);
+                }
+                sourceSubstitution = this.cachedStringInterfaceType;
+            }
+            else if (source == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+                if (!this.cachedNumberInterfaceType.isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedNumberInterfaceType, null, context);
+                }
+                sourceSubstitution = this.cachedNumberInterfaceType;
+            }
+            else if (source == this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
+                if (!this.cachedBooleanInterfaceType.isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType, null, context);
+                }
+                sourceSubstitution = this.cachedBooleanInterfaceType;
+            }
+            else if (PullHelpers.symbolIsEnum(source) && this.cachedNumberInterfaceType) {
+                sourceSubstitution = this.cachedNumberInterfaceType;
+            }
+            else if (source.isTypeParameter()) {
+                sourceSubstitution = this.substituteUpperBoundForType(source);
+            }
 
             // REVIEW: Does this check even matter?
             //if (this.typesAreIdentical(source, target)) {
@@ -5224,6 +5300,8 @@ module TypeScript {
             if (target === this.semanticInfoChain.numberTypeSymbol && PullHelpers.symbolIsEnum(source)) {
                 return true;
             }
+
+            // REVIEW: We allow this only for enum initialization purposes
             if (source === this.semanticInfoChain.numberTypeSymbol && PullHelpers.symbolIsEnum(target)) {
                 return true;
             }
@@ -5255,25 +5333,6 @@ module TypeScript {
                 return true;
             }
 
-            if (target.isTypeParameter()) {
-
-                if (!source.isTypeParameter()) {
-                    return false;
-                }
-
-                // We compare parent declarations instead of container symbols because type parameter symbols are shared
-                // accross overload groups
-                var sourceParentDeclaration = source.getDeclarations()[0].getParentDecl();
-                var targetParentDeclaration = target.getDeclarations()[0].getParentDecl();
-
-                if (targetParentDeclaration === sourceParentDeclaration) {
-                    return this.symbolsShareDeclaration(source, target);
-                }
-                else {
-                    return true;
-                }
-            }
-
             // this check ensures that we only operate on object types from this point forward,
             // since the checks involving primitives occurred above
             if (source.isPrimitive() && target.isPrimitive()) {
@@ -5282,44 +5341,38 @@ module TypeScript {
                 return false;
             }
             else if (source.isPrimitive() != target.isPrimitive()) {
+                if (target.isPrimitive()) {
+                    return false;
+                }
+            }
 
-                if (!target.isPrimitive()) {
-                    if (source === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+            if (target.isTypeParameter()) {
 
-                        if (!this.cachedNumberInterfaceType.isResolved()) {
-                            this.resolveDeclaredSymbol(this.cachedNumberInterfaceType, null, context);
-                        }
+                // if the source is another type parameter (with no constraints), they can only be assignable if they share
+                // a declaration
+                if (source.isTypeParameter() && (source == sourceSubstitution)) {
+                    // We compare parent declarations instead of container symbols because type parameter symbols are shared
+                    // accross overload groups
+                    var targetParentDeclaration = target.getDeclarations()[0].getParentDecl();
+                    var sourceParentDeclaration = source.getDeclarations()[0].getParentDecl();
 
-                        source = this.cachedNumberInterfaceType;
-                    }
-                    else if (source === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
-
-                        if (!this.cachedStringInterfaceType.isResolved()) {
-                            this.resolveDeclaredSymbol(this.cachedStringInterfaceType, null, context);
-                        }
-
-                        source = this.cachedStringInterfaceType;
-                    }
-                    else if (source === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
-
-                        if (!this.cachedBooleanInterfaceType.isResolved()) {
-                            this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType, null, context);
-                        }
-
-                        source = this.cachedBooleanInterfaceType;
+                    if (targetParentDeclaration !== sourceParentDeclaration) {
+                        return this.symbolsShareDeclaration(target, source);
                     }
                     else {
-                        return false;
+                        return true;
                     }
                 }
                 else {
-                    return false;
+                    // if the source is not another type parameter, we consider the
+                    // target to be a subtype of its constraint
+                    target = this.substituteUpperBoundForType(target);
                 }
             }
 
             comparisonCache[comboId] = false;
 
-            if (source.hasBase(target)) {
+            if (sourceSubstitution.hasBase(target)) {
                 comparisonCache[comboId] = true;
                 return true;
             }
@@ -5328,26 +5381,26 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedFunctionInterfaceType && (source.getCallSignatures().length || source.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType) {
+            if (this.cachedFunctionInterfaceType && (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType) {
                 return true;
             }
 
-            if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+            if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo)) {
                 comparisonCache[comboId] = undefined;
                 return false;
             }
 
-            if (!this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+            if (!this.sourceCallSignaturesAreRelatableToTargetCallSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo)) {
                 comparisonCache[comboId] = undefined;
                 return false;
             }
 
-            if (!this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+            if (!this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo)) {
                 comparisonCache[comboId] = undefined;
                 return false;
             }
 
-            if (!this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, assignableTo, comparisonCache, context, comparisonInfo)) {
+            if (!this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo)) {
                 comparisonCache[comboId] = undefined;
                 return false;
             }
@@ -5743,6 +5796,13 @@ module TypeScript {
             var sourceReturnType = sourceSig.getReturnType();
             var targetReturnType = targetSig.getReturnType();
 
+            if (sourceReturnType && sourceReturnType.isTypeParameter() && this.cachedObjectInterfaceType) {
+                sourceReturnType = this.cachedObjectInterfaceType;
+            }
+            if (targetReturnType && targetReturnType.isTypeParameter() && this.cachedObjectInterfaceType) {
+                targetReturnType = this.cachedObjectInterfaceType;
+            }
+
             if (targetReturnType != this.semanticInfoChain.voidTypeSymbol) {
                 if (!this.sourceIsRelatableToTarget(sourceReturnType, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -5787,6 +5847,13 @@ module TypeScript {
                         targetParamType = targetParamType.getElementType();
                     }
                     targetParamName = targetParameters[iTarget].getName();
+                }
+
+                if (sourceParamType && sourceParamType.isTypeParameter() && this.cachedObjectInterfaceType) {
+                    sourceParamType = this.cachedObjectInterfaceType;
+                }
+                if (targetParamType && targetParamType.isTypeParameter() && this.cachedObjectInterfaceType) {
+                    targetParamType = this.cachedObjectInterfaceType;
                 }
 
                 if (!(this.sourceIsRelatableToTarget(sourceParamType, targetParamType, assignableTo, comparisonCache, context, comparisonInfo) ||
@@ -6372,6 +6439,11 @@ module TypeScript {
             if (!args.members.length && !resultTypes.length && typeParameters.length) {
                 for (var i = 0; i < typeParameters.length; i++) {
                     resultTypes[resultTypes.length] = this.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+            else if (resultTypes.length && resultTypes.length < typeParameters.length) {
+                for (var i = resultTypes.length; i < typeParameters.length; i++) {
+                    resultTypes[i] = this.semanticInfoChain.anyTypeSymbol;
                 }
             }
 

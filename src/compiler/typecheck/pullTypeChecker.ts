@@ -467,7 +467,16 @@ module TypeScript {
             if (boundDeclAST.typeExpr) {
                 typeExprSymbol = this.typeCheckAST(boundDeclAST.typeExpr, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-                if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized()) {
+                if (typeExprSymbol.isNamedTypeSymbol() &&
+                    typeExprSymbol.isGeneric() &&
+                    !typeExprSymbol.isTypeParameter() &&
+                    !this.resolver.isArrayOrEquivalent(typeExprSymbol) &&
+                    typeExprSymbol.isResolved() &&
+                    typeExprSymbol.getTypeArguments() != null &&
+                    !typeExprSymbol.getIsSpecialized() &&
+                    this.resolver.isTypeRefWithoutTypeArgs(<TypeReference>boundDeclAST.typeExpr)) {
+
+                    this.postError(boundDeclAST.typeExpr.minChar, boundDeclAST.typeExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
                     typeExprSymbol = this.resolver.specializeTypeToAny(typeExprSymbol, enclosingDecl, this.context);
                 }
             }

@@ -248,6 +248,7 @@ module TypeScript {
         All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1: DiagnosticInfo;
         All_named_properties_must_be_subtypes_of_string_indexer_type___0__: DiagnosticInfo;
         All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1: DiagnosticInfo;
+        Generic_type_references_must_include_all_type_arguments: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1574,9 +1575,11 @@ module TypeScript {
             message: "All named properties must be subtypes of string indexer type '{0}':{NL}{1}",
             code: 2172
         },
-
-
-
+        Generic_type_references_must_include_all_type_arguments: {
+            category: DiagnosticCategory.Error,
+            message: "Generic type references must include all type arguments",
+            code: 2173
+        },
 
 
         Type__0__is_missing_property__1__from_type__2_: {

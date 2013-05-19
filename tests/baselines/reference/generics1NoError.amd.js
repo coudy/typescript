@@ -2,7 +2,6 @@ var v1;
 var v2;
 var v4;
 var v5;
-var v7;
 
 ////[0.d.ts]
 interface A {
@@ -24,4 +23,3 @@ declare var v2: G<{
 }, C>;
 declare var v4: G<G<A, B>, C>;
 declare var v5: G<any, any>;
-declare var v7: G<any, any>;

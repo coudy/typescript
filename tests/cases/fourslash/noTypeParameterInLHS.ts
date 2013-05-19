@@ -2,7 +2,7 @@
 
 ////interface I<T> { }
 ////class C<T> {}
-////var i/*1*/: I;
+////var i/*1*/: I<any>;
 ////var c/*2*/: C<I>;
 
 goTo.marker('1');

@@ -52,7 +52,7 @@
 ////         return ("My name is " + this.name + ", and my age is " + this.age + ".  I enjoy eating " + this.food.name + " and my variant is " + this.variant);
 ////     }
 //// }
-//// class GenericPlanet<T extends GenericMonster> {
+//// class GenericPlanet<T extends GenericMonster<any, any>> {
 ////     constructor(public name: string, public solarSystem: string, public species: T) { }
 //// }
 //// var cookie = new Cookie("Chocolate Chip", false);

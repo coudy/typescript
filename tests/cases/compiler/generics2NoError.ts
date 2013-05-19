@@ -17,4 +17,3 @@ var v1: {
 var v2: G<{ a: string }, C>;   // Ok, equivalent to G<A, C>
 var v4: G<G<A, B>, C>;         // Ok
 var v5: G<any, any>;           // Ok
-var v7: G;                     // Ok, equivalent to G<any, any>

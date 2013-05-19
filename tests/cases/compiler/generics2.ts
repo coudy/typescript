@@ -18,4 +18,4 @@ var v3: G<A, A>;               // Error, A not valid argument for U
 var v4: G<G<A, B>, C>;         // Ok
 var v5: G<any, any>;           // Ok
 var v6: G<any>;                // Error, wrong number of arguments
-var v7: G;                     // Ok, equivalent to G<any, any>
+var v7: G;                     // Error, no type arguments
