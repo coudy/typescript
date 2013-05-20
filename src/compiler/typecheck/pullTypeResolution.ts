@@ -3568,7 +3568,7 @@ module TypeScript {
             }
 
             // Find the elment type
-            if (contextualElementType) {
+            if (contextualElementType && !contextualElementType.isTypeParameter()) {
                 // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
                 elementType = contextualElementType;
 
@@ -3613,6 +3613,14 @@ module TypeScript {
                 if (!elementType) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
+                else if (contextualType && !contextualType.isTypeParameter()) {
+                    // for the case of zero-length 'any' arrays, we still want to set the contextual type, if   
+                    // need be   
+                    if (this.sourceIsAssignableToTarget(elementType, contextualType, context)) {
+                        elementType = contextualType;
+                    }
+                }  
+
             }
 
             var arraySymbol = elementType.getArrayType();
