@@ -3547,7 +3547,7 @@ module TypeScript {
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
 
-                if (contextualType.isArray()) {
+                if (contextualType && contextualType.isArray()) {
                     contextualElementType = contextualType.getElementType();
                 }
             }
