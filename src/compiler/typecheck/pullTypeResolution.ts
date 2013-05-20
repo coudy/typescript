@@ -4024,6 +4024,9 @@ module TypeScript {
                     }
                 }
             }
+            else if (isSuperCall && targetTypeSymbol.isGeneric()) {
+                typeArgs = targetTypeSymbol.getTypeArguments();
+            }
 
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
