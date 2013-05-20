@@ -1,7 +1,12 @@
 
+// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
+// See LICENSE.txt in the project root for complete license information.
+
+///<reference path='typescriptServices.ts' />
+
 module Services {
 
-export class FindReferenceHelpers {
+    export class FindReferenceHelpers {
         public static getCorrectASTForReferencedSymbolName(matchingAST: TypeScript.AST, symbolName: string): TypeScript.AST {
 
             if (matchingAST.nodeType == TypeScript.NodeType.MemberAccessExpression) {
@@ -25,7 +30,7 @@ export class FindReferenceHelpers {
             }
             else {
                 switch (firstSymbol.getKind()) {
-                    case TypeScript.PullElementKind.Class:{
+                    case TypeScript.PullElementKind.Class: {
                         return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
                     }
                     case TypeScript.PullElementKind.Property: {
@@ -41,6 +46,7 @@ export class FindReferenceHelpers {
                                 return true;
                             }
                         }
+                        return false;   
                     }
                     case TypeScript.PullElementKind.Function: {
                         if (secondSymbol.isAccessor()) {
@@ -55,6 +61,7 @@ export class FindReferenceHelpers {
                                 return true;
                             }
                         }
+                        return false;
                     }
                     case TypeScript.PullElementKind.ConstructorMethod: {
                         return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
@@ -82,12 +89,12 @@ export class FindReferenceHelpers {
             var firstParent: TypeScript.PullDecl = firstDecl.getParentDecl();
             var secondParent: TypeScript.PullDecl = secondDecl.getParentDecl();
             if (firstDecl === secondDecl ||
-                firstDecl === secondParent ||
-                firstParent === secondDecl ||
-                firstParent === secondParent) {
+                (firstDecl === secondParent && secondParent.getKind() !== 1) ||
+                (firstParent === secondDecl && firstParent.getKind() !== 1) ||
+                (firstParent === secondParent && firstParent.getKind() !== 1 && secondParent.getKind() !== 1)) {
                 return true;
             }
             return false;
         }
-}
+    }
 }

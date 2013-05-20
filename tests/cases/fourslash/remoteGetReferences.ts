@@ -183,7 +183,7 @@ verify.referencesCountIs(11);
 
 // References to a type.
 goTo.marker("2");
-verify.referencesCountIs(2);
+verify.referencesCountIs(8);
 
 // References to a function argument.
 goTo.marker("3");

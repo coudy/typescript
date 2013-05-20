@@ -218,7 +218,7 @@ goTo.marker("10");
 verify.referencesCountIs(11);
 
 // References to illegal assignment.
-goTo.marker("11");
+goTo.marker("11");debugger;
 verify.referencesCountIs(7);
 
 // References to unresolved symbol.

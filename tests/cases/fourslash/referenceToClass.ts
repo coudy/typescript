@@ -21,21 +21,16 @@
 ////var k: /*4*/foo;
 
 goTo.marker("1");
-// Work around 675291 - Reference to class name after key word "new" is broken.
-// Update the expected value from 6 to 5.
-verify.referencesCountIs(5);
+verify.referencesCountIs(6);
 
 goTo.marker("2");
-// Work around 675291 - Reference to class name after key word "new" is broken.
-// Update the expected value from 6 to 5.
-verify.referencesCountIs(5);
+
+verify.referencesCountIs(6);
 
 goTo.marker("3");
-// Work around 675291 - Reference to class name after key word "new" is broken.
-// Update the expected value from 6 to 5.
-verify.referencesCountIs(5);
+
+verify.referencesCountIs(6);
 
 goTo.marker("4");
-// Work around 675291 - Reference to class name after key word "new" is broken.
-// Update the expected value from 6 to 5.
-verify.referencesCountIs(5);
+
+verify.referencesCountIs(6);

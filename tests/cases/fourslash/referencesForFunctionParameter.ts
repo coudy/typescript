@@ -9,7 +9,7 @@
 ////}
 
 goTo.marker("1");
-verify.referencesCountIs(3);
+debugger;verify.referencesCountIs(3);
 
 goTo.marker("2");
 verify.referencesCountIs(3);
