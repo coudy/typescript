@@ -3566,6 +3566,10 @@ module TypeScript {
                 newSignature.setHasVariableParamList();
             }
 
+            if (resolver.isTypeArgumentOrWrapper(newParameterType)) {
+                newSignature.setHasGenericParameter();
+            }
+
             newParameter.setType(newParameterType);
             newSignature.addParameter(newParameter, newParameter.getIsOptional());
         }

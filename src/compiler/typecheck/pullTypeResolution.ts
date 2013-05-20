@@ -715,7 +715,7 @@ module TypeScript {
             return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType && type === this.cachedNumberInterfaceType);
         }
 
-        private isTypeArgumentOrWrapper(type: PullTypeSymbol) {
+        public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
             if (!type) {
                 return false;
             }
@@ -1431,6 +1431,11 @@ module TypeScript {
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
                     this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.arguments.members[i], signature, enclosingDecl, context);
                 }
+            }
+
+            // Flag if one of the arguments has a generic parameter
+            if (funcDeclSymbol && signature.hasGenericParameter()) {
+                funcDeclSymbol.getType().setHasGenericSignature();
             }
 
             if (signature.hasGenericParameter()) {
