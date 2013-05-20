@@ -130,9 +130,9 @@ module TypeScript {
             return key.charCodeAt(index);
         }
 
-        public addRange(values: string[]) {
-            for (var i = 0, len = values.length; i < len; i++) {
-                this.add(values[i]);
+        public addKeys(keys: BlockIntrinsics) {
+            for (var name in keys) {
+                this.add(name);
             }
         }
 

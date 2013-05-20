@@ -107,12 +107,12 @@ module TypeScript {
         public lineMap: LineMap;
 
         constructor(public fileName: string,
-                    private compilationSettings: CompilationSettings,
-                    private scriptSnapshot: IScriptSnapshot,
-                    public byteOrderMark: ByteOrderMark,
-                    public version: number,
-                    public isOpen: boolean,
-                    syntaxTree: SyntaxTree) {
+            private compilationSettings: CompilationSettings,
+            private scriptSnapshot: IScriptSnapshot,
+            public byteOrderMark: ByteOrderMark,
+            public version: number,
+            public isOpen: boolean,
+            syntaxTree: SyntaxTree) {
 
             if (isOpen) {
                 this._syntaxTree = syntaxTree;
@@ -122,11 +122,17 @@ module TypeScript {
                 this._diagnostics = syntaxTree.diagnostics();
             }
 
-            var identifiers: string[] = [];
-            var identifierWalker: IdentifierWalker = new IdentifierWalker(identifiers);
-            syntaxTree.sourceUnit().accept(identifierWalker);
-            this._bloomFilter = new BloomFilter(identifiers.length);
-            this._bloomFilter.addRange(identifiers);
+                var identifiers: BlockIntrinsics = new BlockIntrinsics();
+
+                var identifierWalker: IdentifierWalker = new IdentifierWalker(identifiers);
+                syntaxTree.sourceUnit().accept(identifierWalker);
+
+                var identifierCount = 0;
+                for (var name in identifiers) {
+                    identifierCount++;
+                }
+                this._bloomFilter = new BloomFilter(identifierCount);
+                this._bloomFilter.addKeys(identifiers);
 
             this.lineMap = syntaxTree.lineMap();
             this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
