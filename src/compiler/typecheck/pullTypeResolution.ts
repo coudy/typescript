@@ -1741,7 +1741,8 @@ module TypeScript {
                         !this.isArrayOrEquivalent(typeExprSymbol) &&
                         typeExprSymbol.isResolved() &&
                         !typeExprSymbol.getIsSpecialized() &&
-                        typeExprSymbol.getTypeArguments() != null &&
+                        typeExprSymbol.getTypeParameters().length &&
+                        typeExprSymbol.getTypeArguments() == null &&
                         this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
 
                         context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
@@ -1869,7 +1870,8 @@ module TypeScript {
                     constraintTypeSymbol.isGeneric() &&
                     !constraintTypeSymbol.isTypeParameter() &&
                     !this.isArrayOrEquivalent(constraintTypeSymbol) &&
-                    constraintTypeSymbol.getTypeArguments != null &&
+                    constraintTypeSymbol.getTypeParameters().length &&
+                    constraintTypeSymbol.getTypeArguments() == null &&
                     constraintTypeSymbol.isResolved() &&
                     this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
 

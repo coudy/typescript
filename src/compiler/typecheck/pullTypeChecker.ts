@@ -472,7 +472,8 @@ module TypeScript {
                     !typeExprSymbol.isTypeParameter() &&
                     !this.resolver.isArrayOrEquivalent(typeExprSymbol) &&
                     typeExprSymbol.isResolved() &&
-                    typeExprSymbol.getTypeArguments() != null &&
+                    typeExprSymbol.getTypeParameters().length &&
+                    typeExprSymbol.getTypeArguments() == null &&
                     !typeExprSymbol.getIsSpecialized() &&
                     this.resolver.isTypeRefWithoutTypeArgs(<TypeReference>boundDeclAST.typeExpr)) {
 

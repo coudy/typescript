@@ -55,7 +55,7 @@ declare module WinJS {
         var sessionState: any;
         interface ApplicationActivationEvent extends Event {
             detail: any;
-            setPromise(p: Promise): any;
+            setPromise(p: Promise<any>): any;
         }
         function addEventListener(type: string, listener: EventListener, capture?: boolean): void;
         var oncheckpoint: EventListener;  
