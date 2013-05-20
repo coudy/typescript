@@ -275,6 +275,9 @@ module TypeScript {
         Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property,
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible,
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3,
+        Type_reference_cannot_refer_to_container__0_,
+        Type_reference_must_refer_to_type,
+
 
 
         //Batch compiler diagnostics

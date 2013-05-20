@@ -1692,7 +1692,18 @@ module TypeScript {
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
+        
+        Type_reference_cannot_refer_to_container__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Type reference cannot refer to container '{0}'.",
+            code: 4022
+        },
 
+        Type_reference_must_refer_to_type: {
+            category: DiagnosticCategory.Error,
+            message: "Type reference cannot must refer to type.",
+            code: 4023
+        },
 
 
 
@@ -1753,7 +1764,6 @@ module TypeScript {
             message: "Emit Error: {0}.",
             code: 5011
         },
-
     };
 
     var seenCodes = [];

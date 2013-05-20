@@ -42,6 +42,7 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
         public inConstructorArguments = false;
+        public inImportDeclaration = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
         }
@@ -527,7 +528,6 @@ module TypeScript {
                 }
 
                 if (initTypeSymbol && typeExprSymbol) {
-
                     var comparisonInfo = new TypeComparisonInfo();
 
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, typeExprSymbol, this.context, comparisonInfo);
@@ -569,7 +569,11 @@ module TypeScript {
 
         private typeCheckImportDeclaration(importDeclaration: ImportDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var result = <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(importDeclaration, /*inContextuallyTypedAssignment:*/ false, typeCheckContext.getEnclosingDecl());
+
+            var savedInImportDeclaration = typeCheckContext.inImportDeclaration;
+            typeCheckContext.inImportDeclaration = true;
             this.typeCheckAST(importDeclaration.alias, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+            typeCheckContext.inImportDeclaration = savedInImportDeclaration;
 
             return result;
         }
@@ -2077,7 +2081,23 @@ module TypeScript {
             else {
                 var savedResolvingTypeReference = this.context.resolvingTypeReference;
                 this.context.resolvingTypeReference = true;
-                this.typeCheckAST(typeRef.term, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+                var type = this.typeCheckAST(typeRef.term, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+
+                // A type reference must refer to a type.
+                if (type && !type.isError() && !typeCheckContext.inImportDeclaration) {
+                    if ((type.getKind() & PullElementKind.SomeType) === 0) {
+                        // Provide some helper messages for common cases.
+                        if (type.getKind() & PullElementKind.SomeContainer) {
+                            this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName,
+                                DiagnosticCode.Type_reference_cannot_refer_to_container__0_, [type.toString()], typeCheckContext.getEnclosingDecl());
+                        }
+                        else {
+                            this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName,
+                                DiagnosticCode.Type_reference_must_refer_to_type, null, typeCheckContext.getEnclosingDecl());
+                        }
+                    }
+                }
+
                 this.context.resolvingTypeReference = savedResolvingTypeReference;
             }
 
