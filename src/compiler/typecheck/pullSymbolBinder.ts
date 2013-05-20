@@ -1753,13 +1753,16 @@ module TypeScript {
                         callSigs = specializations[j].getCallSignatures();
 
                         for (var i = 0; i < callSigs.length; i++) {
-                            specializations[j].removeCallSignature(callSigs[i], false);
-                        }
+                            decls = callSigs[i].getDeclarations();
 
-                        specializations[j].invalidate();
-                        specializations[j].recomputeCallSignatures();
-                        specializations[j].recomputeConstructSignatures();
-                        specializations[j].recomputeIndexSignatures();
+                            for (var k = 0; k < decls.length; k++) {
+                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
+                                    callSigs[i].removeDeclaration(decls[k]);
+                                    callSigs[i].addDeclaration(functionDeclaration);
+                                    callSigs[i].invalidate();
+                                }      
+                            }
+                        }
                     }
                 }
             }
@@ -2147,23 +2150,18 @@ module TypeScript {
 
                     for (var j = 0; j < specializations.length; j++) {
                         callSigs = specializations[j].getCallSignatures();
-                        constructSigs = specializations[j].getConstructSignatures();
-                        indexSigs = specializations[j].getIndexSignatures();
 
                         for (var i = 0; i < callSigs.length; i++) {
-                            specializations[j].removeCallSignature(callSigs[i], false);
-                        }
-                        for (var i = 0; i < constructSigs.length; i++) {
-                            specializations[j].removeConstructSignature(constructSigs[i], false);
-                        }
-                        for (var i = 0; i < indexSigs.length; i++) {
-                            specializations[j].removeIndexSignature(indexSigs[i], false);
-                        }
+                            decls = callSigs[i].getDeclarations();
 
-                        specializations[j].invalidate();
-                        specializations[j].recomputeCallSignatures();
-                        specializations[j].recomputeConstructSignatures();
-                        specializations[j].recomputeIndexSignatures();
+                            for (var k = 0; k < decls.length; k++) {
+                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
+                                    callSigs[i].removeDeclaration(decls[k]);
+                                    callSigs[i].addDeclaration(methodDeclaration);
+                                    callSigs[i].invalidate();
+                                }
+                            }
+                        }
                     }
                 }
             }
