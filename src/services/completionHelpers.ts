@@ -73,11 +73,15 @@ module Services {
                 switch (positionedToken.kind()) {
                     case TypeScript.SyntaxKind.CommaToken:
                         return containingNodeKind === TypeScript.SyntaxKind.ParameterList ||
-                            containingNodeKind === TypeScript.SyntaxKind.VariableDeclaration;
+                            containingNodeKind === TypeScript.SyntaxKind.VariableDeclaration ||
+                            containingNodeKind === TypeScript.SyntaxKind.EnumDeclaration;           // enum { foo, |
 
                     case TypeScript.SyntaxKind.OpenParenToken:
                         return containingNodeKind === TypeScript.SyntaxKind.ParameterList ||
                             containingNodeKind === TypeScript.SyntaxKind.CatchClause;
+
+                    case TypeScript.SyntaxKind.OpenBraceToken:
+                        return containingNodeKind === TypeScript.SyntaxKind.EnumDeclaration;        // enum { |
 
                     case TypeScript.SyntaxKind.PublicKeyword:
                     case TypeScript.SyntaxKind.PrivateKeyword:

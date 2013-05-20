@@ -282,12 +282,16 @@ module TypeScript {
         }
 
         public findTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
-            var positionedToken = this.findToken(position, includeSkippedTokens);
+            var positionedToken = this.findToken(position, /*includeSkippedTokens*/ false);
             var start = positionedToken.start();
-
+            
             // Position better fall within this token.
             // Debug.assert(position >= positionedToken.fullStart());
             // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
+
+            if (includeSkippedTokens) {
+                positionedToken = Syntax.findSkippedTokenOnLeft(positionedToken, position) || positionedToken;
+            }
 
             // if position is after the start of the token, then this token is the token on the left.
             if (position > start) {
@@ -304,11 +308,15 @@ module TypeScript {
         }
 
         public findCompleteTokenOnLeft(position: number, includeSkippedTokens: boolean = false): PositionedToken {
-            var positionedToken = this.findToken(position, includeSkippedTokens);
+            var positionedToken = this.findToken(position, /*includeSkippedTokens*/ false);
 
             // Position better fall within this token.
             // Debug.assert(position >= positionedToken.fullStart());
             // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
+
+            if (includeSkippedTokens) {
+                positionedToken = Syntax.findSkippedTokenOnLeft(positionedToken, position) || positionedToken;
+            }
 
             // if position is after the end of the token, then this token is the token on the left.
             if (positionedToken.token().width() > 0 && position >= positionedToken.end()) {

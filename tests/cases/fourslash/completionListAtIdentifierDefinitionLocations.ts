@@ -22,6 +22,15 @@
 
 ////enum a/*enumName2*/
 
+////enum a { /*enumValueName1*/
+
+////enum a { f/*enumValueName2*/
+
+////enum a { foo, /*enumValueName3*/
+
+
+////var x = 0; enum /*enumName4*/
+
 
 
 ////function /*functionName1*/
@@ -70,7 +79,7 @@
 
 //// try {} catch(a/*catchVariable2*/
 
-debugger;
+
 test.markers().forEach((m) => {
     goTo.position(m.position, m.fileName);
     verify.completionListIsEmpty();
