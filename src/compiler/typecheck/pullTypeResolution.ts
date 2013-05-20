@@ -2418,7 +2418,7 @@ module TypeScript {
                         return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
                     }
 
-                case GenericType:
+                case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
 
                 case NodeType.FunctionDeclaration:

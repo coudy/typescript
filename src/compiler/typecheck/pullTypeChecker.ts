@@ -2556,10 +2556,35 @@ module TypeScript {
             return type;
         }
 
+        // validate:
+        //  - switch expression and case expression are compatible
         private typeCheckSwitchStatement(switchStatement: SwitchStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.typeCheckAST(switchStatement.val, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var expressionType = this.typeCheckAST(switchStatement.val, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(switchStatement.caseList, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             this.typeCheckAST(switchStatement.defaultCase, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
+
+            if (switchStatement.caseList && switchStatement.caseList.members) {
+                for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
+                    var caseClause = <CaseClause>switchStatement.caseList.members[i];
+                    if (caseClause !== switchStatement.defaultCase) {
+                        var caseClauseExpressionType = this.resolver.resolveAST(caseClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, this.context).symbol.getType();
+
+                        var comparisonInfo = new TypeComparisonInfo();
+                        if (!this.resolver.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, this.context, comparisonInfo) &&
+                            !this.resolver.sourceIsAssignableToTarget(caseClauseExpressionType, expressionType, this.context, comparisonInfo)) {
+                                if (comparisonInfo.message) {
+                                    this.postError(caseClause.expr.minChar, caseClause.expr.getLength(), typeCheckContext.scriptName,
+                                        DiagnosticCode.Cannot_convert__0__to__1__NL__2, [caseClauseExpressionType.toString(), expressionType.toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                                }
+                                else {
+                                    this.postError(caseClause.expr.minChar, caseClause.expr.getLength(), typeCheckContext.scriptName,
+                                        DiagnosticCode.Cannot_convert__0__to__1_, [caseClauseExpressionType.toString(), expressionType.toString()], typeCheckContext.getEnclosingDecl());
+                                }
+                        }
+                    }
+                }
+            }
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
