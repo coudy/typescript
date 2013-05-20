@@ -131,7 +131,7 @@ goTo.marker('21');
 // verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('22');
-verify.quickInfoIs('Collection<any, any>');
+verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('23');
 // Bug: 689228

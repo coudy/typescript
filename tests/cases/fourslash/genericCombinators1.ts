@@ -102,7 +102,7 @@ goTo.marker('19');
 // BUG: 684805, 689228
 // verify.quickInfoIs('Collection<string>');
 goTo.marker('20');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('any');
 goTo.marker('21');
 // Bug: 689228
 //verify.quickInfoIs('Collection<A>');

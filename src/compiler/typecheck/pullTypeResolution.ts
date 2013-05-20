@@ -4060,7 +4060,7 @@ module TypeScript {
 
                             if (inferredTypeArgs.length) {
 
-                                if (inferredTypeArgs.length < typeParameters.length) {
+                                if (inferredTypeArgs.length != typeParameters.length) {
                                     continue;
                                 }
 
