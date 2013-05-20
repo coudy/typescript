@@ -1145,6 +1145,12 @@ module TypeScript {
                                 constructorSignature.addParameter(parentParameters[j], parentParameters[j].getIsOptional());
                             }
 
+                            var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                constructorSignature.addTypeParameter(typeParameters[j]);
+                            }
+
                             constructorTypeSymbol.addConstructSignature(constructorSignature);
                             constructorSignature.addDeclaration(classDecl);
                         }
@@ -1154,6 +1160,12 @@ module TypeScript {
                         constructorSignature.setReturnType(classDeclSymbol);
                         constructorTypeSymbol.addConstructSignature(constructorSignature);
                         constructorSignature.addDeclaration(classDecl);
+
+                        var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+                        for (var i = 0; i < typeParameters.length; i++) {
+                            constructorSignature.addTypeParameter(typeParameters[i]);
+                        }
                     }
                 }
 
