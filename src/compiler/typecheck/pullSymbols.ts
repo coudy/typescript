@@ -3098,6 +3098,12 @@ module TypeScript {
             return newType;
         }
 
+        // If it's a constructor, we want to flag the type as being specialized
+        // to prevent stack overflows when specializing the return type
+        if (typeToSpecialize.getKind() == PullElementKind.ConstructorType) {
+            typeToSpecialize.setIsBeingSpecialized();
+        }
+
         // create the type replacement map
 
         var typeReplacementMap: any = {};

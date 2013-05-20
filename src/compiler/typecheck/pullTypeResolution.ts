@@ -2939,7 +2939,7 @@ module TypeScript {
                     if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
-                        if (parentDecl != enclosingDecl) {
+                        if (parentDecl.getKind() == PullElementKind.Class) {
                             return SymbolAndDiagnostics.create(
                                 this.getNewErrorTypeSymbol(null),
                                 [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters)]);
