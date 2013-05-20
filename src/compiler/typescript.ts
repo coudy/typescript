@@ -1328,6 +1328,29 @@ module TypeScript {
                     case NodeType.TypeParameter:
                         resolutionContext.resolvingTypeReference = true;
                         break;
+
+                    case NodeType.ClassDeclaration:
+                        var classDeclaration = <ClassDeclaration>current;
+                        if (path.asts[i + 1]) {
+                            if (path.asts[i + 1] === classDeclaration.extendsList ||
+                                path.asts[i + 1] === classDeclaration.implementsList) {
+                                resolutionContext.resolvingTypeReference = true;
+                            }
+                        }
+
+                        break;
+
+                    case NodeType.InterfaceDeclaration:
+                        var interfaceDeclaration = <InterfaceDeclaration>current;
+                        if (path.asts[i + 1]) {
+                            if (path.asts[i + 1] === interfaceDeclaration.extendsList ||
+                                path.asts[i + 1] === interfaceDeclaration.implementsList ||
+                                path.asts[i + 1] === interfaceDeclaration.name) {
+                                resolutionContext.resolvingTypeReference = true;
+                            }
+                        }
+
+                        break;
                 }
 
                 // Record enclosing Decl
@@ -1336,11 +1359,6 @@ module TypeScript {
                     enclosingDecl = decl;
                     enclosingDeclAST = current;
                 }
-            }
-
-            // Other possible type space references
-            if (path.isNameOfInterface() || path.isInClassImplementsList() || path.isInInterfaceExtendsList()) {
-                resolutionContext.resolvingTypeReference = true;
             }
 
             // if the found AST is a named, we want to check for previous dotted expressions,
