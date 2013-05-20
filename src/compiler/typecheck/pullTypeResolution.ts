@@ -5225,6 +5225,19 @@ module TypeScript {
 
         private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
 
+            // REVIEW: Does this check even matter?
+            //if (this.typesAreIdentical(source, target)) {
+            //    return true;
+            //}
+            if (source === target) {
+                return true;
+            }
+
+            // An error has already been reported in this case
+            if (!(source && target)) {
+                return true;
+            }
+
             //source = this.substituteUpperBoundForType(source);
             //target = this.substituteUpperBoundForType(target);
 
@@ -5258,19 +5271,6 @@ module TypeScript {
             }
             else if (source.isTypeParameter()) {
                 sourceSubstitution = this.substituteUpperBoundForType(source);
-            }
-
-            // REVIEW: Does this check even matter?
-            //if (this.typesAreIdentical(source, target)) {
-            //    return true;
-            //}
-            if (source === target) {
-                return true;
-            }
-
-            // An error has already been reported in this case
-            if (!(source && target)) {
-                return true;
             }
 
             var comboId = source.getSymbolID().toString() + "#" + target.getSymbolID().toString();
