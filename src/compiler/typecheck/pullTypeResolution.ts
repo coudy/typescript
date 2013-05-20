@@ -4013,6 +4013,7 @@ module TypeScript {
 
             // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
+
                 // specialize the type arguments
                 typeArgs = [];
 
@@ -4123,7 +4124,9 @@ module TypeScript {
                         }
                     }
                     else {
-                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                        if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
+                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                        }
                     }
                 }
                 // PULLTODO: Try to avoid copying here...
@@ -4443,7 +4446,9 @@ module TypeScript {
                             }
                         }
                         else {
-                            resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
+                            if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
+                                resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
+                            }
                         }
                     }
 
