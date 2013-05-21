@@ -635,18 +635,20 @@ var TypeScript;
         DiagnosticCode[DiagnosticCode["Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property"] = 258] = "Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property";
         DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible"] = 259] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible";
         DiagnosticCode[DiagnosticCode["Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3"] = 260] = "Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3";
+        DiagnosticCode[DiagnosticCode["Type_reference_cannot_refer_to_container__0_"] = 261] = "Type_reference_cannot_refer_to_container__0_";
+        DiagnosticCode[DiagnosticCode["Type_reference_must_refer_to_type"] = 262] = "Type_reference_must_refer_to_type";
 
-        DiagnosticCode[DiagnosticCode["Current_host_does_not_support__w_atch_option"] = 261] = "Current_host_does_not_support__w_atch_option";
-        DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 262] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 263] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
-        DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 264] = "Could_not_find_file___0_";
-        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 265] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 266] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 267] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 268] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 269] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
-        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 270] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
-        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 271] = "Emit_Error__0";
+        DiagnosticCode[DiagnosticCode["Current_host_does_not_support__w_atch_option"] = 263] = "Current_host_does_not_support__w_atch_option";
+        DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 264] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 265] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
+        DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 266] = "Could_not_find_file___0_";
+        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 267] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
+        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 268] = "A_file_cannot_have_a_reference_itself";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 269] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 270] = "Cannot_resolve_imported_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 271] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
+        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 272] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
+        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 273] = "Emit_Error__0";
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1957,6 +1959,16 @@ var TypeScript;
             category: 3 /* NoPrefix */,
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
+        },
+        Type_reference_cannot_refer_to_container__0_: {
+            category: 1 /* Error */,
+            message: "Type reference cannot refer to container '{0}'.",
+            code: 4022
+        },
+        Type_reference_must_refer_to_type: {
+            category: 1 /* Error */,
+            message: "Type reference cannot must refer to type.",
+            code: 4023
         },
         Current_host_does_not_support__w_atch_option: {
             category: 1 /* Error */,
@@ -31232,7 +31244,7 @@ var TypeScript;
 
         Emitter.handleEmitterError = function (fileName, e) {
             if ((e).isEmitterError === true) {
-                return [new TypeScript.Diagnostic(fileName, 0, 0, 271 /* Emit_Error__0 */, [e.message])];
+                return [new TypeScript.Diagnostic(fileName, 0, 0, 273 /* Emit_Error__0 */, [e.message])];
             }
 
             throw e;
@@ -31674,14 +31686,14 @@ var TypeScript;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
 
                         if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 266 /* A_file_cannot_have_a_reference_itself */, null));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 268 /* A_file_cannot_have_a_reference_itself */, null));
                             continue;
                         }
 
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 267 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 269 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
                         }
                     }
 
@@ -31691,7 +31703,7 @@ var TypeScript;
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
 
                         if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 268 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
+                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 270 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
                         }
                     }
 
@@ -32708,6 +32720,143 @@ var TypeScript;
         return DeclarationEmitter;
     })();
     TypeScript.DeclarationEmitter = DeclarationEmitter;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var BloomFilter = (function () {
+        function BloomFilter(expectedCount) {
+            var m = Math.max(1, BloomFilter.computeM(expectedCount));
+            var k = Math.max(1, BloomFilter.computeK(expectedCount));
+            ;
+
+            var sizeInEvenBytes = (m + 7) & ~7;
+
+            this.bitArray = [];
+            for (var i = 0, len = sizeInEvenBytes; i < len; i++) {
+                this.bitArray[i] = false;
+            }
+            this.hashFunctionCount = k;
+        }
+        BloomFilter.computeM = function (expectedCount) {
+            var p = BloomFilter.falsePositiveProbability;
+            var n = expectedCount;
+
+            var numerator = n * Math.log(p);
+            var denominator = Math.log(1.0 / Math.pow(2.0, Math.log(2.0)));
+            return Math.ceil(numerator / denominator);
+        };
+
+        BloomFilter.computeK = function (expectedCount) {
+            var n = expectedCount;
+            var m = BloomFilter.computeM(expectedCount);
+
+            var temp = Math.log(2.0) * m / n;
+            return Math.round(temp);
+        };
+
+        BloomFilter.prototype.computeHash = function (key, seed) {
+            var m = 0x5bd1e995;
+            var r = 24;
+
+            var numberOfCharsLeft = key.length;
+            var h = Math.abs(seed ^ numberOfCharsLeft);
+
+            var index = 0;
+            while (numberOfCharsLeft >= 2) {
+                var c1 = this.getCharacter(key, index);
+                var c2 = this.getCharacter(key, index + 1);
+
+                var k = Math.abs(c1 | (c2 << 16));
+
+                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
+                k ^= k >> r;
+                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
+
+                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
+                h ^= k;
+
+                index += 2;
+                numberOfCharsLeft -= 2;
+            }
+
+            if (numberOfCharsLeft == 1) {
+                h ^= this.getCharacter(key, index);
+                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
+            }
+
+            h ^= h >> 13;
+            h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
+            h ^= h >> 15;
+
+            return Math.round(h);
+        };
+
+        BloomFilter.prototype.getCharacter = function (key, index) {
+            return key.charCodeAt(index);
+        };
+
+        BloomFilter.prototype.addKeys = function (keys) {
+            for (var name in keys) {
+                this.add(name);
+            }
+        };
+
+        BloomFilter.prototype.add = function (value) {
+            for (var i = 0; i < this.hashFunctionCount; i++) {
+                var hash = this.computeHash(value, i);
+                hash = hash % this.bitArray.length;
+                this.bitArray[Math.abs(hash)] = true;
+            }
+        };
+
+        BloomFilter.prototype.probablyContains = function (value) {
+            for (var i = 0; i < this.hashFunctionCount; i++) {
+                var hash = this.computeHash(value, i);
+                hash = hash % this.bitArray.length;
+                if (!this.bitArray[Math.abs(hash)]) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        BloomFilter.prototype.isEquivalent = function (filter) {
+            return BloomFilter.isEquivalent(this.bitArray, filter.bitArray) && this.hashFunctionCount == filter.hashFunctionCount;
+        };
+
+        BloomFilter.isEquivalent = function (array1, array2) {
+            if (array1.length != array2.length) {
+                return false;
+            }
+
+            for (var i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+        BloomFilter.falsePositiveProbability = 0.0001;
+        return BloomFilter;
+    })();
+    TypeScript.BloomFilter = BloomFilter;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var IdentifierWalker = (function (_super) {
+        __extends(IdentifierWalker, _super);
+        function IdentifierWalker(list) {
+            _super.call(this);
+            this.list = list;
+        }
+        IdentifierWalker.prototype.visitToken = function (token) {
+            this.list[token.text()] = true;
+        };
+        return IdentifierWalker;
+    })(TypeScript.SyntaxWalker);
+    TypeScript.IdentifierWalker = IdentifierWalker;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -36579,6 +36728,14 @@ var TypeScript;
 
         if (typeToSpecialize.isClass()) {
             var constructorMethod = (typeToSpecialize).getConstructorMethod();
+
+            if (!constructorMethod.isResolved()) {
+                var prevIsSpecializingConstructorMethod = context.isSpecializingConstructorMethod;
+                context.isSpecializingConstructorMethod = true;
+                resolver.resolveDeclaredSymbol(constructorMethod, enclosingDecl, context);
+                context.isSpecializingConstructorMethod = prevIsSpecializingConstructorMethod;
+            }
+
             var newConstructorMethod = new PullSymbol(constructorMethod.getName(), 32768 /* ConstructorMethod */);
             var newConstructorType = specializeType(constructorMethod.getType(), typeArguments, resolver, newTypeDecl, context, ast);
 
@@ -37005,6 +37162,7 @@ var TypeScript;
             this.specializingToAny = false;
             this.isResolvingClassExtendedType = false;
             this.isSpecializingSignatureAtCallSite = false;
+            this.isSpecializingConstructorMethod = false;
             this.inSpecialization = false;
             this.suppressErrors = false;
             this.inBaseTypeResolution = false;
@@ -38698,7 +38856,6 @@ var TypeScript;
                             var instanceSymbol = (typeExprSymbol.getType()).getInstanceSymbol();
 
                             if (!instanceSymbol || !TypeScript.PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), 189 /* Tried_to_set_variable_type_to_module_type__0__ */, [typeExprSymbol.toString()], decl);
                                 typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                             } else {
                                 typeExprSymbol = instanceSymbol.getType();
@@ -39732,7 +39889,7 @@ var TypeScript;
                     }
                 }
 
-                if (!(typeNameSymbol.isTypeParameter() && (typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite)) {
+                if (!(typeNameSymbol.isTypeParameter() && (typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {
                     typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
                 }
             }
@@ -43000,6 +43157,7 @@ var TypeScript;
             this.inSuperConstructorTarget = false;
             this.seenSuperConstructorCall = false;
             this.inConstructorArguments = false;
+            this.inImportDeclaration = false;
         }
         PullTypeCheckContext.prototype.pushEnclosingDecl = function (decl) {
             this.enclosingDeclStack[this.enclosingDeclStack.length] = decl;
@@ -43482,7 +43640,11 @@ var TypeScript;
 
         PullTypeChecker.prototype.typeCheckImportDeclaration = function (importDeclaration, typeCheckContext) {
             var result = this.resolveSymbolAndReportDiagnostics(importDeclaration, false, typeCheckContext.getEnclosingDecl());
+
+            var savedInImportDeclaration = typeCheckContext.inImportDeclaration;
+            typeCheckContext.inImportDeclaration = true;
             this.typeCheckAST(importDeclaration.alias, typeCheckContext, false);
+            typeCheckContext.inImportDeclaration = savedInImportDeclaration;
 
             return result;
         };
@@ -44748,7 +44910,18 @@ var TypeScript;
             } else {
                 var savedResolvingTypeReference = this.context.resolvingTypeReference;
                 this.context.resolvingTypeReference = true;
-                this.typeCheckAST(typeRef.term, typeCheckContext, false);
+                var type = this.typeCheckAST(typeRef.term, typeCheckContext, false);
+
+                if (type && !type.isError() && !typeCheckContext.inImportDeclaration) {
+                    if ((type.getKind() & TypeScript.PullElementKind.SomeType) === 0) {
+                        if (type.getKind() & TypeScript.PullElementKind.SomeContainer) {
+                            this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName, 261 /* Type_reference_cannot_refer_to_container__0_ */, [type.toString()], typeCheckContext.getEnclosingDecl());
+                        } else {
+                            this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName, 262 /* Type_reference_must_refer_to_type */, null, typeCheckContext.getEnclosingDecl());
+                        }
+                    }
+                }
+
                 this.context.resolvingTypeReference = savedResolvingTypeReference;
             }
 
@@ -53678,11 +53851,24 @@ var TypeScript;
             this.isOpen = isOpen;
             this._diagnostics = null;
             this._syntaxTree = null;
+            this._bloomFilter = null;
             if (isOpen) {
                 this._syntaxTree = syntaxTree;
             } else {
                 this._diagnostics = syntaxTree.diagnostics();
             }
+
+            var identifiers = new TypeScript.BlockIntrinsics();
+
+            var identifierWalker = new TypeScript.IdentifierWalker(identifiers);
+            syntaxTree.sourceUnit().accept(identifierWalker);
+
+            var identifierCount = 0;
+            for (var name in identifiers) {
+                identifierCount++;
+            }
+            this._bloomFilter = new TypeScript.BloomFilter(identifierCount);
+            this._bloomFilter.addKeys(identifiers);
 
             this.lineMap = syntaxTree.lineMap();
             this.script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
@@ -53701,6 +53887,10 @@ var TypeScript;
             }
 
             return TypeScript.Parser.parse(this.fileName, TypeScript.SimpleText.fromScriptSnapshot(this.scriptSnapshot), TypeScript.isDTSFile(this.fileName), this.compilationSettings.codeGenTarget, TypeScript.getParseOptions(this.compilationSettings));
+        };
+
+        Document.prototype.bloomFilter = function () {
+            return this._bloomFilter;
         };
 
         Document.prototype.update = function (scriptSnapshot, version, isOpen, textChangeRange, settings) {
@@ -53811,7 +54001,7 @@ var TypeScript;
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    return new TypeScript.Diagnostic(null, 0, 0, 269 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
+                                    return new TypeScript.Diagnostic(null, 0, 0, 271 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
                                 }
 
                                 break;
@@ -53852,7 +54042,7 @@ var TypeScript;
             }
 
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new TypeScript.Diagnostic(null, 0, 0, 270 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
+                return new TypeScript.Diagnostic(null, 0, 0, 272 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
             }
 
             if (this.emitOptions.outputMany) {
@@ -56983,10 +57173,18 @@ var Services;
             }
 
             var symbol = symbolInfoAtPosition.symbol;
+            var symbolName = symbol.getName();
 
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
-                result = result.concat(this.getReferencesInFile(fileNames[i], symbol));
+                var tempFileName = fileNames[i];
+
+                var tempDocument = this.compilerState.getDocument(tempFileName);
+                var filter = tempDocument.bloomFilter();
+
+                if (filter.probablyContains(symbolName)) {
+                    result = result.concat(this.getReferencesInFile(tempFileName, symbol));
+                }
             }
 
             return result;
@@ -57025,7 +57223,7 @@ var Services;
             var result = [];
             var symbolName = symbol.getDisplayName();
 
-            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
+            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
             if (possiblePositions && possiblePositions.length > 0) {
                 var document = this.compilerState.getDocument(fileName);
                 var script = document.script;
@@ -57035,11 +57233,13 @@ var Services;
                     if (path.ast() === null || path.ast().nodeType !== 20 /* Name */) {
                         return;
                     }
-
                     var searchSymbolInfoAtPosition = _this.compilerState.getSymbolInformationFromPath(path, document);
-                    if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
+
+                    if (searchSymbolInfoAtPosition !== null && Services.FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
                         var isWriteAccess = _this.isWriteAccess(path.ast(), path.parent());
-                        result.push(new Services.ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast.minChar, searchSymbolInfoAtPosition.ast.limChar, isWriteAccess));
+                        var referenceAST = Services.FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
+
+                        result.push(new Services.ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
                     }
                 });
             }
@@ -57098,12 +57298,11 @@ var Services;
             return false;
         };
 
-        LanguageService.prototype.getPossibleSymbolReferencePositions = function (fileName, symbol) {
+        LanguageService.prototype.getPossibleSymbolReferencePositions = function (fileName, symbolName) {
             var positions = [];
 
             var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
-            var symbolName = symbol.getDisplayName();
 
             var position = text.indexOf(symbolName);
             while (position >= 0) {
@@ -57982,6 +58181,97 @@ var Services;
         return LanguageService;
     })();
     Services.LanguageService = LanguageService;
+})(Services || (Services = {}));
+var Services;
+(function (Services) {
+    var FindReferenceHelpers = (function () {
+        function FindReferenceHelpers() {
+        }
+        FindReferenceHelpers.getCorrectASTForReferencedSymbolName = function (matchingAST, symbolName) {
+            if (matchingAST.nodeType == 32 /* MemberAccessExpression */) {
+                var binaryExpression = matchingAST;
+                var identifierOperand1 = binaryExpression.operand1;
+                var identifierOperand2 = binaryExpression.operand2;
+                if (identifierOperand1.actualText === symbolName) {
+                    return binaryExpression.operand1;
+                } else if (identifierOperand2.actualText === symbolName) {
+                    return binaryExpression.operand2;
+                }
+            }
+            return matchingAST;
+        };
+
+        FindReferenceHelpers.compareSymbolsForLexicalIdentity = function (firstSymbol, secondSymbol) {
+            if (firstSymbol.getKind() === secondSymbol.getKind()) {
+                return firstSymbol === secondSymbol;
+            } else {
+                switch (firstSymbol.getKind()) {
+                    case 8 /* Class */: {
+                        return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
+                    }
+                    case 4096 /* Property */: {
+                        if (firstSymbol.isAccessor()) {
+                            var getterSymbol = (firstSymbol).getGetter();
+                            var setterSymbol = (firstSymbol).getSetter();
+
+                            if (getterSymbol && getterSymbol === secondSymbol) {
+                                return true;
+                            }
+
+                            if (setterSymbol && setterSymbol === secondSymbol) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    case 16384 /* Function */: {
+                        if (secondSymbol.isAccessor()) {
+                            var getterSymbol = (secondSymbol).getGetter();
+                            var setterSymbol = (secondSymbol).getSetter();
+
+                            if (getterSymbol && getterSymbol === firstSymbol) {
+                                return true;
+                            }
+
+                            if (setterSymbol && setterSymbol === firstSymbol) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    case 32768 /* ConstructorMethod */: {
+                        return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
+                    }
+                }
+            }
+
+            return firstSymbol === secondSymbol;
+        };
+
+        FindReferenceHelpers.checkSymbolsForDeclarationEquality = function (firstSymbol, secondSymbol) {
+            var firstSymbolDeclarations = firstSymbol.getDeclarations();
+            var secondSymbolDeclarations = secondSymbol.getDeclarations();
+            for (var i = 0, iLen = firstSymbolDeclarations.length; i < iLen; i++) {
+                for (var j = 0, jLen = secondSymbolDeclarations.length; j < jLen; j++) {
+                    if (this.declarationsAreSameOrParents(firstSymbolDeclarations[i], secondSymbolDeclarations[j])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
+        FindReferenceHelpers.declarationsAreSameOrParents = function (firstDecl, secondDecl) {
+            var firstParent = firstDecl.getParentDecl();
+            var secondParent = secondDecl.getParentDecl();
+            if (firstDecl === secondDecl || (firstDecl === secondParent && secondParent.getKind() !== 1) || (firstParent === secondDecl && firstParent.getKind() !== 1) || (firstParent === secondParent && firstParent.getKind() !== 1 && secondParent.getKind() !== 1)) {
+                return true;
+            }
+            return false;
+        };
+        return FindReferenceHelpers;
+    })();
+    Services.FindReferenceHelpers = FindReferenceHelpers;
 })(Services || (Services = {}));
 var Services;
 (function (Services) {
