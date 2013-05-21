@@ -644,7 +644,7 @@ module TypeScript {
 
                 this.movePast(node.body.closeBraceToken);
 
-                result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
+                result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null, /*isObjectTypeLiteral:*/ false);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -1488,7 +1488,7 @@ module TypeScript {
                 this.movePast(node.closeBraceToken);
 
                 var interfaceDecl = new InterfaceDeclaration(
-                    new Identifier("__anonymous"), null, typeMembers, null, null);
+                    new Identifier("__anonymous"), null, typeMembers, null, null, /*isObjectTypeLiteral:*/ true);
                 this.setSpan(interfaceDecl, start, node);
 
                 interfaceDecl.setFlags(interfaceDecl.getFlags() | ASTFlags.TypeReference);

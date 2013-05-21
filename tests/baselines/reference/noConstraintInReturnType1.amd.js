@@ -10,6 +10,4 @@ var List = (function () {
 ////[0.d.ts]
 declare class List<T extends {}> {
     static empty<T extends {}>(): List<T>;
-    interface __anonymous {
-    }
 }

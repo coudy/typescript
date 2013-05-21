@@ -978,10 +978,11 @@ module TypeScript {
 
     export class InterfaceDeclaration extends TypeDeclaration {
         constructor(name: Identifier,
-            typeParameters: ASTList,
-            members: ASTList,
-            extendsList: ASTList,
-            implementsList: ASTList) {
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList,
+                    public isObjectTypeLiteral: boolean) {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 

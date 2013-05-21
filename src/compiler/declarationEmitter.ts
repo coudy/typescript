@@ -690,6 +690,10 @@ module TypeScript {
                 return false;
             }
 
+            if (interfaceDecl.isObjectTypeLiteral) {
+                return false;
+            }
+
             if (pre) {
                 var interfaceName = interfaceDecl.name.actualText;
                 this.emitDeclarationComments(interfaceDecl);
