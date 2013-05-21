@@ -63,8 +63,10 @@ class BatchCompiler {
     }
 }
 
-var batch = new BatchCompiler();
-batch.compile();
+function compile() {
+    var batch = new BatchCompiler();
+    batch.compile();
+}
 
 // for (var i = 0; i < 2; i++) {
 //    var tree = batch.newParse();
