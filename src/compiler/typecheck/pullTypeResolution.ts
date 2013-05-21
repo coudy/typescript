@@ -2946,7 +2946,7 @@ module TypeScript {
                     }
                 }
 
-                if (!(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite)) {
+                if (!(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)) {
                     typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
                 }
             }
