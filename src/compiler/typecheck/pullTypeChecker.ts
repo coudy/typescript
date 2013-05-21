@@ -2763,9 +2763,12 @@ module TypeScript {
                     var parentDecl = functionDecl.getParentDecl();
                     functionSymbol = parentDecl.getSymbol();
                     if (functionSymbol && functionSymbol.isType() && !(<PullTypeSymbol>functionSymbol).isNamedTypeSymbol()) {
-                        // Signature from the non named type
+                        // Call Signature from the non named type
                         return;
                     }
+                } else if (functionSymbol.getKind() == PullElementKind.Method && !functionSymbol.getContainer().isNamedTypeSymbol()) {
+                    // method of the unnmaed type
+                    return;
                 }
                 functionSignature = functionDecl.getSignatureSymbol();
             }
