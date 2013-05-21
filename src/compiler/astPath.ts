@@ -343,10 +343,10 @@ module TypeScript {
 
                 // The AST walker skips comments, but we might be in one, so check the pre/post comments for this node manually
                 if (pos < limChar) {
-                    lookInComments(cur.preComments);
+                    lookInComments(cur.preComments());
                 }
                 if (pos >= minChar) {
-                    lookInComments(cur.postComments);
+                    lookInComments(cur.postComments());
                 }
 
                 if (!hasFlag(options, GetAstPathOptions.DontPruneSearchBasedOnPosition)) {

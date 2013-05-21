@@ -28,7 +28,7 @@ module TypeScript {
         public trailingTriviaWidth = 0;
     }
 
-    export var astID = 0;
+    var astID = 0;
 
     export function structuralEqualsNotIncludingPosition(ast1: AST, ast2: AST): boolean {
         return structuralEquals(ast1, ast2, false);
@@ -62,16 +62,42 @@ module TypeScript {
 
         public typeCheckPhase = -1;
 
-        private astID = astID++;
+        private astID: number;
 
         // REVIEW: for diagnostic purposes
         public passCreated: number = CompilerDiagnostics.analysisPass;
 
-        public preComments: Comment[] = null;
-        public postComments: Comment[] = null;
-        private docComments: Comment[] = null;
+        private _preComments: Comment[];
+        private _postComments: Comment[];
+        private _docComments: Comment[];
 
         constructor(public nodeType: NodeType) {
+        }
+
+        public preComments(): Comment[] {
+            return this._preComments || null;
+        }
+
+        public postComments(): Comment[] {
+            return this._postComments || null;
+        }
+
+        public setPreComments(comments: Comment[]) {
+            if (comments && comments.length) {
+                this._preComments = comments;
+            }
+            else if (this._preComments) {
+                this._preComments = null;
+            }
+        }
+
+        public setPostComments(comments: Comment[]) {
+            if (comments && comments.length) {
+                this._postComments = comments;
+            }
+            else if (this._postComments) {
+                this._postComments = null;
+            }
         }
 
         public shouldEmit(): boolean {
@@ -92,7 +118,13 @@ module TypeScript {
 
         public getLength() { return this.limChar - this.minChar; }
 
-        public getID() { return this.astID; }
+        public getID() {
+            if (!this.astID) {
+                this.astID = astID++;
+            }
+
+            return this.astID;
+        }
 
         public isDeclaration() { return false; }
 
@@ -112,31 +144,32 @@ module TypeScript {
             throw new Error("please implement in derived class");
         }
 
-        public getDocComments(): Comment[] {
-            if (!this.isDeclaration() || !this.preComments || this.preComments.length === 0) {
+        public docComments(): Comment[] {
+            if (!this.isDeclaration() || !this.preComments() || this.preComments().length === 0) {
                 return [];
             }
 
-            if (!this.docComments) {
-                var preCommentsLength = this.preComments.length;
+            if (!this._docComments) {
+                var preComments = this.preComments();
+                var preCommentsLength = preComments.length;
                 var docComments: Comment[] = [];
                 for (var i = preCommentsLength - 1; i >= 0; i--) {
-                    if (this.preComments[i].isDocComment()) {
+                    if (preComments[i].isDocComment()) {
                         var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
                         if (prevDocComment === null || // If the help comments were not yet set then this is the comment
-                             (this.preComments[i].limLine === prevDocComment.minLine ||
-                              this.preComments[i].limLine + 1 === prevDocComment.minLine)) { // On same line or next line
-                            docComments.push(this.preComments[i]);
+                            (preComments[i].limLine === prevDocComment.minLine ||
+                             preComments[i].limLine + 1 === prevDocComment.minLine)) { // On same line or next line
+                                 docComments.push(preComments[i]);
                             continue;
                         }
                     }
                     break;
                 }
 
-                this.docComments = docComments.reverse();
+                this._docComments = docComments.reverse();
             }
 
-            return this.docComments;
+            return this._docComments;
         }
 
         public structuralEquals(ast: AST, includingPosition: boolean): boolean {
@@ -147,8 +180,8 @@ module TypeScript {
             }
 
             return this._flags === ast._flags &&
-                   astArrayStructuralEquals(this.preComments, ast.preComments, includingPosition) &&
-                   astArrayStructuralEquals(this.postComments, ast.postComments, includingPosition)
+                   astArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
+                   astArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition)
         }
     }
 

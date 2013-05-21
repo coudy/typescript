@@ -127,8 +127,8 @@ module TypeScript {
             var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
                 // Apply delta to this node
                 applyDelta(cur);
-                applyDeltaToComments(cur.preComments);
-                applyDeltaToComments(cur.postComments);
+                applyDeltaToComments(cur.preComments());
+                applyDeltaToComments(cur.postComments());
 
                 return cur;
             }
@@ -264,7 +264,7 @@ module TypeScript {
                     }
                 }
 
-                result.postComments = this.previousTokenTrailingComments;
+                result.setPostComments(this.previousTokenTrailingComments);
                 this.previousTokenTrailingComments = null;
 
                 if (n > 0) {
@@ -391,7 +391,7 @@ module TypeScript {
                     var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
                     result = new NumberLiteral(value, token.text());
 
-                    result.preComments = preComments;
+                    result.setPreComments(preComments);
                 }
                 else {
                     result = this.identifierFromToken(token, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -573,8 +573,8 @@ module TypeScript {
                 result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
                 result.endingToken = closeBraceSpan;
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
 
                 for (var i = 0; i < members.members.length; i++) {
                     var member = members.members[i];
@@ -646,8 +646,8 @@ module TypeScript {
 
                 result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null, /*isObjectTypeLiteral:*/ false);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
             }
 
             if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
@@ -761,8 +761,8 @@ module TypeScript {
                     result = new ModuleDeclaration(innerName, members, closeBraceSpan);
                     this.setSpan(result, start, node);
 
-                    result.preComments = preComments;
-                    result.postComments = postComments;
+                    result.setPreComments(preComments);
+                    result.setPostComments(postComments);
 
                     preComments = null;
                     postComments = null;
@@ -835,8 +835,8 @@ module TypeScript {
 
                 result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
 
@@ -969,8 +969,8 @@ module TypeScript {
             var modDecl = new ModuleDeclaration(name, members, closeBraceSpan);
             this.setSpan(modDecl, start, node);
 
-            modDecl.preComments = preComments;
-            modDecl.postComments = postComments;
+            modDecl.setPreComments(preComments);
+            modDecl.setPostComments(postComments);
             modDecl.setModuleFlags(modDecl.getModuleFlags() | ModuleFlags.IsEnum);
 
             if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
@@ -1006,8 +1006,8 @@ module TypeScript {
 
                 result = new ImportDeclaration(name, alias);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
             }
 
@@ -1057,7 +1057,7 @@ module TypeScript {
                 var varDecl = <VariableDeclarator>declaration.declarators.members[i];
 
                 if (i === 0) {
-                    varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
+                    varDecl.setPreComments(this.mergeComments(preComments, varDecl.preComments()));
                 }
 
                 if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
@@ -1094,8 +1094,8 @@ module TypeScript {
 
             for (var i = 0; i < variableDecls.members.length; i++) {
                 if (i === 0) {
-                    variableDecls.members[i].preComments = preComments;
-                    variableDecls.members[i].postComments = postComments;
+                    variableDecls.members[i].setPreComments(preComments);
+                    variableDecls.members[i].setPostComments(postComments);
                 }
             }
 
@@ -1265,8 +1265,8 @@ module TypeScript {
                 //
                 // Because of ASI, this gets parsed as "return;" which is *not* what we want for
                 // proper semantics.
-                returnStatement.preComments = expression.preComments;
-                expression.preComments = null;
+                returnStatement.setPreComments(expression.preComments());
+                expression.setPreComments(null);
 
                 statements.append(returnStatement);
                 var block = new Block(statements);
@@ -1329,7 +1329,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.returnTypeAnnotation = returnType;
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFatArrowFunction);
@@ -1608,8 +1608,8 @@ module TypeScript {
 
                 result = new Parameter(identifier);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.isOptional = !!node.questionToken;
                 result.init = init;
                 result.typeExpr = typeExpr;
@@ -1863,7 +1863,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.returnTypeAnnotation = returnType;
 
                 result.hint = "_construct";
@@ -1899,7 +1899,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(name, null, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method);
@@ -1937,7 +1937,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.variableArgList = false;
                 result.returnTypeAnnotation = returnType;
 
@@ -1969,7 +1969,7 @@ module TypeScript {
 
                 result = new VariableDeclarator(name);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.typeExpr = typeExpr;
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Property);
             }
@@ -2012,7 +2012,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
 
@@ -2111,8 +2111,8 @@ module TypeScript {
                 this.movePast(node.semicolonToken);
 
                 result = new ExpressionStatement(expression);
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
             }
 
             this.setAST(node, result);
@@ -2141,8 +2141,8 @@ module TypeScript {
 
                 result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
                 if (node.semicolonToken) {
@@ -2183,8 +2183,8 @@ module TypeScript {
 
                 result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
 
@@ -2232,8 +2232,8 @@ module TypeScript {
                 var block = node.block ? node.block.accept(this) : null;
                 result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
 
@@ -2301,8 +2301,8 @@ module TypeScript {
 
                 result = new VariableDeclarator(name);
 
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
                 result.typeExpr = typeExpr;
                 result.init = init;
 
@@ -2372,8 +2372,8 @@ module TypeScript {
                 this.movePast(node.semicolonToken);
 
                 result = new ReturnStatement(expression);
-                result.preComments = preComments;
-                result.postComments = postComments;
+                result.setPreComments(preComments);
+                result.setPostComments(postComments);
             }
 
             this.setAST(node, result);
@@ -2696,7 +2696,7 @@ module TypeScript {
                 this.movePast(node.closeBraceToken);
 
                 result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments);
-                result.preComments = preComments;
+                result.setPreComments(preComments);
 
                 if (this.isOnSingleLine(openStart, closeStart)) {
                     result.setFlags(result.getFlags() | ASTFlags.SingleLine);
@@ -2728,7 +2728,7 @@ module TypeScript {
                 var right = node.expression.accept(this);
 
                 result = new BinaryExpression(NodeType.Member, left, right);
-                result.preComments = preComments;
+                result.setPreComments(preComments);
 
                 if (right.nodeType === NodeType.FunctionDeclaration) {
                     var funcDecl = <FunctionDeclaration>right;
@@ -2864,7 +2864,7 @@ module TypeScript {
 
                 result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
-                result.preComments = preComments;
+                result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);

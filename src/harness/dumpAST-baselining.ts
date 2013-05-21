@@ -86,9 +86,9 @@ module DumpAST {
                 }
             }
 
-            dumpComments(cur.preComments);
+            dumpComments(cur.preComments());
             entries.push(newEntry);
-            dumpComments(cur.postComments);
+            dumpComments(cur.postComments());
             return cur;
         };
 

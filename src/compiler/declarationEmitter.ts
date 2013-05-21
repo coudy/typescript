@@ -284,7 +284,7 @@ module TypeScript {
                 return;
             }
 
-            var declComments = <Comment[]>astOrSymbol.getDocComments();
+            var declComments = <Comment[]>astOrSymbol.docComments();
             this.writeDeclarationComments(declComments, endLine);
         }
 
@@ -573,10 +573,10 @@ module TypeScript {
             var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.fileName);
             var comments: Comment[] = [];
             if (accessors.getter) {
-                comments = comments.concat(accessors.getter.getDocComments());
+                comments = comments.concat(accessors.getter.docComments());
             }
             if (accessors.setter) {
-                comments = comments.concat(accessors.setter.getDocComments());
+                comments = comments.concat(accessors.setter.docComments());
             }
             this.writeDeclarationComments(comments);
         }
@@ -835,7 +835,7 @@ module TypeScript {
                     hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported));
 
                 // Module is dotted only if it does not have doc comments for it
-                var moduleDeclComments = moduleDecl.getDocComments();
+                var moduleDeclComments = moduleDecl.docComments();
                 isCurrentModuleDotted = isCurrentModuleDotted && (moduleDeclComments === null || moduleDeclComments.length === 0);
 
                 this.isDottedModuleName.push(isCurrentModuleDotted);

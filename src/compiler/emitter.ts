@@ -279,7 +279,7 @@ module TypeScript {
         }
 
         public emitComments(ast: AST, pre: boolean) {
-            var comments = pre ? ast.preComments : ast.postComments;
+            var comments = pre ? ast.preComments() : ast.postComments();
 
             if (this.emitOptions.compilationSettings.emitComments && comments && comments.length !== 0) {
                 for (var i = 0; i < comments.length; i++) {
