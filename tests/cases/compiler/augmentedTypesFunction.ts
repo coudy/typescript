@@ -17,13 +17,12 @@ function y3a() { }
 class y3a { public foo() { } } // error
 
 // function then enum
-// BUG 694388
-//function y4() { }
-//enum y4 { One } // error
+function y4() { }
+enum y4 { One } // error
 
 // function then internal module
 function y5() { }
-module y5 { } // should be an error
+module y5 { } // ok since module is not instantiated
 
 function y5a() { }
 module y5a { var y = 2; } // should be an error
@@ -34,6 +33,6 @@ module y5b { export var y = 3; } // should be an error
 function y5c() { }
 module y5c { export interface I { foo(): void } } // should be an error
 
-// function then import
-function y6() { }
-import y6 = require('');
+// function then import, messes with other errors
+//function y6() { }
+//import y6 = require('');

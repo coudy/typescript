@@ -29,6 +29,3 @@ var c44 = (function () {
     };
     return c44;
 })();
-
-
-

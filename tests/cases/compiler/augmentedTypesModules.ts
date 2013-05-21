@@ -28,7 +28,6 @@ function m2a() { }; // error since the module is instantiated
 module m2b { export var y = 2; }
 function m2b() { };  // error since the module is instantiated
 
-// BUG 694389
 // should be errors to have function first
 function m2c() { }; 
 module m2c { export var y = 2; } 
@@ -45,7 +44,7 @@ module m2f { export interface I { foo(): void } }
 function m2g() { };
 module m2g { export class C { foo() { } } } 
 
-//// module then class
+// module then class
 module m3 { }
 class m3 { } // ok since the module is not instantiated
 

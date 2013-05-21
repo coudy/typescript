@@ -1,14 +1,13 @@
 // Checking class with other things in type space not value space
 
 // class then interface
-// BUG: 694374, don't want to allow this anymore
 class c11 {
     foo() {
         return 1;
     }
 }
 
-interface c11 {
+interface c11 { // error
     bar(): void;
 }
 
@@ -28,4 +27,4 @@ class c44 {
     }
 }
 
-import c44 = require(''); // BUG?: not currently allowed
+//import c44 = require(''); // BUG?: not currently allowed

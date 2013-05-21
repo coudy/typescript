@@ -44,7 +44,3 @@ var x6b;
 (function (x6b) {
     x6b.y = 2;
 })(x6b || (x6b = {}));
-
-var x7 = 1;
-
-

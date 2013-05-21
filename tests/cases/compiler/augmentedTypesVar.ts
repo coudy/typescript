@@ -30,6 +30,6 @@ module x6a { var y = 2; } // error since instantiated
 var x6b = 1;
 module x6b { export var y = 2; } // error
 
-// var then import
-var x7 = 1;
-import x7 = require('');
+// var then import, messes with other error reporting
+//var x7 = 1;
+//import x7 = require('');

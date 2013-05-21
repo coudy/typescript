@@ -30,6 +30,13 @@ var y3a = (function () {
     return y3a;
 })();
 
+function y4() {
+}
+var y4;
+(function (y4) {
+    y4[y4["One"] = 0] = "One";
+})(y4 || (y4 = {}));
+
 function y5() {
 }
 
@@ -49,8 +56,3 @@ var y5b;
 
 function y5c() {
 }
-
-function y6() {
-}
-
-

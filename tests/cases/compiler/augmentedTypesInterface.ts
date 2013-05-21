@@ -9,12 +9,11 @@ interface i {
 }
 
 // interface then class
-// BUG 694374
 interface i2 {
     foo(): void;
 }
 
-class i2 {  // BUG: should be ok
+class i2 {  // error
     bar() {
         return 1;
     }
@@ -30,5 +29,5 @@ enum i3 { One }; // error
 interface i4 {
     foo(): void;
 }
-// TODO: make a real module
-import i4 = require('');  // error
+
+//import i4 = require('');  // error
