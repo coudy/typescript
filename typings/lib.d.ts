@@ -8895,7 +8895,7 @@ interface HTMLTrackElement extends HTMLElement {
     srclang: string;
     track: TextTrack;
     label: string;
-    defaul: boolean;
+    default: boolean;
 }
 declare var HTMLTrackElement: {
     prototype: HTMLTrackElement;
