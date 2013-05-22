@@ -151,13 +151,13 @@ module TypeScript {
                 var identifiers: BlockIntrinsics = new BlockIntrinsics();
                 var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
                     if (isValidAstNode(cur)) {
-                        if (cur.nodeType === NodeType.Name)
-                        {
+                        if (cur.nodeType() === NodeType.Name) {
                             var nodeText = (<TypeScript.Identifier>cur).text;
 
                             identifiers[nodeText] = true;
                         }
                     }
+
                     return cur;
                 }
 
@@ -169,6 +169,7 @@ module TypeScript {
                         identifierCount++;
                     }
                 }
+
                 this._bloomFilter = new BloomFilter(identifierCount);
                 this._bloomFilter.addKeys(identifiers);
             }

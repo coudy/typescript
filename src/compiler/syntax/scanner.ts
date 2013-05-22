@@ -1,6 +1,35 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
+    var isKeywordStartCharacter: boolean[] = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+    var isIdentifierStartCharacter: boolean[] = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+    var isIdentifierPartCharacter: boolean[] = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+    var isNumericLiteralStart: boolean[] = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
+
+    for (var character = 0; character < CharacterCodes.maxAsciiCharacter; character++) {
+        if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
+            isIdentifierStartCharacter[character] = true;
+            isIdentifierPartCharacter[character] = true;
+        }
+        else if ((character >= CharacterCodes.A && character <= CharacterCodes.Z) ||
+            character === CharacterCodes._ ||
+            character === CharacterCodes.$) {
+            isIdentifierStartCharacter[character] = true;
+            isIdentifierPartCharacter[character] = true;
+        }
+        else if (character >= CharacterCodes._0 && character <= CharacterCodes._9) {
+            isIdentifierPartCharacter[character] = true;
+            isNumericLiteralStart[character] = true;
+        }
+    }
+
+    isNumericLiteralStart[CharacterCodes.dot] = true;
+
+    for (var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
+        var keyword = SyntaxFacts.getText(keywordKind);
+        isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
+    }
+
     export class Scanner implements ISlidingWindowSource {
         private slidingWindow: SlidingWindow;
 
@@ -8,50 +37,10 @@ module TypeScript {
         private text: ISimpleText;
         private _languageVersion: LanguageVersion;
 
-        private static isKeywordStartCharacter: boolean[] = [];
-        private static isIdentifierStartCharacter: boolean[] = [];
-        public static isIdentifierPartCharacter: boolean[] = [];
-        private static isNumericLiteralStart: boolean[] = [];
-
-        private static initializeStaticData() {
-            if (Scanner.isKeywordStartCharacter.length === 0) {
-                Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
-                Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
-                Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
-                Scanner.isNumericLiteralStart = ArrayUtilities.createArray(CharacterCodes.maxAsciiCharacter, false);
-
-                for (var character = 0; character < CharacterCodes.maxAsciiCharacter; character++) {
-                    if (character >= CharacterCodes.a && character <= CharacterCodes.z) {
-                        Scanner.isIdentifierStartCharacter[character] = true;
-                        Scanner.isIdentifierPartCharacter[character] = true;
-                    }
-                    else if ((character >= CharacterCodes.A && character <= CharacterCodes.Z) ||
-                             character === CharacterCodes._ ||
-                             character === CharacterCodes.$) {
-                        Scanner.isIdentifierStartCharacter[character] = true;
-                        Scanner.isIdentifierPartCharacter[character] = true;
-                    }
-                    else if (character >= CharacterCodes._0 && character <= CharacterCodes._9) {
-                        Scanner.isIdentifierPartCharacter[character] = true;
-                        Scanner.isNumericLiteralStart[character] = true;
-                    }
-                }
-
-                Scanner.isNumericLiteralStart[CharacterCodes.dot] = true;
-
-                for (var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
-                    var keyword = SyntaxFacts.getText(keywordKind);
-                    Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
-                }
-            }
-        }
-
         constructor(fileName: string,
                     text: ISimpleText,
                     languageVersion: LanguageVersion,
                     window: number[] = ArrayUtilities.createArray(2048, 0)) {
-            Scanner.initializeStaticData();
-
             this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
             this.fileName = fileName;
             this.text = text;
@@ -538,14 +527,14 @@ module TypeScript {
                     return this.advanceAndSetTokenKind(SyntaxKind.QuestionToken);
             }
 
-            if (Scanner.isNumericLiteralStart[character]) {
+            if (isNumericLiteralStart[character]) {
                 return this.scanNumericLiteral();
             }
 
             // We run into so many identifiers (and keywords) when scanning, that we want the code to
             // be as fast as possible.  To that end, we have an extremely fast path for scanning that
             // handles the 99.9% case of no-unicode characters and no unicode escapes.
-            if (Scanner.isIdentifierStartCharacter[character]) {
+            if (isIdentifierStartCharacter[character]) {
                 var result = this.tryFastScanIdentifierOrKeyword(character);
                 if (result !== SyntaxKind.None) {
                     return result;
@@ -560,7 +549,7 @@ module TypeScript {
         }
 
         private isIdentifierStart(interpretedChar: number): boolean {
-            if (Scanner.isIdentifierStartCharacter[interpretedChar]) {
+            if (isIdentifierStartCharacter[interpretedChar]) {
                 return true;
             }
 
@@ -568,7 +557,7 @@ module TypeScript {
         }
 
         private isIdentifierPart(interpretedChar: number): boolean {
-            if (Scanner.isIdentifierPartCharacter[interpretedChar]) {
+            if (isIdentifierPartCharacter[interpretedChar]) {
                 return true;
             }
 
@@ -580,7 +569,7 @@ module TypeScript {
 
             while (true) {
                 var character = this.currentCharCode();
-                if (Scanner.isIdentifierPartCharacter[character]) {
+                if (isIdentifierPartCharacter[character]) {
                     // Still part of an identifier.  Move to the next caracter.
                     this.slidingWindow.moveToNextItem();
                 }
@@ -599,7 +588,7 @@ module TypeScript {
 
                     // Also check if it a keyword if it started with a lowercase letter.
                     var kind;
-                    if (Scanner.isKeywordStartCharacter[firstCharacter]) {
+                    if (isKeywordStartCharacter[firstCharacter]) {
                         var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
                         kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                     }
@@ -954,7 +943,7 @@ module TypeScript {
 
                 // TODO: The grammar says any identifier part is allowed here.  Do we need to support
                 // \u identifiers here?  The existing typescript parser does not.  
-                while (Scanner.isIdentifierPartCharacter[this.currentCharCode()]) {
+                while (isIdentifierPartCharacter[this.currentCharCode()]) {
                     this.slidingWindow.moveToNextItem();
                 }
 
