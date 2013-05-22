@@ -1617,7 +1617,7 @@ module TypeScript {
             return false;
         }
 
-        private checkForThisOrSuperCaptureInArrowFunction(expression: Expression, typeCheckContext: PullTypeCheckContext): void {
+        private checkForThisOrSuperCaptureInArrowFunction(expression: AST, typeCheckContext: PullTypeCheckContext): void {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var declPath: PullDecl[] = typeCheckContext.enclosingDeclStack;
@@ -1697,7 +1697,7 @@ module TypeScript {
         // 'Super' expressions 
         // validate:
         //
-        private typeCheckSuperExpression(ast: Expression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        private typeCheckSuperExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var nonLambdaEnclosingDecl = typeCheckContext.getEnclosingNonLambdaDecl();
             var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.getKind();

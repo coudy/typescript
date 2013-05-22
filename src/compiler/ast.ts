@@ -206,13 +206,7 @@ module TypeScript {
         }
     }
 
-    export class Expression extends AST {
-        constructor(nodeType: NodeType) {
-            super(nodeType);
-        }
-    }
-
-    export class Identifier extends Expression {
+    export class Identifier extends AST {
         public text: string;
 
         // 'actualText' is the text that the user has entered for the identifier. the text might 
@@ -265,7 +259,7 @@ module TypeScript {
         }
     }
 
-    export class LiteralExpression extends Expression {
+    export class LiteralExpression extends AST {
         constructor(nodeType: NodeType) {
             super(nodeType);
         }
@@ -291,7 +285,7 @@ module TypeScript {
         }
     }
 
-    export class ThisExpression extends Expression {
+    export class ThisExpression extends AST {
         constructor() {
             super(NodeType.ThisExpression);
         }
@@ -310,7 +304,7 @@ module TypeScript {
         }
     }
 
-    export class SuperExpression extends Expression {
+    export class SuperExpression extends AST {
         constructor() {
             super(NodeType.SuperExpression);
         }
@@ -324,7 +318,7 @@ module TypeScript {
         }
     }
 
-    export class ParenthesizedExpression extends Expression {
+    export class ParenthesizedExpression extends AST {
         constructor(public expression: AST) {
             super(NodeType.ParenthesizedExpression);
         }
@@ -341,7 +335,7 @@ module TypeScript {
         }
     }
 
-    export class UnaryExpression extends Expression {
+    export class UnaryExpression extends AST {
         public castTerm: TypeReference = null;
 
         constructor(nodeType: NodeType, public operand: AST) {
@@ -421,7 +415,7 @@ module TypeScript {
         }
     }
 
-    export class CallExpression extends Expression {
+    export class CallExpression extends AST {
         constructor(nodeType: NodeType,
                     public target: AST,
                     public typeArguments: ASTList,
@@ -446,7 +440,7 @@ module TypeScript {
         }
     }
 
-    export class BinaryExpression extends Expression {
+    export class BinaryExpression extends AST {
         constructor(nodeType: NodeType,
                     public operand1: AST,
                     public operand2: AST) {
@@ -556,7 +550,7 @@ module TypeScript {
         }
     }
 
-    export class ConditionalExpression extends Expression {
+    export class ConditionalExpression extends AST {
         constructor(public operand1: AST,
                     public operand2: AST,
                     public operand3: AST) {
@@ -579,7 +573,7 @@ module TypeScript {
         }
     }
 
-    export class NumberLiteral extends Expression {
+    export class NumberLiteral extends AST {
         constructor(public value: number, public text: string) {
             super(NodeType.NumericLiteral);
         }
@@ -595,7 +589,7 @@ module TypeScript {
         }
     }
 
-    export class RegexLiteral extends Expression {
+    export class RegexLiteral extends AST {
         constructor(public text: string) {
             super(NodeType.RegularExpressionLiteral);
         }
@@ -610,7 +604,7 @@ module TypeScript {
         }
     }
 
-    export class StringLiteral extends Expression {
+    export class StringLiteral extends AST {
         constructor(public actualText: string, public text: string) {
             super(NodeType.StringLiteral);
         }
@@ -1034,7 +1028,7 @@ module TypeScript {
     }
 
     export class ThrowStatement extends Statement {
-        constructor(public expression: Expression) {
+        constructor(public expression: AST) {
             super(NodeType.ThrowStatement);
         }
 
@@ -1555,7 +1549,7 @@ module TypeScript {
         }
     }
 
-    export class OmittedExpression extends Expression {
+    export class OmittedExpression extends AST {
         constructor() {
             super(NodeType.OmittedExpression);
         }

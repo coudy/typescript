@@ -272,8 +272,8 @@ module TypeScript {
             return this.convertTokenTrailingComments(node.lastToken(), nodeStart + node.leadingTriviaWidth() + node.width());
         }
 
-        public visitToken(token: ISyntaxToken): Expression {
-            var result: Expression = this.getAST(token);
+        public visitToken(token: ISyntaxToken): AST {
+            var result = this.getAST(token);
             var fullStart = this.position;
 
             if (result) {
@@ -1015,7 +1015,7 @@ module TypeScript {
             return result;
         }
 
-        public visitEqualsValueClause(node: EqualsValueClauseSyntax): Expression {
+        public visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
             this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
                 this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());
 
