@@ -22,7 +22,6 @@ var compilerSources = [
 	"hashTable.ts",
 	"ast.ts",
 	"astWalker.ts",
-	"astWalkerCallback.ts",
 	"astPath.ts",
 	"types.ts",
 	"base64.ts",

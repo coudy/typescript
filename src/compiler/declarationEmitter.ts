@@ -43,7 +43,7 @@ module TypeScript {
         }
     }
     
-    export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
+    export class DeclarationEmitter {
         public fileName: string = null;
         private declFile: TextWriter = null;
         private indenter = new Indenter();
@@ -79,7 +79,36 @@ module TypeScript {
         }
 
         public emitDeclarations(script: TypeScript.Script): void {
-            AstWalkerWithDetailCallback.walk(script, this);
+            var walk = (pre: boolean, ast: AST): boolean => {
+                switch (ast.nodeType) {
+                    case NodeType.VariableStatement:
+                        return this.variableStatementCallback(pre, <VariableStatement>ast);
+                    case NodeType.VariableDeclaration:
+                        return this.variableDeclarationCallback(pre, <VariableDeclaration>ast);
+                    case NodeType.VariableDeclarator:
+                        return this.variableDeclaratorCallback(pre, <VariableDeclarator>ast);
+                    case NodeType.Block:
+                        return this.blockCallback(pre, <Block>ast);
+                    case NodeType.FunctionDeclaration:
+                        return this.functionDeclarationCallback(pre, <FunctionDeclaration>ast);
+                    case NodeType.ClassDeclaration:
+                        return this.classDeclarationCallback(pre, <ClassDeclaration>ast);
+                    case NodeType.InterfaceDeclaration:
+                        return this.interfaceDeclarationCallback(pre, <InterfaceDeclaration>ast);
+                    case NodeType.ImportDeclaration:
+                        return this.importDeclarationCallback(pre, <ImportDeclaration>ast);
+                    case NodeType.ModuleDeclaration:
+                        return this.moduleDeclarationCallback(pre, <ModuleDeclaration>ast);
+                    case NodeType.Script:
+                        return this.scriptCallback(pre, <Script>ast);
+                    default:
+                        return this.defaultCallback(pre, ast);
+                }
+            };
+
+            getAstWalkerFactory().walk(script,
+                (ast: AST, parent: AST, walker: IAstWalker): AST => { walker.options.goChildren = walk(/*pre*/true, ast); return ast; },
+                (ast: AST, parent: AST, walker: IAstWalker): AST => { walker.options.goChildren = walk(/*pre*/false, ast); return ast; });
         }
 
         public getAstDeclarationContainer() {
@@ -323,7 +352,7 @@ module TypeScript {
             }
         }
 
-        public VariableDeclaratorCallback(pre: boolean, varDecl: VariableDeclarator): boolean {
+        private variableDeclaratorCallback(pre: boolean, varDecl: VariableDeclarator): boolean {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.getVarFlags()), false)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
@@ -368,21 +397,22 @@ module TypeScript {
             return false;
         }
 
-        public BlockCallback(pre: boolean, block: Block): boolean {
+        private blockCallback(pre: boolean, block: Block): boolean {
             return false;
         }
 
-        public VariableStatementCallback(pre: boolean, variableDeclaration: VariableDeclaration): boolean {
+        private variableStatementCallback(pre: boolean, variableStatement: VariableStatement): boolean {
             return true;
         }
 
-        public VariableDeclarationCallback(pre: boolean, variableDeclaration: VariableDeclaration): boolean {
+        private variableDeclarationCallback(pre: boolean, variableDeclaration: VariableDeclaration): boolean {
             if (pre) {
                 this.varListCount = variableDeclaration.declarators.members.length;
             }
             else {
                 this.varListCount = 0;
             }
+
             return true;
         }
 
@@ -410,7 +440,7 @@ module TypeScript {
             return signatures && signatures.length > 1;
         }
 
-        public FunctionDeclarationCallback(pre: boolean, funcDecl: FunctionDeclaration): boolean {
+        private functionDeclarationCallback(pre: boolean, funcDecl: FunctionDeclaration): boolean {
             if (!pre) {
                 return false;
             }
@@ -621,7 +651,7 @@ module TypeScript {
             }
         }
 
-        public ClassDeclarationCallback(pre: boolean, classDecl: ClassDeclaration): boolean {
+        private classDeclarationCallback(pre: boolean, classDecl: ClassDeclaration): boolean {
             if (!this.canEmitPrePostAstSignature(ToDeclFlags(classDecl.getVarFlags()), classDecl, pre)) {
                 return false;
             }
@@ -685,7 +715,7 @@ module TypeScript {
             this.declFile.Write(">");
         }
 
-        public InterfaceDeclarationCallback(pre: boolean, interfaceDecl: InterfaceDeclaration): boolean {
+        private interfaceDeclarationCallback(pre: boolean, interfaceDecl: InterfaceDeclaration): boolean {
             if (!this.canEmitPrePostAstSignature(ToDeclFlags(interfaceDecl.getVarFlags()), interfaceDecl, pre)) {
                 return false;
             }
@@ -717,7 +747,7 @@ module TypeScript {
             return true;
         }
 
-        public ImportDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
+        private importDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
             if (pre) {
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
@@ -767,7 +797,7 @@ module TypeScript {
             return false;
         }
 
-        public ModuleDeclarationCallback(pre: boolean, moduleDecl: ModuleDeclaration): boolean {
+        private moduleDeclarationCallback(pre: boolean, moduleDecl: ModuleDeclaration): boolean {
             if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile)) {
                 // This is dynamic modules and we are going to outputing single file, 
                 // we need to change the declFile because dynamic modules are always emitted to their corresponding .d.ts
@@ -862,7 +892,7 @@ module TypeScript {
             return true;
         }
 
-        public ScriptCallback(pre: boolean, script: Script): boolean {
+        private scriptCallback(pre: boolean, script: Script): boolean {
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
@@ -885,7 +915,7 @@ module TypeScript {
             return true;
         }
 
-        public DefaultCallback(pre: boolean, ast: AST): boolean {
+        private defaultCallback(pre: boolean, ast: AST): boolean {
             return !ast.isStatement();
         }
     }

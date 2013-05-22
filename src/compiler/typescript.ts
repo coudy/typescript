@@ -22,7 +22,6 @@
 ///<reference path='hashTable.ts' />
 ///<reference path='ast.ts' />
 ///<reference path='astWalker.ts' />
-///<reference path='astWalkerCallback.ts' />
 ///<reference path='astPath.ts' />
 ///<reference path='base64.ts' />
 ///<reference path='sourceMapping.ts' />
@@ -176,7 +175,8 @@ module TypeScript {
             return this._bloomFilter;
         }
 
-        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
+        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
+
             var oldScript = this.script;
             var oldSyntaxTree = this._syntaxTree;
 
