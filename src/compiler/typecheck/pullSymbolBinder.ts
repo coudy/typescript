@@ -638,6 +638,7 @@ module TypeScript {
 
                         specialization.addDeclaration(classDecl);
                         specialization.setUnresolved();
+                        specialization.invalidate();
                     }
 
                     classSymbol.cleanTypeParameters();
@@ -891,6 +892,7 @@ module TypeScript {
 
                         specialization.addDeclaration(interfaceDecl);
                         this.cleanInterfaceSignatures(specialization);
+                        specialization.invalidate();
                     }
 
                     interfaceSymbol.cleanTypeParameters();
@@ -2355,6 +2357,26 @@ module TypeScript {
                 constructorSymbol.invalidate();
                 constructorTypeSymbol.invalidate();
                 constructorTypeSymbol.recomputeConstructSignatures();
+
+                if (isGeneric) {
+                    var specializations = constructorTypeSymbol.getKnownSpecializations();
+
+                    for (var j = 0; j < specializations.length; j++) {
+                        constructSigs = specializations[j].getConstructSignatures();
+
+                        for (var i = 0; i < constructSigs.length; i++) {
+                            decls = constructSigs[i].getDeclarations();
+
+                            for (var k = 0; k < decls.length; k++) {
+                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
+                                    constructSigs[i].removeDeclaration(decls[k]);
+                                    constructSigs[i].addDeclaration(constructorDeclaration);
+                                    constructSigs[i].invalidate();
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             // add a call signature to the constructor method, and a construct signature to the parent class type

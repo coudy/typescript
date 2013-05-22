@@ -880,8 +880,9 @@ module TypeScript {
                 }
 
                 context.pushTypeSpecializationCache(typeCache);
+                var rootType = getRootType(symbol.getType());
 
-                var specializedSymbol = specializeType((<PullTypeSymbol>symbol), typeArgs, this, enclosingDecl, context, ast);
+                var specializedSymbol = specializeType(rootType, typeArgs, this, enclosingDecl, context, ast);
 
                 context.popTypeSpecializationCache();
 
@@ -947,8 +948,11 @@ module TypeScript {
             var typeDecl: PullDecl = this.getDeclForAST(typeDeclAST);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
+            var typeSymbolDeclarations = typeDeclSymbol.getDeclarations();
             var typeDeclIsClass = typeDeclAST.nodeType === NodeType.ClassDeclaration;
             var hasVisited = this.getSymbolAndDiagnosticsForAST(typeDeclAST) != null;
+            var extendedTypes: PullTypeSymbol[] = [];
+            var implementedTypes: PullTypeSymbol[] = [];
 
             if ((typeDeclSymbol.isResolved() && hasVisited) || (typeDeclSymbol.isResolving() && !context.isInBaseTypeResolution())) {
                 return typeDeclSymbol;
@@ -993,6 +997,7 @@ module TypeScript {
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             this.setSymbolAndDiagnosticsForAST(typeDeclAST.extendsList.members[i], SymbolAndDiagnostics.fromSymbol(resolvedParentType), context);
                             typeDeclSymbol.addExtendedType(parentType);
+                            extendedTypes[extendedTypes.length] = parentType;
                         }
                     }
                 }
@@ -1000,13 +1005,22 @@ module TypeScript {
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
-            // Remove any extends links that are not in the AST extendsList IF this is the first pass
-            if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
-                for (var i = 0; i < baseTypeSymbols.length; i++) {
-                    var baseType = baseTypeSymbols[i];
-                    if (!(typeDeclAST.extendsList && this.baseListHasBase(typeDeclAST.extendsList, baseType.getName()))) {
-                        typeDeclSymbol.removeExtendedType(baseTypeSymbols[i]);
+            // Remove any extends links that are not in the AST extendsList if this is the first pass after a re-bind
+            if (typeSymbolDeclarations.length > 1) {
+                if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                    var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
+                    for (var i = 0; i < baseTypeSymbols.length; i++) {
+                        var baseType = baseTypeSymbols[i];
+
+                        for (var j = 0; j < extendedTypes.length; j++) {
+                            if (baseType == extendedTypes[j]) {
+                                break;
+                            }
+                        }
+
+                        if (j == extendedTypes.length) {
+                            typeDeclSymbol.removeExtendedType(baseType);
+                        }
                     }
                 }
             }
@@ -1030,18 +1044,28 @@ module TypeScript {
                             this.setSymbolAndDiagnosticsForAST(
                                 typeDeclAST.implementsList.members[i - extendsCount], SymbolAndDiagnostics.fromSymbol(resolvedImplementedType), context);
                             typeDeclSymbol.addImplementedType(implementedType);
+                            implementedTypes[implementedTypes.length] = implementedType;
                         }
                     }
                 }
             }
 
-            // Remove any implements links that are not in the AST implementsList
-            if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
-                for (var i = 0; i < baseTypeSymbols.length; i++) {
-                    var baseType = baseTypeSymbols[i];
-                    if (!(typeDeclAST.implementsList && this.baseListHasBase(typeDeclAST.implementsList, baseType.getName()))) {
-                        typeDeclSymbol.removeImplementedType(baseTypeSymbols[i]);
+            // On the first pass after a re-binding, remove any stale implements links that are not in the AST implementsList
+            if (typeSymbolDeclarations.length > 1) {
+                if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                    var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
+                    for (var i = 0; i < baseTypeSymbols.length; i++) {
+                        var baseType = baseTypeSymbols[i];
+
+                        for (var j = 0; j < implementedTypes.length; j++) {
+                            if (baseType == extendedTypes[j]) {
+                                break;
+                            }
+                        }
+
+                        if (j == extendedTypes.length) {
+                            typeDeclSymbol.removeExtendedType(baseType);
+                        }
                     }
                 }
             }
@@ -1084,16 +1108,6 @@ module TypeScript {
             typeDeclSymbol.setResolved();
 
             return typeDeclSymbol;
-        }
-
-        private baseListHasBase(list: ASTList, baseName: string): boolean {
-            for (var i = 0; i < list.members.length; i++) {
-                var baseSymbol = this.getSymbolAndDiagnosticsForAST(list.members[i]);
-                if (baseSymbol && baseSymbol.symbol.getName() === baseName) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         //
@@ -2855,6 +2869,14 @@ module TypeScript {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
             }
 
+            if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)) {
+                typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
+
+                if (typeNameSymbol != typeNameSymbolAndDiagnostics.symbol) {
+                    return SymbolAndDiagnostics.fromSymbol(typeNameSymbol);
+                }
+            }            
+
             return typeNameSymbolAndDiagnostics;
         }
 
@@ -2944,10 +2966,6 @@ module TypeScript {
                                 [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Static_methods_cannot_reference_class_type_parameters)]);
                         }
                     }
-                }
-
-                if (!(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)) {
-                    typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
                 }
             }
 
@@ -3958,7 +3976,7 @@ module TypeScript {
             }
 
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
-            if (!symbolAndDiagnostics) {
+            if (!symbolAndDiagnostics || !symbolAndDiagnostics.symbol.isResolved()) {
                 symbolAndDiagnostics = this.computeCallExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
                 this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnostics, context);
             }
@@ -4303,13 +4321,13 @@ module TypeScript {
                 return this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
             }
 
-            var symbolAndDiagnotics = this.getSymbolAndDiagnosticsForAST(callEx);
-            if (!symbolAndDiagnotics) {
-                symbolAndDiagnotics = this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
-                this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnotics, context);
+            var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
+            if (!symbolAndDiagnostics || !symbolAndDiagnostics.symbol.isResolved()) {
+                symbolAndDiagnostics = this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
+                this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnostics, context);
             }
 
-            return symbolAndDiagnotics;
+            return symbolAndDiagnostics;
         }
 
         public computeNewExpressionSymbol(callEx: CallExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): SymbolAndDiagnostics<PullSymbol> {
