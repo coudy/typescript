@@ -122,18 +122,6 @@ module TypeScript {
                 this._diagnostics = syntaxTree.diagnostics();
             }
 
-                var identifiers: BlockIntrinsics = new BlockIntrinsics();
-
-                var identifierWalker: IdentifierWalker = new IdentifierWalker(identifiers);
-                syntaxTree.sourceUnit().accept(identifierWalker);
-
-                var identifierCount = 0;
-                for (var name in identifiers) {
-                    identifierCount++;
-                }
-                this._bloomFilter = new BloomFilter(identifierCount);
-                this._bloomFilter.addKeys(identifiers);
-
             this.lineMap = syntaxTree.lineMap();
             this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
         }
@@ -160,7 +148,38 @@ module TypeScript {
         }
 
         public bloomFilter(): BloomFilter {
-            return this._bloomFilter;
+            if (this._bloomFilter && this._bloomFilter !== null) {
+                return this._bloomFilter;
+            }
+            else {
+                var identifiers: BlockIntrinsics = new BlockIntrinsics();
+                var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
+                    if (isValidAstNode(cur)) {
+
+                        if (cur.nodeType === NodeType.Name)
+                        {
+                            var nodeText = (<TypeScript.Identifier>cur).text;
+
+                            identifiers[nodeText] = true;
+                        }
+
+                        walker.options.goChildren = true;
+                    }
+                    return cur;
+                }
+
+                TypeScript.getAstWalkerFactory().walk(this.script, pre, null, null, identifiers);
+
+                var identifierCount = 0;
+                for (var name in identifiers) {
+                    if (identifiers[name] === true) {
+                        identifierCount++;
+                    }
+                }
+                this._bloomFilter = new BloomFilter(identifierCount);
+                this._bloomFilter.addKeys(identifiers);
+                return this._bloomFilter;
+            }
         }
 
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
