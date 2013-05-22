@@ -948,7 +948,6 @@ module TypeScript {
             var typeDecl: PullDecl = this.getDeclForAST(typeDeclAST);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
-            var typeSymbolDeclarations = typeDeclSymbol.getDeclarations();
             var typeDeclIsClass = typeDeclAST.nodeType === NodeType.ClassDeclaration;
             var hasVisited = this.getSymbolAndDiagnosticsForAST(typeDeclAST) != null;
             var extendedTypes: PullTypeSymbol[] = [];
@@ -990,6 +989,7 @@ module TypeScript {
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         var resolvedParentType = parentType;
+                        extendedTypes[extendedTypes.length] = parentType;
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                             typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
@@ -997,7 +997,6 @@ module TypeScript {
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             this.setSymbolAndDiagnosticsForAST(typeDeclAST.extendsList.members[i], SymbolAndDiagnostics.fromSymbol(resolvedParentType), context);
                             typeDeclSymbol.addExtendedType(parentType);
-                            extendedTypes[extendedTypes.length] = parentType;
                         }
                     }
                 }
@@ -1006,33 +1005,32 @@ module TypeScript {
             }
 
             // Remove any extends links that are not in the AST extendsList if this is the first pass after a re-bind
-            if (typeSymbolDeclarations.length > 1) {
-                if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                    var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
-                    for (var i = 0; i < baseTypeSymbols.length; i++) {
-                        var baseType = baseTypeSymbols[i];
+            if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
+                for (var i = 0; i < baseTypeSymbols.length; i++) {
+                    var baseType = baseTypeSymbols[i];
 
-                        for (var j = 0; j < extendedTypes.length; j++) {
-                            if (baseType == extendedTypes[j]) {
-                                break;
-                            }
+                    for (var j = 0; j < extendedTypes.length; j++) {
+                        if (baseType == extendedTypes[j]) {
+                            break;
                         }
+                    }
 
-                        if (j == extendedTypes.length) {
-                            typeDeclSymbol.removeExtendedType(baseType);
-                        }
+                    if (j == extendedTypes.length) {
+                        typeDeclSymbol.removeExtendedType(baseType);
                     }
                 }
             }
 
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
-                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); (i - extendsCount) < typeDeclAST.implementsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < typeDeclAST.implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context).symbol;
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
                         var resolvedImplementedType = implementedType;
+                        implementedTypes[implementedTypes.length] = implementedType;
                         if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
                             typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
@@ -1044,28 +1042,25 @@ module TypeScript {
                             this.setSymbolAndDiagnosticsForAST(
                                 typeDeclAST.implementsList.members[i - extendsCount], SymbolAndDiagnostics.fromSymbol(resolvedImplementedType), context);
                             typeDeclSymbol.addImplementedType(implementedType);
-                            implementedTypes[implementedTypes.length] = implementedType;
                         }
                     }
                 }
             }
 
             // On the first pass after a re-binding, remove any stale implements links that are not in the AST implementsList
-            if (typeSymbolDeclarations.length > 1) {
-                if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                    var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
-                    for (var i = 0; i < baseTypeSymbols.length; i++) {
-                        var baseType = baseTypeSymbols[i];
+            if (!typeDeclSymbol.isResolved() && !wasResolving) {
+                var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
+                for (var i = 0; i < baseTypeSymbols.length; i++) {
+                    var baseType = baseTypeSymbols[i];
 
-                        for (var j = 0; j < implementedTypes.length; j++) {
-                            if (baseType == extendedTypes[j]) {
-                                break;
-                            }
+                    for (var j = 0; j < implementedTypes.length; j++) {
+                        if (baseType == implementedTypes[j]) {
+                            break;
                         }
+                    }
 
-                        if (j == extendedTypes.length) {
-                            typeDeclSymbol.removeExtendedType(baseType);
-                        }
+                    if (j == implementedTypes.length) {
+                        typeDeclSymbol.removeImplementedType(baseType);
                     }
                 }
             }
