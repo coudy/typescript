@@ -13,22 +13,24 @@ module TypeScript {
 
         export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfo: SemanticInfo) {
             var funcSymbol = semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
-            if (funcSymbol.isSignature()) {
-                return {
-                    signature: <PullSignatureSymbol>funcSymbol,
-                    allSignatures: [<PullSignatureSymbol>funcSymbol]
-                };
-            }
             var functionDecl = semanticInfo.getDeclForAST(funcDecl);
-            var functionSignature = functionDecl.getSignatureSymbol();
-            var funcTypeSymbol = funcSymbol.getType();
+            var functionSignature: PullSignatureSymbol = null;
+            var typeSymbolWithAllSignatures: PullTypeSymbol = null;
+            if (funcSymbol.isSignature()) {
+                functionSignature = <PullSignatureSymbol>funcSymbol;
+                var parent = functionDecl.getParentDecl();
+                typeSymbolWithAllSignatures = parent.getSymbol().getType();                
+            } else {
+                functionSignature = functionDecl.getSignatureSymbol();
+                typeSymbolWithAllSignatures = funcSymbol.getType();
+            }
             var signatures: PullSignatureSymbol[];
             if (funcDecl.isConstructor || funcDecl.isConstructMember()) {
-                signatures = funcTypeSymbol.getConstructSignatures();
+                signatures = typeSymbolWithAllSignatures.getConstructSignatures();
             } else if (funcDecl.isIndexerMember()) {
-                signatures = funcTypeSymbol.getIndexSignatures();
+                signatures = typeSymbolWithAllSignatures.getIndexSignatures();
             } else {
-                signatures = funcTypeSymbol.getCallSignatures();
+                signatures = typeSymbolWithAllSignatures.getCallSignatures();
             }
             return {
                 signature: functionSignature,
