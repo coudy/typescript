@@ -74,6 +74,10 @@ module TypeScript {
         constructor(public nodeType: NodeType) {
         }
 
+        public isStatement() {
+            return false;
+        }
+
         public preComments(): Comment[] {
             return this._preComments || null;
         }
@@ -104,9 +108,6 @@ module TypeScript {
             return true;
         }
 
-        public isExpression() { return false; }
-        public isStatementOrExpression() { return false; }
-
         public getFlags(): ASTFlags {
             return this._flags;
         }
@@ -127,10 +128,6 @@ module TypeScript {
         }
 
         public isDeclaration() { return false; }
-
-        public isStatement() {
-            return false;
-        }
 
         public emit(emitter: Emitter) {
             emitter.emitComments(this, true);
