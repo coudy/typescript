@@ -1415,6 +1415,8 @@ module TypeScript {
                 }
             }
 
+            this.specializationLinks = null;
+
             this.specializedTypeCache = null;
 
             this.invalidatedSpecializations = true;
@@ -2999,7 +3001,7 @@ module TypeScript {
 
         var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        if (searchForExistingSpecialization) {
+        if (searchForExistingSpecialization || context.specializingToAny) {
             if (!typeArguments.length || context.specializingToAny) {
                 for (var i = 0; i < typeParameters.length; i++) {
                     typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
@@ -3209,6 +3211,8 @@ module TypeScript {
                 newSignature.mimicSignature(signature);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
+                Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
@@ -3270,6 +3274,8 @@ module TypeScript {
 
                 newSignature.mimicSignature(signature);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
+
+                Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -3334,6 +3340,8 @@ module TypeScript {
 
                 newSignature.mimicSignature(signature);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
+
+                Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
