@@ -132,7 +132,7 @@ module TypeScript {
 
         public addKeys(keys: BlockIntrinsics) {
             for (var name in keys) {
-                if (keys[name] === true) {
+                if (keys[name]) {
                     this.add(name);
                 }
             }

@@ -148,22 +148,16 @@ module TypeScript {
         }
 
         public bloomFilter(): BloomFilter {
-            if (this._bloomFilter && this._bloomFilter !== null) {
-                return this._bloomFilter;
-            }
-            else {
+            if (!this._bloomFilter) {
                 var identifiers: BlockIntrinsics = new BlockIntrinsics();
                 var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
                     if (isValidAstNode(cur)) {
-
                         if (cur.nodeType === NodeType.Name)
                         {
                             var nodeText = (<TypeScript.Identifier>cur).text;
 
                             identifiers[nodeText] = true;
                         }
-
-                        walker.options.goChildren = true;
                     }
                     return cur;
                 }
@@ -172,14 +166,14 @@ module TypeScript {
 
                 var identifierCount = 0;
                 for (var name in identifiers) {
-                    if (identifiers[name] === true) {
+                    if (identifiers[name]) {
                         identifierCount++;
                     }
                 }
                 this._bloomFilter = new BloomFilter(identifierCount);
                 this._bloomFilter.addKeys(identifiers);
-                return this._bloomFilter;
             }
+            return this._bloomFilter;
         }
 
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
