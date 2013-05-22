@@ -1,57 +1,6 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
-    var incrementalAst = true;
-    export class SyntaxPositionMap {
-        private position = 0;
-        private elementToPosition = Collections.createHashTable(2048, Collections.identityHashCode);
-
-        constructor(node: SyntaxNode) {
-            this.process(node);
-        }
-
-        private process(element: ISyntaxElement) {
-            if (element !== null) {
-                if (element.isToken()) {
-                    this.elementToPosition.add(element, this.position);
-                    this.position += element.fullWidth();
-                }
-                else {
-                    if (element.isNode() ||
-                        (element.isList() && (<ISyntaxList>element).childCount() > 0) ||
-                        (element.isSeparatedList() && (<ISeparatedSyntaxList>element).childCount() > 0)) {
-                        this.elementToPosition.add(element, this.position);
-                    }
-
-                    for (var i = 0, n = element.childCount(); i < n; i++) {
-                        this.process(element.childAt(i));
-                    }
-                }
-            }
-        }
-
-        public static create(node: SyntaxNode): SyntaxPositionMap {
-            var map = new SyntaxPositionMap(node);
-            return map;
-        }
-
-        public fullStart(element: ISyntaxElement): number {
-            return this.elementToPosition.get(element);
-        }
-
-        public start(element: ISyntaxElement): number {
-            return this.fullStart(element) + element.leadingTriviaWidth();
-        }
-
-        public end(element: ISyntaxElement): number {
-            return this.start(element) + element.width();
-        }
-
-        public fullEnd(element: ISyntaxElement): number {
-            return this.fullStart(element) + element.fullWidth();
-        }
-    }
-
     export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
         public static checkPositions = false;
 
@@ -67,28 +16,19 @@ module TypeScript {
         private static protoString = "__proto__";
         private static protoSubstitutionString = "#__proto__";
 
-        constructor(private syntaxPositionMap: SyntaxPositionMap,
-                    private fileName: string,
+        constructor(private fileName: string,
                     private lineMap: LineMap,
                     private compilationSettings: CompilationSettings) {
             this.isParsingDeclareFile = isDTSFile(fileName);
         }
 
         public static visit(syntaxTree: SyntaxTree, fileName: string, compilationSettings: CompilationSettings): Script {
-            var map = SyntaxTreeToAstVisitor.checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap(), compilationSettings);
+            var visitor = new SyntaxTreeToAstVisitor(fileName, syntaxTree.lineMap(), compilationSettings);
             return syntaxTree.sourceUnit().accept(visitor);
-        }
-
-        private assertElementAtPosition(element: ISyntaxElement) {
-            if (SyntaxTreeToAstVisitor.checkPositions) {
-                Debug.assert(this.position === this.syntaxPositionMap.fullStart(element));
-            }
         }
 
         private movePast(element: ISyntaxElement): void {
             if (element !== null) {
-                this.assertElementAtPosition(element);
                 this.position += element.fullWidth();
             }
         }
@@ -146,11 +86,7 @@ module TypeScript {
         }
 
         private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
-
             if (span.minChar !== -1) {
-                Debug.assert(span.limChar !== -1);
-                Debug.assert((<any>span).nodeType !== undefined);
-
                 // Have an existing span.  We need to adjust it so that it starts at the provided
                 // desiredMinChar.
 
@@ -158,26 +94,15 @@ module TypeScript {
                 this.applyDelta(<AST>span, delta);
 
                 span.limChar = end;
-
-                Debug.assert(span.minChar === start);
-                Debug.assert(span.limChar === end);
             }
             else {
-                Debug.assert(span.limChar === -1);
                 // Have a new span, just set it to the lim/min we were given.
                 span.minChar = start;
                 span.limChar = end;
             }
-
-            Debug.assert(!isNaN(span.minChar));
-            Debug.assert(!isNaN(span.limChar));
-            Debug.assert(span.minChar !== -1);
-            Debug.assert(span.limChar !== -1);
         }
 
         private identifierFromToken(token: ISyntaxToken, isOptional: boolean, useValueText: boolean): Identifier {
-            this.assertElementAtPosition(token);
-
             var result: Identifier = null;
             if (token.fullWidth() === 0) {
                 result = new MissingIdentifier();
@@ -205,19 +130,12 @@ module TypeScript {
                 return null;
             }
 
-            if (incrementalAst) {
-                var result = (<any>element)._ast;
-                return result ? result : null;
-            }
-            else {
-                return null;
-            }
+            var result = (<any>element)._ast;
+            return result ? result : null;
         }
 
         private setAST(element: ISyntaxElement, ast: IASTSpan): void {
-            if (incrementalAst) {
-                (<any>element)._ast = ast;
-            }
+            (<any>element)._ast = ast;
         }
 
         public visitSyntaxList(list: ISyntaxList): ASTList {
@@ -355,8 +273,6 @@ module TypeScript {
         }
 
         public visitToken(token: ISyntaxToken): Expression {
-            this.assertElementAtPosition(token);
-
             var result: Expression = this.getAST(token);
             var fullStart = this.position;
 
@@ -465,8 +381,6 @@ module TypeScript {
         }
 
         public visitSourceUnit(node: SourceUnitSyntax): Script {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var members;
 
@@ -519,7 +433,6 @@ module TypeScript {
         }
 
         public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
-            this.assertElementAtPosition(node);
             this.moveTo(node, node.stringLiteral);
             var result = this.identifierFromToken(node.stringLiteral, /*isOptional:*/ false, /*useValueText:*/ false);
             this.movePast(node.stringLiteral);
@@ -529,13 +442,10 @@ module TypeScript {
         }
 
         public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
-            this.assertElementAtPosition(node);
             return node.moduleName.accept(this);
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ClassDeclaration = this.getAST(node);
             if (result) {
@@ -558,7 +468,6 @@ module TypeScript {
                         extendsList = heritageClause.accept(this);
                     }
                     else {
-                        Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
                         implementsList = heritageClause.accept(this);
                     }
                 }
@@ -612,8 +521,6 @@ module TypeScript {
         }
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: InterfaceDeclaration = this.getAST(node);
             if (result) {
@@ -663,8 +570,6 @@ module TypeScript {
         }
 
         public visitHeritageClause(node: HeritageClauseSyntax): ASTList {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ASTList = this.getAST(node);
             if (result) {
@@ -705,8 +610,6 @@ module TypeScript {
         }
 
         private getModuleNamesHelper(name: INameSyntax, result: Identifier[]): void {
-            this.assertElementAtPosition(name);
-
             if (name.kind() === SyntaxKind.QualifiedName) {
                 var qualifiedName = <QualifiedNameSyntax>name;
                 this.getModuleNamesHelper(qualifiedName.left, result);
@@ -721,8 +624,6 @@ module TypeScript {
         }
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ModuleDeclaration = this.getAST(node);
             if (result) {
@@ -806,8 +707,6 @@ module TypeScript {
         }
 
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -865,8 +764,6 @@ module TypeScript {
         }
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
@@ -986,8 +883,6 @@ module TypeScript {
         }
 
         public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ImportDeclaration = this.getAST(node);
             if (result) {
@@ -1017,8 +912,6 @@ module TypeScript {
         }
 
         public visitExportAssignment(node: ExportAssignmentSyntax): ExportAssignment {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ExportAssignment = this.getAST(node);
             if (result) {
@@ -1039,8 +932,6 @@ module TypeScript {
         }
 
         public visitVariableStatement(node: VariableStatementSyntax): VariableStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
 
             var preComments: Comment[] = null;
@@ -1082,8 +973,6 @@ module TypeScript {
         }
 
         public visitVariableDeclaration(node: VariableDeclarationSyntax): VariableDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
@@ -1105,8 +994,6 @@ module TypeScript {
         }
 
         public visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
@@ -1129,8 +1016,6 @@ module TypeScript {
         }
 
         public visitEqualsValueClause(node: EqualsValueClauseSyntax): Expression {
-            this.assertElementAtPosition(node);
-
             this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
                 this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());
 
@@ -1155,8 +1040,6 @@ module TypeScript {
         }
 
         public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -1179,8 +1062,6 @@ module TypeScript {
         }
 
         public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -1195,7 +1076,6 @@ module TypeScript {
                 var closeStart = this.position + node.closeBracketToken.leadingTriviaWidth();
                 this.movePast(node.closeBracketToken);
 
-                Debug.assert(expressions !== null);
                 result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
 
                 if (this.isOnSingleLine(openStart, closeStart)) {
@@ -1209,8 +1089,6 @@ module TypeScript {
         }
 
         public visitOmittedExpression(node: OmittedExpressionSyntax): OmittedExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: OmittedExpression = this.getAST(node);
             if (result) {
@@ -1226,8 +1104,6 @@ module TypeScript {
         }
 
         public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): ParenthesizedExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ParenthesizedExpression = this.getAST(node);
             if (result) {
@@ -1276,8 +1152,6 @@ module TypeScript {
         }
 
         public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -1310,8 +1184,6 @@ module TypeScript {
         }
 
         public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -1342,8 +1214,6 @@ module TypeScript {
         }
 
         public visitType(type: ITypeSyntax): TypeReference {
-            this.assertElementAtPosition(type);
-
             var result: TypeReference;
             if (type.isToken()) {
                 var start = this.position;
@@ -1354,14 +1224,10 @@ module TypeScript {
                 result = type.accept(this);
             }
 
-            Debug.assert(result.nodeType === NodeType.TypeRef);
-
             return result;
         }
 
         public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1385,8 +1251,6 @@ module TypeScript {
         }
 
         public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
-            this.assertElementAtPosition(node);
-
             var result = new ASTList();
 
             this.movePast(node.lessThanToken);
@@ -1409,8 +1273,6 @@ module TypeScript {
         }
 
         public visitConstructorType(node: ConstructorTypeSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1444,8 +1306,6 @@ module TypeScript {
         }
 
         public visitFunctionType(node: FunctionTypeSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1475,8 +1335,6 @@ module TypeScript {
         }
 
         public visitObjectType(node: ObjectTypeSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1502,8 +1360,6 @@ module TypeScript {
         }
 
         public visitArrayType(node: ArrayTypeSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1531,8 +1387,6 @@ module TypeScript {
         }
 
         public visitGenericType(node: GenericTypeSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeReference = this.getAST(node);
             if (result) {
@@ -1556,15 +1410,11 @@ module TypeScript {
         }
 
         public visitTypeAnnotation(node: TypeAnnotationSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             this.movePast(node.colonToken);
             return this.visitType(node.type);
         }
 
         public visitBlock(node: BlockSyntax): Block {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: Block = this.getAST(node);
             if (result) {
@@ -1588,8 +1438,6 @@ module TypeScript {
         }
 
         public visitParameter(node: ParameterSyntax): Parameter {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: Parameter = this.getAST(node);
             if (result) {
@@ -1636,8 +1484,6 @@ module TypeScript {
         }
 
         public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -1658,8 +1504,6 @@ module TypeScript {
         }
 
         public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -1678,8 +1522,6 @@ module TypeScript {
         }
 
         public visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -1721,8 +1563,6 @@ module TypeScript {
         }
 
         public visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: CallExpression = this.getAST(node);
             if (result) {
@@ -1793,8 +1633,6 @@ module TypeScript {
         }
 
         public visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -1823,8 +1661,6 @@ module TypeScript {
         }
 
         public visitConditionalExpression(node: ConditionalExpressionSyntax): ConditionalExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ConditionalExpression = this.getAST(node);
             if (result) {
@@ -1846,8 +1682,6 @@ module TypeScript {
         }
 
         public visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -1879,8 +1713,6 @@ module TypeScript {
         }
 
         public visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -1912,8 +1744,6 @@ module TypeScript {
         }
 
         public visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -1952,8 +1782,6 @@ module TypeScript {
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: VariableDeclarator = this.getAST(node);
             if (result) {
@@ -1980,8 +1808,6 @@ module TypeScript {
         }
 
         public visitParameterList(node: ParameterListSyntax): ASTList {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
 
             var openParenToken = node.openParenToken;
@@ -1996,8 +1822,6 @@ module TypeScript {
         }
 
         public visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -2028,8 +1852,6 @@ module TypeScript {
         }
 
         public visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
-            this.assertElementAtPosition(node);
-
             this.movePast(node.lessThanToken);
             var result = this.visitSeparatedSyntaxList(node.typeParameters);
             this.movePast(node.greaterThanToken);
@@ -2038,8 +1860,6 @@ module TypeScript {
         }
 
         public visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TypeParameter = this.getAST(node);
             if (result) {
@@ -2059,15 +1879,11 @@ module TypeScript {
         }
 
         public visitConstraint(node: ConstraintSyntax): TypeReference {
-            this.assertElementAtPosition(node);
-
             this.movePast(node.extendsKeyword);
             return this.visitType(node.type);
         }
 
         public visitIfStatement(node: IfStatementSyntax): IfStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: IfStatement = this.getAST(node);
             if (result) {
@@ -2089,15 +1905,11 @@ module TypeScript {
         }
 
         public visitElseClause(node: ElseClauseSyntax): Statement {
-            this.assertElementAtPosition(node);
-
             this.movePast(node.elseKeyword);
             return node.statement.accept(this);
         }
 
         public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ExpressionStatement = this.getAST(node);
             if (result) {
@@ -2121,8 +1933,6 @@ module TypeScript {
         }
 
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -2156,8 +1966,6 @@ module TypeScript {
         }
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -2212,8 +2020,6 @@ module TypeScript {
         }
 
         public visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -2257,8 +2063,6 @@ module TypeScript {
         }
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var result = this.visitMemberAccessorDeclaration(node, node.typeAnnotation);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.GetAccessor);
@@ -2268,8 +2072,6 @@ module TypeScript {
         }
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var result = this.visitMemberAccessorDeclaration(node, null);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.SetAccessor);
@@ -2279,8 +2081,6 @@ module TypeScript {
         }
 
         public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: VariableDeclarator = this.getAST(node);
             if (result) {
@@ -2334,8 +2134,6 @@ module TypeScript {
         }
 
         public visitThrowStatement(node: ThrowStatementSyntax): ThrowStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ThrowStatement = this.getAST(node);
             if (result) {
@@ -2355,8 +2153,6 @@ module TypeScript {
         }
 
         public visitReturnStatement(node: ReturnStatementSyntax): ReturnStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
 
             var result: ReturnStatement = this.getAST(node);
@@ -2382,8 +2178,6 @@ module TypeScript {
         }
 
         public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: CallExpression = this.getAST(node);
             if (result) {
@@ -2415,8 +2209,6 @@ module TypeScript {
         }
 
         public visitSwitchStatement(node: SwitchStatementSyntax): SwitchStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: SwitchStatement = this.getAST(node);
             if (result) {
@@ -2457,8 +2249,6 @@ module TypeScript {
         }
 
         public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: CaseClause = this.getAST(node);
             if (result) {
@@ -2482,8 +2272,6 @@ module TypeScript {
         }
 
         public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: CaseClause = this.getAST(node);
             if (result) {
@@ -2504,8 +2292,6 @@ module TypeScript {
         }
 
         public visitBreakStatement(node: BreakStatementSyntax): Jump {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: Jump = this.getAST(node);
             if (result) {
@@ -2529,8 +2315,6 @@ module TypeScript {
         }
 
         public visitContinueStatement(node: ContinueStatementSyntax): Jump {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: Jump = this.getAST(node);
             if (result) {
@@ -2554,8 +2338,6 @@ module TypeScript {
         }
 
         public visitForStatement(node: ForStatementSyntax): ForStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ForStatement = this.getAST(node);
             if (result) {
@@ -2585,8 +2367,6 @@ module TypeScript {
         }
 
         public visitForInStatement(node: ForInStatementSyntax): ForInStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: ForInStatement = this.getAST(node);
             if (result) {
@@ -2610,8 +2390,6 @@ module TypeScript {
         }
 
         public visitWhileStatement(node: WhileStatementSyntax): WhileStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: WhileStatement = this.getAST(node);
             if (result) {
@@ -2632,8 +2410,6 @@ module TypeScript {
         }
 
         public visitWithStatement(node: WithStatementSyntax): WithStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: WithStatement = this.getAST(node);
             if (result) {
@@ -2654,8 +2430,6 @@ module TypeScript {
         }
 
         public visitCastExpression(node: CastExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -2677,8 +2451,6 @@ module TypeScript {
         }
 
         public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -2709,8 +2481,6 @@ module TypeScript {
         }
 
         public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -2742,8 +2512,6 @@ module TypeScript {
         }
 
         public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -2767,8 +2535,6 @@ module TypeScript {
         }
 
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -2804,8 +2570,6 @@ module TypeScript {
         }
 
         public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: BinaryExpression = this.getAST(node);
             if (result) {
@@ -2841,8 +2605,6 @@ module TypeScript {
         }
 
         public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: FunctionDeclaration = this.getAST(node);
             if (result) {
@@ -2876,8 +2638,6 @@ module TypeScript {
         }
 
         public visitEmptyStatement(node: EmptyStatementSyntax): EmptyStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: EmptyStatement = this.getAST(node);
             if (result) {
@@ -2895,8 +2655,6 @@ module TypeScript {
         }
 
         public visitTryStatement(node: TryStatementSyntax): TryStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: TryStatement = this.getAST(node);
             if (result) {
@@ -2922,15 +2680,12 @@ module TypeScript {
                 result = new TryStatement(tryBody, catchClause, finallyBody);
             }
 
-            Debug.assert(result !== null);
             this.setAST(node, result);
             this.setSpan(result, start, node);
             return result;
         }
 
         public visitCatchClause(node: CatchClauseSyntax): CatchClause {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: CatchClause = this.getAST(node);
             if (result) {
@@ -2964,8 +2719,6 @@ module TypeScript {
         }
 
         public visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: LabeledStatement = this.getAST(node);
             if (result) {
@@ -2986,8 +2739,6 @@ module TypeScript {
         }
 
         public visitDoStatement(node: DoStatementSyntax): DoStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: DoStatement = this.getAST(node);
             if (result) {
@@ -3015,8 +2766,6 @@ module TypeScript {
         }
 
         public visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -3035,8 +2784,6 @@ module TypeScript {
         }
 
         public visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -3055,8 +2802,6 @@ module TypeScript {
         }
 
         public visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: UnaryExpression = this.getAST(node);
             if (result) {
@@ -3075,8 +2820,6 @@ module TypeScript {
         }
 
         public visitDebuggerStatement(node: DebuggerStatementSyntax): DebuggerStatement {
-            this.assertElementAtPosition(node);
-
             var start = this.position;
             var result: DebuggerStatement = this.getAST(node);
             if (result) {
