@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license r.js 2.1.5 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
  * see: http://github.com/jrburke/requirejs for details
@@ -11410,7 +11410,7 @@ function prepare_ifs(ast) {
     //     blah();
     //     return y;
     // }
-    // foobar();
+    // myFunction();
     //
     // is rewritten into:
     //
@@ -11418,7 +11418,7 @@ function prepare_ifs(ast) {
     //     blah();
     //     return y;
     // } else {
-    //     foobar();
+    //     myFunction();
     // }
     function redo_if(statements) {
         statements = MAP(statements, walk);

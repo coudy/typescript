@@ -5748,8 +5748,8 @@ module TypeScript {
                 }
             }
 
-            // if the target has a string signature, the source's members must be comparable with it's return type
-            if (targetStringSig && source.hasMembers()) {
+            // if the target has a string signature, the source is object literal's type, the source's members must be comparable with it's return type
+            if (targetStringSig && !source.isNamedTypeSymbol() && source.hasMembers()) {
                 var targetReturnType = targetStringSig.getReturnType();
                 var sourceMembers = source.getMembers();
 

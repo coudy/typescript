@@ -12,21 +12,21 @@
 
 function testcase() {
 
-  function foo()
+  function a()
   {
     'use strict';
     return typeof(this);
   } 
 
-  function bar()
+  function b()
   {
     return typeof(this);
   }
 
-  function foobar()
+  function ab()
   {
   }
 
-  return foo.call(foobar) === 'function' && bar.call(foobar) === 'function';
+  return a.call(ab) === 'function' && b.call(ab) === 'function';
  }
 runTestCase(testcase);
