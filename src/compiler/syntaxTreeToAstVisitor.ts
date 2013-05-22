@@ -487,7 +487,7 @@ module TypeScript {
 
                 for (var i = 0; i < members.members.length; i++) {
                     var member = members.members[i];
-                    if (member.nodeType === NodeType.FunctionDeclaration) {
+                    if (member.nodeType() === NodeType.FunctionDeclaration) {
                         var funcDecl = <FunctionDeclaration>member;
 
                         if (funcDecl.isConstructor) {
@@ -732,7 +732,7 @@ module TypeScript {
 
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.setPostComments(postComments);
@@ -818,18 +818,18 @@ module TypeScript {
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(declarator, memberStart, this.position);
 
-                    if (memberValue.nodeType === NodeType.NumericLiteral) {
+                    if (memberValue.nodeType() === NodeType.NumericLiteral) {
                         declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                     }
-                    else if (memberValue.nodeType === NodeType.LeftShiftExpression) {
+                    else if (memberValue.nodeType() === NodeType.LeftShiftExpression) {
                         // If the initializer is of the form "value << value" then treat it as a constant
                         // as well.
                         var binop = <BinaryExpression>memberValue;
-                        if (binop.operand1.nodeType === NodeType.NumericLiteral && binop.operand2.nodeType === NodeType.NumericLiteral) {
+                        if (binop.operand1.nodeType() === NodeType.NumericLiteral && binop.operand2.nodeType() === NodeType.NumericLiteral) {
                             declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                         }
                     }
-                    else if (memberValue.nodeType === NodeType.Name) {
+                    else if (memberValue.nodeType() === NodeType.Name) {
                         // If the initializer refers to an earlier enum value, then treat it as a constant
                         // as well.
                         var nameNode = <Identifier>memberValue;
@@ -1005,7 +1005,7 @@ module TypeScript {
 
             result.typeExpr = typeExpr;
             result.init = init;
-            if (init && init.nodeType === NodeType.FunctionDeclaration) {
+            if (init && init.nodeType() === NodeType.FunctionDeclaration) {
                 var funcDecl = <FunctionDeclaration>init;
                 funcDecl.hint = name.actualText;
             }
@@ -1171,7 +1171,7 @@ module TypeScript {
 
                 var statements = this.getArrowFunctionStatements(node.body);
 
-                result = new FunctionDeclaration(null, statements, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, statements, /*isConstructor:*/ false, null, parameters);
 
                 result.returnTypeAnnotation = null;
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
@@ -1199,7 +1199,7 @@ module TypeScript {
 
                 var block = this.getArrowFunctionStatements(node.body);
 
-                result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.returnTypeAnnotation = returnType;
@@ -1285,7 +1285,7 @@ module TypeScript {
                 this.movePast(node.equalsGreaterThanToken);
                 var returnType = node.type ? this.visitType(node.type) : null;
 
-                var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.returnTypeAnnotation = returnType;
@@ -1317,7 +1317,7 @@ module TypeScript {
                 this.movePast(node.equalsGreaterThanToken);
                 var returnType = node.type ? this.visitType(node.type) : null;
 
-                var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.returnTypeAnnotation = returnType;
@@ -1370,7 +1370,7 @@ module TypeScript {
                 this.movePast(node.openBracketToken);
                 this.movePast(node.closeBracketToken);
 
-                if (underlying.nodeType === NodeType.TypeRef) {
+                if (underlying.nodeType() === NodeType.TypeRef) {
                     result = <TypeReference>underlying;
                     result.arrayCount++;
                 }
@@ -1562,9 +1562,9 @@ module TypeScript {
             return result;
         }
 
-        public visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpression {
             var start = this.position;
-            var result: CallExpression = this.getAST(node);
+            var result: InvocationExpression = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -1575,7 +1575,7 @@ module TypeScript {
                     : null;
                 var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-                result = new CallExpression(NodeType.InvocationExpression, expression, typeArguments, argumentList);
+                result = new InvocationExpression(expression, typeArguments, argumentList);
             }
 
             this.setAST(node, result);
@@ -1646,9 +1646,9 @@ module TypeScript {
 
                 result = new BinaryExpression(nodeType, left, right);
 
-                if (right.nodeType === NodeType.FunctionDeclaration) {
-                    var id = left.nodeType === NodeType.MemberAccessExpression ? (<BinaryExpression>left).operand2 : left;
-                    var idHint: string = id.nodeType === NodeType.Name ? id.actualText : null;
+                if (right.nodeType() === NodeType.FunctionDeclaration) {
+                    var id = left.nodeType() === NodeType.MemberAccessExpression ? (<BinaryExpression>left).operand2 : left;
+                    var idHint: string = id.nodeType() === NodeType.Name ? id.actualText : null;
 
                     var funcDecl = <FunctionDeclaration>right;
                     funcDecl.hint = idHint;
@@ -1695,7 +1695,7 @@ module TypeScript {
                 var parameters = node.callSignature.parameterList.accept(this);
                 var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-                result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.returnTypeAnnotation = returnType;
@@ -1729,7 +1729,7 @@ module TypeScript {
                 var parameters = node.callSignature.parameterList.accept(this);
                 var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-                result = new FunctionDeclaration(name, null, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, null, false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
@@ -1765,7 +1765,7 @@ module TypeScript {
                 var parameters = new ASTList();
                 parameters.append(parameter);
 
-                result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters);
 
                 result.setPreComments(preComments);
                 result.variableArgList = false;
@@ -1834,7 +1834,7 @@ module TypeScript {
                 var parameters = node.parameterList.accept(this);
                 var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-                result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
@@ -1949,7 +1949,7 @@ module TypeScript {
 
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters);
 
                 result.setPreComments(preComments);
                 result.setPostComments(postComments);
@@ -1989,7 +1989,7 @@ module TypeScript {
                 var block = node.block ? node.block.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.setPostComments(postComments);
@@ -2036,7 +2036,7 @@ module TypeScript {
                 var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 
                 var block = node.block ? node.block.accept(this) : null;
-                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters);
 
                 result.setPreComments(preComments);
                 result.setPostComments(postComments);
@@ -2177,9 +2177,9 @@ module TypeScript {
             return result;
         }
 
-        public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
+        public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): ObjectCreationExpression {
             var start = this.position;
-            var result: CallExpression = this.getAST(node);
+            var result: ObjectCreationExpression = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2189,14 +2189,14 @@ module TypeScript {
                 var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
                 var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-                result = new CallExpression(NodeType.ObjectCreationExpression, expression, typeArgumentList, argumentList);
+                result = new ObjectCreationExpression(expression, typeArgumentList, argumentList);
 
-                if (expression.nodeType === NodeType.TypeRef) {
+                if (expression.nodeType() === NodeType.TypeRef) {
                     var typeRef = <TypeReference>expression;
 
                     if (typeRef.arrayCount === 0) {
                         var term = typeRef.term;
-                        if (term.nodeType === NodeType.MemberAccessExpression || term.nodeType === NodeType.Name) {
+                        if (term.nodeType() === NodeType.MemberAccessExpression || term.nodeType() === NodeType.Name) {
                             expression = term;
                         }
                     }
@@ -2500,7 +2500,7 @@ module TypeScript {
                 result = new BinaryExpression(NodeType.Member, left, right);
                 result.setPreComments(preComments);
 
-                if (right.nodeType === NodeType.FunctionDeclaration) {
+                if (right.nodeType() === NodeType.FunctionDeclaration) {
                     var funcDecl = <FunctionDeclaration>right;
                     funcDecl.hint = left.text;
                 }
@@ -2553,7 +2553,7 @@ module TypeScript {
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList(), NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList());
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor);
@@ -2589,7 +2589,7 @@ module TypeScript {
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, parameters);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor);
@@ -2624,7 +2624,7 @@ module TypeScript {
 
                 var block = node.block ? node.block.accept(this) : null;
 
-                result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, false, typeParameters, parameters);
 
                 result.setPreComments(preComments);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);

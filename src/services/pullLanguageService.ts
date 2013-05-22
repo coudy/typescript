@@ -41,7 +41,7 @@ module Services {
             /// TODO: this does not allow getting references on "constructor"
 
             var path = this.getAstPathToPosition(script, pos);
-            if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No name found at the given position");
                 return result;
             }
@@ -81,7 +81,7 @@ module Services {
             /// TODO: this does not allow getting references on "constructor"
 
             var path = this.getAstPathToPosition(script, pos);
-            if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No name found at the given position");
                 return result;
             }
@@ -111,7 +111,7 @@ module Services {
 
                 possiblePositions.forEach(p => {
                     var path = this.getAstPathToPosition(script, p);
-                    if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+                    if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                         return;
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
@@ -133,7 +133,7 @@ module Services {
 
         private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
             if (parent !== null) {
-                var parentNodeType = parent.nodeType;
+                var parentNodeType = parent.nodeType();
                 switch (parentNodeType) {
                     case TypeScript.NodeType.ClassDeclaration:
                         return (<TypeScript.ClassDeclaration>parent).name === current;
@@ -235,8 +235,8 @@ module Services {
 
             // Find call expression
             while (path.count() >= 2) {
-                if (path.ast().nodeType === TypeScript.NodeType.InvocationExpression ||
-                    path.ast().nodeType === TypeScript.NodeType.ObjectCreationExpression ||  // Valid call or new expressions
+                if (path.ast().nodeType() === TypeScript.NodeType.InvocationExpression ||
+                    path.ast().nodeType() === TypeScript.NodeType.ObjectCreationExpression ||  // Valid call or new expressions
                     (path.isDeclaration() && position > path.ast().minChar)) // Its a declaration node - call expression cannot be in parent scope
                 {
                     break;
@@ -245,13 +245,13 @@ module Services {
                 path.pop();
             }
 
-            if (path.ast().nodeType !== TypeScript.NodeType.InvocationExpression && path.ast().nodeType !== TypeScript.NodeType.ObjectCreationExpression) {
+            if (path.ast().nodeType() !== TypeScript.NodeType.InvocationExpression && path.ast().nodeType() !== TypeScript.NodeType.ObjectCreationExpression) {
                 this.logger.log("No call expression or generic arguments found for the given position");
                 return null;
             }
 
             var callExpression = <TypeScript.CallExpression>path.ast();
-            var isNew = (callExpression.nodeType === TypeScript.NodeType.ObjectCreationExpression);
+            var isNew = (callExpression.nodeType() === TypeScript.NodeType.ObjectCreationExpression);
 
             if (position <= callExpression.target.limChar + callExpression.target.trailingTriviaWidth || position > callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth) {
                 this.logger.log("Outside argument list");
@@ -286,7 +286,7 @@ module Services {
 
             // Get the identifier information
             var path = this.getAstPathToPosition(script, genericTypeArgumentListInfo.genericIdentifer.start());
-            if (path.count() == 0 || path.ast().nodeType !== TypeScript.NodeType.Name) {
+            if (path.count() == 0 || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 throw new Error("getTypeParameterSignatureAtPosition: Looking up path for identifier token did not result in an identifer.");
             }
 
@@ -565,7 +565,7 @@ module Services {
             }
 
             var cur = path.ast();
-            switch (cur.nodeType) {
+            switch (cur.nodeType()) {
                 default:
                     return null;
                 case TypeScript.NodeType.FunctionDeclaration:
@@ -611,7 +611,7 @@ module Services {
                 symbol = declarationInformation.symbol;
                 enclosingScopeSymbol = declarationInformation.enclosingScopeSymbol;
 
-                if (path.ast().nodeType === TypeScript.NodeType.FunctionDeclaration) {
+                if (path.ast().nodeType() === TypeScript.NodeType.FunctionDeclaration) {
                     var funcDecl = <TypeScript.FunctionDeclaration>(path.ast());
                     if (symbol && symbol.getKind() != TypeScript.PullElementKind.Property) {
                         var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(fileName));
@@ -717,14 +717,14 @@ module Services {
 
             var isRightOfDot = false;
             if (path.count() >= 1 &&
-                path.asts[path.top].nodeType === TypeScript.NodeType.MemberAccessExpression
+                path.asts[path.top].nodeType() === TypeScript.NodeType.MemberAccessExpression
                 && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) {
                 isRightOfDot = true;
                 path.push((<TypeScript.BinaryExpression>path.asts[path.top]).operand1);
             }
             else if (path.count() >= 2 &&
-                    path.asts[path.top].nodeType === TypeScript.NodeType.Name &&
-                    path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression &&
+                    path.asts[path.top].nodeType() === TypeScript.NodeType.Name &&
+                    path.asts[path.top - 1].nodeType() === TypeScript.NodeType.MemberAccessExpression &&
                     (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                 isRightOfDot = true;
                 path.pop();
@@ -751,11 +751,11 @@ module Services {
                     path = this.getAstPathToPosition(script, searchPosition);
                     // Get the object literal node
 
-                    while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
+                    while (path.ast().nodeType() !== TypeScript.NodeType.ObjectLiteralExpression) {
                         path.pop();
                     }
 
-                    if (!path.ast() || path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
+                    if (!path.ast() || path.ast().nodeType() !== TypeScript.NodeType.ObjectLiteralExpression) {
                         throw TypeScript.Errors.invalidOperation("AST Path look up did not result in the same node as Fidelity Syntax Tree look up.");
                     }
 

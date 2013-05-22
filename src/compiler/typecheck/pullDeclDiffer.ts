@@ -167,12 +167,12 @@ module TypeScript {
             //    return true;
             //}
 
-            if (oldAST.nodeType !== newAST.nodeType ||
+            if (oldAST.nodeType() !== newAST.nodeType() ||
                 oldAST.getFlags() !== newAST.getFlags()) {
                 return false;
             }
 
-            switch (oldAST.nodeType) {
+            switch (oldAST.nodeType()) {
                 case NodeType.ImportDeclaration:
                     return this.importDeclarationIsEquivalent(<ImportDeclaration>oldAST, <ImportDeclaration>newAST);
                 case NodeType.ModuleDeclaration:

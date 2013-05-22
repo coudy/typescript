@@ -71,7 +71,7 @@ module TypeScript {
 
     export interface PullTypeInfoAtPositionInfo {
         symbol: PullSymbol;
-        ast: AST;
+        ast: IAST;
         enclosingScopeSymbol: PullSymbol;
         candidateSignature: PullSignatureSymbol;
         callSignatures: PullSignatureSymbol[];
@@ -837,7 +837,7 @@ module TypeScript {
                 return null;
             }
             var enlosingDecl = this.pullTypeChecker.resolver.getEnclosingDecl(decl);
-            if (ast.nodeType === NodeType.Member) {
+            if (ast.nodeType() === NodeType.Member) {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
             var resolutionContext = new PullTypeResolutionContext();
@@ -854,7 +854,7 @@ module TypeScript {
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var lastDeclAST: AST = null;
-            var foundAST: AST = null;
+            var foundAST: IAST = null;
             var symbol: PullSymbol = null;
             var candidateSignature: PullSignatureSymbol = null;
             var callSignatures: PullSignatureSymbol[] = null;
@@ -885,22 +885,22 @@ module TypeScript {
                                 lastDeclAST = cur;
                             }
 
-                            if (cur.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
+                            if (cur.nodeType() === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
                                 lambdaAST = <FunctionDeclaration>cur;
                             }
-                            else if (cur.nodeType === NodeType.VariableDeclarator) {
+                            else if (cur.nodeType() === NodeType.VariableDeclarator) {
                                 declarationInitASTs[declarationInitASTs.length] = <VariableDeclarator>cur;
                             }
-                            else if (cur.nodeType === NodeType.ObjectLiteralExpression) {
+                            else if (cur.nodeType() === NodeType.ObjectLiteralExpression) {
                                 objectLitAST = <UnaryExpression>cur;
                             }
-                            else if (cur.nodeType === NodeType.CastExpression) {
+                            else if (cur.nodeType() === NodeType.CastExpression) {
                                 typeAssertionASTs[typeAssertionASTs.length] = <UnaryExpression>cur;
                             }
-                            else if (cur.nodeType === NodeType.AssignmentExpression) {
+                            else if (cur.nodeType() === NodeType.AssignmentExpression) {
                                 asgAST = <BinaryExpression>cur;
                             }
-                            else if (cur.nodeType === NodeType.TypeRef) {
+                            else if (cur.nodeType() === NodeType.TypeRef) {
                                 inTypeReference = true;
                             }
 
@@ -919,9 +919,9 @@ module TypeScript {
                 foundAST = resultASTs[resultASTs.length - 1];
 
                 // Check if is a name of a container
-                if (foundAST.nodeType === NodeType.Name && resultASTs.length > 1) {
+                if (foundAST.nodeType() === NodeType.Name && resultASTs.length > 1) {
                     var previousAST = resultASTs[resultASTs.length - 2];
-                    switch (previousAST.nodeType) {
+                    switch (previousAST.nodeType()) {
                         case NodeType.InterfaceDeclaration:
                         case NodeType.ClassDeclaration:
                         case NodeType.ModuleDeclaration:
@@ -950,7 +950,7 @@ module TypeScript {
                     symbol = declStack[declStack.length - 1].getSymbol();
                     this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
-                    if (foundAST.nodeType === NodeType.FunctionDeclaration) {
+                    if (foundAST.nodeType() === NodeType.FunctionDeclaration) {
                         funcDecl = <FunctionDeclaration>foundAST;
                     }
                 }
@@ -970,19 +970,19 @@ module TypeScript {
 
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
-                    var callExpression: CallExpression = null;
-                    if ((foundAST.nodeType === NodeType.SuperExpression || foundAST.nodeType === NodeType.ThisExpression || foundAST.nodeType === NodeType.Name) &&
+                    var callExpression: ICallExpression = null;
+                    if ((foundAST.nodeType() === NodeType.SuperExpression || foundAST.nodeType() === NodeType.ThisExpression || foundAST.nodeType() === NodeType.Name) &&
                     resultASTs.length > 1) {
                         for (var i = resultASTs.length - 2; i >= 0; i--) {
-                            if (resultASTs[i].nodeType === NodeType.MemberAccessExpression &&
+                            if (resultASTs[i].nodeType() === NodeType.MemberAccessExpression &&
                             (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];
                             }
-                            else if ((resultASTs[i].nodeType === NodeType.InvocationExpression || resultASTs[i].nodeType === NodeType.ObjectCreationExpression) &&
+                            else if ((resultASTs[i].nodeType() === NodeType.InvocationExpression || resultASTs[i].nodeType() === NodeType.ObjectCreationExpression) &&
                             (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
-                                callExpression = <CallExpression>resultASTs[i];
+                                callExpression = <ICallExpression><any>resultASTs[i];
                                 break;
-                            } else if (resultASTs[i].nodeType === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
+                            } else if (resultASTs[i].nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
                                 funcDecl = <FunctionDeclaration>resultASTs[i];
                                 break;
                             } else {
@@ -992,7 +992,7 @@ module TypeScript {
                     }
 
                     // if it's a list, we may not have an exact AST, so find the next nearest one
-                    if (foundAST.nodeType === NodeType.List) {
+                    if (foundAST.nodeType() === NodeType.List) {
                         for (var i = 0; i < (<ASTList>foundAST).members.length; i++) {
                             if ((<ASTList>foundAST).members[i].minChar > pos) {
                                 foundAST = (<ASTList>foundAST).members[i];
@@ -1056,21 +1056,21 @@ module TypeScript {
                         }
 
                         if (!isPropertyOrVar) {
-                            isConstructorCall = foundAST.nodeType === NodeType.SuperExpression || callExpression.nodeType === NodeType.ObjectCreationExpression;
+                            isConstructorCall = foundAST.nodeType() === NodeType.SuperExpression || callExpression.nodeType() === NodeType.ObjectCreationExpression;
 
-                            if (foundAST.nodeType === NodeType.SuperExpression) {
+                            if (foundAST.nodeType() === NodeType.SuperExpression) {
                                 if (symbol.getKind() === PullElementKind.Class) {
                                     callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
                                 }
                             } else {
-                                callSignatures = callExpression.nodeType === NodeType.InvocationExpression ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                                callSignatures = callExpression.nodeType() === NodeType.InvocationExpression ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
                             }
 
                             var callResolutionResults = new PullAdditionalCallResolutionData();
-                            if (callExpression.nodeType === NodeType.InvocationExpression) {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                            if (callExpression.nodeType() === NodeType.InvocationExpression) {
+                                this.pullTypeChecker.resolver.resolveInvocationExpression(<InvocationExpression>callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             if (callResolutionResults.candidateSignature) {
@@ -1133,7 +1133,7 @@ module TypeScript {
             for (var i = 0 , n = path.count(); i < n; i++) {
                 var current = path.asts[i];
 
-                switch (current.nodeType) {
+                switch (current.nodeType()) {
                     case NodeType.FunctionDeclaration:
                         if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
                             this.pullTypeChecker.resolver.resolveAST((<FunctionDeclaration>current), true, enclosingDecl, resolutionContext);
@@ -1164,7 +1164,7 @@ module TypeScript {
 
                     case NodeType.InvocationExpression:
                     case NodeType.ObjectCreationExpression:
-                        var isNew = current.nodeType === NodeType.ObjectCreationExpression;
+                        var isNew = current.nodeType() === NodeType.ObjectCreationExpression;
                         var callExpression = <CallExpression>current;
                         var contextualType: PullTypeSymbol = null;
 
@@ -1172,15 +1172,15 @@ module TypeScript {
                         if ((i + 1 < n) && callExpression.arguments === path.asts[i + 1]) {
                             var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (isNew) {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveObjectCreationExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
                             else {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                                this.pullTypeChecker.resolver.resolveInvocationExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             // Find the index in the arguments list
                             if (callResolutionResults.actualParametersContextTypeSymbols) {
-                                var argExpression = (path.asts[i + 1] && path.asts[i + 1].nodeType === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                                var argExpression = (path.asts[i + 1] && path.asts[i + 1].nodeType() === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
                                 if (argExpression) {
                                     for (var j = 0, m = callExpression.arguments.members.length; j < m; j++) {
                                         if (callExpression.arguments.members[j] === argExpression) {
@@ -1197,10 +1197,10 @@ module TypeScript {
                         else {
                             // Just resolve the call expression
                             if (isNew) {
-                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                this.pullTypeChecker.resolver.resolveObjectCreationExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                             else {
-                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                this.pullTypeChecker.resolver.resolveInvocationExpression(callExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                         }
 
@@ -1228,7 +1228,7 @@ module TypeScript {
                         this.pullTypeChecker.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
                        // find the member in the path
-                        var memeberAST = (path.asts[i + 1] && path.asts[i + 1].nodeType === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                        var memeberAST = (path.asts[i + 1] && path.asts[i + 1].nodeType() === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
                         if (memeberAST) {
                             // Propagate the member contextual type
                             var contextualType: PullTypeSymbol = null;
@@ -1344,9 +1344,9 @@ module TypeScript {
 
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
-            if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
+            if (path.ast().nodeType() === NodeType.Name && path.count() > 1) {
                 for (var i = path.count() - 1; i >= 0; i--) {
-                    if (path.asts[path.top - 1].nodeType === NodeType.MemberAccessExpression &&
+                    if (path.asts[path.top - 1].nodeType() === NodeType.MemberAccessExpression &&
                     (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                         path.pop();
                     }
@@ -1386,7 +1386,7 @@ module TypeScript {
 
             var ast = path.ast();
 
-            if (ast.nodeType !== NodeType.ClassDeclaration && ast.nodeType !== NodeType.InterfaceDeclaration && ast.nodeType !== NodeType.ModuleDeclaration && ast.nodeType !== NodeType.FunctionDeclaration && ast.nodeType !== NodeType.VariableDeclarator) {
+            if (ast.nodeType() !== NodeType.ClassDeclaration && ast.nodeType() !== NodeType.InterfaceDeclaration && ast.nodeType() !== NodeType.ModuleDeclaration && ast.nodeType() !== NodeType.FunctionDeclaration && ast.nodeType() !== NodeType.VariableDeclarator) {
                 return null;
             }
 
@@ -1409,11 +1409,11 @@ module TypeScript {
 
         public pullGetCallInformationFromPath(path: AstPath, document: Document): PullCallSymbolInfo {
             // AST has to be a call expression
-            if (path.ast().nodeType !== NodeType.InvocationExpression && path.ast().nodeType !== NodeType.ObjectCreationExpression) {
+            if (path.ast().nodeType() !== NodeType.InvocationExpression && path.ast().nodeType() !== NodeType.ObjectCreationExpression) {
                 return null;
             }
 
-            var isNew = (path.ast().nodeType === NodeType.ObjectCreationExpression);
+            var isNew = (path.ast().nodeType() === NodeType.ObjectCreationExpression);
 
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
@@ -1423,10 +1423,10 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveObjectCreationExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveInvocationExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
@@ -1475,7 +1475,7 @@ module TypeScript {
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
             // Input has to be an object literal
-            if (path.ast().nodeType !== NodeType.ObjectLiteralExpression) {
+            if (path.ast().nodeType() !== NodeType.ObjectLiteralExpression) {
                 return null;
             }
 

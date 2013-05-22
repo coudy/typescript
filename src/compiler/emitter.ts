@@ -336,7 +336,7 @@ module TypeScript {
 
         public emitNew(target: AST, args: ASTList) {
             this.writeToOutput("new ");
-            if (target.nodeType === NodeType.TypeRef) {
+            if (target.nodeType() === NodeType.TypeRef) {
                 var typeRef = <TypeReference>target;
                 if (typeRef.arrayCount) {
                     this.writeToOutput("Array()");
@@ -358,7 +358,7 @@ module TypeScript {
 
         public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
             CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
-                boundDeclInfo.boundDecl.init.nodeType === NodeType.Name,
+                boundDeclInfo.boundDecl.init.nodeType() === NodeType.Name,
                 "The init expression of bound declaration when emitting as constant has to be indentifier");
 
             var init = boundDeclInfo.boundDecl.init;
@@ -373,7 +373,7 @@ module TypeScript {
                 if (pullDecls.length === 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType === NodeType.VariableDeclarator) {
+                    if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
                         return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
                 }
@@ -385,18 +385,18 @@ module TypeScript {
         private getConstantValue(boundDeclInfo: BoundDeclInfo): number {
             var init = boundDeclInfo.boundDecl.init;
             if (init) {
-                if (init.nodeType === NodeType.NumericLiteral) {
+                if (init.nodeType() === NodeType.NumericLiteral) {
                     var numLit = <NumberLiteral>init;
                     return numLit.value;
                 }
-                else if (init.nodeType === NodeType.LeftShiftExpression) {
+                else if (init.nodeType() === NodeType.LeftShiftExpression) {
                     var binop = <BinaryExpression>init;
-                    if (binop.operand1.nodeType === NodeType.NumericLiteral &&
-                        binop.operand2.nodeType === NodeType.NumericLiteral) {
+                    if (binop.operand1.nodeType() === NodeType.NumericLiteral &&
+                        binop.operand2.nodeType() === NodeType.NumericLiteral) {
                         return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
                     }
                 }
-                else if (init.nodeType === NodeType.Name) {
+                else if (init.nodeType() === NodeType.Name) {
                     var varDeclInfo = this.getVarDeclFromIdentifier(boundDeclInfo);
                     if (varDeclInfo) {
                         return this.getConstantValue(varDeclInfo);
@@ -415,7 +415,7 @@ module TypeScript {
                 if (pullDecls.length === 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType === NodeType.VariableDeclarator) {
+                    if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
                         return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
                 }
@@ -445,23 +445,23 @@ module TypeScript {
             return false;
         }
 
-        public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
+        public emitCall(callNode: InvocationExpression, target: AST, args: ASTList) {
             if (!this.emitSuperCall(callNode)) {
-                if (target.nodeType === NodeType.FunctionDeclaration) {
+                if (target.nodeType() === NodeType.FunctionDeclaration) {
                     this.writeToOutput("(");
                 }
-                if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                if (callNode.target.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("_super.call");
                 }
                 else {
                     this.emitJavascript(target, false);
                 }
-                if (target.nodeType === NodeType.FunctionDeclaration) {
+                if (target.nodeType() === NodeType.FunctionDeclaration) {
                     this.writeToOutput(")");
                 }
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
-                if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                if (callNode.target.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("this");
                     if (args && args.members.length) {
                         this.writeToOutput(", ");
@@ -697,7 +697,7 @@ module TypeScript {
         }
 
         public shouldCaptureThis(ast: AST) {
-            if (ast.nodeType === NodeType.Script) {
+            if (ast.nodeType() === NodeType.Script) {
                 var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecls()[0];
                 return (scriptDecl.getFlags() & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
@@ -1369,7 +1369,7 @@ module TypeScript {
             }
 
             for (var i = 0, n = this.thisClassNode.members.members.length; i < n; i++) {
-                if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
+                if (this.thisClassNode.members.members[i].nodeType() === NodeType.VariableDeclarator) {
                     var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
@@ -1428,9 +1428,9 @@ module TypeScript {
         }
 
         private isDirectivePrologueElement(node: AST) {
-            if (node.nodeType === NodeType.ExpressionStatement) {
+            if (node.nodeType() === NodeType.ExpressionStatement) {
                 var exprStatement = <ExpressionStatement>node;
-                return exprStatement.expression.nodeType === NodeType.StringLiteral;
+                return exprStatement.expression.nodeType() === NodeType.StringLiteral;
             }
 
             return false;
@@ -1630,7 +1630,7 @@ module TypeScript {
 
             if (hasBaseClass) {
                 baseNameDecl = classDecl.extendsList.members[0];
-                baseName = baseNameDecl.nodeType === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                baseName = baseNameDecl.nodeType() === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
                 this.emitIndent();
                 this.writeLineToOutput("__extends(" + className + ", _super);");
             }
@@ -1712,7 +1712,7 @@ module TypeScript {
             for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
                 var memberDecl = classDecl.members.members[i];
 
-                if (memberDecl.nodeType === NodeType.FunctionDeclaration) {
+                if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var fn = <FunctionDeclaration>memberDecl;
 
                     if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
@@ -1743,7 +1743,7 @@ module TypeScript {
             for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
                 var memberDecl = classDecl.members.members[i];
 
-                if (memberDecl.nodeType === NodeType.VariableDeclarator) {
+                if (memberDecl.nodeType() === NodeType.VariableDeclarator) {
                     var varDecl = <VariableDeclarator>memberDecl;
 
                     if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
@@ -1788,10 +1788,10 @@ module TypeScript {
             this.writeToOutput("_super.prototype");
         }
 
-        public emitSuperCall(callEx: CallExpression): boolean {
-            if (callEx.target.nodeType === NodeType.MemberAccessExpression) {
+        public emitSuperCall(callEx: InvocationExpression): boolean {
+            if (callEx.target.nodeType() === NodeType.MemberAccessExpression) {
                 var dotNode = <BinaryExpression>callEx.target;
-                if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
+                if (dotNode.operand1.nodeType() === NodeType.SuperExpression) {
                     dotNode.emit(this);
                     this.writeToOutput(".call(");
                     this.emitThis();
@@ -1816,7 +1816,7 @@ module TypeScript {
         }
 
         public emitBlockOrStatement(node: AST): void {
-            if (node.nodeType === NodeType.Block) {
+            if (node.nodeType() === NodeType.Block) {
                 node.emit(this);
             }
             else {

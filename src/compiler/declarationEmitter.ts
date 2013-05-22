@@ -80,7 +80,7 @@ module TypeScript {
 
         public emitDeclarations(script: TypeScript.Script): void {
             var walk = (pre: boolean, ast: AST): boolean => {
-                switch (ast.nodeType) {
+                switch (ast.nodeType()) {
                     case NodeType.VariableStatement:
                         return this.variableStatementCallback(pre, <VariableStatement>ast);
                     case NodeType.VariableDeclaration:
@@ -141,11 +141,11 @@ module TypeScript {
                 container = this.declarationContainerStack[this.declarationContainerStack.length - 2];
             }
 
-            if (container.nodeType === NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
+            if (container.nodeType() === NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
                 return false;
             }
 
-            if (!canEmitGlobalAmbientDecl && container.nodeType === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
+            if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
                 return false;
             }
 
@@ -190,7 +190,7 @@ module TypeScript {
                     // Emit export only for global export statements. 
                     // The container for this would be dynamic module which is whole file
                     var container = this.getAstDeclarationContainer();
-                    if (container.nodeType === NodeType.ModuleDeclaration &&
+                    if (container.nodeType() === NodeType.ModuleDeclaration &&
                         hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile) &&
                         hasFlag(declFlags, DeclFlags.Exported)) {
                         result += "export ";
@@ -354,7 +354,7 @@ module TypeScript {
 
         private variableDeclaratorCallback(pre: boolean, varDecl: VariableDeclarator): boolean {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.getVarFlags()), false)) {
-                var interfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
+                var interfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
                     // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
@@ -449,7 +449,7 @@ module TypeScript {
                 return this.emitPropertyAccessorSignature(funcDecl);
             }
 
-            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
+            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
 
             var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
             var funcTypeSymbol = funcSymbol.getType();
@@ -782,7 +782,7 @@ module TypeScript {
             var membersLen = moduleDecl.members.members.length;
             for (var j = 0; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType === NodeType.VariableStatement && !hasFlag(memberDecl.getFlags(), ASTFlags.EnumMapElement)) {
+                if (memberDecl.nodeType() === NodeType.VariableStatement && !hasFlag(memberDecl.getFlags(), ASTFlags.EnumMapElement)) {
                     var variableStatement = <VariableStatement>memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
@@ -860,7 +860,7 @@ module TypeScript {
                 this.dottedModuleEmit += moduleDecl.name.actualText;
 
                 var isCurrentModuleDotted = (moduleDecl.members.members.length === 1 &&
-                    moduleDecl.members.members[0].nodeType === NodeType.ModuleDeclaration &&
+                    moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
                     !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
                     hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported));
 

@@ -76,7 +76,7 @@ module TypeScript {
         public nodeType(): TypeScript.NodeType {
             if (this.ast() === null)
                 return TypeScript.NodeType.None;
-            return this.ast().nodeType;
+            return this.ast().nodeType();
         }
 
         public ast() {
@@ -99,8 +99,8 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.ClassDeclaration) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.ClassDeclaration) &&
                 ((<TypeScript.InterfaceDeclaration>this.parent()).name === this.ast());
         }
 
@@ -108,8 +108,8 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.InterfaceDeclaration) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.InterfaceDeclaration) &&
                 ((<TypeScript.InterfaceDeclaration>this.parent()).name === this.ast());
         }
 
@@ -117,8 +117,8 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.Parameter) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.Parameter) &&
                 ((<TypeScript.Parameter>this.parent()).id === this.ast());
         }
 
@@ -126,8 +126,8 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.VariableDeclarator) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.VariableDeclarator) &&
                 ((<TypeScript.VariableDeclarator>this.parent()).id === this.ast());
         }
 
@@ -135,8 +135,8 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.ModuleDeclaration) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.ModuleDeclaration) &&
                 ((<TypeScript.ModuleDeclaration>this.parent()).name === this.ast());
         }
 
@@ -144,33 +144,33 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.FunctionDeclaration) &&
+            return (this.ast().nodeType() === TypeScript.NodeType.Name) &&
+                (this.parent().nodeType() === TypeScript.NodeType.FunctionDeclaration) &&
                 ((<TypeScript.FunctionDeclaration>this.parent()).name === this.ast());
         }
 
         public isBodyOfFunction(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
+                this.asts[this.top - 1].nodeType() === TypeScript.NodeType.FunctionDeclaration &&
                  (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).block === this.asts[this.top - 0];
         }
 
         public isArgumentListOfFunction(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
+                this.asts[this.top - 0].nodeType() === TypeScript.NodeType.List &&
+                this.asts[this.top - 1].nodeType() === TypeScript.NodeType.FunctionDeclaration &&
                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
         
         public isTargetOfCall(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.InvocationExpression &&
+                this.asts[this.top - 1].nodeType() === TypeScript.NodeType.InvocationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
         
         public isTargetOfNew(): boolean {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectCreationExpression &&
+                this.asts[this.top - 1].nodeType() === TypeScript.NodeType.ObjectCreationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
 
@@ -178,7 +178,7 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.parent().nodeType === TypeScript.NodeType.ClassDeclaration) &&
+            return (this.parent().nodeType() === TypeScript.NodeType.ClassDeclaration) &&
                 (this.isMemberOfList((<TypeScript.ClassDeclaration>this.parent()).implementsList, this.ast()));
         }
 
@@ -186,13 +186,13 @@ module TypeScript {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
-            return (this.parent().nodeType === TypeScript.NodeType.InterfaceDeclaration) &&
+            return (this.parent().nodeType() === TypeScript.NodeType.InterfaceDeclaration) &&
                 (this.isMemberOfList((<TypeScript.InterfaceDeclaration>this.parent()).extendsList, this.ast()));
         }
 
         public isMemberOfMemberAccessExpression() {
             if (this.count() > 1 &&
-                this.parent().nodeType === NodeType.MemberAccessExpression &&
+                this.parent().nodeType() === NodeType.MemberAccessExpression &&
                 (<BinaryExpression>this.parent()).operand2 === this.asts[this.top]) {
                 return true;
             }
@@ -202,7 +202,7 @@ module TypeScript {
         
         public isCallExpression(): boolean {
             return this.count() >= 1 &&
-            (this.asts[this.top - 0].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[this.top - 0].nodeType === TypeScript.NodeType.ObjectCreationExpression);
+            (this.asts[this.top - 0].nodeType() === TypeScript.NodeType.InvocationExpression || this.asts[this.top - 0].nodeType() === TypeScript.NodeType.ObjectCreationExpression);
         }
 
         public isCallExpressionTarget(): boolean {
@@ -212,14 +212,14 @@ module TypeScript {
 
             var current = this.top;
             
-            var nodeType = this.asts[current].nodeType;
+            var nodeType = this.asts[current].nodeType();
             if (nodeType === TypeScript.NodeType.ThisExpression || nodeType === TypeScript.NodeType.SuperExpression || nodeType === TypeScript.NodeType.Name) {
                 current--;
             }
 
             while (current >= 0) {
                 // if this is a dot, then skip to find the outter most qualifed name
-                if (current < this.top && this.asts[current].nodeType === TypeScript.NodeType.MemberAccessExpression &&
+                if (current < this.top && this.asts[current].nodeType() === TypeScript.NodeType.MemberAccessExpression &&
                     (<TypeScript.BinaryExpression>this.asts[current]).operand2 === this.asts[current + 1]) {
                     current--;
                     continue;
@@ -229,14 +229,14 @@ module TypeScript {
             }
 
             return current < this.top &&
-                (this.asts[current].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[current].nodeType === TypeScript.NodeType.ObjectCreationExpression) &&
+                (this.asts[current].nodeType() === TypeScript.NodeType.InvocationExpression || this.asts[current].nodeType() === TypeScript.NodeType.ObjectCreationExpression) &&
                 this.asts[current + 1] === (<TypeScript.CallExpression>this.asts[current]).target;
         }
 
 
         public isDeclaration(): boolean {
             if (this.ast() !== null) {
-                switch (this.ast().nodeType) {
+                switch (this.ast().nodeType()) {
                     case TypeScript.NodeType.ClassDeclaration:
                     case TypeScript.NodeType.InterfaceDeclaration:
                     case TypeScript.NodeType.ModuleDeclaration:
@@ -320,9 +320,9 @@ module TypeScript {
                 // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
                 var inclusive =
                     hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
-                    cur.nodeType === TypeScript.NodeType.Name ||
-                    cur.nodeType === TypeScript.NodeType.MemberAccessExpression ||
-                    cur.nodeType === TypeScript.NodeType.TypeRef ||
+                    cur.nodeType() === TypeScript.NodeType.Name ||
+                    cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
+                    cur.nodeType() === TypeScript.NodeType.TypeRef ||
                     pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
 
                 var minChar = cur.minChar;

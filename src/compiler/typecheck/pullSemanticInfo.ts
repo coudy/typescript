@@ -91,12 +91,12 @@ module TypeScript {
             this.declASTMap.link(this.getDeclKey(decl), ast);
         }
 
-        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
+        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
             this.astSymbolMap.link(ast.getID().toString(), symbolAndDiagnostics);
             this.symbolASTMap.link(symbolAndDiagnostics.symbol.getSymbolID().toString(), ast)
         }
 
-        public getSymbolAndDiagnosticsForAST(ast: AST): SymbolAndDiagnostics<PullSymbol> {
+        public getSymbolAndDiagnosticsForAST(ast: IAST): SymbolAndDiagnostics<PullSymbol> {
             return <SymbolAndDiagnostics>this.astSymbolMap.read(ast.getID().toString());
         }
 
@@ -421,7 +421,7 @@ module TypeScript {
             return null;
         }
 
-        public getSymbolAndDiagnosticsForAST(ast: AST, unitPath: string): SymbolAndDiagnostics<PullSymbol> {
+        public getSymbolAndDiagnosticsForAST(ast: IAST, unitPath: string): SymbolAndDiagnostics<PullSymbol> {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
@@ -441,7 +441,7 @@ module TypeScript {
             return null;
         }
 
-        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
+        public setSymbolAndDiagnosticsForAST(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {

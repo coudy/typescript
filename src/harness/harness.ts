@@ -1072,7 +1072,7 @@ module Harness {
                 }
             }
 
-            private getTypeInfoName(ast: TypeScript.AST) {
+            private getTypeInfoName(ast: TypeScript.IAST) {
                 var name = '';
                 // Depending on the node type one of these properties will be there and have the value we care about
                 var a = <any>ast;
