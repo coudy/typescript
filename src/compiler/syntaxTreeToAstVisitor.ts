@@ -186,9 +186,7 @@ module TypeScript {
             return this.convertTokenLeadingComments(node.firstToken(), nodeStart);
         }
 
-        private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[]{
-            var lastToken = node.lastToken();
-
+        private convertNodeTrailingComments(node: SyntaxNode, lastToken: ISyntaxToken, nodeStart: number): Comment[]{
             // Bail out quickly before doing any expensive math computation.
             if (lastToken === null || !lastToken.hasTrailingComment() || lastToken.hasTrailingNewLine()) {
                 return null;
@@ -368,7 +366,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
@@ -440,7 +438,7 @@ module TypeScript {
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.body.closeBraceToken, start);
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
@@ -534,7 +532,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
 
             this.moveTo(node, node.moduleKeyword);
             this.movePast(node.moduleKeyword);
@@ -614,7 +612,7 @@ module TypeScript {
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -669,7 +667,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
 
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -787,7 +785,7 @@ module TypeScript {
         public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -865,7 +863,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
 
             this.moveTo(node, node.variableDeclarators);
             var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
@@ -1247,7 +1245,6 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo(node, node.identifier);
             var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ true);
@@ -1259,7 +1256,6 @@ module TypeScript {
             var result = new Parameter(identifier);
 
             result.setPreComments(preComments);
-            result.setPostComments(postComments);
             result.isOptional = !!node.questionToken;
             result.init = init;
             result.typeExpr = typeExpr;
@@ -1642,7 +1638,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             var expression = node.expression.accept(this);
             this.movePast(node.semicolonToken);
@@ -1659,7 +1655,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.parameterList);
             var parameters = node.parameterList.accept(this);
@@ -1686,7 +1682,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -1734,7 +1730,6 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
@@ -1746,7 +1741,6 @@ module TypeScript {
             var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters);
 
             result.setPreComments(preComments);
-            result.setPostComments(postComments);
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
 
@@ -1789,7 +1783,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.variableDeclarator);
             this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
@@ -1841,7 +1835,7 @@ module TypeScript {
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.movePast(node.returnKeyword);
             var expression = node.expression ? node.expression.accept(this) : null;
