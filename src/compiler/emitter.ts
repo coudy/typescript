@@ -334,7 +334,7 @@ module TypeScript {
             this.writeToOutput("]");
         }
 
-        public emitNew(target: AST, args: ASTList) {
+        public emitNew(objectCreationExpression: ObjectCreationExpression, target: AST, args: ASTList) {
             this.writeToOutput("new ");
             if (target.nodeType() === NodeType.TypeRef) {
                 var typeRef = <TypeReference>target;
@@ -351,7 +351,9 @@ module TypeScript {
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
                 this.emitCommaSeparatedList(args);
+                this.recordSourceMappingStart(objectCreationExpression.closeParenSpan);
                 this.writeToOutput(")");
+                this.recordSourceMappingEnd(objectCreationExpression.closeParenSpan);
                 this.recordSourceMappingEnd(args);
             }
         }
@@ -468,7 +470,9 @@ module TypeScript {
                     }
                 }
                 this.emitCommaSeparatedList(args);
+                this.recordSourceMappingStart(callNode.closeParenSpan);
                 this.writeToOutput(")");
+                this.recordSourceMappingEnd(callNode.closeParenSpan);
                 this.recordSourceMappingEnd(args);
             }
         }

@@ -1541,7 +1541,7 @@ module TypeScript {
             return result;
         }
 
-        private convertArgumentListArguments(node: ArgumentListSyntax): ASTList {
+        private convertArgumentListArguments(node: ArgumentListSyntax) {
             if (node === null) {
                 return null;
             }
@@ -1558,8 +1558,15 @@ module TypeScript {
                 this.setSpanExplicit(result, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
             }
 
+            var closeParenPos = this.position;
             this.movePast(node.closeParenToken);
-            return result;
+            var closeParenSpan = new ASTSpan();
+            this.setSpan(closeParenSpan, closeParenPos, node.closeParenToken);
+            
+            return {
+                argumentList: result,
+                closeParenSpan: closeParenSpan
+            };
         }
 
         public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpression {

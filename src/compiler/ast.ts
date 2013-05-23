@@ -447,13 +447,24 @@ module TypeScript {
         target: AST;
         typeArguments: ASTList;
         arguments: ASTList;
+        closeParenSpan: ASTSpan;
     }
 
     export class ObjectCreationExpression extends AST implements ICallExpression {
+        public arguments: ASTList;
+        public closeParenSpan: ASTSpan;
+
         constructor(public target: AST,
-                    public typeArguments: ASTList,
-                    public arguments: ASTList) {
+            public typeArguments: ASTList,
+            arguments: { argumentList: ASTList; closeParenSpan: ASTSpan; }) {
             super();
+            if (arguments) {
+                this.arguments = arguments.argumentList;
+                this.closeParenSpan = arguments.closeParenSpan;
+            } else {
+                this.arguments = null;
+                this.closeParenSpan = null;
+            }
         }
 
         public nodeType(): NodeType {
@@ -461,7 +472,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitNew(this.target, this.arguments);
+            emitter.emitNew(this, this.target, this.arguments);
         }
 
         public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
@@ -473,10 +484,20 @@ module TypeScript {
     }
 
     export class InvocationExpression extends AST implements ICallExpression {
+        public arguments: ASTList;
+        public closeParenSpan: ASTSpan;
+
         constructor(public target: AST,
-                    public typeArguments: ASTList,
-                    public arguments: ASTList) {
+            public typeArguments: ASTList,
+            arguments: { argumentList: ASTList; closeParenSpan: ASTSpan; }) {
             super();
+            if (arguments) {
+                this.arguments = arguments.argumentList;
+                this.closeParenSpan = arguments.closeParenSpan;
+            } else {
+                this.arguments = null;
+                this.closeParenSpan = null;
+            }
         }
 
         public nodeType(): NodeType {
@@ -484,7 +505,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-                emitter.emitCall(this, this.target, this.arguments);
+            emitter.emitCall(this, this.target, this.arguments);
         }
 
         public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
