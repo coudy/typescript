@@ -55,7 +55,6 @@ class Program {
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript3, verify, /*generateBaselines:*/ generate));
 
         if (specificFile === undefined) {
-            TypeScript.SyntaxTreeToAstVisitor.checkPositions = false;
             this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         }
 
@@ -133,7 +132,7 @@ class Program {
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5, new TypeScript.ParseOptions(true, true));
         var originalTree = tree;
-        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
+        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings(), /*incrementalAST:*/ true);
 
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
@@ -150,7 +149,7 @@ class Program {
             TypeScript.Debug.assert(tree.structuralEquals(tree2));
 
             timer.start();
-            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings());
+            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings(), /*incrementalAST:*/ true);
             timer.end();
             totalIncrementalASTTime += timer.time;
 
@@ -194,7 +193,7 @@ class Program {
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5, new TypeScript.ParseOptions(true, true));
         var originalTree = tree;
-        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
+        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings(), /*incrementalAST:*/ true);
 
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
@@ -230,7 +229,7 @@ class Program {
             totalIncrementalTime += timer.time;
 
             timer.start();
-            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings());
+            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings(), /*incrementalAST:*/ true);
             timer.end();
             totalIncrementalASTTime += timer.time;
 
@@ -432,8 +431,7 @@ class Program {
 
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
-        TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-        TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
+        TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings(), /*incrementalAST:*/ true);
 
         this.checkResult(fileName, tree, verify, generateBaseline, /*justText:*/ false);
 
