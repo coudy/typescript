@@ -21,4 +21,4 @@ goTo.position(26);
 ////   2: }
 ////   3: interface Comparer {
 edit.insert("    compareTo(): number;\n");
-diagnostics.validateTypesAtPositions(168,84,53,118,22);
+//diagnostics.validateTypesAtPositions(168,84,53,118,22);
