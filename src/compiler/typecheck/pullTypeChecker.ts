@@ -1373,6 +1373,18 @@ module TypeScript {
             var moduleDecl = typeCheckContext.semanticInfo.getDeclForAST(moduleDeclAST);
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
+            var modName = (<Identifier>moduleDeclAST.name).text;
+            var isDynamic = isQuoted(modName) || hasFlag(moduleDeclAST.getModuleFlags(), ModuleFlags.IsDynamic);
+
+            // Resolve the export assignment first to make sure 
+            if (isDynamic && moduleDeclAST.members && moduleDeclAST.members.members) {
+                for (var i = moduleDeclAST.members.members.length - 1; i >= 0; i--) {
+                    if (moduleDeclAST.members.members[i] && moduleDeclAST.members.members[i].nodeType == NodeType.ExportAssignment) {
+                        this.typeCheckAST(moduleDeclAST.members.members[i], typeCheckContext, false);
+                        break;
+                    }
+                }
+            }
             this.typeCheckAST(moduleDeclAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             this.validateVariableDeclarationGroups(moduleDecl, typeCheckContext);
@@ -2597,15 +2609,18 @@ module TypeScript {
                         var declSymbolPath = declSymbol.pathToRoot();
                         if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != typeSymbolPath[typeSymbolPath.length - 1]) {
                             // Declaration symbol is from different unit
-                            var aliasSymbol = (<PullContainerTypeSymbol>typeSymbolPath[typeSymbolPath.length - 1]).getAliasedSymbol(declSymbol);
-                            if (aliasSymbol) {
-                                // Visible type.
-                                // Also mark this Import declaration as visible
-                                CompilerDiagnostics.assert(aliasSymbol.getKind() === PullElementKind.TypeAlias, "dynamic module need to be referenced by type alias");
-                                (<PullTypeAliasSymbol>aliasSymbol).setIsTypeUsedExternally();
-                            } else {
-                                // Type from different module without import statement
-                                typeSymbolIsVisible = false;
+                            // Type may not be visible without import statement
+                            typeSymbolIsVisible = false;
+                            for (var i = typeSymbolPath.length - 1; i >= 0; i--) {
+                                var aliasSymbol = typeSymbolPath[i].getAliasedSymbol(declSymbol);
+                                if (aliasSymbol) {
+                                    // Visible type.
+                                    // Also mark this Import declaration as visible
+                                    CompilerDiagnostics.assert(aliasSymbol.getKind() === PullElementKind.TypeAlias, "dynamic module need to be referenced by type alias");
+                                    (<PullTypeAliasSymbol>aliasSymbol).setIsTypeUsedExternally();
+                                    typeSymbolIsVisible = true;
+                                    break;
+                                } 
                             }
                         }
                     }

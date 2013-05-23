@@ -50,7 +50,7 @@ module m1 {
     }
 
     export function f2(s: string);
-    function f2(n: number);
+    export function f2(n: number);
     export function f2(ns: any) {
     }
 
@@ -67,8 +67,6 @@ module m1 {
         public e: { x: number; y: string; };
         constructor (public n, public n2: number, private n3, private n4: string) {
         }
-
-        public f = c.a.b;
     }
 
     export interface i1 {

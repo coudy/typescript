@@ -1309,6 +1309,9 @@ module TypeScript {
             }
 
             if (!acceptableAlias && containerSymbol && containerSymbol.getKind() == PullElementKind.TypeAlias) {
+                if (!containerSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(containerSymbol, enclosingDecl, context);
+                }
                 var aliasedType = (<PullTypeAliasSymbol>containerSymbol).getType();
 
                 // It's ok if the import statement aliases an internal module
@@ -1331,7 +1334,6 @@ module TypeScript {
                         if (aliasedAssignedContainer) {
                             containerSymbol = aliasedAssignedContainer;
                         }
-
                         acceptableAlias = true;
                     }
                 }

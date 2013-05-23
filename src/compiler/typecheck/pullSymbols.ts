@@ -92,11 +92,55 @@ module TypeScript {
         public isAlias() { return false; }
         public isContainer() { return false; }
 
+        private findAliasedType(decls: PullDecl[]) {
+            for (var i = 0; i < decls.length; i++) {
+                var childDecls = decls[i].getChildDecls();
+                for (var j = 0; j < childDecls.length; j++) {
+                    if (childDecls[j].getKind() === PullElementKind.TypeAlias) {
+                        var symbol = <PullTypeAliasSymbol>childDecls[j].getSymbol();
+                        if (PullContainerTypeSymbol.usedAsSymbol(symbol, this)) {
+                            return symbol;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public getAliasedSymbol(scopeSymbol: PullSymbol) {
+            if (!scopeSymbol) {
+                return null;
+            }
+
+            var scopePath = scopeSymbol.pathToRoot();
+            if (scopePath.length && scopePath[scopePath.length - 1].getKind() === PullElementKind.DynamicModule) {
+                var decls = scopePath[scopePath.length - 1].getDeclarations();
+                var symbol = this.findAliasedType(decls);
+                return symbol;
+            }
+
+            return null;
+        }
+
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) { return this.name; }
-        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
+            var symbol = this.getAliasedSymbol(scopeSymbol);
+            if (symbol) {
+                return symbol.getName();
+            }
+            
+            return this.name;
+        }
+
+        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
+            var symbol = this.getAliasedSymbol(scopeSymbol);
+            if (symbol) {
+                return symbol.getDisplayName();
+            }
+
             // Get the actual name associated with a declaration for this symbol
             return this.getDeclarations()[0].getDisplayName();
         }
@@ -260,7 +304,7 @@ module TypeScript {
                 this.unsetType();
             }
 
-            this.cachedTypeLink  = this.addOutgoingLink(typeRef, SymbolLinkKind.TypedAs);
+            this.cachedTypeLink = this.addOutgoingLink(typeRef, SymbolLinkKind.TypedAs);
 
         }
 
@@ -405,7 +449,7 @@ module TypeScript {
                                 bDecl = decls[0].getParentDecl();
                             }
                         }
-                        if (!aDecl|| !bDecl || aDecl == bDecl) {
+                        if (!aDecl || !bDecl || aDecl == bDecl) {
                             commonNodeIndex = i;
                             break;
                         }
@@ -429,61 +473,72 @@ module TypeScript {
             return str;
         }
 
-        private getPrettyNameInScope(scopeSymbol?: PullSymbol) {
-            var scopedName = this.getDisplayName(scopeSymbol);
-            if (this.getKind() === PullElementKind.DynamicModule) {
-                if (!isQuoted(scopedName) && scopedName === this.getDisplayName()) {
-                    return "";
-                }
-            }
-
-            return scopedName;
-        }
-
-        public getNamePartForFullName(scopeSymbol: PullSymbol) {
-            if (this.getKind() === PullElementKind.DynamicModule) {
-                return this.getPrettyNameInScope(scopeSymbol);
-            } else {
-                return this.getDisplayName(scopeSymbol, true);
-            }
+        public getNamePartForFullName() {
+            return this.getDisplayName(null, true);
         }
 
         public fullName(scopeSymbol?: PullSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
-            for (var i = 1; i < path.length; i++) {
-                var scopedName = path[i].getNamePartForFullName(scopeSymbol);
-                if (!scopedName) {
-                    // Same file as dynamic module - do not include this name
-                    break;
-                }
-
-                if (scopedName === "") {
-                    // If the item does not have a name, stop enumarting them, e.g. Object literal
-                    break;
-                }
-
-                fullName = scopedName + "." + fullName;
+            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            if (aliasedSymbol) {
+                return aliasedSymbol.getDisplayName();
             }
 
-            fullName = fullName + this.getNamePartForFullName(scopeSymbol);
+            for (var i = 1; i < path.length; i++) {
+                aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                if (aliasedSymbol) {
+                    // Aliased name found
+                    fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                    break;
+                } else {
+                    var scopedName = path[i].getNamePartForFullName();
+                    if (path[i].getKind() == PullElementKind.DynamicModule && !isQuoted(scopedName)) {
+                        // Same file as dynamic module - do not include this name
+                        break;
+                    }
+
+                    if (scopedName === "") {
+                        // If the item does not have a name, stop enumarting them, e.g. Object literal
+                        break;
+                    }
+
+                    fullName = scopedName + "." + fullName;
+                }
+            }
+
+            fullName = fullName + this.getNamePartForFullName();
             return fullName;
         }
 
         public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
+            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            if (aliasedSymbol) {
+                return aliasedSymbol.getDisplayName();
+            }
+
             for (var i = 1; i < path.length; i++) {
                 var kind = path[i].getKind();
-                if (kind === PullElementKind.Container) {
-                    fullName = path[i].getDisplayName() + "." + fullName;
-                } else if (kind === PullElementKind.DynamicModule) {
-                    var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
-                    if (scopedName) {
-                        fullName = scopedName + "." + fullName;
+                if (kind === PullElementKind.Container || kind === PullElementKind.DynamicModule) {
+                    aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                    if (aliasedSymbol) {
+                        // Aliased name
+                        fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                        break;
+                    } else if (kind === PullElementKind.Container) {
+                        fullName = path[i].getDisplayName() + "." + fullName;
+                    } else {
+                        // Dynamic module 
+                        var displayName = path[i].getDisplayName();
+                        if (isQuoted(displayName)) {
+                            fullName = displayName + "." + fullName;
+                        }
+                        break;
                     }
-                    break;
                 } else {
+                    // Any other type of container is not part of the name
                     break;
                 }
             }
@@ -623,6 +678,17 @@ module TypeScript {
             var container = this.getContainer();
             if (container === null) {
                 return true;
+            }
+
+            // If export assignment check if this is the symbol that is exported
+            if (container.getKind() == PullElementKind.DynamicModule ||
+                (container.getAssociatedContainerType() && container.getAssociatedContainerType().getKind() == PullElementKind.DynamicModule)) {
+                var containerTypeSymbol = container.getKind() == PullElementKind.DynamicModule
+                    ? <PullContainerTypeSymbol>container
+                    : <PullContainerTypeSymbol>container.getAssociatedContainerType();
+                if (PullContainerTypeSymbol.usedAsSymbol(containerTypeSymbol, this)) {
+                    return true;
+                }
             }
 
             // If non exported member and is not class properties and method, it is not visible
@@ -1993,8 +2059,8 @@ module TypeScript {
             super.invalidate();
         }
 
-        public getNamePartForFullName(scopeSymbol: PullSymbol) {
-            var name = super.getNamePartForFullName(scopeSymbol);
+        public getNamePartForFullName() {
+            var name = super.getNamePartForFullName();
 
             var typars = this.getTypeArguments();
             if (!typars || !typars.length) {
@@ -2243,53 +2309,6 @@ module TypeScript {
             super.invalidate();
         }
 
-        private findAliasedType(decls: PullDecl[]) {
-            for (var i = 0; i < decls.length; i++) {
-                var childDecls = decls[i].getChildDecls();
-                for (var j = 0; j < childDecls.length; j++) {
-                    if (childDecls[j].getKind() === PullElementKind.TypeAlias) {
-                        var symbol = childDecls[j].getSymbol();
-                        if (symbol.getType() === this) {
-                            return symbol;
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public getAliasedSymbol(scopeSymbol: PullSymbol) {
-            var scopePath = scopeSymbol.pathToRoot();
-            if (scopePath.length && scopePath[scopePath.length - 1].getKind() === PullElementKind.DynamicModule) {
-                var decls = scopePath[scopePath.length - 1].getDeclarations();
-                var symbol = this.findAliasedType(decls);
-                return symbol;
-            }
-
-            return null;
-        }
-
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            if (scopeSymbol && this.getKind() === PullElementKind.DynamicModule) {
-                var symbol = this.getAliasedSymbol(scopeSymbol);
-                if (symbol) {
-                    return symbol.getName();
-                }
-            }
-            return super.getName();
-        }
-
-        public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
-                var symbol = this.getAliasedSymbol(scopeSymbol);
-                if (symbol) {
-                    return symbol.getDisplayName();
-                }
-            }
-            return super.getDisplayName();
-        }
-
         public setExportAssignedValueSymbol(symbol: PullSymbol): void {
 
             this._exportAssignedValueSymbol = symbol;
@@ -2316,6 +2335,26 @@ module TypeScript {
             this._exportAssignedContainerSymbol = null;
             this._exportAssignedTypeSymbol = null;
             this._exportAssignedValueSymbol = null;
+        }
+
+        static usedAsSymbol(containerSymbol: PullSymbol, symbol: PullSymbol) {
+            if (!containerSymbol || !containerSymbol.isContainer()) {
+                return false;
+            }
+
+            if (containerSymbol.getType() == symbol) {
+                return true;
+            }
+
+            var containerTypeSymbol = <PullContainerTypeSymbol>containerSymbol;
+            var valueExportSymbol = containerTypeSymbol.getExportAssignedValueSymbol();
+            var typeExportSymbol = containerTypeSymbol.getExportAssignedTypeSymbol();
+            var containerExportSymbol = containerTypeSymbol.getExportAssignedContainerSymbol();
+            if (valueExportSymbol || typeExportSymbol || containerExportSymbol) {
+                return valueExportSymbol == symbol || typeExportSymbol == symbol || containerExportSymbol == symbol || PullContainerTypeSymbol.usedAsSymbol(containerExportSymbol, symbol);
+            }
+
+            return false;
         }
     }
 
