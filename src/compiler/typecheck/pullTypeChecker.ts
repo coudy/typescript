@@ -1373,6 +1373,8 @@ module TypeScript {
             var moduleDecl = typeCheckContext.semanticInfo.getDeclForAST(moduleDeclAST);
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
+            // Resolve the export assignment first to make sure 
+
             this.typeCheckAST(moduleDeclAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             this.validateVariableDeclarationGroups(moduleDecl, typeCheckContext);

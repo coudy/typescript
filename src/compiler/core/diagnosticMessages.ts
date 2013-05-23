@@ -68,6 +68,7 @@ module TypeScript {
         _module_______is_deprecated__Use__require_______instead: DiagnosticInfo;
         Export_assignments_cannot_be_used_in_internal_modules: DiagnosticInfo;
         Export_assignment_not_allowed_in_module_with_exported_element: DiagnosticInfo;
+        Module_cannot_have_multiple_export_assignments: DiagnosticInfo;
 
 
 
@@ -698,6 +699,11 @@ module TypeScript {
             code: 1064
         },
 
+        Module_cannot_have_multiple_export_assignments: {
+            category: DiagnosticCategory.Error,
+            message: "Module cannot have multiple export assignments.",
+            code: 1065
+        },
 
 
 
