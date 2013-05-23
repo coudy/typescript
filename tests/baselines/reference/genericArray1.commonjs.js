@@ -3,4 +3,4 @@ var lengths = ["a", "b", "c"].map(function (x) {
 });
 
 ////[0.d.ts]
-declare var lengths: any[];
+declare var lengths: number[];

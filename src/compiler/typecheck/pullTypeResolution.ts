@@ -1988,6 +1988,14 @@ module TypeScript {
 
                     returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, context, new TypeComparisonInfo());
 
+                    if (useContextualType && returnType == this.semanticInfoChain.anyTypeSymbol) {
+                        var contextualType = context.getContextualType();
+
+                        if (contextualType) {
+                            returnType = contextualType;
+                        }
+                    }
+
                     signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
 
                     if (this.isTypeArgumentOrWrapper(returnType)) {
@@ -2094,6 +2102,11 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
+
+                    // We may have a return type from a previous resolution - if the function's generic,
+                    // we can reuse it
+                    var prevReturnTypeSymbol = signature.getReturnType();
+
                     // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                     // on the function when resolving the return type
                     returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context).symbol;
@@ -2104,7 +2117,7 @@ module TypeScript {
 
                         hadError = true;
                     }
-                    else {
+                    else if (!(this.isTypeArgumentOrWrapper(returnTypeSymbol) && prevReturnTypeSymbol && !this.isTypeArgumentOrWrapper(prevReturnTypeSymbol))) {
                         if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
                             signature.setHasGenericParameter();
 
@@ -6518,6 +6531,9 @@ module TypeScript {
             }
 
             if (parameterType === expressionType) {
+                //if (parameterType.isTypeParameter() && shouldFix) {
+                //    argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, this.semanticInfoChain.anyTypeSymbol, shouldFix);
+                //}
                 return;
             }
 
@@ -6685,9 +6701,9 @@ module TypeScript {
             context.specializingToAny = true;
 
             // get the "root" unspecialized type, since even generic types may already be partially specialize
-            //typeToSpecialize = <PullTypeSymbol>typeToSpecialize.getDeclarations()[0].getSymbol().getType();
+            var rootType = getRootType(typeToSpecialize);
 
-            var type = specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+            var type = specializeType(rootType, [], this, enclosingDecl, context);
 
             context.specializingToAny = prevSpecialize;
 

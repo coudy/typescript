@@ -803,7 +803,7 @@ module TypeScript {
             this.invalidate();
         }
 
-        public mimicSignature(signature: PullSignatureSymbol) {
+        public mimicSignature(signature: PullSignatureSymbol, resolver: PullTypeResolver) {
             // mimic type parameters
             var typeParameters = signature.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
@@ -839,11 +839,11 @@ module TypeScript {
             // calls to setReturnType when we re-resolve the signature for
             // specialization
 
-            // var returnType = signature.getReturnType();
+             var returnType = signature.getReturnType();
 
-            // if (returnType) {
-            //     this.setReturnType(returnType);
-            // }
+             if (!resolver.isTypeArgumentOrWrapper(returnType)) {
+                 this.setReturnType(returnType);
+             }
         }
 
         public getReturnType(): PullTypeSymbol {
@@ -3208,7 +3208,7 @@ module TypeScript {
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
 
-                newSignature.mimicSignature(signature);
+                newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
                 Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
@@ -3272,7 +3272,7 @@ module TypeScript {
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
 
-                newSignature.mimicSignature(signature);
+                newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
                 Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
@@ -3338,7 +3338,7 @@ module TypeScript {
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
 
-                newSignature.mimicSignature(signature);
+                newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
                 Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
