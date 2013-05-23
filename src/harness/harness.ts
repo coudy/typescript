@@ -1779,7 +1779,7 @@ module Harness {
             var parseOptions = TypeScript.getParseOptions(compilationSettings);
             return TypeScript.SyntaxTreeToAstVisitor.visit(
                 TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5, parseOptions),
-                fileName, compilationSettings);
+                fileName, compilationSettings, /*incrementalAST: */ true);
         }
 
         /** Parse a file on disk given its fileName */

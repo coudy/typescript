@@ -106,12 +106,12 @@ module TypeScript {
         public lineMap: LineMap;
 
         constructor(public fileName: string,
-            private compilationSettings: CompilationSettings,
-            private scriptSnapshot: IScriptSnapshot,
-            public byteOrderMark: ByteOrderMark,
-            public version: number,
-            public isOpen: boolean,
-            syntaxTree: SyntaxTree) {
+                    private compilationSettings: CompilationSettings,
+                    private scriptSnapshot: IScriptSnapshot,
+                    public byteOrderMark: ByteOrderMark,
+                    public version: number,
+                    public isOpen: boolean,
+                    syntaxTree: SyntaxTree) {
 
             if (isOpen) {
                 this._syntaxTree = syntaxTree;
@@ -122,7 +122,7 @@ module TypeScript {
             }
 
             this.lineMap = syntaxTree.lineMap();
-            this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
+            this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings, isOpen);
         }
 
         public diagnostics(): IDiagnostic[]{
