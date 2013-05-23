@@ -1626,7 +1626,7 @@ module TypeScript {
             return result;
         }
 
-        public visitElseClause(node: ElseClauseSyntax): Statement {
+        public visitElseClause(node: ElseClauseSyntax): AST {
             this.movePast(node.elseKeyword);
             return node.statement.accept(this);
         }

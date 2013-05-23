@@ -1134,23 +1134,17 @@ module TypeScript {
         }
     }
 
-    export class Statement extends AST {
-        constructor(private _nodeType: NodeType) {
+    export class ThrowStatement extends AST {
+        constructor(public expression: AST) {
             super();
         }
 
         public nodeType(): NodeType {
-            return this._nodeType;
+            return NodeType.ThrowStatement;
         }
 
         public isStatement() {
             return true;
-        }
-    }
-
-    export class ThrowStatement extends Statement {
-        constructor(public expression: AST) {
-            super(NodeType.ThrowStatement);
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1165,9 +1159,17 @@ module TypeScript {
         }
     }
 
-    export class ExpressionStatement extends Statement {
+    export class ExpressionStatement extends AST {
         constructor(public expression: AST) {
-            super(NodeType.ExpressionStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ExpressionStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1181,9 +1183,17 @@ module TypeScript {
         }
     }
 
-    export class LabeledStatement extends Statement {
+    export class LabeledStatement extends AST {
         constructor(public identifier: Identifier, public statement: AST) {
-            super(NodeType.LabeledStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.LabeledStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1220,9 +1230,17 @@ module TypeScript {
         }
     }
 
-    export class VariableStatement extends Statement {
+    export class VariableStatement extends AST {
         constructor(public declaration: VariableDeclaration) {
-            super(NodeType.VariableStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.VariableStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public shouldEmit(): boolean {
@@ -1250,10 +1268,19 @@ module TypeScript {
         }
     }
 
-    export class Block extends Statement {
+    export class Block extends AST {
         public closeBraceSpan: IASTSpan = null;
+
         constructor(public statements: ASTList) {
-            super(NodeType.Block);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.Block;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1273,13 +1300,21 @@ module TypeScript {
         }
     }
 
-    export class Jump extends Statement {
+    export class Jump extends AST {
         public target: string = null;
         public hasExplicitTarget() { return (this.target); }
-        public resolvedTarget: Statement = null;
+        public resolvedTarget: AST = null;
 
-        constructor(nodeType: NodeType) {
-            super(nodeType);
+        constructor(private _nodeType: NodeType) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1301,9 +1336,17 @@ module TypeScript {
         }
     }
 
-    export class WhileStatement extends Statement {
+    export class WhileStatement extends AST {
         constructor(public cond: AST, public body: AST) {
-            super(NodeType.WhileStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.WhileStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1320,11 +1363,19 @@ module TypeScript {
         }
     }
 
-    export class DoStatement extends Statement {
+    export class DoStatement extends AST {
         public whileSpan: ASTSpan = null;
 
         constructor(public body: AST, public cond: AST) {
-            super(NodeType.DoStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.DoStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1346,13 +1397,21 @@ module TypeScript {
         }
     }
 
-    export class IfStatement extends Statement {
+    export class IfStatement extends AST {
         public statement: ASTSpan = new ASTSpan();
 
         constructor(public cond: AST,
                     public thenBod: AST,
                     public elseBod: AST) {
-            super(NodeType.IfStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.IfStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1384,9 +1443,17 @@ module TypeScript {
         }
     }
 
-    export class ReturnStatement extends Statement {
+    export class ReturnStatement extends AST {
         constructor(public returnExpression: AST) {
-            super(NodeType.ReturnStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ReturnStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1406,12 +1473,20 @@ module TypeScript {
         }
     }
 
-    export class ForInStatement extends Statement {
+    export class ForInStatement extends AST {
+        public statement: ASTSpan = new ASTSpan();
+
         constructor(public lval: AST, public obj: AST, public body: AST) {
-            super(NodeType.ForInStatement);
+            super();
         }
 
-        public statement: ASTSpan = new ASTSpan();
+        public nodeType(): NodeType {
+            return NodeType.ForInStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
 
         public emitWorker(emitter: Emitter) {
             emitter.recordSourceMappingStart(this.statement);
@@ -1432,12 +1507,20 @@ module TypeScript {
         }
     }
 
-    export class ForStatement extends Statement {
+    export class ForStatement extends AST {
         constructor(public init: AST,
                     public cond: AST,
                     public incr: AST,
                     public body: AST) {
-            super(NodeType.ForStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ForStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1469,9 +1552,17 @@ module TypeScript {
         }
     }
 
-    export class WithStatement extends Statement {
+    export class WithStatement extends AST {
         constructor(public expr: AST, public body: AST) {
-            super(NodeType.WithStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.WithStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1491,13 +1582,21 @@ module TypeScript {
         }
     }
 
-    export class SwitchStatement extends Statement {
+    export class SwitchStatement extends AST {
         public caseList: ASTList;
         public defaultCase: CaseClause = null;
         public statement: ASTSpan = new ASTSpan();
 
         constructor(public val: AST) {
-            super(NodeType.SwitchStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SwitchStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1628,9 +1727,17 @@ module TypeScript {
         }
     }
 
-    export class TryStatement extends Statement {
+    export class TryStatement extends AST {
         constructor(public tryBody: Block, public catchClause: CatchClause, public finallyBody: Block) {
-            super(NodeType.TryStatement);
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TryStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1680,9 +1787,13 @@ module TypeScript {
         }
     }
 
-    export class DebuggerStatement extends Statement {
-        constructor() {
-            super(NodeType.DebuggerStatement);
+    export class DebuggerStatement extends AST {
+        public nodeType(): NodeType {
+            return NodeType.DebuggerStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
@@ -1703,9 +1814,13 @@ module TypeScript {
         }
     }
 
-    export class EmptyStatement extends Statement {
-        constructor() {
-            super(NodeType.EmptyStatement);
+    export class EmptyStatement extends AST {
+        public nodeType(): NodeType {
+            return NodeType.EmptyStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter) {
