@@ -217,7 +217,7 @@ class BatchCompiler {
         } ;
 
         var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-            this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+            this.resolvedEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
         };
 
         // TODO: if there are any emit diagnostics.  Don't proceed.
@@ -327,10 +327,10 @@ class BatchCompiler {
 
     // Execute the provided inputs
     private run() {
-        for (var i in this.compilationEnvironment.code) {
-            var outputFileName: string = this.compilationEnvironment.inputFileNameToOutputFileName.lookup(i);
+        for (var i in this.resolvedEnvironment.code) {
+            var outputFileName: string = this.resolvedEnvironment.inputFileNameToOutputFileName.lookup(this.resolvedEnvironment.code[i].path) || undefined;
             if (this.ioHost.fileExists(outputFileName)) {
-                var unitRes = this.ioHost.readFile(outputFileName)
+                var unitRes = this.ioHost.readFile(outputFileName);
                 this.ioHost.run(unitRes.contents(), outputFileName);
             }
         }
@@ -376,7 +376,7 @@ class BatchCompiler {
 
         if (this.ioHost.watchFile) {
             opts.flag('watch', {
-                usage: 'Watch output files',
+                usage: 'Watch input files',
                 set: () => {
                     this.compilationSettings.watch = true;
                 }
@@ -551,33 +551,27 @@ class BatchCompiler {
             return;
         }
 
-        var sourceFiles: TypeScript.SourceUnit[] = [];
-        if (this.compilationSettings.watch) {
-            // Capture the state before calling resolve
-            sourceFiles = this.compilationEnvironment.code.slice(0);
-        }
-
-        // Resolve file dependencies, if requested
-        this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
-
-        if (!this.compilationSettings.updateTC) {
-            this.compile();
-        }
-        else {
-            this.updateCompile();
-        }
-
-        if (!this.errorReporter.hasErrors) {
-            if (this.compilationSettings.exec) {
-                this.run();
-            }
-        }
-
         if (this.compilationSettings.watch) {
             // Watch will cause the program to stick around as long as the files exist
-            this.watchFiles(sourceFiles);
+            this.watchFiles(this.compilationEnvironment.code.slice(0));
         }
-        else {  
+        else {
+            // Resolve file dependencies, if requested
+            this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
+
+            if (!this.compilationSettings.updateTC) {
+                this.compile();
+            }
+            else {
+                this.updateCompile();
+            }
+
+            if (!this.errorReporter.hasErrors) {
+                if (this.compilationSettings.exec) {
+                    this.run();
+                }
+            }
+
             // Exit with the appropriate error code
             this.ioHost.quit(this.errorReporter.hasErrors ? 1 : 0);
         }
@@ -599,6 +593,7 @@ class BatchCompiler {
 
         var resolvedFiles: string[] = []
         var watchers: { [x: string]: IFileWatcher; } = {};
+        var firstTime = true;
 
         var addWatcher = (fileName: string) => {
             if (!watchers[fileName]) {
@@ -671,29 +666,32 @@ class BatchCompiler {
             resolvedFiles = newFiles;
 
             // Print header
-            this.ioHost.printLine("");
-            this.ioHost.printLine("Recompiling (" + new Date() + "): ");
-            resolvedFiles.forEach((f) => this.ioHost.printLine("    " + f));
+            if (!firstTime) {
+                this.ioHost.printLine("");
+                this.ioHost.printLine("Recompiling (" + new Date() + "): ");
+                resolvedFiles.forEach((f) => this.ioHost.printLine("    " + f));
+            }
 
             // Trigger a new compilation
             this.compile();
 
-            if (!this.errorReporter.hasErrors) {
-                if (this.compilationSettings.exec) {
+            if (!this.errorReporter.hasErrors && this.compilationSettings.exec) {
+                try {
                     this.run();
                 }
+                catch (e) {
+                    if (e.stack) {
+                        this.ioHost.stderr.WriteLine('\n' + e.stack);
+                    }
+                }
             }
+
+            firstTime = false;
         };
 
         // Switch to using stdout for all error messages
         this.ioHost.stderr = this.ioHost.stdout;
-
-        // Initialize the initial list of resolved files, and add watches to them
-        this.resolvedEnvironment.code.forEach((sf) => {
-            resolvedFiles.push(sf.path);
-            addWatcher(sf.path);
-        });
-        resolvedFiles.sort();
+        onWatchedFileChange();
     }
 }
 
