@@ -5,9 +5,9 @@ class derived extends base { }
 
 
 class f {
-    public voidIfAny(x: boolean, y = false): number;
-    public voidIfAny(x: string, y = false): number;
-    public voidIfAny(x: number, y = false): number;
+    public voidIfAny(x: boolean, y?: boolean): number;
+    public voidIfAny(x: string, y?: boolean): number;
+    public voidIfAny(x: number, y?: boolean): number;
     public voidIfAny(x: any, y =false): any { return null; }
     
     public x() {

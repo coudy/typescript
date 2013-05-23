@@ -74,6 +74,7 @@ module TypeScript {
         Export_assignments_cannot_be_used_in_internal_modules,
         Export_assignment_not_allowed_in_module_with_exported_element,
         Module_cannot_have_multiple_export_assignments,
+        Ambient_enums_can_only_have_numeric_literals_as_initializers,
 
 
 
@@ -252,6 +253,7 @@ module TypeScript {
         All_named_properties_must_be_subtypes_of_string_indexer_type___0__,
         All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1,
         Generic_type_references_must_include_all_type_arguments,
+        Default_arguments_are_not_allowed_in_an_overload_parameter,
 
         // Extra information that is used as part of other error message
         Type__0__is_missing_property__1__from_type__2_,

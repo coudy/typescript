@@ -900,6 +900,17 @@ module TypeScript {
             return false;
         }
 
+        public visitEnumElement(node: EnumElementSyntax): void {
+            if (this.inAmbientDeclaration && node.equalsValueClause && node.equalsValueClause.value.kind() !== SyntaxKind.NumericLiteral) {
+                this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(),
+                    DiagnosticCode.Ambient_enums_can_only_have_numeric_literals_as_initializers);
+                this.skip(node);
+                return;
+            }
+
+            super.visitEnumElement(node);
+        }
+
         public visitInvocationExpression(node: InvocationExpressionSyntax): void {
             if (node.expression.kind() === SyntaxKind.SuperKeyword &&
                 node.argumentList.typeArgumentList !== null) {
@@ -1349,15 +1360,15 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
-        public visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
+        public visitVariableDeclarator(node: VariableDeclaratorSyntax): void {
+            if (this.inAmbientDeclaration && node.equalsValueClause) {
+                this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(),
                     DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
 
-            super.visitEqualsValueClause(node);
+            super.visitVariableDeclarator(node);
         }
 
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {

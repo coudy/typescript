@@ -485,6 +485,14 @@ module TypeScript {
 
             // if there's a type expr and an initializer, resolve the initializer
             if (boundDeclAST.init) {
+                // Check if it is a parameter in an overload, which is not supposed to have a default value
+                if (boundDeclAST.nodeType() === NodeType.Parameter) {
+                    var containerSignature = enclosingDecl.getSignatureSymbol();
+                    if (containerSignature && !containerSignature.isDefinition()) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Default_arguments_are_not_allowed_in_an_overload_parameter, [], enclosingDecl);
+                    }
+                }
+
                 if (typeExprSymbol) {
                     this.context.pushContextualType(typeExprSymbol, this.context.inProvisionalResolution(), null);
                 }
