@@ -1379,7 +1379,7 @@ module TypeScript {
             // Resolve the export assignment first to make sure 
             if (isDynamic && moduleDeclAST.members && moduleDeclAST.members.members) {
                 for (var i = moduleDeclAST.members.members.length - 1; i >= 0; i--) {
-                    if (moduleDeclAST.members.members[i] && moduleDeclAST.members.members[i].nodeType == NodeType.ExportAssignment) {
+                    if (moduleDeclAST.members.members[i] && moduleDeclAST.members.members[i].nodeType() == NodeType.ExportAssignment) {
                         this.typeCheckAST(moduleDeclAST.members.members[i], typeCheckContext, false);
                         break;
                     }

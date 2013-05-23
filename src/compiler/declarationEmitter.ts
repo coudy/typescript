@@ -99,6 +99,8 @@ module TypeScript {
                         return this.importDeclarationCallback(pre, <ImportDeclaration>ast);
                     case NodeType.ModuleDeclaration:
                         return this.moduleDeclarationCallback(pre, <ModuleDeclaration>ast);
+                    case NodeType.ExportAssignment:
+                        return this.exportAssignmentCallback(pre, <ExportAssignment>ast);
                     case NodeType.Script:
                         return this.scriptCallback(pre, <Script>ast);
                     default:
@@ -893,18 +895,18 @@ module TypeScript {
             return true;
         }
 
-        public ExportAssignmentCallback(pre: boolean, ast: AST): boolean {
+        public exportAssignmentCallback(pre: boolean, ast: ExportAssignment): boolean {
             if (pre) {
                 this.emitIndent();
                 this.declFile.Write("export = ");
-                this.declFile.Write((<ExportAssignment>ast).id.actualText);
+                this.declFile.Write(ast.id.actualText);
                 this.declFile.WriteLine(";");
             } 
 
             return false;
         }
 
-        public ScriptCallback(pre: boolean, script: Script): boolean {
+        public scriptCallback(pre: boolean, script: Script): boolean {
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
