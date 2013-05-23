@@ -8,10 +8,6 @@
     <script>
         var repeat = 10;
 
-        if (!batch) {
-            batch = new BatchCompiler();
-        }
-
         function appendTime(message, time) {
             var res = message + ": " + time;
             var div = document.createElement('div');
@@ -36,6 +32,8 @@
         }
 
         function newParse() {
+            var batch = new BatchCompiler();
+
             run(function () {
                 var start = new Date().getTime();
                 batch.newParse();
@@ -45,6 +43,8 @@
         }
 
         function newParseAndAST() {
+            var batch = new BatchCompiler();
+
             run(function () {
                 var start = new Date().getTime();
 
@@ -56,7 +56,22 @@
             });
         }
 
+        function newParseAndFakeAST() {
+            var batch = new BatchCompiler();
+
+            run(function () {
+                var start = new Date().getTime();
+
+                var tree = batch.newParse();
+                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings());
+
+                var end = new Date().getTime();
+                appendTime("Fake AST", end - start);
+            });
+        }
+
         function newIncrementalParse() {
+            var batch = new BatchCompiler();
             var tree = batch.newParse();
 
             run(function () {
@@ -68,6 +83,7 @@
         }
 
         function newIncrementalParseAndAST() {
+            var batch = new BatchCompiler();
             var tree = batch.newParse();
             TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
 
@@ -81,6 +97,7 @@
         }
 
         function typeCheck() {
+            var batch = new BatchCompiler();
             var start = new Date().getTime();
             batch.reTypeCheck();
             var end = new Date().getTime();
@@ -108,6 +125,7 @@
     <h1>TypeScript Perf Testbed</h1>
     <button onclick="newParse()">Parse</button>
     <button onclick="newParseAndAST()">Parse + AST</button>
+    <button onclick="newParseAndFakeAST()">Parse + Fake AST</button>
     <button onclick="newIncrementalParse()">Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
