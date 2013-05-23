@@ -4329,7 +4329,7 @@ module TypeScript {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(callEx);
             if (!symbolAndDiagnostics || !symbolAndDiagnostics.symbol.isResolved()) {
 
-                symbolAndDiagnostics = this.computeNewExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
+                symbolAndDiagnostics = this.computeObjectCreationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
                 this.setSymbolAndDiagnosticsForAST(callEx, symbolAndDiagnostics, context);
             }
 
