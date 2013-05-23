@@ -226,12 +226,21 @@ module TypeScript {
                 // search for a complementary instance symbol first
                 var variableSymbol: PullSymbol = null;
                 if (!isEnum) {
-                    if (parent) {
+                    if (parentInstanceSymbol) {
                         if (isExported) {
-                            variableSymbol = parent.findMember(modName, false);
+                            // We search twice because export visibility does not need to agree
+                            variableSymbol = parentInstanceSymbol.findMember(modName, false);
+
+                            if (!variableSymbol) {
+                                variableSymbol = parentInstanceSymbol.findContainedMember(modName);
+                            }
                         }
                         else {
-                            variableSymbol = parent.findContainedMember(modName);
+                            variableSymbol = parentInstanceSymbol.findContainedMember(modName);
+
+                            if (!variableSymbol) {
+                                variableSymbol = parentInstanceSymbol.findMember(modName, false);
+                            }
                         }
 
                         if (variableSymbol) {
