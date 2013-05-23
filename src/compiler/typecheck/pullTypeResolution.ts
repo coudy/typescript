@@ -3112,6 +3112,15 @@ module TypeScript {
             // now for the name...
             var childTypeSymbol = lhsType.findNestedType(rhsName);
 
+            // if the lhs exports a container type, but not a type, we should check the container type
+            if (!childTypeSymbol && lhsType.isContainer()) {
+                var exportedContainer = (<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol();
+
+                if (exportedContainer) {
+                    childTypeSymbol = exportedContainer.findNestedType(rhsName);
+                }
+            }
+
             // If the name is expressed as a dotted name within the parent type,
             // then it will be considered a contained member, so back up to the nearest
             // enclosing symbol and look there
