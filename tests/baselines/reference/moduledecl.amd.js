@@ -55,7 +55,6 @@ var m1;
             this.n2 = n2;
             this.n3 = n3;
             this.n4 = n4;
-            this.f = c.a.b;
         }
         c1.prototype.d = function () {
             return "Hello";
@@ -208,6 +207,7 @@ declare module m0 {
 declare module m1 {
     function f1(): void;
     function f2(s: string);
+    function f2(n: number);
     class c1 {
         public n;
         public n2: number;
@@ -223,7 +223,6 @@ declare module m1 {
             y: string;
         };
         constructor(n, n2: number, n3, n4: string);
-        public f;
     }
     interface i1 {
         (): Object;

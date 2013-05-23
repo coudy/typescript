@@ -103,7 +103,7 @@ module TypeScript {
             this.declFile.Write(this.getIndentString());
         }
 
-        private canEmitSignature(declFlags: DeclFlags, canEmitGlobalAmbientDecl: boolean = true, useDeclarationContainerTop: boolean = true) {
+        private canEmitSignature(declFlags: DeclFlags, declAST: AST, canEmitGlobalAmbientDecl: boolean = true, useDeclarationContainerTop: boolean = true) {
             var container: AST;
             if (useDeclarationContainerTop) {
                 container = this.getAstDeclarationContainer();
@@ -113,7 +113,8 @@ module TypeScript {
             }
 
             if (container.nodeType === NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
-                return false;
+                var declSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declAST, this.fileName).symbol;
+                return declSymbol && declSymbol.isExternallyVisible();
             }
 
             if (!canEmitGlobalAmbientDecl && container.nodeType === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
@@ -130,7 +131,7 @@ module TypeScript {
                 return false;
             }
             else if (preCallback &&
-                !this.canEmitSignature(declFlags, true, preCallback)) {
+                !this.canEmitSignature(declFlags, astWithPrePostCallback, true, preCallback)) {
                 this.ignoreCallbackAst = astWithPrePostCallback;
                 return false;
             }
@@ -324,7 +325,7 @@ module TypeScript {
         }
 
         public VariableDeclaratorCallback(pre: boolean, varDecl: VariableDeclarator): boolean {
-            if (pre && this.canEmitSignature(ToDeclFlags(varDecl.getVarFlags()), false)) {
+            if (pre && this.canEmitSignature(ToDeclFlags(varDecl.getVarFlags()), varDecl, false)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
@@ -445,7 +446,7 @@ module TypeScript {
                 }
             }
 
-            if (!this.canEmitSignature(ToDeclFlags(funcDecl.getFunctionFlags()), false)) {
+            if (!this.canEmitSignature(ToDeclFlags(funcDecl.getFunctionFlags()), funcDecl, false)) {
                 return false;
             }
 
@@ -717,7 +718,7 @@ module TypeScript {
             if (pre) {
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-                if (importSymbol.getTypeUsedExternally()) {
+                if (importSymbol.getTypeUsedExternally() || PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                     this.emitDeclarationComments(importDeclAST);
                     this.emitIndent();
                     this.declFile.Write("import ");
@@ -736,7 +737,7 @@ module TypeScript {
         }
 
         private emitEnumSignature(moduleDecl: ModuleDeclaration) {
-            if (!this.canEmitSignature(ToDeclFlags(moduleDecl.getModuleFlags()))) {
+            if (!this.canEmitSignature(ToDeclFlags(moduleDecl.getModuleFlags()), moduleDecl)) {
                 return false;
             }
 
@@ -856,6 +857,17 @@ module TypeScript {
             }
 
             return true;
+        }
+
+        public ExportAssignmentCallback(pre: boolean, ast: AST): boolean {
+            if (pre) {
+                this.emitIndent();
+                this.declFile.Write("export = ");
+                this.declFile.Write((<ExportAssignment>ast).id.actualText);
+                this.declFile.WriteLine(";");
+            } 
+
+            return false;
         }
 
         public ScriptCallback(pre: boolean, script: Script): boolean {
