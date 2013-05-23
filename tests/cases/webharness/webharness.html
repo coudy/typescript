@@ -49,7 +49,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings(), false);
 
                 var end = new Date().getTime();
                 appendTime("AST", end - start);
@@ -63,7 +63,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings());
+                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings(), false);
 
                 var end = new Date().getTime();
                 appendTime("Fake AST", end - start);
@@ -85,12 +85,12 @@
         function newIncrementalParseAndAST() {
             var batch = new BatchCompiler();
             var tree = batch.newParse();
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings(), false);
 
             run(function () {
                 var start = new Date().getTime();
                 tree = batch.newIncrementalParse(tree);
-                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings(), false);
                 var end = new Date().getTime();
                 appendTime("Incremental Parse and AST", end - start);
             });
