@@ -36,6 +36,16 @@ var MyClass = (function () {
 ////[bin/comments_MultiModule_MultiFile_1.js]
 //@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
 
+////[bin/declFileImportModuleWithExportAssignment_0.js.map]
+{"version":3,"file":"declFileImportModuleWithExportAssignment_0.js","sources":["declFileImportModuleWithExportAssignment_0.ts"],"names":[],"mappings":""}
+////[bin/declFileImportModuleWithExportAssignment_0.js]
+//@ sourceMappingURL=declFileImportModuleWithExportAssignment_0.js.map
+
+////[bin/declFileImportModuleWithExportAssignment_1.js.map]
+{"version":3,"file":"declFileImportModuleWithExportAssignment_1.js","sources":["declFileImportModuleWithExportAssignment_1.ts"],"names":[],"mappings":""}
+////[bin/declFileImportModuleWithExportAssignment_1.js]
+//@ sourceMappingURL=declFileImportModuleWithExportAssignment_1.js.map
+
 ////[bin/deprecatedBool_0.js.map]
 {"version":3,"file":"deprecatedBool_0.js","sources":["deprecatedBool_0.ts"],"names":[],"mappings":""}
 ////[bin/deprecatedBool_0.js]

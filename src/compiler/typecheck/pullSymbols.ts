@@ -109,6 +109,10 @@ module TypeScript {
         }
 
         public getAliasedSymbol(scopeSymbol: PullSymbol) {
+            if (!scopeSymbol) {
+                return null;
+            }
+
             var scopePath = scopeSymbol.pathToRoot();
             if (scopePath.length && scopePath[scopePath.length - 1].getKind() === PullElementKind.DynamicModule) {
                 var decls = scopePath[scopePath.length - 1].getDeclarations();
@@ -123,21 +127,18 @@ module TypeScript {
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            if (scopeSymbol && this.getKind() === PullElementKind.DynamicModule) {
-                var symbol = this.getAliasedSymbol(scopeSymbol);
-                if (symbol) {
-                    return symbol.getName();
-                }
+            var symbol = this.getAliasedSymbol(scopeSymbol);
+            if (symbol) {
+                return symbol.getName();
             }
+            
             return this.name;
         }
 
         public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
-                var symbol = this.getAliasedSymbol(scopeSymbol);
-                if (symbol) {
-                    return symbol.getDisplayName();
-                }
+            var symbol = this.getAliasedSymbol(scopeSymbol);
+            if (symbol) {
+                return symbol.getDisplayName();
             }
 
             // Get the actual name associated with a declaration for this symbol
@@ -472,61 +473,72 @@ module TypeScript {
             return str;
         }
 
-        private getPrettyNameInScope(scopeSymbol?: PullSymbol) {
-            var scopedName = this.getDisplayName(scopeSymbol);
-            if (this.getKind() === PullElementKind.DynamicModule) {
-                if (!isQuoted(scopedName) && scopedName === this.getDisplayName()) {
-                    return "";
-                }
-            }
-
-            return scopedName;
-        }
-
-        public getNamePartForFullName(scopeSymbol: PullSymbol) {
-            if (this.getKind() === PullElementKind.DynamicModule) {
-                return this.getPrettyNameInScope(scopeSymbol);
-            } else {
-                return this.getDisplayName(scopeSymbol, true);
-            }
+        public getNamePartForFullName() {
+            return this.getDisplayName(null, true);
         }
 
         public fullName(scopeSymbol?: PullSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
-            for (var i = 1; i < path.length; i++) {
-                var scopedName = path[i].getNamePartForFullName(scopeSymbol);
-                if (!scopedName) {
-                    // Same file as dynamic module - do not include this name
-                    break;
-                }
-
-                if (scopedName === "") {
-                    // If the item does not have a name, stop enumarting them, e.g. Object literal
-                    break;
-                }
-
-                fullName = scopedName + "." + fullName;
+            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            if (aliasedSymbol) {
+                return aliasedSymbol.getDisplayName();
             }
 
-            fullName = fullName + this.getNamePartForFullName(scopeSymbol);
+            for (var i = 1; i < path.length; i++) {
+                aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                if (aliasedSymbol) {
+                    // Aliased name found
+                    fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                    break;
+                } else {
+                    var scopedName = path[i].getNamePartForFullName();
+                    if (path[i].getKind() == PullElementKind.DynamicModule && !isQuoted(scopedName)) {
+                        // Same file as dynamic module - do not include this name
+                        break;
+                    }
+
+                    if (scopedName === "") {
+                        // If the item does not have a name, stop enumarting them, e.g. Object literal
+                        break;
+                    }
+
+                    fullName = scopedName + "." + fullName;
+                }
+            }
+
+            fullName = fullName + this.getNamePartForFullName();
             return fullName;
         }
 
         public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
+            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            if (aliasedSymbol) {
+                return aliasedSymbol.getDisplayName();
+            }
+
             for (var i = 1; i < path.length; i++) {
                 var kind = path[i].getKind();
-                if (kind === PullElementKind.Container) {
-                    fullName = path[i].getDisplayName() + "." + fullName;
-                } else if (kind === PullElementKind.DynamicModule) {
-                    var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
-                    if (scopedName) {
-                        fullName = scopedName + "." + fullName;
+                if (kind === PullElementKind.Container || kind === PullElementKind.DynamicModule) {
+                    aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                    if (aliasedSymbol) {
+                        // Aliased name
+                        fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                        break;
+                    } else if (kind === PullElementKind.Container) {
+                        fullName = path[i].getDisplayName() + "." + fullName;
+                    } else {
+                        // Dynamic module 
+                        var displayName = path[i].getDisplayName();
+                        if (isQuoted(displayName)) {
+                            fullName = displayName + "." + fullName;
+                        }
+                        break;
                     }
-                    break;
                 } else {
+                    // Any other type of container is not part of the name
                     break;
                 }
             }
@@ -2047,8 +2059,8 @@ module TypeScript {
             super.invalidate();
         }
 
-        public getNamePartForFullName(scopeSymbol: PullSymbol) {
-            var name = super.getNamePartForFullName(scopeSymbol);
+        public getNamePartForFullName() {
+            var name = super.getNamePartForFullName();
 
             var typars = this.getTypeArguments();
             if (!typars || !typars.length) {
