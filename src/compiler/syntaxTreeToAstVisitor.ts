@@ -186,8 +186,15 @@ module TypeScript {
             return this.convertTokenLeadingComments(node.firstToken(), nodeStart);
         }
 
-        private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[] {
-            return this.convertTokenTrailingComments(node.lastToken(), nodeStart + node.leadingTriviaWidth() + node.width());
+        private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[]{
+            var lastToken = node.lastToken();
+
+            // Bail out quickly before doing any expensive math computation.
+            if (lastToken === null || !lastToken.hasTrailingComment() || lastToken.hasTrailingNewLine()) {
+                return null;
+            }
+
+            return this.convertComments(lastToken.trailingTrivia(), nodeStart + node.fullWidth() - lastToken.trailingTriviaWidth());
         }
 
         public visitToken(token: ISyntaxToken): AST {
