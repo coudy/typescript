@@ -8,7 +8,12 @@
 ///<reference path='languageVersion.ts' />
 ///<reference path='parseOptions.ts' />
 ///<reference path='positionedElement.ts' />
+
+// Scanner depends on SyntaxKind and SyntaxFacts
+///<reference path='syntaxKind.ts' />
+///<reference path='syntaxFacts.ts' />
 ///<reference path='scanner.ts' />
+
 ///<reference path='scannerUtilities.generated.ts' />
 ///<reference path='separatedSyntaxList.ts' />
 ///<reference path='slidingWindow.ts' />
@@ -17,9 +22,7 @@
 ///<reference path='syntaxDiagnostic.ts' />
 ///<reference path='syntaxElement.ts' />
 ///<reference path='syntaxFactory.generated.ts' />
-///<reference path='syntaxFacts.ts' />
 ///<reference path='syntaxFacts2.ts' />
-///<reference path='syntaxKind.ts' />
 ///<reference path='syntaxList.ts' />
 ///<reference path='syntaxNode.ts' />
 ///<reference path='syntaxNodeOrToken.ts' />
