@@ -23,11 +23,17 @@
             var start = new Date().getTime();
             for (var i = 0; i < repeat; i++) {
                 f();
+
+                // If we're repeating multiple times, then ignore the first run so we don't count 
+                // the time taken to JIT.
+                if (repeat > 1 && i === 0) {
+                    start = new Date().getTime();
+                }
             }
 
             var end = new Date().getTime();
             if (repeat > 1) {
-                appendTime("Average", (end - start) / repeat);
+                appendTime("Average", (end - start) / (repeat - 1));
             }
         }
 
@@ -63,7 +69,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings(), false);
+                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings());
 
                 var end = new Date().getTime();
                 appendTime("Fake AST", end - start);

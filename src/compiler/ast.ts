@@ -208,7 +208,7 @@ module TypeScript {
     }
 
     export class Identifier extends AST {
-        public text: string = null;
+        private _text: string;
 
         // 'actualText' is the text that the user has entered for the identifier. the text might 
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
@@ -218,22 +218,21 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        // 
-        // Note: 
-        //    To change text, and to avoid running into a situation where 'actualText' does not 
-        //    match 'text', always use setText.
-        constructor(public actualText: string) {
+        constructor(public actualText: string, text: string) {
             super();
-            this.setText(actualText);
+            this._text = text;
+        }
+
+        public text(): string {
+            if (!this._text) {
+                this._text = Syntax.massageEscapes(this.actualText);
+            }
+
+            return this._text;
         }
 
         public nodeType(): NodeType {
             return NodeType.Name;
-        }
-
-        public setText(actualText: string) {
-            this.actualText = actualText;
-            this.text = actualText;
         }
 
         public isMissing() { return false; }
@@ -244,7 +243,6 @@ module TypeScript {
 
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.text === ast.text &&
                    this.actualText === ast.actualText &&
                    this.isMissing() === ast.isMissing();
         }
@@ -252,7 +250,7 @@ module TypeScript {
 
     export class MissingIdentifier extends Identifier {
         constructor() {
-            super("__missing");
+            super("__missing", "__missing");
         }
 
         public isMissing() {
@@ -627,9 +625,16 @@ module TypeScript {
     }
 
     export class NumberLiteral extends AST {
+        private _text: string;
+
         constructor(public value: number,
-                    public text: string) {
+                    text: string) {
             super();
+            this._text = text;
+        }
+
+        public text(): string {
+            return this._text;
         }
 
         public nodeType(): NodeType {
@@ -637,13 +642,13 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this.text);
+            emitter.writeToOutput(this._text);
         }
 
         public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.value === ast.value &&
-                   this.text === ast.text;
+                   this._text === ast._text;
         }
     }
 
@@ -667,8 +672,15 @@ module TypeScript {
     }
 
     export class StringLiteral extends AST {
-        constructor(public actualText: string, public text: string) {
+        private _text: string;
+
+        constructor(public actualText: string, text: string) {
             super();
+            this._text = text;
+        }
+
+        public text(): string {
+            return this._text;
         }
 
         public nodeType(): NodeType {

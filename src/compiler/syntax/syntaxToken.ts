@@ -215,7 +215,7 @@ module TypeScript.Syntax {
         return result
     }
 
-    function massageEscapes(text: string): string {
+    export function massageEscapes(text: string): string {
         return text.indexOf("\\") >= 0 ? convertEscapes(text) : text;
     }
 

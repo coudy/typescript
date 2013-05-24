@@ -1385,7 +1385,7 @@ module TypeScript {
             var moduleDecl = typeCheckContext.semanticInfo.getDeclForAST(moduleDeclAST);
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
-            var modName = (<Identifier>moduleDeclAST.name).text;
+            var modName = (<Identifier>moduleDeclAST.name).text();
             var isDynamic = isQuoted(modName) || hasFlag(moduleDeclAST.getModuleFlags(), ModuleFlags.IsDynamic);
 
             // Resolve the export assignment first to make sure 
@@ -1505,10 +1505,10 @@ module TypeScript {
                     if (contextualType) {
                         var text: string;
                         if (binex.operand1.nodeType() === NodeType.Name) {
-                            text = (<Identifier>binex.operand1).text;
+                            text = (<Identifier>binex.operand1).text();
                         }
                         else if (binex.operand1.nodeType() === NodeType.StringLiteral) {
-                            text = (<StringLiteral>binex.operand1).text;
+                            text = (<StringLiteral>binex.operand1).text();
                         }
 
                         member = contextualType.findMember(text);

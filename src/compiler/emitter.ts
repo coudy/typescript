@@ -718,9 +718,10 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
             this.pushDecl(pullDecl);
 
-            var modName = moduleDecl.name.actualText;
-            if (isTSFile(modName)) {
-                moduleDecl.name.setText(modName.substring(0, modName.length - 3));
+            var svModuleName = this.moduleName;
+            this.moduleName = moduleDecl.name.actualText;
+            if (isTSFile(this.moduleName )) {
+                this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
             }
 
             var isDynamicMod = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
@@ -731,10 +732,8 @@ module TypeScript {
             var prevColumn = this.emitState.column;
             var prevLine = this.emitState.line;
             var temp = this.setContainer(EmitContainer.Module);
-            var svModuleName = this.moduleName;
             var isExported = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported);
             var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
-            this.moduleName = moduleDecl.name.actualText;
 
             // prologue
             if (isDynamicMod) {
@@ -899,11 +898,11 @@ module TypeScript {
             this.writeToOutput('[');
             this.writeToOutput(this.moduleName);
             this.writeToOutput('["');
-            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput(varDecl.id.text());
             this.writeToOutput('"] = ');
             varDecl.init.emit(this);
             this.writeToOutput('] = "');
-            this.writeToOutput(varDecl.id.text);
+            this.writeToOutput(varDecl.id.text());
             this.writeToOutput('";');
         }
 

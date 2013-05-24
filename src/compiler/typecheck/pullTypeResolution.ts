@@ -1217,7 +1217,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
-            var aliasName = importStatementAST.id.text;
+            var aliasName = importStatementAST.id.text();
             var aliasedType: PullTypeSymbol = null;
 
             if (importDeclSymbol.isResolved()) {
@@ -1279,7 +1279,7 @@ module TypeScript {
         public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
 
             // get the identifier text
-            var id = exportAssignmentAST.id.text;
+            var id = exportAssignmentAST.id.text();
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
             var containerSymbol: PullSymbol = null;
@@ -2635,7 +2635,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
-            var id = nameAST.text;
+            var id = nameAST.text();
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
@@ -2709,7 +2709,7 @@ module TypeScript {
         }
 
         public isPrototypeMember(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
-            var rhsName = (<Identifier>dottedNameAST.operand2).text;
+            var rhsName = (<Identifier>dottedNameAST.operand2).text();
             if (rhsName === "prototype") {
                 var prevCanUseTypeSymbol = context.canUseTypeSymbol;
                 context.canUseTypeSymbol = true;
@@ -2739,7 +2739,7 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).text;
+            var rhsName = (<Identifier>dottedNameAST.operand2).text();
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
             context.canUseTypeSymbol = true;
             var lhs = this.resolveAST(dottedNameAST.operand1, /*inContextuallyTypedAssignment*/false, enclosingDecl, context).symbol;
@@ -2912,7 +2912,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
-            var id = nameAST.text;
+            var id = nameAST.text();
 
             // if it's a known primitive name, cheat
             if (id === "any") {
@@ -3120,7 +3120,7 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).text;
+            var rhsName = (<Identifier>dottedNameAST.operand2).text();
 
             // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
             // gotten into this code path if it was already set.
@@ -3491,11 +3491,11 @@ module TypeScript {
 
                     if (id.nodeType() === NodeType.Name) {
                         actualText = (<Identifier>id).actualText;
-                        text = (<Identifier>id).text;
+                        text = (<Identifier>id).text();
                     }
                     else if (id.nodeType() === NodeType.StringLiteral) {
                         actualText = (<StringLiteral>id).actualText;
-                        text = (<StringLiteral>id).text;
+                        text = (<StringLiteral>id).text();
                     }
                     else {
                         // TODO: no error for this?  What if it's a numeric literal?
