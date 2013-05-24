@@ -2610,14 +2610,21 @@ module TypeScript {
 
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var nameSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(nameAST);
-            if (!nameSymbolAndDiagnostics) {
+            var foundCached = nameSymbolAndDiagnostics != null;
+
+            if (!foundCached) {
                 nameSymbolAndDiagnostics = this.computeNameExpression(nameAST, enclosingDecl, context);
-                this.setSymbolAndDiagnosticsForAST(nameAST, nameSymbolAndDiagnostics, context);
             }
 
             var nameSymbol = nameSymbolAndDiagnostics.symbol;
             if (!nameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+            }
+
+            // We don't want to cache symbols of type 'any', in case we need to contextually
+            // type the symbols again later on
+            if (!foundCached && !this.isAnyOrEquivalent(nameSymbol.getType())) {
+                this.setSymbolAndDiagnosticsForAST(nameAST, nameSymbolAndDiagnostics, context);
             }
 
             return nameSymbolAndDiagnostics;
@@ -2677,19 +2684,25 @@ module TypeScript {
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(dottedNameAST);
-            if (!symbolAndDiagnostics) {
-                symbolAndDiagnostics = this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context);
+            var foundCached = symbolAndDiagnostics != null;
 
-                // Associate the result with both the dotted expres ion and the name on t e right.
-                // TODO(cyrusn): We should not be associating the result with anything but the node
-                // passed in.  A higher layer should be responsible for mapping between nodes.
-                this.setSymbolAndDiagnosticsForAST(dottedNameAST, symbolAndDiagnostics, context);
-                this.setSymbolAndDiagnosticsForAST(dottedNameAST.operand2, symbolAndDiagnostics, context);
+            if (!foundCached) {
+                symbolAndDiagnostics = this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context);
             }
 
             var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
             if (symbol && !symbol.isResolved()) {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
+            }
+
+            // Associate the result with both the dotted expression and the name on the right.
+            // TODO(cyrusn): We should not be associating the result with anything but the node
+            // passed in.  A higher layer should be responsible for mapping between nodes.
+            // Also, we don't want to cache symbols of type 'any', in case we need to contextually
+            // type the symbols again later on
+            if (!foundCached && !this.isAnyOrEquivalent(symbol.getType())) {
+                this.setSymbolAndDiagnosticsForAST(dottedNameAST, symbolAndDiagnostics, context);
+                this.setSymbolAndDiagnosticsForAST(dottedNameAST.operand2, symbolAndDiagnostics, context);
             }
 
             return symbolAndDiagnostics;
