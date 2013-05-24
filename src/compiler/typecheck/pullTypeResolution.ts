@@ -2880,7 +2880,13 @@ module TypeScript {
             }
 
             if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)) {
-                typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
+                var substitution = context.findSpecializationForType(typeNameSymbol);
+
+                if (typeNameSymbol.isTypeParameter() && (substitution != typeNameSymbol)) {
+                    if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeNameSymbol)) {//(<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() || !(substitution.isTypeParameter() && (<PullTypeParameterSymbol>substitution).isFunctionTypeParameter())) {
+                        typeNameSymbol = substitution;
+                    }
+                }
 
                 if (typeNameSymbol != typeNameSymbolAndDiagnostics.symbol) {
                     return SymbolAndDiagnostics.fromSymbol(typeNameSymbol);
@@ -6540,6 +6546,9 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
+                if (expressionType.isGeneric() && !expressionType.isFixed()) {
+                    expressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
+                }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }

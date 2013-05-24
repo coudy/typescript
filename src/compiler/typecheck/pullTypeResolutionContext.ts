@@ -99,6 +99,7 @@ module TypeScript {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
 
                 if (!info.inferenceCandidates.length) {
+                    results[results.length] = { param: info.typeParameter, type: resolver.semanticInfoChain.anyTypeSymbol };
                     continue;
                 }
 
