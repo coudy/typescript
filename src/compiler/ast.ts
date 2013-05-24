@@ -161,7 +161,7 @@ module TypeScript {
             if (!this._docComments) {
                 var preComments = this.preComments();
                 var preCommentsLength = preComments.length;
-                var docComments: Comment[] = [];
+                var docComments = new Array<Comment>();
                 for (var i = preCommentsLength - 1; i >= 0; i--) {
                     if (preComments[i].isDocComment()) {
                         var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
@@ -947,7 +947,7 @@ module TypeScript {
 
     export class Script extends AST {
         public moduleElements: ASTList = null;
-        public referencedFiles: IFileReference[] = [];
+        public referencedFiles = new Array<IFileReference>();
         public requiresExtendsBlock = false;
         public isDeclareFile = false;
         public topLevelMod: ModuleDeclaration = null;
@@ -974,7 +974,7 @@ module TypeScript {
     export class ModuleDeclaration extends AST {
         private _moduleFlags = ModuleFlags.None;
         public prettyName: string;
-        public amdDependencies: string[] = [];
+        public amdDependencies = new Array<string>();
         // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
@@ -1944,7 +1944,7 @@ module TypeScript {
 
         static cleanJSDocComment(content: string, spacesToRemove?: number) {
 
-            var docCommentLines: string[] = [];
+            var docCommentLines = new Array<string>();
             content = content.replace("/**", ""); // remove /**
             if (content.length >= 2 && content.charAt(content.length - 1) === "/" && content.charAt(content.length - 2) === "*") {
                 content = content.substring(0, content.length - 2); // remove last */
@@ -2004,7 +2004,7 @@ module TypeScript {
         }
 
         static getDocCommentText(comments: Comment[]) {
-            var docCommentText: string[] = [];
+            var docCommentText = new Array<string>();
             for (var c = 0 ; c < comments.length; c++) {
                 var commentText = comments[c].getDocCommentTextValue();
                 if (commentText !== "") {

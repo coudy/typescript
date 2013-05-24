@@ -140,7 +140,7 @@ module TypeScript {
 
         private scanTrivia(isTrailing: boolean): ISyntaxTriviaList {
             // Keep this exactly in sync with scanTriviaInfo
-            var trivia: ISyntaxTrivia[] = [];
+            var trivia = new Array<ISyntaxTrivia>();
 
             while (true) {
                 if (!this.slidingWindow.isAtEndOfSource()) {
@@ -1216,7 +1216,7 @@ module TypeScript {
 
         public static isValidIdentifier(text: ISimpleText, languageVersion: LanguageVersion): boolean {
             var scanner = new Scanner(/*fileName:*/ null, text, LanguageVersion, Scanner.triviaWindow);
-            var errors: Diagnostic[] = [];
+            var errors = new Array<Diagnostic>();
             var token = scanner.scan(errors, false);
 
             return errors.length === 0 && SyntaxFacts.isIdentifierNameOrAnyKeyword(token) && token.width() === text.length();

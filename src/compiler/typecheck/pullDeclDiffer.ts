@@ -17,7 +17,7 @@ module TypeScript {
     }
 
     export class PullDeclDiffer {
-        private differences: PullDeclDiff[] = [];
+        private differences = new Array<PullDeclDiff>();
 
         constructor(private oldSemanticInfo: SemanticInfo,
                     private newSemanticInfo: SemanticInfo) {
@@ -59,7 +59,7 @@ module TypeScript {
             }
         }
 
-        private static emptyDeclArray: PullDecl[] = [];
+        private static emptyDeclArray = new Array<PullDecl>();
 
         private diff1(oldDecl: PullDecl,
                       newDecl: PullDecl,

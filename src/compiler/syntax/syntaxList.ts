@@ -252,7 +252,7 @@ module TypeScript.Syntax {
         }
 
         public fullText(): string {
-            var elements: string[] = [];
+            var elements = new Array<string>();
             this.collectTextElements(elements);
             return elements.join("");
         }

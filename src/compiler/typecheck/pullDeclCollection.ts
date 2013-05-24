@@ -5,7 +5,7 @@
 
 module TypeScript {
     export class DeclCollectionContext {
-        public parentChain: PullDecl[] = [];
+        public parentChain = new Array<PullDecl>();
 
         constructor(public semanticInfo: SemanticInfo, public scriptName = "") {
         }

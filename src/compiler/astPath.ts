@@ -29,7 +29,7 @@ module TypeScript {
     // This is helpful as our tree don't have parents.
     //
     export class AstPath {
-        public asts: AST[] = [];
+        public asts = new Array<AST>();
         public top: number = -1;
 
         static reverseIndexOf(items: any[], index: number): any {

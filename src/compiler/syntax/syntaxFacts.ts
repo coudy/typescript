@@ -111,7 +111,7 @@ module TypeScript.SyntaxFacts {
         "/=": SyntaxKind.SlashEqualsToken,
     };
 
-    var kindToText: string[] = [];
+    var kindToText = new Array<string>();
 
     for (var name in textToKeywordKind) {
         if (textToKeywordKind.hasOwnProperty(name)) {
