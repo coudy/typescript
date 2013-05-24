@@ -29,7 +29,9 @@ module TypeScript {
 
         private declSymbolMap: DataMap = new DataMap();
 
-        private astSymbolMap: DataMap = new DataMap();
+        private astSymbolMap: Collections.HashTable<number, SymbolAndDiagnostics<any>> =
+            Collections.createHashTable<number, SymbolAndDiagnostics<any>>(Collections.DefaultHashTableCapacity, k => k);
+
         private symbolASTMap: DataMap = new DataMap();
 
         private syntaxElementSymbolMap: DataMap = new DataMap();
@@ -92,12 +94,12 @@ module TypeScript {
         }
 
         public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
-            this.astSymbolMap.link(ast.getID().toString(), symbolAndDiagnostics);
+            this.astSymbolMap.set(ast.getID(), <SymbolAndDiagnostics<any>>symbolAndDiagnostics);
             this.symbolASTMap.link(symbolAndDiagnostics.symbol.getSymbolID().toString(), ast)
         }
 
         public getSymbolAndDiagnosticsForAST(ast: IAST): SymbolAndDiagnostics<PullSymbol> {
-            return <SymbolAndDiagnostics>this.astSymbolMap.read(ast.getID().toString());
+            return <SymbolAndDiagnostics<PullSymbol>>this.astSymbolMap.get(ast.getID());
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
