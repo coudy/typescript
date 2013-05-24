@@ -811,7 +811,6 @@ module TypeScript {
                             CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
                             // Create new file
                             var declareFileName = this.emitOptions.mapOutputFileName(this.fileName, TypeScriptCompiler.mapToDTSFileName);
-                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
 
                             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
                             this.declFile = new TextWriter(this.emitOptions.ioHost, declareFileName, this.writeByteOrderMark);

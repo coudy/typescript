@@ -216,7 +216,7 @@ module TypeScript {
     }
 
     export class Identifier extends AST {
-        public text: string;
+        public text: string = null;
 
         // 'actualText' is the text that the user has entered for the identifier. the text might 
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
@@ -357,9 +357,7 @@ module TypeScript {
     }
 
     export class UnaryExpression extends AST {
-        public castTerm: TypeReference = null;
-
-        constructor(private _nodeType: NodeType, public operand: AST) {
+        constructor(private _nodeType: NodeType, public operand: AST, public castTerm: TypeReference) {
             super();
         }
 
@@ -448,20 +446,11 @@ module TypeScript {
     }
 
     export class ObjectCreationExpression extends AST implements ICallExpression {
-        public arguments: ASTList;
-        public closeParenSpan: ASTSpan;
-
         constructor(public target: AST,
-            public typeArguments: ASTList,
-            arguments: { argumentList: ASTList; closeParenSpan: ASTSpan; }) {
+                    public typeArguments: ASTList,
+                    public arguments: ASTList,
+                    public closeParenSpan: ASTSpan) {
             super();
-            if (arguments) {
-                this.arguments = arguments.argumentList;
-                this.closeParenSpan = arguments.closeParenSpan;
-            } else {
-                this.arguments = null;
-                this.closeParenSpan = null;
-            }
         }
 
         public nodeType(): NodeType {
@@ -481,20 +470,11 @@ module TypeScript {
     }
 
     export class InvocationExpression extends AST implements ICallExpression {
-        public arguments: ASTList;
-        public closeParenSpan: ASTSpan;
-
         constructor(public target: AST,
-            public typeArguments: ASTList,
-            arguments: { argumentList: ASTList; closeParenSpan: ASTSpan; }) {
+                    public typeArguments: ASTList,
+                    public arguments: ASTList,
+                    public closeParenSpan: ASTSpan) {
             super();
-            if (arguments) {
-                this.arguments = arguments.argumentList;
-                this.closeParenSpan = arguments.closeParenSpan;
-            } else {
-                this.arguments = null;
-                this.closeParenSpan = null;
-            }
         }
 
         public nodeType(): NodeType {
@@ -798,14 +778,13 @@ module TypeScript {
     }
 
     export class BoundDecl extends AST {
-        public init: AST = null;
-        public typeExpr: AST = null;
         private _varFlags = VariableFlags.None;
-        public isDeclaration() { return true; }
 
-        constructor(public id: Identifier) {
+        constructor(public id: Identifier, public typeExpr: AST, public init: AST) {
             super();
         }
+
+        public isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {
             return this._varFlags;
@@ -828,8 +807,8 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends BoundDecl {
-        constructor(id: Identifier) {
-            super(id);
+        constructor(id: Identifier, typeExpr: AST, init: AST) {
+            super(id, typeExpr, init);
         }
 
         public nodeType(): NodeType {
@@ -846,15 +825,13 @@ module TypeScript {
     }
 
     export class Parameter extends BoundDecl {
-        constructor(id: Identifier) {
-            super(id);
+        constructor(id: Identifier, typeExpr: AST, init: AST, public isOptional: boolean) {
+            super(id, typeExpr, init);
         }
 
         public nodeType(): NodeType {
             return NodeType.Parameter;
         }
-
-        public isOptional = false;
 
         public isOptionalArg() { return this.isOptional || this.init; }
 
@@ -871,20 +848,21 @@ module TypeScript {
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
-        public returnTypeAnnotation: AST = null;
-        public variableArgList = false;
         public classDecl: ClassDeclaration = null;
 
         public returnStatementsWithExpressions: ReturnStatement[];
-        public isDeclaration() { return true; }
 
         constructor(public name: Identifier,
                     public block: Block,
                     public isConstructor: boolean,
                     public typeArguments: ASTList,
-                    public arguments: ASTList) {
+                    public arguments: ASTList,
+                    public returnTypeAnnotation: AST,
+                    public variableArgList: boolean) {
             super();
         }
+
+        public isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.FunctionDeclaration;
@@ -951,9 +929,6 @@ module TypeScript {
         public requiresExtendsBlock = false;
         public isDeclareFile = false;
         public topLevelMod: ModuleDeclaration = null;
-        // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
-        public containsUnicodeChar = false;
-        public containsUnicodeCharInComment = false;
 
         public nodeType(): NodeType {
             return NodeType.Script;
@@ -975,9 +950,6 @@ module TypeScript {
         private _moduleFlags = ModuleFlags.None;
         public prettyName: string;
         public amdDependencies = new Array<string>();
-        // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
-        public containsUnicodeChar = false;
-        public containsUnicodeCharInComment = false;
 
         constructor(public name: Identifier,
                     public members: ASTList,
@@ -1089,13 +1061,13 @@ module TypeScript {
 
     export class ClassDeclaration extends TypeDeclaration {
         public constructorDecl: FunctionDeclaration = null;
-        public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,
                     typeParameters: ASTList,
                     members: ASTList,
                     extendsList: ASTList,
-                    implementsList: ASTList) {
+                    implementsList: ASTList,
+                    public endingToken: ASTSpan) {
             super(name, typeParameters, extendsList, implementsList, members);
         }
 
@@ -1266,9 +1238,7 @@ module TypeScript {
     }
 
     export class Block extends AST {
-        public closeBraceSpan: IASTSpan = null;
-
-        constructor(public statements: ASTList) {
+        constructor(public statements: ASTList, public closeBraceSpan: IASTSpan) {
             super();
         }
 
@@ -1298,11 +1268,7 @@ module TypeScript {
     }
 
     export class Jump extends AST {
-        public target: string = null;
-        public hasExplicitTarget() { return (this.target); }
-        public resolvedTarget: AST = null;
-
-        constructor(private _nodeType: NodeType) {
+        constructor(private _nodeType: NodeType, public target: string) {
             super();
         }
 
@@ -1313,6 +1279,8 @@ module TypeScript {
         public isStatement() {
             return true;
         }
+        
+        public hasExplicitTarget() { return this.target; }
 
         public emitWorker(emitter: Emitter) {
             if (this.nodeType() === NodeType.BreakStatement) {
@@ -1361,9 +1329,7 @@ module TypeScript {
     }
 
     export class DoStatement extends AST {
-        public whileSpan: ASTSpan = null;
-
-        constructor(public body: AST, public cond: AST) {
+        constructor(public body: AST, public cond: AST, public whileSpan: ASTSpan) {
             super();
         }
 
@@ -1395,8 +1361,6 @@ module TypeScript {
     }
 
     export class IfStatement extends AST {
-        public statement: ASTSpan = new ASTSpan();
-
         constructor(public cond: AST,
                     public thenBod: AST,
                     public elseBod: AST) {
@@ -1412,11 +1376,9 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("if (");
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
-            emitter.recordSourceMappingEnd(this.statement);
 
             emitter.emitBlockOrStatement(this.thenBod);
 
@@ -1471,8 +1433,6 @@ module TypeScript {
     }
 
     export class ForInStatement extends AST {
-        public statement: ASTSpan = new ASTSpan();
-
         constructor(public lval: AST, public obj: AST, public body: AST) {
             super();
         }
@@ -1486,13 +1446,11 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("for (");
             this.lval.emit(emitter);
             emitter.writeToOutput(" in ");
             this.obj.emit(emitter);
             emitter.writeToOutput(")");
-            emitter.recordSourceMappingEnd(this.statement);
             emitter.emitBlockOrStatement(this.body);
         }
 
@@ -1580,11 +1538,7 @@ module TypeScript {
     }
 
     export class SwitchStatement extends AST {
-        public caseList: ASTList;
-        public defaultCase: CaseClause = null;
-        public statement: ASTSpan = new ASTSpan();
-
-        constructor(public val: AST) {
+        constructor(public val: AST, public caseList: ASTList, public defaultCase: CaseClause, public statement: ASTSpan) {
             super();
         }
 
@@ -1627,9 +1581,9 @@ module TypeScript {
     }
 
     export class CaseClause extends AST {
-        public expr: AST = null;
-        public body: ASTList;
-        public colonSpan: ASTSpan = new ASTSpan();
+        constructor(public expr: AST, public body: ASTList) {
+            super();
+        }
 
         public nodeType(): NodeType {
             return NodeType.CaseClause;
@@ -1643,9 +1597,7 @@ module TypeScript {
             else {
                 emitter.writeToOutput("default");
             }
-            emitter.recordSourceMappingStart(this.colonSpan);
             emitter.writeToOutput(":");
-            emitter.recordSourceMappingEnd(this.colonSpan);
 
             if (this.body.members.length === 1 && this.body.members[0].nodeType() === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
@@ -1765,15 +1717,11 @@ module TypeScript {
             return NodeType.CatchClause;
         }
 
-        public statement: ASTSpan = new ASTSpan();
-
         public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(" ");
-            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("catch (");
             this.param.id.emit(emitter);
             emitter.writeToOutput(")");
-            emitter.recordSourceMappingEnd(this.statement);
             this.body.emit(emitter);
         }
 
