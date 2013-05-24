@@ -63,7 +63,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings(), false);
+                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings());
 
                 var end = new Date().getTime();
                 appendTime("Fake AST", end - start);
