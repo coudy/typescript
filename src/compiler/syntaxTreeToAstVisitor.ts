@@ -39,6 +39,14 @@ module TypeScript {
             }
         }
 
+        private setCommentsAndSpan(ast: AST, fullStart: number, node: SyntaxNode): void {
+            var firstToken = node.firstToken();
+
+            this.setSpan(ast, fullStart, node, firstToken);
+            ast.setPreComments(this.convertTokenLeadingComments(firstToken, fullStart));
+            ast.setPostComments(this.convertNodeTrailingComments(node, node.lastToken(), fullStart));
+        }
+
         public setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement, firstToken: ISyntaxToken): void {
             var leadingTriviaWidth = firstToken ? firstToken.leadingTriviaWidth() : 0;
             var trailingTriviaWidth = element.trailingTriviaWidth();
@@ -370,9 +378,6 @@ module TypeScript {
         public visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
@@ -399,9 +404,7 @@ module TypeScript {
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken, node.closeBraceToken);
 
             var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList, closeBraceSpan);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             for (var i = 0; i < members.members.length; i++) {
                 var member = members.members[i];
@@ -418,7 +421,6 @@ module TypeScript {
 
             this.completeClassDeclaration(node, result);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -446,9 +448,6 @@ module TypeScript {
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.body.closeBraceToken, start);
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
@@ -472,13 +471,10 @@ module TypeScript {
             this.movePast(node.body.closeBraceToken);
 
             var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null, /*isObjectTypeLiteral:*/ false);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             this.completeInterfaceDeclaration(node, result);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -624,10 +620,6 @@ module TypeScript {
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
-
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
 
@@ -645,9 +637,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
@@ -655,7 +645,6 @@ module TypeScript {
 
             this.completeFunctionDeclaration(node, result);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -680,10 +669,6 @@ module TypeScript {
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
 
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
@@ -779,21 +764,18 @@ module TypeScript {
             var closeBraceSpan = new ASTSpan();
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken, node.closeBraceToken);
 
-            var modDecl = new ModuleDeclaration(name, members, closeBraceSpan);
-            this.setSpan(modDecl, start, node, firstToken);
+            var result = new ModuleDeclaration(name, members, closeBraceSpan);
+            this.setCommentsAndSpan(result, start, node);
 
-            modDecl.setPreComments(preComments);
-            modDecl.setPostComments(postComments);
-
-            var flags = modDecl.getModuleFlags() | ModuleFlags.IsEnum;
+            var flags = result.getModuleFlags() | ModuleFlags.IsEnum;
 
             if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
                 flags = flags | ModuleFlags.Exported;
             }
             
-            modDecl.setModuleFlags(flags);
+            result.setModuleFlags(flags);
 
-            return modDecl;
+            return result;
         }
 
         public visitEnumElement(node: EnumElementSyntax): void {
@@ -804,10 +786,6 @@ module TypeScript {
         public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
-
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
@@ -816,12 +794,10 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new ImportDeclaration(name, alias);
+            this.setCommentsAndSpan(result, start, node);
 
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
             result.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -926,13 +902,13 @@ module TypeScript {
         }
 
         public visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
-            this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
+            var afterEqualsComments = this.convertTokenTrailingComments(node.equalsToken,
                 this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());
 
             this.movePast(node.equalsToken);
-            var result = node.value.accept(this);
+            var result: AST = node.value.accept(this);
+            result.setPreComments(this.mergeComments(afterEqualsComments, result.preComments()));
 
-            this.previousTokenTrailingComments = null;
             return result;
         }
 
@@ -1058,9 +1034,6 @@ module TypeScript {
         public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FunctionDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
@@ -1069,11 +1042,10 @@ module TypeScript {
             var block = this.getArrowFunctionStatements(node.body);
 
             var result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            this.setCommentsAndSpan(result, start, node);
 
-            result.setPreComments(preComments);
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1261,9 +1233,6 @@ module TypeScript {
         public visitParameter(node: ParameterSyntax): Parameter {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             this.moveTo(node, node.identifier);
             var identifier = this.identifierFromToken(node.identifier, !!node.questionToken);
             this.movePast(node.identifier);
@@ -1272,8 +1241,7 @@ module TypeScript {
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new Parameter(identifier, typeExpr, init, !!node.questionToken);
-
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (node.publicOrPrivateKeyword) {
                 if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
@@ -1288,7 +1256,6 @@ module TypeScript {
                 result.setFlags(result.getFlags() | ASTFlags.OptionalName);
             }
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1465,30 +1432,22 @@ module TypeScript {
         public visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             this.movePast(node.newKeyword);
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
             var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
-
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             result.hint = "_construct";
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.ConstructMember | FunctionFlags.Method | FunctionFlags.Signature);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
 
             var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
             this.movePast(node.propertyName);
@@ -1499,19 +1458,15 @@ module TypeScript {
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
             var result = new FunctionDeclaration(name, null, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            this.setCommentsAndSpan(result, start, node);
 
-            result.setPreComments(preComments);
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method | FunctionFlags.Signature);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
 
             this.movePast(node.openBracketToken);
 
@@ -1526,32 +1481,26 @@ module TypeScript {
             var parameters = new ASTList([parameter]);
 
             var result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters, returnType, false);
-
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IndexerMember | FunctionFlags.Method | FunctionFlags.Signature);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            
             var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var result = new VariableDeclarator(name, typeExpr, null);
+            this.setCommentsAndSpan(result, start, node);
 
-            result.setPreComments(preComments);
             result.setVarFlags(result.getVarFlags() | VariableFlags.Property);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1572,21 +1521,16 @@ module TypeScript {
         public visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
-
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             result.hint = "_call";
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.CallMember | FunctionFlags.Method | FunctionFlags.Signature);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1639,27 +1583,17 @@ module TypeScript {
         public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
-
             var expression = node.expression.accept(this);
             this.movePast(node.semicolonToken);
 
             var result = new ExpressionStatement(expression);
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.parameterList);
             var parameters = node.parameterList.accept(this);
@@ -1669,24 +1603,17 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, null, this.hasDotDotDotParameter(node.parameterList.parameters));
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
             }
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
@@ -1703,9 +1630,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
             if (node.semicolonToken) {
@@ -1726,15 +1651,11 @@ module TypeScript {
             flags = flags | FunctionFlags.Method;
             result.setFunctionFlags(flags);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
             var start = this.position;
-
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
@@ -1744,8 +1665,7 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
             var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
-
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Private);
@@ -1760,7 +1680,6 @@ module TypeScript {
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1785,10 +1704,6 @@ module TypeScript {
         public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
-
             this.moveTo(node, node.variableDeclarator);
             this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
 
@@ -1799,9 +1714,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new VariableDeclarator(name, typeExpr, init);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Static);
@@ -1816,7 +1729,6 @@ module TypeScript {
 
             result.setVarFlags(result.getVarFlags() | VariableFlags.ClassProperty);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -1836,19 +1748,13 @@ module TypeScript {
         public visitReturnStatement(node: ReturnStatementSyntax): ReturnStatement {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.semicolonToken, start);
-
             this.movePast(node.returnKeyword);
             var expression = node.expression ? node.expression.accept(this) : null;
             this.movePast(node.semicolonToken);
 
             var result = new ReturnStatement(expression);
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
+            this.setCommentsAndSpan(result, start, node);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -2053,9 +1959,6 @@ module TypeScript {
         public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
             this.movePast(node.openBraceToken);
 
@@ -2065,39 +1968,35 @@ module TypeScript {
             this.movePast(node.closeBraceToken);
 
             var result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments, null);
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (this.isOnSingleLine(openStart, closeStart)) {
                 result.setFlags(result.getFlags() | ASTFlags.SingleLine);
             }
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
         public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             var left = node.propertyName.accept(this);
 
-            this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+            var afterColonComments = this.convertTokenTrailingComments(
                 node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
 
             this.movePast(node.colonToken);
-            var right = node.expression.accept(this);
+            var right: AST = node.expression.accept(this);
+            right.setPreComments(this.mergeComments(afterColonComments, right.preComments()));
 
             var result = new BinaryExpression(NodeType.Member, left, right);
-            result.setPreComments(preComments);
+            this.setCommentsAndSpan(result, start, node);
 
             if (right.nodeType() === NodeType.FunctionDeclaration) {
                 var funcDecl = <FunctionDeclaration>right;
                 funcDecl.hint = left.text();
             }
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
@@ -2177,9 +2076,6 @@ module TypeScript {
         public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-
             this.movePast(node.functionKeyword);
             var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
@@ -2192,11 +2088,10 @@ module TypeScript {
             var block = node.block ? node.block.accept(this) : null;
 
             var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            this.setCommentsAndSpan(result, start, node);
 
-            result.setPreComments(preComments);
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
 
-            this.setSpan(result, start, node, firstToken);
             return result;
         }
 
