@@ -278,6 +278,9 @@ module Services {
                 resolvePath: (fileName: string) => fileName
             };
 
+            // Force a type check on the file before calling the emitter
+            this.compiler.getSemanticDiagnostics(fileName);
+
             // Call the emitter
             var diagnostics: TypeScript.IDiagnostic[];
 
