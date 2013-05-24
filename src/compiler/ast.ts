@@ -161,13 +161,8 @@ module TypeScript {
                 var docComments = new Array<Comment>();
                 for (var i = preCommentsLength - 1; i >= 0; i--) {
                     if (preComments[i].isDocComment()) {
-                        var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
-                        if (prevDocComment === null || // If the help comments were not yet set then this is the comment
-                            (preComments[i].limLine === prevDocComment.minLine ||
-                             preComments[i].limLine + 1 === prevDocComment.minLine)) { // On same line or next line
-                                 docComments.push(preComments[i]);
-                            continue;
-                        }
+                        docComments.push(preComments[i]);
+                        continue;
                     }
                     break;
                 }
@@ -1776,8 +1771,6 @@ module TypeScript {
 
     export class Comment extends AST {
         public text: string[] = null;
-        public minLine: number;
-        public limLine: number;
         private docCommentText: string = null;
 
         constructor(public content: string,
@@ -1792,7 +1785,6 @@ module TypeScript {
 
         public structuralEquals(ast: Comment, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.minLine === ast.minLine &&
                    this.content === ast.content &&
                    this.isBlockComment === ast.isBlockComment &&
                    this.endsLine === ast.endsLine;
