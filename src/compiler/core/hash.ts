@@ -27,7 +27,7 @@ module TypeScript {
                 // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
                 // V8 recognize this as not needing to go past the 53 bits needed for the float 
                 // mantissa.  Or'ing with 0 keeps this 32 bits.
-                hash = (((hash << 5) + hash) + ch) | 0;
+                hash = (((hash << 5) - hash) + ch) | 0;
             }
 
             // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
@@ -48,7 +48,7 @@ module TypeScript {
                 // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
                 // V8 recognize this as not needing to go past the 53 bits needed for the float 
                 // mantissa.  Or'ing with 0 keeps this 32 bits.
-                hash = (((hash << 5) + hash) + ch) | 0;
+                hash = (((hash << 5) - hash) + ch) | 0;
             }
 
             // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
