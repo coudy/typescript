@@ -70,6 +70,9 @@ module TypeScript {
 
         private astID: number;
 
+        // REVIEW: for diagnostic purposes
+        public passCreated: number = CompilerDiagnostics.analysisPass;
+
         private _preComments: Comment[];
         private _postComments: Comment[];
         private _docComments: Comment[];
