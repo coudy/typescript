@@ -29,8 +29,7 @@
 
 goTo.marker('1');
 // BUG: 702221
-//verify.quickInfoIs('number[]');
-verify.quickInfoIs('any[]');
+verify.quickInfoIs('number[]');
 goTo.marker('2');
 verify.quickInfoIs('string');
 
@@ -45,30 +44,18 @@ goTo.marker('6');
 verify.quickInfoIs('string');
 
 goTo.marker('7');
-// BUG: 702221
-//verify.quickInfoIs('number[]');
 verify.quickInfoIs('any[]');
 goTo.marker('8');
-// BUG: 702221
-//verify.quickInfoIs('string');
 verify.quickInfoIs('any');
 
 goTo.marker('9');
-// BUG: 702221
-//verify.quickInfoIs('number[]');
 verify.quickInfoIs('any[]');
 goTo.marker('10');
-// BUG: 702221
-//verify.quickInfoIs('string');
 verify.quickInfoIs('any');
 
 goTo.marker('11');
-// BUG: 702221
-//verify.quickInfoIs('number[]');
-verify.quickInfoIs('any');
+verify.quickInfoIs('any[]');
 goTo.marker('12');
-// BUG: 702221
-//verify.quickInfoIs('string');
 verify.quickInfoIs('any');
 
 goTo.marker('13');

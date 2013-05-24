@@ -2965,6 +2965,39 @@ module TypeScript {
 
     export var nSpecializationsCreated = 0;
 
+    export function shouldSpecializeTypeParameterForTypeParameter(specialization: PullTypeParameterSymbol, typeToSpecialize: PullTypeParameterSymbol) {
+        if (specialization == typeToSpecialize) {
+            return false;
+        }
+
+        if (!(specialization.isTypeParameter() && typeToSpecialize.isTypeParameter())) {
+            return true;
+        }
+
+        var parent = specialization.getDeclarations()[0].getParentDecl();
+        var targetParent = typeToSpecialize.getDeclarations()[0].getParentDecl();
+
+        // if they share a parent, it's fine to specialize
+        if (parent == targetParent) {
+            return true;
+        }
+
+        // if the target parent encloses the specialization type, we don't want to specialize
+        while (parent) {
+            if (parent.getFlags() & PullElementFlags.Static) {
+                return true;
+            }
+
+            if (parent == targetParent) {
+                return false;
+            }
+
+            parent = parent.getParentDecl();
+        }
+
+        return true;
+    }
+
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
         if (typeToSpecialize.isPrimitive() || !typeToSpecialize.isGeneric()) {
@@ -2987,13 +3020,13 @@ module TypeScript {
 
             if (substitution != typeToSpecialize) {
 
-                if (!(substitution.isTypeParameter() && (<PullTypeParameterSymbol>substitution).isFunctionTypeParameter())) {
+                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
                     return substitution;
                 }
             }
 
             if (typeArguments && typeArguments.length) {
-                if (!(typeArguments[0].isTypeParameter() && (<PullTypeParameterSymbol>typeArguments[0]).isFunctionTypeParameter())) {
+                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
                     return typeArguments[0];
                 }
             }

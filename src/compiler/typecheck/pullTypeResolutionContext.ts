@@ -99,6 +99,7 @@ module TypeScript {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
 
                 if (!info.inferenceCandidates.length) {
+                    results[results.length] = { param: info.typeParameter, type: resolver.semanticInfoChain.anyTypeSymbol };
                     continue;
                 }
 
@@ -174,6 +175,7 @@ module TypeScript {
         public isResolvingClassExtendedType = false; 
         public isSpecializingSignatureAtCallSite = false;
         public isSpecializingConstructorMethod = false;
+        public isComparingSpecializedSignatures = false;
 
         constructor() {}
 

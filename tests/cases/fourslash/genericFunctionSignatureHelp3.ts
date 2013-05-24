@@ -20,19 +20,19 @@ goTo.marker('1');
 verify.currentSignatureHelpIs('foo1<T>(x: number, callback: (y1: T) => number): void');
 
 goTo.marker('2');
-verify.currentSignatureHelpIs('foo2<T>(x: number, callback: (y2: T) => number): void');
+verify.currentSignatureHelpIs('foo2<T>(x: number, callback: (y2: any) => number): void');
 
 goTo.marker('3');
 verify.currentSignatureHelpIs('foo3<T>(x: number, callback: (y3: T) => number): void');
 
 goTo.marker('4');
-verify.currentSignatureHelpIs('foo4<T>(x: number, callback: (y4: T) => number): void');
+verify.currentSignatureHelpIs('foo4<T>(x: number, callback: (y4: string) => number): void');
 
 goTo.marker('5');
-verify.currentSignatureHelpIs('foo5<T>(x: number, callback: (y5: string) => number): void');
+verify.currentSignatureHelpIs('foo5<T>(x: number, callback: (y5: T) => number): void');
 
 goTo.marker('6');
-verify.currentSignatureHelpIs('foo6<T>(x: number, callback: (y6: T) => number): void');
+verify.currentSignatureHelpIs('foo6<T>(x: number, callback: (y6: any) => number): void');
 edit.insert('string>(null,null);'); // need to make this line parse so we can get reasonable LS answers to later tests
 
 goTo.marker('7');
