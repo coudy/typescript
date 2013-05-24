@@ -31,6 +31,7 @@ var compilerSources = [
 	"precompile.ts",
 	"pathUtils.ts",
 	"referenceResolution.ts",
+	"referenceResolver.ts",
 	"typecheck/dataMap.ts",
 	"typecheck/pullFlags.ts",
 	"typecheck/pullDecls.ts",

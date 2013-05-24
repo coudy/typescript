@@ -282,13 +282,12 @@ module TypeScript {
         ECMAScript_target_version__0__not_supported___Using_default__1__code_generation: DiagnosticInfo;
         Module_code_generation__0__not_supported___Using_default__1__code_generation: DiagnosticInfo;
         Could_not_find_file___0_: DiagnosticInfo;
-        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: DiagnosticInfo;
-        A_file_cannot_have_a_reference_itself: DiagnosticInfo;
+        A_file_cannot_have_a_reference_to_itself: DiagnosticInfo;
         Cannot_resolve_referenced_file___0_: DiagnosticInfo;
-        Cannot_resolve_imported_file___0_: DiagnosticInfo;
         Cannot_find_the_common_subdirectory_path_for_the_input_files: DiagnosticInfo;
         Cannot_compile_dynamic_modules_when_emitting_into_single_file: DiagnosticInfo;
         Emit_Error__0: DiagnosticInfo;
+        Cannot_read_file__0__1: DiagnosticInfo;
     }
 
     export var diagnosticMessages: IDiagnosticMessages = {
@@ -1712,7 +1711,7 @@ module TypeScript {
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
-        
+
         Type_reference_cannot_refer_to_container__0_: {
             category: DiagnosticCategory.Error,
             message: "Type reference cannot refer to container '{0}'.",
@@ -1749,25 +1748,15 @@ module TypeScript {
             message: "Could not find file: '{0}'.",
             code: 5004
         },
-        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: {
+        A_file_cannot_have_a_reference_to_itself: {
             category: DiagnosticCategory.Error,
-            message: "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.",
-            code: 5005
-        },
-        A_file_cannot_have_a_reference_itself: {
-            category: DiagnosticCategory.Error,
-            message: "A file cannot have a reference itself.",
+            message: "A file cannot have a reference to itself.",
             code: 5006
         },
         Cannot_resolve_referenced_file___0_: {
             category: DiagnosticCategory.Error,
             message: "Cannot resolve referenced file: '{0}'.",
             code: 5007
-        },
-        Cannot_resolve_imported_file___0_: {
-            category: DiagnosticCategory.Error,
-            message: "Cannot resolve imported file: '{0}'.",
-            code: 5008
         },
         Cannot_find_the_common_subdirectory_path_for_the_input_files: {
             category: DiagnosticCategory.Error,
@@ -1783,6 +1772,11 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Emit Error: {0}.",
             code: 5011
+        },
+        Cannot_read_file__0__1: {
+            category: DiagnosticCategory.Error,
+            message: "Cannot read file '{0}': {1}",
+            code: 5012
         },
     };
 

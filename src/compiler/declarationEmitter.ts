@@ -909,13 +909,13 @@ module TypeScript {
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
-                        var referencePath = script.referencedFiles[i].path;
+                        var referencePath = script.referencedFiles[i];
                         var declareFileName: string;
                         if (isRooted(referencePath)) {
                             declareFileName = this.emitOptions.mapOutputFileName(referencePath, TypeScriptCompiler.mapToDTSFileName)
                         }
                         else {
-                            declareFileName = getDeclareFilePath(script.referencedFiles[i].path);
+                            declareFileName = getDeclareFilePath(script.referencedFiles[i]);
                         }
                         this.declFile.WriteLine('/// <reference path="' + declareFileName + '" />');
                     }

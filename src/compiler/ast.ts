@@ -931,7 +931,7 @@ module TypeScript {
 
     export class Script extends AST {
         public moduleElements: ASTList = null;
-        public referencedFiles = new Array<IFileReference>();
+        public referencedFiles= new Array<string>();
         public requiresExtendsBlock = false;
         public isDeclareFile = false;
         public topLevelMod: ModuleDeclaration = null;

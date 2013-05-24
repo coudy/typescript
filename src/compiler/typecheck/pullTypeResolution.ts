@@ -786,12 +786,12 @@ module TypeScript {
 
                 // Check the literal path first
                 if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".ts";
+                    idText = stripQuotes(originalIdText) + ".d.ts";
                     symbol = search(idText);
                 }
 
                 if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".d.ts";
+                    idText = stripQuotes(originalIdText) + ".ts";
                     symbol = search(idText);
                 }
 
@@ -807,12 +807,13 @@ module TypeScript {
                     var path = getRootFilePath(switchToForwardSlashes(currentFileName));
 
                     while (symbol === null && path != "") {
-                        idText = normalizePath(path + strippedIdText + ".ts");
+                        // Check for .d.ts
+                        idText = normalizePath(path + strippedIdText + ".d.ts");
                         symbol = search(idText);
 
-                        // check for .d.ts
+                        // check for .ts
                         if (symbol === null) {
-                            idText = changePathToDTS(idText);
+                            idText = normalizePath(path + strippedIdText + ".ts");
                             symbol = search(idText);
                         }
 

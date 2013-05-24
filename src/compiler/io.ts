@@ -78,6 +78,10 @@ module IOUtils {
         throw new Error(errorMessage);
     }
 
+    export function combine(prefix: string, suffix: string): string {
+        return prefix + "/" + suffix;
+    }
+
     export class BufferedTextWriter implements ITextWriter {
         public buffer = "";
         // Inner writer does not need a WriteLine method, since the BufferedTextWriter wraps it itself
@@ -332,8 +336,15 @@ var IO = (function() {
             resolvePath: function(path: string): string {
                 return _path.resolve(path);
             },
-            dirName: function(path: string): string {
-                return _path.dirname(path);
+            dirName: function (path: string): string {
+                var dirPath = _path.dirname(path);
+
+                // Node will just continue to repeat the root path, rather than return null
+                if (dirPath === path) {
+                    dirPath = null;
+                }
+
+                return dirPath;
             },
             findFile: function(rootPath: string, partialFilePath): IResolvedFile {
                 var path = rootPath + "/" + partialFilePath;

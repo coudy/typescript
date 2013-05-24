@@ -2,170 +2,100 @@
 ///<reference path="../../../src/harness/exec.ts" />
 ///<reference path="../runnerbase.ts" />
 
-class HarnessErrorReporter implements TypeScript.IDignosticsReporter {
-    private compilationEnvironment: TypeScript.CompilationEnvironment
+class SourceFile {
+    private _scriptSnapshot: TypeScript.IScriptSnapshot;
+    private _byteOrderMark: ByteOrderMark;
 
-    constructor(public ioHost: IIO, public errout: Harness.Compiler.WriterAggregator, compilationEnvironment: TypeScript.CompilationEnvironment) {
-        this.setCompilationEnvironment(compilationEnvironment);
+    constructor(scriptSnapshot: TypeScript.IScriptSnapshot, byteOrderMark: ByteOrderMark) {
+        this._scriptSnapshot = scriptSnapshot;
+        this._byteOrderMark = byteOrderMark;
     }
 
-    public addDiagnostic(diagnostic: TypeScript.IDiagnostic) {
-        if (diagnostic.fileName()) {
-            var soruceUnit = this.compilationEnvironment.getSourceUnit(diagnostic.fileName());
-            if (!soruceUnit) {
-                soruceUnit = new TypeScript.SourceUnit(diagnostic.fileName(), this.ioHost.readFile(diagnostic.fileName()));
-            }
-            var lineMap = new TypeScript.LineMap(soruceUnit.getLineStartPositions(), soruceUnit.getLength());
-            var lineCol = { line: -1, character: -1 };
-            lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
-
-            this.errout.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): ");
-        }
-
-        this.errout.WriteLine(diagnostic.message());
+    public scriptSnapshot(): TypeScript.IScriptSnapshot {
+        return this._scriptSnapshot;
     }
 
-    public setCompilationEnvironment(compilationEnvironment: TypeScript.CompilationEnvironment): void {
-        this.compilationEnvironment = compilationEnvironment;
+    public byteOrderMark(): ByteOrderMark {
+        return this._byteOrderMark;
     }
 }
 
-
-class HarnessHost implements TypeScript.IResolverHost {
-    public pathMap: any = {};
-    public resolvedPaths: any = {};
-
-    constructor(public compilationSettings: TypeScript.CompilationSettings, public errorReporter: HarnessErrorReporter) {}
-
-    public getPathIdentifier(path: string) {
-        return this.compilationSettings.useCaseSensitiveFileResolution ? path : path.toLocaleUpperCase();
-    }
-
-    public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment, resolver: TypeScript.ICodeResolver, traceDependencies: boolean): TypeScript.CompilationEnvironment {
-        var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
-
-        var nCode = preEnv.code.length;
-        var path = "";
-
-        this.errorReporter.setCompilationEnvironment(resolvedEnv);
-
-        var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            errorReporter: this.errorReporter,
-            postResolution: (path: string, code: TypeScript.IScriptSnapshot) => {
-                var pathId = this.getPathIdentifier(path);
-                if (!this.resolvedPaths[pathId]) {
-                    resolvedEnv.code.push(<TypeScript.SourceUnit>code);
-                    this.resolvedPaths[pathId] = true;
-                }
-            }
-        };
-
-        for (var i = 0; i < nCode; i++) {
-            path = TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.code[i].path));
-            this.pathMap[preEnv.code[i].path] = path;
-            resolver.resolveCode(path, "", false, resolutionDispatcher);
-        }
-
-        return resolvedEnv;
-    }
-}
-
-class HarnessBatch {
-    public host: IIO;
-    public compilationEnvironment: TypeScript.CompilationEnvironment;
-    public commandLineHost: HarnessHost;
-    public resolvedEnvironment: TypeScript.CompilationEnvironment;
+class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IReferenceResolverHost {
+    private host: IIO;
     public errout: Harness.Compiler.WriterAggregator;
-    public errorReporter: HarnessErrorReporter;
+    private inputFiles: string[];
+    private resolvedFiles: TypeScript.IResolvedFile[];
+    private fileNameToSourceFile = new TypeScript.StringHashTable();
 
     constructor(getDeclareFiles: boolean, generateMapFiles: boolean, outputOption: string, public compilationSettings: TypeScript.CompilationSettings) {
         this.host = IO;
         this.compilationSettings.generateDeclarationFiles = getDeclareFiles;
         this.compilationSettings.mapSourceFiles = generateMapFiles;
         this.compilationSettings.outputOption = outputOption;
-        this.compilationEnvironment = new TypeScript.CompilationEnvironment(this.compilationSettings, this.host);        
-        this.resolvedEnvironment = null;
         this.errout = new Harness.Compiler.WriterAggregator();
-        this.errorReporter = new HarnessErrorReporter(this.host, this.errout, this.compilationEnvironment);
-        this.commandLineHost = new HarnessHost(this.compilationSettings, this.errorReporter);
-
-        this.harnessCompile = function (
-            files: string[],
-            writeEmitFiles: (path: string, contents: string, writeByteOrderMark: boolean) => void,
-            writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
-            TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } }
-
-            this.errout.reset();
-            files.unshift(Harness.userSpecifiedroot + 'tests/minimal.lib.d.ts');
-            
-            for (var i = 0; i < files.length; i++) {
-                var code = new TypeScript.SourceUnit(files[i], null);
-                this.compilationEnvironment.code.push(code);
-            }
-
-            // set the root
-            if (this.compilationSettings.rootPath == "" && this.compilationEnvironment.code.length > 0) {
-                var rootPath = TypeScript.getRootFilePath(this.compilationEnvironment.ioHost.resolvePath(this.compilationEnvironment.code[0].path));
-                this.compilationSettings.rootPath = rootPath;
-            }
-
-            // resolve file dependencies
-            this.resolvedEnvironment = this.resolve();
-
-            this.compile(writeEmitFiles, writeDeclareFile);
-        }
     }
 
     private resolve() {
-        var resolver = new TypeScript.CodeResolver(this.compilationEnvironment);
-        return this.commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
+        var resolvedFiles: TypeScript.IResolvedFile[];
+
+        // Resolve references
+        var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compilationSettings);
+        resolvedFiles = resolutionResults.resolvedFiles;
+
+        // Populate any diagnostic messages generated during resolution
+        for (var i = 0, n = resolutionResults.diagnostics.length; i < n; i++) {
+            this.addDiagnostic(resolutionResults.diagnostics[i]);
+        }
+
+        // Add the library file if needed
+        if (this.compilationSettings.useDefaultLib && !resolutionResults.seenNoDefaultLibTag) {
+            var libraryPath = Harness.userSpecifiedroot + 'tests/minimal.lib.d.ts';
+            resolvedFiles.unshift({ path: libraryPath, refrencedFiles: [], importedFiles: [] });
+        }
+
+        this.resolvedFiles = resolvedFiles;
     }
 
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     private compile(
-        writeEmitFile: (path: string, contents: string, writeByteOrderMark: boolean) => void,
-        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
-        
+        writeEmitFile: (path: string, contents: string, writeByteOrderMark: boolean) => void ,
+        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void ) {
+
         var compiler: TypeScript.TypeScriptCompiler;
-        var _self = this;        
 
         compiler = new TypeScript.TypeScriptCompiler();
         compiler.settings = this.compilationSettings;
         compiler.emitOptions.compilationSettings = this.compilationSettings;
 
-        function consumeUnit(code: TypeScript.SourceUnit) {
+        for (var iCode = 0; iCode < this.resolvedFiles.length; iCode++) {
+            var code = this.resolvedFiles[iCode];
+
             try {
-                // if file resolving is disabled, the file's content will not yet be loaded
-                if (!(_self.compilationSettings.resolve)) {
-                    code.fileInformation = this.host.readFile(code.path);
+                var sourceFile = this.getSourceFile(code.path);
+                var soruceScriptSnapshot = sourceFile.scriptSnapshot();
+                var sourceText = soruceScriptSnapshot.getText(0, soruceScriptSnapshot.getLength());
+
+                // Log any bugs associated with the test
+                var bugs = sourceText.match(/\bbug (\d+)/i);
+                if (bugs) {
+                    bugs.forEach(bug => Harness.Assert.bug(bug));
                 }
-                if (code.fileInformation != null) {
-                    // Log any bugs associated with the test
-                    var bugs = code.fileInformation.contents().match(/\bbug (\d+)/i);
-                    if (bugs) {
-                        bugs.forEach(bug => Harness.Assert.bug(bug));
-                    }
-                    
-                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.fileInformation.contents()),
-                        code.fileInformation.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true);
-                }
+
+                compiler.addSourceUnit(code.path, soruceScriptSnapshot, sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true);
             }
             catch (err) {
                 // This includes syntax errors thrown from error callback if not in recovery mode
-                if (_self.errout != null) {
-                    _self.errout.WriteLine(err.message)
+                if (this.errout != null) {
+                    this.errout.WriteLine(err.message)
                 } else {
-                    _self.host.stderr.WriteLine(err.message);
+                    this.host.stderr.WriteLine(err.message);
                 }
             }
         }
 
-        for (var iCode = 0; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            consumeUnit(this.resolvedEnvironment.code[iCode]);
-        }
-
         compiler.pullTypeCheck();
+
         var emitterIOHost = {
             writeFile: writeEmitFile,
             directoryExists: IO.directoryExists,
@@ -177,32 +107,31 @@ class HarnessBatch {
         files.forEach(file => {
             if (file.indexOf('lib.d.ts') == -1) {
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(file);
-                compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
+                compiler.reportDiagnostics(syntacticDiagnostics, this);
 
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(file);
-                compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
+                compiler.reportDiagnostics(semanticDiagnostics, this);
             }
-        }); 
+        });
 
         var emitDiagnostics = compiler.emitAll(emitterIOHost);
-        compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);    
+        compiler.reportDiagnostics(emitDiagnostics, this);
 
         emitterIOHost.writeFile = writeDeclareFile;
         compiler.emitOptions.ioHost = emitterIOHost;
 
         var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
-        compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errorReporter);
+        compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
 
         if (this.errout) {
             this.errout.Close();
         }
     }
 
-
     // Execute the provided inputs
     private run() {
-        for (var i = 0; i < this.resolvedEnvironment.code.length; i++) {
-            var unit = this.resolvedEnvironment.code[i];
+        for (var i = 0; i < this.resolvedFiles.length; i++) {
+            var unit = this.resolvedFiles[i];
             var outputFileName = unit.path.replace(/\.ts$/, ".js");
             var unitRes = this.host.readFile(outputFileName).contents();
             this.host.run(unitRes, outputFileName);
@@ -210,15 +139,88 @@ class HarnessBatch {
     }
 
     /// Begin batch compilation
-    public harnessCompile;
+    public harnessCompile(
+        files: string[],
+        writeEmitFiles: (path: string, contents: string, writeByteOrderMark: boolean) => void ,
+        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void ) {
+
+        TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } };
+
+        this.errout.reset();
+
+        this.inputFiles = files;
+
+        // resolve file dependencies
+        this.resolve();
+
+        this.compile(writeEmitFiles, writeDeclareFile);
+    }
 
     public getResolvedFilePaths(): string[] {
         var paths: string[] = [];
-        for (var i = 1; i < this.resolvedEnvironment.code.length; i++) {
-            paths.push(this.resolvedEnvironment.code[i].path);
+        for (var i = 1; i < this.resolvedFiles.length; i++) {
+            paths.push(this.resolvedFiles[i].path);
         }
 
         return paths;
+    }
+
+    private getSourceFile(fileName: string): SourceFile {
+        var sourceFile = this.fileNameToSourceFile.lookup(fileName);
+        if (!sourceFile) {
+            var fileInformation = this.host.readFile(fileName);
+            var snapshot = TypeScript.ScriptSnapshot.fromString(fileInformation.contents());
+            var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark());
+            this.fileNameToSourceFile.add(fileName, sourceFile);
+        }
+
+        return sourceFile;
+    }
+
+    /// TypeScript.IReferenceResolverHost methods
+    getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
+        return this.getSourceFile(fileName).scriptSnapshot();
+    }
+
+    resolveRelativePath(path: string, directory: string): string {
+        var unQuotedPath = TypeScript.stripQuotes(path);
+        var normalizedPath: string;
+
+        if (TypeScript.isRooted(unQuotedPath) || !directory) {
+            normalizedPath = unQuotedPath;
+        } else {
+            normalizedPath = IOUtils.combine(directory, unQuotedPath);
+        }
+
+        // get the absolute path
+        normalizedPath = this.host.resolvePath(normalizedPath);
+
+        // Switch to forward slashes
+        normalizedPath = TypeScript.switchToForwardSlashes(normalizedPath);
+
+        return normalizedPath;
+    }
+
+    fileExists(path: string): boolean {
+        return this.host.fileExists(path);
+    }
+
+    getParentDirectory(path: string): string {
+        return this.host.dirName(path);
+    }
+
+    /// TypeScript.IDiagnosticReporter methods
+    addDiagnostic(diagnostic: TypeScript.IDiagnostic) {
+        if (diagnostic.fileName()) {
+            var scriptSnapshot = this.getScriptSnapshot(diagnostic.fileName());
+            var lineMap = new TypeScript.LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
+            var lineCol = { line: -1, character: -1 };
+            lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
+
+            this.errout.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): ");
+        }
+
+        this.errout.WriteLine(diagnostic.message());
     }
 }
 
@@ -228,18 +230,24 @@ class ProjectRunner extends RunnerBase {
             var rPath = Harness.userSpecifiedroot + 'tests\\cases\\projects\\r.js';
             var testExec = true;
 
-            function cleanProjectDirectory(directory: string) {
-                var files = IO.dir(Harness.userSpecifiedroot + directory, /.*\.js/);
+            function cleanProjectDirectory(directory: string, outputFiles: string[], declareFiles: string[]) {
+                var files = outputFiles.concat(declareFiles);
                 for (var i = 0; i < files.length; i++) {
-                    IO.deleteFile(files[i]);
+                    var file = files[i];
+                    if (IO.fileExists(file)) {
+                        IO.deleteFile(file);
+                    }
                 }
             }
 
             function assertRelativePathsInArray(arr, relativePaths) {
                 for (var i = 0; i < relativePaths.length; i++) {
+                    var expectedPath = TypeScript.switchToForwardSlashes(relativePaths[i]);
+                    var expectedPathMatchingRegEx = new RegExp(expectedPath + "$");
                     var found = false;
                     for (var j = 0; j < arr.length; j++) {
-                        if (arr[j].match(new RegExp(relativePaths[i].replace(/\\/g, "\\\\") + "$"))) {
+                        var actualPath = TypeScript.switchToForwardSlashes(arr[j]);
+                        if (actualPath.match(expectedPathMatchingRegEx)) {
                             found = true;
                             break;
                         }
@@ -260,7 +268,6 @@ class ProjectRunner extends RunnerBase {
             }
 
             function createTest(spec: any) {
-                debugger;
                 var inputFiles = [];
                 for (var i = 0; i < spec.inputFiles.length; i++) {
                     inputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.inputFiles[i]);
@@ -269,6 +276,13 @@ class ProjectRunner extends RunnerBase {
                 var outputFiles = [];
                 for (var j = 0; j < spec.outputFiles.length; j++) {
                     outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[j]);
+                }
+
+                var declareFiles = [];
+                if (spec.declareFiles) {
+                    for (var j = 0; j < spec.declareFiles.length; j++) {
+                        declareFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.declareFiles[j]);
+                    }
                 }
 
                 var generatedDeclareFiles: { fname: string; file: Harness.Compiler.WriterAggregator;  }[] = [];
@@ -347,7 +361,7 @@ class ProjectRunner extends RunnerBase {
                         Harness.Assert.bug(spec.bug)
                     }
 
-                    cleanProjectDirectory(spec.projectRoot);
+                    cleanProjectDirectory(spec.projectRoot, outputFiles, declareFiles);
 
                     generatedDeclareFiles = [];
                     generatedEmitFiles = [];
@@ -369,7 +383,7 @@ class ProjectRunner extends RunnerBase {
                         });
                     } else {
                         it("compiles with errors", function () {
-                            Harness.Assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
+                            Harness.Assert.equal(TypeScript.switchToForwardSlashes(batch.errout.lines.join("\n").trim()), TypeScript.switchToForwardSlashes(spec.errors.join("\n").trim()));
                         });
                     }
 
@@ -414,7 +428,7 @@ class ProjectRunner extends RunnerBase {
                         Harness.Assert.bug(spec.bug)
                     }
 
-                    cleanProjectDirectory(spec.projectRoot);
+                    cleanProjectDirectory(spec.projectRoot, outputFiles, declareFiles);
 
                     var compilationSettings = new TypeScript.CompilationSettings();
                     compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
@@ -439,7 +453,7 @@ class ProjectRunner extends RunnerBase {
                     }
                     else {
                         it("compiles with errors", function () {
-                            Harness.Assert.equal(batch.errout.lines.join("\n").trim(), spec.errors.join("\n").trim());
+                            Harness.Assert.equal(TypeScript.switchToForwardSlashes(batch.errout.lines.join("\n").trim()), TypeScript.switchToForwardSlashes(spec.errors.join("\n").trim()));
                         });
                     }
 
@@ -524,8 +538,6 @@ class ProjectRunner extends RunnerBase {
                     , negative: true
                     , skipRun: true
                     , errors: [
-                        IO.resolvePath(Harness.userSpecifiedroot) + "\\tests\\cases\\projects\\NoModule\\decl.ts(1,26): error TS5008: Cannot resolve imported file: './foo/bar.js'.",
-                        IO.resolvePath(Harness.userSpecifiedroot) + "\\tests\\cases\\projects\\NoModule\\decl.ts(3,26): error TS5008: Cannot resolve imported file: './baz'.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(1,1): error TS2071: Unable to resolve external module '\"./foo/bar.js\"'.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(1,1): error TS2072: Module cannot be aliased to a non-module type.",
                         TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NoModule/decl.ts(2,1): error TS2071: Unable to resolve external module '\"baz\"'.",
@@ -651,8 +663,8 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                     , negative: true
                     , errors: [
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test1.ts(3,2): error TS2136: Import declarations in an internal module cannot reference an external module.",
-                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test2.ts(5,5): error TS2136: Import declarations in an internal module cannot reference an external module."
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test2.ts(5,5): error TS2136: Import declarations in an internal module cannot reference an external module.",
+                        TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck/test1.ts(3,2): error TS2136: Import declarations in an internal module cannot reference an external module."
                     ]
             });
 
@@ -1512,11 +1524,11 @@ class ProjectRunner extends RunnerBase {
                     , outputFiles: ['main.js']
                     , verifyEmitFiles: false
                     , skipRun: true
-                , negative: true
-                , errors: [
-                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(1,1): error TS5006: A file cannot have a reference itself.',
-                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(2,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile1.ts\'.',
-                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(3,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile2.ts\'.']
+                    , negative: true
+                    , errors: [
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(1,1): error TS5006: A file cannot have a reference to itself.',
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(2,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile1.ts\'.',
+                        IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\InvalidReferences\\main.ts(3,1): error TS5007: Cannot resolve referenced file: \'nonExistingFile2.ts\'.']
             });
 
 
@@ -1530,6 +1542,20 @@ class ProjectRunner extends RunnerBase {
                     , verifyEmitFiles: true
                     , skipRun: true
             });
+
+            tests.push({
+                scenario: "No-default-lib"
+                , projectRoot: 'tests/cases/projects/No-default-lib'
+                , inputFiles: ['test.ts']
+                , collectedFiles: []
+                , outputFiles: ['test.js']
+                , verifyEmitFiles: false
+                , skipRun: true
+                , negative: true
+                , errors: [
+                    IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\No-default-lib\\test.ts(3,8): error TS2095: Could not find symbol \'Array\'.']
+            });
+
 
             var amdDriverTemplate = "var requirejs = require('../r.js');\n\n" +
         "requirejs.config({\n" +

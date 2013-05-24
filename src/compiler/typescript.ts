@@ -30,6 +30,7 @@
 ///<reference path='pathUtils.ts' />
 ///<reference path='referenceResolution.ts' />
 ///<reference path='precompile.ts' />
+///<reference path='referenceResolver.ts' />
 ///<reference path='declarationEmitter.ts' />
 ///<reference path='bloomFilter.ts' />
 ///<reference path='identifierWalker.ts' />
@@ -206,7 +207,7 @@ module TypeScript {
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         }
 
-        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
+        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: string[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
             var start = new Date().getTime();
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, getParseOptions(compilationSettings));
@@ -254,7 +255,7 @@ module TypeScript {
                              byteOrderMark: ByteOrderMark,
                              version: number,
                              isOpen: boolean,
-                             referencedFiles: IFileReference[]= []): Document {
+                             referencedFiles: string[]= []): Document {
 
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
@@ -1549,7 +1550,7 @@ module TypeScript {
             return unit.getTopLevelDecls();
         }
 
-        public reportDiagnostics(errors: IDiagnostic[], errorReporter: TypeScript.IDignosticsReporter): void {
+        public reportDiagnostics(errors: IDiagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {
             for (var i = 0; i < errors.length; i++) {
                 errorReporter.addDiagnostic(errors[i]);
             }

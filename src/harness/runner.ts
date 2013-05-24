@@ -211,7 +211,7 @@ global.runners = runners;
 var reverse: boolean = false;
 var iterations: number = 1;
 
-var opts = new OptionsParser(IO);
+var opts = new TypeScript.OptionsParser(IO, "testCompiler");
 
 opts.flag('compiler', {
     set: function () {

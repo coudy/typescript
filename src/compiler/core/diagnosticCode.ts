@@ -288,12 +288,11 @@ module TypeScript {
         ECMAScript_target_version__0__not_supported___Using_default__1__code_generation,
         Module_code_generation__0__not_supported___Using_default__1__code_generation,
         Could_not_find_file___0_,
-        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed,
-        A_file_cannot_have_a_reference_itself,
+        A_file_cannot_have_a_reference_to_itself,
         Cannot_resolve_referenced_file___0_,
-        Cannot_resolve_imported_file___0_,
         Cannot_find_the_common_subdirectory_path_for_the_input_files,
         Cannot_compile_dynamic_modules_when_emitting_into_single_file,
         Emit_Error__0,
+        Cannot_read_file__0__1,
     }
 }

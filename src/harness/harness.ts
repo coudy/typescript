@@ -1158,7 +1158,7 @@ module Harness {
             postCompile: () => void;
         }
 
-        export function addUnit(compilerInstance: CompilerInstance, code: string, unitName?: string, isDeclareFile?: boolean, references?: TypeScript.IFileReference[]): TypeScript.Script {
+        export function addUnit(compilerInstance: CompilerInstance, code: string, unitName?: string, isDeclareFile?: boolean, references?: string[]): TypeScript.Script {
             var compiler = getCompiler(compilerInstance);
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
@@ -1176,6 +1176,7 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
+
                 var document = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code),
                     ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, references);
                 script = document.script;
@@ -1190,7 +1191,7 @@ module Harness {
             compiler.updateSourceUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
         }
 
-        export function compileFile(compilerInstance: CompilerInstance, path: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileFile(compilerInstance: CompilerInstance, path: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: string[]) {
             var compiler = getCompiler(compilerInstance);
             path = switchToForwardSlashes(path);
             var fileName = path.match(/[^\/]*$/)[0];
@@ -1222,7 +1223,7 @@ module Harness {
             };
         }
 
-        export function compileUnit(compilerInstance: CompilerInstance, code: string, fileName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileUnit(compilerInstance: CompilerInstance, code: string, fileName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: string[]) {
             var compiler = getCompiler(compilerInstance);
 
             var restoreSavedCompilerSettings = saveCompilerSettings(compilerInstance);
@@ -1322,7 +1323,7 @@ module Harness {
         }
 
         /** Compiles a given piece of code with the provided unitName. The compilation results are available to the provided callback in a CompilerResult object */
-        export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, compilerInstance: CompilerInstance = CompilerInstance.RunTime, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, compilerInstance: CompilerInstance = CompilerInstance.RunTime, context?: CompilationContext, references?: string[]) {
             var compiler = getCompiler(compilerInstance);
             var scripts: TypeScript.Script[] = [];
 
@@ -1348,7 +1349,7 @@ module Harness {
         }
 
         /** Compiles a given piece of code with the provided unitName and emits Javascript for both CommonJS and AMD. The compilation results are available to the provided callback in one CompilerResult object for each emit type */
-        export function compileStringForCommonJSAndAMD(code: string, unitName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void , compilerInstance: CompilerInstance = CompilerInstance.RunTime, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileStringForCommonJSAndAMD(code: string, unitName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void , compilerInstance: CompilerInstance = CompilerInstance.RunTime, context?: CompilationContext, references?: string[]) {
             var compiler = getCompiler(compilerInstance);
             var scripts: TypeScript.Script[] = [];
 
@@ -1470,7 +1471,7 @@ module Harness {
             name: string;
             fileOptions: any;
             originalFilePath: string;
-            references: TypeScript.IFileReference[];
+            references:string[];
         }
 
         // Regex for parsing options in the format "@Alpha: Value of any sort"
@@ -1505,7 +1506,7 @@ module Harness {
             var currentFileContent: string = null;
             var currentFileOptions = {};
             var currentFileName = null;
-            var refs: TypeScript.IFileReference[] = [];
+            var refs: string[] = [];
 
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i];
@@ -1524,7 +1525,7 @@ module Harness {
                             isResident: false
                         };
 
-                        refs.push(ref);
+                        refs.push(ref.path);
                     }
                 } else if (testMetaData) {
                     // Comment line, check for global/file @options and record them
