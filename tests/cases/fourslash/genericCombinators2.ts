@@ -71,7 +71,7 @@ verify.quickInfoIs('A');
 goTo.marker('4a');
 verify.quickInfoIs('number');
 goTo.marker('4b');
-verify.quickInfoIs('B<T>');
+verify.quickInfoIs('B<any>');
 
 goTo.marker('5a');
 verify.quickInfoIs('number');

@@ -64,7 +64,7 @@ verify.quickInfoIs('Collection<number>');
 goTo.marker('3');
 verify.quickInfoIs('A');
 goTo.marker('4');
-verify.quickInfoIs('B<T>');
+verify.quickInfoIs('B<any>');
 goTo.marker('5');
 verify.quickInfoIs('number');
 goTo.marker('6');
