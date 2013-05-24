@@ -2883,7 +2883,7 @@ module TypeScript {
                 var substitution = context.findSpecializationForType(typeNameSymbol);
 
                 if (typeNameSymbol.isTypeParameter() && (substitution != typeNameSymbol)) {
-                    if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeNameSymbol)) {//(<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() || !(substitution.isTypeParameter() && (<PullTypeParameterSymbol>substitution).isFunctionTypeParameter())) {
+                    if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeNameSymbol)) {
                         typeNameSymbol = substitution;
                     }
                 }
@@ -3058,6 +3058,15 @@ module TypeScript {
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
+
+                    if (typeConstraint.isTypeParameter()) {
+                        for (var j = 0; j < typeParameters.length && j < typeArgs.length; j++) {
+                            if (typeParameters[j] == typeConstraint) {
+                                typeConstraint = typeArgs[j];
+                            }
+                        }
+                    }
+
                     if (typeArg.isTypeParameter()) {
                         upperBound = (<PullTypeParameterSymbol>typeArg).getConstraint();
 
@@ -4127,14 +4136,26 @@ module TypeScript {
                                     // test specialization type for assignment compatibility with the constraint
                                     if (typeConstraint) {
                                         if (typeConstraint.isTypeParameter()) {
+                                            for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
+                                                if (typeParameters[k] == typeConstraint) {
+                                                    typeConstraint = inferredTypeArgs[k];
+                                                }
+                                            }
+                                        }
+                                        if (typeConstraint.isTypeParameter()) {
                                             context.pushTypeSpecializationCache(typeReplacementMap);
                                             typeConstraint = specializeType(typeConstraint, null, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
                                             context.popTypeSpecializationCache();
                                         }
+                                        context.isComparingSpecializedSignatures = true;
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                             diagnostics = this.addDiagnostic(diagnostics,
                                                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]));
                                             couldNotAssignToConstraint = true;
+                                        }
+                                        context.isComparingSpecializedSignatures = false;
+
+                                        if (couldNotAssignToConstraint) {
                                             break;
                                         }
                                     }
@@ -4447,19 +4468,31 @@ module TypeScript {
 
                                         // test specialization type for assignment compatibility with the constraint
                                         if (typeConstraint) {
-
+                                            if (typeConstraint.isTypeParameter()) {
+                                                for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
+                                                    if (typeParameters[k] == typeConstraint) {
+                                                        typeConstraint = inferredTypeArgs[k];
+                                                    }
+                                                }
+                                            }
                                             if (typeConstraint.isTypeParameter()) {
                                                 context.pushTypeSpecializationCache(typeReplacementMap);
                                                 typeConstraint = specializeType(typeConstraint, null, this, enclosingDecl, context);
                                                 context.popTypeSpecializationCache();
                                             }
 
+                                            context.isComparingSpecializedSignatures = true;
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                                 diagnostics = this.addDiagnostic(diagnostics,
                                                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_, [inferredTypeArgs[j].toString(true), typeConstraint.toString(true), typeParameters[j].toString(true)]));
                                                 couldNotAssignToConstraint = true;
+                                            }
+                                            context.isComparingSpecializedSignatures = false;
+
+                                            if (couldNotAssignToConstraint) {
                                                 break;
                                             }
+
                                         }
                                     }
                                 }
@@ -5441,9 +5474,14 @@ module TypeScript {
                     }
                 }
                 else {
-                    // if the source is not another type parameter, we consider the
+                    // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
                     // target to be a subtype of its constraint
-                    target = this.substituteUpperBoundForType(target);
+                    if (context.isComparingSpecializedSignatures) {
+                        target = this.substituteUpperBoundForType(target);
+                    }
+                    else {
+                        return false;
+                    }
                 }
             }
 

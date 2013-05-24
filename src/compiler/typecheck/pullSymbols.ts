@@ -2984,6 +2984,10 @@ module TypeScript {
 
         // if the target parent encloses the specialization type, we don't want to specialize
         while (parent) {
+            if (parent.getFlags() & PullElementFlags.Static) {
+                return true;
+            }
+
             if (parent == targetParent) {
                 return false;
             }
@@ -3016,14 +3020,13 @@ module TypeScript {
 
             if (substitution != typeToSpecialize) {
 
-                //if ((<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter() || !(substitution.isTypeParameter() && (<PullTypeParameterSymbol>substitution).isFunctionTypeParameter())) {
                 if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
                     return substitution;
                 }
             }
 
             if (typeArguments && typeArguments.length) {
-                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {//!(typeArguments[0].isTypeParameter() && (<PullTypeParameterSymbol>typeArguments[0]).isFunctionTypeParameter())) {
+                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
                     return typeArguments[0];
                 }
             }

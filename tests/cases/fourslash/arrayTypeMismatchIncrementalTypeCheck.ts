@@ -28,4 +28,4 @@
 //// 
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(364);
+diagnostics.validateTypesAtPositions(364);

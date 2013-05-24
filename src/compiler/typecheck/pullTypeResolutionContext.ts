@@ -175,6 +175,7 @@ module TypeScript {
         public isResolvingClassExtendedType = false; 
         public isSpecializingSignatureAtCallSite = false;
         public isSpecializingConstructorMethod = false;
+        public isComparingSpecializedSignatures = false;
 
         constructor() {}
 
