@@ -138,11 +138,11 @@ module FourSlashInterface {
             }
         }
 
-		// Verifies the completion list items count to be greater than the specified amount. The
-		// completion list is brought up if necessary
-		public completionListItemsCountIsGreaterThan(count: number) {
-			FourSlash.currentTestState.verifyCompletionListItemsCountIsGreaterThan(count);
-		}
+        // Verifies the completion list items count to be greater than the specified amount. The
+        // completion list is brought up if necessary
+        public completionListItemsCountIsGreaterThan(count: number) {
+            FourSlash.currentTestState.verifyCompletionListItemsCountIsGreaterThan(count);
+        }
 
         public completionListIsEmpty() {
             FourSlash.currentTestState.verifyCompletionListIsEmpty(this.negative);
@@ -152,9 +152,9 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyMemberListIsEmpty(this.negative);
         }
 
-		public referencesCountIs(count: number) {
-			FourSlash.currentTestState.verifyReferencesCountIs(count);
-		}
+        public referencesCountIs(count: number) {
+            FourSlash.currentTestState.verifyReferencesCountIs(count);
+        }
 
         public currentParameterIsVariable() {
             FourSlash.currentTestState.verifyCurrentParameterIsVariable(!this.negative);
