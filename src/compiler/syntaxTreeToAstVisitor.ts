@@ -40,12 +40,15 @@ module TypeScript {
         }
 
         public setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
-            var desiredMinChar = fullStart + element.leadingTriviaWidth();
-            var desiredLimChar = desiredMinChar + element.width();
+            var leadingTriviaWidth = element.leadingTriviaWidth();
+            var trailingTriviaWidth = element.trailingTriviaWidth();
+
+            var desiredMinChar = fullStart + leadingTriviaWidth;
+            var desiredLimChar = fullStart + element.fullWidth() - trailingTriviaWidth;
 
             this.setSpanExplicit(span, desiredMinChar, desiredLimChar);
 
-            span.trailingTriviaWidth = element.trailingTriviaWidth();
+            span.trailingTriviaWidth = trailingTriviaWidth;
         }
 
         public setSpanExplicit(span: IASTSpan, start: number, end: number): void {
