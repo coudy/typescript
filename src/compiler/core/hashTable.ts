@@ -54,7 +54,7 @@ module TypeScript.Collections {
                 : this.hash(key);
 
             hashCode = hashCode & 0x7FFFFFFF;
-            Debug.assert(hashCode > 0);
+            Debug.assert(hashCode >= 0);
 
             return hashCode;
         }

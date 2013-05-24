@@ -190,7 +190,7 @@ module TypeScript {
             return this.semanticInfoChain.getSymbolAndDiagnosticsForAST(ast, this.unitPath);
         }
 
-        private setSymbolAndDiagnosticsForAST(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, context: PullTypeResolutionContext): void {
+        private setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, context: PullTypeResolutionContext): void {
             if (context && (context.inProvisionalResolution() || context.inSpecialization)) {
                 return;
             }
@@ -2368,7 +2368,7 @@ module TypeScript {
 
         // Expression resolution
 
-        public resolveAST(ast: IAST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             switch (ast.nodeType()) {
                 case NodeType.CatchClause:
                 case NodeType.WithStatement:
@@ -3327,7 +3327,7 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
-        private resolveThisExpression(ast: IAST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+        private resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(ast);
 
             if (!symbolAndDiagnostics) {
@@ -3428,7 +3428,7 @@ module TypeScript {
             return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
         }
 
-        public resolveObjectLiteralExpression(expressionAST: IAST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): SymbolAndDiagnostics<PullSymbol> {
+        public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): SymbolAndDiagnostics<PullSymbol> {
             var symbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(expressionAST);
 
             if (!symbolAndDiagnostics || additionalResults) {

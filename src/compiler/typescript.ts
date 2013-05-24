@@ -855,7 +855,7 @@ module TypeScript {
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var lastDeclAST: AST = null;
-            var foundAST: IAST = null;
+            var foundAST: AST = null;
             var symbol: PullSymbol = null;
             var candidateSignature: PullSignatureSymbol = null;
             var callSignatures: PullSignatureSymbol[] = null;
@@ -1080,7 +1080,7 @@ module TypeScript {
                             if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() !== "") {
                                 symbol = callResolutionResults.targetSymbol;
                             }
-                            foundAST = callExpression;
+                            foundAST = <AST><any>callExpression;
                         }
                     }
                 }

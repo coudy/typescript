@@ -21,18 +21,16 @@ module TypeScript {
 
         private topLevelDecls: PullDecl[] = [];
 
-        private astDeclMap: DataMap = new DataMap();
         private declASTMap: DataMap = new DataMap();
-
-        private syntaxElementDeclMap: DataMap = new DataMap();
-        private declSyntaxElementMap: DataMap = new DataMap();
-
         private declSymbolMap: DataMap = new DataMap();
+
+        private astDeclMap: DataMap = new DataMap();
 
         private astSymbolMap: Collections.HashTable<number, SymbolAndDiagnostics<any>> =
             Collections.createHashTable<number, SymbolAndDiagnostics<any>>(Collections.DefaultHashTableCapacity, k => k);
 
-        private symbolASTMap: DataMap = new DataMap();
+        private symbolASTMap: Collections.HashTable<number, AST> =
+            Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);
 
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
@@ -93,9 +91,9 @@ module TypeScript {
             this.declASTMap.link(this.getDeclKey(decl), ast);
         }
 
-        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
+        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
             this.astSymbolMap.set(ast.getID(), <SymbolAndDiagnostics<any>>symbolAndDiagnostics);
-            this.symbolASTMap.link(symbolAndDiagnostics.symbol.getSymbolID().toString(), ast)
+            this.symbolASTMap.set(symbolAndDiagnostics.symbol.getSymbolID(), ast)
         }
 
         public getSymbolAndDiagnosticsForAST(ast: IAST): SymbolAndDiagnostics<PullSymbol> {
@@ -103,23 +101,7 @@ module TypeScript {
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
-            return <AST>this.symbolASTMap.read(symbol.getSymbolID().toString());
-        }
-
-        public getSyntaxElementForDecl(decl: PullDecl): ISyntaxElement {
-            return <ISyntaxElement>this.declSyntaxElementMap.read(this.getDeclKey(decl));
-        }
-
-        public setSyntaxElementForDecl(decl: PullDecl, syntaxElement: ISyntaxElement): void {
-            this.declSyntaxElementMap.link(this.getDeclKey(decl), syntaxElement);
-        }
-
-        public getDeclForSyntaxElement(syntaxElement: ISyntaxElement): PullDecl {
-            return <PullDecl>this.syntaxElementDeclMap.read(Collections.identityHashCode(syntaxElement).toString());
-        }
-
-        public setDeclForSyntaxElement(syntaxElement: ISyntaxElement, decl: PullDecl): void {
-            this.syntaxElementDeclMap.link(Collections.identityHashCode(syntaxElement).toString(), decl);
+            return this.symbolASTMap.get(symbol.getSymbolID());
         }
 
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
@@ -443,7 +425,7 @@ module TypeScript {
             return null;
         }
 
-        public setSymbolAndDiagnosticsForAST(ast: IAST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
+        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
