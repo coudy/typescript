@@ -79,23 +79,24 @@ module TypeScript {
 
         public visitSyntaxList(list: ISyntaxList): ASTList {
             var start = this.position;
-            var result = new ASTList();
+            var array = new Array(list.childCount());
 
             for (var i = 0, n = list.childCount(); i < n; i++) {
-                result.append(list.childAt(i).accept(this));
+                array[i] = list.childAt(i).accept(this);
             }
-
+            
+            var result = new ASTList(array);
             this.setSpan(result, start, list);
             return result;
         }
 
         public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
             var start = this.position;
-            var result = new ASTList();
+            var array = new Array(list.nonSeparatorCount());
 
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (i % 2 === 0) {
-                    result.append(list.childAt(i).accept(this));
+                    array[i / 2] = list.childAt(i).accept(this);
                     this.previousTokenTrailingComments = null;
                 }
                 else {
@@ -105,6 +106,8 @@ module TypeScript {
                     this.movePast(separatorToken);
                 }
             }
+
+            var result = new ASTList(array);
 
             result.setPostComments(this.previousTokenTrailingComments);
             this.previousTokenTrailingComments = null;
@@ -333,9 +336,8 @@ module TypeScript {
 
                 // topLevelMod.amdDependencies = this.amdDependencies;
 
-                bod = new ASTList();
+                bod = new ASTList([topLevelMod]);
                 this.setSpanExplicit(bod, start, this.position);
-                bod.append(topLevelMod);
             }
 
             var result = new Script();
@@ -372,8 +374,8 @@ module TypeScript {
             this.movePast(node.identifier);
 
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = new ASTList();
-            var implementsList = new ASTList();
+            var extendsList: ASTList = null;
+            var implementsList: ASTList = null;
 
             for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
                 var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
@@ -418,7 +420,7 @@ module TypeScript {
         }
 
         public completeClassDeclaration(node: ClassDeclarationSyntax, result: ClassDeclaration): void {
-            this.requiresExtendsBlock = this.requiresExtendsBlock || result.extendsList.members.length > 0;
+            this.requiresExtendsBlock = this.requiresExtendsBlock || (result.extendsList && result.extendsList.members.length > 0);
 
             if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Exported);
@@ -483,7 +485,7 @@ module TypeScript {
 
         public visitHeritageClause(node: HeritageClauseSyntax): ASTList {
             var start = this.position;
-            var result = new ASTList();
+            var array = new Array(node.typeNames.nonSeparatorCount());
 
             this.movePast(node.extendsOrImplementsKeyword);
             for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
@@ -492,9 +494,11 @@ module TypeScript {
                 }
                 else {
                     var type = this.visitType(node.typeNames.childAt(i)).term;
-                    result.append(type);
+                    array[i / 2] = type;
                 }
             }
+
+            var result = new ASTList(array);
 
             this.setSpan(result, start, node);
             return result;
@@ -579,8 +583,7 @@ module TypeScript {
 
                 // REVIEW: will also possibly need to re-parent comments as well
 
-                members = new ASTList();
-                members.append(result);
+                members = new ASTList([result]);
             }
 
             this.completeModuleDeclaration(node, result);
@@ -674,7 +677,7 @@ module TypeScript {
             this.movePast(node.identifier);
 
             this.movePast(node.openBraceToken);
-            var members = new ASTList();
+            var array: VariableStatement[] = new Array(node.enumElements.nonSeparatorCount());
 
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
@@ -742,8 +745,8 @@ module TypeScript {
                         }
                     }
 
-                    var declarators = new ASTList();
-                    declarators.append(declarator);
+                    var declarators = new ASTList([declarator]);
+
                     var declaration = new VariableDeclaration(declarators);
                     this.setSpanExplicit(declaration, memberStart, this.position);
 
@@ -751,12 +754,14 @@ module TypeScript {
                     statement.setFlags(ASTFlags.EnumElement);
                     this.setSpanExplicit(statement, memberStart, this.position);
 
-                    members.append(statement);
+                    array[i / 2] = statement;
                     memberNames.push(memberName);
                     // all enum members are exported
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Exported);
                 }
             }
+
+            var members = new ASTList(array);
 
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
@@ -988,7 +993,6 @@ module TypeScript {
                 return body.accept(this);
             }
             else {
-                var statements = new ASTList();
                 var expression = body.accept(this);
                 var returnStatement = new ReturnStatement(expression);
 
@@ -1003,8 +1007,9 @@ module TypeScript {
                 // proper semantics.
                 returnStatement.setPreComments(expression.preComments());
                 expression.setPreComments(null);
+                
+                var statements = new ASTList([returnStatement]);
 
-                statements.append(returnStatement);
                 var block = new Block(statements);
                 block.closeBraceSpan = statements.members[0];
                 return block;
@@ -1018,12 +1023,10 @@ module TypeScript {
             this.movePast(node.identifier);
             this.movePast(node.equalsGreaterThanToken);
 
-            var parameters = new ASTList();
-
             var parameter = new Parameter(identifier);
             this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
 
-            parameters.append(parameter);
+            var parameters = new ASTList([parameter]);
 
             var statements = this.getArrowFunctionStatements(node.body);
 
@@ -1091,7 +1094,7 @@ module TypeScript {
         }
 
         public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
-            var result = new ASTList();
+            var array = new Array(node.typeArguments.nonSeparatorCount());
 
             this.movePast(node.lessThanToken);
 
@@ -1102,11 +1105,12 @@ module TypeScript {
                     this.movePast(node.typeArguments.childAt(i));
                 }
                 else {
-                    result.append(this.visitType(node.typeArguments.childAt(i)));
+                    array[i / 2] = this.visitType(node.typeArguments.childAt(i));
                 }
             }
             this.movePast(node.greaterThanToken);
-
+            
+            var result = new ASTList(array);
             this.setSpan(result, start, node.typeArguments);
 
             return result;
@@ -1513,8 +1517,7 @@ module TypeScript {
             var name = new Identifier("__item");
             this.setSpanExplicit(name, start, start);   // 0 length name.
 
-            var parameters = new ASTList();
-            parameters.append(parameter);
+            var parameters = new ASTList([parameter]);
 
             var result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters);
 
@@ -1889,9 +1892,9 @@ module TypeScript {
             result.statement.minChar = start;
             result.statement.limChar = closeParenPosition;
 
-            result.caseList = new ASTList()
+            var array = new Array(node.switchClauses.childCount());
 
-                for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
+            for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
                 var switchClause = node.switchClauses.childAt(i);
                 var translated = switchClause.accept(this);
 
@@ -1899,9 +1902,10 @@ module TypeScript {
                     result.defaultCase = translated;
                 }
 
-                result.caseList.append(translated);
+                array[i] = translated;
             }
 
+            result.caseList = new ASTList(array)
             this.movePast(node.closeBraceToken);
 
             this.setSpan(result, start, node);
@@ -2137,7 +2141,7 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList());
+            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList([]));
             this.setSpan(funcDecl, start, node);
 
             funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor);
@@ -2162,8 +2166,7 @@ module TypeScript {
             var parameter = node.parameter.accept(this);
             this.movePast(node.closeParenToken);
 
-            var parameters = new ASTList();
-            parameters.append(parameter);
+            var parameters = new ASTList([parameter]);
 
             var block = node.block ? node.block.accept(this) : null;
 

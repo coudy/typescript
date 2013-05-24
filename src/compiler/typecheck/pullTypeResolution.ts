@@ -6032,8 +6032,8 @@ module TypeScript {
             else if (application.nodeType() === NodeType.ElementAccessExpression) {
                 var binExp = <BinaryExpression>application;
                 target = binExp.operand1;
-                args = new ASTList();
-                args.members[0] = binExp.operand2;
+                args = new ASTList([binExp.operand2]);
+
                 var argSym = this.resolveAST(args.members[0], false, enclosingDecl, context).symbol;
                 actuals[0] = argSym.getType();
             }

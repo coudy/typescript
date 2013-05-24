@@ -1284,13 +1284,17 @@ module TypeScript {
                 return;
             }
 
-            for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {
-                this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, typeCheckContext);
+            if (typeDeclAst.extendsList) {
+                for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {
+                    this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, typeCheckContext);
+                }
             }
 
             if (typeSymbol.isClass()) {
-                for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
-                    this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
+                if (typeDeclAst.implementsList) {
+                    for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
+                        this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, typeCheckContext);
+                    }
                 }
             }
             else if (typeDeclAst.implementsList) {

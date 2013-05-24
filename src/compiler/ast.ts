@@ -195,15 +195,12 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        public members: AST[] = [];
+        constructor(public members: AST[]) {
+            super();
+        }
 
         public nodeType(): NodeType {
             return NodeType.List;
-        }
-
-        public append(ast: AST) {
-            this.members[this.members.length] = ast;
-            return this;
         }
 
         public emit(emitter: Emitter) {
