@@ -5,5 +5,4 @@
 //// }
 
 goTo.marker();
-// Bug 692109: Exception getting quickinfo here
 verify.quickInfoExists();
