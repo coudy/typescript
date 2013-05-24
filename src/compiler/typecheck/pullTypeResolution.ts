@@ -1749,7 +1749,6 @@ module TypeScript {
                     if (typeExprSymbol.isNamedTypeSymbol() &&
                         typeExprSymbol.isGeneric() &&
                         !typeExprSymbol.isTypeParameter() &&
-                        !this.isArrayOrEquivalent(typeExprSymbol) &&
                         typeExprSymbol.isResolved() &&
                         !typeExprSymbol.getIsSpecialized() &&
                         typeExprSymbol.getTypeParameters().length &&
@@ -1879,7 +1878,6 @@ module TypeScript {
                 if (constraintTypeSymbol.isNamedTypeSymbol() &&
                     constraintTypeSymbol.isGeneric() &&
                     !constraintTypeSymbol.isTypeParameter() &&
-                    !this.isArrayOrEquivalent(constraintTypeSymbol) &&
                     constraintTypeSymbol.getTypeParameters().length &&
                     constraintTypeSymbol.getTypeArguments() == null &&
                     constraintTypeSymbol.isResolved() &&
