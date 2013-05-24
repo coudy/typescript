@@ -70,9 +70,9 @@ module TypeScript {
 
         private astID: number;
 
-        private _preComments: Comment[];
-        private _postComments: Comment[];
-        private _docComments: Comment[];
+        private _preComments: Comment[] = null;
+        private _postComments: Comment[] = null;
+        private _docComments: Comment[] = null;
 
         constructor() {
         }
@@ -86,11 +86,11 @@ module TypeScript {
         }
 
         public preComments(): Comment[] {
-            return this._preComments || null;
+            return this._preComments;
         }
 
         public postComments(): Comment[] {
-            return this._postComments || null;
+            return this._postComments;
         }
 
         public setPreComments(comments: Comment[]) {
