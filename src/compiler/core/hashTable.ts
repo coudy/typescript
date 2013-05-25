@@ -93,10 +93,6 @@ module TypeScript.Collections {
 
             this.entries[index] = e;
 
-            // Right now we grow when we get a load factor of 1.  We're basically guaranteed to have had
-            // a collision at that point.  Should we potentially change this to a lower load factor?  It
-            // will require more space, but provide us with faster lookup.  We could potentially make this
-            // configurable as well.
             if (this.count >= (this.entries.length / 2)) {
                 this.grow();
             }
