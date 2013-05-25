@@ -21,8 +21,7 @@ module TypeScript {
 
         private topLevelDecls: PullDecl[] = [];
 
-        private declASTMap: DataMap = new DataMap();
-        private declSymbolMap: DataMap = new DataMap();
+        private declASTMap: Collections.HashTable<PullDecl, AST> = Collections.createHashTable<PullDecl, AST>();
 
         private astDeclMap: Collections.HashTable<number, PullDecl> =
             Collections.createHashTable<number, PullDecl>(Collections.DefaultHashTableCapacity, k => k);
@@ -74,22 +73,12 @@ module TypeScript {
             this.astDeclMap.set(ast.getID(), decl);
         }
 
-        private getDeclKey(decl: PullDecl): string {
-            var decl1: any = decl;
-
-            if (!decl1.__declKey) {
-                decl1.__declKey = decl.getDeclID().toString() + "-" + decl.getKind().toString();
-            }
-
-            return decl1.__declKey;
-        }
-
         public getASTForDecl(decl: PullDecl): AST {
-            return <AST>this.declASTMap.read(this.getDeclKey(decl));
+            return this.declASTMap.get(decl);
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
-            this.declASTMap.link(this.getDeclKey(decl), ast);
+            this.declASTMap.set(decl, ast);
         }
 
         public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {

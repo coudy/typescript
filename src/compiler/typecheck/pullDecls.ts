@@ -61,13 +61,17 @@ module TypeScript {
             }
         }
 
+        public hashCode(): number {
+            return this.getDeclID() ^ this.getKind();
+        }
+
         public getDeclID() { return this.declID; }
 
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
-        public getName() { return this.declName; }
-        public getKind() { return this.declType }
+        public getName(): string { return this.declName; }
+        public getKind(): PullElementKind { return this.declType }
 
         public getDisplayName() {
             return this.declDisplayName === undefined ? this.declName : this.declDisplayName;
