@@ -1,4 +1,4 @@
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// a.concat("hello", 'world');
 //// 
@@ -44,4 +44,4 @@ goTo.position(9);
 //   1: a.concat("hello");
 //   2: 
 edit.deleteAtCaret(7);
-//diagnostics.validateTypesAtPositions(43);
+diagnostics.validateTypesAtPositions(43);

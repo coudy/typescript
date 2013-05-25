@@ -1021,6 +1021,9 @@ module FourSlash {
             var referenceLanguageServiceShim = referenceLanguageServiceShimHost.getLanguageService();
             var referenceLanguageService = referenceLanguageServiceShim.languageService;
 
+            // Add lib.d.ts to the reference language service
+            referenceLanguageServiceShimHost.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
+
             for (var i = 0; i < this.testData.files.length; i++) {
                 var file = this.testData.files[i];
 

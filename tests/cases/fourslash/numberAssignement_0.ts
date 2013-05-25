@@ -1,8 +1,8 @@
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// var x: Number;
 //// var y: Number;
 //// var z = x ;
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(28);
+diagnostics.validateTypesAtPositions(28);
