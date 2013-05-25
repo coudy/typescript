@@ -123,10 +123,10 @@ module TypeScript {
         }
 
         public static select(values: any[], func: (v: any) => any): any[] {
-            var result = [];
+            var result = new Array(values.length);
 
             for (var i = 0; i < values.length; i++) {
-                result.push(func(values[i]));
+                result[i] = func(values[i]);
             }
 
             return result;
@@ -186,10 +186,10 @@ module TypeScript {
             return ~low;
         }
 
-        public static createArray(length: number, defaultvalue: any): any[] {
-            var result = [];
+        public static createArray(length: number, defaultValue: any): any[] {
+            var result = new Array(length);
             for (var i = 0; i < length; i++) {
-                result.push(defaultvalue);
+                result[i] = defaultValue;
             }
 
             return result;
