@@ -97,7 +97,7 @@ module TypeScript.Collections {
             // a collision at that point.  Should we potentially change this to a lower load factor?  It
             // will require more space, but provide us with faster lookup.  We could potentially make this
             // configurable as well.
-            if (this.count === this.entries.length) {
+            if (this.count >= (this.entries.length / 2)) {
                 this.grow();
             }
 
@@ -105,28 +105,28 @@ module TypeScript.Collections {
             return e.Key;
         }
 
-        //private dumpStats() {
-        //    var standardOut = Environment.standardOut;
+        private dumpStats() {
+            var standardOut = Environment.standardOut;
 
-        //    standardOut.WriteLine("----------------------")
-        //    standardOut.WriteLine("Hash table stats");
-        //    standardOut.WriteLine("Count            : " + this.count);
-        //    standardOut.WriteLine("Entries Length   : " + this.entries.length);
+            standardOut.WriteLine("----------------------")
+            standardOut.WriteLine("Hash table stats");
+            standardOut.WriteLine("Count            : " + this.count);
+            standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
-        //    var occupiedSlots = 0;
-        //    for (var i = 0; i < this.entries.length; i++) {
-        //        if (this.entries[i] !== null) {
-        //            occupiedSlots++;
-        //        }
-        //    }
+            var occupiedSlots = 0;
+            for (var i = 0; i < this.entries.length; i++) {
+                if (this.entries[i] !== null) {
+                    occupiedSlots++;
+                }
+            }
 
-        //    standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-        //    standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-        //    standardOut.WriteLine("----------------------");
-        //}
+            standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+            standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+            standardOut.WriteLine("----------------------");
+        }
 
         private grow(): void {
-            // this.dumpStats();
+            //this.dumpStats();
 
             var newSize = Hash.expandPrime(this.entries.length);
 
@@ -147,7 +147,7 @@ module TypeScript.Collections {
                 }
             }
 
-            // this.dumpStats();
+            //this.dumpStats();
         }
     }
 
