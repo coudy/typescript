@@ -68,7 +68,7 @@ module TypeScript {
 
         public typeCheckPhase = -1;
 
-        private astID: number;
+        private astID: number = -1;
 
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
@@ -129,11 +129,13 @@ module TypeScript {
         }
 
         public getID(): number {
-            if (!this.astID) {
-                this.astID = astID++;
+            var result = this.astID;
+            if (result === -1) {
+                result = astID++;
+                this.astID = result;
             }
 
-            return this.astID;
+            return result;
         }
 
         public isDeclaration() { return false; }

@@ -17,11 +17,8 @@ module TypeScript.Collections {
         private count: number = 0;
 
         constructor(capacity: number,
-                    private hash: (k: TKey) => number,
-                    private equals: (k1: TKey, k2: TKey) => boolean) {
+                    private hash: (k: TKey) => number) {
             var size = Hash.getPrime(capacity);
-            this.hash = hash;
-            this.equals = equals;
             this.entries = ArrayUtilities.createArray(size, null);
         }
 
@@ -79,14 +76,10 @@ module TypeScript.Collections {
 
         private findEntry(key: TKey, hashCode: number): HashTableEntry<TKey, TValue> {
             for (var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-                if (e.HashCode === hashCode) {
-                    var equals = this.equals === null
-                        ? key === e.Key
-                        : this.equals(key, e.Key);
+                if (e.HashCode === hashCode &&
+                    key === e.Key) {
 
-                    if (equals) {
-                        return e;
-                    }
+                    return e;
                 }
             }
 
@@ -159,9 +152,8 @@ module TypeScript.Collections {
     }
 
     export function createHashTable<TKey,TValue>(capacity: number = DefaultHashTableCapacity,
-        hash: (k: TKey) => number = null,
-        equals: (k1: TKey, k2: TKey) => boolean = null): HashTable<TKey,TValue> {
-        return new HashTable<TKey,TValue>(capacity, hash, equals);
+                                                 hash: (k: TKey) => number = null): HashTable<TKey,TValue> {
+        return new HashTable<TKey,TValue>(capacity, hash);
     }
 
     var currentHashCode = 1;
