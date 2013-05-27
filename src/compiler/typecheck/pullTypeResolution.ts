@@ -5324,6 +5324,10 @@ module TypeScript {
                 return true;
             }
 
+            if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
+                return true;
+            }
+
             //source = this.substituteUpperBoundForType(source);
             //target = this.substituteUpperBoundForType(target);
 
@@ -6624,13 +6628,21 @@ module TypeScript {
                 }
             }
 
-            // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
-            var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
-            var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
+                // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
+                //var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
+                //var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
 
-            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
-                return;
-            }
+                //if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
+                //    return;
+                //}
+                var prevSpecializingToAny = context.specializingToAny;
+                context.specializingToAny = true;
+
+                if (!this.sourceIsAssignableToTarget(expressionType, parameterType, context)) {
+                    context.specializingToAny = prevSpecializingToAny;
+                    return;
+                }
+                context.specializingToAny = prevSpecializingToAny;
 
             if (expressionType.isArray() && parameterType.isArray()) {
                 this.relateArrayTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
@@ -6648,12 +6660,12 @@ module TypeScript {
             context: PullTypeResolutionContext): void {
             // Sub in 'any' for type parameters
 
-            var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, enclosingDecl, context);
-            var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, enclosingDecl, context);
+            //var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, enclosingDecl, context);
+            //var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, enclosingDecl, context);
 
-            if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
-                return;
-            }
+            //if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
+            //    return;
+            //}
 
             var expressionParams = expressionSignature.getParameters();
             var expressionReturnType = expressionSignature.getReturnType();
