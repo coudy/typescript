@@ -45,7 +45,6 @@ DEALINGS IN THE SOFTWARE.
 // [LocalStorage adapter](backbone-localstorage.js)
 // to persist Backbone models within your browser.
 
-declare var $: any;
 declare module Backbone {
     export class Model {
         constructor (attr? , opts? );
@@ -57,35 +56,60 @@ declare module Backbone {
         bind(ev: string, f: Function, ctx?: any): void;
         toJSON(): any;
     }
-    export class Collection {
+    export class Collection<T> {
         constructor (models? , opts? );
         bind(ev: string, f: Function, ctx?: any): void;
         length: number;
         create(attrs, opts? ): any;
-        each(f: (elem: any) => void ): void;
+        each(f: (elem: T) => void ): void;
         fetch(opts?: any): void;
-        last(): any;
-        last(n: number): any[];
-        filter(f: (elem: any) => any): any[];
-        without(...values: any[]): any[];
+        last(): T;
+        last(n: number): T[];
+        filter(f: (elem: T) => boolean): T[];
+        without(...values: T[]): T[];
     }
     export class View {
         constructor (options? );
-        $(selector: string): any;
+        $(selector: string): JQuery;
         el: HTMLElement;
-        $el: any;
+        $el: JQuery;
         model: Model;
         remove(): void;
         delegateEvents: any;
         make(tagName: string, attrs? , opts? ): View;
         setElement(element: HTMLElement, delegate?: boolean): void;
+        setElement(element: JQuery, delegate?: boolean): void;
         tagName: string;
         events: any;
 
         static extend: any;
     }
 }
-declare var _: any;
+interface JQuery {
+    fadeIn(): JQuery;
+    fadeOut(): JQuery;
+    focus(): JQuery;
+    html(): string;
+    html(val: string): JQuery;
+    show(): JQuery;
+    addClass(className: string): JQuery;
+    removeClass(className: string): JQuery;
+    append(el: HTMLElement): JQuery;
+    val(): string;
+    val(value: string): JQuery;
+    attr(attrName: string): string;
+}
+declare var $: {
+    (el: HTMLElement): JQuery;
+    (selector: string): JQuery;
+    (readyCallback: () => void ): JQuery;
+};
+declare var _: {
+    each<T, U>(arr: T[], f: (elem: T) => U): U[];
+    delay(f: Function, wait: number, ...arguments: any[]): number;
+    template(template: string): (model: any) => string;
+    bindAll(object: any, ...methodNames: string[]): void;
+};
 declare var Store: any;
 
 
@@ -127,7 +151,7 @@ class Todo extends Backbone.Model {
 
 // The collection of todos is backed by *localStorage* instead of a remote
 // server.
-class TodoList extends Backbone.Collection {
+class TodoList extends Backbone.Collection<Todo> {
 
     // Reference to this collection's model.
     model = Todo;
@@ -137,7 +161,7 @@ class TodoList extends Backbone.Collection {
 
     // Filter down the list of all todo items that are finished.
     done() {
-        return this.filter((todo: Todo) => todo.get('done'));
+        return this.filter(todo => todo.get('done'));
     }
 
     // Filter down the list to only todo items that are still not finished.
@@ -175,7 +199,7 @@ class TodoView extends Backbone.View {
 
     // A TodoView model must be a Todo, redeclare with specific type
     model: Todo;
-    input: any;
+    input: JQuery;
 
     constructor (options? ) {
         //... is a list tag.
@@ -250,7 +274,7 @@ class AppView extends Backbone.View {
         "click .mark-all-done": "toggleAllComplete"
     };
 
-    input: any;
+    input: JQuery;
     allCheckbox: HTMLInputElement;
     statsTemplate: (params: any) => string;
 
@@ -322,7 +346,7 @@ class AppView extends Backbone.View {
 
     // Clear all done todo items, destroying their models.
     clearCompleted() {
-        _.each(Todos.done(), (todo: Todo) => todo.clear());
+        _.each(Todos.done(), todo => todo.clear());
         return false;
     }
 
@@ -340,7 +364,7 @@ class AppView extends Backbone.View {
 
     toggleAllComplete() {
         var done = this.allCheckbox.checked;
-        Todos.each((todo: Todo) => todo.save({ 'done': done }));
+        Todos.each(todo => todo.save({ 'done': done }));
     }
 
 }
