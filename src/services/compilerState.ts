@@ -266,6 +266,9 @@ module Services {
                 // This file has at least one syntactic error, return and do not emit code.
                 return result;
             }
+            
+            // Force a type check before emit
+            this.compiler.getSemanticDiagnostics(fileName);
 
             var emitterIOHost: TypeScript.EmitterIOHost = {
                 writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
