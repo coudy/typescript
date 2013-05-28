@@ -1032,6 +1032,10 @@ module TypeScript {
                                        getPrettyTypeName?: boolean,
                                        candidateSignature?: PullSignatureSymbol) {
             var result: MemberName[] = [];
+            if (!signatures) {
+                return result;
+            }
+
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
                 shortform = false;
