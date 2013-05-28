@@ -105,11 +105,13 @@ class CommandLineHost implements TypeScript.IResolverHost {
             }
         };
 
+        var start = new Date().getTime();
         for (var i = 0; i < nCode; i++) {
             path = TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.code[i].path));
             this.pathMap[preEnv.code[i].path] = path;
             resolver.resolveCode(path, "", false, resolutionDispatcher);
         }
+        TypeScript.fileResolutionTime = new Date().getTime() - start;
 
         return resolvedEnv;
     }

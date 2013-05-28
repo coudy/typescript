@@ -737,7 +737,8 @@ module TypeScript {
                 }
 
                 var findErrorsEndTime = new Date().getTime();
-
+                
+                this.logger.log("File resolution time      :               " + fileResolutionTime);
                 this.logger.log("Source characters compiled:               " + sourceCharactersCompiled);
                 this.logger.log("SyntaxTree parse time:                    " + syntaxTreeParseTime);
                 this.logger.log("Syntax Diagnostics time:                  " + syntaxDiagnosticsTime);
