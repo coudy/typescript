@@ -151,13 +151,12 @@ module TypeScript {
 
         private currentUnit: SemanticInfo = null;
 
-        constructor(private compilationSettings: CompilationSettings,
-                    public semanticInfoChain: SemanticInfoChain,
-                    private unitPath: string) {
+        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
             this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
             this.cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
             this.cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
             this.cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface);
+
             this.cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface);
             this.cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
             this.cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
@@ -170,6 +169,12 @@ module TypeScript {
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
 
+            if (!this.cachedObjectInterfaceType) {
+                this.cachedObjectInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+            }
+            if (!this.cachedArrayInterfaceType) {
+                this.cachedArrayInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+            }
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
@@ -5326,6 +5331,19 @@ module TypeScript {
                 return true;
             }
 
+            if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
+                return true;
+            }
+
+            if (context.specializingToObject) {
+                if (target.isTypeParameter()) {
+                    target = this.cachedObjectInterfaceType;
+                }
+                if (source.isTypeParameter()) {
+                    target = this.cachedObjectInterfaceType;
+                }
+            }
+
             //source = this.substituteUpperBoundForType(source);
             //target = this.substituteUpperBoundForType(target);
 
@@ -5931,6 +5949,9 @@ module TypeScript {
                 targetReturnType = this.cachedObjectInterfaceType;
             }
 
+            var prevSpecializingToObject = context.specializingToObject;
+            context.specializingToObject = true;
+
             if (targetReturnType != this.semanticInfoChain.voidTypeSymbol) {
                 if (!this.sourceIsRelatableToTarget(sourceReturnType, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -5938,6 +5959,7 @@ module TypeScript {
                         // No need to print this one here - it's printed as part of the signature error in sourceIsRelatableToTarget
                         //comparisonInfo.addMessage("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
                     }
+                    context.specializingToObject = prevSpecializingToObject;
                     return false;
                 }
             }
@@ -5990,9 +6012,11 @@ module TypeScript {
                     if (comparisonInfo) {
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleParameterTypes;
                     }
+                        context.specializingToObject = prevSpecializingToObject;
                     return false;
                 }
             }
+            context.specializingToObject = prevSpecializingToObject;
             return true;
         }
 
@@ -6626,13 +6650,21 @@ module TypeScript {
                 }
             }
 
-            // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
-            var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
-            var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
+                // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
+                //var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
+                //var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
 
-            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
-                return;
-            }
+                //if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
+                //    return;
+                //}
+                var prevSpecializingToAny = context.specializingToAny;
+                context.specializingToAny = true;
+
+                if (!this.sourceIsAssignableToTarget(expressionType, parameterType, context)) {
+                    context.specializingToAny = prevSpecializingToAny;
+                    return;
+                }
+                context.specializingToAny = prevSpecializingToAny;
 
             if (expressionType.isArray() && parameterType.isArray()) {
                 this.relateArrayTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
@@ -6650,12 +6682,12 @@ module TypeScript {
             context: PullTypeResolutionContext): void {
             // Sub in 'any' for type parameters
 
-            var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, enclosingDecl, context);
-            var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, enclosingDecl, context);
+            //var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, enclosingDecl, context);
+            //var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, enclosingDecl, context);
 
-            if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
-                return;
-            }
+            //if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
+            //    return;
+            //}
 
             var expressionParams = expressionSignature.getParameters();
             var expressionReturnType = expressionSignature.getReturnType();

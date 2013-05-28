@@ -740,6 +740,9 @@ module TypeScript {
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
+                this.logger.log("Number of symbols created: " + pullSymbolID);
+                this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
+                this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
             } );
         }
 

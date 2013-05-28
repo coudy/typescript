@@ -633,21 +633,8 @@ module TypeScript {
                     var specialization: PullTypeSymbol = null;
 
                     for (var i = 0; i < specializations.length; i++) {
-                        specialization = specializations[i];
-
-                        decls = specialization.getDeclarations();
-
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                specialization.removeDeclaration(decls[j]);
-
-                                cleanedPreviousDecls = true;
-                            }
-                        }
-
-                        specialization.addDeclaration(classDecl);
-                        specialization.setUnresolved();
-                        specialization.invalidate();
+                        specializations[i].setUnresolved();
+                        specializations[i].invalidate();
                     }
 
                     classSymbol.cleanTypeParameters();
@@ -891,15 +878,6 @@ module TypeScript {
                     for (var i = 0; i < specializations.length; i++) {
                         specialization = specializations[i];
 
-                        decls = specialization.getDeclarations();
-
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                specialization.removeDeclaration(decls[j]);
-                            }
-                        }
-
-                        specialization.addDeclaration(interfaceDecl);
                         this.cleanInterfaceSignatures(specialization);
                         specialization.invalidate();
                     }
@@ -1685,16 +1663,7 @@ module TypeScript {
                     var specializations = functionTypeSymbol.getKnownSpecializations();
 
                     for (var i = 0; i < specializations.length; i++) {
-                        decls = specializations[i].getDeclarations();
-
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                specializations[i].removeDeclaration(decls[j]);
-                                specializations[i].addDeclaration(functionDeclaration);
-                                specializations[i].invalidate();
-                                cleanedPreviousDecls = true;
-                            }                    
-                        }
+                        specializations[i].invalidate();
                     }
                 }
 
@@ -1708,17 +1677,7 @@ module TypeScript {
             }
 
             if (!functionTypeSymbol) {
-                //if (parent) {
-                //    functionTypeSymbol = parent.findNestedType(funcName);
-                //}
-                //else if (!(functionDeclaration.getFlags() & PullElementFlags.Exported)) {
-                //    functionTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(funcName, PullElementKind.SomeType, []);
-                //}
-
-                //if (!functionTypeSymbol) {
-                    functionTypeSymbol = new PullFunctionTypeSymbol();
-                //}
-
+                functionTypeSymbol = new PullFunctionTypeSymbol();
                 functionSymbol.setType(functionTypeSymbol);
             }
 
@@ -1764,15 +1723,7 @@ module TypeScript {
                         callSigs = specializations[j].getCallSignatures();
 
                         for (var i = 0; i < callSigs.length; i++) {
-                            decls = callSigs[i].getDeclarations();
-
-                            for (var k = 0; k < decls.length; k++) {
-                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
-                                    callSigs[i].removeDeclaration(decls[k]);
-                                    callSigs[i].addDeclaration(functionDeclaration);
-                                    callSigs[i].invalidate();
-                                }      
-                            }
+                            callSigs[i].invalidate();
                         }
                     }
                 }
@@ -2084,16 +2035,7 @@ module TypeScript {
                     var specializations = methodTypeSymbol.getKnownSpecializations();
 
                     for (var i = 0; i < specializations.length; i++) {
-                        decls = specializations[i].getDeclarations();
-
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                specializations[i].removeDeclaration(decls[j]);
-                                specializations[i].addDeclaration(methodDeclaration);
-                                specializations[i].invalidate();
-                                cleanedPreviousDecls = true;
-                            }                    
-                        }
+                        specializations[i].invalidate();
                     }
                 }
 
@@ -2163,15 +2105,7 @@ module TypeScript {
                         callSigs = specializations[j].getCallSignatures();
 
                         for (var i = 0; i < callSigs.length; i++) {
-                            decls = callSigs[i].getDeclarations();
-
-                            for (var k = 0; k < decls.length; k++) {
-                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
-                                    callSigs[i].removeDeclaration(decls[k]);
-                                    callSigs[i].addDeclaration(methodDeclaration);
-                                    callSigs[i].invalidate();
-                                }
-                            }
+                            callSigs[i].invalidate();
                         }
                     }
                 }
@@ -2320,16 +2254,7 @@ module TypeScript {
                         var specializations = constructorTypeSymbol.getKnownSpecializations();
 
                         for (var i = 0; i < specializations.length; i++) {
-                            decls = specializations[i].getDeclarations();
-
-                            for (var j = 0; j < decls.length; j++) {
-                                if (decls[j].getScriptName() === scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                    specializations[i].removeDeclaration(decls[j]);
-                                    specializations[i].addDeclaration(constructorDeclaration);
-                                    specializations[i].invalidate();
-                                    cleanedPreviousDecls = true;
-                                }                    
-                            }
+                            specializations[i].invalidate();
                         }
                     }                          
 
@@ -2374,15 +2299,7 @@ module TypeScript {
                         constructSigs = specializations[j].getConstructSignatures();
 
                         for (var i = 0; i < constructSigs.length; i++) {
-                            decls = constructSigs[i].getDeclarations();
-
-                            for (var k = 0; k < decls.length; k++) {
-                                if (decls[k].getScriptName() === scriptName && decls[k].getDeclID() < this.startingDeclForRebind) {
-                                    constructSigs[i].removeDeclaration(decls[k]);
-                                    constructSigs[i].addDeclaration(constructorDeclaration);
-                                    constructSigs[i].invalidate();
-                                }
-                            }
+                            constructSigs[i].invalidate();
                         }
                     }
                 }

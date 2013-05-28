@@ -49,6 +49,8 @@ module TypeScript {
         private isSpecialized = false;
         private isBeingSpecialized = false;
 
+        private rootSymbol: PullSymbol = null;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -162,6 +164,9 @@ module TypeScript {
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
 
+        public getRootSymbol() { return this.rootSymbol; }
+        public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
+
         public setIsBound(rebindingID: number) {
             this.isBound = true;
             this.rebindingID = rebindingID;
@@ -190,6 +195,11 @@ module TypeScript {
         // declaration methods
         public addDeclaration(decl: PullDecl) {
             Debug.assert(!!decl);
+
+            if (this.rootSymbol) {
+                return;
+            }
+
             this.declarations.addItem(decl);
 
             if (!this.cachedDeclarations) {
@@ -201,6 +211,11 @@ module TypeScript {
         }
 
         public getDeclarations() {
+
+            if (this.rootSymbol) {
+                return this.rootSymbol.getDeclarations();
+            }
+
             if (!this.cachedDeclarations) {
                 this.cachedDeclarations = [];
             }
@@ -208,11 +223,21 @@ module TypeScript {
         }
 
         public removeDeclaration(decl: PullDecl) {
+
+            if (this.rootSymbol) {
+                return;
+            }
+
             this.declarations.remove(d => d === decl);
             this.cachedDeclarations = <PullDecl[]>this.declarations.find(d => d);
         }
 
         public updateDeclarations(map: (item: PullDecl, context: any) => void , context: any) {
+
+            if (this.rootSymbol) {
+                return;
+            }
+
             this.declarations.update(map, context);
         }
 
@@ -889,7 +914,8 @@ module TypeScript {
             if (parameters) {
                 for (var j = 0; j < parameters.length; j++) {
                     parameter = new PullSymbol(parameters[j].getName(), PullElementKind.Parameter);
-                    parameter.addDeclaration(parameters[j].getDeclarations()[0]);
+                    parameter.setRootSymbol(parameters[j]);
+                    //parameter.addDeclaration(parameters[j].getDeclarations()[0]);
                     if (parameters[j].getIsOptional()) {
                         parameter.setIsOptional();
                     }
@@ -2964,6 +2990,7 @@ module TypeScript {
     }
 
     export var nSpecializationsCreated = 0;
+    export var nSpecializedSignaturesCreated = 0;
 
     export function shouldSpecializeTypeParameterForTypeParameter(specialization: PullTypeParameterSymbol, typeToSpecialize: PullTypeParameterSymbol) {
         if (specialization == typeToSpecialize) {
@@ -3171,7 +3198,7 @@ module TypeScript {
                     typeToSpecialize.isTypeParameter() ? // watch out for replacing one tyvar with another
                         new PullTypeVariableSymbol(typeToSpecialize.getName(), (<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter()) :
                         new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
-        newType.addDeclaration(newTypeDecl);
+        newType.setRootSymbol(rootType);
 
         newType.setIsBeingSpecialized();
 
@@ -3279,7 +3306,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3307,7 +3334,7 @@ module TypeScript {
                 }
 
                 signature.setIsBeingSpecialized();
-                newSignature.addDeclaration(decl);
+                newSignature.setRootSymbol(signature);
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
 
@@ -3343,7 +3370,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3373,7 +3400,7 @@ module TypeScript {
                 }
 
                 signature.setIsBeingSpecialized();
-                newSignature.addDeclaration(decl);
+                newSignature.setRootSymbol(signature);
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
 
@@ -3409,7 +3436,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3439,7 +3466,7 @@ module TypeScript {
                 }
 
                 signature.setIsBeingSpecialized();
-                newSignature.addDeclaration(decl);
+                newSignature.setRootSymbol(signature);
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
 
@@ -3481,9 +3508,7 @@ module TypeScript {
 
             newField = new PullSymbol(field.getName(), field.getKind());
 
-            for (var j = 0; j < decls.length; j++) {
-                newField.addDeclaration(decls[j]);
-            }
+            newField.setRootSymbol(field);
 
             if (field.getIsOptional()) {
                 newField.setIsOptional();
@@ -3548,10 +3573,7 @@ module TypeScript {
 
             var constructorDecls: PullDecl[] = constructorMethod.getDeclarations();
 
-            for (var i = 0; i < constructorDecls.length; i++) {
-                newConstructorMethod.addDeclaration(constructorDecls[i]);
-                //newConstructorType.addDeclaration(constructorDecls[i]);
-            }
+            newConstructorMethod.setRootSymbol(constructorMethod);
 
             (<PullClassTypeSymbol>newType).setConstructorMethod(newConstructorMethod);
         }
@@ -3594,7 +3616,8 @@ module TypeScript {
         context.inSpecialization = true;
 
         newSignature = new PullSignatureSymbol(signature.getKind());
-        newSignature.addDeclaration(signature.getDeclarations()[0]);
+        nSpecializedSignaturesCreated++;
+        newSignature.setRootSymbol(signature);
 
         if (signature.hasVariableParamList()) {
             newSignature.setHasVariableParamList();
@@ -3655,7 +3678,7 @@ module TypeScript {
         for (var k = 0; k < parameters.length; k++) {
 
             newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
-            newParameter.addDeclaration(parameters[k].getDeclarations()[0]);
+            newParameter.setRootSymbol(parameters[k]);
 
             parameterType = parameters[k].getType();
 
