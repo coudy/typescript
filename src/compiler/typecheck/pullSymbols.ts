@@ -163,6 +163,7 @@ module TypeScript {
         public getIsSpecialized() { return this.isSpecialized; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
+        public setValueIsBeingSpecialized(val: boolean) { this.isBeingSpecialized = val; }
 
         public getRootSymbol() { return this.rootSymbol; }
         public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
@@ -3217,6 +3218,7 @@ module TypeScript {
 
         // If it's a constructor, we want to flag the type as being specialized
         // to prevent stack overflows when specializing the return type
+        var prevCurrentlyBeingSpecialized = typeToSpecialize.currentlyBeingSpecialized();
         if (typeToSpecialize.getKind() == PullElementKind.ConstructorType) {
             typeToSpecialize.setIsBeingSpecialized();
         }
@@ -3342,6 +3344,7 @@ module TypeScript {
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     Debug.assert(false, "returning from call");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -3408,6 +3411,7 @@ module TypeScript {
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     Debug.assert(false, "returning from construct");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -3474,6 +3478,7 @@ module TypeScript {
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     Debug.assert(false, "returning from index");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -3581,7 +3586,7 @@ module TypeScript {
         newType.setIsSpecialized();
 
         newType.setResolved();
-
+        typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
         context.inSpecialization = prevInSpecialization;
         return newType;
     }
