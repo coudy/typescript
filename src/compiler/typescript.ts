@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,11 +118,16 @@ module TypeScript {
             }
             else {
                 // Don't store the syntax tree for a closed file.
+                var start = new Date().getTime();
                 this._diagnostics = syntaxTree.diagnostics();
+                TypeScript.syntaxDiagnosticsTime += new Date().getTime();
             }
 
             this.lineMap = syntaxTree.lineMap();
+
+            var start = new Date().getTime();
             this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings, isOpen);
+            TypeScript.astTranslationTime += new Date().getTime() - start;
         }
 
         public diagnostics(): IDiagnostic[]{
@@ -194,8 +199,9 @@ module TypeScript {
 
         public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
-
+            var start = new Date().getTime();
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, getParseOptions(compilationSettings));
+            TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
 
             var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;
@@ -239,13 +245,14 @@ module TypeScript {
                              byteOrderMark: ByteOrderMark,
                              version: number,
                              isOpen: boolean,
-                             referencedFiles: IFileReference[] = []): Document {
-            return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
-                this.fileNameToDocument.addOrUpdate(fileName, document);
+                             referencedFiles: IFileReference[]= []): Document {
 
-                return document;
-            } );
+            TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
+
+            var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
+            this.fileNameToDocument.addOrUpdate(fileName, document);
+
+            return document;
         }
 
         public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
@@ -543,56 +550,54 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
-            if (optionsDiagnostic) {
-                return [optionsDiagnostic];
-            }
-            
-            var startEmitTime = (new Date()).getTime();
+        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[]{
+            return TypeScript.timeFunction(this.logger, "emitAll()", () => {
+                var optionsDiagnostic = this.parseEmitOption(ioHost);
+                if (optionsDiagnostic) {
+                    return [optionsDiagnostic];
+                }
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
-            var sharedEmitter: Emitter = null;
+                var fileNames = this.fileNameToDocument.getAllKeys();
+                var sharedEmitter: Emitter = null;
 
-            // Iterate through the files, as long as we don't get an error.
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
+                // Iterate through the files, as long as we don't get an error.
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var fileName = fileNames[i];
 
-                var document = this.getDocument(fileName);
+                    var document = this.getDocument(fileName);
 
-                try {
-                    if (this.emitOptions.outputMany) {
-                        // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                        var singleEmitter = this.emit(document, inputOutputMapper);
+                    try {
+                        if (this.emitOptions.outputMany) {
+                            // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                            var singleEmitter = this.emit(document, inputOutputMapper);
 
-                        // Close the emitter after each emitted file.
-                        if (singleEmitter) {
-                            singleEmitter.emitSourceMapsAndClose();
+                            // Close the emitter after each emitted file.
+                            if (singleEmitter) {
+                                singleEmitter.emitSourceMapsAndClose();
+                            }
+                        }
+                        else {
+                            // We're not outputting to multiple files.  Keep using the same emitter and don't
+                            // close until below.
+                            sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
                         }
                     }
-                    else {
-                        // We're not outputting to multiple files.  Keep using the same emitter and don't
-                        // close until below.
-                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
+                    catch (ex1) {
+                        return Emitter.handleEmitterError(fileName, ex1);
                     }
                 }
-                catch (ex1) {
-                    return Emitter.handleEmitterError(fileName, ex1);
-                }
-            }
 
-            this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
-
-            if (sharedEmitter) {
-                try {
-                    sharedEmitter.emitSourceMapsAndClose();
+                if (sharedEmitter) {
+                    try {
+                        sharedEmitter.emitSourceMapsAndClose();
+                    }
+                    catch (ex2) {
+                        return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
+                    }
                 }
-                catch (ex2) {
-                    return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
-                }
-            }
 
-            return [];
+                return [];
+            });
         }
 
         // Emit single file if outputMany is specified, else emit all
@@ -684,7 +689,6 @@ module TypeScript {
 
         public pullTypeCheck() {
             return this.timeFunction("pullTypeCheck()", () => {
-
                 this.semanticInfoChain = new SemanticInfoChain();
                 this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
@@ -729,19 +733,21 @@ module TypeScript {
                 //// type check
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     fileName = fileNames[i];
-
-                    this.logger.log("Type checking " + fileName);
                     this.pullTypeChecker.typeCheckScript(this.getDocument(fileName).script, fileName, this);
                 }
 
                 var findErrorsEndTime = new Date().getTime();
 
-                this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
-                this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-                this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
-                this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-                this.logger.log("Number of symbols created: " + pullSymbolID);
-                this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
+                this.logger.log("Source characters compiled:               " + sourceCharactersCompiled);
+                this.logger.log("SyntaxTree parse time:                    " + syntaxTreeParseTime);
+                this.logger.log("Syntax Diagnostics time:                  " + syntaxDiagnosticsTime);
+                this.logger.log("AST translation time:                     " + astTranslationTime);
+                this.logger.log("Decl creation:                            " + (createDeclsEndTime - createDeclsStartTime));
+                this.logger.log("Binding:                                  " + (bindEndTime - bindStartTime));
+                this.logger.log("    Time in findSymbol:                   " + time_in_findSymbol);
+                this.logger.log("Find errors:                              " + (findErrorsEndTime - findErrorsStartTime));
+                this.logger.log("Number of symbols created:                " + pullSymbolID);
+                this.logger.log("Number of specialized types created:      " + nSpecializationsCreated);
                 this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
             } );
         }
