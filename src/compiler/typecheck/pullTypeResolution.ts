@@ -6609,6 +6609,10 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): void {
 
+            if (!expressionType || !parameterType) {
+                return;
+            }
+
             if (expressionType.isError()) {
                 expressionType = this.semanticInfoChain.anyTypeSymbol;
             }
