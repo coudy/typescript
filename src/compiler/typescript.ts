@@ -163,7 +163,8 @@ module TypeScript {
             return this._bloomFilter;
         }
 
-        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
+        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
+
             var oldScript = this.script;
             var oldSyntaxTree = this._syntaxTree;
 
@@ -726,6 +727,9 @@ module TypeScript {
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
+                this.logger.log("Number of symbols created: " + pullSymbolID);
+                this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
+                this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
             } );
         }
 

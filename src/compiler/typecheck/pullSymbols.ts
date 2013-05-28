@@ -2990,6 +2990,7 @@ module TypeScript {
     }
 
     export var nSpecializationsCreated = 0;
+    export var nSpecializedSignaturesCreated = 0;
 
     export function shouldSpecializeTypeParameterForTypeParameter(specialization: PullTypeParameterSymbol, typeToSpecialize: PullTypeParameterSymbol) {
         if (specialization == typeToSpecialize) {
@@ -3305,7 +3306,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3369,7 +3370,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3435,7 +3436,7 @@ module TypeScript {
                 resolver.setUnitPath(decl.getScriptName());
 
                 newSignature = new PullSignatureSymbol(signature.getKind());
-
+                nSpecializedSignaturesCreated++;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
@@ -3615,6 +3616,7 @@ module TypeScript {
         context.inSpecialization = true;
 
         newSignature = new PullSignatureSymbol(signature.getKind());
+        nSpecializedSignaturesCreated++;
         newSignature.setRootSymbol(signature);
 
         if (signature.hasVariableParamList()) {
