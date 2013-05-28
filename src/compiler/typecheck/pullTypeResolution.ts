@@ -1772,13 +1772,16 @@ module TypeScript {
                             typeExprSymbol = exportedTypeSymbol;
                         }
                         else {
-                            var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol()
+                            typeExprSymbol = typeExprSymbol.getType();
+                            if (typeExprSymbol.isContainer()) {
+                                var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
-                            if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                            }
-                            else {
-                                typeExprSymbol = instanceSymbol.getType();
+                                if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
+                                    typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                                }
+                                else {
+                                    typeExprSymbol = instanceSymbol.getType();
+                                }
                             }
                         }
                     }

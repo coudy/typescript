@@ -1,4 +1,4 @@
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// function f18(a?:string, ...b){}
 ////  
@@ -9,4 +9,4 @@
 //// function f21(a:string, b?:string, ...d:number[]){}
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(48,100,43,133,47);
+diagnostics.validateTypesAtPositions(48,100,43,133,47);

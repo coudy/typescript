@@ -1,4 +1,4 @@
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// 
 //// //_modes. // produces an internal error - please implement in derived class
@@ -30,4 +30,4 @@ goTo.position(326);
 ////    :  |->-> insert "         var x:modes.Mode;\n"
 ////  12:      }
 ////  13:     
-//edit.insert("         var x:modes.Mode;\n");
+edit.insert("         var x:modes.Mode;\n");

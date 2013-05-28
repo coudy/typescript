@@ -1,4 +1,4 @@
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// // @sourcemap: true
 //// module Foo.Bar {
@@ -37,4 +37,4 @@
 //// }
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(147,705,232,706,113);
+diagnostics.validateTypesAtPositions(147,705,232,706,113);
