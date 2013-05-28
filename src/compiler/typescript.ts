@@ -120,7 +120,7 @@ module TypeScript {
                 // Don't store the syntax tree for a closed file.
                 var start = new Date().getTime();
                 this._diagnostics = syntaxTree.diagnostics();
-                TypeScript.syntaxDiagnosticsTime += new Date().getTime();
+                TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
             }
 
             this.lineMap = syntaxTree.lineMap();

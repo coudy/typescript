@@ -13,7 +13,7 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 
-var TypeScript;
+﻿var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
         function ArrayUtilities() {
@@ -33784,6 +33784,9 @@ var TypeScript;
         PullSymbol.prototype.setIsBeingSpecialized = function () {
             this.isBeingSpecialized = true;
         };
+        PullSymbol.prototype.setValueIsBeingSpecialized = function (val) {
+            this.isBeingSpecialized = val;
+        };
 
         PullSymbol.prototype.getRootSymbol = function () {
             return this.rootSymbol;
@@ -36611,6 +36614,10 @@ var TypeScript;
 
     TypeScript.nSpecializationsCreated = 0;
     TypeScript.nSpecializedSignaturesCreated = 0;
+    TypeScript.syntaxTreeParseTime = 0;
+    TypeScript.syntaxDiagnosticsTime = 0;
+    TypeScript.astTranslationTime = 0;
+    TypeScript.sourceCharactersCompiled = 0;
 
     function shouldSpecializeTypeParameterForTypeParameter(specialization, typeToSpecialize) {
         if (specialization == typeToSpecialize) {
@@ -36809,6 +36816,7 @@ var TypeScript;
             return newType;
         }
 
+        var prevCurrentlyBeingSpecialized = typeToSpecialize.currentlyBeingSpecialized();
         if (typeToSpecialize.getKind() == 33554432 /* ConstructorType */) {
             typeToSpecialize.setIsBeingSpecialized();
         }
@@ -36928,6 +36936,7 @@ var TypeScript;
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     TypeScript.Debug.assert(false, "returning from call");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -36989,6 +36998,7 @@ var TypeScript;
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     TypeScript.Debug.assert(false, "returning from construct");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -37050,6 +37060,7 @@ var TypeScript;
 
                 if (!newSignature) {
                     context.inSpecialization = prevInSpecialization;
+                    typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
                     TypeScript.Debug.assert(false, "returning from index");
                     return resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -37148,7 +37159,7 @@ var TypeScript;
         newType.setIsSpecialized();
 
         newType.setResolved();
-
+        typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
         context.inSpecialization = prevInSpecialization;
         return newType;
     }
@@ -38872,11 +38883,7 @@ var TypeScript;
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
-            var declPath = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
+            var declPath = enclosingDecl !== null ? [enclosingDecl] : [];
 
             containerSymbol = this.getSymbolFromDeclPath(id, declPath, TypeScript.PullElementKind.SomeContainer);
 
@@ -54368,11 +54375,16 @@ var TypeScript;
             if (isOpen) {
                 this._syntaxTree = syntaxTree;
             } else {
+                var start = new Date().getTime();
                 this._diagnostics = syntaxTree.diagnostics();
+                TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
             }
 
             this.lineMap = syntaxTree.lineMap();
+
+            var start = new Date().getTime();
             this.script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings, isOpen);
+            TypeScript.astTranslationTime += new Date().getTime() - start;
         }
         Document.prototype.diagnostics = function () {
             if (this._diagnostics === null) {
@@ -54432,7 +54444,9 @@ var TypeScript;
         };
 
         Document.create = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, compilationSettings) {
+            var start = new Date().getTime();
             var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, TypeScript.getParseOptions(compilationSettings));
+            TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
 
             var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
             document.script.referencedFiles = referencedFiles;
@@ -54470,13 +54484,12 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.addSourceUnit = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles) {
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
-            var _this = this;
-            return this.timeFunction("addSourceUnit(" + fileName + ")", function () {
-                var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, _this.emitOptions.compilationSettings);
-                _this.fileNameToDocument.addOrUpdate(fileName, document);
+            TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
-                return document;
-            });
+            var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
+            this.fileNameToDocument.addOrUpdate(fileName, document);
+
+            return document;
         };
 
         TypeScriptCompiler.prototype.updateSourceUnit = function (fileName, scriptSnapshot, version, isOpen, textChangeRange) {
@@ -54739,47 +54752,46 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.emitAll = function (ioHost, inputOutputMapper) {
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
-            if (optionsDiagnostic) {
-                return [optionsDiagnostic];
-            }
+            var _this = this;
+            return TypeScript.timeFunction(this.logger, "emitAll()", function () {
+                var optionsDiagnostic = _this.parseEmitOption(ioHost);
+                if (optionsDiagnostic) {
+                    return [optionsDiagnostic];
+                }
 
-            var startEmitTime = (new Date()).getTime();
+                var fileNames = _this.fileNameToDocument.getAllKeys();
+                var sharedEmitter = null;
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
-            var sharedEmitter = null;
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var fileName = fileNames[i];
 
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
+                    var document = _this.getDocument(fileName);
 
-                var document = this.getDocument(fileName);
+                    try  {
+                        if (_this.emitOptions.outputMany) {
+                            var singleEmitter = _this.emit(document, inputOutputMapper);
 
-                try  {
-                    if (this.emitOptions.outputMany) {
-                        var singleEmitter = this.emit(document, inputOutputMapper);
-
-                        if (singleEmitter) {
-                            singleEmitter.emitSourceMapsAndClose();
+                            if (singleEmitter) {
+                                singleEmitter.emitSourceMapsAndClose();
+                            }
+                        } else {
+                            sharedEmitter = _this.emit(document, inputOutputMapper, sharedEmitter);
                         }
-                    } else {
-                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
+                    } catch (ex1) {
+                        return TypeScript.Emitter.handleEmitterError(fileName, ex1);
                     }
-                } catch (ex1) {
-                    return TypeScript.Emitter.handleEmitterError(fileName, ex1);
                 }
-            }
 
-            this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
-
-            if (sharedEmitter) {
-                try  {
-                    sharedEmitter.emitSourceMapsAndClose();
-                } catch (ex2) {
-                    return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
+                if (sharedEmitter) {
+                    try  {
+                        sharedEmitter.emitSourceMapsAndClose();
+                    } catch (ex2) {
+                        return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
+                    }
                 }
-            }
 
-            return [];
+                return [];
+            });
         };
 
         TypeScriptCompiler.prototype.emitUnit = function (fileName, ioHost, inputOutputMapper) {
@@ -54900,19 +54912,21 @@ var TypeScript;
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     fileName = fileNames[i];
-
-                    _this.logger.log("Type checking " + fileName);
                     _this.pullTypeChecker.typeCheckScript(_this.getDocument(fileName).script, fileName, _this);
                 }
 
                 var findErrorsEndTime = new Date().getTime();
 
-                _this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
-                _this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-                _this.logger.log("    Time in findSymbol: " + TypeScript.time_in_findSymbol);
-                _this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-                _this.logger.log("Number of symbols created: " + TypeScript.pullSymbolID);
-                _this.logger.log("Number of specialized types created: " + TypeScript.nSpecializationsCreated);
+                _this.logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
+                _this.logger.log("SyntaxTree parse time:                    " + TypeScript.syntaxTreeParseTime);
+                _this.logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
+                _this.logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
+                _this.logger.log("Decl creation:                            " + (createDeclsEndTime - createDeclsStartTime));
+                _this.logger.log("Binding:                                  " + (bindEndTime - bindStartTime));
+                _this.logger.log("    Time in findSymbol:                   " + TypeScript.time_in_findSymbol);
+                _this.logger.log("Find errors:                              " + (findErrorsEndTime - findErrorsStartTime));
+                _this.logger.log("Number of symbols created:                " + TypeScript.pullSymbolID);
+                _this.logger.log("Number of specialized types created:      " + TypeScript.nSpecializationsCreated);
                 _this.logger.log("Number of specialized signatures created: " + TypeScript.nSpecializedSignaturesCreated);
             });
         };
