@@ -1299,12 +1299,11 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
-
+            // The Identifier of an export assignment must name a variable, function, class, interface, 
+            // enum, or internal module declared at the top level in the external module.
+            // So look for the id only from this dynamic module
+            var declPath: PullDecl[] = enclosingDecl !== null ? [enclosingDecl] : [];
+            
             containerSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeContainer); 
 
             var acceptableAlias = true;
