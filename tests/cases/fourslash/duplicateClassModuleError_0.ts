@@ -1,3 +1,4 @@
+//bug 703465: retyper: Full type check doesn't error on duplicate class in re-opened module
 /// <reference path="../fourslash.ts" />
 
 //// module A

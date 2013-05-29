@@ -1,36 +1,17 @@
+//bug 703308: retyper: add/remove export clause changes reported error
 /// <reference path="../fourslash.ts" />
 
 //// module M {
-//// 
+////     /*1*/class C<T> { }
 //// }
 ////  
 //// var x = new M.C<string>();
 //// 
 
 edit.disableFormatting();
-diagnostics.validateTypesAtPositions(24,40,20,0,30);
 
-//   1: 
-//    : |->-> go here
-//   2: 
-//   3: }
-goTo.position(11);
+goTo.marker(1);
+edit.insert("export ");
+goTo.marker(1);
 
-//   1: 
-//    : |->-> insert "\nexport class C<T> { }\n"
-//   2: 
-//   3: }
-edit.insert("\nexport class C<T> { }\n");
-diagnostics.validateTypesAtPositions(52,53,26,43,54);
-
-//   1: 
-//    : |->-> go here
-//   2: 
-//   3: }
-goTo.position(11);
-
-//   1: 
-//    : |->-> delete "\n}\n \..."
-//   2: 
-//   3: }
 //edit.deleteAtCaret(8);

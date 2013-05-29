@@ -1,3 +1,4 @@
+//bug 703557: retyper: Interface recursive base type misses recursion on pull type check
 /// <reference path="../fourslash.ts" />
 
 ////interface i8 extends i9 { }

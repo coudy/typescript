@@ -1,3 +1,4 @@
+//bug 702384: retyper: error when typechecking expression
 /// <reference path="../fourslash.ts" />
 
 //// class Point {
