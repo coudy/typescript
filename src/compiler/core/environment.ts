@@ -2,6 +2,8 @@
 ///<reference path='..\enumerator.ts' />
 ///<reference path='..\process.ts' />
 
+declare function Buffer(subject, encoding): void;
+
 enum ByteOrderMark {
     None,
     Utf8,
@@ -260,12 +262,32 @@ var Environment = (function () {
                         _fs.mkdirSync(path, 0775);
                     }
                 }
+                var start = new Date().getTime();
                 mkdirRecursiveSync(_path.dirname(path));
+                TypeScript.nodeMakeDirectoryTime += new Date().getTime() - start;
 
                 if (writeByteOrderMark) {
                     contents = '\uFEFF' + contents;
                 }
-                _fs.writeFileSync(path, contents, "utf8");
+
+                var start = new Date().getTime();
+
+                var chunkLength = 4 * 1024;
+                var fileDescriptor = _fs.openSync(path, "w");
+                try {
+                    for (var index = 0; index < contents.length; index += chunkLength) {
+                        var bufferStart = new Date().getTime();
+                        var buffer = new Buffer(contents.substr(index, chunkLength), "utf8");
+                        TypeScript.nodeCreateBufferTime += new Date().getTime() - bufferStart;
+
+                        _fs.writeSync(fileDescriptor, buffer, 0, buffer.length, null);
+                    }
+                }
+                finally {
+                    _fs.closeSync(fileDescriptor);
+                }
+
+                TypeScript.nodeWriteFileSyncTime += new Date().getTime() - start;
             },
             
             fileExists: function(path): boolean {

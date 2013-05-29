@@ -32,7 +32,7 @@ var compilerSources = [
 	"pathUtils.ts",
 	"referenceResolution.ts",
 	"referenceResolver.ts",
-	"typecheck/dataMap.ts",
+	"core/environment.ts",
 	"typecheck/pullFlags.ts",
 	"typecheck/pullDecls.ts",
 	"typecheck/pullSymbols.ts",

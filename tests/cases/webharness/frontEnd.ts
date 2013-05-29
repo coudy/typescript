@@ -38,6 +38,7 @@ class BatchCompiler {
     public compile() {
         var settings = new TypeScript.CompilationSettings();
         settings.generateDeclarationFiles = true;
+        settings.outputOption = "Output.ts";
 
         this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 
@@ -48,7 +49,7 @@ class BatchCompiler {
 
         var emitterIOHost = {
             writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => { },
-            directoryExists: a => true,
+            directoryExists: a => false,
             fileExists: a => true,
             resolvePath: a => a,
         };

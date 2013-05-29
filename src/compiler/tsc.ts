@@ -223,10 +223,49 @@ module TypeScript {
                 return true;
             }
 
+<<<<<<< HEAD
             // Don't emit declarations if we have any semantic diagnostics.
             if (anySemanticErrors) {
                 return true;
             }
+=======
+        var emitterIOHost = {
+            writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
+                var start = new Date().getTime();
+                IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);
+                TypeScript.emitWriteFileTime += new Date().getTime() - start;
+            },
+            directoryExists: n => {
+                var result = this.ioHost.directoryExists(n);
+                var start = new Date().getTime();
+                TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
+                return result;
+            },
+            fileExists: n => {
+                var start = new Date().getTime();
+                var result = this.ioHost.fileExists(n);
+                TypeScript.emitFileExistsTime += new Date().getTime() - start;
+                return result;
+            },
+            resolvePath: n => {
+                var start = new Date().getTime();
+                var result = this.ioHost.resolvePath(n);
+                TypeScript.emitResolvePathTime += new Date().getTime() - start;
+                return result;
+            }
+        };
+
+        var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+            this.resolvedEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+        };
+
+        // TODO: if there are any emit diagnostics.  Don't proceed.
+        var emitDiagnostics = compiler.emitAll(emitterIOHost, mapInputToOutput);
+        compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);
+        if (emitDiagnostics.length > 0) {
+            return true;
+        }
+>>>>>>> Break file into chunks while writing to workaround poor node buffer scaling on large files.
 
             var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
             compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);

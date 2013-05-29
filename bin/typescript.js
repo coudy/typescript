@@ -2746,12 +2746,31 @@ var Environment = (function () {
                         _fs.mkdirSync(path, 0775);
                     }
                 }
+                var start = new Date().getTime();
                 mkdirRecursiveSync(_path.dirname(path));
+                TypeScript.nodeMakeDirectoryTime += new Date().getTime() - start;
 
                 if (writeByteOrderMark) {
                     contents = '\uFEFF' + contents;
                 }
-                _fs.writeFileSync(path, contents, "utf8");
+
+                var start = new Date().getTime();
+
+                var chunkLength = 4 * 1024;
+                var fileDescriptor = _fs.openSync(path, "w");
+                try  {
+                    for (var index = 0; index < contents.length; index += chunkLength) {
+                        var bufferStart = new Date().getTime();
+                        var buffer = new Buffer(contents.substr(index, chunkLength), "utf8");
+                        TypeScript.nodeCreateBufferTime += new Date().getTime() - bufferStart;
+
+                        _fs.writeSync(fileDescriptor, buffer, 0, buffer.length, null);
+                    }
+                } finally {
+                    _fs.closeSync(fileDescriptor);
+                }
+
+                TypeScript.nodeWriteFileSyncTime += new Date().getTime() - start;
             },
             fileExists: function (path) {
                 return _fs.existsSync(path);
@@ -54420,7 +54439,12 @@ var TypeScript;
     TypeScript.syntaxDiagnosticsTime = 0;
     TypeScript.astTranslationTime = 0;
     TypeScript.typeCheckTime = 0;
+
     TypeScript.emitTime = 0;
+    TypeScript.emitWriteFileTime = 0;
+    TypeScript.emitDirectoryExistsTime = 0;
+    TypeScript.emitFileExistsTime = 0;
+    TypeScript.emitResolvePathTime = 0;
 
     TypeScript.declarationEmitTime = 0;
     TypeScript.declarationEmitIsExternallyVisibleTime = 0;
@@ -54432,6 +54456,15 @@ var TypeScript;
     TypeScript.declarationEmitGetAccessorFunctionTime = 0;
     TypeScript.declarationEmitGetTypeParameterSymbolTime = 0;
     TypeScript.declarationEmitGetImportDeclarationSymbolTime = 0;
+
+    TypeScript.ioHostResolvePathTime = 0;
+    TypeScript.ioHostDirectoryNameTime = 0;
+    TypeScript.ioHostCreateDirectoryStructureTime = 0;
+    TypeScript.ioHostWriteFileTime = 0;
+
+    TypeScript.nodeMakeDirectoryTime = 0;
+    TypeScript.nodeWriteFileSyncTime = 0;
+    TypeScript.nodeCreateBufferTime = 0;
 
     var Document = (function () {
         function Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {

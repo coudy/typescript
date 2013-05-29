@@ -62,7 +62,12 @@ module TypeScript {
     export var syntaxDiagnosticsTime = 0;
     export var astTranslationTime = 0;
     export var typeCheckTime = 0;
+
     export var emitTime = 0;
+    export var emitWriteFileTime = 0;
+    export var emitDirectoryExistsTime = 0;
+    export var emitFileExistsTime = 0;
+    export var emitResolvePathTime = 0;
 
     export var declarationEmitTime = 0;
     export var declarationEmitIsExternallyVisibleTime = 0;
@@ -74,6 +79,15 @@ module TypeScript {
     export var declarationEmitGetAccessorFunctionTime = 0;
     export var declarationEmitGetTypeParameterSymbolTime = 0;
     export var declarationEmitGetImportDeclarationSymbolTime = 0;
+
+    export var ioHostResolvePathTime = 0;
+    export var ioHostDirectoryNameTime = 0;
+    export var ioHostCreateDirectoryStructureTime = 0;
+    export var ioHostWriteFileTime = 0;
+
+    export var nodeMakeDirectoryTime = 0;
+    export var nodeWriteFileSyncTime = 0;
+    export var nodeCreateBufferTime = 0;
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
