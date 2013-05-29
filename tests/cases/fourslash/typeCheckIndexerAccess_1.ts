@@ -37,4 +37,4 @@
 //// }
 
 edit.disableFormatting();
-diagnostics.validateTypesAtPositions(147,705,232,706,113);
+diagnostics.validateTypesAtPositions(705);

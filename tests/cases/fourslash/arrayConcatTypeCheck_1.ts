@@ -1,47 +1,27 @@
 /// <reference path="fourslash.ts" />
 
-//// a.concat("hello", 'world');
+//// a.concat(/*2*/"hello"/*1*/, 'world');
 //// 
-//// a.concat('Hello');
+//// a.concat(/*3*/'Hello');
 //// 
-//// var b = new Array<>();
+//// var b = new Array/*4*/<>();
 //// b.concat('hello');
 //// 
 
 edit.disableFormatting();
-diagnostics.validateTypesAtPositions(16,2,89,67,55);
 
-//    :                  |->-> go here
-//   1: a.concat("hello", 'world');
-//   2: 
-goTo.position(16);
+goTo.marker(1);
 
-//    :                  |->-> delete ", 'world'"
-//   1: a.concat("hello", 'world');
-//   2: 
 edit.deleteAtCaret(9);
-diagnostics.validateTypesAtPositions(36,80,72,2,8);
 
-//   2: 
-//    :  |->-> go here
-//   3: a.concat('Hello');
-//   4: 
-goTo.position(29);
+goTo.marker(3);
 
-//   2: 
-//    :  |->-> delete "a.conca"
-//   3: a.concat('Hello');
-//   4: 
 edit.deleteAtCaret(7);
-diagnostics.validateTypesAtPositions(73,28,17,9,29);
 
-//    :           |->-> go here
-//   1: a.concat("hello");
-//   2: 
-goTo.position(9);
+goTo.marker(2);
 
-//    :           |->-> delete "\"hello\""
-//   1: a.concat("hello");
-//   2: 
 edit.deleteAtCaret(7);
+
+goTo.marker(4);
 diagnostics.validateTypesAtPositions(43);
+
