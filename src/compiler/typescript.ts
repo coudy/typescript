@@ -63,7 +63,17 @@ module TypeScript {
     export var astTranslationTime = 0;
     export var typeCheckTime = 0;
     export var emitTime = 0;
+
     export var declarationEmitTime = 0;
+    export var declarationEmitIsExternallyVisibleTime = 0;
+    export var declarationEmitTypeSignatureTime = 0;
+    export var declarationEmitGetBoundDeclTypeTime = 0;
+    export var declarationEmitIsOverloadedCallSignatureTime = 0;
+    export var declarationEmitFunctionDeclarationGetSymbolTime = 0;
+    export var declarationEmitGetBaseTypeTime = 0;
+    export var declarationEmitGetAccessorFunctionTime = 0;
+    export var declarationEmitGetTypeParameterSymbolTime = 0;
+    export var declarationEmitGetImportDeclarationSymbolTime = 0;
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed

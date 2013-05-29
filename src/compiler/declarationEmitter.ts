@@ -144,8 +144,12 @@ module TypeScript {
             }
 
             if (container.nodeType() === NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
+                var start = new Date().getTime();
                 var declSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declAST, this.fileName).symbol;
-                return declSymbol && declSymbol.isExternallyVisible();
+                var result = declSymbol && declSymbol.isExternallyVisible();
+                TypeScript.declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
+
+                return result;
             }
 
             if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
@@ -278,8 +282,12 @@ module TypeScript {
 
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
+
+            var start = new Date().getTime();
             var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(declarationContainerAst, this.fileName);
             var declarationPullSymbol = declarationContainerDecl.getSymbol();
+            TypeScript.declarationEmitTypeSignatureTime += new Date().getTime() - start;
+
             var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
@@ -340,8 +348,11 @@ module TypeScript {
         }
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
+            var start = new Date().getTime();
             var decl = this.semanticInfoChain.getDeclForAST(boundDecl, this.fileName);
             var pullSymbol = decl.getSymbol();
+            TypeScript.declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
+
             var type = this.widenType(pullSymbol.getType());
             if (!type) {
                 // PULLTODO
@@ -353,6 +364,7 @@ module TypeScript {
                 this.declFile.Write(": ");
                 this.emitTypeSignature(type);
             }
+
         }
 
         private variableDeclaratorCallback(pre: boolean, varDecl: VariableDeclarator): boolean {
@@ -436,11 +448,16 @@ module TypeScript {
         }
 
         public isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
+            var start = new Date().getTime();
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.fileName);
             var funcSymbol = functionDecl.getSymbol();
+            TypeScript.declarationEmitIsOverloadedCallSignatureTime += new Date().getTime() - start;
+
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
-            return signatures && signatures.length > 1;
+            var result = signatures && signatures.length > 1;
+
+            return result;
         }
 
         private functionDeclarationCallback(pre: boolean, funcDecl: FunctionDeclaration): boolean {
@@ -454,7 +471,10 @@ module TypeScript {
 
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
 
+            var start = new Date().getTime();
             var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
+            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+
             var funcTypeSymbol = funcSymbol.getType();
             if (funcDecl.block) {
                 var constructSignatures = funcTypeSymbol.getConstructSignatures();
@@ -578,7 +598,10 @@ module TypeScript {
         }
 
         public emitBaseExpression(bases: ASTList, index: number) {
+            var start = new Date().getTime();
             var baseTypeAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(bases.members[index], this.fileName);
+            TypeScript.declarationEmitGetBaseTypeTime += new Date().getTime() - start;
+
             var baseType = baseTypeAndDiagnostics && <PullTypeSymbol>baseTypeAndDiagnostics.symbol;
             this.emitTypeSignature(baseType);
         }
@@ -603,7 +626,10 @@ module TypeScript {
                 return;
             }
 
+            var start = new Date().getTime();
             var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.fileName);
+            TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
+
             var comments: Comment[] = [];
             if (accessors.getter) {
                 comments = comments.concat(accessors.getter.docComments());
@@ -611,11 +637,15 @@ module TypeScript {
             if (accessors.setter) {
                 comments = comments.concat(accessors.setter.docComments());
             }
+
             this.writeDeclarationComments(comments);
         }
 
         public emitPropertyAccessorSignature(funcDecl: FunctionDeclaration) {
+            var start = new Date().getTime();
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.fileName);
+            TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
+
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
                 return false;
@@ -636,7 +666,10 @@ module TypeScript {
 
         private emitClassMembersFromConstructorDefinition(funcDecl: FunctionDeclaration) {
             if (funcDecl.arguments) {
-                var argsLen = funcDecl.arguments.members.length; if (funcDecl.variableArgList) { argsLen--; }
+                var argsLen = funcDecl.arguments.members.length;
+                if (funcDecl.variableArgList) {
+                    argsLen--;
+                }
 
                 for (var i = 0; i < argsLen; i++) {
                     var argDecl = <Parameter>funcDecl.arguments.members[i];
@@ -693,8 +726,12 @@ module TypeScript {
 
             this.declFile.Write("<");
             var containerAst = this.getAstDeclarationContainer();
+
+            var start = new Date().getTime();
             var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst, this.fileName);
             var containerSymbol = <PullTypeSymbol>containerDecl.getSymbol();
+            TypeScript.declarationEmitGetTypeParameterSymbolTime += new Date().getTime() - start;
+
             var typars: PullTypeSymbol[];
             if (funcSignature) {
                 typars = funcSignature.getTypeParameters();
@@ -711,7 +748,7 @@ module TypeScript {
                     this.declFile.Write(", ");
                 }
 
-                var memberName = typars[i].getScopedNameEx(containerSymbol, true);
+                var memberName = typars[i].getScopedNameEx(containerSymbol, /*useConstraintInName:*/ true);
                 this.emitTypeNamesMember(memberName);
             }
 
@@ -752,8 +789,11 @@ module TypeScript {
 
         private importDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
             if (pre) {
+                var start = new Date().getTime();
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                TypeScript.declarationEmitGetImportDeclarationSymbolTime += new Date().getTime() - start;
+
                 if (importSymbol.getTypeUsedExternally() || PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                     this.emitDeclarationComments(importDeclAST);
                     this.emitIndent();
