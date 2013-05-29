@@ -98,7 +98,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------------
 
 ------------- End of ThirdPartyNotices --------------------------------------------------- */
-﻿var TypeScript;
+var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
         function ArrayUtilities() {

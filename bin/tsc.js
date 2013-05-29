@@ -13,7 +13,7 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 
-﻿var TypeScript;
+var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
         function ArrayUtilities() {
