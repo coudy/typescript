@@ -758,11 +758,13 @@ module FourSlash {
             var compiler = new TypeScript.TypeScriptCompiler();
 
             compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
-            compiler.addSourceUnit(this.activeFile.fileName, TypeScript.ScriptSnapshot.fromString(content), ByteOrderMark.None,0, true);
+
+            for (var i = 0; i < this.testData.files.length; i++) {
+                snapshot = this.languageServiceShimHost.getScriptSnapshot(this.testData.files[i].fileName);
+                compiler.addSourceUnit(this.testData.files[i].fileName, TypeScript.ScriptSnapshot.fromString(snapshot.getText(0, snapshot.getLength())), ByteOrderMark.None, 0, true);
+            }
 
             compiler.pullTypeCheck();
-            var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.activeFile.fileName));
-            var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.activeFile.fileName));
 
             if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
@@ -772,12 +774,17 @@ module FourSlash {
                 throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
             }
 
-            if (incrSyntaxErrs !== fullSyntaxErrs) {
-                throw new Error('Mismatched incremental/full syntactic errors.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
-            }
+            for (var i = 0; i < this.testData.files.length; i++) {
+                var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
+                var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
 
-            if (incrSemanticErrs !== refSemanticErrs) {
-                throw new Error('Mismatched incremental/full semantic errors.\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
+                if (incrSyntaxErrs !== fullSyntaxErrs) {
+                    throw new Error('Mismatched incremental/full syntactic errors for file ' + this.testData.files[i].fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+                }
+
+                if (incrSemanticErrs !== refSemanticErrs) {
+                    throw new Error('Mismatched incremental/full semantic errors for file ' + this.testData.files[i].fileName + '\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
+                }
             }
         }
 
