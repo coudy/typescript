@@ -156,9 +156,6 @@ module TypeScript {
         public getIsVarArg() { return this.isVarArg; }
         public setIsVarArg() { this.isVarArg = true; }
 
-        public setIsSynthesized() { this.isSynthesized = true; }
-        public getIsSynthesized() { return this.isSynthesized; }
-
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
         public getIsSpecialized() { return this.isSpecialized; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
@@ -167,6 +164,11 @@ module TypeScript {
 
         public getRootSymbol() { return this.rootSymbol; }
         public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
+
+        public setIsSynthesized(value = true) {
+            this.isSynthesized = value;
+        }
+        public getIsSynthesized() { return this.isSynthesized; }
 
         public setIsBound(rebindingID: number) {
             this.isBound = true;

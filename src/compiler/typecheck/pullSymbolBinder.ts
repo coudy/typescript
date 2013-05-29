@@ -621,9 +621,8 @@ module TypeScript {
                     }
                 }
 
-                if (constructorSymbol.getIsSynthesized()) {
-                    classSymbol.setConstructorMethod(null);
-                }
+                // For now, consider the symbol synthesized. If it is not, we will unset this later when visiting the child decls and the decl happens to be the constructor.
+                constructorSymbol.setIsSynthesized();
 
                 if (classSymbol.isGeneric()) {
                     //classSymbol.invalidateSpecializations();
@@ -715,10 +714,7 @@ module TypeScript {
                 constructorSymbol.setIsSynthesized();
 
                 constructorSymbol.setType(constructorTypeSymbol);
-                constructorSymbol.addDeclaration(classDecl);
                 classSymbol.setConstructorMethod(constructorSymbol);
-
-                constructorTypeSymbol.addDeclaration(classDecl);
 
                 classSymbol.setHasDefaultConstructor();
 
@@ -731,6 +727,14 @@ module TypeScript {
 
                 // set the class decl's AST to the class declaration
                 //this.semanticInfo.setASTForDecl(classDecl, classAST);
+            }
+
+            if (constructorSymbol.getIsSynthesized()) {
+                constructorSymbol.addDeclaration(classDecl.getValueDecl());
+                constructorTypeSymbol.addDeclaration(classDecl);
+            }
+            else {
+                classSymbol.setHasDefaultConstructor(false);
             }
 
             constructorTypeSymbol.setAssociatedContainerType(classSymbol);
@@ -2276,6 +2280,7 @@ module TypeScript {
             constructorDeclaration.setSymbol(constructorSymbol);
             constructorSymbol.addDeclaration(constructorDeclaration);
             constructorTypeSymbol.addDeclaration(constructorDeclaration);
+            constructorSymbol.setIsSynthesized(false);
             this.semanticInfo.setSymbolAndDiagnosticsForAST(constructorAST, SymbolAndDiagnostics.fromSymbol(constructorSymbol));
 
             if (!isSignature) {
