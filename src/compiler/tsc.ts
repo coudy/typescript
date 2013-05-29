@@ -208,7 +208,7 @@ class BatchCompiler {
                 anySemanticErrors = true;
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }
-        }  
+        }
 
         var emitterIOHost = {
             writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark),

@@ -37,6 +37,7 @@ class BatchCompiler {
 
     public compile() {
         var settings = new TypeScript.CompilationSettings();
+        settings.generateDeclarationFiles = true;
 
         this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 
@@ -44,6 +45,20 @@ class BatchCompiler {
         this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, ByteOrderMark.None, 0, false, []);
 
         this.compiler.pullTypeCheck();
+
+        var emitterIOHost = {
+            writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => { },
+            directoryExists: a => true,
+            fileExists: a => true,
+            resolvePath: a => a,
+        };
+
+        var mapInputToOutput = (inputFile: string, outputFile: string): void => { };
+
+        // TODO: if there are any emit diagnostics.  Don't proceed.
+        var emitDiagnostics = this.compiler.emitAll(emitterIOHost, mapInputToOutput);
+
+        var emitDeclarationsDiagnostics = this.compiler.emitAllDeclarations();
     }
 
     // use this to test "clean" re-typecheck speed
