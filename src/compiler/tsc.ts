@@ -314,8 +314,8 @@ module TypeScript {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var outputFileName: string = this.inputFileNameToOutputFileName.lookup(this.resolvedFiles[i].path);
                 if (this.ioHost.fileExists(outputFileName)) {
-                    var outputFileInformation = this.ioHost.readFile(outputFileName)
-                this.ioHost.run(outputFileInformation.contents(), outputFileName);
+                    var outputFileInformation = this.ioHost.readFile(outputFileName);
+                    this.ioHost.run(outputFileInformation.contents(), outputFileName);
                 }
             }
         }

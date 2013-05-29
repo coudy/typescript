@@ -56841,6 +56841,8 @@ var BatchCompiler = (function () {
                 logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
                 logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
                 logger.log("");
+                logger.log("Type check time:                          " + TypeScript.typeCheckTime);
+                logger.log("");
                 logger.log("Emit time:                                " + TypeScript.emitTime);
                 logger.log("Declaration emit time:                    " + TypeScript.declarationEmitTime);
                 logger.log("");
