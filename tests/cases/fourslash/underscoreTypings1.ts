@@ -16,19 +16,18 @@
 ////declare var _: Underscore;
 ////
 ////var a: string[];
-////var b/*1*/ = _.map(a, x/*2*/ => x.length);    // Type any[], should be number[]
+////var b/*1*/ = _.map(a, x/*2*/ => x.length);    // Bug was typed any[], should be number[]
 ////var c/*3*/ = _(a).map(x/*4*/ => x.length);
 ////var d/*5*/ = a.map(x/*6*/ => x.length);
 ////
 ////var aa: any[];
 ////var bb/*7*/ = _.map(aa, x/*8*/ => x.length);
-////var cc/*9*/ = _(aa).map(x/*10*/ => x.length);  // Error, could not select overload
-////var dd/*11*/ = aa.map(x/*12*/ => x.length);     // Error, could not select overload
+////var cc/*9*/ = _(aa).map(x/*10*/ => x.length); 
+////var dd/*11*/ = aa.map(x/*12*/ => x.length);     
 ////
 ////var e = a.map(x => x./*13*/
 
 goTo.marker('1');
-// BUG: 702221
 verify.quickInfoIs('number[]');
 goTo.marker('2');
 verify.quickInfoIs('string');

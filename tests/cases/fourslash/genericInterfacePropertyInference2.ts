@@ -111,18 +111,14 @@ verify.quickInfoIs('{ x: Foo<{ x: number; }>; }');
 goTo.marker('d7');
 verify.quickInfoIs('C<{ x: number; }>');
 
-// BUG 682397
-//goTo.marker('e1');
-//verify.quickInfoIs('any');
+goTo.marker('e1');
+verify.quickInfoIs('Foo<Foo<number>>');
 // BUG 682406
 //goTo.marker('e2');
 //verify.quickInfoIs('any'); // TODO: fourslash reporting 'any' but VS is correct...
 //goTo.marker('e3');
 //verify.quickInfoIs('any');
-// BUG 668369
-//goTo.marker('e5');
-//verify.quickInfoIs('{ x: Foo<T>; }');
-//goTo.marker('e6');
-//verify.quickInfoIs('IG<Foo<number>>');
-//goTo.marker('e7');
-//verify.quickInfoIs('any');
+goTo.marker('e5');
+verify.quickInfoIs('{ x: Foo<Foo<number>>; }');
+goTo.marker('e7');
+verify.quickInfoIs('C<Foo<number>>');
