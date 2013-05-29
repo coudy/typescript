@@ -338,7 +338,7 @@ module TypeScript {
             var valDecl: PullDecl = null;
             var kind: PullElementKind;
             var instanceSymbol: PullSymbol = null;
-            var instanceType: PullTypeSymbol = null
+            var instanceType: PullTypeSymbol = null;
             var childSymbol: PullSymbol = null;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
