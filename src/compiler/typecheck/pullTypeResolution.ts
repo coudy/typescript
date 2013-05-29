@@ -338,7 +338,8 @@ module TypeScript {
             var valDecl: PullDecl = null;
             var kind: PullElementKind;
             var instanceSymbol: PullSymbol = null;
-            var instanceType: PullTypeSymbol = null;
+            var instanceType: PullTypeSymbol = null
+            var childSymbol: PullSymbol = null;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
@@ -366,6 +367,19 @@ module TypeScript {
 
                             if (valDecl) {
                                 return valDecl.getSymbol();
+                            }
+                        }
+
+                        // search "split" exported members
+                        instanceSymbol = (<PullContainerTypeSymbol>decl.getSymbol()).getInstanceSymbol();
+
+                        if (instanceSymbol) {
+                            instanceType = instanceSymbol.getType();
+
+                            childSymbol = instanceType.findMember(symbolName, false);
+
+                            if (childSymbol && (childSymbol.getKind() & declSearchKind)) {
+                                return childSymbol;
                             }
                         }
 
