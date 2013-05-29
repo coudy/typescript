@@ -570,6 +570,9 @@ class BatchCompiler {
                 logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
                 logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
                 logger.log("");
+                logger.log("Emit time:                                " + TypeScript.emitTime);
+                logger.log("Declaration emit time:                    " + TypeScript.declarationEmitTime);
+                logger.log("");
                 logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
                 logger.log("Compile time:                             " + (new Date().getTime() - start));
             }

@@ -61,6 +61,8 @@ module TypeScript {
     export var syntaxDiagnosticsTime = 0;
     export var astTranslationTime = 0;
     export var typeCheckTime = 0;
+    export var emitTime = 0;
+    export var declarationEmitTime = 0;
 
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
@@ -437,7 +439,9 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAllDeclarations(): IDiagnostic[] {
+        public emitAllDeclarations(): IDiagnostic[]{
+            var start = new Date().getTime();
+
             if (this.canEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNameToDocument.getAllKeys();
@@ -473,6 +477,8 @@ module TypeScript {
                     }
                 }
             }
+
+            declarationEmitTime += new Date().getTime() - start;
 
             return [];
         }
@@ -557,54 +563,55 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[]{
-            return TypeScript.timeFunction(this.logger, "emitAll()", () => {
-                var optionsDiagnostic = this.parseEmitOption(ioHost);
-                if (optionsDiagnostic) {
-                    return [optionsDiagnostic];
-                }
+        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
+            var start = new Date().getTime();
 
-                var fileNames = this.fileNameToDocument.getAllKeys();
-                var sharedEmitter: Emitter = null;
+            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            if (optionsDiagnostic) {
+                return [optionsDiagnostic];
+            }
 
-                // Iterate through the files, as long as we don't get an error.
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    var fileName = fileNames[i];
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            var sharedEmitter: Emitter = null;
 
-                    var document = this.getDocument(fileName);
+            // Iterate through the files, as long as we don't get an error.
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
-                    try {
-                        if (this.emitOptions.outputMany) {
-                            // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                            var singleEmitter = this.emit(document, inputOutputMapper);
+                var document = this.getDocument(fileName);
 
-                            // Close the emitter after each emitted file.
-                            if (singleEmitter) {
-                                singleEmitter.emitSourceMapsAndClose();
-                            }
-                        }
-                        else {
-                            // We're not outputting to multiple files.  Keep using the same emitter and don't
-                            // close until below.
-                            sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
+                try {
+                    if (this.emitOptions.outputMany) {
+                        // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                        var singleEmitter = this.emit(document, inputOutputMapper);
+
+                        // Close the emitter after each emitted file.
+                        if (singleEmitter) {
+                            singleEmitter.emitSourceMapsAndClose();
                         }
                     }
-                    catch (ex1) {
-                        return Emitter.handleEmitterError(fileName, ex1);
+                    else {
+                        // We're not outputting to multiple files.  Keep using the same emitter and don't
+                        // close until below.
+                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
                     }
                 }
-
-                if (sharedEmitter) {
-                    try {
-                        sharedEmitter.emitSourceMapsAndClose();
-                    }
-                    catch (ex2) {
-                        return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
-                    }
+                catch (ex1) {
+                    return Emitter.handleEmitterError(fileName, ex1);
                 }
+            }
 
-                return [];
-            });
+            if (sharedEmitter) {
+                try {
+                    sharedEmitter.emitSourceMapsAndClose();
+                }
+                catch (ex2) {
+                    return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
+                }
+            }
+
+            emitTime += new Date().getTime() - start;
+            return [];
         }
 
         // Emit single file if outputMany is specified, else emit all

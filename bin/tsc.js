@@ -54366,6 +54366,8 @@ var TypeScript;
     TypeScript.syntaxDiagnosticsTime = 0;
     TypeScript.astTranslationTime = 0;
     TypeScript.typeCheckTime = 0;
+    TypeScript.emitTime = 0;
+    TypeScript.declarationEmitTime = 0;
 
     var Document = (function () {
         function Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
@@ -54659,6 +54661,8 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.emitAllDeclarations = function () {
+            var start = new Date().getTime();
+
             if (this.canEmitDeclarations()) {
                 var sharedEmitter = null;
                 var fileNames = this.fileNameToDocument.getAllKeys();
@@ -54690,6 +54694,8 @@ var TypeScript;
                     }
                 }
             }
+
+            TypeScript.declarationEmitTime += new Date().getTime() - start;
 
             return [];
         };
@@ -54758,46 +54764,46 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.emitAll = function (ioHost, inputOutputMapper) {
-            var _this = this;
-            return TypeScript.timeFunction(this.logger, "emitAll()", function () {
-                var optionsDiagnostic = _this.parseEmitOption(ioHost);
-                if (optionsDiagnostic) {
-                    return [optionsDiagnostic];
-                }
+            var start = new Date().getTime();
 
-                var fileNames = _this.fileNameToDocument.getAllKeys();
-                var sharedEmitter = null;
+            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            if (optionsDiagnostic) {
+                return [optionsDiagnostic];
+            }
 
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    var fileName = fileNames[i];
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            var sharedEmitter = null;
 
-                    var document = _this.getDocument(fileName);
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
-                    try  {
-                        if (_this.emitOptions.outputMany) {
-                            var singleEmitter = _this.emit(document, inputOutputMapper);
+                var document = this.getDocument(fileName);
 
-                            if (singleEmitter) {
-                                singleEmitter.emitSourceMapsAndClose();
-                            }
-                        } else {
-                            sharedEmitter = _this.emit(document, inputOutputMapper, sharedEmitter);
+                try  {
+                    if (this.emitOptions.outputMany) {
+                        var singleEmitter = this.emit(document, inputOutputMapper);
+
+                        if (singleEmitter) {
+                            singleEmitter.emitSourceMapsAndClose();
                         }
-                    } catch (ex1) {
-                        return TypeScript.Emitter.handleEmitterError(fileName, ex1);
+                    } else {
+                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
                     }
+                } catch (ex1) {
+                    return TypeScript.Emitter.handleEmitterError(fileName, ex1);
                 }
+            }
 
-                if (sharedEmitter) {
-                    try  {
-                        sharedEmitter.emitSourceMapsAndClose();
-                    } catch (ex2) {
-                        return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
-                    }
+            if (sharedEmitter) {
+                try  {
+                    sharedEmitter.emitSourceMapsAndClose();
+                } catch (ex2) {
+                    return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
                 }
+            }
 
-                return [];
-            });
+            TypeScript.emitTime += new Date().getTime() - start;
+            return [];
         };
 
         TypeScriptCompiler.prototype.emitUnit = function (fileName, ioHost, inputOutputMapper) {
@@ -56816,6 +56822,9 @@ var BatchCompiler = (function () {
                 logger.log("SyntaxTree parse time:                    " + TypeScript.syntaxTreeParseTime);
                 logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
                 logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
+                logger.log("");
+                logger.log("Emit time:                                " + TypeScript.emitTime);
+                logger.log("Declaration time:                         " + TypeScript.declarationEmitTime);
                 logger.log("");
                 logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
                 logger.log("Compile time:                             " + (new Date().getTime() - start));
