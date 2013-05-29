@@ -2992,12 +2992,6 @@ module TypeScript {
 
     export var nSpecializationsCreated = 0;
     export var nSpecializedSignaturesCreated = 0;
-    
-    export var fileResolutionTime = 0;
-    export var sourceCharactersCompiled = 0;
-    export var syntaxTreeParseTime = 0;
-    export var syntaxDiagnosticsTime = 0;
-    export var astTranslationTime = 0;
 
     export function shouldSpecializeTypeParameterForTypeParameter(specialization: PullTypeParameterSymbol, typeToSpecialize: PullTypeParameterSymbol) {
         if (specialization == typeToSpecialize) {

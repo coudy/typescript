@@ -36614,10 +36614,6 @@ var TypeScript;
 
     TypeScript.nSpecializationsCreated = 0;
     TypeScript.nSpecializedSignaturesCreated = 0;
-    TypeScript.syntaxTreeParseTime = 0;
-    TypeScript.syntaxDiagnosticsTime = 0;
-    TypeScript.astTranslationTime = 0;
-    TypeScript.sourceCharactersCompiled = 0;
 
     function shouldSpecializeTypeParameterForTypeParameter(specialization, typeToSpecialize) {
         if (specialization == typeToSpecialize) {
@@ -39278,12 +39274,15 @@ var TypeScript;
                         if (exportedTypeSymbol) {
                             typeExprSymbol = exportedTypeSymbol;
                         } else {
-                            var instanceSymbol = (typeExprSymbol.getType()).getInstanceSymbol();
+                            typeExprSymbol = typeExprSymbol.getType();
+                            if (typeExprSymbol.isContainer()) {
+                                var instanceSymbol = (typeExprSymbol).getInstanceSymbol();
 
-                            if (!instanceSymbol || !TypeScript.PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                            } else {
-                                typeExprSymbol = instanceSymbol.getType();
+                                if (!instanceSymbol || !TypeScript.PullHelpers.symbolIsEnum(instanceSymbol)) {
+                                    typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                                } else {
+                                    typeExprSymbol = instanceSymbol.getType();
+                                }
                             }
                         }
                     } else if (declSymbol.getIsVarArg() && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType) && this.cachedArrayInterfaceType) {
@@ -54361,6 +54360,13 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    TypeScript.fileResolutionTime = 0;
+    TypeScript.sourceCharactersCompiled = 0;
+    TypeScript.syntaxTreeParseTime = 0;
+    TypeScript.syntaxDiagnosticsTime = 0;
+    TypeScript.astTranslationTime = 0;
+    TypeScript.typeCheckTime = 0;
+
     var Document = (function () {
         function Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
             this.fileName = fileName;
@@ -54870,65 +54876,61 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.pullTypeCheck = function () {
-            var _this = this;
-            return this.timeFunction("pullTypeCheck()", function () {
-                _this.semanticInfoChain = new TypeScript.SemanticInfoChain();
-                _this.pullTypeChecker = new TypeScript.PullTypeChecker(_this.settings, _this.semanticInfoChain);
+            var start = new Date().getTime();
 
-                var declCollectionContext = null;
-                var i, n;
+            this.semanticInfoChain = new TypeScript.SemanticInfoChain();
+            this.pullTypeChecker = new TypeScript.PullTypeChecker(this.settings, this.semanticInfoChain);
 
-                var createDeclsStartTime = new Date().getTime();
+            var declCollectionContext = null;
+            var i, n;
 
-                var fileNames = _this.fileNameToDocument.getAllKeys();
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    var fileName = fileNames[i];
-                    var document = _this.getDocument(fileName);
-                    var semanticInfo = new TypeScript.SemanticInfo(fileName);
+            var createDeclsStartTime = new Date().getTime();
 
-                    declCollectionContext = new TypeScript.DeclCollectionContext(semanticInfo);
-                    declCollectionContext.scriptName = fileName;
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
+                var document = this.getDocument(fileName);
+                var semanticInfo = new TypeScript.SemanticInfo(fileName);
 
-                    TypeScript.getAstWalkerFactory().walk(document.script, TypeScript.preCollectDecls, TypeScript.postCollectDecls, null, declCollectionContext);
+                declCollectionContext = new TypeScript.DeclCollectionContext(semanticInfo);
+                declCollectionContext.scriptName = fileName;
 
-                    semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
+                TypeScript.getAstWalkerFactory().walk(document.script, TypeScript.preCollectDecls, TypeScript.postCollectDecls, null, declCollectionContext);
 
-                    _this.semanticInfoChain.addUnit(semanticInfo);
-                }
+                semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
 
-                var createDeclsEndTime = new Date().getTime();
+                this.semanticInfoChain.addUnit(semanticInfo);
+            }
 
-                var bindStartTime = new Date().getTime();
+            var createDeclsEndTime = new Date().getTime();
 
-                var binder = new TypeScript.PullSymbolBinder(_this.settings, _this.semanticInfoChain);
+            var bindStartTime = new Date().getTime();
 
-                for (var i = 1; i < _this.semanticInfoChain.units.length; i++) {
-                    binder.bindDeclsForUnit(_this.semanticInfoChain.units[i].getPath());
-                }
+            var binder = new TypeScript.PullSymbolBinder(this.settings, this.semanticInfoChain);
 
-                var bindEndTime = new Date().getTime();
+            for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
+                binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
+            }
 
-                var findErrorsStartTime = new Date().getTime();
+            var bindEndTime = new Date().getTime();
 
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    fileName = fileNames[i];
-                    _this.pullTypeChecker.typeCheckScript(_this.getDocument(fileName).script, fileName, _this);
-                }
+            var findErrorsStartTime = new Date().getTime();
 
-                var findErrorsEndTime = new Date().getTime();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                fileName = fileNames[i];
+                this.pullTypeChecker.typeCheckScript(this.getDocument(fileName).script, fileName, this);
+            }
 
-                _this.logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
-                _this.logger.log("SyntaxTree parse time:                    " + TypeScript.syntaxTreeParseTime);
-                _this.logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
-                _this.logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
-                _this.logger.log("Decl creation:                            " + (createDeclsEndTime - createDeclsStartTime));
-                _this.logger.log("Binding:                                  " + (bindEndTime - bindStartTime));
-                _this.logger.log("    Time in findSymbol:                   " + TypeScript.time_in_findSymbol);
-                _this.logger.log("Find errors:                              " + (findErrorsEndTime - findErrorsStartTime));
-                _this.logger.log("Number of symbols created:                " + TypeScript.pullSymbolID);
-                _this.logger.log("Number of specialized types created:      " + TypeScript.nSpecializationsCreated);
-                _this.logger.log("Number of specialized signatures created: " + TypeScript.nSpecializedSignaturesCreated);
-            });
+            var findErrorsEndTime = new Date().getTime();
+            TypeScript.typeCheckTime += new Date().getTime() - start;
+
+            this.logger.log("Number of symbols created:                " + TypeScript.pullSymbolID);
+            this.logger.log("Number of specialized types created:      " + TypeScript.nSpecializationsCreated);
+            this.logger.log("Number of specialized signatures created: " + TypeScript.nSpecializedSignaturesCreated);
+            this.logger.log("Decl creation:                            " + (createDeclsEndTime - createDeclsStartTime));
+            this.logger.log("Binding:                                  " + (bindEndTime - bindStartTime));
+            this.logger.log("    Time in findSymbol:                   " + TypeScript.time_in_findSymbol);
+            this.logger.log("Find errors:                              " + (findErrorsEndTime - findErrorsStartTime));
         };
 
         TypeScriptCompiler.prototype.pullUpdateScript = function (oldDocument, newDocument) {

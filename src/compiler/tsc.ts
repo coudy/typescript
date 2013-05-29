@@ -156,12 +156,11 @@ class BatchCompiler {
     
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    public compile(): boolean {
+    private compile(logger: TypeScript.ILogger): boolean {
         if (typeof localizedDiagnosticMessages === "undefined") {
             localizedDiagnosticMessages = null;
         }
 
-        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
         var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings, localizedDiagnosticMessages);
 
         var anySyntacticErrors = false;
@@ -340,9 +339,9 @@ class BatchCompiler {
 
     /// Begin batch compilation
     public batchCompile() {
+        var start = new Date().getTime();
+        
         TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: (s: string) => { this.ioHost.printLine(s); } }
-
-        var code: TypeScript.SourceUnit;
 
         var opts = new OptionsParser(this.ioHost);
 
@@ -529,17 +528,19 @@ class BatchCompiler {
         }, 'm');
 
         opts.parse(this.ioHost.arguments);
-        
+
+        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
+
         if (this.compilationSettings.useDefaultLib) {
             var compilerFilePath = this.ioHost.getExecutingFilePath()
             var binDirPath = this.ioHost.dirName(compilerFilePath);
             var libStrPath = this.ioHost.resolvePath(binDirPath + "/lib.d.ts");
-            code = new TypeScript.SourceUnit(libStrPath, null);
+            var code = new TypeScript.SourceUnit(libStrPath, null);
             this.compilationEnvironment.code.push(code);
         }
 
         for (var i = 0; i < opts.unnamed.length; i++) {
-            code = new TypeScript.SourceUnit(opts.unnamed[i], null);
+            var code = new TypeScript.SourceUnit(opts.unnamed[i], null);
             this.compilationEnvironment.code.push(code);
         }
 
@@ -555,14 +556,22 @@ class BatchCompiler {
 
         if (this.compilationSettings.watch) {
             // Watch will cause the program to stick around as long as the files exist
-            this.watchFiles(this.compilationEnvironment.code.slice(0));
+            this.watchFiles(this.compilationEnvironment.code.slice(0), logger);
         }
         else {
             // Resolve file dependencies, if requested
             this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
 
             if (!this.compilationSettings.updateTC) {
-                this.compile();
+                this.compile(logger);
+
+                logger.log("File resolution time:                     " + TypeScript.fileResolutionTime);
+                logger.log("SyntaxTree parse time:                    " + TypeScript.syntaxTreeParseTime);
+                logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
+                logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
+                logger.log("");
+                logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
+                logger.log("Compile time:                             " + (new Date().getTime() - start));
             }
             else {
                 this.updateCompile();
@@ -586,7 +595,7 @@ class BatchCompiler {
         }
     }
 
-    private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
+    private watchFiles(sourceFiles: TypeScript.SourceUnit[], logger: TypeScript.ILogger) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.addDiagnostic(
                 new TypeScript.SemanticDiagnostic(null, 0, 0, TypeScript.DiagnosticCode.Current_host_does_not_support__w_atch_option, null));
@@ -675,7 +684,7 @@ class BatchCompiler {
             }
 
             // Trigger a new compilation
-            this.compile();
+            this.compile(logger);
 
             if (!this.errorReporter.hasErrors && this.compilationSettings.exec) {
                 try {
