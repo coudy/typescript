@@ -2371,9 +2371,10 @@ module TypeScript {
 
             // push contextual type
             var inContextuallyTypedAssignment = false;
+            var enclosingDeclAST: FunctionDeclaration;
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
-                var enclosingDeclAST = <FunctionDeclaration>this.resolver.getASTForDecl(enclosingDecl);
+                enclosingDeclAST = <FunctionDeclaration>this.resolver.getASTForDecl(enclosingDecl);
                 if (enclosingDeclAST.returnTypeAnnotation) {
                     // The containing function has a type annotation, propagate it as the contextual type
                     var returnTypeAnnotationSymbol = this.resolver.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, this.context).symbol;
@@ -2407,44 +2408,49 @@ module TypeScript {
             }
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
-                var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                var sigReturnType = signatureSymbol.getReturnType();
 
-                if (returnType && sigReturnType) {
-                    var comparisonInfo = new TypeComparisonInfo();
-                    var upperBound: PullTypeSymbol = null;
+                enclosingDeclAST = <FunctionDeclaration>this.resolver.getASTForDecl(enclosingDecl);
 
-                    if (returnType.isTypeParameter()) {
-                        upperBound = (<PullTypeParameterSymbol>returnType).getConstraint();
+                if (enclosingDeclAST.returnTypeAnnotation) {
+                    var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                    var sigReturnType = signatureSymbol.getReturnType();
 
-                        if (upperBound) {
-                            returnType = upperBound;
+                    if (returnType && sigReturnType) {
+                        var comparisonInfo = new TypeComparisonInfo();
+                        var upperBound: PullTypeSymbol = null;
+
+                        if (returnType.isTypeParameter()) {
+                            upperBound = (<PullTypeParameterSymbol>returnType).getConstraint();
+
+                            if (upperBound) {
+                                returnType = upperBound;
+                            }
                         }
-                    }
 
-                    if (sigReturnType.isTypeParameter()) {
-                        upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+                        if (sigReturnType.isTypeParameter()) {
+                            upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
 
-                        if (upperBound) {
-                            sigReturnType = upperBound;
+                            if (upperBound) {
+                                sigReturnType = upperBound;
+                            }
                         }
-                    }
 
-                    if (!returnType.isResolved()) {
-                        this.resolver.resolveDeclaredSymbol(returnType, enclosingDecl, this.context);
-                    }
+                        if (!returnType.isResolved()) {
+                            this.resolver.resolveDeclaredSymbol(returnType, enclosingDecl, this.context);
+                        }
 
-                    if (!sigReturnType.isResolved()) {
-                        this.resolver.resolveDeclaredSymbol(sigReturnType, enclosingDecl, this.context);
-                    }
+                        if (!sigReturnType.isResolved()) {
+                            this.resolver.resolveDeclaredSymbol(sigReturnType, enclosingDecl, this.context);
+                        }
 
-                    var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
+                        var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
 
-                    if (!isAssignable) {
-                        if (comparisonInfo.message) {
-                            this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Cannot_convert__0__to__1__NL__2, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message], enclosingDecl);
-                        } else {
-                            this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()], enclosingDecl);
+                        if (!isAssignable) {
+                            if (comparisonInfo.message) {
+                                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Cannot_convert__0__to__1__NL__2, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message], enclosingDecl);
+                            } else {
+                                this.postError(returnExpr.minChar, returnExpr.getLength(), typeCheckContext.scriptName, DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()], enclosingDecl);
+                            }
                         }
                     }
                 }
