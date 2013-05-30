@@ -538,12 +538,21 @@ module Services {
             if (this.isLocal(symbol) ||
                 symbol.getKind() == TypeScript.PullElementKind.Parameter) {
                 // Local var
-                return symbol.getScopedName(enclosingScopeSymbol);
+                return symbol.getScopedName(enclosingScopeSymbol, true);
             }
 
+            var symbolKind = symbol.getKind();
             if (symbol.getKind() == TypeScript.PullElementKind.Primitive) {
                 // Primitive type symbols - do not use symbol name
                 return "";
+            }
+
+            if (symbolKind != TypeScript.PullElementKind.Property &&
+                symbolKind != TypeScript.PullElementKind.Method &&
+                symbolKind != TypeScript.PullElementKind.TypeParameter &&
+                !symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
+                // Non exported variable/function
+                return symbol.getScopedName(enclosingScopeSymbol, true);
             }
 
             return symbol.fullName(enclosingScopeSymbol);

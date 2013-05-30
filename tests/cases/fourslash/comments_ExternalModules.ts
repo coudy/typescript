@@ -37,12 +37,12 @@ verify.quickInfoIs("m1", "Module comment", "m1", "module");
 
 goTo.marker('2');
 verify.completionListContains("b", "number", "b's comment", "m1.b", "var");
-verify.completionListContains("foo", "(): number", "foo's comment", "m1.foo", "function");
+verify.completionListContains("foo", "(): number", "foo's comment", "foo", "function");
 
 goTo.marker('3');
 verify.currentSignatureHelpDocCommentIs("foo's comment");
 goTo.marker('3q');
-verify.quickInfoIs("(): number", "foo's comment", "m1.foo", "function");
+verify.quickInfoIs("(): number", "foo's comment", "foo", "function");
 
 goTo.marker('4');
 verify.completionListContains("m1", "m1", "Module comment", "m1", "module");

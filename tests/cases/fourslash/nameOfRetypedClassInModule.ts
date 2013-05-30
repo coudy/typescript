@@ -12,7 +12,7 @@
 edit.disableFormatting();
 
 goTo.marker('check');
-verify.quickInfoSymbolNameIs('M.Check');
+verify.quickInfoSymbolNameIs('Check');
 
 goTo.marker('A');
 edit.deleteAtCaret('class A {}'.length);
