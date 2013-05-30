@@ -462,6 +462,8 @@ module TypeScript {
             var childDecls: PullDecl[];
             var pathDeclKind: PullElementKind;
             var parameters: PullTypeParameterSymbol[];
+            var instanceSymbol: PullSymbol = null;
+            var instanceType: PullTypeSymbol = null;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
@@ -1621,7 +1623,7 @@ module TypeScript {
             if (!symbolAndDiagnostics) {
                 symbolAndDiagnostics = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
 
-                if (!symbolAndDiagnostics.symbol.isGeneric()) {
+                if (symbolAndDiagnostics.symbol && !symbolAndDiagnostics.symbol.isGeneric()) {
                     this.setSymbolAndDiagnosticsForAST(typeRef, symbolAndDiagnostics, context);
                 }
             }
