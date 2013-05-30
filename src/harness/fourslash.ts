@@ -358,7 +358,7 @@ module FourSlash {
 
         public verifyCompletionListDoesNotContain(symbol: string) {
             var completions = this.getCompletionListAtCaret();
-            if (completions.entries.filter(e => e.name === symbol).length !== 0) {
+            if (completions && completions.entries && completions.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Completion list did contain ' + symbol);
             }
         }

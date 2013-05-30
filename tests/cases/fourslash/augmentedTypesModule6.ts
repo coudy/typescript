@@ -11,9 +11,8 @@
 goTo.marker('1');
 // BUG 697192
 //verify.completionListContains('I');
-//verify.not.completionListContains('foo');
 verify.not.completionListContains('I');
-verify.completionListContains('foo');
+verify.not.completionListContains('foo');
 edit.insert('I;');
 
 goTo.marker('2');

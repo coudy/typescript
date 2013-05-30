@@ -609,11 +609,19 @@ module TypeScript {
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[]{
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
+            var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.canUseTypeSymbol = true;
+            context.resolvingNamespaceMemberAccess = true;
             var lhs = this.resolveAST(expression, false, enclosingDecl, context).symbol;
             context.canUseTypeSymbol = prevCanUseTypeSymbol;
-            var lhsType = lhs.getType();
+            context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
 
+            if (context.resolvingTypeReference && (lhs.getKind() === PullElementKind.Class || lhs.getKind() === PullElementKind.Interface)) {
+                // No more sub types in these types
+                return null;
+            }
+
+            var lhsType = lhs.getType();
             if (!lhsType) {
                 return null;
             }
