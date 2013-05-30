@@ -54,7 +54,7 @@ td.test-operation
 <script type="text/javascript">
     function copy(code) {
         if (window.clipboardData) {
-            window.clipboardData.setData('Text', code);
+            window.clipboardData.setData('Text', decodeURIComponent(code));
         } else {
             alert(code);
         }
