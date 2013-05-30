@@ -1,5 +1,5 @@
-/// <reference path="lib/ClassA.ts" />
-/// <reference path="lib/ClassB.ts" />
+/// <reference path="lib/classA.ts" />
+/// <reference path="lib/classB.ts" />
 
 class ClassC extends test.ClassA {
 }

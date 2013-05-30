@@ -632,8 +632,8 @@ class ProjectRunner extends RunnerBase {
                 scenario: 'nested reference tags'
                     , projectRoot: 'tests/cases/projects/reference-1'
                     , inputFiles: ['main.ts']
-                    , collectedFiles: ['main.ts', 'ClassA.ts', 'ClassB.ts']
-                    , outputFiles: ['main.js', 'lib/ClassA.js', 'lib/ClassB.js']
+                    , collectedFiles: ['main.ts', 'classA.ts', 'classB.ts']
+                    , outputFiles: ['main.js', 'lib/classA.js', 'lib/classB.js']
                     , skipRun: true /* this requires a host which is able to resolve the script in the reference tags */
             });
 
@@ -649,9 +649,9 @@ class ProjectRunner extends RunnerBase {
             tests.push({
                 scenario: 'circular referencing - 2'
                     , projectRoot: 'tests/cases/projects/CircularReferencing-2'
-                    , inputFiles: ['A.ts']
-                    , collectedFiles: ['A.ts', 'B.ts', 'C.ts']
-                    , outputFiles: ['A.js', 'B.js', 'C.js']
+                    , inputFiles: ['a.ts']
+                    , collectedFiles: ['a.ts', 'b.ts', 'c.ts']
+                    , outputFiles: ['a.js', 'b.js', 'c.js']
             });
 
             tests.push({
@@ -754,8 +754,8 @@ class ProjectRunner extends RunnerBase {
                 scenario: "relative paths"
                 , projectRoot: 'tests/cases/projects/RelativePaths'
                 , inputFiles: ['app.ts']
-                , collectedFiles: ['app.ts', 'A.ts', 'B.ts']
-                , outputFiles: ['app.js', 'A/A.js', 'A/B.js']
+                , collectedFiles: ['app.ts', 'a.ts', 'b.ts']
+                , outputFiles: ['app.js', 'A/a.js', 'A/b.js']
                 , skipRun: true
             })
 
