@@ -80,51 +80,6 @@ module TypeScript {
         */
         private computeHash(key: string, seed: number): number {
             return Hash.computeMurmur2StringHashCode(key, seed);
-            // 'm' and 'r' are mixing constants generated offline.
-            // They're not really 'magic', they just happen to work well.
-
-            var m: number = 0x5bd1e995;
-            var r: number = 24;
-
-            // Initialize the hash to a 'random' value
-
-            var numberOfCharsLeft = key.length;
-            var h = Math.abs(seed ^ numberOfCharsLeft);
-
-            // Mix 4 bytes at a time into the hash.  NOTE: 4 bytes is two chars, so we iterate
-            // through the string two chars at a time.
-            var index = 0;
-            while (numberOfCharsLeft >= 2) {
-                var c1 = key.charCodeAt(index);
-                var c2 = key.charCodeAt(index + 1);
-
-                var k = Math.abs(c1 | (c2 << 16));
-
-                k = IntegerUtilities.integerMultiplyLow32Bits(k, m);
-                k ^= k >> r;
-                k = IntegerUtilities.integerMultiplyLow32Bits(k, m);
-
-                h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
-                h ^= k;
-
-                index += 2;
-                numberOfCharsLeft -= 2;
-            }
-
-            // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
-            // odd length.
-            if (numberOfCharsLeft == 1) {
-                h ^= key.charCodeAt(index);
-                h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
-            }
-
-            // Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
-
-            h ^= h >> 13;
-            h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
-            h ^= h >> 15;
-
-            return h;
         }
 
         public addKeys(keys: BlockIntrinsics) {
