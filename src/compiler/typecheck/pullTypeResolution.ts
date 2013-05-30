@@ -704,6 +704,12 @@ module TypeScript {
                         var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
                         members = members.concat(instanceMembers);
                     }
+
+                    var exportedContainer = (<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol();
+                    if (exportedContainer) {
+                        var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, includePrivate);
+                        members = members.concat(exportedContainerMembers);
+                    }
                 }
                 // Constructor types have a "prototype" property
                 else if (lhsType.isConstructor()) {

@@ -155,8 +155,8 @@ module Services {
                 var signatureGroupInfo = new FormalSignatureItemInfo();
                 var paramIndexInfo: number[] = [];
                 var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
-                if (!functionName) {
-                    functionName = symbol.getDisplayName();
+                if (!functionName && (!symbol.isType() || (<PullTypeSymbol>symbol).isNamedTypeSymbol())) {
+                    functionName = symbol.getScopedNameEx(enclosingScopeSymbol).toString();
                 }
 
                 var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true, true);

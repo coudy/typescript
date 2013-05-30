@@ -447,7 +447,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new PullDecl("{new}", "{new}", declType, declFlags, span, context.semanticInfo.getPath());
+        var decl = new PullDecl("", "", declType, declFlags, span, context.semanticInfo.getPath());
         context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
@@ -631,7 +631,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new PullDecl("[]", "[]" , declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl("", "" , declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
 
@@ -669,7 +669,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new PullDecl("()", "()", declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl("", "", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
 
@@ -707,7 +707,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new PullDecl("new", "new", declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl("", "", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
 
