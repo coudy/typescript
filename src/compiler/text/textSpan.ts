@@ -14,8 +14,8 @@ module TypeScript {
                 Errors.argument("start");
             }
 
-            if (start + length < start) {
-                throw new Error("length");
+            if (length < 0) {
+                Errors.argument("length");
             }
 
             this._start = start;

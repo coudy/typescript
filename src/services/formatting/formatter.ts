@@ -263,7 +263,7 @@ module TypeScript.Formatting {
                 case RuleAction.NewLine:
                     {
                         if (rule.Flag == RuleFlags.CanDeleteNewLines) {
-                            betweenSpan = new TextSpan(t1.end(), t1.start() - t1.end());
+                            betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
                         }
                         else {
                             var lengthBetween: number;

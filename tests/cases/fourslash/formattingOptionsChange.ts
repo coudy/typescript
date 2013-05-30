@@ -30,6 +30,19 @@ runTest("InsertSpaceAfterFunctionKeywordForAnonymousFunctions", "(function () { 
 runTest("InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", "( 1 )", "(1)");
 
 
+/////*PlaceOpenBraceOnNewLineForFunctions*/class   foo   { 
+////}
+
+runTest("PlaceOpenBraceOnNewLineForFunctions", "class foo", "class foo {");
+
+
+// bug 697725
+/////*PlaceOpenBraceOnNewLineForControlBlocks*/if (true)   {
+////}
+
+//runTest("PlaceOpenBraceOnNewLineForControlBlocks", "if ( true )", "if ( true ) {");
+
+
 function runTest(propertyName: string, expectedStringWhenTrue: string, expectedStringWhenFalse: string) {
     // Go to the correct file
     goTo.marker(propertyName);
