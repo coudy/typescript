@@ -1228,12 +1228,16 @@ module TypeScript {
             this.movePast(node.openBraceToken);
             var statements = this.visitSyntaxList(node.statements);
             var closeBracePosition = this.position;
+
+            var closeBraceLeadingComments = this.convertTokenLeadingComments(node.closeBraceToken, this.position);
             this.movePast(node.closeBraceToken);
             var closeBraceSpan = new ASTSpan();
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
             var result = new Block(statements, closeBraceSpan);
             this.setSpan(result, start, node);
+
+            result.closeBraceLeadingComments = closeBraceLeadingComments;
 
             return result;
         }

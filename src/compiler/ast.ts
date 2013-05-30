@@ -1244,6 +1244,8 @@ module TypeScript {
     }
 
     export class Block extends AST {
+        public closeBraceLeadingComments: Comment[] = null;
+
         constructor(public statements: ASTList, public closeBraceSpan: IASTSpan) {
             super();
         }
@@ -1262,6 +1264,7 @@ module TypeScript {
             if (this.statements) {
                 emitter.emitModuleElements(this.statements);
             }
+            emitter.emitCommentsArray(this.closeBraceLeadingComments);
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");

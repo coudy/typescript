@@ -60,6 +60,8 @@ var c8 = (function () {
     /** constructor comment
     */
     function c8() {
+        /** constructor comment2
+        */
     }
     return c8;
 })();

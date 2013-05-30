@@ -1,5 +1,5 @@
 ////[bin/0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;;AAYCA,IATGA,uBADuBA;8BACvBA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;;IAEDF,6BAAAA,UAAgBA,KAAaA;IAG7BG,CAACA;IACLH;AAACA,CAAAA,IAAA"}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;;AAYCA,IATGA,uBADuBA;8BACvBA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;;IAEDF,6BAAAA,UAAgBA,KAAaA;QAEzBG,EAAEA;IACNA,CAACA;IACLH;AAACA,CAAAA,IAAA"}
 ////[bin/0.js]
 // my class comments
 var MyClass = (function () {
@@ -11,6 +11,7 @@ var MyClass = (function () {
     };
 
     MyClass.prototype.SetCount = function (value) {
+        //
     };
     return MyClass;
 })();

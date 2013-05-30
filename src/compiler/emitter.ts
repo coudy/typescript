@@ -235,14 +235,19 @@ module TypeScript {
             this.writeToOutput(this.getIndentString());
         }
 
-        public emitCommentInPlace(comment: Comment) {
+        public emitComment(comment: Comment) {
+            if (!this.emitOptions.compilationSettings.emitComments) {
+                return;
+            }
+
             var text = comment.getText();
-            var hadNewLine = false;
+            var emitColumn = this.emitState.column;
+
+            if (emitColumn === 0) {
+                this.emitIndent();
+            }
 
             if (comment.isBlockComment) {
-                if (this.emitState.column === 0) {
-                    this.emitIndent();
-                }
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
 
@@ -254,36 +259,37 @@ module TypeScript {
                     }
                     this.recordSourceMappingEnd(comment);
                     this.writeLineToOutput("");
-                    hadNewLine = true;
+                    // Fall through
                 } else {
                     this.recordSourceMappingEnd(comment);
+                    this.writeToOutput(" ");
+                    return;
                 }
             }
             else {
-                if (this.emitState.column === 0) {
-                    this.emitIndent();
-                }
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
                 this.recordSourceMappingEnd(comment);
                 this.writeLineToOutput("");
-                hadNewLine = true;
+                // Fall through
             }
 
-            if (hadNewLine) {
+            if (emitColumn != 0) {
+                // If we were indented before, stay indented after.
                 this.emitIndent();
-            }
-            else {
-                this.writeToOutput(" ");
             }
         }
 
         public emitComments(ast: AST, pre: boolean) {
             var comments = pre ? ast.preComments() : ast.postComments();
 
-            if (this.emitOptions.compilationSettings.emitComments && comments && comments.length !== 0) {
-                for (var i = 0; i < comments.length; i++) {
-                    this.emitCommentInPlace(comments[i]);
+            this.emitCommentsArray(comments);
+        }
+
+        public emitCommentsArray(comments: Comment[]): void {
+            if (this.emitOptions.compilationSettings.emitComments && comments) {
+                for (var i = 0, n = comments.length; i < n; i++) {
+                    this.emitComment(comments[i]);
                 }
             }
         }
@@ -580,6 +586,8 @@ module TypeScript {
             else {
                 this.emitModuleElements(funcDecl.block.statements);
             }
+
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
