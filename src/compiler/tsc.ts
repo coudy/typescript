@@ -88,16 +88,40 @@ module TypeScript {
                     this.compile();
 
                     if (this.compilationSettings.gatherDiagnostics) {
+                        this.logger.log("");
                         this.logger.log("File resolution time:                     " + TypeScript.fileResolutionTime);
                         this.logger.log("SyntaxTree parse time:                    " + TypeScript.syntaxTreeParseTime);
                         this.logger.log("Syntax Diagnostics time:                  " + TypeScript.syntaxDiagnosticsTime);
                         this.logger.log("AST translation time:                     " + TypeScript.astTranslationTime);
                         this.logger.log("");
+                        this.logger.log("Type check time:                          " + TypeScript.typeCheckTime);
+                        this.logger.log("");
                         this.logger.log("Emit time:                                " + TypeScript.emitTime);
                         this.logger.log("Declaration emit time:                    " + TypeScript.declarationEmitTime);
-                        this.logger.log("");
-                        this.logger.log("Source characters compiled:               " + TypeScript.sourceCharactersCompiled);
-                        this.logger.log("Compile time:                             " + (new Date().getTime() - start));
+
+                        this.logger.log("  IsExternallyVisibleTime:                " + TypeScript.declarationEmitIsExternallyVisibleTime);
+                        this.logger.log("  TypeSignatureTime:                      " + TypeScript.declarationEmitTypeSignatureTime);
+                        this.logger.log("  GetBoundDeclTypeTime:                   " + TypeScript.declarationEmitGetBoundDeclTypeTime);
+                        this.logger.log("  IsOverloadedCallSignatureTime:          " + TypeScript.declarationEmitIsOverloadedCallSignatureTime);
+                        this.logger.log("  FunctionDeclarationGetSymbolTime:       " + TypeScript.declarationEmitFunctionDeclarationGetSymbolTime);
+                        this.logger.log("  GetBaseTypeTime:                        " + TypeScript.declarationEmitGetBaseTypeTime);
+                        this.logger.log("  GetAccessorFunctionTime:                " + TypeScript.declarationEmitGetAccessorFunctionTime);
+                        this.logger.log("  GetTypeParameterSymbolTime:             " + TypeScript.declarationEmitGetTypeParameterSymbolTime);
+                        this.logger.log("  GetImportDeclarationSymbolTime:         " + TypeScript.declarationEmitGetImportDeclarationSymbolTime);
+
+                        this.logger.log("Emit write file time:                     " + TypeScript.emitWriteFileTime);
+                        this.logger.log("Emit directory exists time:               " + TypeScript.emitDirectoryExistsTime);
+                        this.logger.log("Emit file exists time:                    " + TypeScript.emitFileExistsTime);
+                        this.logger.log("Emit resolve path time:                   " + TypeScript.emitResolvePathTime);
+
+                        this.logger.log("IO host resolve path time:                " + TypeScript.ioHostResolvePathTime);
+                        this.logger.log("IO host directory name time:              " + TypeScript.ioHostDirectoryNameTime);
+                        this.logger.log("IO host create directory structure time:  " + TypeScript.ioHostCreateDirectoryStructureTime);
+                        this.logger.log("IO host write file time:                  " + TypeScript.ioHostWriteFileTime);
+
+                        this.logger.log("Node make directory time:                 " + TypeScript.nodeMakeDirectoryTime);
+                        this.logger.log("Node writeFileSync time:                  " + TypeScript.nodeWriteFileSyncTime);
+                        this.logger.log("Node createBuffer time:                   " + TypeScript.nodeCreateBufferTime);
                     }
                 }
                 else {
@@ -223,49 +247,47 @@ module TypeScript {
                 return true;
             }
 
-<<<<<<< HEAD
             // Don't emit declarations if we have any semantic diagnostics.
             if (anySemanticErrors) {
                 return true;
             }
-=======
-        var emitterIOHost = {
-            writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
-                var start = new Date().getTime();
-                IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);
-                TypeScript.emitWriteFileTime += new Date().getTime() - start;
-            },
-            directoryExists: n => {
-                var start = new Date().getTime();
-                var result = this.ioHost.directoryExists(n);
-                TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
-                return result;
-            },
-            fileExists: n => {
-                var start = new Date().getTime();
-                var result = this.ioHost.fileExists(n);
-                TypeScript.emitFileExistsTime += new Date().getTime() - start;
-                return result;
-            },
-            resolvePath: n => {
-                var start = new Date().getTime();
-                var result = this.ioHost.resolvePath(n);
-                TypeScript.emitResolvePathTime += new Date().getTime() - start;
-                return result;
+
+            var emitterIOHost = {
+                writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
+                    var start = new Date().getTime();
+                    IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);
+                    TypeScript.emitWriteFileTime += new Date().getTime() - start;
+                },
+                directoryExists: n => {
+                    var start = new Date().getTime();
+                    var result = this.ioHost.directoryExists(n);
+                    TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
+                    return result;
+                },
+                fileExists: n => {
+                    var start = new Date().getTime();
+                    var result = this.ioHost.fileExists(n);
+                    TypeScript.emitFileExistsTime += new Date().getTime() - start;
+                    return result;
+                },
+                resolvePath: n => {
+                    var start = new Date().getTime();
+                    var result = this.ioHost.resolvePath(n);
+                    TypeScript.emitResolvePathTime += new Date().getTime() - start;
+                    return result;
+                }
+            };
+
+            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+            };
+
+            // TODO: if there are any emit diagnostics.  Don't proceed.
+            var emitDiagnostics = compiler.emitAll(emitterIOHost, mapInputToOutput);
+            compiler.reportDiagnostics(emitDiagnostics, this);
+            if (emitDiagnostics.length > 0) {
+                return true;
             }
-        };
-
-        var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-            this.resolvedEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-        };
-
-        // TODO: if there are any emit diagnostics.  Don't proceed.
-        var emitDiagnostics = compiler.emitAll(emitterIOHost, mapInputToOutput);
-        compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);
-        if (emitDiagnostics.length > 0) {
-            return true;
-        }
->>>>>>> Break file into chunks while writing to workaround poor node buffer scaling on large files.
 
             var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
             compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
