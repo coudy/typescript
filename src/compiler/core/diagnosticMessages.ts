@@ -288,6 +288,7 @@ module TypeScript {
         Cannot_compile_dynamic_modules_when_emitting_into_single_file: DiagnosticInfo;
         Emit_Error__0: DiagnosticInfo;
         Cannot_read_file__0__1: DiagnosticInfo;
+        Unsupported_file_encoding: DiagnosticInfo;
     }
 
     export var diagnosticMessages: IDiagnosticMessages = {
@@ -1777,6 +1778,11 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Cannot read file '{0}': {1}",
             code: 5012
+        },
+        Unsupported_file_encoding: {
+            category: DiagnosticCategory.NoPrefix,
+            message: "Unsupported file encoding.",
+            code: 5013
         },
     };
 

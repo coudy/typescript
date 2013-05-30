@@ -33,6 +33,7 @@ var compilerSources = [
 	"referenceResolution.ts",
 	"referenceResolver.ts",
 	"core/environment.ts",
+	"core/diagnosticMessages.ts",
 	"typecheck/pullFlags.ts",
 	"typecheck/pullDecls.ts",
 	"typecheck/pullSymbols.ts",

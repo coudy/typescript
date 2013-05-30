@@ -294,5 +294,6 @@ module TypeScript {
         Cannot_compile_dynamic_modules_when_emitting_into_single_file,
         Emit_Error__0,
         Cannot_read_file__0__1,
+        Unsupported_file_encoding,
     }
 }

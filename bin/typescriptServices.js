@@ -651,6 +651,7 @@ var TypeScript;
         DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 273] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
         DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 274] = "Emit_Error__0";
         DiagnosticCode[DiagnosticCode["Cannot_read_file__0__1"] = 275] = "Cannot_read_file__0__1";
+        DiagnosticCode[DiagnosticCode["Unsupported_file_encoding"] = 276] = "Unsupported_file_encoding";
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -2036,6 +2037,11 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Cannot read file '{0}': {1}",
             code: 5012
+        },
+        Unsupported_file_encoding: {
+            category: 3 /* NoPrefix */,
+            message: "Unsupported file encoding.",
+            code: 5013
         }
     };
 
@@ -2640,7 +2646,14 @@ var Environment = (function () {
                     releaseStreamObject(streamObj);
                     return new FileInformation(contents, byteOrderMark);
                 } catch (err) {
-                    throw new Error("Error reading file \"" + path + "\": " + err.message);
+                    var message;
+                    if (err.number === -2147024809) {
+                        message = TypeScript.getDiagnosticMessage(276 /* Unsupported_file_encoding */, null);
+                    } else {
+                        message = err.message;
+                    }
+
+                    throw new Error(message);
                 }
             },
             writeFile: function (path, contents, writeByteOrderMark) {
