@@ -236,8 +236,8 @@ module TypeScript {
                 TypeScript.emitWriteFileTime += new Date().getTime() - start;
             },
             directoryExists: n => {
-                var result = this.ioHost.directoryExists(n);
                 var start = new Date().getTime();
+                var result = this.ioHost.directoryExists(n);
                 TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
                 return result;
             },

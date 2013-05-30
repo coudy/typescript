@@ -56596,8 +56596,8 @@ var BatchCompiler = (function () {
                 TypeScript.emitWriteFileTime += new Date().getTime() - start;
             },
             directoryExists: function (n) {
-                var result = _this.ioHost.directoryExists(n);
                 var start = new Date().getTime();
+                var result = _this.ioHost.directoryExists(n);
                 TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
                 return result;
             },
