@@ -308,7 +308,7 @@ module TypeScript {
             var anySyntacticErrors = false;
             var foundLib = false;
 
-            for (var iCode = 0, n = this.resolvedFiles.length; i < n; i++) {
+            for (var iCode = 0, n = this.resolvedFiles.length; iCode < n; iCode++) {
                 var resolvedFile = this.resolvedFiles[iCode];
 
                 if (resolvedFile.path.indexOf("lib.d.ts") != -1) {

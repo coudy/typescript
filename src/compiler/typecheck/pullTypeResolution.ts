@@ -462,8 +462,6 @@ module TypeScript {
             var childDecls: PullDecl[];
             var pathDeclKind: PullElementKind;
             var parameters: PullTypeParameterSymbol[];
-            var instanceSymbol: PullSymbol = null;
-            var instanceType: PullTypeSymbol = null;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
