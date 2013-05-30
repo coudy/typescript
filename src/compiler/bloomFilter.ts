@@ -79,6 +79,7 @@ module TypeScript {
         * </summary>
         */
         private computeHash(key: string, seed: number): number {
+            return Hash.computeMurmur2StringHashCode(key, seed);
             // 'm' and 'r' are mixing constants generated offline.
             // They're not really 'magic', they just happen to work well.
 
@@ -94,8 +95,8 @@ module TypeScript {
             // through the string two chars at a time.
             var index = 0;
             while (numberOfCharsLeft >= 2) {
-                var c1 = this.getCharacter(key, index);
-                var c2 = this.getCharacter(key, index + 1);
+                var c1 = key.charCodeAt(index);
+                var c2 = key.charCodeAt(index + 1);
 
                 var k = Math.abs(c1 | (c2 << 16));
 
@@ -113,7 +114,7 @@ module TypeScript {
             // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
             // odd length.
             if (numberOfCharsLeft == 1) {
-                h ^= this.getCharacter(key, index);
+                h ^= key.charCodeAt(index);
                 h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
             }
 
@@ -123,11 +124,7 @@ module TypeScript {
             h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
             h ^= h >> 15;
 
-            return Math.round(h);
-        }
-
-        private getCharacter(key: string, index: number): number {
-            return key.charCodeAt(index);
+            return h;
         }
 
         public addKeys(keys: BlockIntrinsics) {

@@ -26,7 +26,7 @@ module TypeScript.Collections {
     // string is added.
     export class StringTable {
         // TODO: uncomment this once typecheck bug is fixed.
-        private entries /*: StringTableEntry[]*/ = [];
+        private entries: StringTableEntry[];
         private count: number = 0;
 
         constructor(capacity) {

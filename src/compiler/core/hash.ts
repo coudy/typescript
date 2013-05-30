@@ -11,7 +11,7 @@ module TypeScript {
             var end = start + len;
 
             for (var i = start; i < end; i++) {
-                hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
+                hashCode = IntegerUtilities.integerMultiplyLow32Bits(hashCode ^ text[i], Hash.FNV_PRIME);
             }
 
             return hashCode;
@@ -27,7 +27,7 @@ module TypeScript {
                 // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
                 // V8 recognize this as not needing to go past the 53 bits needed for the float 
                 // mantissa.  Or'ing with 0 keeps this 32 bits.
-                hash = (((hash << 5) - hash) + ch) | 0;
+                hash = ((((hash << 5) - hash) | 0) + ch) | 0;
             }
 
             // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
@@ -48,7 +48,7 @@ module TypeScript {
                 // Left shift keeps things as a 32bit int.  And we're only doing two adds.  Chakra and
                 // V8 recognize this as not needing to go past the 53 bits needed for the float 
                 // mantissa.  Or'ing with 0 keeps this 32 bits.
-                hash = (((hash << 5) - hash) + ch) | 0;
+                hash = ((((hash << 5) - hash) | 0) + ch) | 0;
             }
 
             // Ensure we fit in 31 bits.  That way if/when this gets stored, it won't require any heap
@@ -56,79 +56,32 @@ module TypeScript {
             return hash & 0x7FFFFFFF;
         }
 
-        public static computeMurmur2CharArrayHashCode(key: number[], start: number, len: number): number {
+        public static computeMurmur2StringHashCode(key: string, seed: number): number {
             // 'm' and 'r' are mixing constants generated offline.
             // They're not really 'magic', they just happen to work well.
-            var m = 0x5bd1e995;
-            var r = 24;
+
+            var m: number = 0x5bd1e995;
+            var r: number = 24;
 
             // Initialize the hash to a 'random' value
-            var numberOfCharsLeft = len;
-            var h = (0 ^ numberOfCharsLeft);
+
+            var numberOfCharsLeft = key.length;
+            var h = Math.abs(seed ^ numberOfCharsLeft);
 
             // Mix 4 bytes at a time into the hash.  NOTE: 4 bytes is two chars, so we iterate
             // through the string two chars at a time.
-            var index = start;
-            while (numberOfCharsLeft >= 2) {
-                var c1 = key[index];
-                var c2 = key[index + 1];
-
-                var k = c1 | (c2 << 16);
-
-                k *= m;
-                k ^= k >> r;
-                k *= m;
-
-                h *= m;
-                h ^= k;
-
-                index += 2;
-                numberOfCharsLeft -= 2;
-            }
-
-            // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
-            // odd length.
-            if (numberOfCharsLeft === 1) {
-                h ^= key[index];
-                h *= m;
-            }
-
-            // Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
-
-            h ^= h >> 13;
-            h *= m;
-            h ^= h >> 15;
-
-            return h;
-        }
-
-        public static computeMurmur2StringHashCode(key: string): number {
-            // 'm' and 'r' are mixing constants generated offline.
-            // They're not really 'magic', they just happen to work well.
-            var m = 0x5bd1e995;
-            var r = 24;
-
-            var start = 0;
-            var len = key.length;
-            var numberOfCharsLeft = len;
-
-            // Initialize the hash to a 'random' value.
-            var h = (0 ^ numberOfCharsLeft);
-
-            // Mix 4 bytes at a time into the hash.  NOTE: 4 bytes is two chars, so we iterate
-            // through the string two chars at a time.
-            var index = start;
+            var index = 0;
             while (numberOfCharsLeft >= 2) {
                 var c1 = key.charCodeAt(index);
                 var c2 = key.charCodeAt(index + 1);
 
-                var k = c1 | (c2 << 16);
+                var k = Math.abs(c1 | (c2 << 16));
 
-                k *= m;
+                k = IntegerUtilities.integerMultiplyLow32Bits(k, m);
                 k ^= k >> r;
-                k *= m;
+                k = IntegerUtilities.integerMultiplyLow32Bits(k, m);
 
-                h *= m;
+                h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
                 h ^= k;
 
                 index += 2;
@@ -137,15 +90,15 @@ module TypeScript {
 
             // Handle the last char (or 2 bytes) if they exist.  This happens if the original string had
             // odd length.
-            if (numberOfCharsLeft === 1) {
+            if (numberOfCharsLeft == 1) {
                 h ^= key.charCodeAt(index);
-                h *= m;
+                h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
             }
 
             // Do a few final mixes of the hash to ensure the last few bytes are well-incorporated.
 
             h ^= h >> 13;
-            h *= m;
+            h = IntegerUtilities.integerMultiplyLow32Bits(h, m);
             h ^= h >> 15;
 
             return h;

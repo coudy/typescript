@@ -12,8 +12,7 @@ module TypeScript.Collections {
     }
 
     export class HashTable<TKey, TValue> {
-        // TODO: figure out why the type checker dosn't like "HashTableEntry[]" here.
-        private entries: HashTableEntry<TKey, TValue>[] = [];
+        private entries: HashTableEntry<TKey, TValue>[];
         private count: number = 0;
 
         constructor(capacity: number,
@@ -101,25 +100,25 @@ module TypeScript.Collections {
             return e.Key;
         }
 
-        private dumpStats() {
-            var standardOut = Environment.standardOut;
+        //private dumpStats() {
+        //    var standardOut = Environment.standardOut;
 
-            standardOut.WriteLine("----------------------")
-            standardOut.WriteLine("Hash table stats");
-            standardOut.WriteLine("Count            : " + this.count);
-            standardOut.WriteLine("Entries Length   : " + this.entries.length);
+        //    standardOut.WriteLine("----------------------")
+        //    standardOut.WriteLine("Hash table stats");
+        //    standardOut.WriteLine("Count            : " + this.count);
+        //    standardOut.WriteLine("Entries Length   : " + this.entries.length);
 
-            var occupiedSlots = 0;
-            for (var i = 0; i < this.entries.length; i++) {
-                if (this.entries[i] !== null) {
-                    occupiedSlots++;
-                }
-            }
+        //    var occupiedSlots = 0;
+        //    for (var i = 0; i < this.entries.length; i++) {
+        //        if (this.entries[i] !== null) {
+        //            occupiedSlots++;
+        //        }
+        //    }
 
-            standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-            standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-            standardOut.WriteLine("----------------------");
-        }
+        //    standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
+        //    standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
+        //    standardOut.WriteLine("----------------------");
+        //}
 
         private grow(): void {
             //this.dumpStats();
