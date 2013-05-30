@@ -1,43 +1,20 @@
-var c5 = (function () {
-    function c5() {
+var c1 = (function () {
+    function c1() {
     }
-    c5.prototype.foo = function () {
+    c1.prototype.foo = function () {
     };
-    return c5;
+    return c1;
 })();
+var c1 = 1;
 
-var c5a = (function () {
-    function c5a() {
+var c4 = (function () {
+    function c4() {
     }
-    c5a.prototype.foo = function () {
+    c4.prototype.foo = function () {
     };
-    return c5a;
+    return c4;
 })();
-
-var c5a;
-(function (c5a) {
-    var y = 2;
-})(c5a || (c5a = {}));
-
-var c5b = (function () {
-    function c5b() {
-    }
-    c5b.prototype.foo = function () {
-    };
-    return c5b;
-})();
-
-var c5b;
-(function (c5b) {
-    c5b.y = 2;
-})(c5b || (c5b = {}));
-
-var c5c = (function () {
-    function c5c() {
-    }
-    c5c.prototype.foo = function () {
-    };
-    return c5c;
-})();
-
-
+var c4;
+(function (c4) {
+    c4[c4["One"] = 0] = "One";
+})(c4 || (c4 = {}));
