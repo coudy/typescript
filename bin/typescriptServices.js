@@ -2094,7 +2094,7 @@ var TypeScript;
             var end = start + len;
 
             for (var i = start; i < end; i++) {
-                hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
+                hashCode = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(hashCode ^ text[i], Hash.FNV_PRIME);
             }
 
             return hashCode;
@@ -2106,7 +2106,7 @@ var TypeScript;
             for (var i = 0; i < len; i++) {
                 var ch = key[start + i];
 
-                hash = (((hash << 5) - hash) + ch) | 0;
+                hash = ((((hash << 5) - hash) | 0) + ch) | 0;
             }
 
             return hash & 0x7FFFFFFF;
@@ -2121,84 +2121,44 @@ var TypeScript;
             for (var i = 0; i < len; i++) {
                 var ch = key.charCodeAt(start + i);
 
-                hash = (((hash << 5) - hash) + ch) | 0;
+                hash = ((((hash << 5) - hash) | 0) + ch) | 0;
             }
 
             return hash & 0x7FFFFFFF;
         };
 
-        Hash.computeMurmur2CharArrayHashCode = function (key, start, len) {
+        Hash.computeMurmur2StringHashCode = function (key, seed) {
             var m = 0x5bd1e995;
             var r = 24;
 
-            var numberOfCharsLeft = len;
-            var h = (0 ^ numberOfCharsLeft);
+            var numberOfCharsLeft = key.length;
+            var h = Math.abs(seed ^ numberOfCharsLeft);
 
-            var index = start;
-            while (numberOfCharsLeft >= 2) {
-                var c1 = key[index];
-                var c2 = key[index + 1];
-
-                var k = c1 | (c2 << 16);
-
-                k *= m;
-                k ^= k >> r;
-                k *= m;
-
-                h *= m;
-                h ^= k;
-
-                index += 2;
-                numberOfCharsLeft -= 2;
-            }
-
-            if (numberOfCharsLeft === 1) {
-                h ^= key[index];
-                h *= m;
-            }
-
-            h ^= h >> 13;
-            h *= m;
-            h ^= h >> 15;
-
-            return h;
-        };
-
-        Hash.computeMurmur2StringHashCode = function (key) {
-            var m = 0x5bd1e995;
-            var r = 24;
-
-            var start = 0;
-            var len = key.length;
-            var numberOfCharsLeft = len;
-
-            var h = (0 ^ numberOfCharsLeft);
-
-            var index = start;
+            var index = 0;
             while (numberOfCharsLeft >= 2) {
                 var c1 = key.charCodeAt(index);
                 var c2 = key.charCodeAt(index + 1);
 
-                var k = c1 | (c2 << 16);
+                var k = Math.abs(c1 | (c2 << 16));
 
-                k *= m;
+                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
                 k ^= k >> r;
-                k *= m;
+                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
 
-                h *= m;
+                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
                 h ^= k;
 
                 index += 2;
                 numberOfCharsLeft -= 2;
             }
 
-            if (numberOfCharsLeft === 1) {
+            if (numberOfCharsLeft == 1) {
                 h ^= key.charCodeAt(index);
-                h *= m;
+                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
             }
 
             h ^= h >> 13;
-            h *= m;
+            h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
             h ^= h >> 15;
 
             return h;
@@ -2325,7 +2285,6 @@ var TypeScript;
         var HashTable = (function () {
             function HashTable(capacity, hash) {
                 this.hash = hash;
-                this.entries = [];
                 this.count = 0;
                 var size = TypeScript.Hash.getPrime(capacity);
                 this.entries = TypeScript.ArrayUtilities.createArray(size, null);
@@ -2400,26 +2359,6 @@ var TypeScript;
 
                 this.count++;
                 return e.Key;
-            };
-
-            HashTable.prototype.dumpStats = function () {
-                var standardOut = Environment.standardOut;
-
-                standardOut.WriteLine("----------------------");
-                standardOut.WriteLine("Hash table stats");
-                standardOut.WriteLine("Count            : " + this.count);
-                standardOut.WriteLine("Entries Length   : " + this.entries.length);
-
-                var occupiedSlots = 0;
-                for (var i = 0; i < this.entries.length; i++) {
-                    if (this.entries[i] !== null) {
-                        occupiedSlots++;
-                    }
-                }
-
-                standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-                standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-                standardOut.WriteLine("----------------------");
             };
 
             HashTable.prototype.grow = function () {
@@ -2973,7 +2912,6 @@ var TypeScript;
 
         var StringTable = (function () {
             function StringTable(capacity) {
-                this.entries = [];
                 this.count = 0;
                 var size = TypeScript.Hash.getPrime(capacity);
                 this.entries = TypeScript.ArrayUtilities.createArray(size, null);
@@ -3932,8 +3870,8 @@ var TypeScript;
                 TypeScript.Errors.argument("start");
             }
 
-            if (start + length < start) {
-                throw new Error("length");
+            if (length < 0) {
+                TypeScript.Errors.argument("length");
             }
 
             this._start = start;
@@ -27970,6 +27908,7 @@ var TypeScript;
             _super.call(this);
             this.statements = statements;
             this.closeBraceSpan = closeBraceSpan;
+            this.closeBraceLeadingComments = null;
         }
         Block.prototype.nodeType = function () {
             return 81 /* Block */;
@@ -27985,6 +27924,7 @@ var TypeScript;
             if (this.statements) {
                 emitter.emitModuleElements(this.statements);
             }
+            emitter.emitCommentsArray(this.closeBraceLeadingComments);
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
@@ -30115,14 +30055,19 @@ var TypeScript;
             this.writeToOutput(this.getIndentString());
         };
 
-        Emitter.prototype.emitCommentInPlace = function (comment) {
+        Emitter.prototype.emitComment = function (comment) {
+            if (!this.emitOptions.compilationSettings.emitComments) {
+                return;
+            }
+
             var text = comment.getText();
-            var hadNewLine = false;
+            var emitColumn = this.emitState.column;
+
+            if (emitColumn === 0) {
+                this.emitIndent();
+            }
 
             if (comment.isBlockComment) {
-                if (this.emitState.column === 0) {
-                    this.emitIndent();
-                }
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
 
@@ -30134,34 +30079,33 @@ var TypeScript;
                     }
                     this.recordSourceMappingEnd(comment);
                     this.writeLineToOutput("");
-                    hadNewLine = true;
                 } else {
                     this.recordSourceMappingEnd(comment);
+                    this.writeToOutput(" ");
+                    return;
                 }
             } else {
-                if (this.emitState.column === 0) {
-                    this.emitIndent();
-                }
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
                 this.recordSourceMappingEnd(comment);
                 this.writeLineToOutput("");
-                hadNewLine = true;
             }
 
-            if (hadNewLine) {
+            if (emitColumn != 0) {
                 this.emitIndent();
-            } else {
-                this.writeToOutput(" ");
             }
         };
 
         Emitter.prototype.emitComments = function (ast, pre) {
             var comments = pre ? ast.preComments() : ast.postComments();
 
-            if (this.emitOptions.compilationSettings.emitComments && comments && comments.length !== 0) {
-                for (var i = 0; i < comments.length; i++) {
-                    this.emitCommentInPlace(comments[i]);
+            this.emitCommentsArray(comments);
+        };
+
+        Emitter.prototype.emitCommentsArray = function (comments) {
+            if (this.emitOptions.compilationSettings.emitComments && comments) {
+                for (var i = 0, n = comments.length; i < n; i++) {
+                    this.emitComment(comments[i]);
                 }
             }
         };
@@ -30430,6 +30374,8 @@ var TypeScript;
             } else {
                 this.emitModuleElements(funcDecl.block.statements);
             }
+
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -31867,6 +31813,9 @@ var TypeScript;
     TypeScript.filePath = filePath;
 
     function normalizePath(path) {
+        if (/^\\\\[^\\]/.test(path)) {
+            path = "file:" + path;
+        }
         var parts = this.getPathComponents(switchToForwardSlashes(path));
         var normalizedParts = [];
 
@@ -31884,7 +31833,7 @@ var TypeScript;
             normalizedParts.push(part);
         }
 
-        return (path.charAt(0) === "/" ? "/" : "") + normalizedParts.join("/");
+        return normalizedParts.join("/");
     }
     TypeScript.normalizePath = normalizePath;
 })(TypeScript || (TypeScript = {}));
@@ -33202,44 +33151,7 @@ var TypeScript;
         };
 
         BloomFilter.prototype.computeHash = function (key, seed) {
-            var m = 0x5bd1e995;
-            var r = 24;
-
-            var numberOfCharsLeft = key.length;
-            var h = Math.abs(seed ^ numberOfCharsLeft);
-
-            var index = 0;
-            while (numberOfCharsLeft >= 2) {
-                var c1 = this.getCharacter(key, index);
-                var c2 = this.getCharacter(key, index + 1);
-
-                var k = Math.abs(c1 | (c2 << 16));
-
-                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
-                k ^= k >> r;
-                k = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(k, m);
-
-                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
-                h ^= k;
-
-                index += 2;
-                numberOfCharsLeft -= 2;
-            }
-
-            if (numberOfCharsLeft == 1) {
-                h ^= this.getCharacter(key, index);
-                h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
-            }
-
-            h ^= h >> 13;
-            h = TypeScript.IntegerUtilities.integerMultiplyLow32Bits(h, m);
-            h ^= h >> 15;
-
-            return Math.round(h);
-        };
-
-        BloomFilter.prototype.getCharacter = function (key, index) {
-            return key.charCodeAt(index);
+            return TypeScript.Hash.computeMurmur2StringHashCode(key, seed);
         };
 
         BloomFilter.prototype.addKeys = function (keys) {
@@ -38427,11 +38339,18 @@ var TypeScript;
 
         PullTypeResolver.prototype.getVisibleMembersFromExpression = function (expression, enclosingDecl, context) {
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
+            var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.canUseTypeSymbol = true;
+            context.resolvingNamespaceMemberAccess = true;
             var lhs = this.resolveAST(expression, false, enclosingDecl, context).symbol;
             context.canUseTypeSymbol = prevCanUseTypeSymbol;
-            var lhsType = lhs.getType();
+            context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
 
+            if (context.resolvingTypeReference && (lhs.getKind() === 8 /* Class */ || lhs.getKind() === 16 /* Interface */)) {
+                return null;
+            }
+
+            var lhsType = lhs.getType();
             if (!lhsType) {
                 return null;
             }
@@ -38504,6 +38423,12 @@ var TypeScript;
                         var instanceType = associatedInstance.getType();
                         var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
                         members = members.concat(instanceMembers);
+                    }
+
+                    var exportedContainer = (lhsType).getExportAssignedContainerSymbol();
+                    if (exportedContainer) {
+                        var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, includePrivate);
+                        members = members.concat(exportedContainerMembers);
                     }
                 } else if (lhsType.isConstructor()) {
                     var prototypeStr = "prototype";
@@ -47583,7 +47508,7 @@ var TypeScript;
             declFlags |= 2097152 /* DeclaredInAWithBlock */;
         }
 
-        var decl = new TypeScript.PullDecl("{new}", "{new}", declType, declFlags, span, context.semanticInfo.getPath());
+        var decl = new TypeScript.PullDecl("", "", declType, declFlags, span, context.semanticInfo.getPath());
         context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
@@ -47753,7 +47678,7 @@ var TypeScript;
             declFlags |= 2097152 /* DeclaredInAWithBlock */;
         }
 
-        var decl = new TypeScript.PullDecl("[]", "[]", declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl("", "", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
 
@@ -47788,7 +47713,7 @@ var TypeScript;
             declFlags |= 2097152 /* DeclaredInAWithBlock */;
         }
 
-        var decl = new TypeScript.PullDecl("()", "()", declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl("", "", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
 
@@ -47823,7 +47748,7 @@ var TypeScript;
             declFlags |= 2097152 /* DeclaredInAWithBlock */;
         }
 
-        var decl = new TypeScript.PullDecl("new", "new", declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl("", "", declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
 
@@ -52717,12 +52642,16 @@ var TypeScript;
             this.movePast(node.openBraceToken);
             var statements = this.visitSyntaxList(node.statements);
             var closeBracePosition = this.position;
+
+            var closeBraceLeadingComments = this.convertTokenLeadingComments(node.closeBraceToken, this.position);
             this.movePast(node.closeBraceToken);
             var closeBraceSpan = new TypeScript.ASTSpan();
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
             var result = new TypeScript.Block(statements, closeBraceSpan);
             this.setSpan(result, start, node);
+
+            result.closeBraceLeadingComments = closeBraceLeadingComments;
 
             return result;
         };
@@ -57736,8 +57665,8 @@ var Services;
                 var signatureGroupInfo = new Services.FormalSignatureItemInfo();
                 var paramIndexInfo = [];
                 var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
-                if (!functionName) {
-                    functionName = symbol.getDisplayName();
+                if (!functionName && (!symbol.isType() || (symbol).isNamedTypeSymbol())) {
+                    functionName = symbol.getScopedNameEx(enclosingScopeSymbol).toString();
                 }
 
                 var signatureMemberName = signature.getSignatureTypeNameEx(functionName, false, false, enclosingScopeSymbol, true, true);
@@ -58386,11 +58315,16 @@ var Services;
         LanguageService.prototype.getFullNameOfSymbol = function (symbol, enclosingScopeSymbol) {
             var container = symbol.getContainer();
             if (this.isLocal(symbol) || symbol.getKind() == 2048 /* Parameter */) {
-                return symbol.getScopedName(enclosingScopeSymbol);
+                return symbol.getScopedName(enclosingScopeSymbol, true);
             }
 
+            var symbolKind = symbol.getKind();
             if (symbol.getKind() == 2 /* Primitive */) {
                 return "";
+            }
+
+            if (symbolKind != 4096 /* Property */ && symbolKind != 65536 /* Method */ && symbolKind != 8192 /* TypeParameter */ && !symbol.hasFlag(1 /* Exported */)) {
+                return symbol.getScopedName(enclosingScopeSymbol, true);
             }
 
             return symbol.fullName(enclosingScopeSymbol);
@@ -62970,7 +62904,7 @@ var TypeScript;
                     case 2 /* NewLine */:
                          {
                             if (rule.Flag == 1 /* CanDeleteNewLines */) {
-                                betweenSpan = new TypeScript.TextSpan(t1.end(), t1.start() - t1.end());
+                                betweenSpan = new TypeScript.TextSpan(t1.end(), t2.start() - t1.end());
                             } else {
                                 var lengthBetween;
                                 if (this.getLineNumber(t1) == this.getLineNumber(t2)) {
