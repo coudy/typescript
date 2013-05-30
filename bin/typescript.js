@@ -560,13 +560,12 @@ var TypeScript;
         DiagnosticCode[DiagnosticCode["ECMAScript_target_version__0__not_supported___Using_default__1__code_generation"] = 267] = "ECMAScript_target_version__0__not_supported___Using_default__1__code_generation";
         DiagnosticCode[DiagnosticCode["Module_code_generation__0__not_supported___Using_default__1__code_generation"] = 268] = "Module_code_generation__0__not_supported___Using_default__1__code_generation";
         DiagnosticCode[DiagnosticCode["Could_not_find_file___0_"] = 269] = "Could_not_find_file___0_";
-        DiagnosticCode[DiagnosticCode["Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed"] = 270] = "Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed";
-        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_itself"] = 271] = "A_file_cannot_have_a_reference_itself";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 272] = "Cannot_resolve_referenced_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_resolve_imported_file___0_"] = 273] = "Cannot_resolve_imported_file___0_";
-        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 274] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
-        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 275] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
-        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 276] = "Emit_Error__0";
+        DiagnosticCode[DiagnosticCode["A_file_cannot_have_a_reference_to_itself"] = 270] = "A_file_cannot_have_a_reference_to_itself";
+        DiagnosticCode[DiagnosticCode["Cannot_resolve_referenced_file___0_"] = 271] = "Cannot_resolve_referenced_file___0_";
+        DiagnosticCode[DiagnosticCode["Cannot_find_the_common_subdirectory_path_for_the_input_files"] = 272] = "Cannot_find_the_common_subdirectory_path_for_the_input_files";
+        DiagnosticCode[DiagnosticCode["Cannot_compile_dynamic_modules_when_emitting_into_single_file"] = 273] = "Cannot_compile_dynamic_modules_when_emitting_into_single_file";
+        DiagnosticCode[DiagnosticCode["Emit_Error__0"] = 274] = "Emit_Error__0";
+        DiagnosticCode[DiagnosticCode["Cannot_read_file__0__1"] = 275] = "Cannot_read_file__0__1";
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1923,25 +1922,15 @@ var TypeScript;
             message: "Could not find file: '{0}'.",
             code: 5004
         },
-        Unknown_extension_for_file___0__Only__ts_and_d_ts_extensions_are_allowed: {
+        A_file_cannot_have_a_reference_to_itself: {
             category: 1 /* Error */,
-            message: "Unknown extension for file: '{0}'. Only .ts and .d.ts extensions are allowed.",
-            code: 5005
-        },
-        A_file_cannot_have_a_reference_itself: {
-            category: 1 /* Error */,
-            message: "A file cannot have a reference itself.",
+            message: "A file cannot have a reference to itself.",
             code: 5006
         },
         Cannot_resolve_referenced_file___0_: {
             category: 1 /* Error */,
             message: "Cannot resolve referenced file: '{0}'.",
             code: 5007
-        },
-        Cannot_resolve_imported_file___0_: {
-            category: 1 /* Error */,
-            message: "Cannot resolve imported file: '{0}'.",
-            code: 5008
         },
         Cannot_find_the_common_subdirectory_path_for_the_input_files: {
             category: 1 /* Error */,
@@ -1957,6 +1946,11 @@ var TypeScript;
             category: 1 /* Error */,
             message: "Emit Error: {0}.",
             code: 5011
+        },
+        Cannot_read_file__0__1: {
+            category: 1 /* Error */,
+            message: "Cannot read file '{0}': {1}",
+            code: 5012
         }
     };
 
@@ -31502,7 +31496,7 @@ var TypeScript;
 
         Emitter.handleEmitterError = function (fileName, e) {
             if ((e).isEmitterError === true) {
-                return [new TypeScript.Diagnostic(fileName, 0, 0, 276 /* Emit_Error__0 */, [e.message])];
+                return [new TypeScript.Diagnostic(fileName, 0, 0, 274 /* Emit_Error__0 */, [e.message])];
             }
 
             throw e;
@@ -31811,171 +31805,6 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var SourceUnit = (function () {
-        function SourceUnit(path, fileInformation) {
-            this.path = path;
-            this.fileInformation = fileInformation;
-            this.referencedFiles = null;
-            this.lineStarts = null;
-        }
-        SourceUnit.prototype.getText = function (start, end) {
-            return this.fileInformation.contents().substring(start, end);
-        };
-
-        SourceUnit.prototype.getLength = function () {
-            return this.fileInformation.contents().length;
-        };
-
-        SourceUnit.prototype.getLineStartPositions = function () {
-            if (this.lineStarts === null) {
-                this.lineStarts = TypeScript.LineMap.fromString(this.fileInformation.contents()).lineStarts();
-            }
-
-            return this.lineStarts;
-        };
-
-        SourceUnit.prototype.getTextChangeRangeSinceVersion = function (scriptVersion) {
-            throw TypeScript.Errors.notYetImplemented();
-        };
-        return SourceUnit;
-    })();
-    TypeScript.SourceUnit = SourceUnit;
-
-    var CompilationEnvironment = (function () {
-        function CompilationEnvironment(compilationSettings, ioHost) {
-            this.compilationSettings = compilationSettings;
-            this.ioHost = ioHost;
-            this.code = [];
-            this.inputFileNameToOutputFileName = new TypeScript.StringHashTable();
-        }
-        CompilationEnvironment.prototype.getSourceUnit = function (path) {
-            var normalizedPath = TypeScript.switchToForwardSlashes(path.toUpperCase());
-            for (var i = 0, n = this.code.length; i < n; i++) {
-                var sourceUnit = this.code[i];
-                var soruceUnitNormalizedPath = TypeScript.switchToForwardSlashes(sourceUnit.path.toUpperCase());
-                if (normalizedPath === soruceUnitNormalizedPath) {
-                    return sourceUnit;
-                }
-            }
-
-            return null;
-        };
-        return CompilationEnvironment;
-    })();
-    TypeScript.CompilationEnvironment = CompilationEnvironment;
-
-    var CodeResolver = (function () {
-        function CodeResolver(environment) {
-            this.environment = environment;
-            this.visited = {};
-        }
-        CodeResolver.prototype.resolveCode = function (referencePath, parentPath, performSearch, resolutionDispatcher) {
-            var resolvedFile = { fileInformation: null, path: referencePath };
-
-            var ioHost = this.environment.ioHost;
-
-            var isRelativePath = TypeScript.isRelative(referencePath);
-            var isRootedPath = isRelativePath ? false : TypeScript.isRooted(referencePath);
-            var normalizedPath = isRelativePath ? ioHost.resolvePath(parentPath + "/" + referencePath) : (isRootedPath || !parentPath || performSearch ? referencePath : parentPath + "/" + referencePath);
-
-            if (!TypeScript.isTSFile(normalizedPath)) {
-                normalizedPath += ".ts";
-            }
-
-            normalizedPath = TypeScript.switchToForwardSlashes(TypeScript.stripQuotes(normalizedPath));
-            var absoluteModuleID = this.environment.compilationSettings.useCaseSensitiveFileResolution ? normalizedPath : normalizedPath.toLocaleUpperCase();
-
-            if (!this.visited[absoluteModuleID]) {
-                if (isRelativePath || isRootedPath || !performSearch) {
-                    try  {
-                        TypeScript.CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-
-                        try  {
-                            resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
-                        } catch (err1) {
-                            if (TypeScript.isTSFile(normalizedPath)) {
-                                normalizedPath = TypeScript.changePathToDTS(normalizedPath);
-                                TypeScript.CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-                                resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
-                            }
-                        }
-                        TypeScript.CompilerDiagnostics.debugPrint("   Found code at " + normalizedPath);
-
-                        resolvedFile.path = normalizedPath;
-                        this.visited[absoluteModuleID] = true;
-                    } catch (err4) {
-                        TypeScript.CompilerDiagnostics.debugPrint("   Did not find code for " + referencePath);
-
-                        return false;
-                    }
-                } else {
-                    resolvedFile = ioHost.findFile(parentPath, normalizedPath);
-
-                    if (!resolvedFile) {
-                        if (TypeScript.isTSFile(normalizedPath)) {
-                            normalizedPath = TypeScript.changePathToDTS(normalizedPath);
-                            resolvedFile = ioHost.findFile(parentPath, normalizedPath);
-                        }
-                    }
-
-                    if (resolvedFile) {
-                        resolvedFile.path = TypeScript.switchToForwardSlashes(TypeScript.stripQuotes(resolvedFile.path));
-                        TypeScript.CompilerDiagnostics.debugPrint(referencePath + " resolved to: " + resolvedFile.path);
-                        resolvedFile.fileInformation = resolvedFile.fileInformation;
-                        this.visited[absoluteModuleID] = true;
-                    } else {
-                        TypeScript.CompilerDiagnostics.debugPrint("Could not find " + referencePath);
-                    }
-                }
-
-                if (resolvedFile && resolvedFile.fileInformation !== null) {
-                    var rootDir = ioHost.dirName(resolvedFile.path);
-                    var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.fileInformation);
-                    var preProcessedFileInfo = TypeScript.preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
-                    var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
-                    var resolutionResult;
-
-                    sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
-
-                    for (var i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
-                        var fileReference = preProcessedFileInfo.referencedFiles[i];
-
-                        normalizedPath = TypeScript.isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
-                        normalizedPath = ioHost.resolvePath(normalizedPath);
-
-                        if (resolvedFilePath === normalizedPath) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(normalizedPath, fileReference.position, fileReference.length, 271 /* A_file_cannot_have_a_reference_itself */, null));
-                            continue;
-                        }
-
-                        resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
-
-                        if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileReference.position, fileReference.length, 272 /* Cannot_resolve_referenced_file___0_ */, [fileReference.path]));
-                        }
-                    }
-
-                    for (var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
-                        var fileImport = preProcessedFileInfo.importedFiles[i];
-
-                        resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
-
-                        if (!resolutionResult) {
-                            resolutionDispatcher.errorReporter.addDiagnostic(new TypeScript.Diagnostic(resolvedFilePath, fileImport.position, fileImport.length, 273 /* Cannot_resolve_imported_file___0_ */, [fileImport.path]));
-                        }
-                    }
-
-                    resolutionDispatcher.postResolution(sourceUnit.path, sourceUnit);
-                }
-            }
-            return true;
-        };
-        return CodeResolver;
-    })();
-    TypeScript.CodeResolver = CodeResolver;
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
     var CompilationSettings = (function () {
         function CompilationSettings() {
             this.propagateConstants = false;
@@ -32158,6 +31987,193 @@ var TypeScript;
         return new TypeScript.ParseOptions(settings.allowAutomaticSemicolonInsertion, settings.allowModuleKeywordInExternalModuleReference);
     }
     TypeScript.getParseOptions = getParseOptions;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var ReferenceResolutionResult = (function () {
+        function ReferenceResolutionResult() {
+            this.resolvedFiles = [];
+            this.diagnostics = [];
+            this.seenNoDefaultLibTag = false;
+        }
+        return ReferenceResolutionResult;
+    })();
+    TypeScript.ReferenceResolutionResult = ReferenceResolutionResult;
+
+    var ReferenceLocation = (function () {
+        function ReferenceLocation(filePath, position, length, isImported) {
+            this.filePath = filePath;
+            this.position = position;
+            this.length = length;
+            this.isImported = isImported;
+        }
+        return ReferenceLocation;
+    })();
+
+    var ReferenceResolver = (function () {
+        function ReferenceResolver(inputFileNames, host, settings) {
+            this.inputFileNames = inputFileNames;
+            this.host = host;
+            this.settings = settings;
+            this.visited = {};
+        }
+        ReferenceResolver.resolve = function (inputFileNames, host, settings) {
+            var resolver = new ReferenceResolver(inputFileNames, host, settings);
+            return resolver.resolveInputFiles();
+        };
+
+        ReferenceResolver.prototype.resolveInputFiles = function () {
+            var result = new ReferenceResolutionResult();
+
+            if (!this.inputFileNames || this.inputFileNames.length <= 0) {
+                return result;
+            }
+
+            var referenceLocation = new ReferenceLocation(null, 0, 0, false);
+            for (var i = 0, n = this.inputFileNames.length; i < n; i++) {
+                this.resolveIncludedFile(this.inputFileNames[i], referenceLocation, result);
+            }
+
+            return result;
+        };
+
+        ReferenceResolver.prototype.resolveIncludedFile = function (path, referenceLocation, resolutionResult) {
+            var normalizedPath = this.getNormalizedFilePath(path, referenceLocation.filePath);
+
+            if (this.isSameFile(normalizedPath, referenceLocation.filePath)) {
+                if (!referenceLocation.isImported) {
+                    resolutionResult.diagnostics.push(new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, 270 /* A_file_cannot_have_a_reference_to_itself */, null));
+                }
+
+                return normalizedPath;
+            }
+
+            if (!TypeScript.isTSFile(normalizedPath) && !TypeScript.isDTSFile(normalizedPath)) {
+                var dtsFile = normalizedPath + ".d.ts";
+                var tsFile = normalizedPath + ".ts";
+
+                if (this.host.fileExists(dtsFile)) {
+                    normalizedPath = dtsFile;
+                } else {
+                    normalizedPath = tsFile;
+                }
+            }
+
+            if (!this.host.fileExists(normalizedPath)) {
+                if (!referenceLocation.isImported) {
+                    resolutionResult.diagnostics.push(new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, 271 /* Cannot_resolve_referenced_file___0_ */, [path]));
+                }
+
+                return normalizedPath;
+            }
+
+            return this.resolveFile(normalizedPath, resolutionResult);
+        };
+
+        ReferenceResolver.prototype.resolveImportedFile = function (path, referenceLocation, resolutionResult) {
+            var isRelativePath = TypeScript.isRelative(path);
+            var isRootedPath = isRelativePath ? false : TypeScript.isRooted(path);
+
+            if (isRelativePath || isRootedPath) {
+                return this.resolveIncludedFile(path, referenceLocation, resolutionResult);
+            } else {
+                var parentDirectory = this.host.getParentDirectory(referenceLocation.filePath);
+                var searchFilePath = null;
+                var dtsFileName = path + ".d.ts";
+                var tsFilePath = path + ".ts";
+
+                do {
+                    var currentFilePath = this.host.resolveRelativePath(dtsFileName, parentDirectory);
+                    if (this.host.fileExists(currentFilePath)) {
+                        searchFilePath = currentFilePath;
+                        break;
+                    }
+
+                    currentFilePath = this.host.resolveRelativePath(tsFilePath, parentDirectory);
+                    if (this.host.fileExists(currentFilePath)) {
+                        searchFilePath = currentFilePath;
+                        break;
+                    }
+
+                    parentDirectory = this.host.getParentDirectory(parentDirectory);
+                } while(parentDirectory);
+
+                if (!searchFilePath) {
+                    return path;
+                }
+
+                return this.resolveFile(searchFilePath, resolutionResult);
+            }
+        };
+
+        ReferenceResolver.prototype.resolveFile = function (normalizedPath, resolutionResult) {
+            if (!this.isVisited(normalizedPath)) {
+                this.recordVisitedFile(normalizedPath);
+
+                var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, this.host.getScriptSnapshot(normalizedPath), this.settings);
+
+                if (preprocessedFileInformation.isLibFile) {
+                    resolutionResult.seenNoDefaultLibTag = true;
+                }
+
+                var normalizedReferencePaths = [];
+                for (var i = 0, n = preprocessedFileInformation.referencedFiles.length; i < n; i++) {
+                    var fileReference = preprocessedFileInformation.referencedFiles[i];
+                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, fileReference.position, fileReference.length, false);
+                    var normalizedReferencePath = this.resolveIncludedFile(fileReference.path, currentReferenceLocation, resolutionResult);
+                    normalizedReferencePaths.push(normalizedReferencePath);
+                }
+
+                var normalizedImportPaths = [];
+                for (var i = 0; i < preprocessedFileInformation.importedFiles.length; i++) {
+                    var fileImport = preprocessedFileInformation.importedFiles[i];
+                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, fileImport.position, fileImport.length, true);
+                    var normalizedImportPath = this.resolveImportedFile(fileImport.path, currentReferenceLocation, resolutionResult);
+                    normalizedImportPaths.push(normalizedImportPath);
+                }
+
+                resolutionResult.resolvedFiles.push({
+                    path: normalizedPath,
+                    refrencedFiles: normalizedReferencePaths,
+                    importedFiles: normalizedImportPaths
+                });
+            }
+
+            return normalizedPath;
+        };
+
+        ReferenceResolver.prototype.getNormalizedFilePath = function (path, parentFilePath) {
+            var parentFileDirectory = parentFilePath ? this.host.getParentDirectory(parentFilePath) : "";
+            var normalizedPath = this.host.resolveRelativePath(path, parentFileDirectory);
+            return normalizedPath;
+        };
+
+        ReferenceResolver.prototype.getUniqueFileId = function (filePath) {
+            return this.settings.useCaseSensitiveFileResolution ? filePath : filePath.toLocaleUpperCase();
+        };
+
+        ReferenceResolver.prototype.recordVisitedFile = function (filePath) {
+            this.visited[this.getUniqueFileId(filePath)] = true;
+        };
+
+        ReferenceResolver.prototype.isVisited = function (filePath) {
+            return this.visited[this.getUniqueFileId(filePath)];
+        };
+
+        ReferenceResolver.prototype.isSameFile = function (filePath1, filePath2) {
+            if (!filePath1 || !filePath2) {
+                return false;
+            }
+
+            if (this.settings.useCaseSensitiveFileResolution) {
+                return filePath1 === filePath2;
+            } else {
+                return filePath1.toLocaleUpperCase() === filePath2.toLocaleUpperCase();
+            }
+        };
+        return ReferenceResolver;
+    })();
+    TypeScript.ReferenceResolver = ReferenceResolver;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -33043,12 +33059,12 @@ var TypeScript;
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
-                        var referencePath = script.referencedFiles[i].path;
+                        var referencePath = script.referencedFiles[i];
                         var declareFileName;
                         if (TypeScript.isRooted(referencePath)) {
                             declareFileName = this.emitOptions.mapOutputFileName(referencePath, TypeScript.TypeScriptCompiler.mapToDTSFileName);
                         } else {
-                            declareFileName = TypeScript.getDeclareFilePath(script.referencedFiles[i].path);
+                            declareFileName = TypeScript.getDeclareFilePath(script.referencedFiles[i]);
                         }
                         this.declFile.WriteLine('/// <reference path="' + declareFileName + '" />');
                     }
@@ -34676,6 +34692,10 @@ var TypeScript;
 
         PullSignatureSymbol.getSignaturesTypeNameEx = function (signatures, prefix, shortform, brackets, scopeSymbol, getPrettyTypeName, candidateSignature) {
             var result = [];
+            if (!signatures) {
+                return result;
+            }
+
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
                 shortform = false;
@@ -38481,12 +38501,12 @@ var TypeScript;
                 }
 
                 if (!symbol) {
-                    idText = TypeScript.stripQuotes(originalIdText) + ".ts";
+                    idText = TypeScript.stripQuotes(originalIdText) + ".d.ts";
                     symbol = search(idText);
                 }
 
                 if (!symbol) {
-                    idText = TypeScript.stripQuotes(originalIdText) + ".d.ts";
+                    idText = TypeScript.stripQuotes(originalIdText) + ".ts";
                     symbol = search(idText);
                 }
 
@@ -38498,11 +38518,11 @@ var TypeScript;
                     var path = TypeScript.getRootFilePath(TypeScript.switchToForwardSlashes(currentFileName));
 
                     while (symbol === null && path != "") {
-                        idText = TypeScript.normalizePath(path + strippedIdText + ".ts");
+                        idText = TypeScript.normalizePath(path + strippedIdText + ".d.ts");
                         symbol = search(idText);
 
                         if (symbol === null) {
-                            idText = TypeScript.changePathToDTS(idText);
+                            idText = TypeScript.normalizePath(path + strippedIdText + ".ts");
                             symbol = search(idText);
                         }
 
@@ -54646,7 +54666,7 @@ var TypeScript;
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    return new TypeScript.Diagnostic(null, 0, 0, 274 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
+                                    return new TypeScript.Diagnostic(null, 0, 0, 272 /* Cannot_find_the_common_subdirectory_path_for_the_input_files */, null);
                                 }
 
                                 break;
@@ -54687,7 +54707,7 @@ var TypeScript;
             }
 
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new TypeScript.Diagnostic(null, 0, 0, 275 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
+                return new TypeScript.Diagnostic(null, 0, 0, 273 /* Cannot_compile_dynamic_modules_when_emitting_into_single_file */, null);
             }
 
             if (this.emitOptions.outputMany) {
