@@ -175,6 +175,10 @@ module TypeScript {
     }
 
     export function normalizePath(path: string): string {
+        // If it's a UNC style path (i.e. \\server\share), convert to a URI style (i.e. file://server/share)
+        if(/^\\\\[^\\]/.test(path)) {
+            path = "file:" + path;
+        }
         var parts = this.getPathComponents(switchToForwardSlashes(path));
         var normalizedParts: string[] = [];
 
@@ -192,6 +196,6 @@ module TypeScript {
             normalizedParts.push(part);
         }
 
-        return (path.charAt(0) === "/" ? "/" : "") + normalizedParts.join("/");
+        return normalizedParts.join("/");
     }
 }
