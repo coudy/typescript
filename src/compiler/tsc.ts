@@ -142,7 +142,7 @@ module TypeScript {
         private resolve() {
             // Resolve file dependencies, if requested
             var includeDefaultLibrary = this.compilationSettings.useDefaultLib;
-            var resolvedFiles: IResolvedFile[];
+            var resolvedFiles: IResolvedFile[] = [];
 
             var start = new Date().getTime();
 
