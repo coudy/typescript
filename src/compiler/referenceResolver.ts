@@ -26,6 +26,7 @@ module TypeScript {
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
         resolveRelativePath(path: string, directory: string): string;
         fileExists(path: string): boolean;
+        directoryExists(path: string): boolean;
         getParentDirectory(path: string): string;
     }
 

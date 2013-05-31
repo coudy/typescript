@@ -1764,6 +1764,27 @@ module Harness {
             return new LanguageServicesDiagnostics("");
         }
 
+        public fileExists(s: string) {
+            return IO.fileExists(s);
+        }
+
+        public directoryExists(s: string) {
+            return IO.directoryExists(s);
+        }
+
+        public resolveRelativePath(path: string, directory: string): string {
+            if (TypeScript.isRooted(path) || !directory) {
+                return IO.resolvePath(path);
+            }
+            else {
+                return IO.resolvePath(IOUtils.combine(directory, path));
+            }
+        }
+
+        public getParentDirectory(path: string): string {
+            return IO.dirName(path);
+        }
+
         /** Return a new instance of the language service shim, up-to-date wrt to typecheck.
          *  To access the non-shim (i.e. actual) language service, use the "ls.languageService" property.
          */

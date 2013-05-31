@@ -257,18 +257,30 @@ module Services {
             return this.compiler.getSemanticDiagnostics(fileName);
         }
 
+        private getAllSyntacticDiagnostics(): TypeScript.IDiagnostic[]{
+            var diagnostics: TypeScript.IDiagnostic[] = [];
+
+            this.compiler.fileNameToDocument.map((fileName, value, context) => {
+                var fileDiagnostics = this.compiler.getSyntacticDiagnostics(fileName);
+                diagnostics = diagnostics.concat(fileDiagnostics);
+            }, null);
+
+            return diagnostics;
+        }
+
+        private getAllSemanticDiagnostics(): TypeScript.IDiagnostic[]{
+            var diagnostics: TypeScript.IDiagnostic[] = [];
+
+            this.compiler.fileNameToDocument.map((fileName, value, context) => {
+                var fileDiagnostics = this.compiler.getSemanticDiagnostics(fileName);
+                diagnostics = diagnostics.concat(fileDiagnostics);
+            }, null);
+
+            return diagnostics;
+        }
+
         public getEmitOutput(fileName: string): EmitOutput {
             var result = new EmitOutput();
-
-            // Check for syntactic errors
-            var syntacticDiagnostics = this.compiler.getSyntacticDiagnostics(fileName);
-            if (this.containErrors(syntacticDiagnostics)) {
-                // This file has at least one syntactic error, return and do not emit code.
-                return result;
-            }
-            
-            // Force a type check before emit
-            this.compiler.getSemanticDiagnostics(fileName);
 
             var emitterIOHost: TypeScript.EmitterIOHost = {
                 writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
@@ -276,22 +288,31 @@ module Services {
                     outputFile.Write(contents);
                     result.outputFiles.push(outputFile);
                 },
-                directoryExists: (fileName: string) => true,
-                fileExists: (fileName: string) => false,
-                resolvePath: (fileName: string) => fileName
+                directoryExists: (fileName: string) => this.host.directoryExists(fileName),
+                fileExists: (fileName: string) => this.host.fileExists(fileName),
+                resolvePath: (fileName: string) => this.host.resolveRelativePath(fileName, null)
             };
 
-            // Force a type check on the file before calling the emitter
-            this.compiler.getSemanticDiagnostics(fileName);
-
-            // Call the emitter
             var diagnostics: TypeScript.IDiagnostic[];
 
+            // Parse the emit options
             diagnostics = this.compiler.parseEmitOption(emitterIOHost) || [];
             result.diagnostics = result.diagnostics.concat(diagnostics);
             if (this.containErrors(diagnostics)) {
                 return result;
             }
+
+            var outputMany = this.compiler.emitOptions.outputMany;
+
+            // Check for syntactic errors
+            var syntacticDiagnostics = outputMany ? this.getSyntacticDiagnostics(fileName) : this.getAllSyntacticDiagnostics();
+            if (this.containErrors(syntacticDiagnostics)) {
+                // This file has at least one syntactic error, return and do not emit code.
+                return result;
+            }
+
+            // Force a type check before emit to ensure that all symbols have been resolved
+            var semanticDiagnostics = outputMany ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
 
             // Emit output files and source maps
             diagnostics = this.compiler.emitUnit(fileName, emitterIOHost) || [];
@@ -300,26 +321,14 @@ module Services {
                 return result;
             }
 
-            // Emit declarations
-            if (this.shouldEmitDeclarations(fileName)) {
+            // Emit declarations, if there are no semantic errors
+            if (!this.containErrors(semanticDiagnostics)) {
                 diagnostics = this.compiler.emitUnitDeclarations(fileName) || [];
                 result.diagnostics = result.diagnostics.concat(diagnostics);
             }
 
             return result;
         }
-
-        private shouldEmitDeclarations(fileName: string): boolean {
-            // Only emit declarations if there are no semantic errors
-            var semanticDiagnostics = this.compiler.getSemanticDiagnostics(fileName);
-            if (this.containErrors(semanticDiagnostics)) {
-                // This file has at least one semantic error, return and do not emit declaration.
-                return false;
-            }
-
-            return true;
-        }
-
 
         private containErrors(diagnostics: TypeScript.IDiagnostic[]): boolean {
             if (diagnostics && diagnostics.length > 0) {

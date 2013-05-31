@@ -21,7 +21,7 @@ module Services {
     //
     // Public interface of the host of a language service instance.
     //
-    export interface ILanguageServiceHost extends TypeScript.ILogger {
+    export interface ILanguageServiceHost extends TypeScript.ILogger, TypeScript.IReferenceResolverHost {
         getCompilationSettings(): TypeScript.CompilationSettings;
 
         getScriptFileNames(): string[];

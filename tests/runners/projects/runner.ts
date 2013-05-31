@@ -205,6 +205,10 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         return this.host.fileExists(path);
     }
 
+    directoryExists(path: string): boolean {
+        return this.host.directoryExists(path);
+    }
+
     getParentDirectory(path: string): string {
         return this.host.dirName(path);
     }

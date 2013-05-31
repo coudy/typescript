@@ -47,6 +47,10 @@ module Services {
         getScriptVersion(fileName: string): number;
         getScriptIsOpen(fileName: string): boolean;
         getScriptSnapshot(fileName: string): IScriptSnapshotShim;
+        resolveRelativePath(path: string, directory: string): string;
+        fileExists(path: string): boolean;
+        directoryExists(path: string): boolean;
+        getParentDirectory(path: string): string;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
 
@@ -218,6 +222,23 @@ module Services {
 
         public getDiagnosticsObject(): ILanguageServicesDiagnostics {
             return this.shimHost.getDiagnosticsObject();
+        }
+
+        // IReferenceResolverHost methods
+        public resolveRelativePath(path: string, directory: string): string {
+            return this.shimHost.resolveRelativePath(path, directory);
+        }
+
+        public fileExists(path: string): boolean {
+            return this.shimHost.fileExists(path);
+        }
+
+        public directoryExists(path: string): boolean {
+            return this.shimHost.directoryExists(path);
+        }
+
+        public getParentDirectory(path: string): string {
+            return this.shimHost.getParentDirectory(path);
         }
     }
 
