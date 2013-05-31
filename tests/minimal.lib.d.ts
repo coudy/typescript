@@ -942,7 +942,7 @@ declare var JSON: JSON;
 interface Array<T> {
     toString(): string;
     toLocaleString(): string;
-    concat(...items: T[][]): T[]; 
+    concat<U extends T[]>(...items: U[]): T[];
     concat(...items: T[]): T[];
     join(separator?: string): string;
     pop(): T;
@@ -966,15 +966,15 @@ interface Array<T> {
     reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue?: U): U;
 
     length: number;
-
 }
+
 declare var Array: {
     new <T>(arrayLength: number): T[];   
     new <T>(...items: T[]): T[]; 
     <T>(arrayLength: number): T[];    
     <T>(...items: T[]): T[];
     isArray(arg: any): boolean;
-    prototype: Array; // Note: Implicitly Array<any>
+    prototype: Array<any>; // Note: Implicitly Array<any>
 }
 
 ////////////////
