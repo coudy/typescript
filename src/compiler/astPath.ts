@@ -314,6 +314,9 @@ module TypeScript {
                         cur.nodeType() === TypeScript.NodeType.Name ||
                         cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
                         cur.nodeType() === TypeScript.NodeType.TypeRef ||
+                        cur.nodeType() === TypeScript.NodeType.VariableDeclaration ||
+                        cur.nodeType() === TypeScript.NodeType.VariableDeclarator ||
+                        cur.nodeType() === TypeScript.NodeType.InvocationExpression ||
                         pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
 
                     var minChar = cur.minChar;

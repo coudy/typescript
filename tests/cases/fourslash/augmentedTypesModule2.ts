@@ -17,6 +17,4 @@ verify.quickInfoIs('(x: number) => void');
 
 goTo.marker('3');
 edit.insert('(');
-// BUG 697000
-//verify.currentSignatureHelpIs('m2f(x: number): void');
-verify.not.signatureHelpPresent();
+verify.currentSignatureHelpIs('m2f(x: number): void');
