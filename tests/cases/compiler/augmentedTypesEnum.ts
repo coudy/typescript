@@ -25,8 +25,7 @@ enum e5a { One } // error
 
 // enum then internal module
 enum e6 { One } 
-// BUG 694381
-module e6 { } // should be error
+module e6 { } // ok
 
 enum e6a { One }
 module e6a { var y = 2; } // should be error
@@ -36,4 +35,4 @@ module e6b { export var y = 2; } // should be error
 
 // enum then import
 enum e7 { One }
-import e7 = require(''); // should be error
+//import e7 = require(''); // should be error
