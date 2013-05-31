@@ -119,6 +119,7 @@ module FourSlash {
         public formatCodeOptions: Services.FormatCodeOptions = null;
 
         constructor(public testData: FourSlashData) {
+            
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
 
@@ -137,6 +138,7 @@ module FourSlash {
 
             // Open the first file by default
             this.openFile(0);
+            this.checkPostEditInvariants();
         }
 
         // Entry points from fourslash.ts
@@ -641,6 +643,11 @@ module FourSlash {
             IO.printLine(JSON2.stringify(completions));
         }
 
+        private editCheckpoint(filename: string) {
+            // 
+            // this.languageService.getScriptLexicalStructure(filename);
+        }
+
         public deleteChar(count = 1) {
             var offset = this.currentCaretPosition;
             var ch = "";
@@ -649,11 +656,12 @@ module FourSlash {
                 // Make the edit
                 this.languageServiceShimHost.editScript(this.activeFile.fileName, offset, offset + 1, ch);
                 this.updateMarkersForEdit(this.activeFile.fileName, offset, offset + 1, ch);
+                this.editCheckpoint(this.activeFile.fileName);
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
                     var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
-                    offset += this.applyEdits(this.activeFile.fileName, edits);
+                    offset += this.applyEdits(this.activeFile.fileName, edits, true);
                 }
             }
 
@@ -667,6 +675,7 @@ module FourSlash {
         public replace(start: number, length: number, text: string) {
             this.languageServiceShimHost.editScript(this.activeFile.fileName, start, start + length, text);
             this.updateMarkersForEdit(this.activeFile.fileName, start, start + length, text);
+            this.editCheckpoint(this.activeFile.fileName);
 
             this.checkPostEditInvariants();
         }
@@ -680,11 +689,13 @@ module FourSlash {
                 // Make the edit
                 this.languageServiceShimHost.editScript(this.activeFile.fileName, offset, offset + 1, ch);
                 this.updateMarkersForEdit(this.activeFile.fileName, offset, offset + 1, ch);
+                this.editCheckpoint(this.activeFile.fileName);
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
                     var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
-                    offset += this.applyEdits(this.activeFile.fileName, edits);
+                    offset += this.applyEdits(this.activeFile.fileName, edits, true);
+                    this.editCheckpoint(this.activeFile.fileName);
                 }
             }
 
@@ -704,12 +715,14 @@ module FourSlash {
                 var ch = text.charAt(i);
                 this.languageServiceShimHost.editScript(this.activeFile.fileName, offset, offset, ch);
                 this.updateMarkersForEdit(this.activeFile.fileName, offset, offset, ch);
+                this.editCheckpoint(this.activeFile.fileName);
                 offset++;
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
                     var edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeOptions);
-                    offset += this.applyEdits(this.activeFile.fileName, edits);
+                    offset += this.applyEdits(this.activeFile.fileName, edits, true);
+                    this.editCheckpoint(this.activeFile.fileName);
                 }
             }
 
@@ -727,13 +740,15 @@ module FourSlash {
             var offset = this.currentCaretPosition;
             this.languageServiceShimHost.editScript(this.activeFile.fileName, offset, offset, text);
             this.updateMarkersForEdit(this.activeFile.fileName, offset, offset, text);
+            this.editCheckpoint(this.activeFile.fileName);
             offset += text.length;
 
             // Handle formatting
             if (this.enableFormatting) {
                 // this.languageService.
                 var edits = this.languageService.getFormattingEditsOnPaste(this.activeFile.fileName, start, offset, this.formatCodeOptions);
-                offset += this.applyEdits(this.activeFile.fileName, edits);
+                offset += this.applyEdits(this.activeFile.fileName, edits, true);
+                this.editCheckpoint(this.activeFile.fileName);
             }
 
             // Move the caret to wherever we ended up
@@ -757,12 +772,12 @@ module FourSlash {
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
             var compiler = new TypeScript.TypeScriptCompiler();
 
-            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
-
             for (var i = 0; i < this.testData.files.length; i++) {
                 snapshot = this.languageServiceShimHost.getScriptSnapshot(this.testData.files[i].fileName);
                 compiler.addSourceUnit(this.testData.files[i].fileName, TypeScript.ScriptSnapshot.fromString(snapshot.getText(0, snapshot.getLength())), ByteOrderMark.None, 0, true);
             }
+
+            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
 
             compiler.pullTypeCheck();
 
@@ -799,29 +814,43 @@ module FourSlash {
             };
         }
 
-        private applyEdits(fileName: string, edits: Services.TextEdit[]): number {
+        private applyEdits(fileName: string, edits: Services.TextEdit[], isFormattingEdit = false): number {
             // We get back a set of edits, but langSvc.editScript only accepts one at a time. Use this to keep track
             // of the incremental offest from each edit to the next. Assumption is that these edit ranges don't overlap
             // or come in out-of-order.
             var runningOffset = 0;
+            // Get a snapshot of the content of the file so we can make sure any formatting edits didn't destroy non-whitespace characters
+            var snapshot = this.languageServiceShimHost.getScriptSnapshot(fileName);
+            var oldContent = snapshot.getText(0, snapshot.getLength());
             for (var j = 0; j < edits.length; j++) {
                 this.languageServiceShimHost.editScript(fileName, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
                 this.updateMarkersForEdit(fileName, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
                 var change = (edits[j].minChar - edits[j].limChar) + edits[j].text.length;
                 runningOffset += change;
+                // TODO: Consider doing this at least some of the time for higher fidelity. Currently causes a failure (bug 707150)
+                // this.languageService.getScriptLexicalStructure(fileName);
+            }
+
+            if (isFormattingEdit) {
+                snapshot = this.languageServiceShimHost.getScriptSnapshot(fileName);
+                var newContent = snapshot.getText(0, snapshot.getLength());
+
+                if (newContent.replace(/\s/g, '') !== oldContent.replace(/\s/g, '')) {
+                    throw new Error('Formatting operation destroyed non-whitespace content');
+                }
             }
             return runningOffset;
         }
 
         public formatDocument() {
             var edits = this.languageService.getFormattingEditsForDocument(this.activeFile.fileName, 0, this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength(), this.formatCodeOptions);
-            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
+            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits, true);
             this.fixCaretPosition();
         }
 
         public formatSelection(start: number, end: number) {
             var edits = this.languageService.getFormattingEditsForRange(this.activeFile.fileName, start, end, this.formatCodeOptions);
-            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
+            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits, true);
             this.fixCaretPosition();
         }
 
