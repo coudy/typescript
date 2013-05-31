@@ -122,8 +122,8 @@ module TypeScript {
             return result;
         }
 
-        public static select(values: any[], func: (v: any) => any): any[] {
-            var result = new Array(values.length);
+        public static select<T,S>(values: T[], func: (v: T) => S): S[] {
+            var result: S[] = new Array(values.length);
 
             for (var i = 0; i < values.length; i++) {
                 result[i] = func(values[i]);
@@ -132,8 +132,8 @@ module TypeScript {
             return result;
         }
 
-        public static where(values: any[], func: (v: any) => boolean): any[] {
-            var result = [];
+        public static where<T>(values: T[], func: (v: T) => boolean): T[] {
+            var result = new Array<T>();
 
             for (var i = 0; i < values.length; i++) {
                 if (func(values[i])) {
@@ -144,7 +144,7 @@ module TypeScript {
             return result;
         }
 
-        public static any(array: any[], func: (v: any) => boolean): boolean {
+        public static any<T>(array: T[], func: (v: T) => boolean): boolean {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (func(array[i])) {
                     return true;
@@ -154,7 +154,7 @@ module TypeScript {
             return false;
         }
 
-        public static all(array: any[], func: (v: any) => boolean): boolean {
+        public static all<T>(array: T[], func: (v: T) => boolean): boolean {
             for (var i = 0, n = array.length; i < n; i++) {
                 if (!func(array[i])) {
                     return false;
@@ -186,8 +186,8 @@ module TypeScript {
             return ~low;
         }
 
-        public static createArray(length: number, defaultValue: any): any[] {
-            var result = new Array(length);
+        public static createArray<T>(length: number, defaultValue: any): T[] {
+            var result = new Array<T>(length);
             for (var i = 0; i < length; i++) {
                 result[i] = defaultValue;
             }
@@ -195,14 +195,14 @@ module TypeScript {
             return result;
         }
 
-        public static grow(array: any[], length: number, defaultValue: any): void {
+        public static grow<T>(array: T[], length: number, defaultValue: T): void {
             var count = length - array.length;
             for (var i = 0; i < count; i++) {
                 array.push(defaultValue);
             }
         }
 
-        public static copy(sourceArray: any[], sourceIndex: number, destinationArray: any[], destinationIndex: number, length: number): void {
+        public static copy<T>(sourceArray: T[], sourceIndex: number, destinationArray: T[], destinationIndex: number, length: number): void {
             for (var i = 0; i < length; i++) {
                 destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
             }
