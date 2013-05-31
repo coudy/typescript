@@ -276,23 +276,10 @@ module TypeScript {
         public path = new TypeScript.AstPath();
     }
 
-    export enum GetAstPathOptions {
-        Default = 0,
-        EdgeInclusive = 1,
-        //We need this options dealing with an AST coming from an incomplete AST. For example:
-        //     class foo { // r
-        // If we ask for the AST at the position after the "r" character, we won't see we are 
-        // inside a comment, because the "class" AST node has a limChar corresponding to the position of 
-        // the "{" character, meaning we don't traverse the tree down to the stmt list of the class, meaning
-        // we don't find the "precomment" attached to the errorneous empty stmt.
-        //TODO: It would be nice to be able to get rid of this.
-        DontPruneSearchBasedOnPosition = 1 << 1,
-    }
-
     ///
     /// Return the stack of AST nodes containing "position"
     ///
-    export function getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true, options = GetAstPathOptions.Default): TypeScript.AstPath {
+    export function getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true): TypeScript.AstPath {
         var lookInComments = (comments: TypeScript.Comment[]) => {
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) {
@@ -310,50 +297,54 @@ module TypeScript {
 
         var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
             if (isValidAstNode(cur)) {
+                var isInvalid1 = cur.nodeType() === NodeType.ExpressionStatement && cur.getLength() === 0;
 
-                // Add "cur" to the stack if it contains our position
-                // For "identifier" nodes, we need a special case: A position equal to "limChar" is
-                // valid, since the position corresponds to a caret position (in between characters)
-                // For example:
-                //  bar
-                //  0123
-                // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
-                var inclusive =
-                    hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
-                    cur.nodeType() === TypeScript.NodeType.Name ||
-                    cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
-                    cur.nodeType() === TypeScript.NodeType.TypeRef ||
-                    pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
+                if (isInvalid1) {
+                    walker.options.goChildren = false;
+                }
+                else {
+                    // Add "cur" to the stack if it contains our position
+                    // For "identifier" nodes, we need a special case: A position equal to "limChar" is
+                    // valid, since the position corresponds to a caret position (in between characters)
+                    // For example:
+                    //  bar
+                    //  0123
+                    // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
+                    var inclusive =
+                        cur.nodeType() === TypeScript.NodeType.Name ||
+                        cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
+                        cur.nodeType() === TypeScript.NodeType.TypeRef ||
+                        pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
 
-                var minChar = cur.minChar;
-                var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
-                if (pos >= minChar && pos < limChar) {
+                    var minChar = cur.minChar;
+                    var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
+                    if (pos >= minChar && pos < limChar) {
 
-                    // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
-                    //       than top of the stack.
-                    var previous = ctx.path.ast();
-                    if (previous === null || (cur.minChar >= previous.minChar &&
-                        (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
-                        ctx.path.push(cur);
+                        // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
+                        //       than top of the stack.
+                        var previous = ctx.path.ast();
+                        if (previous === null || (cur.minChar >= previous.minChar &&
+                            (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
+                            ctx.path.push(cur);
+                        }
+                        else {
+                            //logger.log("TODO: Ignoring node because minChar, limChar not better than previous node in stack");
+                        }
                     }
-                    else {
-                        //logger.log("TODO: Ignoring node because minChar, limChar not better than previous node in stack");
+
+                    // The AST walker skips comments, but we might be in one, so check the pre/post comments for this node manually
+                    if (pos < limChar) {
+                        lookInComments(cur.preComments());
                     }
-                }
+                    if (pos >= minChar) {
+                        lookInComments(cur.postComments());
+                    }
 
-                // The AST walker skips comments, but we might be in one, so check the pre/post comments for this node manually
-                if (pos < limChar) {
-                    lookInComments(cur.preComments());
-                }
-                if (pos >= minChar) {
-                    lookInComments(cur.postComments());
-                }
-
-                if (!hasFlag(options, GetAstPathOptions.DontPruneSearchBasedOnPosition)) {
                     // Don't go further down the tree if pos is outside of [minChar, limChar]
                     walker.options.goChildren = (minChar <= pos && pos <= limChar);
                 }
             }
+
             return cur;
         }
 
