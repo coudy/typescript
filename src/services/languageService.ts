@@ -354,6 +354,7 @@ module Services {
 
     export interface IOutputFile {
         name: string;
+        useUTF8encoding: boolean;
         writeByteOrderMark: boolean;
         text: string;
     }

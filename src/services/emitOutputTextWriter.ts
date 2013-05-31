@@ -6,7 +6,9 @@
 module Services {
     export class EmitOutputTextWriter implements ITextWriter {
         public text: string;
+        public useUTF8encoding: boolean;
         constructor(public name: string, public writeByteOrderMark: boolean) {
+            this.useUTF8encoding = writeByteOrderMark;
             this.text = "";
         }
 
