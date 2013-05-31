@@ -493,7 +493,7 @@ module TypeScript.Syntax {
                     // (and not a hex integer).  i.e. -0xA is a legal expression, but it is not a 
                     // *literal*.
                     expression = (<PrefixUnaryExpressionSyntax>expression).operand;
-                    return isInteger(text)
+                    return isInteger((<ISyntaxToken>expression).text())
 
                 case SyntaxKind.NumericLiteral:
                     // If it doesn't have a + or -, then either an integer literal or a hex literal
