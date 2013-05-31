@@ -69,7 +69,7 @@ module TypeScript {
         Export_assignments_cannot_be_used_in_internal_modules: DiagnosticInfo;
         Export_assignment_not_allowed_in_module_with_exported_element: DiagnosticInfo;
         Module_cannot_have_multiple_export_assignments: DiagnosticInfo;
-        Ambient_enums_can_only_have_numeric_literals_as_initializers: DiagnosticInfo;
+        Ambient_enum_elements_can_only_have_integer_literal_initializers: DiagnosticInfo;
 
 
 
@@ -707,9 +707,9 @@ module TypeScript {
             code: 1065
         },
 
-        Ambient_enums_can_only_have_numeric_literals_as_initializers: {
+        Ambient_enum_elements_can_only_have_integer_literal_initializers: {
             category: DiagnosticCategory.Error,
-            message: "Ambient enums can only have numeric literals as initializers.",
+            message: "Ambient enum elements can only have integer literal initializers.",
             code: 1066
         },
 

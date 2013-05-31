@@ -5,8 +5,7 @@ module TypeScript.Syntax {
         return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
     }
 
-    export function getStandaloneExpression(positionedToken: PositionedToken): PositionedNodeOrToken
-    {
+    export function getStandaloneExpression(positionedToken: PositionedToken): PositionedNodeOrToken {
         var token = positionedToken.token();
         if (positionedToken !== null && positionedToken.kind() === SyntaxKind.IdentifierName) {
             var parentPositionedNode = positionedToken.containingNode();
@@ -483,5 +482,35 @@ module TypeScript.Syntax {
 
     export function hasAncestorOfKind(positionedToken: PositionedElement, kind: SyntaxKind): boolean {
         return Syntax.getAncestorOfKind(positionedToken, kind) !== null;
+    }
+
+    export function isIntegerLiteral(expression: IExpressionSyntax): boolean {
+        if (expression) {
+            switch (expression.kind()) {
+                case SyntaxKind.PlusExpression:
+                case SyntaxKind.NegateExpression:
+                    // Note: if there is a + or - sign, we can only allow a normal integer following
+                    // (and not a hex integer).  i.e. -0xA is a legal expression, but it is not a 
+                    // *literal*.
+                    expression = (<PrefixUnaryExpressionSyntax>expression).operand;
+                    return isInteger(text)
+
+                case SyntaxKind.NumericLiteral:
+                    // If it doesn't have a + or -, then either an integer literal or a hex literal
+                    // is acceptable.
+                    var text = (<ISyntaxToken> expression).text();
+                    return isInteger(text) || isHexInteger(text);
+            }
+        }
+
+        return false;
+    }
+
+    function isInteger(text): boolean {
+        return /^[0-9]+$/.test(text);
+    }
+
+    function isHexInteger(text): boolean {
+        return /^0(x|X)[0-9a-fA-F]+$/.test(text);
     }
 }

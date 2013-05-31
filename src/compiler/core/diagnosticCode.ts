@@ -74,7 +74,7 @@ module TypeScript {
         Export_assignments_cannot_be_used_in_internal_modules,
         Export_assignment_not_allowed_in_module_with_exported_element,
         Module_cannot_have_multiple_export_assignments,
-        Ambient_enums_can_only_have_numeric_literals_as_initializers,
+        Ambient_enum_elements_can_only_have_integer_literal_initializers,
 
 
 

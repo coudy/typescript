@@ -901,11 +901,14 @@ module TypeScript {
         }
 
         public visitEnumElement(node: EnumElementSyntax): void {
-            if (this.inAmbientDeclaration && node.equalsValueClause && node.equalsValueClause.value.kind() !== SyntaxKind.NumericLiteral) {
-                this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(),
-                    DiagnosticCode.Ambient_enums_can_only_have_numeric_literals_as_initializers);
-                this.skip(node);
-                return;
+            if (this.inAmbientDeclaration && node.equalsValueClause) {
+                var expression = node.equalsValueClause.value;
+                if (!Syntax.isIntegerLiteral(expression)) {
+                    this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(),
+                        DiagnosticCode.Ambient_enum_elements_can_only_have_integer_literal_initializers);
+                    this.skip(node);
+                    return;
+                }
             }
 
             super.visitEnumElement(node);
