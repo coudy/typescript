@@ -81,7 +81,7 @@ module TypeScript {
             return max;
         }
 
-        public static last(array: any[]) {
+        public static last<T>(array: T[]): T {
             if (array.length === 0) {
                 throw Errors.argumentOutOfRange('array');
             }
@@ -89,7 +89,7 @@ module TypeScript {
             return array[array.length - 1];
         }
 
-        public static firstOrDefault(array: any[], func: (v: any) => boolean): any {
+        public static firstOrDefault<T>(array: T[], func: (v: T) => boolean): T {
             for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];
                 if (func(value)) {
@@ -100,7 +100,7 @@ module TypeScript {
             return null;
         }
 
-        public static sum(array: any[], func: (v: any) => number): number {
+        public static sum<T>(array: T[], func: (v: T) => number): number {
             var result = 0;
 
             for (var i = 0, n = array.length; i < n; i++) {
@@ -110,7 +110,7 @@ module TypeScript {
             return result;
         }
 
-        public static whereNotNull(array: any[]): any[] {
+        public static whereNotNull<T>(array: T[]): T[] {
             var result = [];
             for (var i = 0; i < array.length; i++) {
                 var value = array[i];
