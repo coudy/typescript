@@ -50,7 +50,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         // Add the library file if needed
         if (this.compilationSettings.useDefaultLib && !resolutionResults.seenNoDefaultLibTag) {
             var libraryPath = Harness.userSpecifiedroot + 'tests/minimal.lib.d.ts';
-            resolvedFiles.unshift({ path: libraryPath, refrencedFiles: [], importedFiles: [] });
+            resolvedFiles.unshift({ path: libraryPath, referencedFiles: [], importedFiles: [] });
         }
 
         this.resolvedFiles = resolvedFiles;

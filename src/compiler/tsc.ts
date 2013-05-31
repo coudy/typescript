@@ -173,7 +173,7 @@ module TypeScript {
 
                     resolvedFiles.push({
                         path: inputFile,
-                        refrencedFiles: referencedFiles,
+                        referencedFiles: referencedFiles,
                         importedFiles: importedFiles
                     });
                 }
@@ -182,7 +182,7 @@ module TypeScript {
             if (includeDefaultLibrary) {
                 var libraryResolvedFile: IResolvedFile = {
                     path: this.getDefaultLibraryFilePath(),
-                    refrencedFiles: [],
+                    referencedFiles: [],
                     importedFiles: []
                 };
 
@@ -210,7 +210,7 @@ module TypeScript {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var resolvedFile = this.resolvedFiles[i];
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ false, resolvedFile.refrencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);
@@ -323,7 +323,7 @@ module TypeScript {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true, resolvedFile.refrencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);

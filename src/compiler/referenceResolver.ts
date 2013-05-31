@@ -18,7 +18,7 @@
 module TypeScript {
     export interface IResolvedFile {
         path: string;
-        refrencedFiles: string[];
+        referencedFiles: string[];
         importedFiles: string[];
     }
 
@@ -195,7 +195,7 @@ module TypeScript {
                 // Add the file to the result list
                 resolutionResult.resolvedFiles.push({
                     path: normalizedPath,
-                    refrencedFiles: normalizedReferencePaths,
+                    referencedFiles: normalizedReferencePaths,
                     importedFiles: normalizedImportPaths
                 });
             }
