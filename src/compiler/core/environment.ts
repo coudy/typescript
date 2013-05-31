@@ -4,6 +4,12 @@
 
 declare function Buffer(subject, encoding): void;
 
+module TypeScript {
+    export var nodeMakeDirectoryTime = 0;
+    export var nodeCreateBufferTime = 0;
+    export var nodeWriteFileSyncTime = 0;
+}
+
 enum ByteOrderMark {
     None,
     Utf8,

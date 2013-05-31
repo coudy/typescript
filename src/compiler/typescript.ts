@@ -85,10 +85,6 @@ module TypeScript {
     export var ioHostCreateDirectoryStructureTime = 0;
     export var ioHostWriteFileTime = 0;
 
-    export var nodeMakeDirectoryTime = 0;
-    export var nodeWriteFileSyncTime = 0;
-    export var nodeCreateBufferTime = 0;
-
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
         writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
