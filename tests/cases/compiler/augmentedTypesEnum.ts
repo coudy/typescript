@@ -22,7 +22,7 @@ enum e5a { One } // error
 
 // enum then internal module
 enum e6 { One } 
-module e6 { } // ok since not instantiated
+module e6 { } // ok
 
 enum e6a { One }
 module e6a { var y = 2; } // should be error

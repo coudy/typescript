@@ -115,7 +115,6 @@ module Services {
                         return;
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
-
                     if (searchSymbolInfoAtPosition !== null) {
                         var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
                         // Compare the length so we filter out strict superstrings of the symbol we are looking for
