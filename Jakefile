@@ -101,6 +101,7 @@ var servicesSources = [
 	"braceMatcher.ts",
 	"indenter.ts",
 	"breakpoints.ts",
+	"findReferenceHelpers.ts",
 	"typescriptServices.ts"
 ].map(function (f) {
 	return path.join(servicesDirectory, f);

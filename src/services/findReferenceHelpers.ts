@@ -89,9 +89,9 @@ module Services {
             var firstParent: TypeScript.PullDecl = firstDecl.getParentDecl();
             var secondParent: TypeScript.PullDecl = secondDecl.getParentDecl();
             if (firstDecl === secondDecl ||
-                (firstDecl === secondParent && secondParent.getKind() !== 1) ||
-                (firstParent === secondDecl && firstParent.getKind() !== 1) ||
-                (firstParent === secondParent && firstParent.getKind() !== 1 && secondParent.getKind() !== 1)) {
+                firstDecl === secondParent ||
+                firstParent === secondDecl ||
+                firstParent === secondParent) {
                 return true;
             }
             return false;

@@ -715,7 +715,7 @@ module TypeScript {
                 constructorSymbol.setIsSynthesized();
 
                 constructorSymbol.setType(constructorTypeSymbol);
-                constructorSymbol.addDeclaration(classDecl);
+                constructorSymbol.addDeclaration(classDecl.getValueDecl());
                 classSymbol.setConstructorMethod(constructorSymbol);
 
                 constructorTypeSymbol.addDeclaration(classDecl);

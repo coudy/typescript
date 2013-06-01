@@ -116,12 +116,13 @@ module Services {
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
 
-                    if (searchSymbolInfoAtPosition !== null && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
-                        var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                    if (searchSymbolInfoAtPosition !== null) {
                         var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
-
-                        result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
-
+                        // Compare the length so we filter out strict superstrings of the symbol we are looking for
+                        if (referenceAST.limChar - referenceAST.minChar === symbolName.length && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
+                            var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                            result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+                        }
                     }
                 });
             }
@@ -846,7 +847,7 @@ module Services {
         }
 
         private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.ConstructorMethod);
+            return symbol.hasFlag(TypeScript.PullElementFlags.ClassConstructorVariable | TypeScript.PullElementFlags.Constructor);
         }
 
         private isClass(symbol: TypeScript.PullSymbol): boolean {
