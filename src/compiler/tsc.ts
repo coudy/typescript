@@ -252,38 +252,12 @@ module TypeScript {
                 return true;
             }
 
-            var emitterIOHost = {
-                writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
-                    var start = new Date().getTime();
-                    IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);
-                    TypeScript.emitWriteFileTime += new Date().getTime() - start;
-                },
-                directoryExists: n => {
-                    var start = new Date().getTime();
-                    var result = this.ioHost.directoryExists(n);
-                    TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
-                    return result;
-                },
-                fileExists: n => {
-                    var start = new Date().getTime();
-                    var result = this.ioHost.fileExists(n);
-                    TypeScript.emitFileExistsTime += new Date().getTime() - start;
-                    return result;
-                },
-                resolvePath: n => {
-                    var start = new Date().getTime();
-                    var result = this.ioHost.resolvePath(n);
-                    TypeScript.emitResolvePathTime += new Date().getTime() - start;
-                    return result;
-                }
-            };
-
             var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                 this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
             };
 
             // TODO: if there are any emit diagnostics.  Don't proceed.
-            var emitDiagnostics = compiler.emitAll(emitterIOHost, mapInputToOutput);
+            var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
             compiler.reportDiagnostics(emitDiagnostics, this);
             if (emitDiagnostics.length > 0) {
                 return true;
@@ -734,7 +708,7 @@ module TypeScript {
             }
 
             // get the absolute path
-            normalizedPath = this.ioHost.resolvePath(normalizedPath);
+            normalizedPath = this.resolvePath(normalizedPath);
 
             // Switch to forward slashes
             normalizedPath = switchToForwardSlashes(normalizedPath);
@@ -743,7 +717,10 @@ module TypeScript {
         }
 
         fileExists(path: string): boolean {
-            return this.ioHost.fileExists(path);
+            var start = new Date().getTime();
+            var result = this.ioHost.fileExists(path);
+            TypeScript.emitFileExistsTime += new Date().getTime() - start;
+            return result;
         }
 
         getParentDirectory(path: string): string {
@@ -768,15 +745,23 @@ module TypeScript {
 
         /// EmitterIOHost methods
         writeFile(fileName: string, contents: string, writeByteOrderMark: boolean): void {
+            var start = new Date().getTime();
             IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);
+            TypeScript.emitWriteFileTime += new Date().getTime() - start;
         }
 
         directoryExists(path: string): boolean {
-            return this.ioHost.directoryExists(path);
+            var start = new Date().getTime();
+            var result = this.ioHost.directoryExists(path);
+            TypeScript.emitDirectoryExistsTime += new Date().getTime() - start;
+            return result;
         }
 
         resolvePath(path: string): string {
-            return this.ioHost.resolvePath(path);
+            var start = new Date().getTime();
+            var result = this.ioHost.resolvePath(path);
+            TypeScript.emitResolvePathTime += new Date().getTime() - start;
+            return result;
         }
     }
 }
