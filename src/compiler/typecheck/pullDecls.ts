@@ -43,6 +43,7 @@ module TypeScript {
 
         private parentDecl: PullDecl = null;
         private _parentPath: PullDecl[] = null;
+        private _isBound: boolean = false;
 
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
@@ -256,6 +257,14 @@ module TypeScript {
 
         public setParentPath(path: PullDecl[]) {
             this._parentPath = path;
+        }
+
+        public setIsBound(isBinding) {
+            this._isBound = isBinding;
+        }
+
+        public isBound() {
+            return this._isBound;
         }
     }
 

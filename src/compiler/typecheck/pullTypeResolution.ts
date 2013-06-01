@@ -219,41 +219,8 @@ module TypeScript {
             return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol);
         }
 
-        // returns a list of decls leading up to decl, inclusive
-        // PULLTODO: Don't bother using spans - obtain cached Decls from syntax nodes
-        private getPathToDecl(decl: PullDecl): PullDecl[] {
-            if (!decl) {
-                return [];
-            }
-
-            var decls: PullDecl[] = decl.getParentPath();
-
-            if (decls) {
-                return decls;
-            }
-            else {
-                decls = [decl];
-            }
-
-            var parentDecl: PullDecl = decl.getParentDecl();
-
-            while (parentDecl) {
-                if (parentDecl && decls[decls.length - 1] != parentDecl && !(parentDecl.getKind() & PullElementKind.ObjectLiteral)) {
-                    decls[decls.length] = parentDecl;
-                }
-                parentDecl = parentDecl.getParentDecl();
-            }
-
-            decls = decls.reverse();
-
-            // PULLREVIEW: Only cache in batch compilation scenarios?
-            decl.setParentPath(decls);
-
-            return decls;
-        }
-
         public getEnclosingDecl(decl: PullDecl): PullDecl {
-            var declPath = this.getPathToDecl(decl);
+            var declPath = getPathToDecl(decl);
 
             if (!declPath.length) {
                 return null;
@@ -273,7 +240,7 @@ module TypeScript {
             }
 
             var symbolName = pathToName[pathToName.length - 1];
-            var contextDeclPath = this.getPathToDecl(enclosingDecl);
+            var contextDeclPath = getPathToDecl(enclosingDecl);
 
             var contextSymbolPath: string[] = [];
             var nestedSymbolPath: string[] = [];
@@ -584,7 +551,7 @@ module TypeScript {
 
         public getVisibleSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -630,7 +597,7 @@ module TypeScript {
             }
 
             if (containerSymbol && containerSymbol.isClass()) {
-                var declPath = this.getPathToDecl(enclosingDecl);
+                var declPath = getPathToDecl(enclosingDecl);
                 if (declPath && declPath.length) {
                     var declarations = containerSymbol.getDeclarations();
                     for (var i = 0, n = declarations.length; i < n; i++) {
@@ -1258,7 +1225,7 @@ module TypeScript {
                 }
                 else { // dynamic module name (string literal)
                     var modPath = (<StringLiteral>importStatementAST.alias).actualText;
-                    var declPath = this.getPathToDecl(enclosingDecl);
+                    var declPath = getPathToDecl(enclosingDecl);
 
                     importStatementAST.isDynamicImport = true;
 
@@ -1690,7 +1657,7 @@ module TypeScript {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
 
                     if (!this.cachedArrayInterfaceType) {
-                        this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", this.getPathToDecl(enclosingDecl), PullElementKind.Interface);
+                        this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", getPathToDecl(enclosingDecl), PullElementKind.Interface);
                     }
 
                     if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
@@ -2655,7 +2622,7 @@ module TypeScript {
 
             var id = nameAST.text;
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -2961,7 +2928,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.voidTypeSymbol);
             }
             else {
-                var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+                var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
 
                 if (enclosingDecl && !declPath.length) {
                     declPath = [enclosingDecl];
@@ -3372,7 +3339,7 @@ module TypeScript {
                         [context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode._this__must_only_be_used_inside_a_function_or_script_context)]);
                 }
                 else {
-                    var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
+                    var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
 
                     // work back up the decl path, until you can find a class
                     // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
@@ -3410,7 +3377,7 @@ module TypeScript {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
             var classSymbol: PullClassTypeSymbol = null;
 
             // work back up the decl path, until you can find a class
@@ -3571,7 +3538,6 @@ module TypeScript {
 
                             var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
                             binder.setUnit(this.unitPath);
-                            binder.pushParent(typeSymbol, objectLitDecl);
 
                             if (funcDeclAST.isGetAccessor()) {
                                 binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
@@ -3709,7 +3675,7 @@ module TypeScript {
             if (!arraySymbol) {
 
                 if (!this.cachedArrayInterfaceType) {
-                    this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", this.getPathToDecl(enclosingDecl), PullElementKind.Interface);
+                    this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", getPathToDecl(enclosingDecl), PullElementKind.Interface);
                 }
 
                 if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
