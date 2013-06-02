@@ -503,7 +503,7 @@ module TypeScript {
                         typeExprSymbol = exportedTypeSymbol;
                     }
                     else {
-                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol();
+                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol().getType();
 
                         if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
                             this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], enclosingDecl);
@@ -516,7 +516,7 @@ module TypeScript {
                 }
 
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
-                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol();
+                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol().getType();
 
                     if (!instanceTypeSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [initTypeSymbol.toString()], enclosingDecl);

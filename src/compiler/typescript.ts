@@ -710,9 +710,9 @@ module TypeScript {
                 globalBinder = binder;
 
                 // start at '1', so as to skip binding for global primitives such as 'any'
-                for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
-                    binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
-                }
+                //for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
+                //    binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
+                //}
 
                 var bindEndTime = new Date().getTime();
 

@@ -220,6 +220,10 @@ module TypeScript {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
+            if (parent) {
+                declCollectionContext.pushParent(parent);
+            }
+
             declCollectionContext.scriptName = context.scriptName;
 
             getAstWalkerFactory().walk((<TypeReference>argDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);

@@ -73,6 +73,11 @@ module TypeScript {
         public getParent(decl: PullDecl, returnInstanceType = false): PullTypeSymbol {
 
             var parentDecl = decl.getParentDecl();
+
+            if (parentDecl.getKind() == PullElementKind.Script) {
+                return null;
+            }
+
             var parent = parentDecl.getSymbol();
 
             if (!parent && parentDecl && !parentDecl.isBound()) {
@@ -156,6 +161,33 @@ module TypeScript {
             time_in_findSymbol += endTime - startTime;
 
             return symbol;
+        }
+
+        public findDeclsInContext(startingDecl: PullDecl, declKind: PullElementKind, searchGlobally: boolean): PullDecl[]{
+
+            if (!searchGlobally) {
+                var parentDecl = startingDecl.getParentDecl();
+                return parentDecl.searchChildDecls(startingDecl.getName(), declKind);
+            }
+
+            var contextSymbolPath: PullDecl[] = getPathToDecl(startingDecl);
+
+            // next, link back up to the enclosing context
+            if (contextSymbolPath.length) {
+                var copyOfContextSymbolPath: string[] = [];
+
+                for (var i = 0; i < contextSymbolPath.length; i++) {
+                    if (contextSymbolPath[i].getKind() & PullElementKind.Script) {
+                        continue;
+                    }
+                    copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i].getName();
+                }
+
+                return this.semanticInfoChain.findDecls(copyOfContextSymbolPath, declKind);
+            }
+
+            // finally, try searching globally
+            return this.semanticInfoChain.findDecls([name], declKind);
         }
 
         public symbolIsRedeclaration(sym: PullSymbol): boolean {
@@ -383,6 +415,14 @@ module TypeScript {
                 moduleInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
 
                 moduleInstanceTypeSymbol.recomputeIndexSignatures();
+            }
+
+            var otherDecls = this.findDeclsInContext(moduleContainerDecl, moduleContainerDecl.getKind(), true);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
             }
         }
 
@@ -948,6 +988,14 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
+            }
+
+            var otherDecls = this.findDeclsInContext(interfaceDecl, interfaceDecl.getKind(), true);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
             }
         }
 
@@ -1784,6 +1832,14 @@ module TypeScript {
             }
 
             functionSymbol.setIsBound(this.bindingPhase);
+
+            var otherDecls = this.findDeclsInContext(functionDeclaration, functionDeclaration.getKind(), false);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
+            }
         }
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
@@ -2172,6 +2228,13 @@ module TypeScript {
             }
 
             //methodSymbol.setIsBound(this.bindingPhase);
+            var otherDecls = this.findDeclsInContext(methodDeclaration, methodDeclaration.getKind(), false);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
+            }
         }
 
         // class constructor declarations
@@ -2308,6 +2371,13 @@ module TypeScript {
             }
 
             //constructorSymbol.setIsBound(this.bindingPhase);
+            var otherDecls = this.findDeclsInContext(constructorDeclaration, constructorDeclaration.getKind(), false);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
+            }
         }
 
         public bindConstructSignatureDeclarationToPullSymbol(constructSignatureDeclaration: PullDecl) {
@@ -2884,6 +2954,10 @@ module TypeScript {
                 this.startingDeclForRebind = lastBoundPullDeclId;
                 this.startingSymbolForRebind = lastBoundPullSymbolID;
                 this.reBindingAfterChange = true;
+            }
+
+            if (decl.isBound()) {
+                return;
             }
 
             decl.setIsBound(true);

@@ -75,15 +75,26 @@ module TypeScript {
         }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
-        public getSymbol(): PullSymbol {
+        public ensureSymbolIsBound() {
 
-            if (!this.symbol && !this._isBound) {
+            if (!this.symbol && !this._isBound && this.declType != PullElementKind.Script) {
                 //var binder = new PullSymbolBinder(globalSemanticInfoChain);
                 var prevUnit = globalBinder.semanticInfo;
                 globalBinder.setUnit(this.scriptName);
                 globalBinder.bindDeclToPullSymbol(this);
-                globalBinder.setUnit(prevUnit.getPath());
+                if (prevUnit) {
+                    globalBinder.setUnit(prevUnit.getPath());
+                }
             }
+        }
+
+        public getSymbol(): PullSymbol {
+
+            if (this.declType == PullElementKind.Script) {
+                return null;
+            }
+
+            this.ensureSymbolIsBound();
 
             return this.symbol;
         }

@@ -307,8 +307,8 @@ module TypeScript {
                 decls = [];
 
                 for (var j = 0; j < declsToSearch.length; j++) {
-                    var kind = (i === declPath.length - 1) ? declKind : PullElementKind.SomeType;
-                    foundDecls = declsToSearch[j].searchChildDecls(path, kind);
+                    //var kind = (i === declPath.length - 1) ? declKind : PullElementKind.SomeType;
+                    foundDecls = declsToSearch[j].searchChildDecls(path, declKind);
 
                     for (var k = 0; k < foundDecls.length; k++) {
                         decls[decls.length] = foundDecls[k];
@@ -356,6 +356,7 @@ module TypeScript {
             var symbol: PullSymbol = null;
 
             if (decls.length) {
+
                 symbol = decls[0].getSymbol();
 
                 if (symbol) {
