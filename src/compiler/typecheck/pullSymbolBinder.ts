@@ -63,8 +63,7 @@ module TypeScript {
         public startingDeclForRebind = pullDeclID; // note that this gets set on creation
         public startingSymbolForRebind = pullSymbolID; // note that this gets set on creation
 
-        constructor(private compilationSettings: CompilationSettings,
-                    public semanticInfoChain: SemanticInfoChain) {
+        constructor(public semanticInfoChain: SemanticInfoChain) {
         }
 
         public setUnit(fileName: string) {
@@ -268,9 +267,9 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
-                        variableSymbol = this.findSymbolInContext(modName, PullElementKind.SomeValue, moduleContainerDecl);
-                    }
+                    //else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
+                    //    variableSymbol = this.findSymbolInContext(modName, PullElementKind.SomeValue, moduleContainerDecl);
+                    //}
                 }
 
                 if (variableSymbol) {
@@ -1319,7 +1318,11 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, (PullElementKind.SomeContainer | PullElementKind.Enum), variableDeclaration);
+                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeContainer, variableDeclaration);
+                            
+                            if (!moduleContainerTypeSymbol) {
+                                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.Enum, variableDeclaration);
+                            }
                         }
                     }
 

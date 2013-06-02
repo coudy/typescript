@@ -233,60 +233,7 @@ module TypeScript {
             }
         }
 
-        //  Given a path to a name, e.g. ["foo"] or ["Foo", "Baz", "bar"], find the associated symbol
-        private findSymbolForPath(pathToName: string[], enclosingDecl: PullDecl, declKind: PullElementKind): PullSymbol {
-            if (!pathToName.length) {
-                return null;
-            }
-
-            var symbolName = pathToName[pathToName.length - 1];
-            var contextDeclPath = getPathToDecl(enclosingDecl);
-
-            var contextSymbolPath: string[] = [];
-            var nestedSymbolPath: string[] = [];
-
-            // first, search within the given symbol path
-            // (copy path to name so as not to mutate the input array)
-            for (var i = 0; i < pathToName.length; i++) {
-                nestedSymbolPath[nestedSymbolPath.length] = pathToName[i];
-            }
-
-            var symbol: PullSymbol = null;
-
-            while (nestedSymbolPath.length >= 2) {
-                symbol = this.semanticInfoChain.findSymbol(nestedSymbolPath, declKind);
-
-                if (symbol) {
-                    return symbol;
-                }
-                nestedSymbolPath.length -= 2;
-                nestedSymbolPath[nestedSymbolPath.length] = symbolName;
-            }
-
-            // next, try the enclosing context
-            for (var i = 0; i < contextDeclPath.length; i++) {
-                contextSymbolPath[contextSymbolPath.length] = contextDeclPath[i].getName();
-            }
-
-            for (var i = 0; i < pathToName.length; i++) {
-                contextSymbolPath[contextSymbolPath.length] = pathToName[i];
-            }
-
-            while (contextSymbolPath.length >= 2) {
-                symbol = this.semanticInfoChain.findSymbol(contextSymbolPath, declKind);
-
-                if (symbol) {
-                    return symbol;
-                }
-                contextSymbolPath.length -= 2;
-                contextSymbolPath[contextSymbolPath.length] = symbolName;
-            }
-
-            // finally, try searching globally
-            symbol = this.semanticInfoChain.findSymbol([symbolName], declKind);
-
-            return symbol;
-        }
+        
 
         // search for an unqualified symbol name within a given decl path
         private getSymbolFromDeclPath(symbolName: string, declPath: PullDecl[], declSearchKind: PullElementKind): PullSymbol {
@@ -1390,7 +1337,7 @@ module TypeScript {
 
                 var functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
                 if (functionDecl.getKind() === PullElementKind.ConstructorType) {
                     binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
@@ -1532,7 +1479,7 @@ module TypeScript {
 
                 var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
 
-                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
 
                 binder.setUnit(this.unitPath);
                 binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
@@ -2835,7 +2782,7 @@ module TypeScript {
                 else {
                     var associatedType = lhsType.getAssociatedContainerType();
 
-                    if (associatedType) {
+                    if (associatedType && !associatedType.isClass()) {
                         nameSymbol = associatedType.findMember(rhsName);
                     }
                 }
@@ -3243,7 +3190,7 @@ module TypeScript {
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
                 binder.bindFunctionExpressionToPullSymbol(functionDecl);
 
@@ -3536,7 +3483,7 @@ module TypeScript {
 
                             var functionDecl = this.getDeclForAST(funcDeclAST);
 
-                            var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
+                            var binder = new PullSymbolBinder(this.semanticInfoChain);
                             binder.setUnit(this.unitPath);
 
                             if (funcDeclAST.isGetAccessor()) {

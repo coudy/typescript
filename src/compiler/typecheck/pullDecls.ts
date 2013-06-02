@@ -75,7 +75,18 @@ module TypeScript {
         }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
-        public getSymbol(): PullSymbol { return this.symbol; }
+        public getSymbol(): PullSymbol {
+
+            if (!this.symbol && !this._isBound) {
+                //var binder = new PullSymbolBinder(globalSemanticInfoChain);
+                var prevUnit = globalBinder.semanticInfo;
+                globalBinder.setUnit(this.scriptName);
+                globalBinder.bindDeclToPullSymbol(this);
+                globalBinder.setUnit(prevUnit.getPath());
+            }
+
+            return this.symbol;
+        }
 
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
         public getSignatureSymbol(): PullSignatureSymbol { return this.signatureSymbol; }

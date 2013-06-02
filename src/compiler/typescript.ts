@@ -195,6 +195,9 @@ module TypeScript {
         //}
     }
 
+    export var globalSemanticInfoChain: SemanticInfoChain = null;
+    export var globalBinder: PullSymbolBinder = null;
+
     export class TypeScriptCompiler {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
@@ -673,6 +676,7 @@ module TypeScript {
             return this.timeFunction("pullTypeCheck()", () => {
 
                 this.semanticInfoChain = new SemanticInfoChain();
+                globalSemanticInfoChain = this.semanticInfoChain;
                 this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
                 var declCollectionContext: DeclCollectionContext = null;
@@ -702,7 +706,8 @@ module TypeScript {
                 // bind declaration symbols
                 var bindStartTime = new Date().getTime();
 
-                var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                globalBinder = binder;
 
                 // start at '1', so as to skip binding for global primitives such as 'any'
                 for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
@@ -775,7 +780,7 @@ module TypeScript {
 
                 this.semanticInfoChain.update(oldDocument.fileName);
 
-                var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(oldDocument.fileName);
 
                 for (var i = 0; i < topLevelDecls.length; i++) {
