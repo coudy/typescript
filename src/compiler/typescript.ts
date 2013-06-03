@@ -1504,7 +1504,7 @@ module TypeScript {
         }
 
         public getTopLevelDeclarations(scriptName: string): PullDecl[] {
-            this.pullResolveFile(scriptName);
+            //this.pullResolveFile(scriptName);
 
             var unit = this.semanticInfoChain.getUnit(scriptName);
 
