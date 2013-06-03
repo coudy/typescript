@@ -3736,17 +3736,22 @@ module TypeScript {
 
                     var decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
                     this.currentUnit.addSynthesizedDecl(decl);
+                    var isAccessor = binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
 
-                    objectLitDecl.addChildDecl(decl);
-                    decl.setParentDecl(objectLitDecl);
+                    if (!isAccessor) {
+                        decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 
-                    this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
-                    this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
+                        objectLitDecl.addChildDecl(decl);
+                        decl.setParentDecl(objectLitDecl);
 
-                    memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                        this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
+                        this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
 
-                    memberSymbol.addDeclaration(decl);
-                    decl.setSymbol(memberSymbol);
+                        memberSymbol = new PullSymbol(text, PullElementKind.Property);
+
+                        memberSymbol.addDeclaration(decl);
+                        decl.setSymbol(memberSymbol);
+                    }
 
                     if (contextualType) {
                         assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, contextualType);
@@ -3766,31 +3771,28 @@ module TypeScript {
                     }
 
                     // if operand 2 is a getter or a setter, we need to resolve it properly
-                    if (binex.operand2.nodeType() === NodeType.FunctionDeclaration) {
+                    if (isAccessor) {
                         var funcDeclAST = <FunctionDeclaration>binex.operand2;
+                        var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-                        if (funcDeclAST.isAccessor()) {
-                            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                            var declCollectionContext = new DeclCollectionContext(semanticInfo);
+                        declCollectionContext.scriptName = this.unitPath;
 
-                            declCollectionContext.scriptName = this.unitPath;
+                        declCollectionContext.pushParent(objectLitDecl);
 
-                            declCollectionContext.pushParent(objectLitDecl);
+                        getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
-                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+                        var functionDecl = this.getDeclForAST(funcDeclAST);
+                        this.currentUnit.addSynthesizedDecl(functionDecl);
 
-                            var functionDecl = this.getDeclForAST(funcDeclAST);
-                            this.currentUnit.addSynthesizedDecl(functionDecl);
+                        var binder = new PullSymbolBinder(this.semanticInfoChain);
+                        binder.setUnit(this.unitPath);
 
-                            var binder = new PullSymbolBinder(this.semanticInfoChain);
-                            binder.setUnit(this.unitPath);
-
-                            if (funcDeclAST.isGetAccessor()) {
-                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                            else {
-                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
+                        if (funcDeclAST.isGetAccessor()) {
+                            binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
+                        }
+                        else {
+                            binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
                         }
                     }
 
@@ -3801,13 +3803,16 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
-                    context.setTypeInContext(memberSymbol, memberExprType.getType());
+                    if (isAccessor) {
+                        this.setSymbolAndDiagnosticsForAST(binex.operand1, SymbolAndDiagnostics.fromSymbol(memberExprType), context);
+                    } else {
+                        context.setTypeInContext(memberSymbol, memberExprType.getType());
+                        memberSymbol.setResolved();
 
-                    memberSymbol.setResolved();
+                        this.setSymbolAndDiagnosticsForAST(binex.operand1, SymbolAndDiagnostics.fromSymbol(memberSymbol), context);
+                        typeSymbol.addMember(memberSymbol, SymbolLinkKind.PublicMember);
+                    }
 
-                    this.setSymbolAndDiagnosticsForAST(binex.operand1, SymbolAndDiagnostics.fromSymbol(memberSymbol), context);
-
-                    typeSymbol.addMember(memberSymbol, SymbolLinkKind.PublicMember);
                 }
             }
 

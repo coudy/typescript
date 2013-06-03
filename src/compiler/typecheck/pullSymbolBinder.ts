@@ -2843,11 +2843,10 @@ module TypeScript {
 
             if (accessorSymbol) {
                 parentHadSymbol = true;
-            }
-
-            // we have an accessor we can use...
-            if (accessorSymbol && setterSymbol) {
-                setterTypeSymbol = <PullFunctionTypeSymbol>setterSymbol.getType();
+                // we have an accessor we can use...
+                if (setterSymbol) {
+                    setterTypeSymbol = <PullFunctionTypeSymbol>setterSymbol.getType();
+                }
             }
 
             if (this.reBindingAfterChange && accessorSymbol) {
