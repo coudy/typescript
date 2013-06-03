@@ -888,7 +888,7 @@ module TypeScript {
 
                     if (enumElement.equalsValueClause) {
                         var value = enumElement.equalsValueClause.value;
-                        if (value.kind() !== SyntaxKind.NumericLiteral) {
+                        if (!Syntax.isIntegerLiteral(value)) {
                             seenComputedValue = true;
                         }
                     }
