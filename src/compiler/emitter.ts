@@ -902,16 +902,18 @@ module TypeScript {
 
         public emitEnumElement(varDecl: VariableDeclarator): void {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
+
+            var quoted = isQuoted(varDecl.id.text());
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
             this.writeToOutput(this.moduleName);
-            this.writeToOutput('["');
-            this.writeToOutput(varDecl.id.text());
-            this.writeToOutput('"] = ');
+            this.writeToOutput('[');
+            this.writeToOutput(quoted ? varDecl.id.text() : '"' + varDecl.id.text() + '"');
+            this.writeToOutput('] = ');
             varDecl.init.emit(this);
-            this.writeToOutput('] = "');
-            this.writeToOutput(varDecl.id.text());
-            this.writeToOutput('";');
+            this.writeToOutput('] = ');
+            this.writeToOutput(quoted ? varDecl.id.text() : '"' + varDecl.id.text() + '"');
+            this.writeToOutput(';');
         }
 
         public emitIndex(operand1: AST, operand2: AST) {
