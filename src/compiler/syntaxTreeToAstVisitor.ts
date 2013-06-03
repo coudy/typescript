@@ -699,6 +699,7 @@ module TypeScript {
                 }
                 else {
                     var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
+                    var memberStart = this.position + enumElement.leadingTriviaWidth();
 
                     var memberValue: AST = null;
 
@@ -709,8 +710,6 @@ module TypeScript {
                         memberValue = enumElement.equalsValueClause.accept(this);
                         lastValue = null;
                     }
-
-                    var memberStart = this.position;
 
                     if (memberValue === null) {
                         if (lastValue === null) {
