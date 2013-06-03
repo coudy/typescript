@@ -903,16 +903,17 @@ module TypeScript {
         public emitEnumElement(varDecl: VariableDeclarator): void {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
 
-            var quoted = isQuoted(varDecl.id.text());
+            var name = varDecl.id.actualText;
+            var quoted = isQuoted(name);
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
-            this.writeToOutput(quoted ? varDecl.id.text() : '"' + varDecl.id.text() + '"');
+            this.writeToOutput(quoted ? name : '"' + name + '"');
             this.writeToOutput('] = ');
             varDecl.init.emit(this);
             this.writeToOutput('] = ');
-            this.writeToOutput(quoted ? varDecl.id.text() : '"' + varDecl.id.text() + '"');
+            this.writeToOutput(quoted ? name : '"' + name + '"');
             this.writeToOutput(';');
         }
 
