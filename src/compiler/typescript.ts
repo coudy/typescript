@@ -722,22 +722,9 @@ module TypeScript {
 
                 var bindEndTime = new Date().getTime();
 
-                var findErrorsStartTime = new Date().getTime();
-
-                //// type check
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    fileName = fileNames[i];
-
-                    this.logger.log("Type checking " + fileName);
-                    this.pullTypeChecker.typeCheckScript(this.getDocument(fileName).script, fileName, this);
-                }
-
-                var findErrorsEndTime = new Date().getTime();
-
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
-                this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
                 this.logger.log("Number of symbols created: " + pullSymbolID);
                 this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
                 this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);

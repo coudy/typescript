@@ -7,6 +7,7 @@
     <script src='perfCompiler.js'></script>
     <script>
         var repeat = 10;
+        var batch;
 
         if (!batch) {
             batch = new BatchCompiler();
@@ -80,6 +81,15 @@
             });
         }
 
+        function completion() {
+            //run(function () {
+                var start = new Date().getTime();
+                batch.getCompletionsAtPosition();
+                var end = new Date().getTime();
+                appendTime("Completions", end - start);
+            //});
+        }
+
         function typeCheck() {
             var start = new Date().getTime();
             batch.reTypeCheck();
@@ -104,6 +114,7 @@
     <button onclick="newIncrementalParse()">Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
+    <button onclick="completion()">Completion</button>
     <button onclick="clear1()">Clear</button>
 </body>
 </html>

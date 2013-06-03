@@ -130,8 +130,6 @@ module Services {
             return result;
         }
 
-
-
         private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
             if (parent !== null) {
                 var parentNodeType = parent.nodeType;
@@ -182,7 +180,6 @@ module Services {
 
             return false;
         }
-
 
         private getPossibleSymbolReferencePositions(fileName: string, symbolName: string): number []{
 
@@ -280,7 +277,6 @@ module Services {
 
             return result;
         }
-
 
         private getTypeParameterSignatureFromPartiallyWrittenExpression(document: TypeScript.Document, position: number, genericTypeArgumentListInfo : IPartiallyWrittenTypeArgumentListInformation): SignatureInfo {
             var script = document.script;
