@@ -12,8 +12,13 @@ module TypeScript {
         }
 
         export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfo: SemanticInfo) {
-            var funcSymbol = semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
             var functionDecl = semanticInfo.getDeclForAST(funcDecl);
+            var funcSymbol = functionDecl.getSymbol();
+
+            if (!funcSymbol) {
+                funcSymbol = functionDecl.getSignatureSymbol();
+            }
+
             var functionSignature: PullSignatureSymbol = null;
             var typeSymbolWithAllSignatures: PullTypeSymbol = null;
             if (funcSymbol.isSignature()) {
@@ -39,7 +44,8 @@ module TypeScript {
         }
 
         export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
-            var getterOrSetterSymbol = semanticInfoChain.getSymbolAndDiagnosticsForAST(getterOrSetter, unitPath).symbol;
+            var functionDecl = semanticInfoChain.getDeclForAST(getterOrSetter, unitPath);
+            var getterOrSetterSymbol = functionDecl.getSymbol();
             var linkKind: SymbolLinkKind;
             if (hasFlag(getterOrSetter.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                 linkKind = SymbolLinkKind.GetterFunction;

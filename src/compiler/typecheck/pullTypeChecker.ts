@@ -657,8 +657,8 @@ module TypeScript {
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }
-
-            var funcSymbol = typeCheckContext.semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
+            var functionDeclaration = typeCheckContext.semanticInfo.getDeclForAST(funcDecl);
+            var funcSymbol = functionDeclaration.getSymbol();
 
             // Find the definition signature for this signature group
             var definitionSignature: PullSignatureSymbol = null;

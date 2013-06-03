@@ -1317,7 +1317,7 @@ module FourSlash {
             throw error;
         }
 
-        var mockFilename = 'test_input.ts';
+        var mockFilename = 'file_0.ts';
 
         var result = '';
         var tsFn = './tests/cases/fourslash/fourslash.ts';

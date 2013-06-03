@@ -2960,6 +2960,10 @@ module TypeScript {
                 return;
             }
 
+            if (globalLogger) {
+                globalLogger.log("Binding " + decl.getName());
+            }
+
             decl.setIsBound(true);
 
             switch (decl.getKind()) {

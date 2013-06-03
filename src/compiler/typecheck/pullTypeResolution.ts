@@ -954,7 +954,7 @@ module TypeScript {
                     }
                 }
             }
-
+            
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < typeDeclAST.implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
@@ -1320,34 +1320,32 @@ module TypeScript {
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var funcDecl = this.getDeclForAST(funcDeclAST);
-            var funcDeclSymbol = funcDecl && <PullFunctionTypeSymbol>funcDecl.getSymbol();//funcDeclSymbolAndDiagnostics && <PullFunctionTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
 
-            if (!funcDeclSymbol) {
-                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
+            var funcDeclSymbol: PullFunctionTypeSymbol = null;
 
-                declCollectionContext.scriptName = this.unitPath;
+            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+            var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-                if (enclosingDecl) {
-                    declCollectionContext.pushParent(enclosingDecl);
-                }
+            declCollectionContext.scriptName = this.unitPath;
 
-                getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                var functionDecl = this.getDeclForAST(funcDeclAST);
-
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-                binder.setUnit(this.unitPath);
-                if (functionDecl.getKind() === PullElementKind.ConstructorType) {
-                    binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
-                }
-                else {
-                    binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
-                }
-
-                funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
+            if (enclosingDecl) {
+                declCollectionContext.pushParent(enclosingDecl);
             }
+
+            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+            var functionDecl = this.getDeclForAST(funcDeclAST);
+
+            var binder = new PullSymbolBinder(this.semanticInfoChain);
+            binder.setUnit(this.unitPath);
+            if (functionDecl.getKind() === PullElementKind.ConstructorType) {
+                binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
+            }
+            else {
+                binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
+            }
+
+            funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
 
             var signature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
 
@@ -1463,30 +1461,28 @@ module TypeScript {
         }
 
         public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
-            var interfaceSymbol = interfaceDecl && <PullTypeSymbol>interfaceDecl.getSymbol();
+            var interfaceSymbol: PullTypeSymbol = null;
 
-            if (!interfaceSymbol) {
-                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
+            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+            var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-                declCollectionContext.scriptName = this.unitPath;
+            declCollectionContext.scriptName = this.unitPath;
 
-                if (enclosingDecl) {
-                    declCollectionContext.pushParent(enclosingDecl);
-                }
-
-                getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
-
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-
-                binder.setUnit(this.unitPath);
-                binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
-
-                interfaceSymbol = <PullFunctionTypeSymbol>interfaceDecl.getSymbol();
+            if (enclosingDecl) {
+                declCollectionContext.pushParent(enclosingDecl);
             }
+
+            getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+
+            var binder = new PullSymbolBinder(this.semanticInfoChain);
+
+            binder.setUnit(this.unitPath);
+            binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
+
+            interfaceSymbol = <PullFunctionTypeSymbol>interfaceDecl.getSymbol();
+
 
             if (interfaceDeclAST.members) {
                 var memberDecl: PullDecl = null;
@@ -3131,7 +3127,6 @@ module TypeScript {
 
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
-            var functionDecl = this.getDeclForAST(funcDeclAST);
             var funcDeclSymbol: PullSymbol = null;
 
             if (functionDecl) {
@@ -3178,27 +3173,25 @@ module TypeScript {
             }
 
             // create a new function decl and symbol
+            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+            var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-            if (!funcDeclSymbol) {
-                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
+            declCollectionContext.scriptName = this.unitPath;
 
-                declCollectionContext.scriptName = this.unitPath;
-
-                if (enclosingDecl) {
-                    declCollectionContext.pushParent(enclosingDecl);
-                }
-
-                getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                functionDecl = this.getDeclForAST(funcDeclAST);
-
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-                binder.setUnit(this.unitPath);
-                binder.bindFunctionExpressionToPullSymbol(functionDecl);
-
-                funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
+            if (enclosingDecl) {
+                declCollectionContext.pushParent(enclosingDecl);
             }
+
+            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+            var functionDecl = this.getDeclForAST(funcDeclAST);
+
+            var binder = new PullSymbolBinder(this.semanticInfoChain);
+            binder.setUnit(this.unitPath);
+            binder.bindFunctionExpressionToPullSymbol(functionDecl);
+
+            funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
+
 
             var signature = funcDeclSymbol.getType().getCallSignatures()[0];
 

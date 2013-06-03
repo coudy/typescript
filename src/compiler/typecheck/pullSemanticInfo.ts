@@ -27,8 +27,6 @@ module TypeScript {
         private syntaxElementDeclMap: DataMap = new DataMap();
         private declSyntaxElementMap: DataMap = new DataMap();
 
-        private declSymbolMap: DataMap = new DataMap();
-
         private astSymbolMap: DataMap = new DataMap();
         private symbolASTMap: DataMap = new DataMap();
 
@@ -56,7 +54,9 @@ module TypeScript {
             return this.hasBeenTypeChecked;
         }
         public invalidate() {
-            this.hasBeenTypeChecked = false;
+            this.astSymbolMap = new DataMap();
+            this.symbolASTMap = new DataMap();            
+            //this.hasBeenTypeChecked = false;
         }
 
         public getTopLevelDecls() { return this.topLevelDecls; }
@@ -166,6 +166,7 @@ module TypeScript {
         private declCache = <any>new BlockIntrinsics();
         private symbolCache = <any>new BlockIntrinsics();
         private unitCache = <any>new BlockIntrinsics();
+        private declSymbolMap: DataMap = new DataMap();
 
         public anyTypeSymbol: PullTypeSymbol = null;
         public booleanTypeSymbol: PullTypeSymbol = null;
@@ -206,11 +207,9 @@ module TypeScript {
             globalDecl.addChildDecl(decl);
         }
 
-        constructor() {
+        public getGlobalDecl() {
             var span = new TextSpan(0, 0);
             var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "");
-            var globalInfo = this.units[0];
-            globalInfo.addTopLevelDecl(globalDecl);
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
@@ -224,7 +223,21 @@ module TypeScript {
             this.nullTypeSymbol = this.addPrimitiveType("null", null);
             this.undefinedTypeSymbol = this.addPrimitiveType("undefined", null);
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
-            this.addPrimitiveValue("null", this.nullTypeSymbol, globalDecl);
+            this.addPrimitiveValue("null", this.nullTypeSymbol, globalDecl);      
+
+            return globalDecl;      
+        }
+        
+
+        constructor() {
+            globalSemanticInfoChain = this;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this;
+            }
+
+            var globalDecl = this.getGlobalDecl();
+            var globalInfo = this.units[0];
+            globalInfo.addTopLevelDecl(globalDecl);
         }
 
         public addUnit(unit: SemanticInfo) {
@@ -384,14 +397,41 @@ module TypeScript {
             }
         }
 
-        public update(compilationUnitPath: string) {
+        private cleanDecl(decl: PullDecl) {
+            decl.setSymbol(null);
+            decl.setSignatureSymbol(null);
+            decl.setSpecializingSignatureSymbol(null);
+            decl.setIsBound(false);
+
+            var children = decl.getChildDecls();
+
+            for (var i = 0; i < children.length; i++) {
+                this.cleanDecl(children[i]);
+            }
+        }
+
+        private cleanAllDecls() {
+            var topLevelDecls = this.collectAllTopLevelDecls();
+
+            // skip the first tld, which contains global primitive symbols
+            for (var i = 1; i < topLevelDecls.length; i++) {
+                this.cleanDecl(topLevelDecls[i]);
+            }
+        }        
+
+        public update() {
 
             // PULLTODO: Be less aggressive about clearing the cache
             this.declCache = <any>new BlockIntrinsics();
+            this.symbolCache = <any>new BlockIntrinsics();
+            this.units[0] = new SemanticInfo("");
+            this.units[0].addTopLevelDecl(this.getGlobalDecl());
+            this.cleanAllDecls();
             //this.symbolCache = <any>{};
-            var unit = this.unitCache[compilationUnitPath];
-            if (unit) {
-                unit.invalidate();
+            for (var unit in this.unitCache) {
+                if (this.unitCache[unit]) {
+                    this.unitCache[unit].invalidate();
+                }
             }
         }
 
@@ -448,6 +488,13 @@ module TypeScript {
             if (unit) {
                 unit.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics);
             }
+        }
+
+        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
+            this.declSymbolMap.link(decl.getDeclID().toString(), symbol);
+        }
+        public getSymbolForDecl(decl): PullSymbol {
+            return <PullSymbol>this.declSymbolMap.read(decl.getDeclID().toString());
         }
 
         public removeSymbolFromCache(symbol: PullSymbol) {
