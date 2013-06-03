@@ -4775,6 +4775,7 @@ module TypeScript {
                     break;
                 case PullElementKind.DynamicModule:
                 case PullElementKind.Container:
+                case PullElementKind.Enum:
                     var moduleDecl = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(decl);
                     this.resolveModuleDeclaration(moduleDecl, context);
                     break;
