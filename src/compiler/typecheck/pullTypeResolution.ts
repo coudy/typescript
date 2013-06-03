@@ -1698,6 +1698,13 @@ module TypeScript {
         private resolveVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
 
             var decl: PullDecl = this.getDeclForAST(varDecl);
+
+
+            // if the enlosing decl is a lambda, we may not have bound the parent symbol
+            if (enclosingDecl && decl.getKind() == PullElementKind.Parameter) {
+                enclosingDecl.ensureSymbolIsBound();
+            }
+
             var declSymbol = decl.getSymbol();
             var declParameterSymbol: PullSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
 
