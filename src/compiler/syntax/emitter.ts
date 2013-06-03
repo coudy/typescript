@@ -436,7 +436,7 @@ module TypeScript.Emitter1 {
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
-            return ArrayUtilities.where(parameterList.parameters.toNonSeparatorArray(), p => p.equalsValueClause !== null);
+            return ArrayUtilities.where(<ParameterSyntax[]>parameterList.parameters.toNonSeparatorArray(), p => p.equalsValueClause !== null);
         }
 
         private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
@@ -628,7 +628,7 @@ module TypeScript.Emitter1 {
                 parameterList, /*changeFirstToken:*/ false, newParameterListIndentation - originalParameterListindentation);
 
             var block = constructorDeclaration.block;
-            var allStatements = block.statements.toArray();
+            var allStatements = <SyntaxNode[]>block.statements.toArray();
 
             var normalStatements: IStatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
                 s => !Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
@@ -641,7 +641,7 @@ module TypeScript.Emitter1 {
             }
 
             var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
-                ArrayUtilities.where(constructorDeclaration.parameterList.parameters.toNonSeparatorArray(), p => p.publicOrPrivateKeyword !== null),
+                ArrayUtilities.where(<ParameterSyntax[]>constructorDeclaration.parameterList.parameters.toNonSeparatorArray(), p => p.publicOrPrivateKeyword !== null),
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
@@ -659,7 +659,7 @@ module TypeScript.Emitter1 {
                 normalStatements.unshift(this.generateThisCaptureStatement(this.options.indentSpaces + constructorIndentationColumn));
             }
 
-            var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
+            var defaultValueAssignments = <IfStatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList),
                 p => this.generateDefaultValueAssignmentStatement(p));
 
@@ -858,8 +858,8 @@ module TypeScript.Emitter1 {
                             Syntax.identifierName("_super")])))).withLeadingTrivia(statementIndentation).withTrailingTrivia(this.newLine));
             }
 
-            var constructorDeclaration: ConstructorDeclarationSyntax =
-                ArrayUtilities.firstOrDefault(node.classElements.toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration);
+            var constructorDeclaration = <ConstructorDeclarationSyntax>ArrayUtilities.firstOrDefault(
+                node.classElements.toArray(), c => c.kind() === SyntaxKind.ConstructorDeclaration);
 
             var constructorFunctionDeclaration = constructorDeclaration === null
                 ? this.createDefaultConstructorDeclaration(node)
