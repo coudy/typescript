@@ -1824,11 +1824,11 @@ module TypeScript {
             functionTypeSymbol.addCallSignature(signature);
 
             if (!isSignature) {
-                var childDecls = functionDeclaration.getChildDecls();
+                // var childDecls = functionDeclaration.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.bindDeclToPullSymbol(childDecls[i]);
-                }
+                // for (var i = 0; i < childDecls.length; i++) {
+                //     this.bindDeclToPullSymbol(childDecls[i]);
+                // }
             }
 
             functionSymbol.setIsBound(this.bindingPhase);
@@ -1917,11 +1917,11 @@ module TypeScript {
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
 
-            var childDecls = functionExpressionDeclaration.getChildDecls();
+            // var childDecls = functionExpressionDeclaration.getChildDecls();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
         }
 
         public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
@@ -2220,11 +2220,11 @@ module TypeScript {
             methodTypeSymbol.addSignature(signature);
 
             if (!isSignature) {
-                var childDecls = methodDeclaration.getChildDecls();
+                // var childDecls = methodDeclaration.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.bindDeclToPullSymbol(childDecls[i]);
-                }
+                // for (var i = 0; i < childDecls.length; i++) {
+                //     this.bindDeclToPullSymbol(childDecls[i]);
+                // }
             }
 
             //methodSymbol.setIsBound(this.bindingPhase);
@@ -2363,11 +2363,11 @@ module TypeScript {
             constructorTypeSymbol.addSignature(constructSignature);
 
             if (!isSignature) {
-                var childDecls = constructorDeclaration.getChildDecls();
+                // var childDecls = constructorDeclaration.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.bindDeclToPullSymbol(childDecls[i]);
-                }
+                // for (var i = 0; i < childDecls.length; i++) {
+                //     this.bindDeclToPullSymbol(childDecls[i]);
+                // }
             }
 
             //constructorSymbol.setIsBound(this.bindingPhase);
@@ -2742,11 +2742,11 @@ module TypeScript {
             getterTypeSymbol.addSignature(signature);
 
             if (!isSignature) {
-                var childDecls = getAccessorDeclaration.getChildDecls();
+                // var childDecls = getAccessorDeclaration.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.bindDeclToPullSymbol(childDecls[i]);
-                }
+                // for (var i = 0; i < childDecls.length; i++) {
+                //     this.bindDeclToPullSymbol(childDecls[i]);
+                // }
             }
 
             getterSymbol.setIsBound(this.bindingPhase);
@@ -2921,30 +2921,30 @@ module TypeScript {
             setterTypeSymbol.addSignature(signature);
 
             if (!isSignature) {
-                var childDecls = setAccessorDeclaration.getChildDecls();
+                // var childDecls = setAccessorDeclaration.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.bindDeclToPullSymbol(childDecls[i]);
-                }
+                // for (var i = 0; i < childDecls.length; i++) {
+                //     this.bindDeclToPullSymbol(childDecls[i]);
+                // }
             }
 
             setterSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindCatchBlockPullSymbols(catchBlockDecl: PullDecl) {
-            var childDecls = catchBlockDecl.getChildDecls();
+            // var childDecls = catchBlockDecl.getChildDecls();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
         }
 
         public bindWithBlockPullSymbols(withBlockDecl: PullDecl) {
-            var childDecls = withBlockDecl.getChildDecls();
+            // var childDecls = withBlockDecl.getChildDecls();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
         }
 
         // binding
