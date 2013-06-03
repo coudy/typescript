@@ -675,6 +675,7 @@ module TypeScript {
                     var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
                     var parentDecl = lhsType.getDeclarations()[0];
                     var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.getKind(), parentDecl.getFlags(), parentDecl.getSpan(), parentDecl.getScriptName());
+                    this.currentUnit.addSynthesizedDecl(prototypeDecl);
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
                     // prototypeSymbol.setType(lhsType);
@@ -1393,6 +1394,7 @@ module TypeScript {
             getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
             var functionDecl = this.getDeclForAST(funcDeclAST);
+            this.currentUnit.addSynthesizedDecl(functionDecl);
 
             var binder = new PullSymbolBinder(this.semanticInfoChain);
             binder.setUnit(this.unitPath);
@@ -1533,6 +1535,7 @@ module TypeScript {
             getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+            this.currentUnit.addSynthesizedDecl(interfaceDecl);
 
             var binder = new PullSymbolBinder(this.semanticInfoChain);
 
@@ -1631,9 +1634,11 @@ module TypeScript {
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>typeRef.term;
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
-                typeDeclSymbol.addDeclaration(new PullDecl(stringConstantAST.actualText, stringConstantAST.actualText,
+                var decl = new PullDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.getKind(), null,
-                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName()));
+                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
+                this.currentUnit.addSynthesizedDecl(decl);
+                typeDeclSymbol.addDeclaration(decl);
             }
 
             if (!typeDeclSymbol) {
@@ -3239,6 +3244,7 @@ module TypeScript {
             getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
             var functionDecl = this.getDeclForAST(funcDeclAST);
+            this.currentUnit.addSynthesizedDecl(functionDecl);
 
             var binder = new PullSymbolBinder(this.semanticInfoChain);
             binder.setUnit(this.unitPath);
@@ -3432,6 +3438,7 @@ module TypeScript {
             var span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
             var objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
+            this.currentUnit.addSynthesizedDecl(objectLitDecl);
 
             if (enclosingDecl) {
                 objectLitDecl.setParentDecl(enclosingDecl);
@@ -3488,6 +3495,7 @@ module TypeScript {
                     span = TextSpan.fromBounds(binex.minChar, binex.limChar);
 
                     var decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
+                    this.currentUnit.addSynthesizedDecl(decl);
 
                     objectLitDecl.addChildDecl(decl);
                     decl.setParentDecl(objectLitDecl);
@@ -3532,6 +3540,7 @@ module TypeScript {
                             getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                             var functionDecl = this.getDeclForAST(funcDeclAST);
+                            this.currentUnit.addSynthesizedDecl(functionDecl);
 
                             var binder = new PullSymbolBinder(this.semanticInfoChain);
                             binder.setUnit(this.unitPath);

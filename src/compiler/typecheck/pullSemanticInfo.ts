@@ -20,6 +20,7 @@ module TypeScript {
         private compilationUnitPath: string;  // the "file" this is associated with
 
         private topLevelDecls: PullDecl[] = [];
+        private topLevelSynthesizedDecls: PullDecl[] = [];
 
         private astDeclMap: DataMap = new DataMap();
         private declASTMap: DataMap = new DataMap();
@@ -63,6 +64,15 @@ module TypeScript {
 
         public getPath(): string {
             return this.compilationUnitPath;
+        }
+
+        public addSynthesizedDecl(decl: PullDecl) {
+            if (!decl.getParentDecl()) {
+                this.topLevelSynthesizedDecls[this.topLevelSynthesizedDecls.length] = decl;
+            }
+        }
+        public getSynthesizedDecls() {
+            return this.topLevelSynthesizedDecls;
         }
 
         public getDeclForAST(ast: AST): PullDecl {
@@ -279,7 +289,21 @@ module TypeScript {
             }
 
             return decls;
-        }    
+        }
+
+        private collectAllSynthesizedDecls() {
+            var decls: PullDecl[] = [];
+            var synthDecls: PullDecl[];
+
+            for (var i = 0; i < this.units.length; i++) {
+                synthDecls = this.units[i].getSynthesizedDecls();
+                for (var j = 0; j < synthDecls.length; j++) {
+                    decls[decls.length] = synthDecls[j];
+                }
+            }
+
+            return decls;
+        }        
 
         private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
             var cacheID = "";
@@ -413,7 +437,7 @@ module TypeScript {
 
             for (var i = 0; i < typeParameters.length; i++) {
                 this.cleanDecl(typeParameters[i]);
-            }            
+            }                 
         }
 
         private cleanAllDecls() {
@@ -422,6 +446,12 @@ module TypeScript {
             // skip the first tld, which contains global primitive symbols
             for (var i = 1; i < topLevelDecls.length; i++) {
                 this.cleanDecl(topLevelDecls[i]);
+            }
+
+            var synthesizedDecls = this.collectAllSynthesizedDecls();
+
+            for (var i = 0; i < synthesizedDecls.length; i++) {
+                this.cleanDecl(synthesizedDecls[i]);
             }
         }        
 
