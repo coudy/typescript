@@ -132,14 +132,14 @@ module TypeScript {
 
     // The resolver associates types with a given AST
     export class PullTypeResolver {
-        private cachedArrayInterfaceType: PullTypeSymbol = null;
-        private cachedNumberInterfaceType: PullTypeSymbol = null;
-        private cachedStringInterfaceType: PullTypeSymbol = null;
-        private cachedBooleanInterfaceType: PullTypeSymbol = null;
-        private cachedObjectInterfaceType: PullTypeSymbol = null;
-        private cachedFunctionInterfaceType: PullTypeSymbol = null;
-        private cachedIArgumentsInterfaceType: PullTypeSymbol = null;
-        private cachedRegExpInterfaceType: PullTypeSymbol = null;
+        private _cachedArrayInterfaceType: PullTypeSymbol = null;
+        private _cachedNumberInterfaceType: PullTypeSymbol = null;
+        private _cachedStringInterfaceType: PullTypeSymbol = null;
+        private _cachedBooleanInterfaceType: PullTypeSymbol = null;
+        private _cachedObjectInterfaceType: PullTypeSymbol = null;
+        private _cachedFunctionInterfaceType: PullTypeSymbol = null;
+        private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
+        private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
 
@@ -151,30 +151,92 @@ module TypeScript {
 
         private currentUnit: SemanticInfo = null;
 
-        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
-            this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
-            this.cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
-            this.cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
-            this.cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface);
+        private cachedArrayInterfaceType() {
+            if (!this._cachedArrayInterfaceType) {
+                this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);    
+            }
+            
+            if (!this._cachedArrayInterfaceType) {
+                this._cachedArrayInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+            }
 
-            this.cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface);
-            this.cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
-            this.cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
-            this.cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
+            return this._cachedArrayInterfaceType;
+        }
+
+        public getCachedArrayType() {
+            return this.cachedArrayInterfaceType();
+        }
+
+        private cachedNumberInterfaceType() {
+            if (!this._cachedNumberInterfaceType) {
+                this._cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
+            }
+
+            return this._cachedNumberInterfaceType;
+        }
+
+        private cachedStringInterfaceType() {
+            if (!this._cachedStringInterfaceType) {
+                this._cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
+            }
+
+            return this._cachedStringInterfaceType;            
+        }
+
+        private cachedBooleanInterfaceType() {
+            if (!this._cachedBooleanInterfaceType) {
+                this._cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface);
+            }
+
+            return this._cachedBooleanInterfaceType;                     
+        }
+
+        private cachedObjectInterfaceType() {
+            if (!this._cachedObjectInterfaceType) {
+                this._cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface);    
+            }
+            
+            if (!this._cachedObjectInterfaceType) {
+                this._cachedObjectInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            return this._cachedObjectInterfaceType;            
+        }
+
+        private cachedFunctionInterfaceType() {
+            if (!this._cachedFunctionInterfaceType) {
+                this._cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
+            }
+
+            return this._cachedFunctionInterfaceType;                     
+        }
+
+        private cachedIArgumentsInterfaceType() {
+            if (!this._cachedIArgumentsInterfaceType) {
+                this._cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
+            }
+
+            return this._cachedIArgumentsInterfaceType;               
+        }
+
+        private cachedRegExpInterfaceType() {
+            if (!this._cachedRegExpInterfaceType) {
+                this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
+            }
+
+            return this._cachedRegExpInterfaceType;               
+        }        
+
+
+        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
 
             this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
-            this.cachedFunctionArgumentsSymbol.setType(this.cachedIArgumentsInterfaceType ? this.cachedIArgumentsInterfaceType : this.semanticInfoChain.anyTypeSymbol);
+            this.cachedFunctionArgumentsSymbol.setType(this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol);
             this.cachedFunctionArgumentsSymbol.setResolved();
+
             var functionArgumentsDecl = new PullDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, new TextSpan(0, 0), unitPath);
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
-
-            if (!this.cachedObjectInterfaceType) {
-                this.cachedObjectInterfaceType = this.semanticInfoChain.anyTypeSymbol;
-            }
-            if (!this.cachedArrayInterfaceType) {
-                this.cachedArrayInterfaceType = this.semanticInfoChain.anyTypeSymbol;
-            }
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
@@ -209,10 +271,6 @@ module TypeScript {
 
         public getASTForDecl(decl: PullDecl): AST {
             return this.semanticInfoChain.getASTForDecl(decl);
-        }
-
-        public getCachedArrayType() {
-            return this.cachedArrayInterfaceType;
         }
 
         public getNewErrorTypeSymbol(diagnostic: SemanticDiagnostic): PullErrorTypeSymbol {
@@ -461,24 +519,24 @@ module TypeScript {
             }
 
             // Get the global symbols
-            var units = this.semanticInfoChain.units;
+            // var units = this.semanticInfoChain.units;
 
-            for (var i = 0, n = units.length; i < n; i++) {
-                var unit = units[i];
-                if (unit === this.currentUnit && declPath.length != 0) {
-                    // Current unit has already been processed. skip it.
-                    continue;
-                }
-                var topLevelDecls = unit.getTopLevelDecls();
-                if (topLevelDecls.length) {
-                    for (var j = 0, m = topLevelDecls.length; j < m; j++) {
-                        var topLevelDecl = topLevelDecls[j];
-                        if (topLevelDecl.getKind() === PullElementKind.Script || topLevelDecl.getKind() === PullElementKind.Global) {
-                            this.addSymbolsFromDecls(topLevelDecl.getChildDecls(), declSearchKind, symbols);
-                        }
-                    }
-                }
-            }
+            // for (var i = 0, n = units.length; i < n; i++) {
+            //     var unit = units[i];
+            //     if (unit === this.currentUnit && declPath.length != 0) {
+            //         // Current unit has already been processed. skip it.
+            //         continue;
+            //     }
+            //     var topLevelDecls = unit.getTopLevelDecls();
+            //     if (topLevelDecls.length) {
+            //         for (var j = 0, m = topLevelDecls.length; j < m; j++) {
+            //             var topLevelDecl = topLevelDecls[j];
+            //             if (topLevelDecl.getKind() === PullElementKind.Script || topLevelDecl.getKind() === PullElementKind.Global) {
+            //                 this.addSymbolsFromDecls(topLevelDecl.getChildDecls(), declSearchKind, symbols);
+            //             }
+            //         }
+            //     }
+            // }
 
             return symbols;
         }
@@ -577,16 +635,16 @@ module TypeScript {
                 }
 
                 // could be a number
-                if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
-                    lhsType = this.cachedNumberInterfaceType;
+                if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType()) {
+                    lhsType = this.cachedNumberInterfaceType();
                 }
                 // could be a string
-                else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
-                    lhsType = this.cachedStringInterfaceType;
+                else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
+                    lhsType = this.cachedStringInterfaceType();
                 }
                 // could be a boolean
-                else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
-                    lhsType = this.cachedBooleanInterfaceType;
+                else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
+                    lhsType = this.cachedBooleanInterfaceType();
                 }
 
                 if (!lhsType.isResolved()) {
@@ -633,8 +691,8 @@ module TypeScript {
             }
 
             // could be a function symbol
-            if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType) {
-                members = members.concat(this.cachedFunctionInterfaceType.getAllMembers(declSearchKind, /*includePrivate*/ false));
+            if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType()) {
+                members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, /*includePrivate*/ false));
             }
 
             return members;
@@ -645,7 +703,7 @@ module TypeScript {
         }
 
         public isNumberOrEquivalent(type: PullTypeSymbol) {
-            return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType && type === this.cachedNumberInterfaceType);
+            return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
         }
 
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
@@ -684,7 +742,7 @@ module TypeScript {
         }
 
         public isArrayOrEquivalent(type: PullTypeSymbol) {
-            return type.isArray() || type == this.cachedArrayInterfaceType;
+            return type.isArray() || type == this.cachedArrayInterfaceType();
         }
 
         private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
@@ -1397,7 +1455,7 @@ module TypeScript {
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context).symbol;
 
-                if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType)) {
+                if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
                     typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
@@ -1411,8 +1469,8 @@ module TypeScript {
             } // PULLTODO: default values?
             else {
                 if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
-                    if (this.cachedArrayInterfaceType) {
-                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType, paramSymbol.getType(), this, context));
+                    if (this.cachedArrayInterfaceType()) {
+                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType(), paramSymbol.getType(), this, context));
                     }
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.getType());
@@ -1433,7 +1491,7 @@ module TypeScript {
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context).symbol;
 
-                if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType)) {
+                if (paramSymbol.getIsVarArg() && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
                     typeRef = this.getNewErrorTypeSymbol(diagnostic);
                 }
@@ -1442,8 +1500,8 @@ module TypeScript {
             } // PULLTODO: default values?
             else {
                 if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
-                    if (this.cachedArrayInterfaceType) {
-                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType, paramSymbol.getType(), this, context));
+                    if (this.cachedArrayInterfaceType()) {
+                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType(), paramSymbol.getType(), this, context));
                     }
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.getType());
@@ -1601,12 +1659,8 @@ module TypeScript {
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
 
-                    if (!this.cachedArrayInterfaceType) {
-                        this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", getPathToDecl(enclosingDecl), PullElementKind.Interface);
-                    }
-
-                    if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
-                        this.resolveDeclaredSymbol(this.cachedArrayInterfaceType, enclosingDecl, context);
+                    if (!this.cachedArrayInterfaceType().isResolved()) {
+                        this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                     }
 
                     arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, typeDeclSymbol, this, context);
@@ -1616,7 +1670,7 @@ module TypeScript {
                     }
                 }
 
-                if (this.cachedArrayInterfaceType && typeRef.arrayCount > 1) {
+                if (typeRef.arrayCount > 1) {
                     for (var arity = typeRef.arrayCount - 1; arity > 0; arity--) {
                         var existingArraySymbol = arraySymbol.getArrayType();
 
@@ -1708,7 +1762,7 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (declSymbol.getIsVarArg() && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType) && this.cachedArrayInterfaceType) {
+                    else if (declSymbol.getIsVarArg() && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType())) {
                         var diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null, enclosingDecl);
                         typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                     }
@@ -1771,8 +1825,8 @@ module TypeScript {
             else {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
-                if (declSymbol.getIsVarArg() && this.cachedArrayInterfaceType) {
-                    defaultType = specializeToArrayType(this.cachedArrayInterfaceType, defaultType, this, context);
+                if (declSymbol.getIsVarArg()) {
+                    defaultType = specializeToArrayType(this.cachedArrayInterfaceType(), defaultType, this, context);
                 }
 
                 context.setTypeInContext(declSymbol, defaultType);
@@ -2496,8 +2550,8 @@ module TypeScript {
         }
 
         private resolveRegularExpressionLiteral(): SymbolAndDiagnostics<PullTypeSymbol> {
-            if (this.cachedRegExpInterfaceType) {
-                return SymbolAndDiagnostics.fromSymbol(this.cachedRegExpInterfaceType);
+            if (this.cachedRegExpInterfaceType()) {
+                return SymbolAndDiagnostics.fromSymbol(this.cachedRegExpInterfaceType());
             }
             else {
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
@@ -2580,8 +2634,8 @@ module TypeScript {
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol;
 
-                if (this.cachedIArgumentsInterfaceType && !this.cachedIArgumentsInterfaceType.isResolved()) {
-                    this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType, enclosingDecl, context);
+                if (this.cachedIArgumentsInterfaceType() && !this.cachedIArgumentsInterfaceType().isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), enclosingDecl, context);
                 }
             }
 
@@ -2691,14 +2745,14 @@ module TypeScript {
                     [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [(<Identifier>dottedNameAST.operand2).actualText])]);
             }
 
-            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType) {
-                lhsType = this.cachedNumberInterfaceType;
+            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.getKind() == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType()) {
+                lhsType = this.cachedNumberInterfaceType();
             }
-            else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
-                lhsType = this.cachedStringInterfaceType;
+            else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
+                lhsType = this.cachedStringInterfaceType();
             }
-            else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
-                lhsType = this.cachedBooleanInterfaceType;
+            else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
+                lhsType = this.cachedBooleanInterfaceType();
             }
 
             if (!lhsType.isResolved()) {
@@ -2756,8 +2810,8 @@ module TypeScript {
                     }
                 }
                 // could be a function symbol
-                else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType) {
-                    nameSymbol = this.cachedFunctionInterfaceType.findMember(rhsName);
+                else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
+                    nameSymbol = this.cachedFunctionInterfaceType().findMember(rhsName);
                 }
                 // could be a type parameter with a contraint
                 else if (lhsType.isTypeParameter()) {
@@ -2789,8 +2843,8 @@ module TypeScript {
                 nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
                 // could be an object member
-                if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType) {
-                    nameSymbol = this.cachedObjectInterfaceType.findMember(rhsName);
+                if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType()) {
+                    nameSymbol = this.cachedObjectInterfaceType().findMember(rhsName);
                 }
 
                 if (!nameSymbol) {
@@ -3036,7 +3090,7 @@ module TypeScript {
                 symbolAndDiagnostics = this.computeDottedTypeNameExpression(dottedNameAST, enclosingDecl, context);
                 this.setSymbolAndDiagnosticsForAST(dottedNameAST, symbolAndDiagnostics, context);
             }
-
+            
             var symbol = symbolAndDiagnostics.symbol;
             if (!symbol.isResolved()) {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
@@ -3617,12 +3671,8 @@ module TypeScript {
             // ...But in case we haven't...
             if (!arraySymbol) {
 
-                if (!this.cachedArrayInterfaceType) {
-                    this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", getPathToDecl(enclosingDecl), PullElementKind.Interface);
-                }
-
-                if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
-                    this.resolveDeclaredSymbol(this.cachedArrayInterfaceType, enclosingDecl, context);
+                if (!this.cachedArrayInterfaceType().isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                 }
 
                 arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, elementType, this, context);
@@ -4170,7 +4220,7 @@ module TypeScript {
                 if (!couldNotFindGenericOverload) {
 
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
-                    if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType, context)) {
+                    if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), context)) {
                         return SymbolAndDiagnostics.create(this.semanticInfoChain.anyTypeSymbol, diagnostics);
                     }
 
@@ -5146,8 +5196,8 @@ module TypeScript {
                 return this.substituteUpperBoundForType(constraint);
             }
 
-            if (this.cachedObjectInterfaceType) {
-                return this.cachedObjectInterfaceType;
+            if (this.cachedObjectInterfaceType()) {
+                return this.cachedObjectInterfaceType();
             }
 
             return type;
@@ -5208,8 +5258,8 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedFunctionInterfaceType) {
-                return this.sourceIsSubtypeOfTarget(source, this.cachedFunctionInterfaceType, context);
+            if (this.cachedFunctionInterfaceType()) {
+                return this.sourceIsSubtypeOfTarget(source, this.cachedFunctionInterfaceType(), context);
             }
 
             return false;
@@ -5257,10 +5307,10 @@ module TypeScript {
 
             if (context.specializingToObject) {
                 if (target.isTypeParameter()) {
-                    target = this.cachedObjectInterfaceType;
+                    target = this.cachedObjectInterfaceType();
                 }
                 if (source.isTypeParameter()) {
-                    target = this.cachedObjectInterfaceType;
+                    target = this.cachedObjectInterfaceType();
                 }
             }
 
@@ -5274,26 +5324,26 @@ module TypeScript {
             //      'Number', 'Boolean', or 'String'
             //  - When source is an enum type, sourceSubstitution is the global interface type 'Number'
             //  - When source is a type parameter, sourceSubstituion is the constraint of that type parameter
-            if (source == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
-                if (!this.cachedStringInterfaceType.isResolved()) {
-                    this.resolveDeclaredSymbol(this.cachedStringInterfaceType, null, context);
+            if (source == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
+                if (!this.cachedStringInterfaceType().isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedStringInterfaceType(), null, context);
                 }
-                sourceSubstitution = this.cachedStringInterfaceType;
+                sourceSubstitution = this.cachedStringInterfaceType();
             }
-            else if (source == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
-                if (!this.cachedNumberInterfaceType.isResolved()) {
-                    this.resolveDeclaredSymbol(this.cachedNumberInterfaceType, null, context);
+            else if (source == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType()) {
+                if (!this.cachedNumberInterfaceType().isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedNumberInterfaceType(), null, context);
                 }
-                sourceSubstitution = this.cachedNumberInterfaceType;
+                sourceSubstitution = this.cachedNumberInterfaceType();
             }
-            else if (source == this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType) {
-                if (!this.cachedBooleanInterfaceType.isResolved()) {
-                    this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType, null, context);
+            else if (source == this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
+                if (!this.cachedBooleanInterfaceType().isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType(), null, context);
                 }
-                sourceSubstitution = this.cachedBooleanInterfaceType;
+                sourceSubstitution = this.cachedBooleanInterfaceType();
             }
-            else if (PullHelpers.symbolIsEnum(source) && this.cachedNumberInterfaceType) {
-                sourceSubstitution = this.cachedNumberInterfaceType;
+            else if (PullHelpers.symbolIsEnum(source) && this.cachedNumberInterfaceType()) {
+                sourceSubstitution = this.cachedNumberInterfaceType();
             }
             else if (source.isTypeParameter()) {
                 sourceSubstitution = this.substituteUpperBoundForType(source);
@@ -5387,10 +5437,10 @@ module TypeScript {
 
                 return ret;
             }
-            else if (source.isArray() && target == this.cachedArrayInterfaceType) {
+            else if (source.isArray() && target == this.cachedArrayInterfaceType()) {
                 return true;
             }
-            else if (target.isArray() && source == this.cachedArrayInterfaceType) {
+            else if (target.isArray() && source == this.cachedArrayInterfaceType()) {
                 return true;
             }
 
@@ -5443,11 +5493,11 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedObjectInterfaceType && target === this.cachedObjectInterfaceType) {
+            if (this.cachedObjectInterfaceType() && target === this.cachedObjectInterfaceType()) {
                 return true;
             }
 
-            if (this.cachedFunctionInterfaceType && (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType) {
+            if (this.cachedFunctionInterfaceType() && (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType()) {
                 return true;
             }
 
@@ -5492,15 +5542,15 @@ module TypeScript {
 
                 if (!sourceProp) {
                     // If it's not present on the type in question, look for the property on 'Object'
-                    if (this.cachedObjectInterfaceType) {
-                        sourceProp = this.cachedObjectInterfaceType.findMember(targetProp.getName());
+                    if (this.cachedObjectInterfaceType()) {
+                        sourceProp = this.cachedObjectInterfaceType().findMember(targetProp.getName());
                     }
 
                     if (!sourceProp) {
                         // Now, the property was not found on Object, but the type in question is a function, look
                         // for it on function
-                        if (this.cachedFunctionInterfaceType && (targetPropType.getCallSignatures().length || targetPropType.getConstructSignatures().length)) {
-                            sourceProp = this.cachedFunctionInterfaceType.findMember(targetProp.getName());
+                        if (this.cachedFunctionInterfaceType() && (targetPropType.getCallSignatures().length || targetPropType.getConstructSignatures().length)) {
+                            sourceProp = this.cachedFunctionInterfaceType().findMember(targetProp.getName());
                         }
 
                         // finally, check to see if the property is optional
@@ -5687,8 +5737,8 @@ module TypeScript {
             if (targetIndexSigs.length) {
                 var sourceIndexSigs = source.getIndexSignatures();
                 
-                var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : targetIndexSigs;
-                var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType ? this.cachedObjectInterfaceType.getIndexSignatures() : sourceIndexSigs;
+                var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType() ? this.cachedObjectInterfaceType().getIndexSignatures() : targetIndexSigs;
+                var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType() ? this.cachedObjectInterfaceType().getIndexSignatures() : sourceIndexSigs;
                 
                 var sourceStringSig: PullSignatureSymbol = null;
                 var sourceNumberSig: PullSignatureSymbol = null;
@@ -5862,11 +5912,11 @@ module TypeScript {
             var sourceReturnType = sourceSig.getReturnType();
             var targetReturnType = targetSig.getReturnType();
 
-            if (sourceReturnType && sourceReturnType.isTypeParameter() && this.cachedObjectInterfaceType) {
-                sourceReturnType = this.cachedObjectInterfaceType;
+            if (sourceReturnType && sourceReturnType.isTypeParameter() && this.cachedObjectInterfaceType()) {
+                sourceReturnType = this.cachedObjectInterfaceType();
             }
-            if (targetReturnType && targetReturnType.isTypeParameter() && this.cachedObjectInterfaceType) {
-                targetReturnType = this.cachedObjectInterfaceType;
+            if (targetReturnType && targetReturnType.isTypeParameter() && this.cachedObjectInterfaceType()) {
+                targetReturnType = this.cachedObjectInterfaceType();
             }
 
             var prevSpecializingToObject = context.specializingToObject;
@@ -5919,11 +5969,11 @@ module TypeScript {
                     targetParamName = targetParameters[iTarget].getName();
                 }
 
-                if (sourceParamType && sourceParamType.isTypeParameter() && this.cachedObjectInterfaceType) {
-                    sourceParamType = this.cachedObjectInterfaceType;
+                if (sourceParamType && sourceParamType.isTypeParameter() && this.cachedObjectInterfaceType()) {
+                    sourceParamType = this.cachedObjectInterfaceType();
                 }
-                if (targetParamType && targetParamType.isTypeParameter() && this.cachedObjectInterfaceType) {
-                    targetParamType = this.cachedObjectInterfaceType;
+                if (targetParamType && targetParamType.isTypeParameter() && this.cachedObjectInterfaceType()) {
+                    targetParamType = this.cachedObjectInterfaceType();
                 }
 
                 if (!(this.sourceIsRelatableToTarget(sourceParamType, targetParamType, assignableTo, comparisonCache, context, comparisonInfo) ||
@@ -6162,7 +6212,7 @@ module TypeScript {
                     }
                     else if (args.members[j].nodeType === NodeType.FunctionDeclaration) {
 
-                        if (this.cachedFunctionInterfaceType && memberType === this.cachedFunctionInterfaceType) {
+                        if (this.cachedFunctionInterfaceType() && memberType === this.cachedFunctionInterfaceType()) {
                             continue;
                         }
 
@@ -6204,7 +6254,7 @@ module TypeScript {
                     }
                     else if (args.members[j].nodeType === NodeType.ObjectLiteralExpression) {
                         // now actually attempt to typecheck as the contextual type
-                        if (this.cachedObjectInterfaceType && memberType === this.cachedObjectInterfaceType) {
+                        if (this.cachedObjectInterfaceType() && memberType === this.cachedObjectInterfaceType()) {
                             continue;
                         }
 
@@ -6231,7 +6281,7 @@ module TypeScript {
                     }
                     else if (args.members[j].nodeType === NodeType.ArrayLiteralExpression) {
                         // attempt to contextually type the array literal
-                        if (this.cachedArrayInterfaceType && memberType === this.cachedArrayInterfaceType) {
+                        if (memberType === this.cachedArrayInterfaceType()) {
                             continue;
                         }
 
@@ -6373,7 +6423,7 @@ module TypeScript {
                 return false;
             }
 
-            beStringent = beStringent || (this.cachedFunctionInterfaceType === candidateType);
+            beStringent = beStringent || (this.cachedFunctionInterfaceType() === candidateType);
 
             // At this point, if we're not being stringent, there's no need to check for multiple call sigs
             // or count parameters - we just want to unblock typecheck

@@ -75,9 +75,10 @@ module TypeScript {
         }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
-        public ensureSymbolIsBound() {
 
-            if (!this.symbol && !this._isBound && this.declType != PullElementKind.Script) {
+        public ensureSymbolIsBound(bindSignatureSymbol=false) {
+
+            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.declType != PullElementKind.Script) {
                 //var binder = new PullSymbolBinder(globalSemanticInfoChain);
                 var prevUnit = globalBinder.semanticInfo;
                 globalBinder.setUnit(this.scriptName);
@@ -100,7 +101,11 @@ module TypeScript {
         }
 
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
-        public getSignatureSymbol(): PullSignatureSymbol { return this.signatureSymbol; }
+        public getSignatureSymbol(): PullSignatureSymbol { 
+            this.ensureSymbolIsBound(true);
+            
+            return this.signatureSymbol;
+        }
 
         public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
         public getSpecializingSignatureSymbol() {

@@ -279,7 +279,7 @@ module TypeScript {
             }
 
             return decls;
-        }
+        }    
 
         private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
             var cacheID = "";
@@ -408,6 +408,12 @@ module TypeScript {
             for (var i = 0; i < children.length; i++) {
                 this.cleanDecl(children[i]);
             }
+
+            var typeParameters = decl.getTypeParameters();
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                this.cleanDecl(typeParameters[i]);
+            }            
         }
 
         private cleanAllDecls() {

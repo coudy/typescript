@@ -2960,9 +2960,9 @@ module TypeScript {
                 return;
             }
 
-            if (globalLogger) {
-                globalLogger.log("Binding " + decl.getName());
-            }
+            // if (globalLogger) {
+            //     globalLogger.log("Binding " + decl.getName());
+            // }
 
             decl.setIsBound(true);
 
