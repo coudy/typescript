@@ -86,6 +86,18 @@ module TypeScript {
             return false;
         }
 
+        public isInterface() {
+            return this.getKind() === PullElementKind.Interface;
+        }
+
+        public isMethod() {
+            return this.getKind() === PullElementKind.Method;
+        }
+
+        public isProperty() {
+            return this.getKind() === PullElementKind.Property;
+        }
+
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.declKind = declKind;
@@ -1894,6 +1906,33 @@ module TypeScript {
             }
 
             return <PullTypeSymbol[]>members;
+        }
+
+        public getExtendingTypes(): PullTypeSymbol[] {
+            var extendingTypes: PullTypeSymbol[] = [];
+
+            var matchingLinks: TypeScript.PullSymbolLink[] = this.findIncomingLinks(psl => psl.kind === SymbolLinkKind.Extends);
+
+            for (var i = 0; i < matchingLinks.length; i++) {
+                var potentialExtendingType: TypeScript.PullTypeSymbol = <TypeScript.PullTypeSymbol>(matchingLinks[i].start);
+                var extendedTypes = potentialExtendingType.getExtendedTypes();
+
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i] === this) {
+                        extendingTypes.push(potentialExtendingType);
+                    }
+                }
+            }
+
+            var returnTypes: PullTypeSymbol[] = [];
+            
+            extendingTypes.forEach( extender => {
+                var recursiveExtenders = extender.getExtendingTypes();
+                returnTypes.push.apply(returnTypes, recursiveExtenders);
+                returnTypes.push( extender);
+            });
+            
+            return returnTypes;
         }
 
         public hasBase(potentialBase: PullTypeSymbol) {

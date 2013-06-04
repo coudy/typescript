@@ -96,8 +96,138 @@ module Services {
             return this.getReferencesInFile(fileName, symbol);
         }
 
-        public getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[] {
-            return [];
+        public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
+            this.refresh();
+
+            var result: ReferenceEntry[] = [];
+
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
+            
+            var path = this.getAstPathToPosition(script, pos);
+            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+                this.logger.log("No identifier at the specified location.");
+                return result;
+            }
+
+            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
+            var symbol = symbolInfoAtPosition.symbol;
+
+            if (symbol === null) {
+                this.logger.log("No symbol annotation on the identifier AST.");
+                return [];
+            }
+
+            var typeSymbol: TypeScript.PullTypeSymbol = symbol.getType();
+            var typesToSearch: TypeScript.PullTypeSymbol[];
+
+            if (typeSymbol.isClass() || typeSymbol.isInterface()) {
+                typesToSearch = typeSymbol.getExtendingTypes();
+            } 
+            else if (symbol.getKind() == TypeScript.PullElementKind.Property ||
+                symbol.getKind() == TypeScript.PullElementKind.Function ||
+                typeSymbol.isMethod() || typeSymbol.isProperty()) {
+
+                var declaration: TypeScript.PullDecl = symbol.getDeclarations()[0];
+                var classSymbol: TypeScript.PullTypeSymbol = declaration.getParentDecl().getSymbol().getType();
+
+                typesToSearch = [];
+                var extendingTypes = classSymbol.getExtendingTypes();
+                var extendedTypes = classSymbol.getExtendedTypes();
+                extendingTypes.forEach(type => {
+                    var overrides = this.getOverrides(type, symbol);
+                    overrides.forEach(override => {
+                        typesToSearch.push(override);
+                    });
+                });
+                extendedTypes.forEach(type => {
+                    var overrides = this.getOverrides(type, symbol);
+                    overrides.forEach(override => {
+                        typesToSearch.push(override);
+                    });
+                });
+            }
+
+            var fileNames = this.compilerState.getFileNames();
+            for (var i = 0, len = fileNames.length; i < len; i++) {
+                var tempFileName = fileNames[i];
+                
+                var tempDocument = this.compilerState.getDocument(tempFileName);
+                var filter = tempDocument.bloomFilter();
+
+                typesToSearch.forEach(typeToSearch => {
+                    var symbolName: string = typeToSearch.getName();
+                    if (filter.probablyContains(symbolName)) {
+                        result = result.concat(this.getImplementorsInFile(tempFileName, typeToSearch));
+                    }
+                });
+            }
+            return result;
+        }
+
+        public getOverrides(container: TypeScript.PullTypeSymbol, memberSym: TypeScript.PullSymbol): TypeScript.PullTypeSymbol[]{
+            var result: TypeScript.PullTypeSymbol[] = [];
+            var members: TypeScript.PullSymbol[];
+            if (container.isClass()) {
+                members = container.getMembers();
+            } else if (container.isInterface()) {
+                members = container.getMembers();
+            }
+
+            if (members == null)
+                return null;
+
+            members.forEach(member => {
+                var typeMember = <TypeScript.PullTypeSymbol>member;
+                if (typeMember.getName() === memberSym.getName()) {
+                    // Not currently checking whether static-ness matches: typeMember.isStatic() === memberSym.isStatic() or whether
+                    //  typeMember.isMethod() === memberSym.isMethod() && typeMember.isProperty() === memberSym.isProperty()
+                        result.push(typeMember);
+                }
+            });
+
+            return result;
+        }
+
+
+        private getImplementorsInFile(fileName: string, symbol: TypeScript.PullTypeSymbol): ReferenceEntry[] {
+            var result: ReferenceEntry[] = [];
+            var symbolName = symbol.getDisplayName();
+
+            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
+            if (possiblePositions && possiblePositions.length > 0) {
+                var document = this.compilerState.getDocument(fileName);
+                var script = document.script;
+
+                possiblePositions.forEach(p => {
+                    var path = this.getAstPathToPosition(script, p);
+                    if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+                        return;
+                    }
+                    var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
+                    if (searchSymbolInfoAtPosition !== null) {
+                        
+                        var normalizedSymbol;
+                        if (symbol.getKind() === TypeScript.PullElementKind.Class || symbol.getKind() === TypeScript.PullElementKind.Interface) {
+                            normalizedSymbol = searchSymbolInfoAtPosition.symbol.getType();
+                        }
+                        else {
+                            var declaration = searchSymbolInfoAtPosition.symbol.getDeclarations()[0];
+                            normalizedSymbol = declaration.getSymbol();
+                        }
+
+                        if (normalizedSymbol === symbol) {
+                            var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                            var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
+
+                            result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+
+                        }
+                    }
+                });
+
+            }
+            return result;
         }
 
         private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
