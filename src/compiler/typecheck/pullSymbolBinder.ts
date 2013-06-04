@@ -41,7 +41,7 @@ module TypeScript {
 
         private bindingPhase = globalBindingPhase++;
 
-        private staticClassMembers: PullSymbol[] = [];
+        //private staticClassMembers: PullSymbol[] = [];
 
         private functionTypeParameterCache: any = new BlockIntrinsics();
 
@@ -387,11 +387,11 @@ module TypeScript {
                 }
             }
 
-            var childDecls = moduleContainerDecl.getChildDecls();
+            // var childDecls = moduleContainerDecl.getChildDecls();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
 
             // if it's an enum, freshen the index signature
             if (isEnum) {
@@ -417,8 +417,14 @@ module TypeScript {
                 moduleInstanceTypeSymbol.recomputeIndexSignatures();
             }
 
-            var otherDecls = this.findDeclsInContext(moduleContainerDecl, moduleContainerDecl.getKind(), true);
+            var valueDecl = moduleContainerDecl.getValueDecl();
 
+            if (valueDecl) {
+                valueDecl.ensureSymbolIsBound();
+            }
+
+            var otherDecls = this.findDeclsInContext(moduleContainerDecl, moduleContainerDecl.getKind(), true);
+            
             if (otherDecls && otherDecls.length) {
                 for (var i = 0; i < otherDecls.length; i++) {
                     otherDecls[i].ensureSymbolIsBound();
@@ -737,13 +743,13 @@ module TypeScript {
                 }
             }
 
-            var childDecls = classDecl.getChildDecls();
+            // var childDecls = classDecl.getChildDecls();
 
             this.resetTypeParameterCache();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
 
             this.resetTypeParameterCache();
 
@@ -767,12 +773,12 @@ module TypeScript {
 
                 classSymbol.setHasDefaultConstructor();
 
-                if (!classAST.extendsList || !classAST.extendsList.members.length) {
-                    var constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                    constructorSignature.setReturnType(classSymbol);
-                    constructorTypeSymbol.addConstructSignature(constructorSignature);
-                    constructorSignature.addDeclaration(classDecl);
-                }
+                // if (!classAST.extendsList || !classAST.extendsList.members.length) {
+                //     var constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                //     constructorSignature.setReturnType(classSymbol);
+                //     constructorTypeSymbol.addConstructSignature(constructorSignature);
+                //     constructorSignature.addDeclaration(classDecl);
+                // }
 
                 // set the class decl's AST to the class declaration
                 //this.semanticInfo.setASTForDecl(classDecl, classAST);
@@ -781,34 +787,7 @@ module TypeScript {
             constructorTypeSymbol.setAssociatedContainerType(classSymbol);
 
             // bind statics to the constructor symbol
-            if (this.staticClassMembers.length) {
-                var member: PullSymbol;
-                var isPrivate = false;
-                var memberMap: any = new BlockIntrinsics();
-                var memberDecl: PullDecl;
-                var memberAST: AST;
 
-                for (var i = 0; i < this.staticClassMembers.length; i++) {
-
-                    member = this.staticClassMembers[i];
-
-                    if (memberMap[member.getName()]) {
-                        memberDecl = member.getDeclarations()[0];
-                        memberAST = this.semanticInfo.getASTForDecl(memberDecl);
-                        memberDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.semanticInfo.getPath(), memberAST.minChar, memberAST.getLength(), DiagnosticCode.Duplicate_identifier__0_, [memberDecl.getDisplayName()]));
-                    }
-                    else {
-                        memberMap[member.getName()] = true;
-                    }
-
-                    isPrivate = member.hasFlag(PullElementFlags.Private);
-
-                    constructorTypeSymbol.addMember(member, isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember);
-                }
-
-                this.staticClassMembers.length = 0;
-            }
 
             var typeParameters = classDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
@@ -845,6 +824,13 @@ module TypeScript {
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
             }
+
+
+            var valueDecl = classDecl.getValueDecl();
+
+            if (valueDecl) {
+                valueDecl.ensureSymbolIsBound();
+            }            
 
             classSymbol.setIsBound(this.bindingPhase);
         }
@@ -934,13 +920,13 @@ module TypeScript {
                 interfaceSymbol.invalidate();
             }
 
-            var childDecls = interfaceDecl.getChildDecls();
+            // var childDecls = interfaceDecl.getChildDecls();
 
             this.resetTypeParameterCache();
 
-            for (var i = 0; i < childDecls.length; i++) {
-                this.bindDeclToPullSymbol(childDecls[i]);
-            }
+            // for (var i = 0; i < childDecls.length; i++) {
+            //     this.bindDeclToPullSymbol(childDecls[i]);
+            // }
 
             this.resetTypeParameterCache();
 
@@ -1460,27 +1446,29 @@ module TypeScript {
 
             if (parent.isClass() && isStatic) {
 
-                for (var i = 0; i < this.staticClassMembers.length; i++) {
-                    if (this.staticClassMembers[i].getName() === declName) {
-                        propertySymbol = this.staticClassMembers[i];
-                        break;
-                    }
-                }
+                parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
+
+                // for (var i = 0; i < this.staticClassMembers.length; i++) {
+                //     if (this.staticClassMembers[i].getName() === declName) {
+                //         propertySymbol = this.staticClassMembers[i];
+                //         break;
+                //     }
+                // }
 
 
-                if (!propertySymbol && this.reBindingAfterChange) {
-                    var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
+                // if (!propertySymbol && this.reBindingAfterChange) {
+                //     var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
 
-                    if (classConstructor) {
-                        var classConstructorType = classConstructor.getType();
+                //     if (classConstructor) {
+                //         var classConstructorType = classConstructor.getType();
 
-                        propertySymbol = classConstructorType.findMember(declName);
-                    }
-                }                
+                //         propertySymbol = classConstructorType.findMember(declName);
+                //     }
+                // }                
             }
-            else {
+            // else {
                 propertySymbol = parent.findMember(declName, false);
-            }
+            // }
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
 
@@ -1531,12 +1519,12 @@ module TypeScript {
                 if (parent.isClass()) {
                     classTypeSymbol = <PullClassTypeSymbol>parent;
 
-                    if (isStatic) {
-                        this.staticClassMembers[this.staticClassMembers.length] = propertySymbol;
-                    }
-                    else {
+                    // if (isStatic) {
+                    //     this.staticClassMembers[this.staticClassMembers.length] = propertySymbol;
+                    // }
+                    // else {
                         classTypeSymbol.addMember(propertySymbol, linkKind);
-                    }
+                    //}
                 }
                 else {
                     parent.addMember(propertySymbol, linkKind);
@@ -1581,16 +1569,21 @@ module TypeScript {
                         params[argDecl.id.text] = true;
                     }
                     if (decl) {
-                        parameterSymbol.addDeclaration(decl);
-                        decl.setSymbol(parameterSymbol);
 
-                        var valDecl = decl.getValueDecl();
+                        if (isProperty) {
+                            decl.ensureSymbolIsBound();
+                            var valDecl = decl.getValueDecl();
 
-                        // if this is a parameter property, we still need to set the value decl
-                        // for the function parameter
-                        if (valDecl) {
-                            valDecl.setSymbol(parameterSymbol);
-                            parameterSymbol.addDeclaration(valDecl);
+                            // if this is a parameter property, we still need to set the value decl
+                            // for the function parameter
+                            if (valDecl) {
+                                valDecl.setSymbol(parameterSymbol);
+                                parameterSymbol.addDeclaration(valDecl);
+                            }                            
+                        }
+                        else {
+                            parameterSymbol.addDeclaration(decl);
+                            decl.setSymbol(parameterSymbol);
                         }
                     }
                     this.semanticInfo.setSymbolAndDiagnosticsForAST(argDecl.id, SymbolAndDiagnostics.fromSymbol(parameterSymbol));
@@ -2015,28 +2008,28 @@ module TypeScript {
             var linkKind = isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember;
 
             if (parent.isClass() && isStatic) {
+                parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
+                // for (var i = 0; i < this.staticClassMembers.length; i++) {
+                //     if (this.staticClassMembers[i].getName() === methodName) {
+                //         methodSymbol = this.staticClassMembers[i];
+                //         break;
+                //     }
+                // }
 
-                for (var i = 0; i < this.staticClassMembers.length; i++) {
-                    if (this.staticClassMembers[i].getName() === methodName) {
-                        methodSymbol = this.staticClassMembers[i];
-                        break;
-                    }
-                }
+                // if (!methodSymbol && this.reBindingAfterChange) {
+                //     var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
 
-                if (!methodSymbol && this.reBindingAfterChange) {
-                    var classConstructor = (<PullClassTypeSymbol>parent).getConstructorMethod();
+                //     if (classConstructor) {
+                //         var classConstructorType = classConstructor.getType();
 
-                    if (classConstructor) {
-                        var classConstructorType = classConstructor.getType();
-
-                        methodSymbol = classConstructorType.findMember(methodName);
-                    }
-                }
+                //         methodSymbol = classConstructorType.findMember(methodName);
+                //     }
+                // }
 
             }
-            else {
+            //else {
                 methodSymbol = parent.findMember(methodName, false);
-            }
+            //}
 
             if (methodSymbol &&
                 (methodSymbol.getKind() !== PullElementKind.Method ||
@@ -2109,12 +2102,12 @@ module TypeScript {
 
             if (!parentHadSymbol) {
 
-                if (isStatic) {
-                    this.staticClassMembers[this.staticClassMembers.length] = methodSymbol;
-                }
-                else {
+                // if (isStatic) {
+                //     this.staticClassMembers[this.staticClassMembers.length] = methodSymbol;
+                // }
+                // else {
                     parent.addMember(methodSymbol, linkKind);
-                }
+                //}
             }
 
             if (parentHadSymbol && cleanedPreviousDecls) {
@@ -2259,7 +2252,7 @@ module TypeScript {
 
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||
-                (!isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature && constructorSymbol.getType() && constructorSymbol.getType().hasOwnConstructSignatures() && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
 
                 constructorDeclaration.addDiagnostic(
                     new SemanticDiagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));
@@ -2605,22 +2598,27 @@ module TypeScript {
             var getterSymbol: PullSymbol = null;
             var getterTypeSymbol: PullFunctionTypeSymbol = null;
 
-            if (!isStatic) {
+            if (isStatic) {
+                parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
+            }
+
+
+            //if (!isStatic) {
                 accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
-            }
-            else {
-                var candidate: PullSymbol;
+            // }
+            // else {
+            //     var candidate: PullSymbol;
 
-                for (var m = 0; m < this.staticClassMembers.length; m++) {
-                    candidate = this.staticClassMembers[m];
+            //     for (var m = 0; m < this.staticClassMembers.length; m++) {
+            //         candidate = this.staticClassMembers[m];
 
-                    if (candidate.getName() === funcName) {
-                        accessorSymbol = <PullAccessorSymbol>candidate;
-                        hadOtherAccessor = accessorSymbol.isAccessor();
-                        break;
-                    }
-                }
-            }
+            //         if (candidate.getName() === funcName) {
+            //             accessorSymbol = <PullAccessorSymbol>candidate;
+            //             hadOtherAccessor = accessorSymbol.isAccessor();
+            //             break;
+            //         }
+            //     }
+            // }
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
@@ -2700,12 +2698,12 @@ module TypeScript {
 
             if (!parentHadSymbol && !hadOtherAccessor) {
 
-                if (isStatic) {
-                    this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
-                }
-                else {
+                // if (isStatic) {
+                //     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
+                // }
+                // else {
                     parent.addMember(accessorSymbol, linkKind);
-                }
+                //}
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -2782,22 +2780,26 @@ module TypeScript {
             var setterSymbol: PullSymbol = null;
             var setterTypeSymbol: PullFunctionTypeSymbol = null;
 
-            if (!isStatic) {
+            if (isStatic) {
+                parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
+            }
+
+            // if (!isStatic) {
                 accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
-            }
-            else {
-                var candidate: PullSymbol;
+            // }
+            // else {
+            //     var candidate: PullSymbol;
 
-                for (var m = 0; m < this.staticClassMembers.length; m++) {
-                    candidate = this.staticClassMembers[m];
+            //     for (var m = 0; m < this.staticClassMembers.length; m++) {
+            //         candidate = this.staticClassMembers[m];
 
-                    if (candidate.getName() === funcName) {
-                        accessorSymbol = <PullAccessorSymbol>candidate;
-                        hadOtherAccessor = accessorSymbol.isAccessor();
-                        break;
-                    }
-                }
-            }
+            //         if (candidate.getName() === funcName) {
+            //             accessorSymbol = <PullAccessorSymbol>candidate;
+            //             hadOtherAccessor = accessorSymbol.isAccessor();
+            //             break;
+            //         }
+            //     }
+            // }
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
@@ -2878,12 +2880,12 @@ module TypeScript {
 
             if (!parentHadSymbol && !hadOtherAccessor) {
 
-                if (isStatic) {
-                    this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
-                }
-                else {
+                // if (isStatic) {
+                //     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
+                // }
+                // else {
                     parent.addMember(accessorSymbol, linkKind);
-                }
+                //}
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when

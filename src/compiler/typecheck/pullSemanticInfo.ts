@@ -435,7 +435,13 @@ module TypeScript {
 
             for (var i = 0; i < typeParameters.length; i++) {
                 this.cleanDecl(typeParameters[i]);
-            }                 
+            }
+
+            var valueDecl = decl.getValueDecl();
+
+            if (valueDecl) {
+                this.cleanDecl(valueDecl);
+            }
         }
 
         private cleanAllDecls() {

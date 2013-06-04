@@ -743,7 +743,7 @@ module TypeScript {
         }
 
         public isArrayOrEquivalent(type: PullTypeSymbol) {
-            return type.isArray() || type == this.cachedArrayInterfaceType();
+            return (type.isArray() && (<PullArrayTypeSymbol>type).getElementType()) || type == this.cachedArrayInterfaceType();
         }
 
         private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
@@ -900,6 +900,16 @@ module TypeScript {
 
             containerSymbol.setResolved();
 
+            var containerDecls = containerSymbol.getDeclarations();
+
+            for (var i = 0; i < containerDecls.length; i++) {
+
+                var childDecls = containerDecls[i].getChildDecls();
+
+                for (var j = 0; j < childDecls.length; j++) {
+                    childDecls[j].ensureSymbolIsBound();
+                }
+            }
 
             if (containerDecl.getKind() != PullElementKind.Enum) {
 
@@ -1064,6 +1074,18 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved()) {
+
+                var typeRefDecls = typeDeclSymbol.getDeclarations();
+
+                for (var i = 0; i < typeRefDecls.length; i++) {
+
+                    var childDecls = typeRefDecls[i].getChildDecls();
+
+                    for (var j = 0; j < childDecls.length; j++) {
+                        childDecls[j].ensureSymbolIsBound();
+                    }
+                }               
+
                 // Resolve members
                 var typeDeclMembers = typeDeclSymbol.getMembers();
                 for (var i = 0; i < typeDeclMembers.length; i++) {
@@ -1160,7 +1182,7 @@ module TypeScript {
                         constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                         constructorSignature.setReturnType(classDeclSymbol);
                         constructorTypeSymbol.addConstructSignature(constructorSignature);
-                        constructorSignature.addDeclaration(classDecl);
+                        constructorSignature.addDeclaration(classDecl);                    
 
                         var typeParameters = constructorTypeSymbol.getTypeParameters();
 
@@ -1748,7 +1770,7 @@ module TypeScript {
                         typeExprSymbol.isResolved() &&
                         !typeExprSymbol.getIsSpecialized() &&
                         typeExprSymbol.getTypeParameters().length &&
-                        typeExprSymbol.getTypeArguments() == null &&
+                        (typeExprSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeExprSymbol)) &&
                         this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
 
                         context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
@@ -1875,7 +1897,7 @@ module TypeScript {
                     constraintTypeSymbol.isGeneric() &&
                     !constraintTypeSymbol.isTypeParameter() &&
                     constraintTypeSymbol.getTypeParameters().length &&
-                    constraintTypeSymbol.getTypeArguments() == null &&
+                    (constraintTypeSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(constraintTypeSymbol)) &&
                     constraintTypeSymbol.isResolved() &&
                     this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
 
@@ -4589,8 +4611,8 @@ module TypeScript {
                     if (callEx.arguments) {
                         for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
                             var arg = callEx.arguments.members[k];
-                            var argDecl = this.getDeclForAST(arg);
-                            var argSymbol = argDecl.getSymbol();
+                            var argSymbolAndDiagnostics = this.getSymbolAndDiagnosticsForAST(arg);
+                            var argSymbol = argSymbolAndDiagnostics && argSymbolAndDiagnostics.symbol;
 
                             if (argSymbol) {
                                 var argType = argSymbol.getType();
