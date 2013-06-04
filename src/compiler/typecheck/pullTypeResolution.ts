@@ -291,7 +291,22 @@ module TypeScript {
             }
         }
 
-        
+        private getMemberSymbol(symbolName: string, declSearchKind: PullElementKind, parent: PullSymbol) {
+            if (!parent.isType()) {
+                return null;
+            }
+
+            var typeDeclarations = parent.getDeclarations();
+            var childDecls: PullDecl[] = null;              
+
+            for (var j = 0; j < typeDeclarations.length; j++) {
+               childDecls = typeDeclarations[j].searchChildDecls(symbolName, declSearchKind);
+
+               if (childDecls.length) {
+                    return childDecls[0].getSymbol();
+               }
+            }
+        }
 
         // search for an unqualified symbol name within a given decl path
         private getSymbolFromDeclPath(symbolName: string, declPath: PullDecl[], declSearchKind: PullElementKind): PullSymbol {
@@ -375,19 +390,12 @@ module TypeScript {
 
                     // otherwise, check the members
                     declSymbol = decl.getSymbol().getType();
-                    declMembers = declSymbol.getMembers();
 
-                    for (var j = 0; j < declMembers.length; j++) {
-                        // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
-                        if (declMembers[j].getName() === symbolName) {
-                            kind = declMembers[j].getKind();
+                    var childSymbol = this.getMemberSymbol(symbolName, declSearchKind, declSymbol);
 
-                            if ((kind & declSearchKind) != 0) {
-                                return declMembers[j];
-                            }
-                        }
+                    if (childSymbol) {
+                        return childSymbol;
                     }
-
                 }
                 else if ((declSearchKind & (PullElementKind.SomeType | PullElementKind.SomeContainer)) || !(pathDeclKind & PullElementKind.Class)) {
                     var candidateSymbol: PullSymbol = null;
