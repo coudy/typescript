@@ -674,6 +674,7 @@ module TypeScript {
 
     export class BoundDecl extends AST {
         public init: AST = null;
+        public isImplicit = false;
         public typeExpr: AST = null;
         private _varFlags = VariableFlags.None;
         public isDeclaration() { return true; }

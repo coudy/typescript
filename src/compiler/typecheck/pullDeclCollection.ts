@@ -17,7 +17,6 @@ module TypeScript {
         public popParent() { this.parentChain.length--; }
 
         public foundValueDecl = false;
-
     }
 
     export function preCollectImportDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {

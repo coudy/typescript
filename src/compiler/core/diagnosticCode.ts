@@ -278,6 +278,8 @@ module TypeScript {
         Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3,
         Type_reference_cannot_refer_to_container__0_,
         Type_reference_must_refer_to_type,
+        Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element,
+
 
 
 
