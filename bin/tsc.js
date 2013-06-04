@@ -5103,7 +5103,7 @@ var TypeScript;
         SyntaxFacts.isTokenKind = isTokenKind;
 
         function isAnyKeyword(kind) {
-            return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
+            return kind >= 15 /* FirstKeyword */ && kind <= 70 /* LastKeyword */;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
 
@@ -5392,7 +5392,7 @@ var TypeScript;
 
     isNumericLiteralStart[46 /* dot */] = true;
 
-    for (var keywordKind = TypeScript.SyntaxKind.FirstKeyword; keywordKind <= TypeScript.SyntaxKind.LastKeyword; keywordKind++) {
+    for (var keywordKind = 15 /* FirstKeyword */; keywordKind <= 70 /* LastKeyword */; keywordKind++) {
         var keyword = TypeScript.SyntaxFacts.getText(keywordKind);
         isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
     }
@@ -5445,7 +5445,7 @@ var TypeScript;
         };
 
         Scanner.prototype.createToken = function (fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo) {
-            if (kind >= TypeScript.SyntaxKind.FirstFixedWidth) {
+            if (kind >= 15 /* FirstFixedWidth */) {
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
                         return new TypeScript.Syntax.FixedWidthTokenWithNoTrivia(kind);
@@ -21622,7 +21622,7 @@ var TypeScript;
             };
 
             ParserImpl.prototype.isKeyword = function (kind) {
-                if (kind >= TypeScript.SyntaxKind.FirstKeyword) {
+                if (kind >= 15 /* FirstKeyword */) {
                     if (kind <= 50 /* LastFutureReservedKeyword */) {
                         return true;
                     }
@@ -26320,7 +26320,6 @@ var TypeScript;
         VariableFlags[VariableFlags["Static"] = 1 << 4] = "Static";
         VariableFlags[VariableFlags["Property"] = 1 << 8] = "Property";
         VariableFlags[VariableFlags["ClassProperty"] = 1 << 11] = "ClassProperty";
-
         VariableFlags[VariableFlags["EnumElement"] = 1 << 13] = "EnumElement";
     })(TypeScript.VariableFlags || (TypeScript.VariableFlags = {}));
     var VariableFlags = TypeScript.VariableFlags;

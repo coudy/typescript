@@ -5188,7 +5188,7 @@ var TypeScript;
         SyntaxFacts.isTokenKind = isTokenKind;
 
         function isAnyKeyword(kind) {
-            return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
+            return kind >= 15 /* FirstKeyword */ && kind <= 70 /* LastKeyword */;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
 
@@ -5477,7 +5477,7 @@ var TypeScript;
 
     isNumericLiteralStart[46 /* dot */] = true;
 
-    for (var keywordKind = TypeScript.SyntaxKind.FirstKeyword; keywordKind <= TypeScript.SyntaxKind.LastKeyword; keywordKind++) {
+    for (var keywordKind = 15 /* FirstKeyword */; keywordKind <= 70 /* LastKeyword */; keywordKind++) {
         var keyword = TypeScript.SyntaxFacts.getText(keywordKind);
         isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
     }
@@ -5530,7 +5530,7 @@ var TypeScript;
         };
 
         Scanner.prototype.createToken = function (fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo) {
-            if (kind >= TypeScript.SyntaxKind.FirstFixedWidth) {
+            if (kind >= 15 /* FirstFixedWidth */) {
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
                         return new TypeScript.Syntax.FixedWidthTokenWithNoTrivia(kind);
@@ -21707,7 +21707,7 @@ var TypeScript;
             };
 
             ParserImpl.prototype.isKeyword = function (kind) {
-                if (kind >= TypeScript.SyntaxKind.FirstKeyword) {
+                if (kind >= 15 /* FirstKeyword */) {
                     if (kind <= 50 /* LastFutureReservedKeyword */) {
                         return true;
                     }
@@ -26405,7 +26405,6 @@ var TypeScript;
         VariableFlags[VariableFlags["Static"] = 1 << 4] = "Static";
         VariableFlags[VariableFlags["Property"] = 1 << 8] = "Property";
         VariableFlags[VariableFlags["ClassProperty"] = 1 << 11] = "ClassProperty";
-
         VariableFlags[VariableFlags["EnumElement"] = 1 << 13] = "EnumElement";
     })(TypeScript.VariableFlags || (TypeScript.VariableFlags = {}));
     var VariableFlags = TypeScript.VariableFlags;
@@ -61275,7 +61274,6 @@ var TypeScript;
             FormattingRequestKind[FormattingRequestKind["FormatOnEnter"] = 2] = "FormatOnEnter";
             FormattingRequestKind[FormattingRequestKind["FormatOnSemicolon"] = 3] = "FormatOnSemicolon";
             FormattingRequestKind[FormattingRequestKind["FormatOnClosingCurlyBrace"] = 4] = "FormatOnClosingCurlyBrace";
-
             FormattingRequestKind[FormattingRequestKind["FormatOnPaste"] = 5] = "FormatOnPaste";
         })(Formatting.FormattingRequestKind || (Formatting.FormattingRequestKind = {}));
         var FormattingRequestKind = Formatting.FormattingRequestKind;
@@ -61308,7 +61306,6 @@ var TypeScript;
             RuleAction[RuleAction["Ignore"] = 0] = "Ignore";
             RuleAction[RuleAction["Space"] = 1] = "Space";
             RuleAction[RuleAction["NewLine"] = 2] = "NewLine";
-
             RuleAction[RuleAction["Delete"] = 3] = "Delete";
         })(Formatting.RuleAction || (Formatting.RuleAction = {}));
         var RuleAction = Formatting.RuleAction;
@@ -61353,7 +61350,6 @@ var TypeScript;
     (function (Formatting) {
         (function (RuleFlags) {
             RuleFlags[RuleFlags["None"] = 0] = "None";
-
             RuleFlags[RuleFlags["CanDeleteNewLines"] = 1] = "CanDeleteNewLines";
         })(Formatting.RuleFlags || (Formatting.RuleFlags = {}));
         var RuleFlags = Formatting.RuleFlags;
@@ -61958,7 +61954,6 @@ var TypeScript;
             RulesPosition[RulesPosition["ContextRulesSpecific"] = MaskBitSize * 2] = "ContextRulesSpecific";
             RulesPosition[RulesPosition["ContextRulesAny"] = MaskBitSize * 3] = "ContextRulesAny";
             RulesPosition[RulesPosition["NoContextRulesSpecific"] = MaskBitSize * 4] = "NoContextRulesSpecific";
-
             RulesPosition[RulesPosition["NoContextRulesAny"] = MaskBitSize * 5] = "NoContextRulesAny";
         })(Formatting.RulesPosition || (Formatting.RulesPosition = {}));
         var RulesPosition = Formatting.RulesPosition;
@@ -62270,7 +62265,7 @@ var TypeScript;
                 };
 
                 TokenRange.Any = TokenRange.AllTokens();
-                TokenRange.Keywords = TokenRange.FromRange(TypeScript.SyntaxKind.FirstKeyword, TypeScript.SyntaxKind.LastKeyword);
+                TokenRange.Keywords = TokenRange.FromRange(15 /* FirstKeyword */, 70 /* LastKeyword */);
                 TokenRange.Operators = TokenRange.FromRange(79 /* SemicolonToken */, 120 /* SlashEqualsToken */);
                 TokenRange.BinaryOperators = TokenRange.FromRange(81 /* LessThanToken */, 120 /* SlashEqualsToken */);
                 TokenRange.BinaryKeywordOperators = TokenRange.FromTokens([29 /* InKeyword */, 30 /* InstanceOfKeyword */]);
