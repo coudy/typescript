@@ -67,7 +67,9 @@ module TypeScript {
         }
 
         public addSynthesizedDecl(decl: PullDecl) {
-            this.topLevelSynthesizedDecls[this.topLevelSynthesizedDecls.length] = decl;
+            if (!decl.getParentDecl()) {
+                this.topLevelSynthesizedDecls[this.topLevelSynthesizedDecls.length] = decl;
+            }
         }
         public getSynthesizedDecls() {
             return this.topLevelSynthesizedDecls;

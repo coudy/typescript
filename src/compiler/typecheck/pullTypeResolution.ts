@@ -1568,7 +1568,6 @@ module TypeScript {
 
             interfaceSymbol = <PullFunctionTypeSymbol>interfaceDecl.getSymbol();
 
-
             if (interfaceDeclAST.members) {
                 var memberDecl: PullDecl = null;
                 var memberSymbol: PullSymbol = null;
