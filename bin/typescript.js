@@ -147,7 +147,7 @@ var TypeScript;
         };
 
         ArrayUtilities.where = function (values, func) {
-            var result = [];
+            var result = new Array();
 
             for (var i = 0; i < values.length; i++) {
                 if (func(values[i])) {
@@ -355,7 +355,7 @@ var TypeScript;
         DiagnosticCode[DiagnosticCode["Export_assignments_cannot_be_used_in_internal_modules"] = 66] = "Export_assignments_cannot_be_used_in_internal_modules";
         DiagnosticCode[DiagnosticCode["Export_assignment_not_allowed_in_module_with_exported_element"] = 67] = "Export_assignment_not_allowed_in_module_with_exported_element";
         DiagnosticCode[DiagnosticCode["Module_cannot_have_multiple_export_assignments"] = 68] = "Module_cannot_have_multiple_export_assignments";
-        DiagnosticCode[DiagnosticCode["Ambient_enums_can_only_have_numeric_literals_as_initializers"] = 69] = "Ambient_enums_can_only_have_numeric_literals_as_initializers";
+        DiagnosticCode[DiagnosticCode["Ambient_enum_elements_can_only_have_integer_literal_initializers"] = 69] = "Ambient_enum_elements_can_only_have_integer_literal_initializers";
 
         DiagnosticCode[DiagnosticCode["Duplicate_identifier__0_"] = 70] = "Duplicate_identifier__0_";
         DiagnosticCode[DiagnosticCode["The_name__0__does_not_exist_in_the_current_scope"] = 71] = "The_name__0__does_not_exist_in_the_current_scope";
@@ -918,9 +918,9 @@ var TypeScript;
             message: "Module cannot have multiple export assignments.",
             code: 1065
         },
-        Ambient_enums_can_only_have_numeric_literals_as_initializers: {
+        Ambient_enum_elements_can_only_have_integer_literal_initializers: {
             category: 1 /* Error */,
-            message: "Ambient enums can only have numeric literals as initializers.",
+            message: "Ambient enum elements can only have integer literal initializers.",
             code: 1066
         },
         Duplicate_identifier__0_: {
@@ -2474,6 +2474,13 @@ var TypeScript;
     }
     TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    TypeScript.nodeMakeDirectoryTime = 0;
+    TypeScript.nodeCreateBufferTime = 0;
+    TypeScript.nodeWriteFileSyncTime = 0;
+})(TypeScript || (TypeScript = {}));
+
 var ByteOrderMark;
 (function (ByteOrderMark) {
     ByteOrderMark[ByteOrderMark["None"] = 0] = "None";
@@ -7799,6 +7806,33 @@ var TypeScript;
             return TypeScript.Syntax.getAncestorOfKind(positionedToken, kind) !== null;
         }
         Syntax.hasAncestorOfKind = hasAncestorOfKind;
+
+        function isIntegerLiteral(expression) {
+            if (expression) {
+                switch (expression.kind()) {
+                    case 163 /* PlusExpression */:
+                    case 164 /* NegateExpression */:
+                        expression = (expression).operand;
+                        return isInteger((expression).text());
+
+                    case 13 /* NumericLiteral */:
+                        var text = (expression).text();
+                        return isInteger(text) || isHexInteger(text);
+                }
+            }
+
+            return false;
+        }
+        Syntax.isIntegerLiteral = isIntegerLiteral;
+
+        function isInteger(text) {
+            return /^[0-9]+$/.test(text);
+        }
+
+        function isHexInteger(text) {
+            return /^0(x|X)[0-9a-fA-F]+$/.test(text);
+        }
+        Syntax.isHexInteger = isHexInteger;
     })(TypeScript.Syntax || (TypeScript.Syntax = {}));
     var Syntax = TypeScript.Syntax;
 })(TypeScript || (TypeScript = {}));
@@ -18831,7 +18865,7 @@ var TypeScript;
             }
 
             if (kind === 13 /* NumericLiteral */) {
-                return parseFloat(text);
+                return Syntax.isHexInteger(text) ? parseInt(text, 16) : parseFloat(text);
             } else if (kind === 14 /* StringLiteral */) {
                 if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
                     return massageEscapes(text.substr(1, text.length - 2));
@@ -25665,7 +25699,7 @@ var TypeScript;
 
                     if (enumElement.equalsValueClause) {
                         var value = enumElement.equalsValueClause.value;
-                        if (value.kind() !== 13 /* NumericLiteral */) {
+                        if (!TypeScript.Syntax.isIntegerLiteral(value)) {
                             seenComputedValue = true;
                         }
                     }
@@ -25678,10 +25712,13 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.visitEnumElement = function (node) {
-            if (this.inAmbientDeclaration && node.equalsValueClause && node.equalsValueClause.value.kind() !== 13 /* NumericLiteral */) {
-                this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(), 69 /* Ambient_enums_can_only_have_numeric_literals_as_initializers */);
-                this.skip(node);
-                return;
+            if (this.inAmbientDeclaration && node.equalsValueClause) {
+                var expression = node.equalsValueClause.value;
+                if (!TypeScript.Syntax.isIntegerLiteral(expression)) {
+                    this.pushDiagnostic1(this.childFullStart(node, node.equalsValueClause), node.equalsValueClause.firstToken(), 69 /* Ambient_enum_elements_can_only_have_integer_literal_initializers */);
+                    this.skip(node);
+                    return;
+                }
             }
 
             _super.prototype.visitEnumElement.call(this, node);
@@ -26283,7 +26320,6 @@ var TypeScript;
         VariableFlags[VariableFlags["Static"] = 1 << 4] = "Static";
         VariableFlags[VariableFlags["Property"] = 1 << 8] = "Property";
         VariableFlags[VariableFlags["ClassProperty"] = 1 << 11] = "ClassProperty";
-        VariableFlags[VariableFlags["Constant"] = 1 << 12] = "Constant";
 
         VariableFlags[VariableFlags["EnumElement"] = 1 << 13] = "EnumElement";
     })(TypeScript.VariableFlags || (TypeScript.VariableFlags = {}));
@@ -27356,6 +27392,7 @@ var TypeScript;
             this.id = id;
             this.typeExpr = typeExpr;
             this.init = init;
+            this.constantValue = null;
             this._varFlags = 0 /* None */;
         }
         BoundDecl.prototype.isDeclaration = function () {
@@ -29475,17 +29512,8 @@ var TypeScript;
     })();
     TypeScript.AstPathContext = AstPathContext;
 
-    (function (GetAstPathOptions) {
-        GetAstPathOptions[GetAstPathOptions["Default"] = 0] = "Default";
-        GetAstPathOptions[GetAstPathOptions["EdgeInclusive"] = 1] = "EdgeInclusive";
-
-        GetAstPathOptions[GetAstPathOptions["DontPruneSearchBasedOnPosition"] = 1 << 1] = "DontPruneSearchBasedOnPosition";
-    })(TypeScript.GetAstPathOptions || (TypeScript.GetAstPathOptions = {}));
-    var GetAstPathOptions = TypeScript.GetAstPathOptions;
-
-    function getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, options) {
+    function getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar) {
         if (typeof useTrailingTriviaAsLimChar === "undefined") { useTrailingTriviaAsLimChar = true; }
-        if (typeof options === "undefined") { options = 0 /* Default */; }
         var lookInComments = function (comments) {
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) {
@@ -29503,29 +29531,34 @@ var TypeScript;
 
         var pre = function (cur, parent, walker) {
             if (isValidAstNode(cur)) {
-                var inclusive = TypeScript.hasFlag(options, 1 /* EdgeInclusive */) || cur.nodeType() === 20 /* Name */ || cur.nodeType() === 32 /* MemberAccessExpression */ || cur.nodeType() === 11 /* TypeRef */ || pos === script.limChar + script.trailingTriviaWidth;
+                var isInvalid1 = cur.nodeType() === 88 /* ExpressionStatement */ && cur.getLength() === 0;
 
-                var minChar = cur.minChar;
-                var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
-                if (pos >= minChar && pos < limChar) {
-                    var previous = ctx.path.ast();
-                    if (previous === null || (cur.minChar >= previous.minChar && (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
-                        ctx.path.push(cur);
-                    } else {
+                if (isInvalid1) {
+                    walker.options.goChildren = false;
+                } else {
+                    var inclusive = cur.nodeType() === 20 /* Name */ || cur.nodeType() === 32 /* MemberAccessExpression */ || cur.nodeType() === 11 /* TypeRef */ || cur.nodeType() === 18 /* VariableDeclaration */ || cur.nodeType() === 17 /* VariableDeclarator */ || cur.nodeType() === 36 /* InvocationExpression */ || pos === script.limChar + script.trailingTriviaWidth;
+
+                    var minChar = cur.minChar;
+                    var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
+                    if (pos >= minChar && pos < limChar) {
+                        var previous = ctx.path.ast();
+                        if (previous === null || (cur.minChar >= previous.minChar && (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
+                            ctx.path.push(cur);
+                        } else {
+                        }
                     }
-                }
 
-                if (pos < limChar) {
-                    lookInComments(cur.preComments());
-                }
-                if (pos >= minChar) {
-                    lookInComments(cur.postComments());
-                }
+                    if (pos < limChar) {
+                        lookInComments(cur.preComments());
+                    }
+                    if (pos >= minChar) {
+                        lookInComments(cur.postComments());
+                    }
 
-                if (!TypeScript.hasFlag(options, 2 /* DontPruneSearchBasedOnPosition */)) {
                     walker.options.goChildren = (minChar <= pos && pos <= limChar);
                 }
             }
+
             return cur;
         };
 
@@ -30126,28 +30159,6 @@ var TypeScript;
             return null;
         };
 
-        Emitter.prototype.getConstantValue = function (boundDeclInfo) {
-            var init = boundDeclInfo.boundDecl.init;
-            if (init) {
-                if (init.nodeType() === 7 /* NumericLiteral */) {
-                    var numLit = init;
-                    return numLit.value;
-                } else if (init.nodeType() === 69 /* LeftShiftExpression */) {
-                    var binop = init;
-                    if (binop.operand1.nodeType() === 7 /* NumericLiteral */ && binop.operand2.nodeType() === 7 /* NumericLiteral */) {
-                        return (binop.operand1).value << (binop.operand2).value;
-                    }
-                } else if (init.nodeType() === 20 /* Name */) {
-                    var varDeclInfo = this.getVarDeclFromIdentifier(boundDeclInfo);
-                    if (varDeclInfo) {
-                        return this.getConstantValue(varDeclInfo);
-                    }
-                }
-            }
-
-            return null;
-        };
-
         Emitter.prototype.getConstantDecl = function (dotExpr) {
             this.setTypeCheckerUnit(this.document.fileName);
             var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), this.resolvingContext).symbol;
@@ -30172,7 +30183,7 @@ var TypeScript;
             var propertyName = dotExpr.operand2;
             var boundDeclInfo = this.getConstantDecl(dotExpr);
             if (boundDeclInfo) {
-                var value = this.getConstantValue(boundDeclInfo);
+                var value = boundDeclInfo.boundDecl.constantValue;
                 if (value !== null) {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
@@ -30600,16 +30611,26 @@ var TypeScript;
         };
 
         Emitter.prototype.emitEnumElement = function (varDecl) {
+            var name = varDecl.id.actualText;
+            var quoted = TypeScript.isQuoted(name);
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
             this.writeToOutput(this.moduleName);
-            this.writeToOutput('["');
-            this.writeToOutput(varDecl.id.text());
-            this.writeToOutput('"] = ');
-            varDecl.init.emit(this);
-            this.writeToOutput('] = "');
-            this.writeToOutput(varDecl.id.text());
-            this.writeToOutput('";');
+            this.writeToOutput('[');
+            this.writeToOutput(quoted ? name : '"' + name + '"');
+            this.writeToOutput('] = ');
+
+            if (varDecl.init) {
+                varDecl.init.emit(this);
+            } else if (varDecl.constantValue !== null) {
+                this.writeToOutput(varDecl.constantValue.toString());
+            } else {
+                this.writeToOutput("null");
+            }
+
+            this.writeToOutput('] = ');
+            this.writeToOutput(quoted ? name : '"' + name + '"');
+            this.writeToOutput(';');
         };
 
         Emitter.prototype.emitIndex = function (operand1, operand2) {
@@ -32096,7 +32117,7 @@ var TypeScript;
 
                 resolutionResult.resolvedFiles.push({
                     path: normalizedPath,
-                    refrencedFiles: normalizedReferencePaths,
+                    referencedFiles: normalizedReferencePaths,
                     importedFiles: normalizedImportPaths
                 });
             }
@@ -33760,13 +33781,6 @@ var TypeScript;
             this.isVarArg = true;
         };
 
-        PullSymbol.prototype.setIsSynthesized = function () {
-            this.isSynthesized = true;
-        };
-        PullSymbol.prototype.getIsSynthesized = function () {
-            return this.isSynthesized;
-        };
-
         PullSymbol.prototype.setIsSpecialized = function () {
             this.isSpecialized = true;
             this.isBeingSpecialized = false;
@@ -33789,6 +33803,14 @@ var TypeScript;
         };
         PullSymbol.prototype.setRootSymbol = function (symbol) {
             this.rootSymbol = symbol;
+        };
+
+        PullSymbol.prototype.setIsSynthesized = function (value) {
+            if (typeof value === "undefined") { value = true; }
+            this.isSynthesized = value;
+        };
+        PullSymbol.prototype.getIsSynthesized = function () {
+            return this.isSynthesized;
         };
 
         PullSymbol.prototype.setIsBound = function (rebindingID) {
@@ -34593,6 +34615,26 @@ var TypeScript;
             _super.prototype.invalidate.call(this);
         };
 
+        PullSignatureSymbol.prototype.destroy = function () {
+            if (this.parameterLinks) {
+                var paramType;
+
+                var sigs;
+
+                for (var i = 0; i < this.parameterLinks.length; i++) {
+                    this.parameterLinks[i].end.removeAllLinks();
+                }
+            }
+
+            if (this.typeParameterLinks) {
+                for (var i = 0; i < this.typeParameterLinks.length; i++) {
+                    this.typeParameterLinks[i].end.removeAllLinks();
+                }
+            }
+
+            this.removeAllLinks();
+        };
+
         PullSignatureSymbol.prototype.isStringConstantOverloadSignature = function () {
             if (this.stringConstantOverload === undefined) {
                 var params = this.getParameters();
@@ -34866,6 +34908,11 @@ var TypeScript;
             arrayType.addOutgoingLink(this, 4 /* ArrayOf */);
         };
 
+        PullTypeSymbol.prototype.setUnresolved = function () {
+            this.invalidatedSpecializations = false;
+            _super.prototype.setUnresolved.call(this);
+        };
+
         PullTypeSymbol.prototype.addContainedByLink = function (containedByLink) {
             if (!this.containedByLinks) {
                 this.containedByLinks = [];
@@ -35093,8 +35140,30 @@ var TypeScript;
             }
 
             var specializations = this.getKnownSpecializations();
+            var signatures = null;
 
             for (var i = 0; i < specializations.length; i++) {
+                signatures = specializations[i].getCallSignatures();
+
+                for (var j = 0; j < signatures.length; j++) {
+                    specializations[i].removeCallSignature(signatures[j], false);
+                }
+
+                signatures = specializations[i].getConstructSignatures();
+
+                for (var j = 0; j < signatures.length; j++) {
+                    specializations[i].removeConstructSignature(signatures[j], false);
+                }
+
+                signatures = specializations[i].getIndexSignatures();
+
+                for (var j = 0; j < signatures.length; j++) {
+                    specializations[i].removeIndexSignature(signatures[j], false);
+                }
+
+                specializations[i].recomputeCallSignatures();
+                specializations[i].recomputeConstructSignatures();
+                specializations[i].recomputeIndexSignatures();
                 specializations[i].invalidate();
             }
 
@@ -35291,6 +35360,7 @@ var TypeScript;
                     if (signature === this.callSignatureLinks[i].end) {
                         signatureLink = this.callSignatureLinks[i];
                         this.removeOutgoingLink(signatureLink);
+                        signature.destroy();
                         break;
                     }
                 }
@@ -35632,7 +35702,6 @@ var TypeScript;
         };
 
         PullTypeSymbol.prototype.setResolved = function () {
-            this.invalidatedSpecializations = true;
             _super.prototype.setResolved.call(this);
         };
 
@@ -36792,10 +36861,12 @@ var TypeScript;
         var prevInSpecialization = context.inSpecialization;
         context.inSpecialization = true;
 
-        TypeScript.nSpecializationsCreated++;
+        if (!newType) {
+            TypeScript.nSpecializationsCreated++;
 
-        newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) : isArray ? new PullArrayTypeSymbol() : typeToSpecialize.isTypeParameter() ? new PullTypeVariableSymbol(typeToSpecialize.getName(), (typeToSpecialize).isFunctionTypeParameter()) : new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
-        newType.setRootSymbol(rootType);
+            newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) : isArray ? new PullArrayTypeSymbol() : typeToSpecialize.isTypeParameter() ? new PullTypeVariableSymbol(typeToSpecialize.getName(), (typeToSpecialize).isFunctionTypeParameter()) : new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
+            newType.setRootSymbol(rootType);
+        }
 
         newType.setIsBeingSpecialized();
 
@@ -36876,6 +36947,7 @@ var TypeScript;
         var members = typeToSpecialize.getMembers();
 
         var newSignature;
+        var placeHolderSignature;
         var signature;
 
         var decl = null;
@@ -36925,8 +36997,14 @@ var TypeScript;
 
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
+                placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+
+                if (newSignature != placeHolderSignature) {
+                    newSignature.setRootSymbol(signature);
+                    placeHolderSignature.destroy();
+                }
 
                 context.popTypeSpecializationCache();
 
@@ -36987,8 +37065,14 @@ var TypeScript;
 
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
+                placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+
+                if (newSignature != placeHolderSignature) {
+                    newSignature.setRootSymbol(signature);
+                    placeHolderSignature.destroy();
+                }
 
                 context.popTypeSpecializationCache();
 
@@ -37049,8 +37133,14 @@ var TypeScript;
 
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
+                placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+
+                if (newSignature != placeHolderSignature) {
+                    newSignature.setRootSymbol(signature);
+                    placeHolderSignature.destroy();
+                }
 
                 context.popTypeSpecializationCache();
 
@@ -39169,7 +39259,7 @@ var TypeScript;
             if (!symbolAndDiagnostics) {
                 symbolAndDiagnostics = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
 
-                if (!symbolAndDiagnostics.symbol.isGeneric()) {
+                if (symbolAndDiagnostics.symbol && !symbolAndDiagnostics.symbol.isGeneric()) {
                     this.setSymbolAndDiagnosticsForAST(typeRef, symbolAndDiagnostics, context);
                 }
             }
@@ -41889,6 +41979,7 @@ var TypeScript;
                     break;
                 case 32 /* DynamicModule */:
                 case 4 /* Container */:
+                case 64 /* Enum */:
                     var moduleDecl = this.semanticInfoChain.getASTForDecl(decl);
                     this.resolveModuleDeclaration(moduleDecl, context);
                     break;
@@ -47272,7 +47363,7 @@ var TypeScript;
             declFlags |= 128 /* Optional */;
         }
 
-        if (TypeScript.hasFlag(propertyDecl.getVarFlags(), 4096 /* Constant */)) {
+        if (propertyDecl.constantValue !== null) {
             declFlags |= 524288 /* Constant */;
         }
 
@@ -48651,9 +48742,7 @@ var TypeScript;
                     }
                 }
 
-                if (constructorSymbol.getIsSynthesized()) {
-                    classSymbol.setConstructorMethod(null);
-                }
+                constructorSymbol.setIsSynthesized();
 
                 if (classSymbol.isGeneric()) {
                     isGeneric = true;
@@ -48736,10 +48825,7 @@ var TypeScript;
                 constructorSymbol.setIsSynthesized();
 
                 constructorSymbol.setType(constructorTypeSymbol);
-                constructorSymbol.addDeclaration(classDecl);
                 classSymbol.setConstructorMethod(constructorSymbol);
-
-                constructorTypeSymbol.addDeclaration(classDecl);
 
                 classSymbol.setHasDefaultConstructor();
 
@@ -48749,6 +48835,13 @@ var TypeScript;
                     constructorTypeSymbol.addConstructSignature(constructorSignature);
                     constructorSignature.addDeclaration(classDecl);
                 }
+            }
+
+            if (constructorSymbol.getIsSynthesized()) {
+                constructorSymbol.addDeclaration(classDecl.getValueDecl());
+                constructorTypeSymbol.addDeclaration(classDecl);
+            } else {
+                classSymbol.setHasDefaultConstructor(false);
             }
 
             constructorTypeSymbol.setAssociatedContainerType(classSymbol);
@@ -49157,6 +49250,7 @@ var TypeScript;
             if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) === 0) {
                 if (!variableSymbol) {
                     variableSymbol = new TypeScript.PullSymbol(declName, declKind);
+                    this.semanticInfoChain.cacheGlobalSymbol(variableSymbol, declKind);
                 }
 
                 variableSymbol.addDeclaration(variableDeclaration);
@@ -50103,6 +50197,7 @@ var TypeScript;
             constructorDeclaration.setSymbol(constructorSymbol);
             constructorSymbol.addDeclaration(constructorDeclaration);
             constructorTypeSymbol.addDeclaration(constructorDeclaration);
+            constructorSymbol.setIsSynthesized(false);
             this.semanticInfo.setSymbolAndDiagnosticsForAST(constructorAST, TypeScript.SymbolAndDiagnostics.fromSymbol(constructorSymbol));
 
             if (!isSignature) {
@@ -52053,65 +52148,32 @@ var TypeScript;
             this.movePast(node.openBraceToken);
             var array = new Array(node.enumElements.nonSeparatorCount());
 
-            var lastValue = null;
-            var memberNames = [];
-            var memberName;
+            var declarators = [];
+            var lastConstantValue = null;
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.enumElements.childAt(i));
                 } else {
                     var enumElement = node.enumElements.childAt(i);
+                    var memberStart = this.position + enumElement.leadingTriviaWidth();
 
-                    var memberValue = null;
-
-                    memberName = this.identifierFromToken(enumElement.propertyName, false);
+                    var memberName = this.identifierFromToken(enumElement.propertyName, false);
                     this.movePast(enumElement.propertyName);
 
-                    if (enumElement.equalsValueClause !== null) {
-                        memberValue = enumElement.equalsValueClause.accept(this);
-                        lastValue = null;
-                    }
+                    var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
 
-                    var memberStart = this.position;
+                    lastConstantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
 
-                    if (memberValue === null) {
-                        if (lastValue === null) {
-                            memberValue = new TypeScript.NumberLiteral(0, "0");
-                            lastValue = memberValue;
-                        } else {
-                            var nextValue = lastValue.value + 1;
-                            memberValue = new TypeScript.NumberLiteral(nextValue, nextValue.toString());
-                            lastValue = memberValue;
-                        }
-                    }
-
-                    var declarator = new TypeScript.VariableDeclarator(memberName, new TypeScript.TypeReference(this.createRef(name.actualText, -1), 0), memberValue);
+                    var declarator = new TypeScript.VariableDeclarator(memberName, new TypeScript.TypeReference(this.createRef(name.actualText, -1), 0), init);
+                    declarator.constantValue = lastConstantValue;
 
                     declarator.setVarFlags(declarator.getVarFlags() | 256 /* Property */);
                     this.setSpanExplicit(declarator, memberStart, this.position);
 
-                    if (memberValue.nodeType() === 7 /* NumericLiteral */) {
-                        declarator.setVarFlags(declarator.getVarFlags() | 4096 /* Constant */);
-                    } else if (memberValue.nodeType() === 69 /* LeftShiftExpression */) {
-                        var binop = memberValue;
-                        if (binop.operand1.nodeType() === 7 /* NumericLiteral */ && binop.operand2.nodeType() === 7 /* NumericLiteral */) {
-                            declarator.setVarFlags(declarator.getVarFlags() | 4096 /* Constant */);
-                        }
-                    } else if (memberValue.nodeType() === 20 /* Name */) {
-                        var nameNode = memberValue;
-                        for (var j = 0; j < memberNames.length; j++) {
-                            memberName = memberNames[j];
-                            if (memberName.text() === nameNode.text()) {
-                                declarator.setVarFlags(declarator.getVarFlags() | 4096 /* Constant */);
-                                break;
-                            }
-                        }
-                    }
+                    declarators.push(declarator);
 
-                    var declarators = new TypeScript.ASTList([declarator]);
-
-                    var declaration = new TypeScript.VariableDeclaration(declarators);
+                    var declaration = new TypeScript.VariableDeclaration(new TypeScript.ASTList([declarator]));
                     this.setSpanExplicit(declaration, memberStart, this.position);
 
                     var statement = new TypeScript.VariableStatement(declaration);
@@ -52119,7 +52181,6 @@ var TypeScript;
                     this.setSpanExplicit(statement, memberStart, this.position);
 
                     array[i / 2] = statement;
-                    memberNames.push(memberName);
 
                     declarator.setVarFlags(declarator.getVarFlags() | 1 /* Exported */);
                 }
@@ -52144,6 +52205,53 @@ var TypeScript;
             result.setModuleFlags(flags);
 
             return result;
+        };
+
+        SyntaxTreeToAstVisitor.prototype.determineConstantValue = function (equalsValue, declarators) {
+            var value = equalsValue === null ? null : equalsValue.value;
+            if (value === null) {
+                if (declarators.length === 0) {
+                    return 0;
+                } else {
+                    var lastConstantValue = TypeScript.ArrayUtilities.last(declarators).constantValue;
+                    return lastConstantValue !== null ? lastConstantValue + 1 : null;
+                }
+            } else {
+                return this.computeConstantValue(value, declarators);
+            }
+        };
+
+        SyntaxTreeToAstVisitor.prototype.computeConstantValue = function (expression, declarators) {
+            if (TypeScript.Syntax.isIntegerLiteral(expression)) {
+                var token;
+                switch (expression.kind()) {
+                    case 163 /* PlusExpression */:
+                    case 164 /* NegateExpression */:
+                        token = (expression).operand;
+                        break;
+                    default:
+                        token = expression;
+                }
+
+                var value = token.value();
+                return value && expression.kind() === 164 /* NegateExpression */ ? -value : value;
+            } else if (this.compilationSettings.propagateConstants) {
+                switch (expression.kind()) {
+                    case 11 /* IdentifierName */:
+                        var variableDeclarator = TypeScript.ArrayUtilities.firstOrDefault(declarators, function (d) {
+                            return d.id.text() === (expression).valueText();
+                        });
+                        return variableDeclarator ? variableDeclarator.constantValue : null;
+
+                    case 201 /* LeftShiftExpression */:
+                        var binaryExpression = expression;
+                        return this.computeConstantValue(binaryExpression.left, declarators) << this.computeConstantValue(binaryExpression.right, declarators);
+                }
+
+                return null;
+            } else {
+                return null;
+            }
         };
 
         SyntaxTreeToAstVisitor.prototype.visitEnumElement = function (node) {
@@ -54423,10 +54531,6 @@ var TypeScript;
     TypeScript.ioHostDirectoryNameTime = 0;
     TypeScript.ioHostCreateDirectoryStructureTime = 0;
     TypeScript.ioHostWriteFileTime = 0;
-
-    TypeScript.nodeMakeDirectoryTime = 0;
-    TypeScript.nodeWriteFileSyncTime = 0;
-    TypeScript.nodeCreateBufferTime = 0;
 
     var Document = (function () {
         function Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
