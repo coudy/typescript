@@ -390,31 +390,6 @@ module TypeScript {
             return null;
         }
 
-        private getConstantValue(boundDeclInfo: BoundDeclInfo): number {
-            var init = boundDeclInfo.boundDecl.init;
-            if (init) {
-                if (init.nodeType() === NodeType.NumericLiteral) {
-                    var numLit = <NumberLiteral>init;
-                    return numLit.value;
-                }
-                else if (init.nodeType() === NodeType.LeftShiftExpression) {
-                    var binop = <BinaryExpression>init;
-                    if (binop.operand1.nodeType() === NodeType.NumericLiteral &&
-                        binop.operand2.nodeType() === NodeType.NumericLiteral) {
-                        return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
-                    }
-                }
-                else if (init.nodeType() === NodeType.Name) {
-                    var varDeclInfo = this.getVarDeclFromIdentifier(boundDeclInfo);
-                    if (varDeclInfo) {
-                        return this.getConstantValue(varDeclInfo);
-                    }
-                }
-            }
-
-            return null;
-        }
-
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
             this.setTypeCheckerUnit(this.document.fileName);
             var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), this.resolvingContext).symbol;
@@ -439,7 +414,7 @@ module TypeScript {
             var propertyName = <Identifier>dotExpr.operand2;
             var boundDeclInfo = this.getConstantDecl(dotExpr);
             if (boundDeclInfo) {
-                var value = this.getConstantValue(boundDeclInfo);
+                var value = boundDeclInfo.boundDecl.constantValue;
                 if (value !== null) {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
@@ -911,7 +886,17 @@ module TypeScript {
             this.writeToOutput('[');
             this.writeToOutput(quoted ? name : '"' + name + '"');
             this.writeToOutput('] = ');
-            varDecl.init.emit(this);
+
+            if (varDecl.init) {
+                varDecl.init.emit(this);
+            }
+            else if (varDecl.constantValue !== null) {
+                this.writeToOutput(varDecl.constantValue.toString());
+            }
+            else {
+                this.writeToOutput("null");
+            }
+
             this.writeToOutput('] = ');
             this.writeToOutput(quoted ? name : '"' + name + '"');
             this.writeToOutput(';');

@@ -270,7 +270,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        if (hasFlag(propertyDecl.getVarFlags(), VariableFlags.Constant)) {
+        if (propertyDecl.constantValue !== null) {
             declFlags |= PullElementFlags.Constant;
         }
 

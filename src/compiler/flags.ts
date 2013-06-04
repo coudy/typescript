@@ -64,7 +64,6 @@ module TypeScript {
         Static = 1 << 4,
         Property = 1 << 8,
         ClassProperty = 1 << 11,
-        Constant = 1 << 12,
         EnumElement = 1 << 13
     }
 

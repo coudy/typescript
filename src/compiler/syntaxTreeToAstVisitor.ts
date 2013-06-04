@@ -689,9 +689,8 @@ module TypeScript {
             this.movePast(node.openBraceToken);
             var array: VariableStatement[] = new Array(node.enumElements.nonSeparatorCount());
 
-            var lastValue: NumberLiteral = null;
-            var memberNames: Identifier[] = [];
-            var memberName: Identifier;
+            var declarators: VariableDeclarator[] = [];
+            var lastConstantValue = null;
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -701,60 +700,22 @@ module TypeScript {
                     var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
                     var memberStart = this.position + enumElement.leadingTriviaWidth();
 
-                    var memberValue: AST = null;
-
-                    memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false);
+                    var memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false);
                     this.movePast(enumElement.propertyName);
+                    
+                    var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
 
-                    if (enumElement.equalsValueClause !== null) {
-                        memberValue = enumElement.equalsValueClause.accept(this);
-                        lastValue = null;
-                    }
+                    lastConstantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
 
-                    if (memberValue === null) {
-                        if (lastValue === null) {
-                            memberValue = new NumberLiteral(0, "0");
-                            lastValue = <NumberLiteral>memberValue;
-                        }
-                        else {
-                            var nextValue = lastValue.value + 1;
-                            memberValue = new NumberLiteral(nextValue, nextValue.toString());
-                            lastValue = <NumberLiteral>memberValue;
-                        }
-                    }
-
-                    var declarator = new VariableDeclarator(memberName, new TypeReference(this.createRef(name.actualText, -1), 0), memberValue);
+                    var declarator = new VariableDeclarator(memberName, new TypeReference(this.createRef(name.actualText, -1), 0), init);
+                    declarator.constantValue = lastConstantValue;
 
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(declarator, memberStart, this.position);
 
-                    if (memberValue.nodeType() === NodeType.NumericLiteral) {
-                        declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
-                    }
-                    else if (memberValue.nodeType() === NodeType.LeftShiftExpression) {
-                        // If the initializer is of the form "value << value" then treat it as a constant
-                        // as well.
-                        var binop = <BinaryExpression>memberValue;
-                        if (binop.operand1.nodeType() === NodeType.NumericLiteral && binop.operand2.nodeType() === NodeType.NumericLiteral) {
-                            declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
-                        }
-                    }
-                    else if (memberValue.nodeType() === NodeType.Name) {
-                        // If the initializer refers to an earlier enum value, then treat it as a constant
-                        // as well.
-                        var nameNode = <Identifier>memberValue;
-                        for (var j = 0; j < memberNames.length; j++) {
-                            memberName = memberNames[j];
-                            if (memberName.text() === nameNode.text()) {
-                                declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
-                                break;
-                            }
-                        }
-                    }
+                    declarators.push(declarator);
 
-                    var declarators = new ASTList([declarator]);
-
-                    var declaration = new VariableDeclaration(declarators);
+                    var declaration = new VariableDeclaration(new ASTList([declarator]));
                     this.setSpanExplicit(declaration, memberStart, this.position);
 
                     var statement = new VariableStatement(declaration);
@@ -762,7 +723,7 @@ module TypeScript {
                     this.setSpanExplicit(statement, memberStart, this.position);
 
                     array[i / 2] = statement;
-                    memberNames.push(memberName);
+
                     // all enum members are exported
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Exported);
                 }
@@ -787,6 +748,64 @@ module TypeScript {
             result.setModuleFlags(flags);
 
             return result;
+        }
+
+        private determineConstantValue(equalsValue: EqualsValueClauseSyntax, declarators: VariableDeclarator[]): number {
+            var value = equalsValue === null ? null : equalsValue.value;
+            if (value === null) {
+                // If they provided no value, then our constant value is 0 if we're the first 
+                // element, or one greater than the last constant value.
+                if (declarators.length === 0) {
+                    return 0;
+                }
+                else {
+                    var lastConstantValue = ArrayUtilities.last(declarators).constantValue;
+                    return lastConstantValue !== null ? lastConstantValue + 1 : null;
+                }
+            }
+            else {
+                return this.computeConstantValue(value, declarators);
+            }
+        }
+
+        private computeConstantValue(expression: IExpressionSyntax, declarators: VariableDeclarator[]): number {
+            if (Syntax.isIntegerLiteral(expression)) {
+                // Always produce a value for an integer literal.
+                var token: ISyntaxToken;
+                switch (expression.kind()) {
+                    case SyntaxKind.PlusExpression:
+                    case SyntaxKind.NegateExpression:
+                        token = <ISyntaxToken>(<PrefixUnaryExpressionSyntax>expression).operand;
+                        break;
+                    default:
+                        token = <ISyntaxToken>expression;
+                }
+
+                var value = token.value();
+                return value && expression.kind() === SyntaxKind.NegateExpression ? -value : value;
+            }
+            else if (this.compilationSettings.propagateConstants) {
+                switch (expression.kind()) {
+                    case SyntaxKind.IdentifierName:
+                        // If it's a name, see if we already had an enum value named this.  If so,
+                        // return that value.
+                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.id.text() === (<ISyntaxToken>expression).valueText());
+                        return variableDeclarator ? variableDeclarator.constantValue : null;
+
+                    case SyntaxKind.LeftShiftExpression:
+                        // Handle the common case of a left shifted value.
+                        var binaryExpression = <BinaryExpressionSyntax>expression;
+                        return this.computeConstantValue(binaryExpression.left, declarators) << this.computeConstantValue(binaryExpression.right, declarators);
+                }
+
+                // TODO: add more cases.
+                return null;
+            }
+            else {
+                // Wasn't an integer literal, and we're not aggressively propagating constants.
+                // There is no constant value for this expression.
+                return null;
+            }
         }
 
         public visitEnumElement(node: EnumElementSyntax): void {

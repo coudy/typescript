@@ -510,7 +510,7 @@ module TypeScript.Syntax {
         return /^[0-9]+$/.test(text);
     }
 
-    function isHexInteger(text): boolean {
+    export function isHexInteger(text): boolean {
         return /^0(x|X)[0-9a-fA-F]+$/.test(text);
     }
 }

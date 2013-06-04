@@ -784,6 +784,7 @@ module TypeScript {
     }
 
     export class BoundDecl extends AST {
+        public constantValue: number = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public id: Identifier, public typeExpr: AST, public init: AST) {

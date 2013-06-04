@@ -238,7 +238,7 @@ module TypeScript.Syntax {
         }
 
         if (kind === SyntaxKind.NumericLiteral) {
-            return parseFloat(text);
+            return isHexInteger(text) ? parseInt(text, /*radix:*/ 16) : parseFloat(text);
         }
         else if (kind === SyntaxKind.StringLiteral) {
             if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
