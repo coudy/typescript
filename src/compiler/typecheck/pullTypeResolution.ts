@@ -300,7 +300,7 @@ module TypeScript {
                 member = parent.findMember(symbolName);
             }
             else {
-                member = parent.findMember(symbolName);
+                member = parent.findNestedType(symbolName);
             }
 
             if (member) {
@@ -317,7 +317,7 @@ module TypeScript {
                 member = parent.findMember(symbolName);
             }
             else {
-                member = parent.findMember(symbolName);
+                member = parent.findNestedType(symbolName);
             }
 
             if (member) {
@@ -1768,7 +1768,19 @@ module TypeScript {
             var declParameterSymbol: PullSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
 
             if (declSymbol.isResolved()) {
-                return declSymbol.getType();
+                var declType = declSymbol.getType();
+                var valDecl = decl.getValueDecl();
+
+                if (valDecl) {
+                    var valSymbol = valDecl.getSymbol();
+
+                    if (valSymbol && !valSymbol.isResolved()) {
+                        valSymbol.setType(declType);
+                        valSymbol.setResolved();
+                    }
+                }
+
+                return declType;
             }
 
             if (declSymbol.isResolving()) {

@@ -661,9 +661,12 @@ module TypeScript {
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
             var errors: IDiagnostic[] = [];
-            // this.semanticInfoChain = globalSemanticInfoChain;
-            // this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
             var unit = this.semanticInfoChain.getUnit(fileName);
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
 
             if (unit) {
                 var document = this.getDocument(fileName);
@@ -862,6 +865,11 @@ module TypeScript {
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
 
             var pre = (cur: AST, parent: AST): AST => {
                 if (isValidAstNode(cur)) {
@@ -1113,6 +1121,11 @@ module TypeScript {
             var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var resolutionContext = new PullTypeResolutionContext();
             resolutionContext.resolveAggressively = true;
 
@@ -1363,6 +1376,11 @@ module TypeScript {
                 return null;
             }
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var symbolAndDiagnostics = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
 
@@ -1386,6 +1404,11 @@ module TypeScript {
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
+            }
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
@@ -1413,6 +1436,11 @@ module TypeScript {
                 return null;
             }
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
@@ -1433,6 +1461,12 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
@@ -1450,6 +1484,12 @@ module TypeScript {
         }
 
         public pullGetVisibleSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
@@ -1467,6 +1507,12 @@ module TypeScript {
         }
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+                        
             // Input has to be an object literal
             if (path.ast().nodeType !== NodeType.ObjectLiteralExpression) {
                 return null;
