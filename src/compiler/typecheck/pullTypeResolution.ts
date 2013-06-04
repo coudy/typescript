@@ -24,6 +24,7 @@ module TypeScript {
             return new SymbolAndDiagnostics<TSymbol>(symbol, null, null);
         }
 
+
         public static fromAlias<TSymbol extends PullSymbol>(symbol: TSymbol, alias: TSymbol): SymbolAndDiagnostics<TSymbol> {
             return new SymbolAndDiagnostics<TSymbol>(symbol, alias, null);
         }
@@ -291,10 +292,37 @@ module TypeScript {
             }
         }
 
-        private getMemberSymbol(symbolName: string, declSearchKind: PullElementKind, parent: PullSymbol) {
-            if (!parent.isType()) {
-                return null;
+        private getMemberSymbol(symbolName: string, declSearchKind: PullElementKind, parent: PullTypeSymbol, searchContainedMembers=false) {
+
+            var member: PullSymbol = null;
+
+            if (declSearchKind & PullElementKind.SomeValue) {
+                member = parent.findMember(symbolName);
             }
+            else {
+                member = parent.findMember(symbolName);
+            }
+
+            if (member) {
+                return member;
+            }
+
+            var containerType = parent.getAssociatedContainerType();
+
+            if (containerType) {
+                parent = containerType;
+            }
+
+            if (declSearchKind & PullElementKind.SomeValue) {
+                member = parent.findMember(symbolName);
+            }
+            else {
+                member = parent.findMember(symbolName);
+            }
+
+            if (member) {
+                return member;
+            }            
 
             var typeDeclarations = parent.getDeclarations();
             var childDecls: PullDecl[] = null;              
@@ -363,7 +391,7 @@ module TypeScript {
                         if (instanceSymbol) {
                             instanceType = instanceSymbol.getType();
 
-                            childSymbol = instanceType.findMember(symbolName, false);
+                            childSymbol = this.getMemberSymbol(symbolName, declSearchKind, instanceType);
 
                             if (childSymbol && (childSymbol.getKind() & declSearchKind)) {
                                 return childSymbol;
@@ -2837,7 +2865,7 @@ module TypeScript {
             // For classes, check the statics first below
             var nameSymbol: PullSymbol = null;
             if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass() && this.isNameOrMemberAccessExpression(dottedNameAST.operand1)) && !nameSymbol) {
-                nameSymbol = lhsType.findMember(rhsName);
+                nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
                 nameSymbol = this.resolveNameSymbol(nameSymbol, context);
             }
 
@@ -2846,22 +2874,22 @@ module TypeScript {
                 if (lhsType.isClass()) {
                     var staticType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
 
-                    nameSymbol = staticType.findMember(rhsName);
+                    nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, staticType);
 
                     if (!nameSymbol) {
-                        nameSymbol = lhsType.findMember(rhsName);
+                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
                     }
                 }
                 // could be a function symbol
                 else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
-                    nameSymbol = this.cachedFunctionInterfaceType().findMember(rhsName);
+                    nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
                 }
                 // could be a type parameter with a contraint
                 else if (lhsType.isTypeParameter()) {
                     var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
 
                     if (constraint) {
-                        nameSymbol = constraint.findMember(rhsName);
+                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, constraint);
                     }
                 }
                 else if (lhsType.isContainer()) {
@@ -2871,7 +2899,7 @@ module TypeScript {
                     if (associatedInstance) {
                         var instanceType = associatedInstance.getType();
 
-                        nameSymbol = instanceType.findMember(rhsName);
+                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, instanceType);
                     }
                 }
                 // could be a module instance
@@ -2879,7 +2907,7 @@ module TypeScript {
                     var associatedType = lhsType.getAssociatedContainerType();
 
                     if (associatedType && !associatedType.isClass()) {
-                        nameSymbol = associatedType.findMember(rhsName);
+                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, associatedType);
                     }
                 }
 
@@ -2887,7 +2915,7 @@ module TypeScript {
 
                 // could be an object member
                 if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType()) {
-                    nameSymbol = this.cachedObjectInterfaceType().findMember(rhsName);
+                    nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, this.cachedObjectInterfaceType());
                 }
 
                 if (!nameSymbol) {
@@ -3179,14 +3207,14 @@ module TypeScript {
             }
 
             // now for the name...
-            var childTypeSymbol = lhsType.findNestedType(rhsName);
+            var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, PullElementKind.SomeType, lhsType);
 
             // if the lhs exports a container type, but not a type, we should check the container type
             if (!childTypeSymbol && lhsType.isContainer()) {
                 var exportedContainer = (<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol();
 
                 if (exportedContainer) {
-                    childTypeSymbol = exportedContainer.findNestedType(rhsName);
+                    childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, PullElementKind.SomeType, exportedContainer);
                 }
             }
 
@@ -3208,7 +3236,7 @@ module TypeScript {
                     var enclosingSymbolType = parentDecl.getSymbol().getType();
 
                     if (enclosingSymbolType === lhsType) {
-                        childTypeSymbol = <PullTypeSymbol>lhsType.findContainedMember(rhsName);
+                        childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, PullElementKind.SomeType, lhsType);//lhsType.findContainedMember(rhsName);
                     }
                 }
             }
@@ -3547,7 +3575,7 @@ module TypeScript {
                     decl.setSymbol(memberSymbol);
 
                     if (contextualType) {
-                        assigningSymbol = contextualType.findMember(text);
+                        assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, contextualType);
 
                         if (assigningSymbol) {
 
@@ -3768,7 +3796,7 @@ module TypeScript {
                 var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).actualText :
                     quoteStr((<NumberLiteral>callEx.operand2).value.toString());
 
-                var member = targetTypeSymbol.findMember(memberName);
+                var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 
                 if (member) {
                     return SymbolAndDiagnostics.fromSymbol(member.getType());
@@ -5100,7 +5128,7 @@ module TypeScript {
                 for (var iMember = 0; iMember < t1Members.length; iMember++) {
 
                     t1MemberSymbol = t1Members[iMember];
-                    t2MemberSymbol = t2.findMember(t1MemberSymbol.getName());
+                    t2MemberSymbol = this.getMemberSymbol(t1MemberSymbol.getName(), PullElementKind.SomeValue, t2);
 
                     if (!t2MemberSymbol || (t1MemberSymbol.getIsOptional() != t2MemberSymbol.getIsOptional())) {
                         this.identicalCache[comboId] = undefined;
@@ -5579,7 +5607,7 @@ module TypeScript {
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
 
                 var targetProp = targetProps[itargetProp];
-                var sourceProp = source.findMember(targetProp.getName());
+                var sourceProp = this.getMemberSymbol(targetProp.getName(), PullElementKind.SomeValue, source);
 
                 if (!targetProp.isResolved()) {
                     this.resolveDeclaredSymbol(targetProp, null, context);
@@ -5590,14 +5618,14 @@ module TypeScript {
                 if (!sourceProp) {
                     // If it's not present on the type in question, look for the property on 'Object'
                     if (this.cachedObjectInterfaceType()) {
-                        sourceProp = this.cachedObjectInterfaceType().findMember(targetProp.getName());
+                        sourceProp = this.getMemberSymbol(targetProp.getName(), PullElementKind.SomeValue, this.cachedObjectInterfaceType());
                     }
 
                     if (!sourceProp) {
                         // Now, the property was not found on Object, but the type in question is a function, look
                         // for it on function
                         if (this.cachedFunctionInterfaceType() && (targetPropType.getCallSignatures().length || targetPropType.getConstructSignatures().length)) {
-                            sourceProp = this.cachedFunctionInterfaceType().findMember(targetProp.getName());
+                            sourceProp = this.getMemberSymbol(targetProp.getName(), PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
                         }
 
                         // finally, check to see if the property is optional
@@ -6756,7 +6784,7 @@ module TypeScript {
             }
 
             for (var i = 0; i < parameterTypeMembers.length; i++) {
-                objectMember = objectType.findMember(parameterTypeMembers[i].getName());
+                objectMember = this.getMemberSymbol(parameterTypeMembers[i].getName(), PullElementKind.SomeValue, objectType);
 
                 if (objectMember) {
                     this.relateTypeToTypeParameters(objectMember.getType(), parameterTypeMembers[i].getType(), shouldFix, argContext, enclosingDecl, context);
