@@ -2957,7 +2957,7 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl, rebind = false) {
-
+            
             if (rebind) {
                 this.startingDeclForRebind = lastBoundPullDeclId;
                 this.startingSymbolForRebind = lastBoundPullSymbolID;

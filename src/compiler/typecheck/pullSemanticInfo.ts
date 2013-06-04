@@ -240,7 +240,6 @@ module TypeScript {
         
 
         constructor() {
-            globalSemanticInfoChain = this;
             if (globalBinder) {
                 globalBinder.semanticInfoChain = this;
             }

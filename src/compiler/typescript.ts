@@ -629,11 +629,11 @@ module TypeScript {
                 return false;
             }
 
-            this.semanticInfoChain = globalSemanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = globalSemanticInfoChain;
-            }
-            this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
+            // this.semanticInfoChain = globalSemanticInfoChain;
+            // if (globalBinder) {
+            //     globalBinder.semanticInfoChain = globalSemanticInfoChain;
+            // }
+            // this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
 
             var unit = this.semanticInfoChain.getUnit(fileName);
 
@@ -661,8 +661,8 @@ module TypeScript {
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
             var errors: IDiagnostic[] = [];
-            this.semanticInfoChain = globalSemanticInfoChain;
-            this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
+            // this.semanticInfoChain = globalSemanticInfoChain;
+            // this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
             var unit = this.semanticInfoChain.getUnit(fileName);
 
             if (unit) {
@@ -683,6 +683,7 @@ module TypeScript {
             return this.timeFunction("pullTypeCheck()", () => {
 
                 this.semanticInfoChain = new SemanticInfoChain();
+                globalSemanticInfoChain = this.semanticInfoChain;
                 this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
                 var declCollectionContext: DeclCollectionContext = null;

@@ -2425,6 +2425,12 @@ module TypeScript {
         // Expression resolution
 
         public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
+            globalSemanticInfoChain = this.semanticInfoChain;
+
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             switch (ast.nodeType) {
                 case NodeType.CatchClause:
                 case NodeType.WithStatement:
