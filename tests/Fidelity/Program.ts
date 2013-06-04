@@ -303,7 +303,7 @@ class Program {
             expectedFile = fileName + ".expected";
 
             // Environment.standardOut.WriteLine("Generating baseline for: " + fileName);
-            Environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+            Environment.writeFile(expectedFile, actualResult, /*writeByteOrderMark:*/ false);
 
             if (Environment.fileExists(actualFile)) {
                 Environment.deleteFile(actualFile);
@@ -322,7 +322,7 @@ class Program {
 
             if (expectedResult !== actualResult) {
                 Environment.standardOut.WriteLine(" ! Fail: " + actualFile);
-                Environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
+                Environment.writeFile(actualFile, actualResult, /*writeByteOrderMark:*/ false);
 
                 if (!generate) {
                     var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
