@@ -2349,6 +2349,12 @@ module TypeScript {
 
             this.bindParameterSymbols(constructorAST, constructorTypeSymbol, constructSignature);
 
+            var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                constructSignature.addTypeParameter(typeParameters[i]);
+            }
+
             if (constructorAST.variableArgList) {
                 constructSignature.setHasVariableParamList();
             }

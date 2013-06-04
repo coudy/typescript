@@ -971,6 +971,19 @@ module TypeScript {
                 }
             }
 
+            // ensure that all members are bound
+            var typeRefDecls = typeDeclSymbol.getDeclarations();
+
+            for (var i = 0; i < typeRefDecls.length; i++) {
+
+                var childDecls = typeRefDecls[i].getChildDecls();
+
+                for (var j = 0; j < childDecls.length; j++) {
+                    childDecls[j].ensureSymbolIsBound();
+                }
+            }               
+
+
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
             // if it's a "split" interface type, we'll need to consider constituent extends lists separately
@@ -1074,17 +1087,6 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved()) {
-
-                var typeRefDecls = typeDeclSymbol.getDeclarations();
-
-                for (var i = 0; i < typeRefDecls.length; i++) {
-
-                    var childDecls = typeRefDecls[i].getChildDecls();
-
-                    for (var j = 0; j < childDecls.length; j++) {
-                        childDecls[j].ensureSymbolIsBound();
-                    }
-                }               
 
                 // Resolve members
                 var typeDeclMembers = typeDeclSymbol.getMembers();
