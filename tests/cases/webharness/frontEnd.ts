@@ -98,12 +98,8 @@ class BatchCompiler implements Services.ILanguageServiceHost {
         return null;
     }
 
-    public getCompletionsAtPosition(): void {
-        var languageService = new Services.LanguageService(this);
-        var index = compilerString.indexOf("walker.options.goChildren = AstWalkerCallback(true, cur, callback);");
-        var index2 = compilerString.indexOf(".", index) + 1;
-
-        languageService.getCompletionsAtPosition(compilerFileName, index2, /*isMemberCompletion:*/ true);
+    public createLanguageService() {
+        return new Services.LanguageService(this);
     }
 
     // use this to test "clean" re-typecheck speed
