@@ -677,10 +677,7 @@ module Harness {
             }
         }
 
-        // Replace with better type when classes are assignment compatible with
-        // the below type.
-        // export function addBenchmark(BenchmarkClass: {new(): Benchmark;}) {
-        export function addBenchmark(BenchmarkClass: any) {
+        export function addBenchmark(BenchmarkClass: {new(): Benchmark;}) {
             benchmarks.push(BenchmarkClass);
         }
 
@@ -1689,8 +1686,8 @@ module Harness {
         }
 
         public addFile(fileName: string) {
-            var code = readFile(name).contents();
-            this.addScript(name, code);
+            var code = readFile(fileName).contents();
+            this.addScript(fileName, code);
         }
 
         private getScriptInfo(fileName: string): ScriptInfo {
@@ -1709,7 +1706,7 @@ module Harness {
                 return;
             }
 
-            this.addScript(name, content);
+            this.addScript(fileName, content);
         }
 
         public editScript(fileName: string, minChar: number, limChar: number, newText: string) {
@@ -1719,7 +1716,7 @@ module Harness {
                 return;
             }
 
-            throw new Error("No script with name '" + name + "'");
+            throw new Error("No script with name '" + fileName + "'");
         }
 
         //////////////////////////////////////////////////////////////////////
