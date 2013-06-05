@@ -1548,6 +1548,10 @@ module TypeScript {
                 for (var i = 0; i < memberASTs.members.length; i++) {
                     elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inContextuallyTypedAssignment*/ false);
                 }
+
+                if (contextualMemberType) {
+                    this.context.popContextualType();
+                }
             }
 
             this.checkForResolutionError(type, enclosingDecl);
