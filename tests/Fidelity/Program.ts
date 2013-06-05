@@ -677,6 +677,18 @@ class Program {
     }
 }
 
+
+var diagnostics = {};
+for (var d in TypeScript.diagnosticMessages) {
+    if (TypeScript.diagnosticMessages.hasOwnProperty(d)) {
+        var info: TypeScript.DiagnosticInfo = TypeScript.diagnosticMessages[d];
+        diagnostics[d] = { category: TypeScript.DiagnosticCategory[info.category], code: info.code };
+    }
+}
+
+var whatever = JSON2.stringify(diagnostics, null, 4);
+
+
 var totalTime = 0;
 var totalSize = 0;
 var program = new Program();
