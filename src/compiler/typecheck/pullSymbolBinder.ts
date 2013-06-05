@@ -1123,6 +1123,7 @@ module TypeScript {
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
             var isModuleValue = (declFlags & (PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule | PullElementFlags.InitializedEnum)) != 0;
             var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
+            var isClassConstructorVariable = (declFlags & PullElementFlags.ClassConstructorVariable) != 0;
 
             if (parentDecl && !isImplicit) {
                 parentDecl.addVariableDeclToGroup(variableDeclaration);
@@ -1178,7 +1179,7 @@ module TypeScript {
                 var isClass = variableDeclaration.getKind() == PullElementKind.ConstructorMethod;
 
                 var acceptableRedeclaration = isImplicit &&
-                    ((!isEnumValue && prevKind == PullElementKind.Function) || // Enums can't mix with functions
+                    ((!isEnumValue && !isClassConstructorVariable && prevKind == PullElementKind.Function) || // Enums can't mix with functions
                     (!isModuleValue && prevIsContainer && isAmbient) || // an ambient class can be declared after a module
                     (!isModuleValue && prevIsClass) || // the module instance variable can't come after the class instance variable
                     variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
@@ -1192,9 +1193,9 @@ module TypeScript {
 
                 if ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum) {
                     span = variableDeclaration.getSpan();
-
                     if (!parent || variableSymbol.getIsSynthesized()) {
-                        variableDeclaration.addDiagnostic(new SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier__0_, [variableDeclaration.getDisplayName()]));
+                        var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;
+                        errorDecl.addDiagnostic(new SemanticDiagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier__0_, [variableDeclaration.getDisplayName()]));
                     }
 
                     variableSymbol = null;
@@ -1241,7 +1242,7 @@ module TypeScript {
             }
             else if (!parentHadSymbol) {
 
-                if ((declFlags & PullElementFlags.ClassConstructorVariable)) {
+                if (isClassConstructorVariable) {
                     // it's really an implicit class decl, so we need to set the type of the symbol to
                     // the constructor type
                     // Note that we would have already found the class symbol in the search above
@@ -2249,10 +2250,14 @@ module TypeScript {
             var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             var linkKind = SymbolLinkKind.ConstructorMethod;
-
+            
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||
-                (!isSignature && constructorSymbol.getType() && constructorSymbol.getType().hasOwnConstructSignatures() && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature && 
+                    constructorSymbol.getType() && 
+                    constructorSymbol.getType().hasOwnConstructSignatures() && 
+                    (<PullConstructorTypeSymbol>constructorSymbol.getType()).getDefinitionSignature() &&
+                    !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
 
                 constructorDeclaration.addDiagnostic(
                     new SemanticDiagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));
