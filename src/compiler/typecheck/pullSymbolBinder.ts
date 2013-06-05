@@ -302,12 +302,13 @@ module TypeScript {
 
             // If we have an enum with more than one declaration, then this enum's first element
             // must have an initializer.
-            if (isEnum && moduleContainerTypeSymbol.getDeclarations().length > 1 && moduleAST.members.members.length > 0) {
-                var multipleEnums = ArrayUtilities.where(moduleContainerTypeSymbol.getDeclarations(), d => d.getKind() === PullElementKind.Enum).length > 1;
+            var moduleDeclarations = moduleContainerTypeSymbol.getDeclarations();
+            if (isEnum && moduleDeclarations.length > 1 && moduleAST.members.members.length > 0) {
+                var multipleEnums = ArrayUtilities.where(moduleDeclarations, d => d.getKind() === PullElementKind.Enum).length > 1;
                 if (multipleEnums) {
                     var firstVariable = <VariableStatement>moduleAST.members.members[0];
                     var firstVariableDeclarator = <VariableDeclarator>firstVariable.declaration.declarators.members[0];
-                    if (firstVariableDeclarator.isImplicit) {
+                    if (firstVariableDeclarator.isImplicitlyInitialized) {
                         moduleContainerDecl.addDiagnostic(new SemanticDiagnostic(
                             this.semanticInfo.getPath(), firstVariableDeclarator.minChar, firstVariableDeclarator.getLength(), DiagnosticCode.Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element, null));
                     }

@@ -916,7 +916,7 @@ module TypeScript {
 
                     var declarator = new VariableDeclarator(memberName);
                     declarator.init = memberValue;
-                    declarator.isImplicit = enumElement.equalsValueClause === null;
+                    declarator.isImplicitlyInitialized = enumElement.equalsValueClause === null;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     declarator.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
