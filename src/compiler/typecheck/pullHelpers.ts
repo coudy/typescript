@@ -43,22 +43,11 @@ module TypeScript {
             };
         }
 
-        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
+        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): PullAccessorSymbol {
             var functionDecl = semanticInfoChain.getDeclForAST(getterOrSetter, unitPath);
             var getterOrSetterSymbol = functionDecl.getSymbol();
-            var linkKind: SymbolLinkKind;
-            if (hasFlag(getterOrSetter.getFunctionFlags(), FunctionFlags.GetAccessor)) {
-                linkKind = SymbolLinkKind.GetterFunction;
-            } else {
-                linkKind = SymbolLinkKind.SetterFunction;
-            }
-
-            var accessorSymbolLinks = getterOrSetterSymbol.findIncomingLinks((psl) => psl.kind === linkKind);
-            if (accessorSymbolLinks.length) {
-                return <PullAccessorSymbol>accessorSymbolLinks[0].start;
-            }
-
-            return null;
+            
+            return <PullAccessorSymbol>getterOrSetterSymbol;
         }
 
         export function getGetterAndSetterFunction(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): { getter: FunctionDeclaration; setter: FunctionDeclaration; } {

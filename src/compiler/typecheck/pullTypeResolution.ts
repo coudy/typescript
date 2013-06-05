@@ -1442,27 +1442,32 @@ module TypeScript {
 
             var funcDeclSymbol: PullFunctionTypeSymbol = null;
 
-            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-            var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-            declCollectionContext.scriptName = this.unitPath;
-
-            if (enclosingDecl) {
-                declCollectionContext.pushParent(enclosingDecl);
-            }
-
-            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
             var functionDecl = this.getDeclForAST(funcDeclAST);
-            this.currentUnit.addSynthesizedDecl(functionDecl);
 
-            var binder = new PullSymbolBinder(this.semanticInfoChain);
-            binder.setUnit(this.unitPath);
-            if (functionDecl.getKind() === PullElementKind.ConstructorType) {
-                binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
-            }
-            else {
-                binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
+            if (!functionDecl || !functionDecl.hasSymbol()) {
+
+                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(semanticInfo);
+
+                declCollectionContext.scriptName = this.unitPath;
+
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
+
+                getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                functionDecl = this.getDeclForAST(funcDeclAST);
+                this.currentUnit.addSynthesizedDecl(functionDecl);
+
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                binder.setUnit(this.unitPath);
+                if (functionDecl.getKind() === PullElementKind.ConstructorType) {
+                    binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
+                }
+                else {
+                    binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
+                }
             }
 
             funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
@@ -1512,7 +1517,8 @@ module TypeScript {
         }
 
         private resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var paramSymbol = this.getSymbolAndDiagnosticsForAST(argDeclAST).symbol;
+            var paramDecl = this.getDeclForAST(argDeclAST);
+            var paramSymbol = paramDecl.getSymbol();
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context).symbol;
@@ -6531,7 +6537,7 @@ module TypeScript {
             // Check that the argument declarations have no type annotations
             for (var i = 0; i < paramLen; i++) {
                 var param = parameters[i];
-                var argDecl = <Parameter>this.getASTForSymbol(param);
+                var argDecl = <Parameter>this.getASTForDecl(param.getDeclarations()[0]);
 
                 // REVIEW: a valid typeExpr is a requirement for varargs,
                 // so we may want to revise our invariant

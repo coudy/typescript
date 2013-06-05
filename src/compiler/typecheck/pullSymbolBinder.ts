@@ -1586,8 +1586,8 @@ module TypeScript {
                             decl.setSymbol(parameterSymbol);
                         }
                     }
-                    this.semanticInfo.setSymbolAndDiagnosticsForAST(argDecl.id, SymbolAndDiagnostics.fromSymbol(parameterSymbol));
-                    this.semanticInfo.setSymbolAndDiagnosticsForAST(argDecl, SymbolAndDiagnostics.fromSymbol(parameterSymbol));
+                    //this.semanticInfo.setSymbolAndDiagnosticsForAST(argDecl.id, SymbolAndDiagnostics.fromSymbol(parameterSymbol));
+                    //this.semanticInfo.setSymbolAndDiagnosticsForAST(argDecl, SymbolAndDiagnostics.fromSymbol(parameterSymbol));
 
                     signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
 
@@ -2957,7 +2957,7 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl, rebind = false) {
-            
+
             if (rebind) {
                 this.startingDeclForRebind = lastBoundPullDeclId;
                 this.startingSymbolForRebind = lastBoundPullSymbolID;

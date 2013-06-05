@@ -100,11 +100,19 @@ module TypeScript {
             return this.symbol;
         }
 
+        public hasSymbol() {
+            return this.symbol != null;
+        }
+
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
         public getSignatureSymbol(): PullSignatureSymbol { 
             this.ensureSymbolIsBound(true);
             
             return this.signatureSymbol;
+        }
+
+        public hasSignature() {
+            return this.signatureSymbol != null;
         }
 
         public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
