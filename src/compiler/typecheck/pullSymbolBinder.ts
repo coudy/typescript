@@ -300,6 +300,20 @@ module TypeScript {
             this.semanticInfo.setSymbolAndDiagnosticsForAST(moduleAST.name, SymbolAndDiagnostics.fromSymbol(moduleContainerTypeSymbol));
             this.semanticInfo.setSymbolAndDiagnosticsForAST(moduleAST, SymbolAndDiagnostics.fromSymbol(moduleContainerTypeSymbol));
 
+            // If we have an enum with more than one declaration, then this enum's first element
+            // must have an initializer.
+            if (isEnum && moduleContainerTypeSymbol.getDeclarations().length > 1 && moduleAST.members.members.length > 0) {
+                var multipleEnums = ArrayUtilities.where(moduleContainerTypeSymbol.getDeclarations(), d => d.getKind() === PullElementKind.Enum).length > 1;
+                if (multipleEnums) {
+                    var firstVariable = <VariableStatement>moduleAST.members.members[0];
+                    var firstVariableDeclarator = <VariableDeclarator>firstVariable.declaration.declarators.members[0];
+                    if (!firstVariableDeclarator.init) {
+                        moduleContainerDecl.addDiagnostic(new SemanticDiagnostic(
+                            this.semanticInfo.getPath(), firstVariableDeclarator.minChar, firstVariableDeclarator.getLength(), DiagnosticCode.Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element, null));
+                    }
+                }
+            }
+
             if (createdNewSymbol) {
 
                 if (parent) {

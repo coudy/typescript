@@ -690,7 +690,6 @@ module TypeScript {
             var array: VariableStatement[] = new Array(node.enumElements.nonSeparatorCount());
 
             var declarators: VariableDeclarator[] = [];
-            var lastConstantValue = null;
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -705,10 +704,8 @@ module TypeScript {
                     
                     var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
 
-                    lastConstantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
-
                     var declarator = new VariableDeclarator(memberName, new TypeReference(this.createRef(name.actualText, -1), 0), init);
-                    declarator.constantValue = lastConstantValue;
+                    declarator.constantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
 
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(declarator, memberStart, this.position);

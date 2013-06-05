@@ -1725,6 +1725,13 @@ module TypeScript {
             code: 4023
         },
 
+        Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element: {
+            category: DiagnosticCategory.Error,
+            message: "Enums with multiple declarations must provide an initializer for the first enum element.",
+            code: 4024
+        },
+
+
 
 
 

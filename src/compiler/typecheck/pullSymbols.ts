@@ -225,8 +225,7 @@ module TypeScript {
             }
         }
 
-        public getDeclarations() {
-
+        public getDeclarations(): PullDecl[] {
             if (this.rootSymbol) {
                 return this.rootSymbol.getDeclarations();
             }
@@ -234,6 +233,7 @@ module TypeScript {
             if (!this.cachedDeclarations) {
                 this.cachedDeclarations = [];
             }
+
             return this.cachedDeclarations;
         }
 
