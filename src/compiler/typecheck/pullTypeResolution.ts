@@ -292,6 +292,21 @@ module TypeScript {
             }
         }
 
+        private getExportedMemberSymbol(symbol: PullSymbol, parent: PullTypeSymbol):PullSymbol {
+
+            var containerType = !parent.isContainer() ? parent.getAssociatedContainerType() : parent;
+
+            if (containerType && containerType.isContainer() && !PullHelpers.symbolIsEnum(parent)) {
+                if (symbol.hasFlag(PullElementFlags.Exported)) {
+                    return symbol;
+                }
+
+                return null;
+            }
+
+            return symbol;
+        }
+
         private getMemberSymbol(symbolName: string, declSearchKind: PullElementKind, parent: PullTypeSymbol, searchContainedMembers=false) {
 
             var member: PullSymbol = null;
@@ -304,12 +319,19 @@ module TypeScript {
             }
 
             if (member) {
-                return member;
+                return this.getExportedMemberSymbol(member, parent);
             }
 
             var containerType = parent.getAssociatedContainerType();
 
             if (containerType) {
+
+                // If we were searching over the constructor type, we don't want to also search
+                // over the class instance type (we only want to consider static fields)
+                if (containerType.isClass()) {
+                    return null;
+                }
+
                 parent = containerType;
             }
 
@@ -321,7 +343,7 @@ module TypeScript {
             }
 
             if (member) {
-                return member;
+                return this.getExportedMemberSymbol(member, parent);
             }            
 
             var typeDeclarations = parent.getDeclarations();
@@ -331,7 +353,7 @@ module TypeScript {
                childDecls = typeDeclarations[j].searchChildDecls(symbolName, declSearchKind);
 
                if (childDecls.length) {
-                    return childDecls[0].getSymbol();
+                    return this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
                }
             }
         }
