@@ -715,7 +715,7 @@ module TypeScript {
             var prevColumn = this.emitState.column;
             var prevLine = this.emitState.line;
             var temp = this.setContainer(EmitContainer.Module);
-            var isExported = hasFlag(pullDecl.getFlags(), DeclFlags.Exported);
+            var isExported = hasFlag(pullDecl.getFlags(), PullElementFlags.Exported);
             var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
 
             // prologue
@@ -935,6 +935,7 @@ module TypeScript {
             this.thisFunctionDeclaration = tempFnc;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
+                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
@@ -949,7 +950,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Exported)) {
+                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(pullFunctionDecl.getFlags(), PullElementFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
@@ -1068,7 +1069,7 @@ module TypeScript {
                     associatedParentSymbolKind === PullElementKind.DynamicModule ||
                     associatedParentSymbolKind === PullElementKind.Enum) {
                     // module
-                    if (!hasFlag(pullDecl.getFlags(), DeclFlags.Exported) && !varDecl.isProperty()) {
+                    if (!hasFlag(pullDecl.getFlags(), PullElementFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
                     }
                     else {
