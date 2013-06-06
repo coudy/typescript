@@ -557,7 +557,7 @@ module m3 { }\
             var index = 0;
             var newTextAndChange = withInsert(oldText, index, "declare ");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+            // compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
         
         //public static testComplexEdits1() {
