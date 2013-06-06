@@ -142,6 +142,8 @@ module TypeScript {
         private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
+        private _haveResolvedGlobals = false;
+
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
 
         private assignableCache: any[] = <any>{};
@@ -226,8 +228,21 @@ module TypeScript {
             }
 
             return this._cachedRegExpInterfaceType;               
-        }        
+        }
 
+        private resolveGlobals(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            if (!this._haveResolvedGlobals) {
+                this.resolveDeclaredSymbol(this.cachedObjectInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedFunctionInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedNumberInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedStringInterfaceType(), enclosingDecl, context);
+                this.resolveDeclaredSymbol(this.cachedRegExpInterfaceType(), enclosingDecl, context);
+                this._haveResolvedGlobals = true;
+            }
+        }
 
         constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
 
@@ -5426,6 +5441,8 @@ module TypeScript {
             if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
+
+            this.resolveGlobals(null, context);
 
             if (context.specializingToObject) {
                 if (target.isTypeParameter()) {
