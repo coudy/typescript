@@ -817,8 +817,8 @@ module FourSlash {
         private applyEdits(fileName: string, edits: Services.TextEdit[], isFormattingEdit = false): number {
             // We get back a set of edits, but langSvc.editScript only accepts one at a time. Use this to keep track
             // of the incremental offest from each edit to the next. Assumption is that these edit ranges don't overlap
-            // or come in out-of-order.
             var runningOffset = 0;
+            edits = edits.sort((a, b) => a.minChar < b.minChar ? -1 : 1);
             // Get a snapshot of the content of the file so we can make sure any formatting edits didn't destroy non-whitespace characters
             var snapshot = this.languageServiceShimHost.getScriptSnapshot(fileName);
             var oldContent = snapshot.getText(0, snapshot.getLength());

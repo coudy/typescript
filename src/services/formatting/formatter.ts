@@ -78,23 +78,28 @@ module TypeScript.Formatting {
             }
 
             // Push the token
-            if (token.kind() !== SyntaxKind.EndOfFileToken) {
-                var currentTokenSpan = new TokenSpan(token.kind(), position, token.width());
-                if (this.previousTokenSpan && !this.parent().hasSkippedOrMissingTokenChild()) {
+            var currentTokenSpan = new TokenSpan(token.kind(), position, token.width());
+            if (!this.parent().hasSkippedOrMissingTokenChild()) {
+                if (this.previousTokenSpan) {
+                    // Note that formatPair calls TrimWhitespaceInLineRange in between the 2 tokens
                     this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
                 }
-                this.previousTokenSpan = currentTokenSpan;
-                if (this.previousTokenParent) {
-                    // Make sure to clear the previous parent before assigning a new value to it
-                    this.indentationNodeContextPool().releaseNode(this.previousTokenParent, /* recursive */true);
+                else {
+                    // We still want to trim whitespace even if it is the first trivia of the first token. Trim from the beginning of the span to the trivia
+                    this.trimWhitespaceInLineRange(this.getLineNumber(this.textSpan()), this.getLineNumber(currentTokenSpan));
                 }
-                this.previousTokenParent = this.parent().clone(this.indentationNodeContextPool());
-                position += token.width();
+            }
+            this.previousTokenSpan = currentTokenSpan;
+            if (this.previousTokenParent) {
+                // Make sure to clear the previous parent before assigning a new value to it
+                this.indentationNodeContextPool().releaseNode(this.previousTokenParent, /* recursive */true);
+            }
+            this.previousTokenParent = this.parent().clone(this.indentationNodeContextPool());
+            position += token.width();
 
-                // Extract any trailing comments
-                if (token.trailingTriviaWidth() !== 0) {
-                    this.processTrivia(token.trailingTrivia(), position);
-                }
+            // Extract any trailing comments
+            if (token.trailingTriviaWidth() !== 0) {
+                this.processTrivia(token.trailingTrivia(), position);
             }
         }
 
@@ -106,15 +111,23 @@ module TypeScript.Formatting {
                 // For a comment, format it like it is a token. For skipped text, eat it up as a token, but skip the formatting
                 if (trivia.isComment() || trivia.isSkippedToken()) {
                     var currentTokenSpan = new TokenSpan(trivia.kind(), position, trivia.fullWidth());
-                    if (this.previousTokenSpan && trivia.isComment()) {
-                        this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
+                    if (this.textSpan().containsTextSpan(currentTokenSpan)) {
+                        if (trivia.isComment() && this.previousTokenSpan) {
+                            // Note that formatPair calls TrimWhitespaceInLineRange in between the 2 tokens
+                            this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
+                        }
+                        else {
+                            // We still want to trim whitespace even if it is the first trivia of the first token. Trim from the beginning of the span to the trivia
+                            var startLine = this.getLineNumber(this.previousTokenSpan || this.textSpan());
+                            this.trimWhitespaceInLineRange(startLine, this.getLineNumber(currentTokenSpan));
+                        }
+                        this.previousTokenSpan = currentTokenSpan;
+                        if (this.previousTokenParent) {
+                            // Make sure to clear the previous parent before assigning a new value to it
+                            this.indentationNodeContextPool().releaseNode(this.previousTokenParent, /* recursive */true);
+                        }
+                        this.previousTokenParent = this.parent().clone(this.indentationNodeContextPool());
                     }
-                    this.previousTokenSpan = currentTokenSpan;
-                    if (this.previousTokenParent) {
-                        // Make sure to clear the previous parent before assigning a new value to it
-                        this.indentationNodeContextPool().releaseNode(this.previousTokenParent, /* recursive */true);
-                    }
-                    this.previousTokenParent = this.parent().clone(this.indentationNodeContextPool());
                 }
 
                 position += trivia.fullWidth();
@@ -196,33 +209,28 @@ module TypeScript.Formatting {
                 if (rule.Operation.Action == RuleAction.NewLine && token1Line == token2Line) {
                     this.forceIndentNextToken(t2.start());
                 }
-            }
-
+            } 
+            
             if (token1Line != token2Line) {
-                this.TrimWhitespaceInLineRange(t1, token1Line, token2Line - 1);
+                this.trimWhitespaceInLineRange(token1Line, token2Line, t1);
             }
         }
 
-        private getLineNumber(token: TokenSpan): number {
-            return this.snapshot().getLineNumberFromPosition(token.start());
+        private getLineNumber(span: TextSpan): number {
+            return this.snapshot().getLineNumberFromPosition(span.start());
         }
 
-        private TrimWhitespaceInLineRange(token: TokenSpan, startLine: number, endLine: number): void {
-            for (var lineNumber = startLine; lineNumber <= endLine; ++lineNumber) {
+        private trimWhitespaceInLineRange(startLine: number, endLine: number, token?: TokenSpan): void {
+            for (var lineNumber = startLine; lineNumber < endLine; ++lineNumber) {
                 var line = this.snapshot().getLineFromLineNumber(lineNumber);
 
-                this.TrimWhitespace2(token, line);
+                this.trimWhitespace(line, token);
             }
         }
 
-        private TrimWhitespace(token: TokenSpan): void {
-            var line = this.snapshot().getLineFromPosition(token.start());
-            this.TrimWhitespace2(token, line);
-        }
-
-        private TrimWhitespace2(token: TokenSpan, line: ITextSnapshotLine): void {
+        private trimWhitespace(line: ITextSnapshotLine, token?: TokenSpan): void {
             // Don't remove the trailing spaces inside comments (this includes line comments and block comments)
-            if ((token.kind() == SyntaxKind.MultiLineCommentTrivia || token.kind() == SyntaxKind.SingleLineCommentTrivia) && token.start() <= line.endPosition() && token.end() >= line.endPosition())
+            if (token && (token.kind() == SyntaxKind.MultiLineCommentTrivia || token.kind() == SyntaxKind.SingleLineCommentTrivia) && token.start() <= line.endPosition() && token.end() >= line.endPosition())
                 return;
 
             var text = line.getText();
@@ -262,20 +270,11 @@ module TypeScript.Formatting {
 
                 case RuleAction.NewLine:
                     {
-                        if (rule.Flag == RuleFlags.CanDeleteNewLines) {
-                            betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
+                        if (!(rule.Flag == RuleFlags.CanDeleteNewLines || this.getLineNumber(t1) == this.getLineNumber(t2))) {
+                            return;
                         }
-                        else {
-                            var lengthBetween: number;
-                            if (this.getLineNumber(t1) == this.getLineNumber(t2)) {
-                                lengthBetween = t2.start() - t1.end();
-                            }
-                            else {
-                                lengthBetween = this.snapshot().getLineFromPosition(t1.end()).endIncludingLineBreakPosition() - t1.end();
-                            }
 
-                            betweenSpan = new TextSpan(t1.end(), Math.max(0, lengthBetween));
-                        }
+                        betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
 
                         var doEdit = false;
                         var betweenText = this.snapshot().getText(betweenSpan);
@@ -302,19 +301,11 @@ module TypeScript.Formatting {
 
                 case RuleAction.Space:
                     {
-                        if (rule.Flag == RuleFlags.CanDeleteNewLines) {
-                            betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
+                        if (!(rule.Flag == RuleFlags.CanDeleteNewLines || this.getLineNumber(t1) == this.getLineNumber(t2))) {
+                            return;
                         }
-                        else {
-                            if (this.getLineNumber(t1) == this.getLineNumber(t2)) {
-                                lengthBetween = t2.start() - t1.end();
-                            }
-                            else {
-                                lengthBetween = this.snapshot().getLineFromPosition(t1.end()).endPosition() - t1.end();
-                            }
 
-                            betweenSpan = new TextSpan(t1.end(), Math.max(0, lengthBetween));
-                        }
+                        betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
 
                         if (betweenSpan.length() > 1 || this.snapshot().getText(betweenSpan) != " ") {
                             this.recordEdit(betweenSpan.start(), betweenSpan.length(), " ");

@@ -66,8 +66,12 @@ module TypeScript.Formatting {
             // Process any leading trivia if any
             var triviaList = token.leadingTrivia();
             if (triviaList) {
-                for (var i = 0, length = triviaList.count(); i < length; i++) {
+                for (var i = 0, length = triviaList.count(); i < length; i++, position += trivia.fullWidth()) {
                     var trivia = triviaList.syntaxTriviaAt(i);
+                    // Skip this trivia if it is not in the span
+                    if (!this.textSpan().containsTextSpan(new TextSpan(position, trivia.fullWidth()))) {
+                        continue;
+                    }
 
                     switch (trivia.kind()) {
                         case SyntaxKind.MultiLineCommentTrivia:
@@ -88,9 +92,13 @@ module TypeScript.Formatting {
 
                         case SyntaxKind.WhitespaceTrivia:
                             // If the next trivia is a comment, use the comment indentation level instead of the regular indentation level
-                            var nextTriviaIsComment = triviaList.count() > i + 1 && triviaList.syntaxTriviaAt(i + 1).isComment();
+                            // If the next trivia is a newline, this whole line is just whitespace, so don't do anything (trimming will take care of it)
+                            var nextTrivia = length > i + 1 && triviaList.syntaxTriviaAt(i + 1);
+                            var whiteSpaceIndentationString = nextTrivia && nextTrivia.isComment() ? commentIndentationString : indentationString;
                             if (indentNextTokenOrTrivia) {
-                                this.recordIndentationEditsForWhitespace(trivia, position, nextTriviaIsComment ? commentIndentationString : indentationString);
+                                if (!(nextTrivia && nextTrivia.isNewLine())) {
+                                    this.recordIndentationEditsForWhitespace(trivia, position, whiteSpaceIndentationString);
+                                }
                                 indentNextTokenOrTrivia = false;
                             }
                             leadingWhiteSpace += trivia.fullText();
@@ -107,8 +115,6 @@ module TypeScript.Formatting {
                         default:
                             throw Errors.invalidOperation();
                     }
-
-                    position += trivia.fullWidth();
                 }
 
             }
