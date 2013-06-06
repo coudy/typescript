@@ -715,7 +715,7 @@ module TypeScript {
             var prevColumn = this.emitState.column;
             var prevLine = this.emitState.line;
             var temp = this.setContainer(EmitContainer.Module);
-            var isExported = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported);
+            var isExported = hasFlag(pullDecl.getFlags(), DeclFlags.Exported);
             var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
 
             // prologue
@@ -1687,7 +1687,7 @@ module TypeScript {
             this.writeToOutput(");");
             this.recordSourceMappingEnd(classDecl);
 
-            if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
+            if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(pullDecl.getFlags(), PullElementFlags.Exported)) {
                 this.writeLineToOutput("");
                 this.emitIndent();
                 var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
