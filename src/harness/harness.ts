@@ -824,7 +824,6 @@ module Harness {
             if (code && filename) {
                 // requires unit to already exist in the compiler
                 if (compiler.fileNameToDocument.lookup(filename)) {
-                    compiler.updateSourceUnit(filename, TypeScript.ScriptSnapshot.fromString(""), /*version:*/ 0, /*isOpen:*/ true, null);
                     compiler.updateSourceUnit(filename, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
                 }
                 else {
@@ -1277,17 +1276,14 @@ module Harness {
         export function reportCompilationErrors(compilerInstance: CompilerInstance, uNames?: string[], errAggregator?: WriterAggregator) {
             var compiler = getCompiler(compilerInstance);
             var us = [];
-            if (uNames && uNames.length > 0) {
-                us = uNames;
-            }
-            else {
-                var files = getAllFilesInCompiler(compilerInstance);
-                files.forEach(file => {
-                    if (file !== 'lib.d.ts') {
-                        us.push(file);
-                    }
-                });
-            }
+
+            var files = getAllFilesInCompiler(compilerInstance);
+            files.forEach(file => {
+                if (file !== 'lib.d.ts') {
+                    us.push(file);
+                }
+            });
+
 
             var errorTarget = (typeof errAggregator == "undefined") ? stderr : errAggregator;
             var errorReporter = {

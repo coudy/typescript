@@ -3299,14 +3299,15 @@ module TypeScript {
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDeclSymbol: PullSymbol = null;
+            var functionDecl: PullDecl = this.getDeclForAST(funcDeclAST);
 
-            if (functionDecl) {
+            if (functionDecl && functionDecl.hasSymbol()) {
                 funcDeclSymbol = functionDecl.getSymbol();
                 if (funcDeclSymbol.isResolved()) {
                     return funcDeclSymbol;
                 }
             }
-
+            
             // if we have an assigning AST with a type, and the funcDecl has no parameter types or return type annotation
             // we'll contextually type it
             // otherwise, just process it as a normal function declaration

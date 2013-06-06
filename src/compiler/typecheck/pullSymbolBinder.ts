@@ -2602,7 +2602,6 @@ module TypeScript {
 
             var parent = this.getParent(getAccessorDeclaration, true);
             var parentHadSymbol = false;
-            var hadOtherAccessor = false;
             var cleanedPreviousDecls = false;
 
             var accessorSymbol: PullAccessorSymbol = null;
@@ -2613,23 +2612,7 @@ module TypeScript {
                 parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
             }
 
-
-            //if (!isStatic) {
-                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
-            // }
-            // else {
-            //     var candidate: PullSymbol;
-
-            //     for (var m = 0; m < this.staticClassMembers.length; m++) {
-            //         candidate = this.staticClassMembers[m];
-
-            //         if (candidate.getName() === funcName) {
-            //             accessorSymbol = <PullAccessorSymbol>candidate;
-            //             hadOtherAccessor = accessorSymbol.isAccessor();
-            //             break;
-            //         }
-            //     }
-            // }
+            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
@@ -2649,10 +2632,13 @@ module TypeScript {
                 }
             }
 
+            if (accessorSymbol) {
+                parentHadSymbol = true;
+            }
+
             // we have an accessor we can use...
             if (accessorSymbol && getterSymbol) {
                 getterTypeSymbol = <PullFunctionTypeSymbol>getterSymbol.getType();
-                parentHadSymbol = true;
             }
 
             if (this.reBindingAfterChange && accessorSymbol) {
@@ -2707,14 +2693,8 @@ module TypeScript {
             // PULLTODO: Verify parent is a class or object literal
             // PULLTODO: Verify static/non-static between getter and setter
 
-            if (!parentHadSymbol && !hadOtherAccessor) {
-
-                // if (isStatic) {
-                //     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
-                // }
-                // else {
-                    parent.addMember(accessorSymbol, linkKind);
-                //}
+            if (!parentHadSymbol) {
+                parent.addMember(accessorSymbol, linkKind);
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -2784,7 +2764,6 @@ module TypeScript {
 
             var parent = this.getParent(setAccessorDeclaration, true);
             var parentHadSymbol = false;
-            var hadOtherAccessor = false;
             var cleanedPreviousDecls = false;
 
             var accessorSymbol: PullAccessorSymbol = null;
@@ -2795,22 +2774,7 @@ module TypeScript {
                 parent = (<PullClassTypeSymbol>parent).getConstructorMethod().getType();
             }
 
-            // if (!isStatic) {
-                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
-            // }
-            // else {
-            //     var candidate: PullSymbol;
-
-            //     for (var m = 0; m < this.staticClassMembers.length; m++) {
-            //         candidate = this.staticClassMembers[m];
-
-            //         if (candidate.getName() === funcName) {
-            //             accessorSymbol = <PullAccessorSymbol>candidate;
-            //             hadOtherAccessor = accessorSymbol.isAccessor();
-            //             break;
-            //         }
-            //     }
-            // }
+            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
@@ -2830,10 +2794,13 @@ module TypeScript {
                 }
             }
 
+            if (accessorSymbol) {
+                parentHadSymbol = true;
+            }
+
             // we have an accessor we can use...
             if (accessorSymbol && setterSymbol) {
                 setterTypeSymbol = <PullFunctionTypeSymbol>setterSymbol.getType();
-                parentHadSymbol = true;
             }
 
             if (this.reBindingAfterChange && accessorSymbol) {
@@ -2889,14 +2856,8 @@ module TypeScript {
             // PULLTODO: Verify parent is a class or object literal
             // PULLTODO: Verify static/non-static between getter and setter
 
-            if (!parentHadSymbol && !hadOtherAccessor) {
-
-                // if (isStatic) {
-                //     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
-                // }
-                // else {
-                    parent.addMember(accessorSymbol, linkKind);
-                //}
+            if (!parentHadSymbol) {
+                parent.addMember(accessorSymbol, linkKind);
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
