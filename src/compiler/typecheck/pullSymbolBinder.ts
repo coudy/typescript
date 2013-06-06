@@ -299,9 +299,30 @@ module TypeScript {
                             }
                         }
                     }
-                    //else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
-                    //    variableSymbol = findSymbolInContext(modName, PullElementKind.SomeValue, moduleContainerDecl);
-                    //}
+                    else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
+                        // Search locally to this file for a previous declaration that's suitable for augmentation
+                        var siblingDecls = parentDecl.getChildDecls();
+                        var augmentedDecl: PullDecl = null;
+
+                        for (var i = 0; i < siblingDecls.length; i++) {
+                            if (siblingDecls[i] == moduleContainerDecl) {
+                                break;
+                            }
+
+                            if ((siblingDecls[i].getName() == modName) && (siblingDecls[i].getKind() & (PullElementKind.Class | PullElementKind.SomeFunction))) {
+                                augmentedDecl = siblingDecls[i];
+                                break;
+                            }
+                        }
+
+                        if (augmentedDecl) {
+                            variableSymbol = augmentedDecl.getSymbol();
+
+                            if (variableSymbol && variableSymbol.isType()) {
+                                variableSymbol = (<PullTypeSymbol>variableSymbol).getConstructorMethod();
+                            }
+                        }
+                    }
                 }
 
                 if (variableSymbol) {

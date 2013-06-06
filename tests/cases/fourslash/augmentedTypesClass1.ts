@@ -7,7 +7,7 @@
 ////r./*2*/
 
 goTo.marker('1');
-verify.completionListContains('y', 'number');
+verify.completionListContains('prototype', '');
 // BUG 696913
 //edit.insert('y;');
 //goTo.marker('2');
