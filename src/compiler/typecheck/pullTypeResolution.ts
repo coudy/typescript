@@ -1011,6 +1011,16 @@ module TypeScript {
                 if (instanceSymbol) {
                     this.resolveDeclaredSymbol(instanceSymbol, containerDecl.getParentDecl(), context);
                 }
+
+                // resolve any export assignments up-front
+                var members = ast.members.members;
+
+                for (var i = 0; i < members.length; i++) {
+                    if (members[i].nodeType == NodeType.ExportAssignment) {
+                        this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
+                        break;
+                    }
+                }
             }
 
             return containerSymbol;
@@ -3109,6 +3119,12 @@ module TypeScript {
                         context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
                     }
 
+                    var aliasedType = (<PullTypeAliasSymbol>typeNameSymbol).getType();
+
+                    if (aliasedType && !aliasedType.isResolved()) {
+                        this.resolveDeclaredSymbol(aliasedType, enclosingDecl, context);
+                    }
+
                     var exportAssignmentSymbol = (<PullTypeAliasSymbol>typeNameSymbol).getExportAssignedTypeSymbol();
 
                     if (exportAssignmentSymbol) {
@@ -3550,6 +3566,11 @@ module TypeScript {
             }
 
             if (classSymbol) {
+
+                if (!classSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(classSymbol, enclosingDecl, context); 
+                }
+
                 var parents = classSymbol.getExtendedTypes();
 
                 if (parents.length) {
