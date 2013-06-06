@@ -142,9 +142,9 @@ module TypeScript {
             else {
                 container = this.declarationContainerStack[this.declarationContainerStack.length - 2];
             }
-
+            
+            var pullDecl = this.semanticInfoChain.getDeclForAST(declAST, this.fileName);
             if (container.nodeType() === NodeType.ModuleDeclaration) {
-                var pullDecl = this.semanticInfoChain.getDeclForAST(declAST, this.fileName);
                 if (!hasFlag(pullDecl.getFlags(), PullElementFlags.Exported)) {
                     var start = new Date().getTime();
                     var declSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declAST, this.fileName).symbol;
@@ -155,7 +155,7 @@ module TypeScript {
                 }
             }
 
-            if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
+            if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(pullDecl.getFlags(), PullElementFlags.Ambient)) {
                 return false;
             }
 

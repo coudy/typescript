@@ -1013,7 +1013,8 @@ module TypeScript {
             this.recordSourceMappingStart(declaration);
             this.setInVarBlock(declaration.declarators.members.length);
 
-            var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
+            var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
+            var isAmbientWithoutInit = hasFlag(pullVarDecl.getFlags(), PullElementFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
                 for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
                     var declarator = declaration.declarators.members[i];
@@ -1038,7 +1039,7 @@ module TypeScript {
         public emitVariableDeclarator(varDecl: VariableDeclarator) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
             this.pushDecl(pullDecl);
-            if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
+            if ((pullDecl.getFlags() & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             }
