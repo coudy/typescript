@@ -822,8 +822,6 @@ module TypeScript {
             return NodeType.VariableDeclarator;
         }
 
-        public isExported() { return hasFlag(this.getVarFlags(), VariableFlags.Exported); }
-
         public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
         public emit(emitter: Emitter) {

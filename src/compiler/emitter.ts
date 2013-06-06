@@ -1068,7 +1068,7 @@ module TypeScript {
                     associatedParentSymbolKind === PullElementKind.DynamicModule ||
                     associatedParentSymbolKind === PullElementKind.Enum) {
                     // module
-                    if (!varDecl.isExported() && !varDecl.isProperty()) {
+                    if (!hasFlag(pullDecl.getFlags(), DeclFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
                     }
                     else {

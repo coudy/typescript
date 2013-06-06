@@ -546,6 +546,19 @@ constructor(name) { }\
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
+
+        public static testInsertDeclareAboveModule() {
+            var source =
+"module mAmbient {\
+module m3 { }\
+}";
+
+            var oldText = TextFactory.createText(source);
+            var index = 0;
+            var newTextAndChange = withInsert(oldText, index, "declare ");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
         
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");
