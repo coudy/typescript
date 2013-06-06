@@ -474,6 +474,12 @@ module TypeScript {
                     childDecls = decl.searchChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
+                        // if the enclosing decl is a function of some sort, we need to ensure that it's bound
+                        // otherwise, the child decl may not be properly bound if it's a parameter (since they're
+                        // bound when binding the function symbol)
+                        if (decl.getKind() & PullElementKind.SomeFunction) {
+                            decl.ensureSymbolIsBound();
+                        }
                         return childDecls[0].getSymbol();
                     }
 
@@ -631,13 +637,21 @@ module TypeScript {
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
 
+            this.resolveGlobals(enclosingDecl, context);
+
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
 
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
 
-            return this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
+            var symbols = this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
+
+            for (var i = 0; i < symbols.length; i++) {
+                this.resolveDeclaredSymbol(symbols[i], enclosingDecl, context);
+            }
+
+            return symbols;
         }
 
         public getVisibleContextSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
@@ -646,6 +660,8 @@ module TypeScript {
                 return null;
             }
 
+            this.resolveGlobals(enclosingDecl, context);
+
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
             var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
 
@@ -653,6 +669,9 @@ module TypeScript {
         }
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[]{
+
+            this.resolveGlobals(enclosingDecl, context);
+
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
             context.canUseTypeSymbol = true;
             var lhs = this.resolveAST(expression, false, enclosingDecl, context).symbol;
@@ -1212,10 +1231,10 @@ module TypeScript {
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             var extendedTypes = classDeclSymbol.getExtendedTypes();
             var parentType = extendedTypes.length ? extendedTypes[0] : null;
-
+            
             if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.getType();
-
+                
                 var constructSignatures = constructorTypeSymbol.getConstructSignatures();
 
                 if (!constructSignatures.length) {
@@ -2922,6 +2941,11 @@ module TypeScript {
                 }
             }
 
+            // If the type parameter has a constraint, we'll need to sub it in
+            if (lhsType.isTypeParameter()) {
+                lhsType = this.substituteUpperBoundForType(lhsType);
+            }
+
             // now for the name...
             // For classes, check the statics first below
             var nameSymbol: PullSymbol = null;
@@ -2944,14 +2968,6 @@ module TypeScript {
                 // could be a function symbol
                 else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
                     nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
-                }
-                // could be a type parameter with a contraint
-                else if (lhsType.isTypeParameter()) {
-                    var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
-
-                    if (constraint) {
-                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, constraint);
-                    }
                 }
                 else if (lhsType.isContainer()) {
                     var containerType = <PullContainerTypeSymbol>(lhsType.isAlias() ? (<PullTypeAliasSymbol>lhsType).getType() : lhsType);

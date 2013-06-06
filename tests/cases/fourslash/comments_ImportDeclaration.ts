@@ -24,10 +24,10 @@
 ////var new/*9*/Var = new extMod.m1.m2./*10*/c();
 
 goTo.marker('1');
-verify.quickInfoIs("extMod", "ExtMod - contains m1", "extMod", "module");
+verify.quickInfoIs("\"extMod\"", undefined, "\"extMod\"", "var");
 
 goTo.marker('2');
-verify.quickInfoIs("m1", "ModuleComment", "extMod.m1", "module");
+verify.quickInfoIs("m1", "ModuleComment", "\"extMod\".m1", "module");
 
 goTo.marker('3');
 verify.quickInfoIs("extMod", "Import declaration", "extMod", "module");
@@ -44,7 +44,7 @@ goTo.marker('6');
 verify.memberListContains("m1", "extMod.m1");
 
 goTo.marker('7');
-verify.memberListContains("b", "number", "b's comment", "extMod.m1.b", "var");
+verify.memberListContains("b", undefined, "b's comment", "extMod.m1.b", "var");
 verify.memberListContains("fooExport", "(): number", "exported function", "extMod.m1.fooExport", "function");
 verify.memberListContains("m2", "extMod.m1.m2");
 
@@ -58,4 +58,4 @@ verify.quickInfoIs("extMod.m1.m2.c", "", "newVar", "var");
 
 goTo.marker('10');
 verify.memberListContains("c", undefined, "class comment;", "extMod.m1.m2.c", "class");
-verify.memberListContains("i", "extMod.m1.m2.c", "i", "extMod.m1.m2.i", "var");
+verify.memberListContains("i", undefined, "i", "extMod.m1.m2.i", "var");
