@@ -24,7 +24,9 @@ verify.memberListCount(2);
 
 
 goTo.marker('typeReference');
-verify.memberListCount(0);
+verify.memberListContains("bar");
+verify.memberListContains("baz");
+verify.memberListCount(2);
 
 
 goTo.marker('enumValueReference');

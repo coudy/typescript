@@ -2923,7 +2923,10 @@ module TypeScript {
 
             var typeNameSymbol = typeNameSymbolAndDiagnostics && typeNameSymbolAndDiagnostics.symbol;
             if (!typeNameSymbol.isResolved()) {
+                var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
+                context.resolvingNamespaceMemberAccess = false;
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
+                context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             }
 
             if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)) {
@@ -2986,14 +2989,14 @@ module TypeScript {
                 }
 
                 // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
-                // first if need be, and then fall back to type names.  Otherwise, only fall back to searching for a container symbol if
-                // we're *not* resolving a container type name, since we don't want to look up container symbols from a strictly type position
+                // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
+                // a type reference (the exception being an alias or export assignment)
                 var kindToCheckFirst = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeContainer : PullElementKind.SomeType;
                 var kindToCheckSecond = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeType : PullElementKind.SomeContainer;
                 
                 var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckFirst);
 
-                if (!typeNameSymbol && !context.resolvingNamespaceMemberAccess) {
+                if (!typeNameSymbol) {
                     typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckSecond);
                 }
 
