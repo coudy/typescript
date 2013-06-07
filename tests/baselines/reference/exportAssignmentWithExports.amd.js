@@ -4,7 +4,6 @@ define(["require", "exports"], function(require, exports) {
         }
         return C;
     })();
-    exports.C = C;
     var D = (function () {
         function D() {
         }
