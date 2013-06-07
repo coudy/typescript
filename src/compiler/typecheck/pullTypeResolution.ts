@@ -636,15 +636,15 @@ module TypeScript {
         public getVisibleSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
-
+            
             this.resolveGlobals(enclosingDecl, context);
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
-
+            
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
-
+            
             var symbols = this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
 
             for (var i = 0; i < symbols.length; i++) {
@@ -669,7 +669,7 @@ module TypeScript {
         }
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[]{
-
+            
             this.resolveGlobals(enclosingDecl, context);
 
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
