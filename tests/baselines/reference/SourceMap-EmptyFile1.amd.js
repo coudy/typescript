@@ -52,6 +52,16 @@
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 
+////[errorsOnImportedSymbol_0.js.map]
+{"version":3,"file":"errorsOnImportedSymbol_0.js","sources":["errorsOnImportedSymbol_0.ts"],"names":[],"mappings":""}
+////[errorsOnImportedSymbol_0.js]
+//@ sourceMappingURL=errorsOnImportedSymbol_0.js.map
+
+////[errorsOnImportedSymbol_1.js.map]
+{"version":3,"file":"errorsOnImportedSymbol_1.js","sources":["errorsOnImportedSymbol_1.ts"],"names":[],"mappings":""}
+////[errorsOnImportedSymbol_1.js]
+//@ sourceMappingURL=errorsOnImportedSymbol_1.js.map
+
 ////[exportEqualsClass_A.js.map]
 {"version":3,"file":"exportEqualsClass_A.js","sources":["exportEqualsClass_A.ts"],"names":[],"mappings":""}
 ////[exportEqualsClass_A.js]

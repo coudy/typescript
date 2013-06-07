@@ -3080,7 +3080,7 @@ module TypeScript {
                 if (!nameSymbol) {
                     return SymbolAndDiagnostics.create(
                         this.getNewErrorTypeSymbol(null, rhsName),
-                        [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()])]);
+                        [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName(lhs)])]);
                 }
             }
 
@@ -3412,7 +3412,7 @@ module TypeScript {
             if (!childTypeSymbol) {
                 return SymbolAndDiagnostics.create(
                     this.getNewErrorTypeSymbol(null, rhsName),
-                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()])]);
+                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName(lhs)])]);
             }
 
             return SymbolAndDiagnostics.fromSymbol(childTypeSymbol);

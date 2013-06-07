@@ -67,6 +67,16 @@ var MyClass = (function () {
 ////[bin/duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 
+////[bin/errorsOnImportedSymbol_0.js.map]
+{"version":3,"file":"errorsOnImportedSymbol_0.js","sources":["errorsOnImportedSymbol_0.ts"],"names":[],"mappings":""}
+////[bin/errorsOnImportedSymbol_0.js]
+//@ sourceMappingURL=errorsOnImportedSymbol_0.js.map
+
+////[bin/errorsOnImportedSymbol_1.js.map]
+{"version":3,"file":"errorsOnImportedSymbol_1.js","sources":["errorsOnImportedSymbol_1.ts"],"names":[],"mappings":""}
+////[bin/errorsOnImportedSymbol_1.js]
+//@ sourceMappingURL=errorsOnImportedSymbol_1.js.map
+
 ////[bin/exportEqualsClass_A.js.map]
 {"version":3,"file":"exportEqualsClass_A.js","sources":["exportEqualsClass_A.ts"],"names":[],"mappings":""}
 ////[bin/exportEqualsClass_A.js]
