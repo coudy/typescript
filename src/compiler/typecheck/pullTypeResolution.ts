@@ -686,6 +686,10 @@ module TypeScript {
                 return null;
             }
 
+            if (!lhsType.isResolved()) {
+                this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
+            }
+
             // Figure out if privates are available under the current scope
             var includePrivate = false;
             var containerSymbol = lhsType;
@@ -786,6 +790,12 @@ module TypeScript {
             // could be a function symbol
             if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType()) {
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, /*includePrivate*/ false));
+            }
+
+            for (var i = 0; i < members.length; i++) {
+                if (!members[i].isResolved()) {
+                    this.resolveDeclaredSymbol(members[i], enclosingDecl, context);
+                }
             }
 
             return members;
@@ -1883,8 +1893,10 @@ module TypeScript {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
+                else if (typeExprSymbol.isError()) {
+                    context.setTypeInContext(declSymbol, typeExprSymbol);
+                }
                 else {
-
                     if (typeExprSymbol.isNamedTypeSymbol() &&
                         typeExprSymbol.isGeneric() &&
                         !typeExprSymbol.isTypeParameter() &&
@@ -2219,7 +2231,7 @@ module TypeScript {
                 }
 
                 signature.startResolving();
-
+                
                 if (funcDeclAST.typeArguments) {
                     for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
                         this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);

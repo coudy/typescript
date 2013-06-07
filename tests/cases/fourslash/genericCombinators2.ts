@@ -95,12 +95,12 @@ verify.quickInfoIs('B<T>');
 
 // BUG 684828
 goTo.marker('9');
-verify.quickInfoIs('Collection<number, string>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('10');
 // BUG 684805
 verify.quickInfoIs('Collection<number, string>');
 goTo.marker('11');
-verify.quickInfoIs('Collection<any, any>');
+verify.quickInfoIs('Collection<Collection<number, number>, number>');
 goTo.marker('12');
 verify.quickInfoIs('Collection<Collection<number, number>, number>');
 goTo.marker('13');

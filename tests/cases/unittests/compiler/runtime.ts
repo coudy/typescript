@@ -159,7 +159,7 @@ describe('Runtime behavior tests', function () {
         var jq: RT_JQuery = { 0: { id: "a" }, 1: { id: "b" } };
         Harness.Assert.equal(jq[0].id, 'a');
     });
-
+    debugger;
     it('Calls static methods properly', function () {
         Harness.Assert.equal(RT_StaticModule.f(), '25wow: 17wow: 66');
     });

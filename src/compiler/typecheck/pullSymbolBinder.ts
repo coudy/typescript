@@ -3046,7 +3046,8 @@ module TypeScript {
                     break;
 
                 case PullElementKind.Parameter:
-                    // parameters are bound by their enclosing function
+                case PullElementKind.TypeParameter:
+                    // parameters are bound by their enclosing function or type
                     break;
 
                 case PullElementKind.CatchBlock:

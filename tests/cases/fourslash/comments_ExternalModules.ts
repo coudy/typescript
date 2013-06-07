@@ -33,7 +33,7 @@
 
 goTo.file("file_0.ts");
 goTo.marker('1');
-verify.quickInfoIs("m1", "", "m1", "var");
+verify.quickInfoIs("m1", "Module comment", "m1", "module");
 
 goTo.marker('2');
 verify.completionListContains("b", "number", "b's comment", "m1.b", "var");
@@ -62,7 +62,7 @@ verify.quickInfoIs("m1.m2.c", "", "myvar", "var");
 
 goTo.marker('8');
 verify.memberListContains("c", undefined, "class comment;", "m1.m2.c", "class");
-verify.memberListContains("i", undefined, "i", "m1.m2.i", "var");
+verify.memberListContains("i", "m1.m2.c", "i", "m1.m2.i", "var");
 
 goTo.file("file_1.ts");
 goTo.marker('9');
@@ -89,4 +89,4 @@ verify.quickInfoIs("extMod.m1.m2.c", "", "newVar", "var");
 
 goTo.marker('15');
 verify.memberListContains("c", undefined, "class comment;", "extMod.m1.m2.c", "class");
-verify.memberListContains("i", "", "i", "extMod.m1.m2.i", "var");
+verify.memberListContains("i", "extMod.m1.m2.c", "i", "extMod.m1.m2.i", "var");

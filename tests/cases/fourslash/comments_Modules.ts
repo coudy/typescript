@@ -97,7 +97,7 @@
 ////var myComp/*35*/lexVal = new compl/*36*/exM.m/*37*/2./*38*/c().f/*39*/oo2().f/*40*/oo();
 
 goTo.marker('1');
-verify.quickInfoIs("m1", undefined, "m1", "var");
+verify.quickInfoIs("m1", "Module comment", "m1", "module");
 
 goTo.marker('2');
 verify.completionListContains("b", "number", "b's comment", "m1.b", "var");
@@ -126,7 +126,7 @@ verify.quickInfoIs("m1.m2.c", "", "myvar", "var");
 goTo.marker('8');
 verify.quickInfoIs("(): m1.m2.c", "", "m1.m2.c", "constructor");
 verify.memberListContains("c", undefined, "class comment;", "m1.m2.c", "class");
-verify.memberListContains("i", undefined, "i", "m1.m2.i", "var");
+verify.memberListContains("i", "m1.m2.c", "i", "m1.m2.i", "var");
 
 goTo.marker('9');
 verify.completionListContains("m2", "m2", "", "m2", "module");
