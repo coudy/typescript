@@ -983,9 +983,13 @@ module TypeScript {
                 //          this.foo();
                 //
                 // Because of ASI, this gets parsed as "return;" which is *not* what we want for
-                // proper semantics.
-                returnStatement.setPreComments(expression.preComments());
-                expression.setPreComments(null);
+                // proper semantics.  Also, we can no longer use this expression incrementally.
+                var preComments = expression.preComments();
+                if (preComments) {
+                    (<any>body)._ast = undefined;
+                    returnStatement.setPreComments(preComments);
+                    expression.setPreComments(null);
+                }
                 
                 var statements = new ASTList([returnStatement]);
 

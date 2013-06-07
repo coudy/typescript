@@ -557,9 +557,23 @@ module m3 { }\
             var index = 0;
             var newTextAndChange = withInsert(oldText, index, "declare ");
 
-            // compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
-        
+
+        public static testInsertFunctionAboveLambdaWithComment() {
+            var source =
+"\
+() =>\
+   // do something\
+0;";
+
+            var oldText = TextFactory.createText(source);
+            var index = 0;
+            var newTextAndChange = withInsert(oldText, index, "function Foo() { }");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");
             
