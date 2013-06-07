@@ -1006,9 +1006,17 @@ module Services {
         }
 
         private isModule(symbol: TypeScript.PullSymbol) {
-            var symbolType = symbol.getType();
-            var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
-            return associatedSymbol && associatedSymbol.getKind() === TypeScript.PullElementKind.Container;
+            var declarations = symbol.getDeclarations();
+            for (var i = 0; i < declarations.length; i++) {
+                var declKind = declarations[i].getKind();
+                if (declKind == TypeScript.PullElementKind.Container) {
+                    return true;
+                } else if (declKind == TypeScript.PullElementKind.Variable && declarations[i].getFlags() & TypeScript.PullElementFlags.InitializedModule) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private isDynamicModule(symbol: TypeScript.PullSymbol) {

@@ -13,9 +13,7 @@ verify.not.completionListContains('foo');
 edit.backspace(1);
 
 goTo.marker('2');
-// BUG 697035
-//verify.quickInfoIs('(x: number) => void');
-verify.quickInfoIs('{ ; (): void; }');
+verify.quickInfoIs("{ C: new() => m2g.C; (): void; }", undefined, "r", "var");
 
 goTo.marker('3');
 edit.insert('(');

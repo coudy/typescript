@@ -618,10 +618,12 @@ module TypeScript {
             var type = this.getType();
             if (type && !type.isNamedTypeSymbol() && this.declKind != PullElementKind.Property && this.declKind != PullElementKind.Variable && this.declKind != PullElementKind.Parameter) {
                 var signatures = type.getCallSignatures();
-                var typeName = new MemberNameArray();
-                var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, prefix, false, false, scopeSymbol, getPrettyTypeName);
-                typeName.addAll(signatureName);
-                return typeName;
+                if (signatures.length) {
+                    var typeName = new MemberNameArray();
+                    var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, prefix, false, false, scopeSymbol, getPrettyTypeName);
+                    typeName.addAll(signatureName);
+                    return typeName;
+                }
             }
 
             return null;
@@ -634,9 +636,9 @@ module TypeScript {
 
         public getNameAndTypeNameEx(scopeSymbol?: PullSymbol) {
             var type = this.getType();
-            var nameEx = this.getScopedNameEx(scopeSymbol);
+            var nameStr = this.getDisplayName(scopeSymbol);
             if (type) {
-                var nameStr = nameEx.toString() + (this.getIsOptional() ? "?" : "");
+                nameStr = nameStr + (this.getIsOptional() ? "?" : "");
                 var memberName: MemberName = this.getTypeNameForFunctionSignature(nameStr, scopeSymbol);
                 if (!memberName) {
                     var typeNameEx = type.getScopedNameEx(scopeSymbol);
@@ -644,7 +646,7 @@ module TypeScript {
                 }
                 return memberName;
             }
-            return nameEx;
+            return MemberName.create(nameStr);
         }
 
         static getTypeParameterString(typars: PullTypeSymbol[], scopeSymbol?: PullSymbol, useContraintInName?: boolean) {
