@@ -293,7 +293,7 @@ module TypeScript {
                     }
                 }
             }
-        }
+        };
 
         var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
             if (isValidAstNode(cur)) {
@@ -349,7 +349,7 @@ module TypeScript {
             }
 
             return cur;
-        }
+        };
 
         var ctx = new AstPathContext();
         TypeScript.getAstWalkerFactory().walk(script, pre, null, null, ctx);
@@ -365,12 +365,12 @@ module TypeScript {
             path.push(cur);
             callback(path, walker);
             return cur;
-        }
+        };
         var post = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
             var path: TypeScript.AstPath = walker.state;
             path.pop();
             return cur;
-        }
+        };
 
         var path = new AstPath();
         TypeScript.getAstWalkerFactory().walk(ast, pre, post, null, path);

@@ -4,7 +4,7 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export var pullSymbolID = 0
+    export var pullSymbolID = 0;
     export var lastBoundPullSymbolID = 0;
     export var globalTyvarID = 0;
 
@@ -770,7 +770,7 @@ module TypeScript {
 
         private hasVarArgs = false;
 
-        private specializationCache: any = {}
+        private specializationCache: any = {};
 
         private memberTypeParameterNameCache: any = null;
 

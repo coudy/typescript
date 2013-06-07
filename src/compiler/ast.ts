@@ -183,8 +183,8 @@ module TypeScript {
             }
 
             return this._flags === ast._flags &&
-                   astArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
-                   astArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition)
+                astArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
+                astArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
         }
     }
 
@@ -522,17 +522,17 @@ module TypeScript {
                 case NodeType.NotEqualsExpression: return "!==";
                 case NodeType.LessThanExpression: return "<";
                 case NodeType.GreaterThanExpression: return ">";
-                case NodeType.LessThanOrEqualExpression: return "<="
-                case NodeType.GreaterThanOrEqualExpression: return ">="
+                case NodeType.LessThanOrEqualExpression: return "<=";
+                case NodeType.GreaterThanOrEqualExpression: return ">=";
                 case NodeType.InstanceOfExpression: return "instanceof";
                 case NodeType.InExpression: return "in";
                 case NodeType.LeftShiftExpression: return "<<";
-                case NodeType.SignedRightShiftExpression: return ">>"
-                case NodeType.UnsignedRightShiftExpression: return ">>>"
-                case NodeType.MultiplyExpression: return "*"
-                case NodeType.DivideExpression: return "/"
-                case NodeType.ModuloExpression: return "%"
-                case NodeType.AddExpression: return "+"
+                case NodeType.SignedRightShiftExpression: return ">>";
+                case NodeType.UnsignedRightShiftExpression: return ">>>";
+                case NodeType.MultiplyExpression: return "*";
+                case NodeType.DivideExpression: return "/";
+                case NodeType.ModuloExpression: return "%";
+                case NodeType.AddExpression: return "+";
                 case NodeType.SubtractExpression: return "-";
             }
 

@@ -109,7 +109,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => {
                         return info.inferenceCandidates[index].getType();
                     }
-                }
+                };
 
                 bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, context, new TypeComparisonInfo()));
 

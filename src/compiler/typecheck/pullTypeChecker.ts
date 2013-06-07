@@ -907,7 +907,7 @@ module TypeScript {
                 //  • The containing class is a derived class.
                 //  • The constructor declares parameter properties or the containing class declares instance member variables with initializers.
                 else if (this.superCallMustBeFirstStatementInConstructor(functionDecl, enclosingDecl)) {
-                    var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST)
+                    var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
                     if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
                         this.postError(funcDeclAST.minChar, 11 /* "constructor" */, typeCheckContext.scriptName,
                             DiagnosticCode.A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties, null, enclosingDecl);
@@ -2294,7 +2294,7 @@ module TypeScript {
             var rhsType = this.typeCheckAST(binaryExpression.operand2, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
             var isValidLHS = lhsType && (this.resolver.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
-            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
+            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context));
 
             if (!isValidLHS) {
                 this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
@@ -3051,7 +3051,7 @@ module TypeScript {
 
                         walker.options.goChildren = go;
                         return ast;
-                    }
+                    };
 
                     getAstWalkerFactory().walk(declAST.block, reportErrorOnReturnExpressions);
                 }

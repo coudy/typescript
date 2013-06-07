@@ -1976,7 +1976,7 @@ module TypeScript.Parser {
                 break;
             }
 
-            return modifierCount
+            return modifierCount;
         }
 
         private parseModifiers(): ISyntaxList {
@@ -2441,7 +2441,7 @@ module TypeScript.Parser {
             // declaration.
             if (index > 0 &&
                 this.peekToken(index).tokenKind === SyntaxKind.InterfaceKeyword) {
-                return true
+                    return true;
             }
 
             // 'interface' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
@@ -4955,7 +4955,7 @@ module TypeScript.Parser {
                     // That may have been because the list is complete.  In that case, break out 
                     // and return the items we were able parse.
                     if (this.listIsTerminated(currentListType)) {
-                        break
+                        break;
                     }
 
                     // List wasn't complete and we didn't get an item.  Figure out if we should bail out

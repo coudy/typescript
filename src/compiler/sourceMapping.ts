@@ -150,7 +150,7 @@ module TypeScript {
 
                     emitComma = true;
                     recordedPosition = mappedPosition;
-                }
+                };
 
                 // Record starting spans
                 var recordSourceMappingSiblings = (sourceMappings: SourceMapping[]) => {
@@ -160,7 +160,7 @@ module TypeScript {
                         recordSourceMappingSiblings(sourceMapping.childMappings);
                         recordSourceMapping(sourceMapping.end, sourceMapping.nameIndex);
                     }
-                }
+                };
 
                 recordSourceMappingSiblings(sourceMapper.sourceMappings);
                 namesCount = namesCount + sourceMapper.names.length;

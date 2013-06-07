@@ -199,7 +199,7 @@ module TypeScript {
             }
             else {
                 this.outfile.WriteLine(s);
-                this.emitState.column = 0
+                this.emitState.column = 0;
                 this.emitState.line++;
             }
         }
@@ -621,7 +621,7 @@ module TypeScript {
                 this.writeLineToOutput(" = [];");
                 this.recordSourceMappingEnd(lastArg);
                 this.emitIndent();
-                this.writeToOutput("for (")
+                this.writeToOutput("for (");
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("var _i = 0;");
                 this.recordSourceMappingEnd(lastArg);
@@ -1728,8 +1728,8 @@ module TypeScript {
                             }
                             else {
                                 this.emitIndent();
-                                this.recordSourceMappingStart(fn)
-                                    this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
+                                this.recordSourceMappingStart(fn);
+                                this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
                                 this.emitInnerFunction(fn, /*printName:*/ false);
                                 this.writeLineToOutput(";");
                             }

@@ -124,7 +124,7 @@ module TypeScript.Syntax {
     }
 
     function hexValue(text: string, start: number, length: number): number {
-        var intChar = 0
+        var intChar = 0;
         for (var i = 0; i < length; i++) {
             var ch2 = text.charCodeAt(start + i);
             if (!CharacterInfo.isHexDigit(ch2)) {
@@ -212,7 +212,7 @@ module TypeScript.Syntax {
             result = result.concat(String.fromCharCode.apply(null, characterArray));
         }
 
-        return result
+        return result;
     }
 
     export function massageEscapes(text: string): string {

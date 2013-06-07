@@ -907,7 +907,7 @@ module TypeScript {
 
             if (typeArgs && typeArgs.length) {
                 var typeParameters = (<PullTypeSymbol>symbol).getTypeParameters();
-                var typeCache: any = {}
+                var typeCache: any = {};
 
                 for (var i = 0; i < typeParameters.length; i++) {
                     typeCache[typeParameters[i].getSymbolID().toString()] = typeArgs[i];
@@ -1952,7 +1952,7 @@ module TypeScript {
 
                     case NodeType.ReturnStatement:
                         var returnStatement: ReturnStatement = <ReturnStatement>ast;
-                        returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1]};
+                        returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] };
                         go = false;
                         break;
 
@@ -1968,7 +1968,7 @@ module TypeScript {
                 walker.options.goChildren = go;
 
                 return ast;
-            }
+            };
 
             var postFindReturnExpressionEnclosingDecls = function (ast: AST, parent: AST, walker: IAstWalker) {
                 switch (ast.nodeType()) {
@@ -1978,12 +1978,12 @@ module TypeScript {
                         break;
                     default:
                         break;
-                    }
+                }
 
                 walker.options.goChildren = true;
 
                 return ast;
-            }
+            };
 
             getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
 
@@ -2015,12 +2015,12 @@ module TypeScript {
 
                     // combine return expression types for best common type
                     var collection: IPullTypeCollection = {
-                        getLength: () => { return returnExpressionSymbols.length; } ,
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } ,
+                        getLength: () => { return returnExpressionSymbols.length; },
+                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
                         getTypeAtIndex: (index: number) => {
                             return returnExpressionSymbols[index].getType();
                         }
-                    }
+                    };
 
                     returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, context, new TypeComparisonInfo());
 
@@ -2641,7 +2641,7 @@ module TypeScript {
                     nameSymbol = null;
             }
 
-            return nameSymbol
+            return nameSymbol;
         }
 
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
@@ -4020,7 +4020,7 @@ module TypeScript {
                     getLength: () => { return 2; },
                     setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
                     getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
-                }
+                };
 
                 var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
 
@@ -4951,7 +4951,7 @@ module TypeScript {
                     bestCommonType = this.mergeOrdered(bestCommonType, targetType, context);
                 }
                 else {
-                    bestCommonType = targetType
+                    bestCommonType = targetType;
                 }
             }
 
@@ -5002,10 +5002,10 @@ module TypeScript {
                 emptyTypeDecl.setSymbol(emptyType);
                 emptyType.addDeclaration(emptyTypeDecl);
 
-                bestCommonType = emptyType;                
+                bestCommonType = emptyType;
             }
 
-            return bestCommonType
+            return bestCommonType;
         }
 
         // Type Identity
@@ -6461,10 +6461,10 @@ module TypeScript {
 
                 if (!args || i === args.members.length) {
                     var collection: IPullTypeCollection = {
-                        getLength: () => { return 2; } ,
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { } , // no contextual typing here, so no need to do anything
+                        getLength: () => { return 2; },
+                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.getReturnType() : best.signature.getReturnType(); } // we only want the "second" type - the "first" is skipped
-                    }
+                    };
                     var bct = this.findBestCommonType(best.signature.getReturnType(), null, collection, context);
                     ambiguous = !bct;
                 }

@@ -809,7 +809,7 @@ module TypeScript {
 
         private scanEqualsToken(): SyntaxKind {
             this.slidingWindow.moveToNextItem();
-            var character = this.currentCharCode()
+            var character = this.currentCharCode();
             if (character === CharacterCodes.equals) {
                 this.slidingWindow.moveToNextItem();
 

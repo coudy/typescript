@@ -11,7 +11,7 @@ module TypeScript.SyntaxFacts {
             }
         }
 
-        return false
+        return false;
     }
 
     export function isUseStrictDirective(node: ISyntaxNodeOrToken): boolean {

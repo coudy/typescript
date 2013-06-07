@@ -194,7 +194,7 @@ module TypeScript {
                     }
 
                     return cur;
-                }
+                };
 
                 TypeScript.getAstWalkerFactory().walk(this.script, pre, null, null, identifiers);
 
@@ -258,7 +258,7 @@ module TypeScript {
             this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
-                TypeScript.diagnosticMessages = this.diagnosticMessages
+                TypeScript.diagnosticMessages = this.diagnosticMessages;
             }
         }
 
@@ -951,7 +951,7 @@ module TypeScript {
                     }
                 }
                 return cur;
-            }
+            };
 
             getAstWalkerFactory().walk(script, pre);
 
@@ -1134,7 +1134,7 @@ module TypeScript {
                     }
                 } else if (!callSignatures && symbol &&
                 (symbol.getKind() === PullElementKind.Method || symbol.getKind() === PullElementKind.Function)) {
-                    var typeSym = symbol.getType()
+                    var typeSym = symbol.getType();
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();
                     }

@@ -1122,7 +1122,7 @@ module TypeScript {
                 return true;
             }
 
-            return false
+            return false;
         }
 
         public visitBreakStatement(node: BreakStatementSyntax): void {

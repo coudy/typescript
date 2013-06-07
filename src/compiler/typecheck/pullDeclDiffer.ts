@@ -277,7 +277,7 @@ module TypeScript {
 
         private catchClauseIsEquivalent(decl1: CatchClause, decl2: CatchClause): boolean {
             return structuralEqualsNotIncludingPosition(decl1.param, decl2.param) &&
-                    structuralEqualsNotIncludingPosition(decl1.body, decl2.body)
+                structuralEqualsNotIncludingPosition(decl1.body, decl2.body);
         }
 
         private withStatementIsEquivalent(decl1: WithStatement, decl2: WithStatement): boolean {

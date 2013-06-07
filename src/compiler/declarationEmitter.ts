@@ -962,7 +962,7 @@ module TypeScript {
                         var referencePath = script.referencedFiles[i];
                         var declareFileName: string;
                         if (isRooted(referencePath)) {
-                            declareFileName = this.emitOptions.mapOutputFileName(referencePath, TypeScriptCompiler.mapToDTSFileName)
+                            declareFileName = this.emitOptions.mapOutputFileName(referencePath, TypeScriptCompiler.mapToDTSFileName);
                         }
                         else {
                             declareFileName = getDeclareFilePath(script.referencedFiles[i]);

@@ -129,7 +129,7 @@ module TypeScript {
                 var element = this.childAt(i);
 
                 if (element !== null) {
-                    element.collectTextElements(elements)
+                    element.collectTextElements(elements);
                 }
             }
         }
@@ -335,7 +335,7 @@ module TypeScript {
         }
 
         public isTypeMember(): boolean {
-            return false
+            return false;
         }
 
         public isStatement(): boolean {

@@ -1408,7 +1408,7 @@ module TypeScript {
             this.movePast(node.questionToken);
             var whenTrue = node.whenTrue.accept(this);
             this.movePast(node.colonToken);
-            var whenFalse = node.whenFalse.accept(this)
+            var whenFalse = node.whenFalse.accept(this);
 
             var result = new ConditionalExpression(condition, whenTrue, whenFalse);
             this.setSpan(result, start, node);
@@ -2237,7 +2237,7 @@ module TypeScript {
                 if (ast.limChar !== -1) {
                     ast.limChar += delta;
                 }
-            }
+            };
 
             var applyDeltaToComments = (comments: TypeScript.Comment[]) => {
                 if (comments && comments.length > 0) {
@@ -2246,7 +2246,7 @@ module TypeScript {
                         applyDelta(comment);
                     }
                 }
-            }
+            };
 
             var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
                 // Apply delta to this node
@@ -2255,7 +2255,7 @@ module TypeScript {
                 applyDeltaToComments(cur.postComments());
 
                 return cur;
-            }
+            };
 
             TypeScript.getAstWalkerFactory().walk(ast, pre);
         }

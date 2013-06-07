@@ -22,13 +22,13 @@ module TypeScript {
 
             now = function () {
                 return TestUtilities.QueryPerformanceCounter();
-            }
+            };
 
             resolution = TestUtilities.QueryPerformanceFrequency();
         } else {
             now = function () {
                 return Date.now();
-            }
+            };
 
             resolution = 1000;
         }

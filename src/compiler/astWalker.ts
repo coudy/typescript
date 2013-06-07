@@ -78,7 +78,7 @@ module TypeScript {
         }
 
         public walk(ast: AST, pre: IAstWalkCallback, post?: IAstWalkCallback, options?: AstWalkOptions, state?: any): AST {
-            return this.getWalker(pre, post, options, state).walk(ast, null)
+            return this.getWalker(pre, post, options, state).walk(ast, null);
         }
 
         public getWalker(pre: IAstWalkCallback, post?: IAstWalkCallback, options?: AstWalkOptions, state?: any): IAstWalker {

@@ -83,7 +83,7 @@ module TypeScript {
 
         public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
             this.astSymbolMap.set(ast.getID(), <SymbolAndDiagnostics<any>>symbolAndDiagnostics);
-            this.symbolASTMap.set(symbolAndDiagnostics.symbol.getSymbolID(), ast)
+            this.symbolASTMap.set(symbolAndDiagnostics.symbol.getSymbolID(), ast);
         }
 
         public getSymbolAndDiagnosticsForAST(ast: IAST): SymbolAndDiagnostics<PullSymbol> {

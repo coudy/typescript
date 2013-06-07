@@ -71,7 +71,7 @@ module TypeScript {
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
         public getName(): string { return this.declName; }
-        public getKind(): PullElementKind { return this.declType }
+        public getKind(): PullElementKind { return this.declType; }
 
         public getDisplayName() {
             return this.declDisplayName === undefined ? this.declName : this.declDisplayName;
