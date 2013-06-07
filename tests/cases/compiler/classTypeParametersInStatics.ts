@@ -5,7 +5,7 @@ module Editor {
         public next: List<T>;
         public prev: List<T>;
 
-        constructor(public isHead: bool, public data: T) {
+        constructor(public isHead: boolean, public data: T) {
         
         }
 

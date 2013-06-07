@@ -1,6 +1,6 @@
 // @Filename: commands.ts
-import fs = module('fs');
-import server = module('server');
+import fs = require('fs');
+import server = require('server');
 
 export interface IConfiguration {
     workspace: server.IWorkspace;
@@ -8,7 +8,7 @@ export interface IConfiguration {
 }
 
 // @Filename: fs.ts
-import commands = module('commands');
+import commands = require('commands');
 function run(configuration: commands.IConfiguration) {
     var absoluteWorkspacePath = configuration.workspace.toAbsolutePath(configuration.server);
 }

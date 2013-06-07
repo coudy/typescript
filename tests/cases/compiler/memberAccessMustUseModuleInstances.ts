@@ -12,7 +12,7 @@ static timeout(delay: number): Promise;
 }
 
 
-import WinJS = module('winjs');
+import WinJS = require('winjs');
 
 
 

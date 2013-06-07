@@ -13,7 +13,7 @@ function forEach<A>(list: A[], f: (a: A, n?: number) => void ): void {
 }
 
 // filter :: (a->bool) -> [a] -> [a]
-function filter<A>(f: (a: A) => bool, ar: A[]): A[] {
+function filter<A>(f: (a: A) => boolean, ar: A[]): A[] {
     var ret = [];
     forEach(ar, (el) => {
         if (f(el)) {
@@ -46,11 +46,11 @@ var cfilter = curry1(filter);
 // pred :: a -> Bool 
 // countWhere :: (a -> Bool) -> [a] -> Num
 
-function countWhere_1<A>(pred: (a: A) => bool): (a: A[]) => number {
+function countWhere_1<A>(pred: (a: A) => boolean): (a: A[]) => number {
     return compose(length, cfilter(pred));
 }
 
-function countWhere_2<A>(pred: (a: A) => bool): (a: A[]) => number {
+function countWhere_2<A>(pred: (a: A) => boolean): (a: A[]) => number {
     var where = cfilter(pred);
     return compose(length, where);
 }

@@ -8,7 +8,7 @@ enum E {
 export = E;
 
 // @Filename: exportEqualsEnum_B.ts
-import EnumE = module("exportEqualsEnum_A");
+import EnumE = require("exportEqualsEnum_A");
 
 var a = EnumE.A;
 var b = EnumE.B;

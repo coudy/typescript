@@ -5,7 +5,7 @@ interface D3SvgPath {
     y(): (data: any, index?: number) => number;
     interpolate(): string;
     tension(): number;
-    defined(): (data: any, index?: number) => bool;
+    defined(): (data: any, index?: number) => boolean;
 }
 
 interface D3SvgArea extends D3SvgPath {
@@ -20,7 +20,7 @@ interface D3SvgArea extends D3SvgPath {
 
     interpolate(interpolator: string): D3SvgArea;
     tension(tension: number): D3SvgArea;
-    defined(defined: (data: any, index?: number) => bool): D3SvgArea;
+    defined(defined: (data: any, index?: number) => boolean): D3SvgArea;
 }
 
 var area: D3SvgArea;

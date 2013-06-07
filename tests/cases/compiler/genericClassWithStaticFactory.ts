@@ -5,7 +5,7 @@ module Editor {
         public prev: List<T>;
         private listFactory: ListFactory<T>;
 
-        constructor(public isHead: bool, public data: T) {
+        constructor(public isHead: boolean, public data: T) {
             this.listFactory = new ListFactory<T>();
            
         }
@@ -32,7 +32,7 @@ module Editor {
             return (i);
         }
 
-        public isEmpty(): bool {
+        public isEmpty(): boolean {
             return (this.next == this);
         }
 

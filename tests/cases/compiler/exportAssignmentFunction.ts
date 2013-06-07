@@ -4,6 +4,6 @@ function foo() { return 0; }
 export = foo;
 
 // @Filename: exportEqualsFunction_B.ts
-import fooFunc = module("exportEqualsFunction_A");
+import fooFunc = require("exportEqualsFunction_A");
 
 var n: number = fooFunc();

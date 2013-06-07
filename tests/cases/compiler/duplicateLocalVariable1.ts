@@ -1,6 +1,6 @@
 
-//import FileManager = module('filemanager');
-//import App = module('app');
+//import FileManager = require('filemanager');
+//import App = require('app');
 
 declare var FileManager: any;
 declare var App: any;

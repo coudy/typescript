@@ -3,5 +3,5 @@ declare module "winjs" {
     }
 }
 
-import WinJS = module('winjs');
+import WinJS = require('winjs');
 var x = (w1: WinJS) => { };

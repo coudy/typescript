@@ -3,7 +3,7 @@ class Food {
     constructor(public name: string) {
         this.amount = 100;
     }
-    public eat(amountToEat: number): bool {
+    public eat(amountToEat: number): boolean {
         this.amount -= amountToEat;
         if (this.amount <= 0) {
             this.amount = 0;
@@ -20,13 +20,13 @@ class MonsterFood extends Food {
     }
 }
 class IceCream extends MonsterFood {
-    private isDairyFree: bool;
+    private isDairyFree: boolean;
     constructor(public flavor: string) {
         super("Ice Cream", flavor);
     }
 }
 class Cookie extends MonsterFood {
-    constructor(public flavor: string, public isGlutenFree: bool) {
+    constructor(public flavor: string, public isGlutenFree: boolean) {
         super("Cookie", flavor);
     }
 }
@@ -41,7 +41,7 @@ class ExpensiveOrganicDogFood extends PetFood {
     }
 }
 class ExpensiveOrganicCatFood extends PetFood {
-    constructor(public whereToBuy: number, public containsFish: bool) {
+    constructor(public whereToBuy: number, public containsFish: boolean) {
         super("Nature's Logic", whereToBuy);
     }
 }

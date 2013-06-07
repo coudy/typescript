@@ -6,7 +6,7 @@ interface A {
 export = A;
 
 // @Filename: exportEqualsInterface_B.ts
-import I1 = module("exportEqualsInterface_A");
+import I1 = require("exportEqualsInterface_A");
 
 var i: I1;
 

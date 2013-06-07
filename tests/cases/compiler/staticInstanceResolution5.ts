@@ -3,7 +3,7 @@ declare module "winjs" {
         static timeout(delay: number): Promise;
     }
 }
-import WinJS = module('winjs');
+import WinJS = require('winjs');
 
 // these 3 should be errors
 var x = (w1: WinJS) => { };

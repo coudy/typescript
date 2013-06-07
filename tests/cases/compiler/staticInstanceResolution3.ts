@@ -4,5 +4,5 @@ declare module "winjs" {
     }
 }
 
-import WinJS = module('winjs');
+import WinJS = require('winjs');
 WinJS.Promise.timeout(10);

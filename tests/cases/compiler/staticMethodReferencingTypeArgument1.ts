@@ -3,7 +3,7 @@ module Editor {
         next: List<T>;
         prev: List<T>;
 
-        constructor(public isHead: bool, public data: T) {
+        constructor(public isHead: boolean, public data: T) {
         }
 
         static MakeHead(): List<T> {

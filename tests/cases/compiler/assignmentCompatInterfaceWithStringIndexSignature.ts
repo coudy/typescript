@@ -1,5 +1,5 @@
 interface IHandler {
-    (e): bool;
+    (e): boolean;
 }
 
 interface IHandlerMap {

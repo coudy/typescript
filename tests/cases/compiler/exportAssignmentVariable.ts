@@ -4,6 +4,6 @@ var x = 0;
 export = x;
 
 // @Filename: exportEqualsVar_B.ts
-import y = module("exportEqualsVar_A");
+import y = require("exportEqualsVar_A");
 
 var n: number = y;

@@ -6,6 +6,6 @@ module M {
 export = M;
 
 // @Filename: exportEqualsModule_B.ts
-import modM = module("exportEqualsModule_A");
+import modM = require("exportEqualsModule_A");
 
 var n: number = modM.x;
