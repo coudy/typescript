@@ -7,17 +7,12 @@ module TypeScript {
         public requiresExtendsBlock: boolean = false;
         public previousTokenTrailingComments: Comment[] = null;
 
-        public isParsingDeclareFile: boolean;
-        public isParsingAmbientModule = false;
-        public containingModuleHasExportAssignment = false;
-
         private static protoString = "__proto__";
         private static protoSubstitutionString = "#__proto__";
 
         constructor(private fileName: string,
                     public lineMap: LineMap,
                     private compilationSettings: CompilationSettings) {
-            this.isParsingDeclareFile = isDTSFile(fileName);
         }
 
         public static visit(syntaxTree: SyntaxTree, fileName: string, compilationSettings: CompilationSettings, incrementalAST: boolean): Script {
@@ -335,14 +330,12 @@ module TypeScript {
                 topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
-                var moduleFlags = topLevelMod.getModuleFlags() | ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported
-
-                if (this.isParsingDeclareFile) {
+                var moduleFlags = topLevelMod.getModuleFlags() | ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported;
+                if (isDTSFile(this.fileName)) {
                     moduleFlags |= ModuleFlags.Ambient;
                 }
 
                 topLevelMod.setModuleFlags(moduleFlags);
-
 
                 topLevelMod.prettyName = getPrettyName(correctedFileName);
                 //topLevelMod.containsUnicodeChar = this.scanner.seenUnicodeChar;
@@ -368,7 +361,7 @@ module TypeScript {
 
             result.moduleElements = bod;
             result.topLevelMod = topLevelMod;
-            result.isDeclareFile = this.isParsingDeclareFile;
+            result.isDeclareFile = isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;
 
             return result;
@@ -440,18 +433,12 @@ module TypeScript {
             this.requiresExtendsBlock = this.requiresExtendsBlock || (result.extendsList && result.extendsList.members.length > 0);
 
             var flags = result.getVarFlags();
-            if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | VariableFlags.Exported;
             }
-            else {
-                flags = flags & ~VariableFlags.Exported;
-            }
 
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 flags = flags | VariableFlags.Ambient;
-            }
-            else {
-                flags = flags & ~VariableFlags.Ambient;
             }
 
             result.setVarFlags(flags);
@@ -491,11 +478,8 @@ module TypeScript {
         }
 
         public completeInterfaceDeclaration(node: InterfaceDeclarationSyntax, result: InterfaceDeclaration): void {
-            if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Exported);
-            }
-            else {
-                result.setVarFlags(result.getVarFlags() & ~VariableFlags.Exported);
             }
         }
 
@@ -560,18 +544,7 @@ module TypeScript {
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
 
-            var savedIsParsingAmbientModule = this.isParsingAmbientModule;
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingDeclareFile) {
-                this.isParsingAmbientModule = true;
-            }
-
-            var savedContainingModuleHasExportAssignment = this.containingModuleHasExportAssignment;
-            this.containingModuleHasExportAssignment = ArrayUtilities.any(node.moduleElements.toArray(), m => m.kind() === SyntaxKind.ExportAssignment);
-
             var members = this.visitSyntaxList(node.moduleElements);
-
-            this.isParsingAmbientModule = savedIsParsingAmbientModule;
-            this.containingModuleHasExportAssignment = savedContainingModuleHasExportAssignment;
 
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
@@ -591,10 +564,8 @@ module TypeScript {
                 postComments = null;
 
                 // mark the inner module declarations as exported
-                if (i) {
-                    result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
-                } else if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
-                    // outer module is exported if export key word or parsing ambient module
+                // outer module is exported if export key word or parsing ambient module
+                if (i || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                     result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
                 }
 
@@ -611,11 +582,8 @@ module TypeScript {
 
         public completeModuleDeclaration(node: ModuleDeclarationSyntax, result: ModuleDeclaration): void {
             // mark ambient if declare keyword or parsing ambient module or parsing declare file
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Ambient);
-            }
-            else {
-                result.setModuleFlags(result.getModuleFlags() & ~ModuleFlags.Ambient);
             }
         }
 
@@ -662,18 +630,12 @@ module TypeScript {
 
         public completeFunctionDeclaration(node: FunctionDeclarationSyntax, result: FunctionDeclaration): void {
             var flags = result.getFunctionFlags();
-            if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | FunctionFlags.Exported;
             }
-            else {
-                flags = flags & ~FunctionFlags.Exported;
-            }
 
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 flags = flags | FunctionFlags.Ambient;
-            }
-            else {
-                flags = flags & ~FunctionFlags.Ambient;
             }
 
             result.setFunctionFlags(flags);
@@ -738,10 +700,10 @@ module TypeScript {
 
             var flags = result.getModuleFlags() | ModuleFlags.IsEnum;
 
-            if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | ModuleFlags.Exported;
             }
-            
+
             result.setModuleFlags(flags);
 
             return result;
@@ -863,18 +825,12 @@ module TypeScript {
                 }
 
                 var flags = varDecl.getVarFlags();
-                if (!this.containingModuleHasExportAssignment && (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule)) {
+                if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                     flags = flags | VariableFlags.Exported;
                 }
-                else {
-                    flags = flags & ~VariableFlags.Exported;
-                }
 
-                if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                     flags = flags | VariableFlags.Ambient;
-                }
-                else {
-                    flags = flags & ~VariableFlags.Ambient;
                 }
 
                 varDecl.setVarFlags(flags);

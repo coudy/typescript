@@ -5,7 +5,10 @@
 
 module TypeScript {
     export class DeclCollectionContext {
+        public isDeclareFile = false;
         public parentChain = new Array<PullDecl>();
+        public containingModuleHasExportAssignmentArray: boolean[] = [false];
+        public isParsingAmbientModuleArray: boolean[] = [false];
 
         constructor(public semanticInfo: SemanticInfo, public scriptName = "") {
         }
@@ -17,9 +20,19 @@ module TypeScript {
         public popParent() { this.parentChain.length--; }
 
         public foundValueDecl = false;
+
+        public containingModuleHasExportAssignment(): boolean {
+            Debug.assert(this.containingModuleHasExportAssignmentArray.length > 0);
+            return ArrayUtilities.last(this.containingModuleHasExportAssignmentArray);
+        }
+
+        public isParsingAmbientModule(): boolean {
+            Debug.assert(this.isParsingAmbientModuleArray.length > 0);
+            return ArrayUtilities.last(this.isParsingAmbientModuleArray);
+        }
     }
 
-    export function preCollectImportDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectImportDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
         var importDecl = <ImportDeclaration>ast;
         var declFlags = PullElementFlags.None;
         var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
@@ -40,19 +53,19 @@ module TypeScript {
         return false;
     }
 
-    export function preCollectModuleDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectModuleDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text();
         var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
         var kind: PullElementKind = PullElementKind.Container;
 
-        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient)) {
-            declFlags |= PullElementFlags.Ambient;
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsEnum)) {
@@ -76,19 +89,24 @@ module TypeScript {
 
         context.pushParent(decl);
 
+        context.containingModuleHasExportAssignmentArray.push(
+            ArrayUtilities.any(moduleDecl.members.members, m => m.nodeType() === NodeType.ExportAssignment));
+        context.isParsingAmbientModuleArray.push(
+            context.isDeclareFile || ArrayUtilities.last(context.isParsingAmbientModuleArray) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient));
+
         return true;
     }
 
-    export function preCollectClassDecls(classDecl: ClassDeclaration, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectClassDecls(classDecl: ClassDeclaration, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var constructorDeclKind = PullElementKind.Variable;
 
-        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
-            declFlags |= PullElementFlags.Ambient;
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(classDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
+        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+            declFlags |= PullElementFlags.Ambient;
         }
 
         var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
@@ -114,7 +132,7 @@ module TypeScript {
         return true;
     }
 
-    export function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
+    function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
@@ -140,7 +158,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectInterfaceDecls(interfaceDecl: InterfaceDeclaration, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectInterfaceDecls(interfaceDecl: InterfaceDeclaration, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         // PULLTODO
@@ -148,7 +166,7 @@ module TypeScript {
             return createObjectTypeDeclaration(interfaceDecl, context);
         }
 
-        if (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported)) {
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -171,7 +189,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectParameterDecl(argDecl: Parameter, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectParameterDecl(argDecl: Parameter, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Private)) {
@@ -227,7 +245,7 @@ module TypeScript {
         return false;
     }
 
-    export function preCollectTypeParameterDecl(typeParameterDecl: TypeParameter, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectTypeParameterDecl(typeParameterDecl: TypeParameter, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
@@ -260,7 +278,7 @@ module TypeScript {
     }
 
     // interface properties
-    export function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext) {
+    function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
         var declType = parent.getKind() === PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
@@ -297,7 +315,7 @@ module TypeScript {
     }
 
     // class member variables
-    export function createMemberVariableDeclaration(memberDecl: VariableDeclarator, context: DeclCollectionContext) {
+    function createMemberVariableDeclaration(memberDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
@@ -336,16 +354,16 @@ module TypeScript {
         return false;
     }
 
-    export function createVariableDeclaration(varDecl: VariableDeclarator, context: DeclCollectionContext) {
+    function createVariableDeclaration(varDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient)) {
-            declFlags |= PullElementFlags.Ambient;
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(varDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
+        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+            declFlags |= PullElementFlags.Ambient;
         }
 
         var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
@@ -377,7 +395,7 @@ module TypeScript {
         return false;
     }
 
-    export function preCollectVarDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectVarDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
         var varDecl = <VariableDeclarator>ast;
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
@@ -395,7 +413,7 @@ module TypeScript {
     }
 
     // function type expressions
-    export function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.FunctionType;
 
@@ -434,7 +452,7 @@ module TypeScript {
     }
 
     // constructor types
-    export function createConstructorTypeDeclaration(constructorTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createConstructorTypeDeclaration(constructorTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorType;
 
@@ -473,16 +491,16 @@ module TypeScript {
     }
 
     // function declaration
-    export function createFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Function;
 
-        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Ambient)) {
-            declFlags |= PullElementFlags.Ambient;
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
+        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (!funcDeclAST.block) {
@@ -523,7 +541,7 @@ module TypeScript {
     }
 
     // function expression
-    export function createFunctionExpressionDeclaration(functionExpressionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createFunctionExpressionDeclaration(functionExpressionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         if (hasFlag(functionExpressionDeclAST.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
@@ -565,7 +583,7 @@ module TypeScript {
     }
 
     // methods
-    export function createMemberFunctionDeclaration(memberFunctionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createMemberFunctionDeclaration(memberFunctionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
 
@@ -618,7 +636,7 @@ module TypeScript {
     }
 
     // index signatures
-    export function createIndexSignatureDeclaration(indexSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createIndexSignatureDeclaration(indexSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
         var declType = PullElementKind.IndexSignature;
 
@@ -656,7 +674,7 @@ module TypeScript {
     }
 
     // call signatures
-    export function createCallSignatureDeclaration(callSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createCallSignatureDeclaration(callSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.CallSignature;
 
@@ -694,7 +712,7 @@ module TypeScript {
     }
 
     // construct signatures
-    export function createConstructSignatureDeclaration(constructSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createConstructSignatureDeclaration(constructSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.ConstructSignature;
 
@@ -732,7 +750,7 @@ module TypeScript {
     }
 
     // class constructors
-    export function createClassConstructorDeclaration(constructorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createClassConstructorDeclaration(constructorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Constructor;
         var declType = PullElementKind.ConstructorMethod;
 
@@ -778,7 +796,7 @@ module TypeScript {
         return true;
     }
 
-    export function createGetAccessorDeclaration(getAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createGetAccessorDeclaration(getAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
@@ -832,7 +850,7 @@ module TypeScript {
     }
 
     // set accessors
-    export function createSetAccessorDeclaration(setAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createSetAccessorDeclaration(setAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
@@ -873,7 +891,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectCatchDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectCatchDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.CatchBlock;
 
@@ -900,7 +918,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectWithDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectWithDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.WithBlock;
 
@@ -923,7 +941,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectFuncDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
+    function preCollectFuncDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
 
         var funcDecl = <FunctionDeclaration>ast;
 
@@ -973,6 +991,7 @@ module TypeScript {
             context.semanticInfo.setASTForDecl(decl, ast);
 
             context.pushParent(decl);
+            context.isDeclareFile = script.isDeclareFile;
 
             go = true;
         }
@@ -1111,6 +1130,9 @@ module TypeScript {
         if (ast.nodeType() === NodeType.ModuleDeclaration) {
             var thisModule = context.getParent();
             context.popParent();
+            context.containingModuleHasExportAssignmentArray.pop();
+            context.isParsingAmbientModuleArray.pop();
+
             parentDecl = context.getParent();
 
             if (hasInitializationFlag(thisModule)) {
