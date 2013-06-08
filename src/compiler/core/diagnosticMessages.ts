@@ -252,6 +252,7 @@ module TypeScript {
         All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1: DiagnosticInfo;
         Generic_type_references_must_include_all_type_arguments: DiagnosticInfo;
         Default_arguments_are_not_allowed_in_an_overload_parameter: DiagnosticInfo;
+        Overloads_cannot_differ_only_by_return_type: DiagnosticInfo;
 
         Type__0__is_missing_property__1__from_type__2_: DiagnosticInfo;
         Types_of_property__0__of_types__1__and__2__are_incompatible: DiagnosticInfo;
@@ -1599,6 +1600,11 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Default arguments are not allowed in an overload parameter",
             code: 2174
+        },
+        Overloads_cannot_differ_only_by_return_type: {
+            category: DiagnosticCategory.Error,
+            message: "Overloads cannot differ only by return type",
+            code: 2175
         },
 
 

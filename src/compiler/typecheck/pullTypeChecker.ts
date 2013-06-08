@@ -684,8 +684,10 @@ module TypeScript {
                         break;
                     }
 
-                    if (this.resolver.signaturesAreIdentical(allSignatures[i], signature)) {
-                        if (funcDecl.isConstructor) {
+                    if (this.resolver.signaturesAreIdentical(allSignatures[i], signature, /*includingReturnType*/ false)) {
+                        if (!this.resolver.typesAreIdentical(allSignatures[i].getReturnType(), signature.getReturnType())) {
+                            this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Overloads_cannot_differ_only_by_return_type, null, typeCheckContext.getEnclosingDecl());
+                        } else if (funcDecl.isConstructor) {
                             this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_constructor_overload_signature, null, typeCheckContext.getEnclosingDecl());
                         } else if (funcDecl.isConstructMember()) {
                             this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_overload_construct_signature, null, typeCheckContext.getEnclosingDecl());

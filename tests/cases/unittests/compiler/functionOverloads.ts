@@ -128,47 +128,52 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     });      
 
     it("Check for overload with compatible return type", function() {
-        var code  = "function foo():string;";
+        var code  = "function foo():string;\n";
             code += 'function foo():number;';
             code += 'function foo():any { if (true) return ""; else return 0;}';
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 0);
+        Harness.Compiler.compileString(code, 'overload', function(result) {
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.equal(result.errors.length, 1);
         });
     });      
 
     it("Check for overload with compatible return type with parameters", function() {
-        var code  = "function foo(bar:number):string;";
+        var code  = "function foo(bar:number):string;\n";
             code += 'function foo(bar:number):number;';
             code += 'function foo(bar?:number):any { return "" };';
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 0);
+        Harness.Compiler.compileString(code, 'overload', function(result) {
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.equal(result.errors.length, 1);
         });
     });   
                         
     it("Check for overload with compatible object literal", function() {
-        var code  = "function foo():{a:number;};";
+        var code  = "function foo():{a:number;};\n";
             code += 'function foo():{a:string;};';
             code += 'function foo():{a:any;} { return {a:1} };';
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 0);
+        Harness.Compiler.compileString(code, 'overload', function(result) {
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.equal(result.errors.length, 1);
         });
     });     
 
     it("Check for overload with compatible object literal - 2", function() {
-        var code  = "function foo(foo:{a:string; b:number;}):string;";
+        var code  = "function foo(foo:{a:string; b:number;}):string;\n";
             code += "function foo(foo:{a:string; b:number;}):number;";
             code += 'function foo(foo:{a:string; b?:number;}):any { return "" };';
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 0);
+        Harness.Compiler.compileString(code, 'overload', function(result) {
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.equal(result.errors.length, 1);
         });
     }); 
 
     it("Check for overload with compatible object literal - 3", function() {
-        var code  = "function foo(foo:{a:string;}):string;";
+        var code  = "function foo(foo:{a:string;}):string;\n";
             code += "function foo(foo:{a:string;}):number;";
             code += 'function foo(foo:{a:string; b?:number;}):any { return "" };';
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 0);
+        Harness.Compiler.compileString(code, 'overload', function(result) {
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.equal(result.errors.length, 1);
         });
     }); 
     

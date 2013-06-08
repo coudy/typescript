@@ -5218,7 +5218,7 @@ module TypeScript {
             return true;
         }
 
-        public signaturesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol) {
+        public signaturesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol, includingReturnType = true) {
 
             if (s1.hasVariableParamList() != s2.hasVariableParamList()) {
                 return false;
@@ -5235,7 +5235,7 @@ module TypeScript {
                 return false;
             }
 
-            if (!this.typesAreIdentical(s1.getReturnType(), s2.getReturnType())) {
+            if (includingReturnType && !this.typesAreIdentical(s1.getReturnType(), s2.getReturnType())) {
                 return false;
             }
 
