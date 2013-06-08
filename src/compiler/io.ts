@@ -137,29 +137,24 @@ var IO = (function() {
                 Environment.writeFile(path, contents, writeByteOrderMark);
             },
 
-            fileExists: function(path: string): boolean {
+            fileExists: function (path: string): boolean {
                 return fso.FileExists(path);
             },
 
-            resolvePath: function(path: string): string {
+            resolvePath: function (path: string): string {
                 return fso.GetAbsolutePathName(path);
             },
 
-            dirName: function(path: string): string {
+            dirName: function (path: string): string {
                 return fso.GetParentFolderName(path);
             },
 
-            findFile: function(rootPath: string, partialFilePath: string): IResolvedFile {
+            findFile: function (rootPath: string, partialFilePath: string): IResolvedFile {
                 var path = fso.GetAbsolutePathName(rootPath) + "/" + partialFilePath;
 
                 while (true) {
                     if (fso.FileExists(path)) {
-                        try {
-                            return { fileInformation: this.readFile(path), path: path };
-                        }
-                        catch (err) {
-                            //Tools.CompilerDiagnostics.debugPrint("Could not find " + path + ", trying parent");
-                        }
+                        return { fileInformation: this.readFile(path), path: path };
                     }
                     else {
                         rootPath = fso.GetParentFolderName(fso.GetAbsolutePathName(rootPath));
@@ -174,7 +169,7 @@ var IO = (function() {
                 }
             },
 
-            deleteFile: function(path: string): void {
+            deleteFile: function (path: string): void {
                 try {
                     if (fso.FileExists(path)) {
                         fso.DeleteFile(path, true); // true: delete read-only files
@@ -184,11 +179,11 @@ var IO = (function() {
                 }
             },
 
-            directoryExists: function(path) {
+            directoryExists: function (path) {
                 return <boolean>fso.FolderExists(path);
             },
 
-            createDirectory: function(path) {
+            createDirectory: function (path) {
                 try {
                     if (!this.directoryExists(path)) {
                         fso.CreateFolder(path);
@@ -198,23 +193,23 @@ var IO = (function() {
                 }
             },
 
-            dir: function(path, spec?, options?) {
+            dir: function (path, spec?, options?) {
                 options = options || <{ recursive?: boolean; }>{};
-                function filesInFolder(folder, root): string[]{
+                function filesInFolder(folder, root): string[] {
                     var paths = [];
                     var fc: Enumerator;
 
                     if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
 
-                        for (; !fc.atEnd() ; fc.moveNext()) {
+                        for (; !fc.atEnd(); fc.moveNext()) {
                             paths = paths.concat(filesInFolder(fc.item(), root + "/" + fc.item().Name));
                         }
                     }
 
                     fc = new Enumerator(folder.files);
 
-                    for (; !fc.atEnd() ; fc.moveNext()) {
+                    for (; !fc.atEnd(); fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
                             paths.push(root + "/" + fc.item().Name);
                         }
@@ -229,11 +224,11 @@ var IO = (function() {
                 return filesInFolder(folder, path);
             },
 
-            print: function(str) {
+            print: function (str) {
                 WScript.StdOut.Write(str);
             },
 
-            printLine: function(str) {
+            printLine: function (str) {
                 WScript.Echo(str);
             },
 
@@ -241,7 +236,7 @@ var IO = (function() {
             stderr: WScript.StdErr,
             stdout: WScript.StdOut,
             watchFile: null,
-            run: function(source, fileName) {
+            run: function (source, fileName) {
                 try {
                     eval(source);
                 } catch (e) {
@@ -257,7 +252,7 @@ var IO = (function() {
                 } catch (e) {
                 }
             }
-        }
+        };
 
     };
 
@@ -340,11 +335,7 @@ var IO = (function() {
 
                 while (true) {
                     if (_fs.existsSync(path)) {
-                        try {
-                            return { fileInformation: this.readFile(path), path: path };
-                        } catch (err) {
-                            //Tools.CompilerDiagnostics.debugPrint(("Could not find " + path) + ", trying parent");
-                        }
+                        return { fileInformation: this.readFile(path), path: path };
                     }
                     else {
                         var parentPath = _path.resolve(rootPath, "..");
@@ -360,7 +351,7 @@ var IO = (function() {
                     }
                 }
             },
-            print: function(str) { process.stdout.write(str) },
+            print: function (str) { process.stdout.write(str); },
             printLine: function(str) { process.stdout.write(str + '\n') },
             arguments: process.argv.slice(2),
             stderr: {

@@ -107,7 +107,6 @@ module TypeScript {
         constructor (public environment: CompilationEnvironment) { }
 
         public resolveCode(referencePath: string, parentPath: string, performSearch: boolean, resolutionDispatcher: TypeScript.IResolutionDispatcher): boolean {
-            
             var resolvedFile: IResolvedFile = { fileInformation: null, path: referencePath };
             
             var ioHost = this.environment.ioHost;
@@ -160,13 +159,20 @@ module TypeScript {
                 else {
 
                     // if the path is non-relative, we should attempt to search on the relative path
-                    resolvedFile = ioHost.findFile(parentPath, normalizedPath);
+                    try {
+                        resolvedFile = ioHost.findFile(parentPath, normalizedPath);
 
-                    if (!resolvedFile) {
-                        if (isTSFile(normalizedPath)) {
-                            normalizedPath = changePathToDTS(normalizedPath);
-                            resolvedFile = ioHost.findFile(parentPath, normalizedPath);
+                        if (!resolvedFile) {
+                            if (isTSFile(normalizedPath)) {
+                                normalizedPath = changePathToDTS(normalizedPath);
+                                resolvedFile = ioHost.findFile(parentPath, normalizedPath);
+                            }
                         }
+                    }
+                    catch (e) {
+                        CompilerDiagnostics.debugPrint("   Did not find code for " + normalizedPath);
+                        // Resolution failed
+                        return false;
                     }
 
                     if (resolvedFile) {

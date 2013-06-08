@@ -88,7 +88,7 @@ var Environment = (function () {
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2); // Read the BOM char
 
-                     // Position has to be at 0 before changing the encoding
+                    // Position has to be at 0 before changing the encoding
                     streamObj.Position = 0;
 
                     var byteOrderMark = ByteOrderMark.None;
@@ -110,7 +110,7 @@ var Environment = (function () {
                         streamObj.Charset = 'utf-8';
                     }
 
-                // Read the whole file
+                    // Read the whole file
                     var contents = streamObj.ReadText(-1 /* read from the current position to EOS */);
                     streamObj.Close();
                     releaseStreamObject(streamObj);
@@ -176,14 +176,14 @@ var Environment = (function () {
                     if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
 
-                        for (; !fc.atEnd() ; fc.moveNext()) {
+                        for (; !fc.atEnd(); fc.moveNext()) {
                             paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
                         }
                     }
 
                     fc = new Enumerator(folder.files);
 
-                    for (; !fc.atEnd() ; fc.moveNext()) {
+                    for (; !fc.atEnd(); fc.moveNext()) {
                         if (!spec || fc.item().Name.match(spec)) {
                             paths.push(root + "\\" + fc.item().Name);
                         }
@@ -201,7 +201,7 @@ var Environment = (function () {
             arguments: <string[]>args,
 
             standardOut: WScript.StdOut,
-        }
+        };
     };
 
     function getNodeEnvironment(): IEnvironment {
@@ -223,7 +223,7 @@ var Environment = (function () {
                             // Little Endian first
                             var i = 0;
                             while ((i + 1) < buffer.length) {
-                                var temp = buffer[i]
+                                var temp = buffer[i];
                                 buffer[i] = buffer[i + 1];
                                 buffer[i + 1] = temp;
                                 i += 2;
@@ -267,26 +267,26 @@ var Environment = (function () {
                 }
                 _fs.writeFileSync(path, contents, "utf8");
             },
-            
-            fileExists: function(path): boolean {
+
+            fileExists: function (path): boolean {
                 return _fs.existsSync(path);
             },
 
-            deleteFile: function(path) {
+            deleteFile: function (path) {
                 try {
                     _fs.unlinkSync(path);
                 } catch (e) {
                 }
             },
-            
-            directoryExists: function(path: string): boolean {
+
+            directoryExists: function (path: string): boolean {
                 return _fs.existsSync(path) && _fs.statSync(path).isDirectory();
             },
 
             listFiles: function dir(path, spec?, options?) {
                 options = options || <{ recursive?: boolean; }>{};
 
-                function filesInFolder(folder: string): string[]{
+                function filesInFolder(folder: string): string[] {
                     var paths = [];
 
                     var files = _fs.readdirSync(folder);
@@ -306,13 +306,13 @@ var Environment = (function () {
             },
 
             arguments: process.argv.slice(2),
-            
+
             standardOut: {
-                Write: function(str) { process.stdout.write(str); },
-                WriteLine: function(str) { process.stdout.write(str + '\n'); },
-                Close: function() { }
+                Write: function (str) { process.stdout.write(str); },
+                WriteLine: function (str) { process.stdout.write(str + '\n'); },
+                Close: function () { }
             },
-        }
+        };
     };
 
     if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
