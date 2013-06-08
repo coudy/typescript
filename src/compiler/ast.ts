@@ -1391,12 +1391,19 @@ module TypeScript {
             emitter.emitBlockOrStatement(this.thenBod);
 
             if (this.elseBod) {
+                if (this.thenBod.nodeType() !== NodeType.Block) {
+                    emitter.writeLineToOutput("");
+                }
+                else {
+                    emitter.writeToOutput(" ");
+                }
+
                 if (this.elseBod.nodeType() === NodeType.IfStatement) {
-                    emitter.writeToOutput(" else ");
+                    emitter.writeToOutput("else ");
                     this.elseBod.emit(emitter);
                 }
                 else {
-                    emitter.writeToOutput(" else");
+                    emitter.writeToOutput("else");
                     emitter.emitBlockOrStatement(this.elseBod);
                 }
             }
