@@ -2267,7 +2267,8 @@ module TypeScript {
     }
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
-        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol) {
+
+        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol, private _data = null) {
             super("error");
         }
 
@@ -2293,6 +2294,14 @@ module TypeScript {
 
         public isResolved() {
             return false;
+        }
+
+        public setData(data: any) {
+            this._data = data;
+        }
+
+        public getData() {
+            return this._data;
         }
     }
 

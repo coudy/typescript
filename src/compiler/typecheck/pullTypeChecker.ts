@@ -1847,6 +1847,11 @@ module TypeScript {
 
             var returnType = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
 
+            if (returnType.isError()) {
+                var symbolName = (<PullErrorTypeSymbol>returnType).getData();
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode.Could_not_find_symbol__0_, [symbolName], typeCheckContext.getEnclosingDecl());
+            }
+
             this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
             var exprType = this.typeCheckAST(ast.operand, typeCheckContext, true);
             this.context.popContextualType();

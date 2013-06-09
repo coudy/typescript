@@ -304,8 +304,8 @@ module TypeScript {
             return this.semanticInfoChain.getASTForDecl(decl);
         }
 
-        public getNewErrorTypeSymbol(diagnostic: SemanticDiagnostic): PullErrorTypeSymbol {
-            return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol);
+        public getNewErrorTypeSymbol(diagnostic: SemanticDiagnostic, data?): PullErrorTypeSymbol {
+            return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol, data);
         }
 
         public getEnclosingDecl(decl: PullDecl): PullDecl {
@@ -1763,6 +1763,10 @@ module TypeScript {
                 typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
+
+                //if (typeDeclSymbol && typeDeclSymbol.isError()) {
+                //    return symbolAndDiagnostic;
+                //}
             }
             // a function
             else if (typeRef.term.nodeType === NodeType.FunctionDeclaration) {
@@ -1775,6 +1779,10 @@ module TypeScript {
             else if (typeRef.term.nodeType === NodeType.GenericType) {
                 symbolAndDiagnostic = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
                 typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
+
+                //if (typeDeclSymbol && typeDeclSymbol.isError()) {
+                //    return symbolAndDiagnostic;
+                //}
             }
             // a dotted name
             else if (typeRef.term.nodeType === NodeType.MemberAccessExpression) {
@@ -1786,6 +1794,10 @@ module TypeScript {
                 symbolAndDiagnostic = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
                 typeDeclSymbol = <PullTypeSymbol>symbolAndDiagnostic.symbol;
                 context.resolvingTypeReference = prevResolvingTypeReference;
+
+                //if (typeDeclSymbol && typeDeclSymbol.isError()) {
+                //    return symbolAndDiagnostic;
+                //}
             }
             else if (typeRef.term.nodeType === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>typeRef.term;
@@ -2829,7 +2841,7 @@ module TypeScript {
 
             if (!nameSymbol) {
                 return SymbolAndDiagnostics.create(
-                    this.getNewErrorTypeSymbol(null),
+                    this.getNewErrorTypeSymbol(null, id),
                     [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText])]);
             }
 
@@ -3034,7 +3046,7 @@ module TypeScript {
 
                 if (!nameSymbol) {
                     return SymbolAndDiagnostics.create(
-                        this.getNewErrorTypeSymbol(null),
+                        this.getNewErrorTypeSymbol(null, rhsName),
                         [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getDisplayName()])]);
                 }
             }
@@ -3133,7 +3145,7 @@ module TypeScript {
 
                 if (!typeNameSymbol) {
                     return SymbolAndDiagnostics.create(
-                        this.getNewErrorTypeSymbol(null),
+                        this.getNewErrorTypeSymbol(null, id),
                         [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol__0_, [nameAST.actualText])]);
                 }
 
@@ -3363,7 +3375,7 @@ module TypeScript {
 
             if (!childTypeSymbol) {
                 return SymbolAndDiagnostics.create(
-                    this.getNewErrorTypeSymbol(null),
+                    this.getNewErrorTypeSymbol(null, rhsName),
                     [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.getName()])]);
             }
 
@@ -3919,8 +3931,8 @@ module TypeScript {
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
             if (callEx.operand2.nodeType === NodeType.StringLiteral || callEx.operand2.nodeType === NodeType.NumericLiteral) {
-                var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).actualText :
-                    quoteStr((<NumberLiteral>callEx.operand2).value.toString());
+                var memberName = callEx.operand2.nodeType === NodeType.StringLiteral ? stripQuotes((<StringLiteral>callEx.operand2).actualText) :
+                    quoteStr((<NumberLiteral>callEx.operand2).value.toString()); // numeric literals are still quoted
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 
@@ -4896,7 +4908,7 @@ module TypeScript {
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullTypeSymbol> {
-            return this.resolveTypeReference(assertionExpression.castTerm, enclosingDecl, context).withoutDiagnostics();
+            return this.resolveTypeReference(assertionExpression.castTerm, enclosingDecl, context);
         }
 
         private resolveAssignmentStatement(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): SymbolAndDiagnostics<PullSymbol> {
