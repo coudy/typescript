@@ -154,6 +154,21 @@ module TypeScript {
 
         private currentUnit: SemanticInfo = null;
 
+
+        public cleanCachedGlobals() {
+            this._cachedArrayInterfaceType = null;
+            this._cachedNumberInterfaceType = null;
+            this._cachedStringInterfaceType = null;
+            this._cachedBooleanInterfaceType = null;
+            this._cachedObjectInterfaceType = null;
+            this._cachedFunctionInterfaceType = null;
+            this._cachedIArgumentsInterfaceType = null;
+            this._cachedRegExpInterfaceType = null;
+            this.cachedFunctionArgumentsSymbol = null;
+            
+            this._haveResolvedGlobals = false;        
+        }        
+
         private cachedArrayInterfaceType() {
             if (!this._cachedArrayInterfaceType) {
                 this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);    

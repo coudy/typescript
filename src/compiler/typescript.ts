@@ -766,7 +766,12 @@ module TypeScript {
                 //var diffEndTime = new Date().getTime();
                 //this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));
 
-                // replace the old semantic info
+                // If we havne't yet created a new resolver, clean any cached symbols
+                if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
+                    this.pullTypeChecker.resolver.cleanCachedGlobals();
+                }
+
+                // replace the old semantic info               
                 this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
 
                 // Re-bind - we do this even if there aren't changes in the decls so as to relate the
@@ -779,6 +784,12 @@ module TypeScript {
                 this.semanticInfoChain.update();
                 var cleanEnd = new Date().getTime();
                 this.logger.log("   time to clean: " +(cleanEnd - cleanStart));
+
+                // reset the resolver's current unit, since we've replaced those decls they won't
+                // be cleaned
+                if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
+                    this.pullTypeChecker.resolver.setUnitPath(oldDocument.fileName);
+                }
 
                 //var binder = new PullSymbolBinder(this.semanticInfoChain);
                 //binder.setUnit(oldDocument.fileName);
@@ -1512,7 +1523,7 @@ module TypeScript {
             if (globalBinder) {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
-                        
+
             // Input has to be an object literal
             if (path.ast().nodeType !== NodeType.ObjectLiteralExpression) {
                 return null;
