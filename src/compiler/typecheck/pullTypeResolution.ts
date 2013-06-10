@@ -1726,7 +1726,7 @@ module TypeScript {
 
                     memberType = memberSymbol.getType();
 
-                    if (memberType && memberType.isGeneric()) {
+                    if ((memberType && memberType.isGeneric()) || (memberSymbol.isSignature() && (<PullSignatureSymbol>memberSymbol).isGeneric())) {
                         interfaceSymbol.setHasGenericMember();
                     }
                 }
