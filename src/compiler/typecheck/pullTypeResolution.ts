@@ -3861,6 +3861,9 @@ module TypeScript {
                 if (elementTypes.length) {
                     elementType = elementTypes[0];
                 }
+                else if (contextualElementType) {
+                    elementType = contextualElementType;
+                }
 
                 var collection: IPullTypeCollection = {
                     getLength: () => { return elements.members.length; },
