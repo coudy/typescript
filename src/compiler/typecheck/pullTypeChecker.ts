@@ -145,7 +145,7 @@ module TypeScript {
                     }
 
                     if (!this.resolver.typesAreIdentical(symbol.getType(), firstSymbol.getType())) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_, [symbol.getDisplayName(), firstSymbol.getType().toString(), symbol.getType().toString()], enclosingDecl);
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_, [symbol.getScopedName(), firstSymbol.getType().toString(), symbol.getType().toString()], enclosingDecl);
                     }
                 }
             }
@@ -2531,7 +2531,7 @@ module TypeScript {
                         var containingClass = typeCheckContext.getEnclosingClassDecl();
                         if (!containingClass || containingClass.getSymbol() !== memberContainer) {
                             var name = <Identifier>memberAccessExpression.operand2;
-                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(false), name.actualText], enclosingDecl);
+                            this.postError(name.minChar, name.getLength(), typeCheckContext.scriptName, DiagnosticCode._0_1__is_inaccessible, [memberContainer.toString(null, false), name.actualText], enclosingDecl);
                             return true;
                         }
                     }
@@ -2739,7 +2739,7 @@ module TypeScript {
                 } else {
                     // Interface
                     messageCode = DiagnosticCode.Exported_interface__0__extends_interface_from_inaccessible_module__1_;
-                    messageArguments = [declSymbol.getDisplayName(), typeSymbolName];
+                    messageArguments = [declSymbol.toString(), typeSymbolName];
                 }
             } else {
                 if (declAST.nodeType() === NodeType.ClassDeclaration) {
@@ -2754,7 +2754,7 @@ module TypeScript {
                 } else {
                     // Interface
                     messageCode = DiagnosticCode.Exported_interface__0__extends_private_interface__1_;
-                    messageArguments = [declSymbol.getDisplayName(), typeSymbolName];
+                    messageArguments = [declSymbol.toString(), typeSymbolName];
                 }
             }
 

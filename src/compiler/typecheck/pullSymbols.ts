@@ -513,8 +513,8 @@ module TypeScript {
             }
         }
 
-        public toString(useConstraintInName?: boolean) {
-            var str = this.getNameAndTypeName();
+        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+            var str = this.getNameAndTypeName(scopeSymbol);
             return str;
         }
 
@@ -1146,8 +1146,8 @@ module TypeScript {
             return result;
         }
 
-        public toString(useConstraintInName?: boolean) {
-            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false, undefined, undefined, useConstraintInName).toString();
+        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false, scopeSymbol, undefined, useConstraintInName).toString();
             return s;
         }
 
@@ -2265,8 +2265,8 @@ module TypeScript {
             return false;
         }
 
-        public toString(useConstraintInName?: boolean) {
-            var s = this.getScopedNameEx(null, useConstraintInName).toString();
+        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+            var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
             return s;
         }
 
@@ -2442,8 +2442,8 @@ module TypeScript {
             return this.delegateType.getDisplayName(scopeSymbol, useConstraintInName);
         }
 
-        public toString() {
-            return this.delegateType.toString();
+        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+            return this.delegateType.toString(scopeSymbol, useConstraintInName);
         }
 
         public isResolved() {
@@ -2851,7 +2851,7 @@ module TypeScript {
             this.isPrinting = true;         
 
             if (useConstraintInName && this.constraintLink) {
-                name += " extends " + this.constraintLink.end.toString();
+                name += " extends " + this.constraintLink.end.toString(scopeSymbol);
             }
 
             this.isPrinting = false;
@@ -2870,7 +2870,7 @@ module TypeScript {
             this.isPrinting = true;
 
             if (useConstraintInName && this.constraintLink) {
-                name += " extends " + this.constraintLink.end.toString();
+                name += " extends " + this.constraintLink.end.toString(scopeSymbol);
             }
 
             this.isPrinting = false;
