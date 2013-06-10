@@ -25,9 +25,9 @@ module TypeScript {
         public watch = false;
         public exec = false;
         public resolve = true;
-        public disallowBool = false;
+        public allowBool = false;
         public allowAutomaticSemicolonInsertion = true;
-        public allowModuleKeywordInExternalModuleReference = true;
+        public allowModuleKeywordInExternalModuleReference = false;
 
         public useDefaultLib = true;
 

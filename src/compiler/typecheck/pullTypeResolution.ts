@@ -2965,7 +2965,7 @@ module TypeScript {
             }
             else if (id === "bool") {
                 // Warn for using bool
-                if (this.compilationSettings.disallowBool && !this.currentUnit.getProperties().unitContainsBool) {
+                if (!this.compilationSettings.allowBool && !this.currentUnit.getProperties().unitContainsBool) {
                     this.currentUnit.getProperties().unitContainsBool = true;
                     return SymbolAndDiagnostics.create(
                         this.semanticInfoChain.booleanTypeSymbol,

@@ -525,17 +525,17 @@ module TypeScript {
                 }
             }, 'v');
 
-            opts.flag('disallowbool', {
-                usage: 'Throw error for use of deprecated "bool" type',
+            opts.flag('allowbool', {
+                usage: 'Allow use of deprecated "bool" type',
                 set: () => {
-                    this.compilationSettings.disallowBool = true;
+                    this.compilationSettings.allowBool = true;
                 }
             }, 'b');
 
-            opts.flag('disallowimportmodule', {
-                usage: 'Throw error for use of deprecated "module" keyword when referencing an external module. Only allow "require" keyword.',
+            opts.flag('allowimportmodule', {
+                usage: 'Allow use of deprecated "module" keyword when referencing an external module',
                 set: () => {
-                    this.compilationSettings.allowModuleKeywordInExternalModuleReference = false;
+                    this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
                 }
             }, 'm');
 
