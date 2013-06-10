@@ -5,5 +5,4 @@
 //// }
 
 goTo.marker('');
-// Bug 712224 AST divergence adding 'declare' in front of a module containing a module
-// edit.insert("declare ");
+edit.insert("declare ");
