@@ -4752,19 +4752,16 @@ module TypeScript {
                                     if (triedToInferTypeArgs) {
 
                                         if (constructSignatures[i].parametersAreFixed()) {
-                                            if (constructSignatures[i].hasGenericParameter()) {
-                                                context.specializingToAny = true;
-                                            }
-                                            else {
+                                            if (!constructSignatures[i].hasGenericParameter()) {
                                                 resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                                             }
                                         }
                                         else {
                                             continue;
                                         }
+                                    } else {
+                                        context.specializingToAny = true;
                                     }
-
-                                    context.specializingToAny = true;
                                 }
 
                                 if (couldNotAssignToConstraint) {
