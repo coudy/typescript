@@ -165,7 +165,12 @@ module TypeScript {
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
         public setValueIsBeingSpecialized(val: boolean) { this.isBeingSpecialized = val; }
 
-        public getRootSymbol() { return this.rootSymbol; }
+        public getRootSymbol() { 
+            if (!this.rootSymbol) {
+                return this;
+            }
+            return this.rootSymbol;
+        }
         public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
 
         public setIsBound(rebindingID: number) {
@@ -1187,9 +1192,17 @@ module TypeScript {
         private hasGenericSignature = false;
         private hasGenericMember = false;
         private knownBaseTypeCount = 0;
+        private _hasBaseTypeConflict = false;
+
         public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
         public resetKnownBaseTypeCount() { this.knownBaseTypeCount = 0; }
         public incrementKnownBaseCount() { this.knownBaseTypeCount++; }
+        public setHasBaseTypeConflict() {
+            this._hasBaseTypeConflict = true;
+        }
+        public hasBaseTypeConflict() {
+            return this._hasBaseTypeConflict;
+        }
 
         private invalidatedSpecializations = false;
 
@@ -1823,16 +1836,24 @@ module TypeScript {
             return <PullTypeSymbol[]>members;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol) {
+        public hasBase(potentialBase: PullTypeSymbol, origin=null) {
 
             if (this === potentialBase) {
                 return true;
             }
 
+            if (origin && (this === origin || this.getRootSymbol() === origin)) {
+                return true;
+            }
+
+            if (!origin) {
+                origin = this;
+            }
+
             var extendedTypes = this.getExtendedTypes();
 
             for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(potentialBase)) {
+                if (extendedTypes[i].hasBase(potentialBase, origin)) {
                     return true;
                 }
             }
@@ -1840,7 +1861,7 @@ module TypeScript {
             var implementedTypes = this.getImplementedTypes();
 
             for (var i = 0; i < implementedTypes.length; i++) {
-                if (implementedTypes[i].hasBase(potentialBase)) {
+                if (implementedTypes[i].hasBase(potentialBase, origin)) {
                     return true;
                 }
             }

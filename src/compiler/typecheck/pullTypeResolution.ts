@@ -1691,24 +1691,29 @@ module TypeScript {
         public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceSymbol: PullTypeSymbol = null;
 
-            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-            var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-            declCollectionContext.scriptName = this.unitPath;
-
-            if (enclosingDecl) {
-                declCollectionContext.pushParent(enclosingDecl);
-            }
-
-            getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
-            this.currentUnit.addSynthesizedDecl(interfaceDecl);
 
-            var binder = new PullSymbolBinder(this.semanticInfoChain);
+            if (!interfaceDecl) {
 
-            binder.setUnit(this.unitPath);
-            binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
+                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(semanticInfo);
+
+                declCollectionContext.scriptName = this.unitPath;
+
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
+
+                getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+                this.currentUnit.addSynthesizedDecl(interfaceDecl);
+
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+
+                binder.setUnit(this.unitPath);
+                binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
+            }
 
             interfaceSymbol = <PullFunctionTypeSymbol>interfaceDecl.getSymbol();
 
@@ -6140,13 +6145,6 @@ module TypeScript {
 
             var sourceReturnType = sourceSig.getReturnType();
             var targetReturnType = targetSig.getReturnType();
-
-            if (sourceReturnType && sourceReturnType.isTypeParameter() && this.cachedObjectInterfaceType()) {
-                sourceReturnType = this.cachedObjectInterfaceType();
-            }
-            if (targetReturnType && targetReturnType.isTypeParameter() && this.cachedObjectInterfaceType()) {
-                targetReturnType = this.cachedObjectInterfaceType();
-            }
 
             var prevSpecializingToObject = context.specializingToObject;
             context.specializingToObject = true;

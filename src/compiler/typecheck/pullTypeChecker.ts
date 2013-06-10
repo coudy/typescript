@@ -1248,7 +1248,9 @@ module TypeScript {
             }
 
             // Check if its a recursive extend/implement type
-            if (baseType.hasBase(typeSymbol)) {
+            if ((<PullTypeSymbol>baseType.getRootSymbol()).hasBase(<PullTypeSymbol>typeSymbol.getRootSymbol())) {
+                typeSymbol.setHasBaseTypeConflict();
+                baseType.setHasBaseTypeConflict();
                 // Report error
                 this.postError(typeDeclAst.name.minChar,
                     typeDeclAst.name.getLength(),
@@ -1320,7 +1322,9 @@ module TypeScript {
             // Type check the members
             this.typeCheckAST(classAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            this.typeCheckMembersAgainstIndexer(classSymbol, typeCheckContext);
+            if (!classSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(classSymbol, typeCheckContext);
+            }
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1352,7 +1356,9 @@ module TypeScript {
             // Type check the members
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            this.typeCheckMembersAgainstIndexer(interfaceType, typeCheckContext);
+            if (!interfaceType.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(interfaceType, typeCheckContext);
+            }
 
             typeCheckContext.popEnclosingDecl();
 

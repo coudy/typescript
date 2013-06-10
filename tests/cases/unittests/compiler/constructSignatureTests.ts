@@ -13,7 +13,7 @@ describe('Compiling tests\\compiler\\constructSignatureTests.ts', function() {
     it("A call signature can have the void return type", function() {
         var code  = 'var foo: {new ():void;};';
             Harness.Compiler.compileString(code, 'call signatures', function(result) {
-            assert.equal(result.errors.length, 2);
+            assert.equal(result.errors.length, 1);
             assert.compilerWarning(result, 1, 11, "error TS2133: Constructors cannot have a return type of 'void'.");
         });
     });
