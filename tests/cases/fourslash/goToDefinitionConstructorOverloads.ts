@@ -1,9 +1,9 @@
 /// <reference path='fourslash.ts' />
 
-////class ConstructorOverload {
+/////*constructorOverloadDefinition*/class ConstructorOverload {
 ////    /*constructorOverload*/constructor();
 ////    constructor(foo: string);
-////    /*constructorOverloadDefinition*/constructor(foo: any)  { }
+////    constructor(foo: any)  { }
 ////}
 ////
 ////var constructorOverload = new /*constructorOverloadReference*/ConstructorOverload();

@@ -6,11 +6,15 @@
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
     <script src='perfCompiler.js'></script>
     <script>
-        var repeat = 10;
+        var repeat = 20;
+        var batch;
 
         if (!batch) {
             batch = new BatchCompiler();
         }
+
+        var languageService = batch.createLanguageService();
+        languageService.refresh();
 
         function appendTime(message, time) {
             var res = message + ": " + time;
@@ -80,6 +84,24 @@
             });
         }
 
+        function completion() {
+            //run(function () {
+            var start = new Date().getTime();
+
+            var index = compilerString.indexOf("walker.options.goChildren = AstWalkerCallback(true, cur, callback);");
+            var index2 = compilerString.indexOf(".", index) + 1;
+            
+            run(function () {
+                var start = new Date().getTime();
+                languageService.compilerState.compiler.semanticInfoChain.update();
+                var info = languageService.getCompletionsAtPosition(compilerFileName, index2, /*isMemberCompletion:*/ true);
+
+                var end = new Date().getTime();
+                appendTime("Completions " + info.entries.length, end - start);
+            });
+            //});
+        }
+
         function typeCheck() {
             var start = new Date().getTime();
             batch.reTypeCheck();
@@ -104,6 +126,7 @@
     <button onclick="newIncrementalParse()">Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
+    <button onclick="completion()">Completion</button>
     <button onclick="clear1()">Clear</button>
 </body>
 </html>

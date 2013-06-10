@@ -42,7 +42,7 @@ interface IIO {
     arguments: string[];
     stderr: ITextWriter;
     stdout: ITextWriter;
-    watchFile(fileName: string, callback: (string) => void ): IFileWatcher;
+    watchFile(fileName: string, callback: (x:string) => void ): IFileWatcher;
     run(source: string, fileName: string): void;
     getExecutingFilePath(): string;
     quit(exitCode?: number);
@@ -364,7 +364,7 @@ var IO = (function() {
                 WriteLine: function(str) { process.stdout.write(str + '\n'); },
                 Close: function() { }
             },
-            watchFile: function(fileName: string, callback: (string) => void ): IFileWatcher {
+            watchFile: function(fileName: string, callback: (x:string) => void ): IFileWatcher {
                 var firstRun = true;
                 var processingChange = false;
 

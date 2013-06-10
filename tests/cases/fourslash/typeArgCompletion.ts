@@ -12,4 +12,5 @@
 ////var x1: I1<Deri/**/>;
 
 goTo.marker();
-verify.completionListContains("Derived");
+// disable until we re-enable global symbol completion
+//verify.completionListContains("Derived");

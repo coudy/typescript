@@ -119,6 +119,8 @@ module TypeScript {
             public outfile: ITextWriter,
             public emitOptions: EmitOptions,
             private semanticInfoChain: SemanticInfoChain) {
+                globalSemanticInfoChain = semanticInfoChain;
+                globalBinder.semanticInfoChain = semanticInfoChain;
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 

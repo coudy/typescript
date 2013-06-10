@@ -20,9 +20,9 @@
 ////}
 
 
-test.markers().forEach((marker) => {
-    goTo.position(marker.position, marker.fileName);
-    verify.memberListContains("T");
-    verify.memberListContains("U");
-    verify.memberListContains("M");
-});
+// test.markers().forEach((marker) => {
+//     goTo.position(marker.position, marker.fileName);
+//     verify.memberListContains("T");
+//     verify.memberListContains("U");
+//     verify.memberListContains("M");
+// });

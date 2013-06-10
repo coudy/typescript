@@ -165,7 +165,12 @@ module TypeScript {
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
         public setValueIsBeingSpecialized(val: boolean) { this.isBeingSpecialized = val; }
 
-        public getRootSymbol() { return this.rootSymbol; }
+        public getRootSymbol() { 
+            if (!this.rootSymbol) {
+                return this;
+            }
+            return this.rootSymbol;
+        }
         public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
 
         public setIsBound(rebindingID: number) {
@@ -1187,9 +1192,17 @@ module TypeScript {
         private hasGenericSignature = false;
         private hasGenericMember = false;
         private knownBaseTypeCount = 0;
+        private _hasBaseTypeConflict = false;
+
         public getKnownBaseTypeCount() { return this.knownBaseTypeCount; }
         public resetKnownBaseTypeCount() { this.knownBaseTypeCount = 0; }
         public incrementKnownBaseCount() { this.knownBaseTypeCount++; }
+        public setHasBaseTypeConflict() {
+            this._hasBaseTypeConflict = true;
+        }
+        public hasBaseTypeConflict() {
+            return this._hasBaseTypeConflict;
+        }
 
         private invalidatedSpecializations = false;
 
@@ -1614,7 +1627,7 @@ module TypeScript {
 
         public hasOwnCallSignatures() { return !!this.callSignatureLinks; }
 
-        public getCallSignatures(): PullSignatureSymbol[] {
+        public getCallSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.callSignatureLinks) {
@@ -1623,13 +1636,15 @@ module TypeScript {
                 }
             }
 
-            var extendedTypes = this.getExtendedTypes();
+            if (collectBaseSignatures) {
+                var extendedTypes = this.getExtendedTypes();
 
-            for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(this)) {
-                    continue;
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+                    members = members.concat(extendedTypes[i].getCallSignatures());
                 }
-                members = members.concat(extendedTypes[i].getCallSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -1637,7 +1652,7 @@ module TypeScript {
 
         public hasOwnConstructSignatures() { return !!this.constructSignatureLinks; }
 
-        public getConstructSignatures(): PullSignatureSymbol[] {
+        public getConstructSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.constructSignatureLinks) {
@@ -1649,14 +1664,16 @@ module TypeScript {
             // If it's a constructor type, we don't inherit construct signatures
             // (E.g., we'd be looking at the statics on a class, where we want
             // to inherit members, but not construct signatures
-            if (!(this.getKind() == PullElementKind.ConstructorType)) {
-                var extendedTypes = this.getExtendedTypes();
+            if (collectBaseSignatures) {
+                if (!(this.getKind() == PullElementKind.ConstructorType)) {
+                    var extendedTypes = this.getExtendedTypes();
 
-                for (var i = 0; i < extendedTypes.length; i++) {
-                    if (extendedTypes[i].hasBase(this)) {
-                        continue;
+                    for (var i = 0; i < extendedTypes.length; i++) {
+                        if (extendedTypes[i].hasBase(this)) {
+                            continue;
+                        }
+                        members = members.concat(extendedTypes[i].getConstructSignatures());
                     }
-                    members = members.concat(extendedTypes[i].getConstructSignatures());
                 }
             }
 
@@ -1665,7 +1682,7 @@ module TypeScript {
 
         public hasOwnIndexSignatures() { return !!this.indexSignatureLinks; }
 
-        public getIndexSignatures(): PullSignatureSymbol[] {
+        public getIndexSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.indexSignatureLinks) {
@@ -1673,13 +1690,16 @@ module TypeScript {
                     members[members.length] = this.indexSignatureLinks[i].end;
                 }
             }
-            var extendedTypes = this.getExtendedTypes();
 
-            for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(this)) {
-                    continue;
+            if (collectBaseSignatures) {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+                    members = members.concat(extendedTypes[i].getIndexSignatures());
                 }
-                members = members.concat(extendedTypes[i].getIndexSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -1816,16 +1836,24 @@ module TypeScript {
             return <PullTypeSymbol[]>members;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol) {
+        public hasBase(potentialBase: PullTypeSymbol, origin=null) {
 
             if (this === potentialBase) {
                 return true;
             }
 
+            if (origin && (this === origin || this.getRootSymbol() === origin)) {
+                return true;
+            }
+
+            if (!origin) {
+                origin = this;
+            }
+
             var extendedTypes = this.getExtendedTypes();
 
             for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(potentialBase)) {
+                if (extendedTypes[i].hasBase(potentialBase, origin)) {
                     return true;
                 }
             }
@@ -1833,7 +1861,7 @@ module TypeScript {
             var implementedTypes = this.getImplementedTypes();
 
             for (var i = 0; i < implementedTypes.length; i++) {
-                if (implementedTypes[i].hasBase(potentialBase)) {
+                if (implementedTypes[i].hasBase(potentialBase, origin)) {
                     return true;
                 }
             }
@@ -2267,7 +2295,8 @@ module TypeScript {
     }
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
-        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol) {
+
+        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol, private _data = null) {
             super("error");
         }
 
@@ -2293,6 +2322,14 @@ module TypeScript {
 
         public isResolved() {
             return false;
+        }
+
+        public setData(data: any) {
+            this._data = data;
+        }
+
+        public getData() {
+            return this._data;
         }
     }
 
@@ -3122,7 +3159,7 @@ module TypeScript {
             for (var i = 0; i < typeArguments.length; i++) {
                 if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], typeParameters[i]))) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
-                    if (declAST) {
+                    if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
@@ -3142,7 +3179,7 @@ module TypeScript {
 
                 if (!typesToReplace[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typesToReplace[i], typeParameters[i]))) {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
-                    if (declAST) {
+                    if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_its_own_type_parameters, null, enclosingDecl, true);
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
@@ -3280,9 +3317,9 @@ module TypeScript {
             }
         }
 
-        var callSignatures = typeToSpecialize.getCallSignatures();
-        var constructSignatures = typeToSpecialize.getConstructSignatures();
-        var indexSignatures = typeToSpecialize.getIndexSignatures();
+        var callSignatures = typeToSpecialize.getCallSignatures(false);
+        var constructSignatures = typeToSpecialize.getConstructSignatures(false);
+        var indexSignatures = typeToSpecialize.getIndexSignatures(false);
         var members = typeToSpecialize.getMembers();
 
         // specialize call signatures

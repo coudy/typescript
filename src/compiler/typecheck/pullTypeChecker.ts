@@ -503,7 +503,7 @@ module TypeScript {
                         typeExprSymbol = exportedTypeSymbol;
                     }
                     else {
-                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol();
+                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol().getType();
 
                         if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
                             this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_module_type__0__, [typeExprSymbol.toString()], enclosingDecl);
@@ -516,7 +516,7 @@ module TypeScript {
                 }
 
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
-                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol();
+                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol().getType();
 
                     if (!instanceTypeSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type__0__, [initTypeSymbol.toString()], enclosingDecl);
@@ -657,8 +657,8 @@ module TypeScript {
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }
-
-            var funcSymbol = typeCheckContext.semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
+            var functionDeclaration = typeCheckContext.semanticInfo.getDeclForAST(funcDecl);
+            var funcSymbol = functionDeclaration.getSymbol();
 
             // Find the definition signature for this signature group
             var definitionSignature: PullSignatureSymbol = null;
@@ -1248,7 +1248,9 @@ module TypeScript {
             }
 
             // Check if its a recursive extend/implement type
-            if (baseType.hasBase(typeSymbol)) {
+            if ((<PullTypeSymbol>baseType.getRootSymbol()).hasBase(<PullTypeSymbol>typeSymbol.getRootSymbol())) {
+                typeSymbol.setHasBaseTypeConflict();
+                baseType.setHasBaseTypeConflict();
                 // Report error
                 this.postError(typeDeclAst.name.minChar,
                     typeDeclAst.name.getLength(),
@@ -1320,7 +1322,9 @@ module TypeScript {
             // Type check the members
             this.typeCheckAST(classAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            this.typeCheckMembersAgainstIndexer(classSymbol, typeCheckContext);
+            if (!classSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(classSymbol, typeCheckContext);
+            }
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1352,7 +1356,9 @@ module TypeScript {
             // Type check the members
             this.typeCheckAST(interfaceAST.members, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
-            this.typeCheckMembersAgainstIndexer(interfaceType, typeCheckContext);
+            if (!interfaceType.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(interfaceType, typeCheckContext);
+            }
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1547,6 +1553,10 @@ module TypeScript {
 
                 for (var i = 0; i < memberASTs.members.length; i++) {
                     elementTypes[elementTypes.length] = this.typeCheckAST(memberASTs.members[i], typeCheckContext, /*inContextuallyTypedAssignment*/ false);
+                }
+
+                if (contextualMemberType) {
+                    this.context.popContextualType();
                 }
             }
 
@@ -1842,6 +1852,11 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var returnType = this.resolveSymbolAndReportDiagnostics(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl).getType();
+
+            if (returnType.isError()) {
+                var symbolName = (<PullErrorTypeSymbol>returnType).getData();
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode.Could_not_find_symbol__0_, [symbolName], typeCheckContext.getEnclosingDecl());
+            }
 
             this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
             var exprType = this.typeCheckAST(ast.operand, typeCheckContext, true);

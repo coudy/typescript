@@ -235,4 +235,4 @@ verify.referencesCountIs(3);
 
 // Reference misses function parameter.
 goTo.marker("15");
-verify.referencesCountIs(2);
+verify.referencesCountIs(1);

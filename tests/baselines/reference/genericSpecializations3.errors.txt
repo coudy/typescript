@@ -7,6 +7,3 @@
 0.ts line 8 col 7: error TS2137: Class IntFooBad declares interface IFoo<number> but does not implement it:
 	Types of property 'foo' of types 'IntFooBad' and 'IFoo<number>' are incompatible:
 		Call signatures of types '<string>(x: string) => string' and '(x: number) => number' are incompatible.
-0.ts line 32 col 7: error TS2137: Class StringFoo3 declares interface IFoo<string> but does not implement it:
-	Types of property 'foo' of types 'StringFoo3' and 'IFoo<string>' are incompatible:
-		Call signatures of types '<T>(x: T) => T' and '(x: string) => string' are incompatible.
