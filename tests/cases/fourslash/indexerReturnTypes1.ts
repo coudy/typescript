@@ -105,7 +105,7 @@ goTo.marker('14');
 verify.quickInfoIs('any');
 
 goTo.marker('15');
-verify.quickInfoIs('{ [x: number]: T; }');
+verify.quickInfoIs('{ [x: number]: Date; }');
 
 goTo.marker('16');
 verify.quickInfoIs('any');
