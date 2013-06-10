@@ -1144,6 +1144,12 @@ module TypeScript {
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             this.setSymbolAndDiagnosticsForAST(typeDeclAST.extendsList.members[i], SymbolAndDiagnostics.fromSymbol(resolvedParentType), context);
                             typeDeclSymbol.addExtendedType(parentType);
+
+                            var specializations = typeDeclSymbol.getKnownSpecializations();
+                            
+                            for (var j = 0; j < specializations.length; j++) {
+                                specializations[j].addExtendedType(parentType);
+                            }
                         }
                     }
                 }

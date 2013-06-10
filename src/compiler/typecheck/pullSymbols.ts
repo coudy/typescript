@@ -1614,7 +1614,7 @@ module TypeScript {
 
         public hasOwnCallSignatures() { return !!this.callSignatureLinks; }
 
-        public getCallSignatures(): PullSignatureSymbol[] {
+        public getCallSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.callSignatureLinks) {
@@ -1623,13 +1623,15 @@ module TypeScript {
                 }
             }
 
-            var extendedTypes = this.getExtendedTypes();
+            if (collectBaseSignatures) {
+                var extendedTypes = this.getExtendedTypes();
 
-            for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(this)) {
-                    continue;
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+                    members = members.concat(extendedTypes[i].getCallSignatures());
                 }
-                members = members.concat(extendedTypes[i].getCallSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -1637,7 +1639,7 @@ module TypeScript {
 
         public hasOwnConstructSignatures() { return !!this.constructSignatureLinks; }
 
-        public getConstructSignatures(): PullSignatureSymbol[] {
+        public getConstructSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.constructSignatureLinks) {
@@ -1649,14 +1651,16 @@ module TypeScript {
             // If it's a constructor type, we don't inherit construct signatures
             // (E.g., we'd be looking at the statics on a class, where we want
             // to inherit members, but not construct signatures
-            if (!(this.getKind() == PullElementKind.ConstructorType)) {
-                var extendedTypes = this.getExtendedTypes();
+            if (collectBaseSignatures) {
+                if (!(this.getKind() == PullElementKind.ConstructorType)) {
+                    var extendedTypes = this.getExtendedTypes();
 
-                for (var i = 0; i < extendedTypes.length; i++) {
-                    if (extendedTypes[i].hasBase(this)) {
-                        continue;
+                    for (var i = 0; i < extendedTypes.length; i++) {
+                        if (extendedTypes[i].hasBase(this)) {
+                            continue;
+                        }
+                        members = members.concat(extendedTypes[i].getConstructSignatures());
                     }
-                    members = members.concat(extendedTypes[i].getConstructSignatures());
                 }
             }
 
@@ -1665,7 +1669,7 @@ module TypeScript {
 
         public hasOwnIndexSignatures() { return !!this.indexSignatureLinks; }
 
-        public getIndexSignatures(): PullSignatureSymbol[] {
+        public getIndexSignatures(collectBaseSignatures=true): PullSignatureSymbol[] {
             var members: PullSymbol[] = [];
 
             if (this.indexSignatureLinks) {
@@ -1673,13 +1677,16 @@ module TypeScript {
                     members[members.length] = this.indexSignatureLinks[i].end;
                 }
             }
-            var extendedTypes = this.getExtendedTypes();
 
-            for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(this)) {
-                    continue;
+            if (collectBaseSignatures) {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (var i = 0; i < extendedTypes.length; i++) {
+                    if (extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+                    members = members.concat(extendedTypes[i].getIndexSignatures());
                 }
-                members = members.concat(extendedTypes[i].getIndexSignatures());
             }
 
             return <PullSignatureSymbol[]>members;
@@ -3289,9 +3296,9 @@ module TypeScript {
             }
         }
 
-        var callSignatures = typeToSpecialize.getCallSignatures();
-        var constructSignatures = typeToSpecialize.getConstructSignatures();
-        var indexSignatures = typeToSpecialize.getIndexSignatures();
+        var callSignatures = typeToSpecialize.getCallSignatures(false);
+        var constructSignatures = typeToSpecialize.getConstructSignatures(false);
+        var indexSignatures = typeToSpecialize.getIndexSignatures(false);
         var members = typeToSpecialize.getMembers();
 
         // specialize call signatures
