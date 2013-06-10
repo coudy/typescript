@@ -165,13 +165,13 @@ module TypeScript {
         public isTargetOfCall(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType() === TypeScript.NodeType.InvocationExpression &&
-                (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
+                (<TypeScript.InvocationExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
         
         public isTargetOfNew(): boolean {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType() === TypeScript.NodeType.ObjectCreationExpression &&
-                (<TypeScript.CallExpression>this.asts[this.top - 1]).target === this.asts[this.top];
+                (<TypeScript.ObjectCreationExpression>this.asts[this.top - 1]).target === this.asts[this.top];
         }
 
         public isInClassImplementsList(): boolean {
@@ -230,7 +230,7 @@ module TypeScript {
 
             return current < this.top &&
                 (this.asts[current].nodeType() === TypeScript.NodeType.InvocationExpression || this.asts[current].nodeType() === TypeScript.NodeType.ObjectCreationExpression) &&
-                this.asts[current + 1] === (<TypeScript.CallExpression>this.asts[current]).target;
+                this.asts[current + 1] === (<TypeScript.InvocationExpression>this.asts[current]).target;
         }
 
 

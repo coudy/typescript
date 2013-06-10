@@ -119,6 +119,8 @@ module TypeScript {
             public outfile: ITextWriter,
             public emitOptions: EmitOptions,
             private semanticInfoChain: SemanticInfoChain) {
+                globalSemanticInfoChain = semanticInfoChain;
+                globalBinder.semanticInfoChain = semanticInfoChain;
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
@@ -1014,7 +1016,7 @@ module TypeScript {
             this.setInVarBlock(declaration.declarators.members.length);
 
             var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
-            var isAmbientWithoutInit = hasFlag(pullVarDecl.getFlags(), PullElementFlags.Ambient) && varDecl.init === null;
+            var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.getFlags(), PullElementFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
                 for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
                     var declarator = declaration.declarators.members[i];
@@ -1631,7 +1633,7 @@ module TypeScript {
 
             if (hasBaseClass) {
                 baseNameDecl = classDecl.extendsList.members[0];
-                baseName = baseNameDecl.nodeType() === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                baseName = baseNameDecl.nodeType() === NodeType.InvocationExpression ? (<InvocationExpression>baseNameDecl).target : baseNameDecl;
                 this.emitIndent();
                 this.writeLineToOutput("__extends(" + className + ", _super);");
             }

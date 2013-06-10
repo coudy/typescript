@@ -244,6 +244,9 @@ module TypeScript {
         //}
     }
 
+    export var globalSemanticInfoChain: SemanticInfoChain = null;
+    export var globalBinder: PullSymbolBinder = null;
+    export var globalLogger: ILogger = null;
     export class TypeScriptCompiler {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
@@ -256,7 +259,7 @@ module TypeScript {
                     public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: IDiagnosticMessages = null) {
             this.emitOptions = new EmitOptions(this.settings);
-
+            globalLogger = logger;
             if (this.diagnosticMessages) {
                 TypeScript.diagnosticMessages = this.diagnosticMessages;
             }
@@ -679,6 +682,12 @@ module TypeScript {
                 return false;
             }
 
+            // this.semanticInfoChain = globalSemanticInfoChain;
+            // if (globalBinder) {
+            //     globalBinder.semanticInfoChain = globalSemanticInfoChain;
+            // }
+            // this.pullTypeChecker.semanticInfoChain = globalSemanticInfoChain;
+
             var unit = this.semanticInfoChain.getUnit(fileName);
 
             if (!unit) {
@@ -705,8 +714,12 @@ module TypeScript {
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
             var errors: IDiagnostic[] = [];
-
             var unit = this.semanticInfoChain.getUnit(fileName);
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
 
             if (unit) {
                 var document = this.getDocument(fileName);
@@ -726,6 +739,7 @@ module TypeScript {
             var start = new Date().getTime();
 
             this.semanticInfoChain = new SemanticInfoChain();
+            globalSemanticInfoChain = this.semanticInfoChain;
             this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
             var declCollectionContext: DeclCollectionContext = null;
@@ -755,7 +769,8 @@ module TypeScript {
             // bind declaration symbols
             var bindStartTime = new Date().getTime();
 
-            var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
+            var binder = new PullSymbolBinder(this.semanticInfoChain);
+            globalBinder = binder;
 
             // start at '1', so as to skip binding for global primitives such as 'any'
             for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
@@ -764,24 +779,12 @@ module TypeScript {
 
             var bindEndTime = new Date().getTime();
 
-            var findErrorsStartTime = new Date().getTime();
-
-            //// type check
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                fileName = fileNames[i];
-                this.pullTypeChecker.typeCheckScript(this.getDocument(fileName).script, fileName, this);
-            }
-
-            var findErrorsEndTime = new Date().getTime();
-            typeCheckTime += new Date().getTime() - start;
-
-            this.logger.log("Number of symbols created:                " + pullSymbolID);
-            this.logger.log("Number of specialized types created:      " + nSpecializationsCreated);
+            this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
+            this.logger.log("Binding: " + (bindEndTime - bindStartTime));
+            this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
+            this.logger.log("Number of symbols created: " + pullSymbolID);
+            this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
-            this.logger.log("Decl creation:                            " + (createDeclsEndTime - createDeclsStartTime));
-            this.logger.log("Binding:                                  " + (bindEndTime - bindStartTime));
-            this.logger.log("    Time in findSymbol:                   " + time_in_findSymbol);
-            this.logger.log("Find errors:                              " + (findErrorsEndTime - findErrorsStartTime));
         }
 
         private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
@@ -809,64 +812,78 @@ module TypeScript {
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
 
-                var diffStartTime = new Date().getTime();
-                var diffResults = PullDeclDiffer.diffDecls(oldTopLevelDecl, oldScriptSemanticInfo, newTopLevelDecl, newScriptSemanticInfo);
+                //var diffStartTime = new Date().getTime();
+                //var diffResults = PullDeclDiffer.diffDecls(oldTopLevelDecl, oldScriptSemanticInfo, newTopLevelDecl, newScriptSemanticInfo);
 
-                var diffEndTime = new Date().getTime();
-                this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));
+                //var diffEndTime = new Date().getTime();
+                //this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));
 
-                // replace the old semantic info
+                // If we havne't yet created a new resolver, clean any cached symbols
+                if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
+                    this.pullTypeChecker.resolver.cleanCachedGlobals();
+                }
+
+                // replace the old semantic info               
                 this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
 
                 // Re-bind - we do this even if there aren't changes in the decls so as to relate the
                 // existing symbols to new decls and ASTs
-                var innerBindStartTime = new Date().getTime();
+                //var innerBindStartTime = new Date().getTime();
 
-                var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
+                //var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
+                this.logger.log("Cleaning symbols...");
+                var cleanStart = new Date().getTime();
+                this.semanticInfoChain.update();
+                var cleanEnd = new Date().getTime();
+                this.logger.log("   time to clean: " +(cleanEnd - cleanStart));
 
-                this.semanticInfoChain.update(oldDocument.fileName);
-
-                var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
-                binder.setUnit(oldDocument.fileName);
-
-                for (var i = 0; i < topLevelDecls.length; i++) {
-                    binder.bindDeclToPullSymbol(topLevelDecls[i], true);
+                // reset the resolver's current unit, since we've replaced those decls they won't
+                // be cleaned
+                if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
+                    this.pullTypeChecker.resolver.setUnitPath(oldDocument.fileName);
                 }
 
-                var innerBindEndTime = new Date().getTime();
+                //var binder = new PullSymbolBinder(this.semanticInfoChain);
+                //binder.setUnit(oldDocument.fileName);
 
-                this.logger.log("Update Script - Inner bind time: " + (innerBindEndTime - innerBindStartTime));
-                if (diffResults.length) {
+                //for (var i = 0; i < topLevelDecls.length; i++) {
+                //    binder.bindDeclToPullSymbol(topLevelDecls[i], true);
+                //}
 
-                    // propagate changes
-                    var graphUpdater = new PullSymbolGraphUpdater(this.semanticInfoChain);
-                    var diff: PullDeclDiff;
+                //var innerBindEndTime = new Date().getTime();
 
-                    var traceStartTime = new Date().getTime();
-                    for (var i = 0; i < diffResults.length; i++) {
-                        diff = diffResults[i];
+                //this.logger.log("Update Script - Inner bind time: " + (innerBindEndTime - innerBindStartTime));
+                //if (diffResults.length) {
 
-                        if (diff.kind === PullDeclEdit.DeclRemoved) {
-                            graphUpdater.removeDecl(diff.oldDecl);
-                        }
-                        else if (diff.kind === PullDeclEdit.DeclAdded) {
-                            graphUpdater.addDecl(diff.newDecl);
-                            graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                        }
-                        else {
-                            // PULLTODO: Other kinds of edits
-                            graphUpdater.invalidateType(diff.newDecl.getSymbol());
-                        }
-                    }
+                //    // propagate changes
+                //    var graphUpdater = new PullSymbolGraphUpdater(this.semanticInfoChain);
+                //    var diff: PullDeclDiff;
 
-                    var traceEndTime = new Date().getTime();
+                //    var traceStartTime = new Date().getTime();
+                //    for (var i = 0; i < diffResults.length; i++) {
+                //        diff = diffResults[i];
 
-                    // Don't re-typecheck or re-report errors just yet
-                    //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
+                //        if (diff.kind === PullDeclEdit.DeclRemoved) {
+                //            graphUpdater.removeDecl(diff.oldDecl);
+                //        }
+                //        else if (diff.kind === PullDeclEdit.DeclAdded) {
+                //            graphUpdater.addDecl(diff.newDecl);
+                //            graphUpdater.invalidateType(diff.oldDecl.getSymbol());
+                //        }
+                //        else {
+                //            // PULLTODO: Other kinds of edits
+                //            graphUpdater.invalidateType(diff.newDecl.getSymbol());
+                //        }
+                //    }
 
-                    this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
-                    this.logger.log("Update Script - Number of diffs: " + diffResults.length);
-                }
+                //    var traceEndTime = new Date().getTime();
+
+                //    // Don't re-typecheck or re-report errors just yet
+                //    //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
+
+                //    this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
+                //    this.logger.log("Update Script - Number of diffs: " + diffResults.length);
+                //}
             } );
         }
 
@@ -911,6 +928,11 @@ module TypeScript {
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
 
             var pre = (cur: AST, parent: AST): AST => {
                 if (isValidAstNode(cur)) {
@@ -965,9 +987,17 @@ module TypeScript {
                     var previousAST = resultASTs[resultASTs.length - 2];
                     switch (previousAST.nodeType()) {
                         case NodeType.InterfaceDeclaration:
+                            if (foundAST === (<InterfaceDeclaration>previousAST).name) {
+                                foundAST = previousAST;
+                            }
+                            break;
                         case NodeType.ClassDeclaration:
+                            if (foundAST === (<ClassDeclaration>previousAST).name) {
+                                foundAST = previousAST;
+                            }
+                            break;
                         case NodeType.ModuleDeclaration:
-                            if (foundAST === (<NamedDeclaration>previousAST).name) {
+                            if (foundAST === (<ModuleDeclaration>previousAST).name) {
                                 foundAST = previousAST;
                             }
                             break;
@@ -1021,7 +1051,7 @@ module TypeScript {
                                 foundAST = resultASTs[i];
                             }
                             else if ((resultASTs[i].nodeType() === NodeType.InvocationExpression || resultASTs[i].nodeType() === NodeType.ObjectCreationExpression) &&
-                            (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
+                                (<InvocationExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <ICallExpression><any>resultASTs[i];
                                 break;
                             } else if (resultASTs[i].nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
@@ -1162,6 +1192,11 @@ module TypeScript {
             var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var resolutionContext = new PullTypeResolutionContext();
             resolutionContext.resolveAggressively = true;
 
@@ -1207,7 +1242,7 @@ module TypeScript {
                     case NodeType.InvocationExpression:
                     case NodeType.ObjectCreationExpression:
                         var isNew = current.nodeType() === NodeType.ObjectCreationExpression;
-                        var callExpression = <CallExpression>current;
+                        var callExpression = <InvocationExpression>current;
                         var contextualType: PullTypeSymbol = null;
 
                         // Check if we are in an argumnt for a call, propagate the contextual typing
@@ -1430,6 +1465,11 @@ module TypeScript {
                 return null;
             }
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var symbolAndDiagnostics = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
 
@@ -1453,6 +1493,11 @@ module TypeScript {
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
+            }
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
@@ -1480,13 +1525,18 @@ module TypeScript {
                 return null;
             }
 
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }            
+
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.pullTypeChecker.resolver.resolveObjectCreationExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.pullTypeChecker.resolver.resolveInvocationExpression(<CallExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveInvocationExpression(<InvocationExpression>path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
@@ -1500,6 +1550,12 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
@@ -1517,6 +1573,12 @@ module TypeScript {
         }
 
         public pullGetVisibleSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
@@ -1534,6 +1596,12 @@ module TypeScript {
         }
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
             // Input has to be an object literal
             if (path.ast().nodeType() !== NodeType.ObjectLiteralExpression) {
                 return null;
@@ -1559,7 +1627,7 @@ module TypeScript {
         }
 
         public getTopLevelDeclarations(scriptName: string): PullDecl[] {
-            this.pullResolveFile(scriptName);
+            //this.pullResolveFile(scriptName);
 
             var unit = this.semanticInfoChain.getUnit(scriptName);
 

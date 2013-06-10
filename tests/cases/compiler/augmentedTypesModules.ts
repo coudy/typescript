@@ -16,6 +16,7 @@ var m1c = 1; // Should be allowed
 module m1d {
     export class I { foo() { } }
 }
+<<<<<<< HEAD
 var m1d = 1; // error
 
 // module then function
@@ -97,3 +98,6 @@ module m5 { export interface I { foo(): void } } // should already be reasonably
 // module then import
 module m6 { export var y = 2; }
 //import m6 = require(''); 
+=======
+var m1d = 1; // error
+>>>>>>> release-0.9.0

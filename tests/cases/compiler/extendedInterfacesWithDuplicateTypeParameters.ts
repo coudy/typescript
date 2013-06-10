@@ -1,11 +1,11 @@
-interface InterfaceWithMultipleTypars<T, T> { // should error
+interface InterfaceWithMultipleTypars<A, A> { // should error
 	bar(): void;
 }
 
-interface InterfaceWithSomeTypars<T> { // should not error
+interface InterfaceWithSomeTypars<B> { // should not error
 	bar(): void;
 }
 
-interface InterfaceWithSomeTypars<T, T> { // should error
+interface InterfaceWithSomeTypars<C, C> { // should error
 	bar2(): void;
 }

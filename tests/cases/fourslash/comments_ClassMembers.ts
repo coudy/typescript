@@ -577,7 +577,7 @@ goTo.marker('86');
 verify.quickInfoIs("number", "", "i1_s_p", "var");
 
 goTo.marker('87');
-verify.quickInfoIs(undefined, "This is comment for c1", "c1", "class");
+verify.quickInfoIs(undefined, "This is comment for c1\nConstructor method", "c1", "class");
 verify.completionListContains("c1", undefined, "This is comment for c1", "c1", "class");
 
 goTo.marker('88');
@@ -647,7 +647,7 @@ goTo.marker('107');
 verify.quickInfoIs("{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "", "i1_c", "var");
 
 goTo.marker('108');
-verify.quickInfoIs(undefined, "This is comment for c1", "c1", "class");
+verify.quickInfoIs(undefined, "This is comment for c1\nConstructor method", "c1", "class");
 
 goTo.marker('109');
 verify.completionListContains("c1", undefined, "This is comment for c1", "c1", "class");

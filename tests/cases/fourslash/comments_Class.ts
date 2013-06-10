@@ -86,7 +86,7 @@ goTo.marker('9');
 verify.quickInfoIs("new() => c3", "", "i3_c", "var");
 
 goTo.marker('10');
-verify.quickInfoIs(undefined, "", "c3", "class");
+verify.quickInfoIs(undefined, "Constructor comment", "c3", "class");
 
 goTo.marker('11');
 verify.quickInfoIs(undefined, "Class comment", "c4", "class");
@@ -101,7 +101,7 @@ goTo.marker('14');
 verify.quickInfoIs("new() => c4", "", "i4_c", "var");
 
 goTo.marker('15');
-verify.quickInfoIs(undefined, "Class comment", "c4", "class");
+verify.quickInfoIs(undefined, "Class comment\nConstructor comment", "c4", "class");
 
 goTo.marker('16');
 verify.quickInfoIs(undefined, "Class with statics", "c5", "class");
@@ -131,7 +131,7 @@ goTo.marker('24');
 verify.quickInfoIs("{ s1: number; new(): c6; }", "", "i6_c", "var");
 
 goTo.marker('25');
-verify.quickInfoIs(undefined, "class with statics and constructor", "c6", "class");
+verify.quickInfoIs(undefined, "class with statics and constructor\nconstructor comment", "c6", "class");
 
 goTo.marker('26');
 verify.completionListContains("c2", undefined, "This is class c2 without constuctor",  "c2", "class");

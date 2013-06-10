@@ -245,6 +245,7 @@ module Services {
                         return;
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
+
                     if (searchSymbolInfoAtPosition !== null) {
                         var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
                         // Compare the length so we filter out strict superstrings of the symbol we are looking for
@@ -258,8 +259,6 @@ module Services {
 
             return result;
         }
-
-
 
         private isWriteAccess(current: TypeScript.AST, parent: TypeScript.AST): boolean {
             if (parent !== null) {
@@ -311,7 +310,6 @@ module Services {
 
             return false;
         }
-
 
         private getPossibleSymbolReferencePositions(fileName: string, symbolName: string): number []{
 
@@ -380,7 +378,7 @@ module Services {
                 return null;
             }
 
-            var callExpression = <TypeScript.CallExpression>path.ast();
+            var callExpression = <TypeScript.InvocationExpression>path.ast();
             var isNew = (callExpression.nodeType() === TypeScript.NodeType.ObjectCreationExpression);
 
             if (position <= callExpression.target.limChar + callExpression.target.trailingTriviaWidth || position > callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth) {
@@ -409,7 +407,6 @@ module Services {
 
             return result;
         }
-
 
         private getTypeParameterSignatureFromPartiallyWrittenExpression(document: TypeScript.Document, position: number, genericTypeArgumentListInfo : IPartiallyWrittenTypeArgumentListInformation): SignatureInfo {
             var script = document.script;
@@ -539,23 +536,24 @@ module Services {
             return result;
         }
 
-        private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentSymbol?: TypeScript.PullSymbol, parentkindName?: string, includeSubcontainers:boolean = true): void {
+        private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentName?: string, parentkindName?: string, includeSubcontainers:boolean = true): void {
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
-                var symbol = declaration.getSymbol();
-                var kindName = this.mapPullElementKind(declaration.getKind(), symbol);
+                var kindName = this.mapPullElementKind(declaration.getKind(), /*symbol*/ null);
                 var fileName = declaration.getScriptName();
 
                 if (this.shouldIncludeDeclarationInNavigationItems(declaration, includeSubcontainers)) {
                     var item = new NavigateToItem();
-                    item.name = this.getNavigationItemDispalyName(declaration);
+                    var name = this.getNavigationItemDispalyName(declaration);
+                    var fullName = parentName ? parentName + "." + name : name;
+                    item.name = name;
                     item.matchKind = MatchKind.exact;
                     item.kind = kindName;
-                    item.kindModifiers = symbol ? this.getScriptElementKindModifiers(symbol) : "";
+                    item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
                     item.fileName = fileName;
                     item.minChar = declaration.getSpan().start();
                     item.limChar = declaration.getSpan().end();
-                    item.containerName = parentSymbol ? parentSymbol.fullName() : "";
+                    item.containerName = parentName || "";
                     item.containerKind = parentkindName || "";
 
                     result.push(item);
@@ -563,24 +561,53 @@ module Services {
                 
                 if (includeSubcontainers && this.isContainerDeclaration(declaration)) {
                     // process child declarations
-                    this.mapPullDeclsToNavigateToItem(declaration.getChildDecls(), result, symbol, kindName, /*includeSubcontainers*/ true);
+                    this.mapPullDeclsToNavigateToItem(declaration.getChildDecls(), result, fullName, kindName, /*includeSubcontainers*/ true);
 
-                    if (symbol) {
-                        // Process declarations in other files
-                        var otherDeclarations = symbol.getDeclarations();
-                        if (otherDeclarations.length > 1) {
-                            for (var j = 0, m = otherDeclarations.length; j < m; j++) {
-                                var otherDeclaration = otherDeclarations[j];
-                                if (otherDeclaration.getScriptName() === fileName) {
-                                    // this has already been processed 
-                                    continue;
-                                }
-                                this.mapPullDeclsToNavigateToItem(otherDeclaration.getChildDecls(), result, symbol, kindName, /*includeSubcontainers*/ false);
-                            }
-                        }
-                    }
+                    // Disable this for now as it causes a rebind
+                    //
+                    //if (symbol) {
+                    //    // Process declarations in other files
+                    //    var otherDeclarations = symbol.getDeclarations();
+                    //    if (otherDeclarations.length > 1) {
+                    //        for (var j = 0, m = otherDeclarations.length; j < m; j++) {
+                    //            var otherDeclaration = otherDeclarations[j];
+                    //            if (otherDeclaration.getScriptName() === fileName) {
+                    //                // this has already been processed 
+                    //                continue;
+                    //            }
+                    //            this.mapPullDeclsToNavigateToItem(otherDeclaration.getChildDecls(), result, fullName, kindName, /*includeSubcontainers*/ false);
+                    //        }
+                    //    }
+                    //}
                 }
             }
+        }
+
+        private getScriptElementKindModifiersFromDecl(decl: TypeScript.PullDecl): string {
+            var result = [];
+            var flags = decl.getFlags();
+
+            if (flags & TypeScript.PullElementFlags.Exported) {
+                result.push(ScriptElementKindModifier.exportedModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Ambient) {
+                result.push(ScriptElementKindModifier.ambientModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Public) {
+                result.push(ScriptElementKindModifier.publicMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Private) {
+                result.push(ScriptElementKindModifier.privateMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Static) {
+                result.push(ScriptElementKindModifier.staticModifier);
+            }
+
+            return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
         }
 
         private isContainerDeclaration(declaration: TypeScript.PullDecl): boolean {
@@ -605,8 +632,10 @@ module Services {
                 case TypeScript.PullElementKind.Variable:
                 case TypeScript.PullElementKind.Property:
                     // Do not include the value side of modules or classes, as thier types has already been included
-                    var symbol = declaration.getSymbol();
-                    return !this.isModule(symbol) && !this.isDynamicModule(symbol)  && !this.isConstructorMethod(symbol) && !this.isClass(symbol);
+                    return (declaration.getFlags() & (TypeScript.PullElementFlags.ClassConstructorVariable |
+                        TypeScript.PullElementFlags.InitializedModule |
+                        TypeScript.PullElementFlags.InitializedDynamicModule |
+                        TypeScript.PullElementFlags.InitializedEnum)) === 0;
                 case TypeScript.PullElementKind.EnumMember:
                     return true;
                 case TypeScript.PullElementKind.FunctionExpression:

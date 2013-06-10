@@ -43,6 +43,7 @@ module TypeScript {
 
         private parentDecl: PullDecl = null;
         private _parentPath: PullDecl[] = null;
+        private _isBound: boolean = false;
 
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
@@ -78,10 +79,45 @@ module TypeScript {
         }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
-        public getSymbol(): PullSymbol { return this.symbol; }
+
+        public ensureSymbolIsBound(bindSignatureSymbol=false) {
+
+            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.declType != PullElementKind.Script) {
+                //var binder = new PullSymbolBinder(globalSemanticInfoChain);
+                var prevUnit = globalBinder.semanticInfo;
+                globalBinder.setUnit(this.scriptName);
+                globalBinder.bindDeclToPullSymbol(this);
+                if (prevUnit) {
+                    globalBinder.setUnit(prevUnit.getPath());
+                }
+            }
+        }
+
+        public getSymbol(): PullSymbol {
+
+            if (this.declType == PullElementKind.Script) {
+                return null;
+            }
+
+            this.ensureSymbolIsBound();
+
+            return this.symbol;
+        }
+
+        public hasSymbol() {
+            return this.symbol != null;
+        }
 
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
-        public getSignatureSymbol(): PullSignatureSymbol { return this.signatureSymbol; }
+        public getSignatureSymbol(): PullSignatureSymbol { 
+            this.ensureSymbolIsBound(true);
+            
+            return this.signatureSymbol;
+        }
+
+        public hasSignature() {
+            return this.signatureSymbol != null;
+        }
 
         public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
         public getSpecializingSignatureSymbol() {
@@ -260,6 +296,14 @@ module TypeScript {
 
         public setParentPath(path: PullDecl[]) {
             this._parentPath = path;
+        }
+
+        public setIsBound(isBinding) {
+            this._isBound = isBinding;
+        }
+
+        public isBound() {
+            return this._isBound;
         }
     }
 
