@@ -39,7 +39,6 @@ module TypeScript.Formatting {
         public SpaceAfterSemicolon: Rule;
 
         // Space/new line after }.
-        public NewLineAfterCloseBrace: Rule;
         public SpaceAfterCloseBrace: Rule;
 
         // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
@@ -116,7 +115,7 @@ module TypeScript.Formatting {
 
         // Treat constructor as an identifier in a function declaration, and remove spaces between constructor and following left parentheses
         public NoSpaceAfterConstructor: Rule;
-        
+
         // Use of module as a function call. e.g.: import m2 = module("m2");
         public NoSpaceAfterModuleImport: Rule;
 
@@ -171,7 +170,6 @@ module TypeScript.Formatting {
         // Open Brace braces after function
         //TypeScript: Function can have return types, which can be made of tons of different token kinds
         public FunctionOpenBraceLeftTokenRange: Shared.TokenRange;
-        public FunctionOpenBraceLeftTokenRange_Js: Shared.TokenRange;
         public SpaceBeforeOpenBraceInFunction: Rule;
         public NewLineBeforeOpenBraceInFunction: Rule;
 
@@ -217,8 +215,7 @@ module TypeScript.Formatting {
             this.SpaceAfterQMark = new Rule(RuleDescriptor.create3(SyntaxKind.QuestionToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Space));
             this.SpaceAfterSemicolon = new Rule(RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
-            // Space/new line after }.
-            this.NewLineAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineChildParentContext), RuleAction.NewLine));
+            // Space after }.
             this.SpaceAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsAfterCodeBlockContext), RuleAction.Space));
 
             // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
@@ -233,6 +230,18 @@ module TypeScript.Formatting {
             this.NoSpaceAfterOpenBracket = new Rule(RuleDescriptor.create3(SyntaxKind.OpenBracketToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
             this.NoSpaceBeforeCloseBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseBracketToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
             this.NoSpaceAfterCloseBracket = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBracketToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+
+            // Place a space before open brace in a function declaration
+            this.FunctionOpenBraceLeftTokenRange = Shared.TokenRange.Any;
+            this.SpaceBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
+
+            // Place a space before open brace in a TypeScript declaration that has braces as children (class, module, enum, etc)
+            this.TypeScriptOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.SingleLineCommentTrivia]);
+            this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
+
+            // Place a space before open brace in a control flow construct
+            this.ControlOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.SingleLineCommentTrivia, SyntaxKind.DoKeyword, SyntaxKind.TryKeyword, SyntaxKind.FinallyKeyword, SyntaxKind.ElseKeyword]);
+            this.SpaceBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
 
             // Insert a space after { and before } in single-line contexts, but remove space from empty object literals {}.
             this.SpaceAfterOpenBrace = new Rule(RuleDescriptor.create3(SyntaxKind.OpenBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSingleLineBlockContext), RuleAction.Space));
@@ -271,7 +280,7 @@ module TypeScript.Formatting {
             this.SpaceAfterCertainKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.VarKeyword, SyntaxKind.ThrowKeyword, SyntaxKind.NewKeyword, SyntaxKind.DeleteKeyword, SyntaxKind.ReturnKeyword, SyntaxKind.VoidKeyword, SyntaxKind.TypeOfKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
             this.NoSpaceBeforeOpenParenInFuncCall = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), RuleAction.Delete));
             this.SpaceAfterFunctionInFuncDecl = new Rule(RuleDescriptor.create3(SyntaxKind.FunctionKeyword, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
-            this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), RuleAction.Delete));
+            this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionDeclContext), RuleAction.Delete));
 
             // Add a space between statements. All keywords except (do,else,case) has open/close parens after them.
             // So, we have a rule to add a space for [),Any], [do,Any], [else,Any], and [case,Any]
@@ -280,11 +289,9 @@ module TypeScript.Formatting {
             // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenBraceInControl didn't execute on FormatOnEnter.
             this.SpaceAfterTryFinally = new Rule(RuleDescriptor.create2(Shared.TokenRange.FromTokens([SyntaxKind.TryKeyword, SyntaxKind.FinallyKeyword]), SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
-            // For get/set members, we check for (identifier,identifier) since get/set don't have tokens and they are represented as just an identifier token.
-            // Though, we do extra check on the context to make sure we are dealing with get/set node. Example:
             //      get x() {}
             //      set x(val) {}
-            this.SpaceAfterGetSetInMember = new Rule(RuleDescriptor.create1(SyntaxKind.IdentifierName, SyntaxKind.IdentifierName), RuleOperation.create2(new RuleOperationContext(Rules.IsGetSetMemberContext), RuleAction.Space));
+            this.SpaceAfterGetSetInMember = new Rule(RuleDescriptor.create2(Shared.TokenRange.FromTokens([SyntaxKind.GetKeyword, SyntaxKind.SetKeyword]), SyntaxKind.IdentifierName), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
 
             // Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
             this.SpaceBeforeBinaryKeywordOperator = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.BinaryKeywordOperators), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
@@ -318,7 +325,7 @@ module TypeScript.Formatting {
             this.NoSpaceAfterOpenAngularBracket = new Rule(RuleDescriptor.create3(SyntaxKind.LessThanToken, Shared.TokenRange.TypeNames), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
             this.NoSpaceBeforeCloseAngularBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.GreaterThanToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
             this.NoSpaceAfterCloseAngularBracket = new Rule(RuleDescriptor.create3(SyntaxKind.GreaterThanToken, Shared.TokenRange.FromTokens([SyntaxKind.OpenParenToken, SyntaxKind.OpenBracketToken, SyntaxKind.GreaterThanToken, SyntaxKind.CommaToken])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
- 
+
             // Remove spaces in empty interface literals. e.g.: x: {}
             this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Rule(RuleDescriptor.create1(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectTypeContext), RuleAction.Delete));
 
@@ -326,7 +333,7 @@ module TypeScript.Formatting {
             this.HighPriorityCommonRules =
             [
                 this.IgnoreBeforeComment, this.IgnoreAfterLineComment,
-                this.NoSpaceBeforeSemicolon, this.NoSpaceBeforeColon, this.SpaceAfterColon, this.NoSpaceBeforeQMark, this.SpaceAfterQMark, this.NewLineAfterCloseBrace,
+                this.NoSpaceBeforeSemicolon, this.NoSpaceBeforeColon, this.SpaceAfterColon, this.NoSpaceBeforeQMark, this.SpaceAfterQMark,
                 this.NoSpaceBeforeDot, this.NoSpaceAfterDot,
                 this.NoSpaceAfterUnaryPrefixOperator,
                 this.NoSpaceAfterUnaryPreincrementOperator, this.NoSpaceAfterUnaryPredecrementOperator,
@@ -361,6 +368,7 @@ module TypeScript.Formatting {
             // These rules are lower in priority than user-configurable rules.
             this.LowPriorityCommonRules =
             [
+                this.SpaceBeforeOpenBraceInControl, this.SpaceBeforeOpenBraceInFunction, this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock,
                 this.NoSpaceBeforeComma,
                 this.NoSpaceBeforeOpenBracket, this.NoSpaceAfterOpenBracket,
                 this.NoSpaceBeforeCloseBracket, this.NoSpaceAfterCloseBracket,
@@ -389,20 +397,13 @@ module TypeScript.Formatting {
 
             // Open Brace braces after function
             //TypeScript: Function can have return types, which can be made of tons of different token kinds
-            this.FunctionOpenBraceLeftTokenRange = Shared.TokenRange.Any;
-            this.FunctionOpenBraceLeftTokenRange_Js = Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.SingleLineCommentTrivia]);
-            this.SpaceBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsBeforeMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
             // Open Brace braces after TypeScript module/class/interface
-            this.TypeScriptOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.SingleLineCommentTrivia]);
-            this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsBeforeMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
             // Open Brace braces after control block
-            this.ControlOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.SingleLineCommentTrivia, SyntaxKind.DoKeyword, SyntaxKind.TryKeyword, SyntaxKind.FinallyKeyword, SyntaxKind.ElseKeyword]);
-            this.SpaceBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsBeforeMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
             // Insert space after semicolon in for statement
             this.SpaceAfterSemicolonInFor = new Rule(RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), RuleAction.Space));
@@ -491,12 +492,56 @@ module TypeScript.Formatting {
             return !Rules.IsBinaryOpContext(context);
         }
 
+        static IsSameLineTokenOrBeforeMultilineBlockContext(context: FormattingContext): boolean {
+            //// This check is mainly used inside SpaceBeforeOpenBraceInControl and SpaceBeforeOpenBraceInFunction.
+            ////
+            //// Ex: 
+            //// if (1)     { ....
+            ////      * ) and { are on the same line so apply the rule. Here we don't care whether it's same or multi block context
+            ////
+            //// Ex: 
+            //// if (1)
+            //// { ... }
+            ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we don't format.
+            ////
+            //// Ex:
+            //// if (1) 
+            //// { ...
+            //// }
+            ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we format.
+
+            return context.TokensAreOnSameLine() || Rules.IsBeforeMultilineBlockContext(context);
+        }
+
+        // This check is done before an open brace in a control construct, a function, or a typescript block declaration
+        static IsBeforeMultilineBlockContext(context: FormattingContext): boolean {
+            return Rules.IsBeforeBlockContext(context) && !(context.NextNodeAllOnSameLine() || context.NextNodeBlockIsOnOneLine());
+        }
+
+        static IsMultilineBlockContext(context: FormattingContext): boolean {
+            return Rules.IsBlockContext(context) && !(context.ContextNodeAllOnSameLine() || context.ContextNodeBlockIsOnOneLine());
+        }
+
+        static IsSingleLineBlockContext(context: FormattingContext): boolean {
+            return Rules.IsBlockContext(context) && (context.ContextNodeAllOnSameLine() || context.ContextNodeBlockIsOnOneLine());
+        }
+
         static IsBlockContext(context: FormattingContext): boolean {
-            if (Rules.IsTypeScriptDeclWithBlockContext(context) || Rules.IsFunctionDeclContext(context)) {
+            return Rules.NodeIsBlockContext(context.contextNode);
+        }
+
+        static IsBeforeBlockContext(context: FormattingContext): boolean {
+            return Rules.NodeIsBlockContext(context.nextTokenParent);
+        }
+
+        // IMPORTANT!!! This method must return true ONLY for nodes with open and close braces as immediate children
+        static NodeIsBlockContext(node: IndentationNodeContext): boolean {
+            if (Rules.NodeIsTypeScriptDeclWithBlockContext(node)) {
+                // This means we are in a context that looks like a block to the user, but in the grammar is actually not a node (it's a class, module, enum, object type literal, etc).
                 return true;
             }
 
-            switch (context.contextNode.kind()) {
+            switch (node.kind()) {
                 case SyntaxKind.Block:
                 case SyntaxKind.SwitchStatement:
                 case SyntaxKind.ObjectLiteralExpression:
@@ -506,52 +551,21 @@ module TypeScript.Formatting {
             return false;
         }
 
-        static IsSingleLineBlockContext(context: FormattingContext): boolean {
-            if (!Rules.IsBlockContext(context))
-                return false;
-            return Rules.IsSingleLineContext(context);
-        }
-
-        static IsMultilineBlockContext(context: FormattingContext): boolean {
-            if (!Rules.IsBlockContext(context))
-                return false;
-
-            return !Rules.IsSingleLineContext(context);
-        }
-
-        static IsSingleLineContext(context: FormattingContext): boolean {
-            var node = context.contextNode;
-            var toReturn: boolean;
-            // If it is an object type, and the parent is an interface, report the line info pertaining to the interface
-            if (node.kind() === SyntaxKind.ObjectType && node.parent().kind() === SyntaxKind.InterfaceDeclaration) {
-                context.contextNode = node.parent();
-                toReturn = context.ContextNodeAllOnSameLine();
-                context.contextNode = node;
-            }
-            // If it is a block, and the parent is an function, report the line info pertaining to the interface
-            else if (node.kind() === SyntaxKind.Block) {
-                context.contextNode = node.parent();
-                if (this.IsFunctionDeclContext(context)) {
-                    toReturn = context.ContextNodeAllOnSameLine();
-                }
-                context.contextNode = node;
-            }
-
-            return (toReturn === undefined) ? context.ContextNodeAllOnSameLine() : toReturn;
-        }
-
         static IsFunctionDeclContext(context: FormattingContext): boolean {
             switch (context.contextNode.kind()) {
                 case SyntaxKind.FunctionDeclaration:
                 case SyntaxKind.MemberFunctionDeclaration:
                 case SyntaxKind.GetMemberAccessorDeclaration:
+                case SyntaxKind.GetAccessorPropertyAssignment:
                 case SyntaxKind.SetMemberAccessorDeclaration:
+                case SyntaxKind.SetAccessorPropertyAssignment:
                 case SyntaxKind.MethodSignature:
                 case SyntaxKind.CallSignature:
                 case SyntaxKind.FunctionExpression:
                 case SyntaxKind.ConstructorDeclaration:
                 case SyntaxKind.SimpleArrowFunctionExpression:
                 case SyntaxKind.ParenthesizedArrowFunctionExpression:
+                case SyntaxKind.InterfaceDeclaration: // This one is not truly a function, but for formatting purposes, it acts just like one
                     return true;
             }
 
@@ -559,15 +573,30 @@ module TypeScript.Formatting {
         }
 
         static IsTypeScriptDeclWithBlockContext(context: FormattingContext): boolean {
-            switch (context.contextNode.kind()) {
+            return Rules.NodeIsTypeScriptDeclWithBlockContext(context.contextNode);
+        }
+
+        static NodeIsTypeScriptDeclWithBlockContext(node: IndentationNodeContext): boolean {
+            switch (node.kind()) {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.ObjectType:
                 case SyntaxKind.ModuleDeclaration:
                     return true;
             }
-            
+
+            return false;
+        }
+
+        static IsAfterCodeBlockContext(context: FormattingContext): boolean {
+            switch (context.currentTokenParent.kind()) {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.ModuleDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.Block:
+                case SyntaxKind.SwitchStatement:
+                    return true;
+            }
             return false;
         }
 
@@ -591,7 +620,7 @@ module TypeScript.Formatting {
             }
         }
 
-        static  IsObjectContext(context: FormattingContext): boolean {
+        static IsObjectContext(context: FormattingContext): boolean {
             return context.contextNode.kind() === SyntaxKind.ObjectLiteralExpression;
         }
 
@@ -611,81 +640,8 @@ module TypeScript.Formatting {
             return context.TokensAreOnSameLine();
         }
 
-        static IsCodeBlockContext(context: FormattingContext): boolean {
-            switch (context.contextNode.kind()) {
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ModuleDeclaration:
-                case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.Block:
-                case SyntaxKind.SwitchStatement:
-                    return true;
-            }
-            return false;
-        }
-
-        static IsAfterCodeBlockContext(context: FormattingContext): boolean {
-            switch (context.currentTokenParent.kind()) {
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ModuleDeclaration:
-                case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.Block:
-                case SyntaxKind.SwitchStatement:
-                    return true;
-            }
-            return false;
-        }
-
-        static IsMultilineChildParentContext(context: FormattingContext): boolean {
-            /// TODO: Figure out if we still need this rule
-            return false;
-
-            //var parent = context.contextNode.Parent;
-
-            //if (parent == null)
-            //    return false;
-
-            //return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && IsMultilineBlockContext(context);
-        }
-
         static IsNotFormatOnEnter(context: FormattingContext): boolean {
             return context.formattingRequestKind != FormattingRequestKind.FormatOnEnter;
-        }
-
-        static IsSameLineTokenOrMultilineBlockContext(context: FormattingContext): boolean {
-            //// This check is mainly used inside SpaceBeforeOpenBraceInControl and SpaceBeforeOpenBraceInFunction.
-            ////
-            //// Ex: 
-            //// if (1)     { ....
-            ////      * ) and { are on the same line so apply the rule. Here we don't care whether it's same or multi block context
-            ////
-            //// Ex: 
-            //// if (1)
-            //// { ... }
-            ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we don't format.
-            ////
-            //// Ex:
-            //// if (1) 
-            //// { ...
-            //// }
-            ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we format.
-
-            return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
-        }
-
-        static IsFunctionOrGetSetDeclContext(context: FormattingContext): boolean {
-            return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
-        }
-
-        static IsGetSetMemberContext(context: FormattingContext): boolean {
-            switch (context.contextNode.kind()) {
-                case SyntaxKind.GetAccessorPropertyAssignment:
-                case SyntaxKind.GetMemberAccessorDeclaration:
-                case SyntaxKind.SetAccessorPropertyAssignment:
-                case SyntaxKind.SetMemberAccessorDeclaration:
-                    return true;
-            }
-
-            return false;
         }
 
         static IsModuleDeclContext(context: FormattingContext): boolean {
@@ -703,7 +659,7 @@ module TypeScript.Formatting {
 
         static IsTypeArgumentOrParameterContext(context: FormattingContext): boolean {
             return Rules.IsTypeArgumentOrParameter(context.currentTokenSpan.kind(), context.currentTokenParent.kind()) ||
-             Rules.IsTypeArgumentOrParameter(context.nextTokenSpan.kind(), context.nextTokenParent.kind());
+                Rules.IsTypeArgumentOrParameter(context.nextTokenSpan.kind(), context.nextTokenParent.kind());
         }
     }
 }

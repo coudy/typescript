@@ -103,17 +103,10 @@ module TypeScript.Formatting {
             if (options.PlaceOpenBraceOnNewLineForControlBlocks) {
                 rules.push(this.globalRules.NewLineBeforeOpenBraceInControl);
             }
-            else {
-                rules.push(this.globalRules.SpaceBeforeOpenBraceInControl);
-            }
 
             if (options.PlaceOpenBraceOnNewLineForFunctions) {
                 rules.push(this.globalRules.NewLineBeforeOpenBraceInFunction);
                 rules.push(this.globalRules.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock);
-            }
-            else {
-                rules.push(this.globalRules.SpaceBeforeOpenBraceInFunction);
-                rules.push(this.globalRules.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock);
             }
 
             rules = rules.concat(this.globalRules.LowPriorityCommonRules);

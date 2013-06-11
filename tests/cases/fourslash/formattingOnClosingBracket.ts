@@ -66,19 +66,13 @@ verify.currentLineContentIs("            if (a === a)");
 goTo.marker("14");
 verify.currentLineContentIs("                return;");
 goTo.marker("15");
-// The expected scenario is failing due to bug 660913 - Formatting does not move braces if the coressponding option is set.
-//verify.currentLineContentIs("            else {");
-verify.currentLineContentIs("            else");
+verify.currentLineContentIs("            else {");
 goTo.marker("16");
 verify.currentLineContentIs("                for (a in b)");
 goTo.marker("17");
-// The expected scenario is failing due to bug 660913 - Formatting does not move braces if the coressponding option is set.
-//verify.currentLineContentIs("                    if (a != a) {");
-verify.currentLineContentIs("                    if (a != a)");
+verify.currentLineContentIs("                    if (a != a) {");
 goTo.marker("18");
-// The expected scenario is failing due to bug 660913 - Formatting does not move braces if the coressponding option is set.
-//verify.currentLineContentIs("                        for (a in b) {");
-verify.currentLineContentIs("                        for (a in b)");
+verify.currentLineContentIs("                        for (a in b) {");
 goTo.marker("19");
 verify.currentLineContentIs("                            a++;");
 goTo.marker("20");

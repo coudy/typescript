@@ -954,7 +954,7 @@ module FourSlash {
             var actual = this.getCurrentFileContent();
             var replaceNewlines = str => str.replace(/\r\n/g, "\n");
             if (replaceNewlines(actual) !== replaceNewlines(text)) {
-                throw new Error('verifyCurrentLineContent\n' +
+                throw new Error('verifyCurrentFileContent\n' +
                     '\tExpected: "' + text + '"\n' +
                     '\t  Actual: "' + actual + '"');
             }

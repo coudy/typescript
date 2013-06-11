@@ -9,9 +9,8 @@
 
 format.document();
 verify.currentFileContentIs(
-    "function f() {\n" +
-    "    return 0;\n" +
-    "}\n"+
+    "function f()\n" +
+    "{ return 0; }\n" +
     "function g() {\n" +
     "    function h() {\n" +
     "        return 0;\n" + 

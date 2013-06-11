@@ -16,6 +16,6 @@ verify.currentLineContentIs('function Foo      () #   { }');
 goTo.marker('3');
 verify.currentLineContentIs('4+:5');
 goTo.marker('4');
-verify.currentLineContentIs('    : T) {');
+verify.currentLineContentIs('    : T) { }');
 goTo.marker('5');
 verify.currentLineContentIs('var x       =');

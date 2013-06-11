@@ -304,8 +304,11 @@ module TypeScript.Formatting {
         private forceRecomputeIndentationOfParent(tokenStart: number, newLineAdded: boolean /*as opposed to removed*/): void {
             var parent = this._parent;
             if (parent.fullStart() === tokenStart) {
+                // Temporarily pop the parent before recomputing
+                this._parent = parent.parent();
                 var indentation = this.getNodeIndentation(parent.node(), /* newLineInsertedByFormatting */ newLineAdded);
                 parent.update(parent.parent(), parent.node(), parent.fullStart(), indentation.indentationAmount, indentation.indentationAmountDelta);
+                this._parent = parent;
             }
         }
     }

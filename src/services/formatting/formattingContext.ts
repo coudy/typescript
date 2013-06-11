@@ -24,10 +24,12 @@ module TypeScript.Formatting {
         public nextTokenParent: IndentationNodeContext = null;
 
         private contextNodeAllOnSameLine: boolean = null;
+        private nextNodeAllOnSameLine: boolean = null;
         private tokensAreOnSameLine: boolean = null;
-        private tokensAreSiblingNodesOnSameLine: boolean = null;
+        private contextNodeBlockIsOnOneLine: boolean = null;
+        private nextNodeBlockIsOnOneLine: boolean = null;
 
-        constructor (private snapshot: ITextSnapshot, public formattingRequestKind: FormattingRequestKind) {
+        constructor(private snapshot: ITextSnapshot, public formattingRequestKind: FormattingRequestKind) {
             Debug.assert(this.snapshot != null, "snapshot is null");
         }
 
@@ -45,30 +47,75 @@ module TypeScript.Formatting {
             this.contextNode = commonParent;
 
             this.contextNodeAllOnSameLine = null;
+            this.nextNodeAllOnSameLine = null;
             this.tokensAreOnSameLine = null;
-            this.tokensAreSiblingNodesOnSameLine = null;
+            this.contextNodeBlockIsOnOneLine = null;
+            this.nextNodeBlockIsOnOneLine = null;
         }
 
         public ContextNodeAllOnSameLine(): boolean {
             if (this.contextNodeAllOnSameLine === null) {
-                var startLine = this.snapshot.getLineNumberFromPosition(this.contextNode.start());
-                var endLine = this.snapshot.getLineNumberFromPosition(this.contextNode.end());
-                
-                this.contextNodeAllOnSameLine = (startLine == endLine);
+                this.contextNodeAllOnSameLine = this.NodeIsOnOneLine(this.contextNode);
             }
 
             return this.contextNodeAllOnSameLine;
         }
 
+        public NextNodeAllOnSameLine(): boolean {
+            if (this.nextNodeAllOnSameLine === null) {
+                this.nextNodeAllOnSameLine = this.NodeIsOnOneLine(this.nextTokenParent);
+            }
+
+            return this.nextNodeAllOnSameLine;
+        }
+
         public TokensAreOnSameLine(): boolean {
             if (this.tokensAreOnSameLine === null) {
                 var startLine = this.snapshot.getLineNumberFromPosition(this.currentTokenSpan.start());
-                var endLine = this.snapshot.getLineNumberFromPosition(this.nextTokenSpan.start())
+                var endLine = this.snapshot.getLineNumberFromPosition(this.nextTokenSpan.start());
 
                 this.tokensAreOnSameLine = (startLine == endLine);
             }
 
             return this.tokensAreOnSameLine;
+        }
+
+        public ContextNodeBlockIsOnOneLine() {
+            if (this.contextNodeBlockIsOnOneLine === null) {
+                this.contextNodeBlockIsOnOneLine = this.BlockIsOnOneLine(this.contextNode);
+            }
+
+            return this.contextNodeBlockIsOnOneLine;
+        }
+
+        public NextNodeBlockIsOnOneLine() {
+            if (this.nextNodeBlockIsOnOneLine === null) {
+                this.nextNodeBlockIsOnOneLine = this.BlockIsOnOneLine(this.nextTokenParent);
+            }
+
+            return this.nextNodeBlockIsOnOneLine;
+        }
+
+        public NodeIsOnOneLine(node: IndentationNodeContext): boolean {
+            var startLine = this.snapshot.getLineNumberFromPosition(node.start());
+            var endLine = this.snapshot.getLineNumberFromPosition(node.end());
+
+            return startLine == endLine;
+        }
+
+        // Now we know we have a block (or a fake block represented by some other kind of node with an open and close brace as children).
+        // IMPORTANT!!! This relies on the invariant that IsBlockContext must return true ONLY for nodes with open and close braces as immediate children
+        public BlockIsOnOneLine(node: IndentationNodeContext): boolean {
+            var start = node.fullStart();
+            var block = <BlockSyntax> node.node();
+            var openBracePosition = start + Syntax.childOffset(block, block.openBraceToken);
+            var closeBracePosition = start + Syntax.childOffset(block, block.closeBraceToken);
+
+            // Now check if they are on the same line
+            var startLine = this.snapshot.getLineNumberFromPosition(openBracePosition);
+            var endLine = this.snapshot.getLineNumberFromPosition(closeBracePosition);
+
+            return startLine == endLine;
         }
     }
 }

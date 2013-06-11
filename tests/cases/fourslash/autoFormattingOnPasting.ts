@@ -23,7 +23,7 @@ public testMethod( )\r\n\
 verify.currentFileContentIs("module TestModule {\r\n\
     class TestClass {\r\n\
         private foo;\r\n\
-        public testMethod() {\r\n\
-        }\r\n\
+        public testMethod()\r\n\
+        { }\r\n\
     }\r\n\
 }");
