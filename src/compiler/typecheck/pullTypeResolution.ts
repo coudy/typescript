@@ -3261,6 +3261,8 @@ module TypeScript {
 
             if (!context.isResolvingTypeArguments(genericTypeAST)) {
                 context.startResolvingTypeArguments(genericTypeAST);
+                var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
+                context.isResolvingClassExtendedType = false;
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
@@ -3268,7 +3270,7 @@ module TypeScript {
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
-
+                context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
                 context.doneResolvingTypeArguments();
             }
 

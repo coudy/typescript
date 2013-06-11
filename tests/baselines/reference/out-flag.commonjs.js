@@ -147,6 +147,16 @@ var MyClass = (function () {
 ////[bin/importInsideModule_file2.js]
 //@ sourceMappingURL=importInsideModule_file2.js.map
 
+////[bin/modulesImportedForTypeArgumentPosition_0.js.map]
+{"version":3,"file":"modulesImportedForTypeArgumentPosition_0.js","sources":["modulesImportedForTypeArgumentPosition_0.ts"],"names":[],"mappings":""}
+////[bin/modulesImportedForTypeArgumentPosition_0.js]
+//@ sourceMappingURL=modulesImportedForTypeArgumentPosition_0.js.map
+
+////[bin/modulesImportedForTypeArgumentPosition_1.js.map]
+{"version":3,"file":"modulesImportedForTypeArgumentPosition_1.js","sources":["modulesImportedForTypeArgumentPosition_1.ts"],"names":[],"mappings":""}
+////[bin/modulesImportedForTypeArgumentPosition_1.js]
+//@ sourceMappingURL=modulesImportedForTypeArgumentPosition_1.js.map
+
 ////[bin/0.d.ts]
 declare class MyClass {
     public Count(): number;
