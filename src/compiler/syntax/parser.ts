@@ -4663,20 +4663,38 @@ module TypeScript.Parser {
         private isType(): boolean {
             return this.isPredefinedType() ||
                    this.isTypeLiteral() ||
+                   this.isTypeQuery() ||
                    this.isName();
         }
 
         private parseType(): ITypeSyntax {
-            var type = this.parseNonArrayType();
-
-            while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
-                var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-                var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-
-                type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
+            if (this.isTypeQuery()) {
+                return this.parseTypeQuery();
             }
+            else {
+                var type = this.parseNonArrayType();
 
-            return type;
+                while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
+                    var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+                    var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+
+                    type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
+                }
+
+                return type;
+            }
+        }
+
+        private isTypeQuery(): boolean {
+            return this.currentToken().tokenKind === SyntaxKind.TypeOfKeyword;
+        }
+
+        private parseTypeQuery(): TypeQuerySyntax {
+            // Debug.assert(this.isTypeQuery());
+            var typeOfKeyword = this.eatToken(SyntaxKind.TypeOfKeyword);
+            var name = this.parseName();
+
+            return this.factory.typeQuery(typeOfKeyword, name);
         }
 
         private parseNonArrayType(): ITypeSyntax {

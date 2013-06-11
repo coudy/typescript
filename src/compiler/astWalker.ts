@@ -120,6 +120,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.TypeParameter] = ChildrenWalkers.walkTypeParameterChildren;
             this.childrenWalkers[NodeType.GenericType] = ChildrenWalkers.walkGenericTypeChildren;
             this.childrenWalkers[NodeType.TypeRef] = ChildrenWalkers.walkTypeReferenceChildren;
+            this.childrenWalkers[NodeType.TypeQuery] = ChildrenWalkers.walkTypeQueryChildren;
             this.childrenWalkers[NodeType.ElementAccessExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.InvocationExpression] = ChildrenWalkers.walkInvocationExpressionChildren;
             this.childrenWalkers[NodeType.ObjectCreationExpression] = ChildrenWalkers.walkObjectCreationExpressionChildren;
@@ -284,6 +285,12 @@ module TypeScript {
         export function walkTypeReferenceChildren(preAst: TypeReference, parent: AST, walker: IAstWalker): void {
             if (preAst.term) {
                 preAst.term = walker.walk(preAst.term, preAst);
+            }
+        }
+
+        export function walkTypeQueryChildren(preAst: TypeQuery, parent: AST, walker: IAstWalker): void {
+            if (preAst.name) {
+                preAst.name = walker.walk(preAst.name, preAst);
             }
         }
 

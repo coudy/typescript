@@ -158,6 +158,7 @@ module TypeScript {
         ArrayType,
         ConstructorType,
         GenericType,
+        TypeQuery,
 
         // Module elements.
         InterfaceDeclaration,

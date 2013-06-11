@@ -345,6 +345,16 @@ var definitions:ITypeDefinition[] = [
         ],
         isTypeScriptSpecific: true
     },
+    <any> {
+        name: 'TypeQuerySyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeSyntax'],
+        children: [
+            <any>{ name: 'typeOfKeyword', isToken: true },
+            <any>{ name: 'name', type: 'INameSyntax' }
+        ],
+        isTypeScriptSpecific: true
+    },
     <any>{
         name: 'TypeAnnotationSyntax',
         baseType: 'SyntaxNode',

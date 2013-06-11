@@ -1,4 +1,4 @@
-///<reference path='references.ts' />
+﻿///<reference path='references.ts' />
 
 module TypeScript.Syntax {
     export interface IFactory {
@@ -29,6 +29,7 @@ module TypeScript.Syntax {
         objectType(openBraceToken: ISyntaxToken, typeMembers: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): ObjectTypeSyntax;
         arrayType(type: ITypeSyntax, openBracketToken: ISyntaxToken, closeBracketToken: ISyntaxToken): ArrayTypeSyntax;
         genericType(name: INameSyntax, typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax;
+        typeQuery(typeOfKeyword: ISyntaxToken, name: INameSyntax): TypeQuerySyntax;
         typeAnnotation(colonToken: ISyntaxToken, type: ITypeSyntax): TypeAnnotationSyntax;
         block(openBraceToken: ISyntaxToken, statements: ISyntaxList, closeBraceToken: ISyntaxToken): BlockSyntax;
         parameter(dotDotDotToken: ISyntaxToken, publicOrPrivateKeyword: ISyntaxToken, identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax;
@@ -170,6 +171,9 @@ module TypeScript.Syntax {
         }
         genericType(name: INameSyntax, typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
             return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ false);
+        }
+        typeQuery(typeOfKeyword: ISyntaxToken, name: INameSyntax): TypeQuerySyntax {
+            return new TypeQuerySyntax(typeOfKeyword, name, /*parsedInStrictMode:*/ false);
         }
         typeAnnotation(colonToken: ISyntaxToken, type: ITypeSyntax): TypeAnnotationSyntax {
             return new TypeAnnotationSyntax(colonToken, type, /*parsedInStrictMode:*/ false);
@@ -428,6 +432,9 @@ module TypeScript.Syntax {
         }
         genericType(name: INameSyntax, typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
             return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ true);
+        }
+        typeQuery(typeOfKeyword: ISyntaxToken, name: INameSyntax): TypeQuerySyntax {
+            return new TypeQuerySyntax(typeOfKeyword, name, /*parsedInStrictMode:*/ true);
         }
         typeAnnotation(colonToken: ISyntaxToken, type: ITypeSyntax): TypeAnnotationSyntax {
             return new TypeAnnotationSyntax(colonToken, type, /*parsedInStrictMode:*/ true);

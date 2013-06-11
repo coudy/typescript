@@ -1671,6 +1671,25 @@ module TypeScript {
         }
     }
 
+    export class TypeQuery extends AST {
+        constructor(public name: AST) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeQuery;
+        }
+
+        public emit(emitter: Emitter) {
+            throw new Error("should not emit a type query");
+        }
+
+        public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition);
+        }
+    }
+
     export class TypeReference extends AST {
         constructor(public term: AST, public arrayCount: number) {
             super();

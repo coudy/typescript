@@ -1,4 +1,4 @@
-///<reference path='references.ts' />
+﻿///<reference path='references.ts' />
 
 module TypeScript {
     export class SourceUnitSyntax extends SyntaxNode {
@@ -2279,6 +2279,81 @@ module TypeScript {
 
     public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
         return this.update(this.name, typeArgumentList);
+    }
+
+    public isTypeScriptSpecific(): boolean {
+        return true;
+    }
+    }
+
+    export class TypeQuerySyntax extends SyntaxNode implements ITypeSyntax {
+
+        constructor(public typeOfKeyword: ISyntaxToken,
+                    public name: INameSyntax,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+
+        }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitTypeQuery(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeQuery;
+    }
+
+    public childCount(): number {
+        return 2;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.typeOfKeyword;
+            case 1: return this.name;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    public isType(): boolean {
+        return true;
+    }
+
+    public isUnaryExpression(): boolean {
+        return true;
+    }
+
+    public isExpression(): boolean {
+        return true;
+    }
+
+    public update(typeOfKeyword: ISyntaxToken,
+                  name: INameSyntax): TypeQuerySyntax {
+        if (this.typeOfKeyword === typeOfKeyword && this.name === name) {
+            return this;
+        }
+
+        return new TypeQuerySyntax(typeOfKeyword, name, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(name: INameSyntax): TypeQuerySyntax {
+        return new TypeQuerySyntax(Syntax.token(SyntaxKind.TypeOfKeyword), name, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeQuerySyntax {
+        return <TypeQuerySyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeQuerySyntax {
+        return <TypeQuerySyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withTypeOfKeyword(typeOfKeyword: ISyntaxToken): TypeQuerySyntax {
+        return this.update(typeOfKeyword, this.name);
+    }
+
+    public withName(name: INameSyntax): TypeQuerySyntax {
+        return this.update(this.typeOfKeyword, name);
     }
 
     public isTypeScriptSpecific(): boolean {

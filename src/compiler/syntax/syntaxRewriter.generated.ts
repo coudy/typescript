@@ -1,4 +1,4 @@
-///<reference path='references.ts' />
+﻿///<reference path='references.ts' />
 
 module TypeScript {
     export class SyntaxRewriter implements ISyntaxVisitor {
@@ -259,6 +259,12 @@ module TypeScript {
             return node.update(
                 <INameSyntax>this.visitNodeOrToken(node.name),
                 <TypeArgumentListSyntax>this.visitNode(node.typeArgumentList));
+        }
+
+        public visitTypeQuery(node: TypeQuerySyntax): any {
+            return node.update(
+                this.visitToken(node.typeOfKeyword),
+                <INameSyntax>this.visitNodeOrToken(node.name));
         }
 
         public visitTypeAnnotation(node: TypeAnnotationSyntax): any {

@@ -1,4 +1,4 @@
-///<reference path='references.ts' />
+﻿///<reference path='references.ts' />
 
 module TypeScript {
     export interface ISyntaxVisitor {
@@ -30,6 +30,7 @@ module TypeScript {
         visitObjectType(node: ObjectTypeSyntax): any;
         visitArrayType(node: ArrayTypeSyntax): any;
         visitGenericType(node: GenericTypeSyntax): any;
+        visitTypeQuery(node: TypeQuerySyntax): any;
         visitTypeAnnotation(node: TypeAnnotationSyntax): any;
         visitBlock(node: BlockSyntax): any;
         visitParameter(node: ParameterSyntax): any;
@@ -204,6 +205,10 @@ module TypeScript {
         }
 
         public visitGenericType(node: GenericTypeSyntax): any {
+            return this.defaultVisit(node);
+        }
+
+        public visitTypeQuery(node: TypeQuerySyntax): any {
             return this.defaultVisit(node);
         }
 

@@ -34,6 +34,7 @@ module TypeScript {
         TypeParameter,
         GenericType,
         TypeRef,
+        TypeQuery,
 
         // Declarations
         FunctionDeclaration,

@@ -394,6 +394,12 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.right);
         }
 
+        public visitTypeQuery(node: TypeQuerySyntax): void {
+            this.appendToken(node.typeOfKeyword);
+            this.ensureSpace();
+            node.name.accept(this);
+        }
+
         public visitTypeArgumentList(node: TypeArgumentListSyntax): void {
             this.appendToken(node.lessThanToken);
             this.appendSeparatorSpaceList(node.typeArguments);

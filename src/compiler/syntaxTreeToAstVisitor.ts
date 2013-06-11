@@ -1052,6 +1052,14 @@ module TypeScript {
             return result;
         }
 
+        public visitTypeQuery(node: TypeQuerySyntax): TypeReference {
+            var start = this.position;
+            this.movePast(node.typeOfKeyword);
+            var name = this.visitType(node.name).term;
+
+            return new TypeReference(new TypeQuery(name), 0);
+        }
+
         public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
             var start = this.position;
             var left = this.visitType(node.left).term;
