@@ -30,4 +30,4 @@ goTo.marker('3');
 verify.quickInfoIs('string');
 
 goTo.marker('4');
-verify.quickInfoIs('any');
+verify.quickInfoIs('string');
