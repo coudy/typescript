@@ -1055,7 +1055,7 @@ module TypeScript {
         public visitTypeQuery(node: TypeQuerySyntax): TypeReference {
             var start = this.position;
             this.movePast(node.typeOfKeyword);
-            var name = this.visitType(node.name).term;
+            var name = node.name.accept(this);
 
             return new TypeReference(new TypeQuery(name), 0);
         }
