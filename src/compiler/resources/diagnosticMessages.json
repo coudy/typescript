@@ -7,14 +7,6 @@
         "category": "NoPrefix",
         "code": 1
     },
-    "{0}{NL}{{1}TB}{2}": {
-        "category": "NoPrefix",
-        "code": 21
-    },
-    "{{0}TB}{1}": {
-        "category": "NoPrefix",
-        "code": 22
-    },
     "Unrecognized escape sequence.": {
         "category": "Error",
         "code": 1000
@@ -962,6 +954,10 @@
     "Default arguments are not allowed in an overload parameter": {
         "category": "Error",
         "code": 2174
+    },
+    "Overloads cannot differ only by return type": {
+        "category": "Error",
+        "code": 2175
     },
     "Type '{0}' is missing property '{1}' from type '{2}'.": {
         "category": "NoPrefix",
