@@ -1,5 +1,3 @@
-/// <reference path="fourslash.ts" />
-
 //// /*1*/function parseInt(s/*2*/:string):number;
 
 goTo.marker('2');

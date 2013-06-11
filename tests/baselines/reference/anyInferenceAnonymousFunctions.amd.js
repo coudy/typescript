@@ -8,7 +8,7 @@ paired.reduce(function (b1, b2) {
     return b1.concat({});
 }, []);
 
-paired.reduce(function (b3, b3) {
+paired.reduce(function (b3, b4) {
     return b3.concat({});
 }, []);
 

@@ -155,7 +155,7 @@ module Services {
                 var signatureGroupInfo = new FormalSignatureItemInfo();
                 var paramIndexInfo: number[] = [];
                 var functionName = signature.getScopedNameEx(enclosingScopeSymbol).toString();
-                if (!functionName && (!symbol.isType() || (<PullTypeSymbol>symbol).isNamedTypeSymbol())) {
+                if (!functionName && (!symbol.isType() || (<TypeScript.PullTypeSymbol>symbol).isNamedTypeSymbol())) {
                     functionName = symbol.getScopedNameEx(enclosingScopeSymbol).toString();
                 }
 

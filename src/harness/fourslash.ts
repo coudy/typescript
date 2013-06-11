@@ -354,11 +354,13 @@ module FourSlash {
         }
 
         public verifyCompletionListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
+            this.getAllDiagnostics();
             var completions = this.getCompletionListAtCaret();
             this.assertItemInCompletionList(completions.entries, symbol, type, docComment, fullSymbolName, kind);
         }
 
         public verifyCompletionListDoesNotContain(symbol: string) {
+            this.getAllDiagnostics();
             var completions = this.getCompletionListAtCaret();
             if (completions && completions.entries && completions.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Completion list did contain ' + symbol);
@@ -366,6 +368,7 @@ module FourSlash {
         }
 
         public verifyReferencesCountIs(count: number, localFilesOnly: boolean = true) {
+            this.getAllDiagnostics();
             var references = this.getReferencesAtCaret();
             var referencesCount = 0;
 
@@ -401,6 +404,7 @@ module FourSlash {
         }
 
         public verifyQuickInfo(negative: boolean, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
+            this.getAllDiagnostics();
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
             var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
@@ -519,6 +523,7 @@ module FourSlash {
         }
 
         private getActiveSignatureHelp() {
+            this.getAllDiagnostics();
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var activeFormal = help.activeFormal;
 
@@ -564,6 +569,7 @@ module FourSlash {
         }
 
         public baselineCurrentFileBreakpointLocations() {
+            this.getAllDiagnostics();
             Harness.Baseline.runBaseline(
                 "Breakpoint Locations for " + this.activeFile.fileName,
                 this.testData.globalOptions['BaselineFile'],
@@ -881,6 +887,7 @@ module FourSlash {
 
         public goToDefinition(definitionIndex: number) {
             this.languageService.refresh();
+            this.getAllDiagnostics(); // trigger a full type check to ensure all symbols are resolved
 
             var definitions = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             if (!definitions || !definitions.length) {
@@ -1370,7 +1377,7 @@ module FourSlash {
             throw error;
         }
 
-        var mockFilename = 'test_input.ts';
+        var mockFilename = 'file_0.ts';
 
         var result = '';
         var tsFn = './tests/cases/fourslash/fourslash.ts';

@@ -96,4 +96,4 @@ module m5 { export interface I { foo(): void } } // should already be reasonably
 
 // module then import
 module m6 { export var y = 2; }
-//import m6 = require(''); 
+//import m6 = require('');

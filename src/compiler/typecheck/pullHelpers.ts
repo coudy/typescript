@@ -12,8 +12,13 @@ module TypeScript {
         }
 
         export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfo: SemanticInfo) {
-            var funcSymbol = semanticInfo.getSymbolAndDiagnosticsForAST(funcDecl).symbol;
             var functionDecl = semanticInfo.getDeclForAST(funcDecl);
+            var funcSymbol = functionDecl.getSymbol();
+
+            if (!funcSymbol) {
+                funcSymbol = functionDecl.getSignatureSymbol();
+            }
+
             var functionSignature: PullSignatureSymbol = null;
             var typeSymbolWithAllSignatures: PullTypeSymbol = null;
             if (funcSymbol.isSignature()) {
@@ -38,21 +43,11 @@ module TypeScript {
             };
         }
 
-        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
-            var getterOrSetterSymbol = semanticInfoChain.getSymbolAndDiagnosticsForAST(getterOrSetter, unitPath).symbol;
-            var linkKind: SymbolLinkKind;
-            if (hasFlag(getterOrSetter.getFunctionFlags(), FunctionFlags.GetAccessor)) {
-                linkKind = SymbolLinkKind.GetterFunction;
-            } else {
-                linkKind = SymbolLinkKind.SetterFunction;
-            }
-
-            var accessorSymbolLinks = getterOrSetterSymbol.findIncomingLinks((psl) => psl.kind === linkKind);
-            if (accessorSymbolLinks.length) {
-                return <PullAccessorSymbol>accessorSymbolLinks[0].start;
-            }
-
-            return null;
+        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): PullAccessorSymbol {
+            var functionDecl = semanticInfoChain.getDeclForAST(getterOrSetter, unitPath);
+            var getterOrSetterSymbol = functionDecl.getSymbol();
+            
+            return <PullAccessorSymbol>getterOrSetterSymbol;
         }
 
         export function getGetterAndSetterFunction(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): { getter: FunctionDeclaration; setter: FunctionDeclaration; } {
