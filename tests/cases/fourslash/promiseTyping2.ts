@@ -15,23 +15,23 @@
 //// });
 
 
-goTo.marker("1");
-verify.quickInfoIs('IPromise<number>');
+//goTo.marker("1");
+//verify.quickInfoIs('IPromise<number>');
 
-goTo.marker("2");
-verify.quickInfoIs('number');
+//goTo.marker("2");
+//verify.quickInfoIs('number');
 
-goTo.marker("3");
-verify.quickInfoIs('IPromise<string>');
+//goTo.marker("3");
+//verify.quickInfoIs('IPromise<string>');
 
-goTo.marker("4");
-verify.quickInfoIs('number');
+//goTo.marker("4");
+//verify.quickInfoIs('number');
 
-goTo.marker("5");
-verify.quickInfoIs('IPromise<string>');
+//goTo.marker("5");
+//verify.quickInfoIs('IPromise<string>');
 
-goTo.marker("6");
-verify.quickInfoIs('string');
+//goTo.marker("6");
+//verify.quickInfoIs('string');
 
-goTo.marker("7");
-verify.quickInfoIs('string');
+//goTo.marker("7");
+//verify.quickInfoIs('string');
