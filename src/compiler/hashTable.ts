@@ -16,6 +16,10 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
+    interface IIndexable<T> {
+        [s: string]: T;
+    }
+
     export class BlockIntrinsics {
         public prototype = undefined;
         public toString = undefined;
@@ -31,20 +35,20 @@ module TypeScript {
         }
     }
 
-    export interface IHashTable {
+    export interface IHashTable<T> {
         getAllKeys(): string[];
-        add(key: string, data): boolean;
-        addOrUpdate(key: string, data): boolean;
-        map(fn: (k: string, value: any, context: any) => void , context: any): void;
-        every(fn: (k: string, value: any, context: any) => void , context: any): boolean;
-        some(fn: (k: string, value: any, context: any) => void , context: any): boolean;
+        add(key: string, data: T): boolean;
+        addOrUpdate(key: string, data: T): boolean;
+        map(fn: (k: string, value: T, context: any) => void , context: any): void;
+        every(fn: (k: string, value: T, context: any) => void , context: any): boolean;
+        some(fn: (k: string, value: T, context: any) => void , context: any): boolean;
         count(): number;
-        lookup(key: string): any;
+        lookup(key: string): T;
     }
 
-    export class StringHashTable implements IHashTable {
-        public itemCount = 0;
-        public table: any = new BlockIntrinsics();
+    export class StringHashTable<T> implements IHashTable<T> {
+        private itemCount = 0;
+        private table: IIndexable<T> = <any>(new BlockIntrinsics());
 
         public getAllKeys(): string[] {
             var result: string[] = [];
@@ -58,7 +62,7 @@ module TypeScript {
             return result;
         }
 
-        public add(key: string, data): boolean {
+        public add(key: string, data: T): boolean {
             if (this.table[key] !== undefined) {
                 return false;
             }
@@ -68,7 +72,7 @@ module TypeScript {
             return true;
         }
 
-        public addOrUpdate(key: string, data): boolean {
+        public addOrUpdate(key: string, data: T): boolean {
             if (this.table[key] !== undefined) {
                 this.table[key] = data;
                 return false;
@@ -79,7 +83,7 @@ module TypeScript {
             return true;
         }
 
-        public map(fn: (k: string, value: any, context: any) => void , context: any) {
+        public map(fn: (k: string, value: T, context: any) => void , context: any) {
             for (var k in this.table) {
                 var data = this.table[k];
 
@@ -89,7 +93,7 @@ module TypeScript {
             }
         }
 
-        public every(fn: (k: string, value: any, context: any) => void , context: any) {
+        public every(fn: (k: string, value: T, context: any) => void , context: any) {
             for (var k in this.table) {
                 var data = this.table[k];
 
@@ -121,7 +125,7 @@ module TypeScript {
             return this.itemCount;
         }
 
-        public lookup(key: string) {
+        public lookup(key: string) : T {
             var data = this.table[key];
             return data === undefined ? null : data;
         }

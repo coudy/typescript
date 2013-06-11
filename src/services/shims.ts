@@ -82,6 +82,8 @@ module Services {
         getSemanticDiagnostics(fileName: string): string;
 
         getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean);
+        getCompletionEntryDetails(fileName: string, position: number, entryName: string);
+
         getTypeAtPosition(fileName: string, position: number): string;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
         getBreakpointStatementAtPosition(fileName: string, position: number): string;
@@ -447,6 +449,16 @@ module Services {
                 () => {
                     var completion = this.languageService.getCompletionsAtPosition(fileName, position, isMemberCompletion);
                     return completion;
+                });
+        }
+
+        /// Get a string based representation of a completion list entry details
+        public getCompletionEntryDetails(fileName: string, position: number, entryName: string) {
+            return this.forwardJSONCall(
+                "getCompletionEntryDetails(\"" + fileName + "\", " + position + ", " + entryName + ")",
+                () => {
+                    var details = this.languageService.getCompletionEntryDetails(fileName, position, entryName);
+                    return details;
                 });
         }
 

@@ -73,7 +73,7 @@ module TypeScript {
     export class CompilationEnvironment {
         constructor (public compilationSettings: CompilationSettings, public ioHost: IFileSystemObject) { }
         public code: SourceUnit[] = [];
-        public inputFileNameToOutputFileName = new StringHashTable();
+        public inputFileNameToOutputFileName = new StringHashTable<string>();
         public getSourceUnit(path: string): SourceUnit {
             var normalizedPath = switchToForwardSlashes(path.toUpperCase());
             for (var i = 0, n = this.code.length; i < n; i++) {

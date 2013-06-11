@@ -100,6 +100,17 @@ module Services {
 
         }
 
+        getCompletionEntryDetails(fileName: string, position: number, entryName: string): Services.CompletionEntryDetails {
+
+            var args = "fileName: " + this.stringify(fileName) + " pos: " + this.stringify(position) + " entryName: " + this.stringify(entryName);
+            var result = this.internal.getCompletionEntryDetails(fileName, position, entryName);
+
+            this.writeFile("getCompletionEntryDetails: " + args + " result: " + this.stringify(result) + "\n");
+
+            return result;
+
+        }
+
         public getTypeAtPosition(fileName: string, pos: number): Services.TypeInfo {
 
             var args = "fileName: " + this.stringify(fileName) + " pos: " + this.stringify(pos);

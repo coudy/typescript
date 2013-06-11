@@ -204,7 +204,7 @@ module TypeScript {
 
         public emitOptions: EmitOptions;
 
-        public fileNameToDocument = new TypeScript.StringHashTable();
+        public fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
@@ -1494,7 +1494,7 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+        public pullGetVisibleDeclsFromPath(path: AstPath, document: Document): PullDecl[] {
 
             globalSemanticInfoChain = this.semanticInfoChain;
             if (globalBinder) {
@@ -1506,15 +1506,9 @@ module TypeScript {
                 return null;
             }
 
-            var symbols = this.pullTypeChecker.resolver.getVisibleSymbols(context.enclosingDecl, context.resolutionContext);
-            if (!symbols) {
-                return null;
-            }
+            var symbols = null;
 
-            return {
-                symbols: symbols,
-                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
-            };
+            return this.pullTypeChecker.resolver.getVisibleDecls(context.enclosingDecl, context.resolutionContext);
         }
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
@@ -1538,6 +1532,27 @@ module TypeScript {
 
             return {
                 symbols: members,
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
+        }
+
+        public pullGetDeclInformation(decl: PullDecl, path: AstPath, document: Document): PullSymbolInfo {
+            var context = this.extractResolutionContextFromPath(path, document);
+            if (!context) {
+                return null;
+            }
+
+            globalSemanticInfoChain = this.semanticInfoChain;
+            if (globalBinder) {
+                globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
+            var symbol = decl.getSymbol();
+            this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, context.enclosingDecl, context.resolutionContext);
+
+            return {
+                symbol: symbol,
+                ast: path.ast(),
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
         }

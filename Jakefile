@@ -95,6 +95,7 @@ var servicesSources = [
 	"completionHelpers.ts",
 	"keywordCompletions.ts",
 	"signatureInfoHelpers.ts",
+	"completionSession.ts",
 	"pullLanguageService.ts",
 	"shims.ts",
 	"outliningElementsCollector.ts",
