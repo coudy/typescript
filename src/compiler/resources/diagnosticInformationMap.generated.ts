@@ -10,14 +10,6 @@ module TypeScript {
     "code": 1,
     "category": DiagnosticCategory.NoPrefix
   },
-  "{0}{NL}{{1}TB}{2}": {
-    "code": 21,
-    "category": DiagnosticCategory.NoPrefix
-  },
-  "{{0}TB}{1}": {
-    "code": 22,
-    "category": DiagnosticCategory.NoPrefix
-  },
   "Unrecognized escape sequence.": {
     "code": 1000,
     "category": DiagnosticCategory.Error
@@ -964,6 +956,10 @@ module TypeScript {
   },
   "Default arguments are not allowed in an overload parameter": {
     "code": 2174,
+    "category": DiagnosticCategory.Error
+  },
+  "Overloads cannot differ only by return type": {
+    "code": 2175,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
