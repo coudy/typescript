@@ -47,6 +47,7 @@ interface IEnvironment {
     standardOut: ITextWriter;
 
     currentDirectory(): string;
+    newLine: string;
 }
 
 var Environment = (function () {
@@ -79,6 +80,9 @@ var Environment = (function () {
         }
 
         return {
+            // On windows, the newline sequence is always "\r\n";
+            newLine: "\r\n",
+
             currentDirectory: (): string => {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
@@ -226,8 +230,12 @@ var Environment = (function () {
         var _fs = require('fs');
         var _path = require('path');
         var _module = require('module');
+        var _os = require('os');
 
         return {
+            // On node pick up the newline character from the OS
+            newLine: _os.EOL,
+
             currentDirectory: (): string => {
                 return (<any>process).cwd();
             },
