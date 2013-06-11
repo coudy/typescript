@@ -569,6 +569,7 @@ module FourSlash {
         }
 
         public baselineCurrentFileBreakpointLocations() {
+            this.getAllDiagnostics();
             Harness.Baseline.runBaseline(
                 "Breakpoint Locations for " + this.activeFile.fileName,
                 this.testData.globalOptions['BaselineFile'],

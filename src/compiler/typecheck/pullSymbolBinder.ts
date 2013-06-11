@@ -1217,21 +1217,26 @@ module TypeScript {
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.getFlags() & PullElementFlags.Ambient) != 0;
                 var isClass = variableDeclaration.getKind() == PullElementKind.ConstructorMethod;
+                var prevDecl = variableSymbol.getDeclarations()[0];
+                var bothAreGlobal = prevKind == PullElementKind.Script && declKind == prevKind;
+                var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
+                var prevIsParam = shareParent && prevKind == PullElementKind.Parameter && declKind == PullElementKind.Variable;
 
-                var acceptableRedeclaration = isImplicit &&
+                var acceptableRedeclaration = (!shareParent || prevIsParam) ||
+                    (isImplicit &&
                     ((!isEnumValue && !isClassConstructorVariable && prevKind == PullElementKind.Function) || // Enums can't mix with functions
                     (!isModuleValue && prevIsContainer && isAmbient) || // an ambient class can be declared after a module
                     (!isModuleValue && prevIsClass) || // the module instance variable can't come after the class instance variable
-                    variableSymbol.hasFlag(PullElementFlags.ImplicitVariable));
+                    variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)));
 
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
                 if (acceptableRedeclaration && prevIsClass && !prevIsAmbient) {
-                    if (variableSymbol.getDeclarations()[0].getScriptName() != variableDeclaration.getScriptName()) {
+                    if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
                         acceptableRedeclaration = false;
                     }
                 }
 
-                if ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum) {
+                if ((shareParent && !prevIsParam) && ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum)) {
                     span = variableDeclaration.getSpan();
                     if (!parent || variableSymbol.getIsSynthesized()) {
                         var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;

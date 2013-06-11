@@ -816,6 +816,7 @@ module Harness {
 
             if (needsFullTypeCheck) {
                 compiler.pullTypeCheck();
+                compiler.resolveAllFiles();
                 needsFullTypeCheck = false;
             }
 

@@ -735,6 +735,13 @@ module TypeScript {
             return errors;
         }
 
+        public resolveAllFiles() {
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                this.getSemanticDiagnostics(fileNames[i]);
+            }
+        }
+
         public pullTypeCheck() {
             var start = new Date().getTime();
 
