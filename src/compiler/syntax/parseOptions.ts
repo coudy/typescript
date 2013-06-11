@@ -5,7 +5,7 @@ module TypeScript {
         private _allowAutomaticSemicolonInsertion: boolean;
         private _allowModuleKeywordInExternalModuleReference: boolean;
 
-        constructor(allowAutomaticSemicolonInsertion, allowModuleKeywordInExternalModuleReference) {
+        constructor(allowAutomaticSemicolonInsertion: boolean, allowModuleKeywordInExternalModuleReference: boolean) {
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
             this._allowModuleKeywordInExternalModuleReference = allowModuleKeywordInExternalModuleReference;
         }
