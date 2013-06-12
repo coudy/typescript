@@ -730,15 +730,15 @@ module TypeScript {
     "code": 2114,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations for for/in expressions cannot contain a type annotation.": {
+  "Variable declarations of a 'for' statement cannot contain a type annotation.": {
     "code": 2115,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations for for/in expressions must be of types 'string' or 'any'.": {
+  "Variable declarations of a 'for' statement must be of types 'string' or 'any'.": {
     "code": 2116,
     "category": DiagnosticCategory.Error
   },
-  "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.": {
+  "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
     "code": 2117,
     "category": DiagnosticCategory.Error
   },

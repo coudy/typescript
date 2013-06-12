@@ -84,7 +84,7 @@ module TypeScript {
         Value_of_type__0__is_not_indexable_by_type__1_: DiagnosticInfo;
         Operator__0__cannot_be_applied_to_types__1__and__2_: DiagnosticInfo;
         Operator__0__cannot_be_applied_to_types__1__and__2__3: DiagnosticInfo;
-        Cannot_convert__0__to__1_: DiagnosticInfo;
+        Cannot_convert___0___to___1___: DiagnosticInfo;
         Cannot_convert__0__to__1__NL__2: DiagnosticInfo;
         Expected_var__class__interface__or_module: DiagnosticInfo;
         Operator__0__cannot_be_applied_to_type__1_: DiagnosticInfo;
@@ -772,7 +772,7 @@ module TypeScript {
             code: 2010
         },
 
-        Cannot_convert__0__to__1_: {
+        Cannot_convert___0___to___1___: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}'.",
             code: 2011

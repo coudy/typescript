@@ -1356,7 +1356,7 @@ module TypeScript.Parser {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
-                        new SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
+                        new SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed_, null));
                 }
 
                 return semicolonToken;
@@ -1395,18 +1395,18 @@ module TypeScript.Parser {
 
             // They wanted something specific, just report that that token was missing.
             if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.__0__expected, [SyntaxFacts.getText(expectedKind)]);
+                return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.__0___expected_, [SyntaxFacts.getText(expectedKind)]);
             }
             else {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected___0__is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected____0___is_a_keyword_, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected_, null);
                 }
             }
 
@@ -2339,7 +2339,7 @@ module TypeScript.Parser {
                 // 
                 // Detect if the user is typing this and attempt recovery.
                 var diagnostic = new SyntaxDiagnostic(this.fileName,
-                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token___0__expected, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
+                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token____0___expected_, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
                 this.addDiagnostic(diagnostic);
 
                 var token = this.eatAnyToken();
@@ -3811,7 +3811,7 @@ module TypeScript.Parser {
                     if (isDot) {
                         // A parameter list must follow a generic type argument list.
                         var diagnostic = new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(),
-                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list____expected, null);
+                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected_, null);
                         this.addDiagnostic(diagnostic);
 
                         return this.factory.argumentList(typeArgumentList,
@@ -3859,7 +3859,7 @@ module TypeScript.Parser {
 
                 var end = this.currentTokenStart() + this.currentToken().width();
                 var diagnostic = new SyntaxDiagnostic(this.fileName, start, end - start,
-                    DiagnosticCode._new_T___cannot_be_used_to_create_an_array__Use__new_Array_T____instead, null);
+                    DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead_, null);
                 this.addDiagnostic(diagnostic);
 
                 argumentExpression = Syntax.emptyToken(SyntaxKind.IdentifierName);
@@ -5150,7 +5150,7 @@ module TypeScript.Parser {
             var token = this.currentToken();
 
             var diagnostic = new SyntaxDiagnostic(this.fileName,
-                this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token___0__expected, [this.getExpectedListElementType(listType)]);
+                this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token____0___expected_, [this.getExpectedListElementType(listType)]);
             this.addDiagnostic(diagnostic);
         }
 

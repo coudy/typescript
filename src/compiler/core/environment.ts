@@ -133,7 +133,7 @@ var Environment = (function () {
                     // "the parameter is incorrect".
                     var message: string;
                     if (err.number === -2147024809) {
-                        message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unsupported_file_encoding, null);
+                        message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unsupported_file_encoding_, null);
                     }
                     else {
                         message = err.message;

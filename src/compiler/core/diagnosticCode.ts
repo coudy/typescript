@@ -89,7 +89,7 @@ module TypeScript {
     //    Value_of_type__0__is_not_indexable_by_type__1_,
     //    Operator__0__cannot_be_applied_to_types__1__and__2_,
     //    Operator__0__cannot_be_applied_to_types__1__and__2__3,
-    //    Cannot_convert__0__to__1_,
+    //    Cannot_convert___0___to___1___,
     //    Cannot_convert__0__to__1__NL__2,
     //    Expected_var__class__interface__or_module,
     //    Operator__0__cannot_be_applied_to_type__1_,

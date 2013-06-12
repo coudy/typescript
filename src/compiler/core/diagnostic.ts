@@ -99,11 +99,11 @@ module TypeScript {
 
     function getLargestIndex(diagnostic: string): number {
         var largest = -1;
-        var regex = /\d+/g;
+        var regex = /\{(\d+)\}/g;
 
         var match;
         while ((match = regex.exec(diagnostic)) != null) {
-            var val = parseInt(match[0]);
+            var val = parseInt(match[1]);
             if (!isNaN(val) && val > largest) {
                 largest = val;
             }
@@ -159,9 +159,9 @@ module TypeScript {
 
         var message: string;
         if (diagnostic.category === DiagnosticCategory.Error) {
-            message = getDiagnosticText(DiagnosticCode.error_TS_0___1_, [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.error_TS_0____1_, [diagnostic.code, diagnosticMessageText]);
         } else if (diagnostic.category === DiagnosticCategory.Warning) {
-            message = getDiagnosticText(DiagnosticCode.warning_TS_0___1_, [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.warning_TS_0____1_, [diagnostic.code, diagnosticMessageText]);
         } else {
             message = diagnosticMessageText;
         }
