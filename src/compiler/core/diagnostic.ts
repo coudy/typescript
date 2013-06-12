@@ -3,16 +3,7 @@
 module TypeScript {
     export var LocalizedDiagnosticMessages: any = null;
 
-    export interface IDiagnostic {
-        fileName(): string;
-        start(): number;
-        length(): number;
-        diagnosticKey(): string;
-        text(): string;
-        message(): string;
-    }
-
-    export class Diagnostic implements IDiagnostic {
+    export class Diagnostic {
         private _fileName: string;
         private _start: number;
         private _length: number;

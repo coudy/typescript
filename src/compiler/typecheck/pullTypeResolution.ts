@@ -309,7 +309,7 @@ module TypeScript {
             return this.semanticInfoChain.getASTForDecl(decl);
         }
 
-        public getNewErrorTypeSymbol(diagnostic: SemanticDiagnostic, data?): PullErrorTypeSymbol {
+        public getNewErrorTypeSymbol(diagnostic: Diagnostic, data?): PullErrorTypeSymbol {
             return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol, data);
         }
 
@@ -1419,7 +1419,7 @@ module TypeScript {
                     }
                     else {
                         importDecl.addDiagnostic(
-                            new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [text]));
+                            new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
@@ -1782,7 +1782,7 @@ module TypeScript {
             // an array of any of the above
 
             var typeDeclSymbol: PullTypeSymbol = null;
-            var diagnostic: SemanticDiagnostic = null;
+            var diagnostic: Diagnostic = null;
             var symbolAndDiagnostic: SymbolAndDiagnostics<PullTypeSymbol> = null;
 
             // a name
@@ -2257,7 +2257,7 @@ module TypeScript {
                     }
                 }
 
-                var diagnostic: SemanticDiagnostic;
+                var diagnostic: Diagnostic;
 
                 if (signature.isResolving()) {
 
@@ -2379,7 +2379,7 @@ module TypeScript {
             var signature: PullSignatureSymbol = getterTypeSymbol.getCallSignatures()[0];
 
             var hadError = false;
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
 
             if (signature) {
 

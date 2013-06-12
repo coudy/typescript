@@ -49,7 +49,7 @@ module TypeScript {
     }
 
     export interface IDiagnosticReporter {
-        addDiagnostic(diagnostic: TypeScript.IDiagnostic): void;
+        addDiagnostic(diagnostic: TypeScript.Diagnostic): void;
     }
 
     export interface ILogger {

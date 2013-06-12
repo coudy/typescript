@@ -304,7 +304,7 @@ module TypeScript {
             this.ioHost.stdout.WriteLine("**** Initial type check errors:");
             compiler.pullTypeCheck();
 
-            var semanticDiagnostics: TypeScript.IDiagnostic[];
+            var semanticDiagnostics: TypeScript.Diagnostic[];
 
             for (var i = 0; i < iCode; i++) {
                 semanticDiagnostics = compiler.getSemanticDiagnostics(this.resolvedFiles[i].path);
@@ -573,7 +573,7 @@ module TypeScript {
         private watchFiles() {
             if (!this.ioHost.watchFile) {
                 this.addDiagnostic(
-                    new SemanticDiagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
+                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
                 return;
             }
 
@@ -743,7 +743,7 @@ module TypeScript {
         }
 
         /// IDiagnosticsReporter methods
-        addDiagnostic(diagnostic: IDiagnostic) {
+        addDiagnostic(diagnostic: Diagnostic) {
             this.hasErrors = true;
 
             if (diagnostic.fileName()) {

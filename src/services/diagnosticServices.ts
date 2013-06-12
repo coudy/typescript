@@ -67,7 +67,7 @@ module Services {
 
         }
 
-        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
 
             var args = "fileName: " + this.stringify(fileName);
             var result = this.internal.getSyntacticDiagnostics(fileName);
@@ -78,7 +78,7 @@ module Services {
 
         }
 
-        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
 
             var args = "fileName: " + this.stringify(fileName);
             var result = this.internal.getSemanticDiagnostics(fileName);

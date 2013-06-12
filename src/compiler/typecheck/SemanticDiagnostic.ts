@@ -4,16 +4,7 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-
-    // pull errors are declared at a specific offset from a given decl
-    // adjustedOffset is set when the error is added to a decl
-    export class SemanticDiagnostic extends Diagnostic {
-        public static equals(diagnostic1: SemanticDiagnostic, diagnostic2: SemanticDiagnostic): boolean {
-            return Diagnostic.equals(diagnostic1, diagnostic2);
-        }
-    }
-
-    export function getDiagnosticsFromEnclosingDecl(enclosingDecl: PullDecl, errors: IDiagnostic[]) {
+    export function getDiagnosticsFromEnclosingDecl(enclosingDecl: PullDecl, errors: Diagnostic[]) {
         var declErrors = enclosingDecl.getDiagnostics();
 
         if (declErrors) {

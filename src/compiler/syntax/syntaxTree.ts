@@ -4,8 +4,8 @@ module TypeScript {
     export class SyntaxTree {
         private _sourceUnit: SourceUnitSyntax;
         private _isDeclaration: boolean;
-        private _parserDiagnostics: SyntaxDiagnostic[];
-        private _allDiagnostics: SyntaxDiagnostic[] = null;
+        private _parserDiagnostics: Diagnostic[];
+        private _allDiagnostics: Diagnostic[] = null;
         private _fileName: string;
         private _lineMap: LineMap;
         private _languageVersion: LanguageVersion;
@@ -13,7 +13,7 @@ module TypeScript {
 
         constructor(sourceUnit: SourceUnitSyntax,
                     isDeclaration: boolean,
-                    diagnostics: SyntaxDiagnostic[],
+                    diagnostics: Diagnostic[],
                     fileName: string,
                     lineMap: LineMap,
                     languageVersion: LanguageVersion,
@@ -52,19 +52,19 @@ module TypeScript {
             return this._isDeclaration;
         }
 
-        private computeDiagnostics(): SyntaxDiagnostic[]{
+        private computeDiagnostics(): Diagnostic[]{
             if (this._parserDiagnostics.length > 0) {
                 return this._parserDiagnostics;
             }
 
             // No parser reported diagnostics.  Check for any additional grammar diagnostics.
-            var diagnostics: SyntaxDiagnostic[] = [];
+            var diagnostics: Diagnostic[] = [];
             this.sourceUnit().accept(new GrammarCheckerWalker(this, diagnostics));
 
             return diagnostics;
         }
 
-        public diagnostics(): SyntaxDiagnostic[] {
+        public diagnostics(): Diagnostic[] {
             if (this._allDiagnostics === null) {
                 this._allDiagnostics = this.computeDiagnostics();
             }
@@ -89,7 +89,7 @@ module TypeScript {
         }
 
         public structuralEquals(tree: SyntaxTree): boolean {
-            return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
+            return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), Diagnostic.equals) &&
                 this.sourceUnit().structuralEquals(tree.sourceUnit());
         }
     }
@@ -100,7 +100,7 @@ module TypeScript {
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private syntaxTree: SyntaxTree,
-                    private diagnostics: IDiagnostic[]) {
+                    private diagnostics: Diagnostic[]) {
             super();
         }
 
@@ -113,12 +113,12 @@ module TypeScript {
         }
 
         private pushDiagnostic(start: number, length: number, diagnosticKey: string, args: any[] = null): void {
-            this.diagnostics.push(new SyntaxDiagnostic(
+            this.diagnostics.push(new Diagnostic(
                 this.syntaxTree.fileName(), start, length, diagnosticKey, args));
         }
 
         private pushDiagnostic1(elementFullStart: number, element: ISyntaxElement, diagnosticKey: string, args: any[] = null): void {
-            this.diagnostics.push(new SyntaxDiagnostic(
+            this.diagnostics.push(new Diagnostic(
                 this.syntaxTree.fileName(), elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticKey, args));
         }
 

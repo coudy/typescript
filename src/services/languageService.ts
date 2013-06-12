@@ -40,8 +40,8 @@ module Services {
         // language service.
         refresh(): void;
 
-        getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
-        getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
+        getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[];
+        getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[];
 
         getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo;
 
@@ -349,7 +349,7 @@ module Services {
 
     export class EmitOutput {
         public outputFiles: IOutputFile[] = [];
-        public diagnostics: TypeScript.IDiagnostic[] = [];
+        public diagnostics: TypeScript.Diagnostic[] = [];
     }
 
     export interface IOutputFile {

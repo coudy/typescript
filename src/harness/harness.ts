@@ -1253,7 +1253,7 @@ module Harness {
             compileUnit(compilerInstance, lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emitAll(compilerInstance: Harness.Compiler.CompilerInstance, ioHost: TypeScript.EmitterIOHost): TypeScript.IDiagnostic[] {
+        export function emitAll(compilerInstance: Harness.Compiler.CompilerInstance, ioHost: TypeScript.EmitterIOHost): TypeScript.Diagnostic[] {
             var compiler = getCompiler(compilerInstance);
             return compiler.emitAll(ioHost);
         }
@@ -1287,7 +1287,7 @@ module Harness {
 
             var errorTarget = (typeof errAggregator == "undefined") ? stderr : errAggregator;
             var errorReporter = {
-                addDiagnostic: (diagnostic: TypeScript.IDiagnostic) => {
+                addDiagnostic: (diagnostic: TypeScript.Diagnostic) => {
                     if (diagnostic.fileName()) {
                         var document = getDocumentFromCompiler(compilerInstance, diagnostic.fileName());
                         var lineCol = { line: -1, character: -1 };

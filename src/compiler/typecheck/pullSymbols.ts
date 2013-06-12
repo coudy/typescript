@@ -2422,7 +2422,7 @@ module TypeScript {
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
 
-        constructor(private diagnostic: SemanticDiagnostic, public delegateType: PullTypeSymbol, private _data = null) {
+        constructor(private diagnostic: Diagnostic, public delegateType: PullTypeSymbol, private _data = null) {
             super("error");
         }
 
@@ -3298,7 +3298,7 @@ module TypeScript {
         else {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
             var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
-            var diagnostic: SemanticDiagnostic;
+            var diagnostic: Diagnostic;
             var declAST: AST;
 
             for (var i = 0; i < typesToReplace.length; i++) {
