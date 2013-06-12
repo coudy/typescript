@@ -15,7 +15,6 @@ module TypeScript {
     export class Diagnostic implements IDiagnostic {
         private _fileName: string;
         private _start: number;
-        private _originalStart: number;
         private _length: number;
         private _diagnosticKey: string;
         private _arguments: any[];
@@ -24,7 +23,7 @@ module TypeScript {
             this._diagnosticKey = diagnosticKey;
             this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
-            this._originalStart = this._start = start;
+            this._start = start;
             this._length = length;
         }
 
@@ -75,10 +74,6 @@ module TypeScript {
         /// </summary>
         public message(): string {
             return TypeScript.getDiagnosticMessage(this._diagnosticKey, this._arguments);
-        }
-
-        public adjustOffset(pos: number) {
-            this._start = this._originalStart + pos;
         }
 
         /// <summary>

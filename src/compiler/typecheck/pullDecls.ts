@@ -172,18 +172,6 @@ module TypeScript {
             return this.diagnostics;
         }
 
-        public setErrors(diagnostics: SemanticDiagnostic[]) {
-            if (diagnostics) {
-                this.diagnostics = [];
-
-                // adjust the spans as we parent the errors to the new decl
-                for (var i = 0; i < diagnostics.length; i++) {
-                    diagnostics[i].adjustOffset(this.span.start());
-                    this.diagnostics[this.diagnostics.length] = diagnostics[i];
-                }
-            }
-        }
-
         public resetErrors() {
             this.diagnostics = [];
         }
