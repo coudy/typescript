@@ -1132,7 +1132,7 @@ module TypeScript {
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
             // if it's a "split" interface type, we'll need to consider constituent extends lists separately
-            if (!typeDeclIsClass && !hasVisited && typeDeclSymbol.isResolved()) {
+            if (!typeDeclIsClass && !hasVisited) {
                 typeDeclSymbol.resetKnownBaseTypeCount();
             }
 
