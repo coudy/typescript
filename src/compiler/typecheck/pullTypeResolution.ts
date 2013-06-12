@@ -6831,7 +6831,12 @@ module TypeScript {
             }
             var parameterDeclarations = parameterType.getDeclarations();
             var expressionDeclarations = expressionType.getDeclarations();
-            if (!parameterType.isArray() && parameterDeclarations.length && expressionDeclarations.length && parameterDeclarations[0].isEqual(expressionDeclarations[0]) && expressionType.isGeneric()) {
+                if (!parameterType.isArray() &&
+                    parameterDeclarations.length &&
+                    expressionDeclarations.length &&
+                    (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
+                        (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(expressionType, parameterType, context, null))) &&
+                    expressionType.isGeneric()) {
                 var typeParameters: PullTypeSymbol[] = parameterType.getIsSpecialized() ? parameterType.getTypeArguments() : parameterType.getTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 
