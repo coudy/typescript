@@ -478,7 +478,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version___0___not_supported___Using_default___1___code_generation_, [type, "ES3"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version_0_not_supported_Using_default_1_code_generation, [type, "ES3"]));
                     }
                 }
             });
@@ -497,7 +497,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation___0___not_supported___Using_default___1___code_generation_, [type, "commonjs"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation_0_not_supported_Using_default_1_code_generation, [type, "commonjs"]));
                     }
                 }
             });
@@ -558,7 +558,7 @@ module TypeScript {
         private watchFiles() {
             if (!this.ioHost.watchFile) {
                 this.addDiagnostic(
-                    new SemanticDiagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support__w_atch__option_, null));
+                    new SemanticDiagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
                 return;
             }
 
@@ -672,7 +672,7 @@ module TypeScript {
                     fileInformation = this.ioHost.readFile(fileName);
                 }
                 catch (e) {
-                    this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_read_file___0_____1_, [fileName, e.message]));
+                    this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_read_file_0_1, [fileName, e.message]));
                     fileInformation = new FileInformation("", ByteOrderMark.None);
                 }
 

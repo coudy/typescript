@@ -396,7 +396,7 @@ module TypeScript {
                     if (diagnostics !== null) {
                         diagnostics.push(new SyntaxDiagnostic(
                             this.fileName,
-                            this.slidingWindow.absoluteIndex(), 0, DiagnosticCode._AsteriskSlash__expected_, null));
+                            this.slidingWindow.absoluteIndex(), 0, DiagnosticCode.AsteriskSlash_expected, null));
                     }
 
                     return width;
@@ -980,7 +980,7 @@ module TypeScript {
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
             diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                position, 1, DiagnosticCode.Unexpected_character__0__, [messageText]));
+                position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
 
             return SyntaxKind.ErrorToken;
         }
@@ -1068,7 +1068,7 @@ module TypeScript {
                 }
                 else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
                     diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                        this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_close_quote_character_, null));
+                        this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_close_quote_character, null));
                     break;
                 }
                 else {
@@ -1211,7 +1211,7 @@ module TypeScript {
 
         private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
             return new SyntaxDiagnostic(this.fileName, start, end - start,
-                DiagnosticCode.Unrecognized_escape_sequence_, null);
+                DiagnosticCode.Unrecognized_escape_sequence, null);
         }
 
         public static isValidIdentifier(text: ISimpleText, languageVersion: LanguageVersion): boolean {

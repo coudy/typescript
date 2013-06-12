@@ -159,9 +159,9 @@ module TypeScript {
 
         var message: string;
         if (diagnostic.category === DiagnosticCategory.Error) {
-            message = getDiagnosticText(DiagnosticCode.error_TS_0____1_, [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.error_TS_0_1, [diagnostic.code, diagnosticMessageText]);
         } else if (diagnostic.category === DiagnosticCategory.Warning) {
-            message = getDiagnosticText(DiagnosticCode.warning_TS_0____1_, [diagnostic.code, diagnosticMessageText]);
+            message = getDiagnosticText(DiagnosticCode.warning_TS_0_1, [diagnostic.code, diagnosticMessageText]);
         } else {
             message = diagnosticMessageText;
         }

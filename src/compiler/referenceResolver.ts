@@ -83,7 +83,7 @@ module TypeScript {
                 // Cannot reference self
                 if (!referenceLocation.isImported) {
                     resolutionResult.diagnostics.push(
-                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.A_file_cannot_have_a_reference_to_itself_, null));
+                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.A_file_cannot_have_a_reference_to_itself, null));
                 }
 
                 return normalizedPath;
@@ -104,7 +104,7 @@ module TypeScript {
             if (!this.host.fileExists(normalizedPath)) {
                 if (!referenceLocation.isImported) {
                     resolutionResult.diagnostics.push(
-                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file____0___, [path]));
+                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file_0, [path]));
                 }
 
                 return normalizedPath;

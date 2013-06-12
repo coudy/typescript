@@ -103,7 +103,7 @@ module Services {
             if (this.scanner.absoluteIndex() >= text.length) {
                 // We're at the end.
                 if (this.diagnostics.length > 0) {
-                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticKey() === TypeScript.DiagnosticCode._AsteriskSlash__expected_) {
+                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticKey() === TypeScript.DiagnosticCode.AsteriskSlash_expected) {
                         result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                         return;
                     }
