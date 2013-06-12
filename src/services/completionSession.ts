@@ -62,7 +62,7 @@ module Services {
     export class CompletionSession {
         constructor(public fileName: string,
             public position: number,
-            public entries: TypeScript.StringHashTable<CachedCompletionEntryDetails>) {
+            public entries: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>) {
         }
     }
 }

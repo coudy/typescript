@@ -130,4 +130,43 @@ module TypeScript {
             return data === undefined ? null : data;
         }
     }
+
+
+    export class IdentiferNameHashTable<T> extends StringHashTable<T> {
+        public getAllKeys(): string[]{
+            var result: string[] = [];
+
+            super.map((k, v, c) => {
+                if (v !== undefined) {
+                    result.push(k.substring(1));
+                }
+            }, null);
+
+            return result;
+        }
+
+        public add(key: string, data: T): boolean {
+            return super.add("#" + key, data);
+        }
+
+        public addOrUpdate(key: string, data: T): boolean {
+            return super.addOrUpdate("#" + key, data);
+        }
+
+        public map(fn: (k: string, value: T, context: any) => void , context: any) {
+            return super.map((k, v, c) => fn(k.substring(1), v, c), context);
+        }
+
+        public every(fn: (k: string, value: T, context: any) => void , context: any) {
+            return super.every((k, v, c) => fn(k.substring(1), v, c), context);
+        }
+
+        public some(fn: (k: string, value: any, context: any) => void , context: any) {
+            return super.some((k, v, c) => fn(k.substring(1), v, c), context);
+        }
+
+        public lookup(key: string): T {
+            return super.lookup("#" + key);
+        }
+    }
 }

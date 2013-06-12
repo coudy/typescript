@@ -761,7 +761,7 @@ module Services {
             }
 
             // Get the completions
-            var entries = new TypeScript.StringHashTable<CachedCompletionEntryDetails>();
+            var entries = new TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>();
 
             // Right of dot member completion list
             if (isRightOfDot) {
@@ -836,7 +836,7 @@ module Services {
             return completions;
         }
 
-        private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo, result: TypeScript.StringHashTable<CachedCompletionEntryDetails>): void {
+        private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo, result: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>): void {
             for (var i = 0, n = symbolInfo.symbols.length; i < n; i++) {
                 var symbol = symbolInfo.symbols[i];
 
@@ -872,7 +872,7 @@ module Services {
             }
         }
 
-        private getCompletionEntriesFromDecls(decls: TypeScript.PullDecl[], result: TypeScript.StringHashTable<CachedCompletionEntryDetails>): void {
+        private getCompletionEntriesFromDecls(decls: TypeScript.PullDecl[], result: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>): void {
             for (var i = 0, n = decls.length; i < n; i++) {
                 var decl = decls[i];
 
