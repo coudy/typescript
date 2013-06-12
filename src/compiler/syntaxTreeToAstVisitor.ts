@@ -130,7 +130,7 @@ module TypeScript {
                 }
             }
 
-            var result = new ASTList(array);
+            var result = new ASTList(array, list.separatorCount());
             this.setSpan(result, start, list);
 
             result.setPostComments(this.previousTokenTrailingComments);

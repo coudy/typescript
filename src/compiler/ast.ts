@@ -189,7 +189,7 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        constructor(public members: AST[]) {
+        constructor(public members: AST[], public separatorCount?: number) {
             super();
         }
 
