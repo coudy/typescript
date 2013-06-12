@@ -274,6 +274,54 @@ module TypeScript {
     "code": 1066,
     "category": DiagnosticCategory.Error
   },
+  "module, class, interface, enum, import or statement": {
+    "code": 1067,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "constructor, function, accessor or variable": {
+    "code": 1068,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "statement": {
+    "code": 1069,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "case or default clause": {
+    "code": 1070,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "identifier": {
+    "code": 1071,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "call, construct, index, property or function signature": {
+    "code": 1072,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "expression": {
+    "code": 1073,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type name": {
+    "code": 1074,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "property or accessor": {
+    "code": 1075,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "parameter": {
+    "code": 1076,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type": {
+    "code": 1077,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type parameter": {
+    "code": 1078,
+    "category": DiagnosticCategory.NoPrefix
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

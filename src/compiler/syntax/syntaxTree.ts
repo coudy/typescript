@@ -272,7 +272,7 @@ module TypeScript {
 
         public visitHeritageClause(node: HeritageClauseSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeNames) ||
-                this.checkForAtLeastOneElement(node, node.typeNames, Strings.type_name)) {
+                this.checkForAtLeastOneElement(node, node.typeNames, getDiagnosticText(DiagnosticCode.type_name, null))) {
                 this.skip(node);
                 return;
             }
@@ -291,7 +291,7 @@ module TypeScript {
 
         public visitVariableDeclaration(node: VariableDeclarationSyntax): void {
             if (this.checkForTrailingSeparator(node, node.variableDeclarators) ||
-                this.checkForAtLeastOneElement(node, node.variableDeclarators, Strings.identifier)) {
+                this.checkForAtLeastOneElement(node, node.variableDeclarators, getDiagnosticText(DiagnosticCode.identifier, null))) {
                 this.skip(node);
                 return;
             }
@@ -301,7 +301,7 @@ module TypeScript {
 
         public visitTypeArgumentList(node: TypeArgumentListSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeArguments) ||
-                this.checkForAtLeastOneElement(node, node.typeArguments, Strings.identifier)) {
+                this.checkForAtLeastOneElement(node, node.typeArguments, getDiagnosticText(DiagnosticCode.identifier, null))) {
                 this.skip(node);
                 return;
             }
@@ -311,7 +311,7 @@ module TypeScript {
 
         public visitTypeParameterList(node: TypeParameterListSyntax): void {
             if (this.checkForTrailingSeparator(node, node.typeParameters) ||
-                this.checkForAtLeastOneElement(node, node.typeParameters, Strings.identifier)) {
+                this.checkForAtLeastOneElement(node, node.typeParameters, getDiagnosticText(DiagnosticCode.identifier, null))) {
                 this.skip(node);
                 return;
             }

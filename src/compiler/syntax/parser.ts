@@ -5548,56 +5548,56 @@ module TypeScript.Parser {
         private getExpectedListElementType(currentListType: ListParsingState): string {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
-                    return Strings.module__class__interface__enum__import_or_statement;
+                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                     return '{';
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return Strings.constructor__function__accessor_or_variable;
+                    return getDiagnosticText(DiagnosticCode.constructor_function_accessor_or_variable, null);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
-                    return Strings.module__class__interface__enum__import_or_statement;
+                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.SwitchStatement_SwitchClauses:
-                    return Strings.case_or_default_clause;
+                    return getDiagnosticText(DiagnosticCode.case_or_default_clause, null);
 
                 case ListParsingState.SwitchClause_Statements:
-                    return Strings.statement;
+                    return getDiagnosticText(DiagnosticCode.statement, null);
 
                 case ListParsingState.Block_Statements:
-                    return Strings.statement;
+                    return getDiagnosticText(DiagnosticCode.statement, null);
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                    return Strings.identifier;
+                    return getDiagnosticText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.EnumDeclaration_EnumElements:
-                    return Strings.identifier;
+                    return getDiagnosticText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.ObjectType_TypeMembers:
-                    return Strings.call__construct__index__property_or_function_signature;
+                    return getDiagnosticText(DiagnosticCode.call_construct_index_property_or_function_signature, null);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
-                    return Strings.expression;
+                    return getDiagnosticText(DiagnosticCode.expression, null);
 
                 case ListParsingState.HeritageClause_TypeNameList:
-                    return Strings.type_name;
+                    return getDiagnosticText(DiagnosticCode.type_name, null);
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                    return Strings.property_or_accessor;
+                    return getDiagnosticText(DiagnosticCode.property_or_accessor, null);
 
                 case ListParsingState.ParameterList_Parameters:
-                    return Strings.parameter;
+                    return getDiagnosticText(DiagnosticCode.parameter, null);
 
                 case ListParsingState.TypeArgumentList_Types:
-                    return Strings.type;
+                    return getDiagnosticText(DiagnosticCode.type, null);
 
                 case ListParsingState.TypeParameterList_TypeParameters:
-                    return Strings.type_parameter;
+                    return getDiagnosticText(DiagnosticCode.type_parameter, null);
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                    return Strings.expression;
+                    return getDiagnosticText(DiagnosticCode.expression, null);
 
                 default:
                     throw Errors.invalidOperation();
