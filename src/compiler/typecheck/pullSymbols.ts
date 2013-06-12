@@ -404,7 +404,6 @@ module TypeScript {
             this.docComments = null;
 
             this.hasBeenResolved = false;
-            //this.inResolution = false;
             this.isBound = false;
 
             // reset the errors for its decl
