@@ -735,6 +735,12 @@ module TypeScript {
 
             var members: PullSymbol[] = [];
 
+            if (lhsType.isContainer()) {
+                if ((<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol()) {
+                    lhsType = (<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol();
+                }
+            }
+
             // could be a type parameter with a contraint
             if (lhsType.isTypeParameter()) {
                 var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
@@ -781,6 +787,9 @@ module TypeScript {
                     var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
                     if (associatedInstance) {
                         var instanceType = associatedInstance.getType();
+                        if (!instanceType.isResolved()) {
+                            this.resolveDeclaredSymbol(instanceType, enclosingDecl, context);
+                        }
                         var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
                         members = members.concat(instanceMembers);
                     }
@@ -801,6 +810,9 @@ module TypeScript {
                     var associatedContainerSymbol = lhsType.getAssociatedContainerType();
                     if (associatedContainerSymbol) {
                         var containerType = associatedContainerSymbol.getType();
+                        if (!containerType.isResolved()) {
+                            this.resolveDeclaredSymbol(containerType, enclosingDecl, context);
+                        }
                         var containerMembers = containerType.getAllMembers(declSearchKind, includePrivate);
                         members = members.concat(containerMembers);
                     }
