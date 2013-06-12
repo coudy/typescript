@@ -1459,7 +1459,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be used at the top-level of external modules
                 enclosingDecl.addDiagnostic(
-                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_in_External_modules));
+                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_at_the_top_level_of_external_modules));
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
             }
 
@@ -1512,7 +1512,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
                 enclosingDecl.addDiagnostic(
-                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_acceptable_kinds));
+                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_variables__functions__classes__interfaces__enums_and_internal_modules));
                 return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.voidTypeSymbol);
             }
 
@@ -2278,7 +2278,7 @@ module TypeScript {
                             signature.setReturnType(returnTypeSymbol);
 
                             if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
-                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_, null, funcDecl, true);
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of__void, null, funcDecl, true);
                             }
                         }
                     }
@@ -2341,7 +2341,7 @@ module TypeScript {
                         signature.setReturnType(returnTypeSymbol);
 
                         if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of__void_, null, funcDecl, true);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of__void, null, funcDecl, true);
                         }
                     }
                 }
@@ -3080,7 +3080,7 @@ module TypeScript {
                 if (!nameSymbol) {
                     return SymbolAndDiagnostics.create(
                         this.getNewErrorTypeSymbol(null, rhsName),
-                        [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(lhs)])]);
+                        [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1_, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(lhs)])]);
                 }
             }
 
@@ -3148,7 +3148,7 @@ module TypeScript {
                     this.currentUnit.getProperties().unitContainsBool = true;
                     return SymbolAndDiagnostics.create(
                         this.semanticInfoChain.booleanTypeSymbol,
-                        [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated__bool__type__Use__boolean__instead)]);
+                        [context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated_type__bool__Use__boolean__instead)]);
                 }
                 else {
                     return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.booleanTypeSymbol);
@@ -3279,7 +3279,7 @@ module TypeScript {
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
                 return SymbolAndDiagnostics.create(
                     this.getNewErrorTypeSymbol(null),
-                    [context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires_1_type_argument_s_, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length])]);
+                    [context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type__0__requires__1__type_argument_s, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length])]);
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
@@ -3414,7 +3414,7 @@ module TypeScript {
             if (!childTypeSymbol) {
                 return SymbolAndDiagnostics.create(
                     this.getNewErrorTypeSymbol(null, rhsName),
-                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1__, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(lhs)])]);
+                    [context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.The_property__0__does_not_exist_on_value_of_type__1_, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(lhs)])]);
             }
 
             return SymbolAndDiagnostics.fromSymbol(childTypeSymbol);
@@ -3879,7 +3879,7 @@ module TypeScript {
                     if (!this.sourceIsAssignableToTarget(currentElementType, contextualElementType, context, comparisonInfo)) {
                         var message: Diagnostic;
                         if (comparisonInfo.message) {
-                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1__NL__2, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
+                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1___NL__2_, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
                         } else {
                             message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert__0__to__1_, [currentElementType.toString(), contextualElementType.toString()]);
                         }
@@ -4314,7 +4314,7 @@ module TypeScript {
 
             if (!signatures.length && (targetTypeSymbol.getKind() == PullElementKind.ConstructorType)) {
                 diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___, [targetTypeSymbol.toString()]));
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new, [targetTypeSymbol.toString()]));
             }
 
             var typeArgs: PullTypeSymbol[] = null;
@@ -5899,7 +5899,7 @@ module TypeScript {
                     comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
                     var message: string;
                     if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = getDiagnosticMessage(DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3,
+                        message = getDiagnosticMessage(DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3_,
                             [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
                     } else {
                         message = getDiagnosticMessage(DiagnosticCode.Types_of_property__0__of_types__1__and__2__are_incompatible,
@@ -5933,7 +5933,7 @@ module TypeScript {
                         var message: string;
                         if (sourceCallSigs.length && targetCallSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = getDiagnosticMessage(DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                                message = getDiagnosticMessage(DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible__NL__2_,
                                     [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
                                 message = getDiagnosticMessage(DiagnosticCode.Call_signatures_of_types__0__and__1__are_incompatible,
@@ -5942,7 +5942,7 @@ module TypeScript {
                         } else {
                             var hasSig = targetCallSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
-                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_call_signature__but_Type__1__lacks_one, [hasSig, lacksSig]);
+                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_call_signature__but_type__1__lacks_one, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                         comparisonInfo.addMessage(message);
@@ -5972,7 +5972,7 @@ module TypeScript {
                         var message: string;
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
                             if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                                message = getDiagnosticMessage(DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                                message = getDiagnosticMessage(DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible__NL__2_,
                                     [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                             } else {
                                 message = getDiagnosticMessage(DiagnosticCode.Construct_signatures_of_types__0__and__1__are_incompatible,
@@ -5981,7 +5981,7 @@ module TypeScript {
                         } else {
                             var hasSig = targetConstructSigs.length ? target.toString() : source.toString();
                             var lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
-                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_construct_signature__but_Type__1__lacks_one, [hasSig, lacksSig]);
+                            message = getDiagnosticMessage(DiagnosticCode.Type__0__requires_a_construct_signature__but_type__1__lacks_one, [hasSig, lacksSig]);
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                         comparisonInfo.addMessage(message);
@@ -6082,7 +6082,7 @@ module TypeScript {
                     if (comparisonInfo) {
                         var message: string;
                         if (comparisonInfoSignatuesTypeCheck && comparisonInfoSignatuesTypeCheck.message) {
-                            message = getDiagnosticMessage(DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2,
+                            message = getDiagnosticMessage(DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible__NL__2_,
                                 [source.toString(), target.toString(), comparisonInfoSignatuesTypeCheck.message]);
                         } else {
                             message = getDiagnosticMessage(DiagnosticCode.Index_signatures_of_types__0__and__1__are_incompatible,
@@ -6317,7 +6317,7 @@ module TypeScript {
                 else {
                     if (comparisonInfo.message) {
                         diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),
-                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0, [comparisonInfo.message]));
+                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0_, [comparisonInfo.message]));
                     }
                     else {
                         diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),

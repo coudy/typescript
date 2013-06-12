@@ -333,7 +333,7 @@ module Services {
         private containErrors(diagnostics: TypeScript.IDiagnostic[]): boolean {
             if (diagnostics && diagnostics.length > 0) {
                 for (var i = 0; i < diagnostics.length; i++) {
-                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromCode(diagnostics[i].diagnosticCode());
+                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromKey(diagnostics[i].diagnosticKey());
                     if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
                         return true;
                     }

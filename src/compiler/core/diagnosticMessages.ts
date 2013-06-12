@@ -73,7 +73,7 @@ module TypeScript {
 
 
         // Semantic diagnostics.
-        Duplicate_identifier__0_: DiagnosticInfo;
+        Duplicate_identifier___0: DiagnosticInfo;
         The_name__0__does_not_exist_in_the_current_scope: DiagnosticInfo;
         The_name__0__does_not_refer_to_a_value: DiagnosticInfo;
         Keyword__super__can_only_be_used_inside_a_class_instance_method: DiagnosticInfo;
@@ -706,7 +706,7 @@ module TypeScript {
 
 
         // Semantic errors start at 2000.
-        Duplicate_identifier__0_: {
+        Duplicate_identifier___0: {
             category: DiagnosticCategory.Error,
             message: "Duplicate identifier '{0}'.",
             code: 2000

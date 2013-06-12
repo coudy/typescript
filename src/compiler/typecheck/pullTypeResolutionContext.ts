@@ -287,8 +287,8 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
-            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
+        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
+            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticKey, arguments);
             this.postDiagnostic(diagnostic, enclosingDecl, addToDecl);
 
             return diagnostic;

@@ -2771,7 +2771,8 @@ module TypeScript {
 
             if (typeParameters.length) {
                 getAccessorDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Accessor_cannot_have_type_parameters, null));
+                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(),
+                        DiagnosticCode.Accessors_cannot_have_type_parameters, null));
             }
 
             // add the implicit call member for this function type
@@ -2934,7 +2935,7 @@ module TypeScript {
 
             if (typeParameters.length) {
                 setAccessorDeclaration.addDiagnostic(
-                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Accessor_cannot_have_type_parameters, null));
+                    new SemanticDiagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Accessors_cannot_have_type_parameters, null));
             }
 
             // add the implicit call member for this function type

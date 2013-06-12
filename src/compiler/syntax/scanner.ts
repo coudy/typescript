@@ -396,7 +396,7 @@ module TypeScript {
                     if (diagnostics !== null) {
                         diagnostics.push(new SyntaxDiagnostic(
                             this.fileName,
-                            this.slidingWindow.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
+                            this.slidingWindow.absoluteIndex(), 0, DiagnosticCode._AsteriskSlash__expected, null));
                     }
 
                     return width;
@@ -980,7 +980,7 @@ module TypeScript {
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
             diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
+                position, 1, DiagnosticCode.Unexpected_character__0_, [messageText]));
 
             return SyntaxKind.ErrorToken;
         }
@@ -1068,7 +1068,7 @@ module TypeScript {
                 }
                 else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
                     diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                        this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character, null));
+                        this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_close_quote_character, null));
                     break;
                 }
                 else {

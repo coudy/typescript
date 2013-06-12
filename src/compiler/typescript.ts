@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+///<reference path='resources\references.ts' />
 ///<reference path='core\references.ts' />
 ///<reference path='text\references.ts' />
 ///<reference path='syntax\references.ts' />

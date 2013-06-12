@@ -1,5 +1,7 @@
 ///<reference path='require.ts' />
 
+///<reference path='..\resources\references.ts' />
+
 ///<reference path='arrayUtilities.ts' />
 ///<reference path='constants.ts' />
 ///<reference path='contract.ts' />
