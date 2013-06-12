@@ -85,7 +85,7 @@ describe("Generic assignment compatibility - 2", function () {
         var funcArray = typeFactory.get('var f : <T>() => void = null; var arr_func = [f];', 'arr_func');
         // generic version would require interface
         var objectArray = typeFactory.get('var o = {one: 1}; var arr_obj = [o];', 'arr_obj');
-        var instanceArray = typeFactory.get('class Foo<T> { public p: T = null; }; var arr_Foo: Foo[];', 'arr_Foo');
+        var instanceArray = typeFactory.get('class Foo<T> { public p: T = null; }; var arr_Foo: Foo<any>[];', 'arr_Foo');
         var classArray = typeFactory.get('class Foo2<T> { public p: T = null; }; var arr_Foo2 = [new Foo2<any>()];', 'arr_Foo2');
 
         var AnyArrayType = [anyArray, boolArray, numberArray, stringArray, funcArray, objectArray, instanceArray, classArray];

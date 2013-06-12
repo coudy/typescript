@@ -1853,6 +1853,19 @@ module TypeScript {
                         this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                     }
 
+                    if (typeDeclSymbol.isNamedTypeSymbol() &&
+                        typeDeclSymbol.isGeneric() &&
+                        !typeDeclSymbol.isTypeParameter() &&
+                        typeDeclSymbol.isResolved() &&
+                        !typeDeclSymbol.getIsSpecialized() &&
+                        typeDeclSymbol.getTypeParameters().length &&
+                        (typeDeclSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeDeclSymbol)) &&
+                        this.isTypeRefWithoutTypeArgs(typeRef)) {
+
+                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
+                        typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
+                    }
+
                     arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, typeDeclSymbol, this, context);
 
                     if (!arraySymbol) {
@@ -3249,6 +3262,20 @@ module TypeScript {
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context).symbol;
+
+                        if (typeArg.isNamedTypeSymbol() &&
+                            typeArg.isGeneric() &&
+                            !typeArg.isTypeParameter() &&
+                            typeArg.isResolved() &&
+                            !typeArg.getIsSpecialized() &&
+                            typeArg.getTypeParameters().length &&
+                            (typeArg.getTypeArguments() == null && !this.isArrayOrEquivalent(typeArg)) &&
+                            this.isTypeRefWithoutTypeArgs(<TypeReference>genericTypeAST.typeArguments.members[i])) {
+
+                                context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
+                                typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
+                        }
+
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
