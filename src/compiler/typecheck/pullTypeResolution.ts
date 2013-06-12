@@ -4329,7 +4329,7 @@ module TypeScript {
                     couldNotAssignToConstraint = false;
                     triedToInferTypeArgs = false;
 
-                    if (signatures[i].isGeneric() && typeParameters.length) {
+                    if (signatures[i].isGeneric() && typeParameters.length && !signatures[i].isFixed()) {
                         if (typeArgs) {
                             inferredTypeArgs = typeArgs;
                         }
@@ -4661,7 +4661,7 @@ module TypeScript {
                     for (var i = 0; i < constructSignatures.length; i++) {
                         couldNotAssignToConstraint = false;
 
-                        if (constructSignatures[i].isGeneric()) {
+                        if (constructSignatures[i].isGeneric() && !constructSignatures[i].isFixed()) {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
                             }

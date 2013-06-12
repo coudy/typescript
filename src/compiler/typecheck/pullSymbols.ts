@@ -981,6 +981,33 @@ module TypeScript {
             return true;
         }
 
+        public isFixed(): boolean {
+
+            if (!this.isGeneric()) {
+                return true;
+            }
+
+            if (this.parameterLinks) {
+                var parameterType: PullTypeSymbol = null;
+                
+                for (var i = 0; i < this.parameterLinks.length; i++) {
+                    parameterType = this.parameterLinks[i].end.getType();
+                    
+                    if (parameterType && !parameterType.isFixed()) {
+                        return false;
+                    }    
+                }
+            }
+
+            if (this.returnTypeLink) {
+                var returnType = <PullTypeSymbol>this.returnTypeLink.end;
+
+                return returnType.isFixed();
+            }
+
+            return true;
+        }
+
         public invalidate() {
 
             this.parameterLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.Parameter);
