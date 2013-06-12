@@ -341,14 +341,16 @@ module TypeScript {
 
         private getExportedMemberSymbol(symbol: PullSymbol, parent: PullTypeSymbol):PullSymbol {
 
-            var containerType = !parent.isContainer() ? parent.getAssociatedContainerType() : parent;
+            if (!(symbol.getKind() & (PullElementKind.Method | PullElementKind.Property))) {
+                var containerType = !parent.isContainer() ? parent.getAssociatedContainerType() : parent;
 
-            if (containerType && containerType.isContainer() && !PullHelpers.symbolIsEnum(parent)) {
-                if (symbol.hasFlag(PullElementFlags.Exported)) {
-                    return symbol;
+                if (containerType && containerType.isContainer() && !PullHelpers.symbolIsEnum(parent)) {
+                    if (symbol.hasFlag(PullElementFlags.Exported)) {
+                        return symbol;
+                    }
+
+                    return null;
                 }
-
-                return null;
             }
 
             return symbol;
