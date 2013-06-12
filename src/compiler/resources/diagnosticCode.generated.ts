@@ -289,5 +289,7 @@ module TypeScript {
         Emit_Error_0: "Emit Error: {0}.",
         Cannot_read_file_0_1: "Cannot read file '{0}': {1}",
         Unsupported_file_encoding: "Unsupported file encoding.",
+        Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp: "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.",
+        Unsupported_locale_0: "Unsupported locale: '{0}'.",
     };
 }

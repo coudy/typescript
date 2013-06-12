@@ -529,11 +529,11 @@ module TypeScript {
                 }
             }, 'm');
 
-            opts.option('language', {
-                usage: 'Specify language for errors and messages.',
+            opts.option('locale', {
+                usage: "Specify locale for errors and messages. For example 'en' or 'ja-jp'.",
                 type: 'string',
                 set: (value) => {
-                    this.setLanguage(value); 
+                    this.setLocale(value); 
                 }
             });
 
@@ -552,21 +552,44 @@ module TypeScript {
             }
         }
 
-        private setLanguage(language: string): void {
-            var compilerFilePath = this.ioHost.getExecutingFilePath();
-            var containingDirectoryPath = this.ioHost.dirName(compilerFilePath);
-            var filePath = this.ioHost.resolvePath(
-                IOUtils.combine(
-                    IOUtils.combine(
-                        IOUtils.combine(containingDirectoryPath, "resources"), language), "diagnosticMessages.generated.json"));
-
-            if (!this.ioHost.fileExists(filePath)) {
-                this.ioHost.stderr.WriteLine("Unsupported language: " + language);
+        private setLocale(locale: string): void {
+            var matchResult = /([a-z]+)([_\-]([a-z]+))?/.exec(locale.toLowerCase());
+            if (!matchResult) {
+                this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
                 this.ioHost.quit(1);
             }
-            
+
+            var language = matchResult[1];
+            var territory = matchResult[3];
+
+            // First try the entire locale, then fall back to just language if that's all we have.
+            if (!this.setLanguageAndTerritory(language, territory) &&
+                !this.setLanguageAndTerritory(language, null)) {
+
+                this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Unsupported_locale_0, [locale]));
+                this.ioHost.quit(1);
+            }
+        }
+
+        private setLanguageAndTerritory(language: string, territory: string): boolean {
+
+            var compilerFilePath = this.ioHost.getExecutingFilePath();
+            var containingDirectoryPath = this.ioHost.dirName(compilerFilePath);
+
+            var filePath = IOUtils.combine(IOUtils.combine(containingDirectoryPath, "resources"), language);
+            if (territory) {
+                filePath = IOUtils.combine(filePath, territory);
+            }
+
+            filePath = this.ioHost.resolvePath(IOUtils.combine(filePath, "diagnosticMessages.generated.json"));
+
+            if (!this.ioHost.fileExists(filePath)) {
+                return false;
+            }
+
             var fileContents = this.ioHost.readFile(filePath);
             TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents());
+            return true;
         }
 
         // Handle -watch switch

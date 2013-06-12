@@ -1153,6 +1153,14 @@ module TypeScript {
   "Unsupported file encoding.": {
     "code": 5013,
     "category": DiagnosticCategory.NoPrefix
+  },
+  "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.": {
+    "code": 5014,
+    "category": DiagnosticCategory.Error
+  },
+  "Unsupported locale: '{0}'.": {
+    "code": 5015,
+    "category": DiagnosticCategory.Error
   }
 };
 }

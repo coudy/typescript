@@ -638,7 +638,7 @@ module JSON3 {
         return callback && getClass.call(callback) == "[object Function]" ? walk((value = {}, value[""] = result, value), "", callback) : result;
     };
 
-    if (typeof JSON === undefined) {
+    if (typeof JSON === "undefined") {
         JSON = JSON3;
     }
 }
