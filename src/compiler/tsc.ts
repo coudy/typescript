@@ -70,15 +70,15 @@ module TypeScript {
             CompilerDiagnostics.diagnosticWriter = { Alert: (s: string) => { this.ioHost.printLine(s); } };
 
             // Parse command line options
-            this.parseOptions();
+            if (this.parseOptions()) {
+                this.logger = this.compilationSettings.gatherDiagnostics ? <ILogger>new DiagnosticsLogger(this.ioHost) : new NullLogger();
 
-            this.logger = this.compilationSettings.gatherDiagnostics ? <ILogger>new DiagnosticsLogger(this.ioHost) : new NullLogger();
+                if (this.compilationSettings.watch) {
+                    // Watch will cause the program to stick around as long as the files exist
+                    this.watchFiles();
+                    return;
+                }
 
-            if (this.compilationSettings.watch) {
-                // Watch will cause the program to stick around as long as the files exist
-                this.watchFiles();
-            }
-            else {
                 // Resolve the compilation environemnt
                 this.resolve();
 
@@ -131,10 +131,10 @@ module TypeScript {
                         this.run();
                     }
                 }
-
-                // Exit with the appropriate error code
-                this.ioHost.quit(this.hasErrors ? 1 : 0);
             }
+
+            // Exit with the appropriate error code
+            this.ioHost.quit(this.hasErrors ? 1 : 0);
         }
 
         private resolve() {
@@ -529,15 +529,22 @@ module TypeScript {
                 }
             }, 'm');
 
+            var locale: string = null;
             opts.option('locale', {
                 usage: "Specify locale for errors and messages. For example 'en' or 'ja-jp'.",
                 type: 'string',
                 set: (value) => {
-                    this.setLocale(value); 
+                    locale = value;
                 }
             });
 
             opts.parse(this.ioHost.arguments);
+
+            if (locale) {
+                if (!this.setLocale(locale)) {
+                    return false;
+                }
+            }
 
             for (var i = 0, n = opts.unnamed.length; i < n; i++) {
                 this.inputFiles.push(opts.unnamed[i]);
@@ -547,16 +554,18 @@ module TypeScript {
             if (this.inputFiles.length === 0) {
                 if (!printedUsage) {
                     opts.printUsage();
-                    this.ioHost.quit(1);
+                    return false;
                 }
             }
+
+            return true;
         }
 
-        private setLocale(locale: string): void {
-            var matchResult = /([a-z]+)([_\-]([a-z]+))?/.exec(locale.toLowerCase());
+        private setLocale(locale: string): boolean {
+            var matchResult = /^([a-z]+)([_\-]([a-z]+))?$/.exec(locale.toLowerCase());
             if (!matchResult) {
-                this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
-                this.ioHost.quit(1);
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
+                return false;
             }
 
             var language = matchResult[1];
@@ -566,9 +575,11 @@ module TypeScript {
             if (!this.setLanguageAndTerritory(language, territory) &&
                 !this.setLanguageAndTerritory(language, null)) {
 
-                this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Unsupported_locale_0, [locale]));
-                this.ioHost.quit(1);
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Unsupported_locale_0, [locale]));
+                return false;
             }
+
+            return true;
         }
 
         private setLanguageAndTerritory(language: string, territory: string): boolean {
