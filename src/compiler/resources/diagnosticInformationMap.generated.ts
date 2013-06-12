@@ -286,7 +286,7 @@ module TypeScript {
     "code": 2002,
     "category": DiagnosticCategory.Error
   },
-  "Keyword 'super' can only be used inside a class instance method.": {
+  "'super' can only be used inside a class instance method.": {
     "code": 2003,
     "category": DiagnosticCategory.Error
   },
@@ -798,7 +798,7 @@ module TypeScript {
     "code": 2133,
     "category": DiagnosticCategory.Error
   },
-  "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'": {
+  "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'.": {
     "code": 2134,
     "category": DiagnosticCategory.Error
   },
@@ -914,7 +914,7 @@ module TypeScript {
     "code": 2163,
     "category": DiagnosticCategory.Error
   },
-  "Export assignments may only be used at the top-level of external modules": {
+  "Export assignments may only be used at the top-level of external modules.": {
     "code": 2164,
     "category": DiagnosticCategory.Error
   },
@@ -922,11 +922,11 @@ module TypeScript {
     "code": 2165,
     "category": DiagnosticCategory.Error
   },
-  "Only public instance methods of the base class are accessible via the super keyword": {
+  "Only public instance methods of the base class are accessible via the 'super' keyword.": {
     "code": 2166,
     "category": DiagnosticCategory.Error
   },
-  "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'": {
+  "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'.": {
     "code": 2167,
     "category": DiagnosticCategory.Error
   },
@@ -934,7 +934,7 @@ module TypeScript {
     "code": 2168,
     "category": DiagnosticCategory.Error
   },
-  "All numerically named properties must be subtypes of numeric indexer type '{0}'": {
+  "All numerically named properties must be subtypes of numeric indexer type '{0}'.": {
     "code": 2169,
     "category": DiagnosticCategory.Error
   },
@@ -942,7 +942,7 @@ module TypeScript {
     "code": 2170,
     "category": DiagnosticCategory.Error
   },
-  "All named properties must be subtypes of string indexer type '{0}'": {
+  "All named properties must be subtypes of string indexer type '{0}'.": {
     "code": 2171,
     "category": DiagnosticCategory.Error
   },
@@ -950,15 +950,15 @@ module TypeScript {
     "code": 2172,
     "category": DiagnosticCategory.Error
   },
-  "Generic type references must include all type arguments": {
+  "Generic type references must include all type arguments.": {
     "code": 2173,
     "category": DiagnosticCategory.Error
   },
-  "Default arguments are not allowed in an overload parameter": {
+  "Default arguments are not allowed in an overload parameter.": {
     "code": 2174,
     "category": DiagnosticCategory.Error
   },
-  "Overloads cannot differ only by return type": {
+  "Overloads cannot differ only by return type.": {
     "code": 2175,
     "category": DiagnosticCategory.Error
   },
@@ -1086,11 +1086,11 @@ module TypeScript {
     "code": 5007,
     "category": DiagnosticCategory.Error
   },
-  "Cannot find the common subdirectory path for the input files": {
+  "Cannot find the common subdirectory path for the input files.": {
     "code": 5009,
     "category": DiagnosticCategory.Error
   },
-  "Cannot compile dynamic modules when emitting into single file": {
+  "Cannot compile dynamic modules when emitting into single file.": {
     "code": 5010,
     "category": DiagnosticCategory.Error
   },
