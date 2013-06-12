@@ -142,8 +142,6 @@ module TypeScript {
         private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
-        private _haveResolvedGlobals = false;
-
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
 
         private assignableCache: any[] = <any>{};
@@ -153,7 +151,6 @@ module TypeScript {
         private resolutionDataCache = new PullResolutionDataCache();
 
         private currentUnit: SemanticInfo = null;
-
 
         public cleanCachedGlobals() {
             this._cachedArrayInterfaceType = null;
@@ -168,9 +165,7 @@ module TypeScript {
 
             this.identicalCache = <any[]>{};
             this.subtypeCache = <any[]>{};
-            this.assignableCache = <any[]>{};
-            
-            this._haveResolvedGlobals = false;        
+            this.assignableCache = <any[]>{};    
         }        
 
         private cachedArrayInterfaceType() {
@@ -180,6 +175,10 @@ module TypeScript {
             
             if (!this._cachedArrayInterfaceType) {
                 this._cachedArrayInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (!this._cachedArrayInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedArrayInterfaceType, null, new PullTypeResolutionContext());
             }
 
             return this._cachedArrayInterfaceType;
@@ -194,6 +193,10 @@ module TypeScript {
                 this._cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
             }
 
+            if (this._cachedNumberInterfaceType && !this._cachedNumberInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedNumberInterfaceType, null, new PullTypeResolutionContext());
+            }
+
             return this._cachedNumberInterfaceType;
         }
 
@@ -202,12 +205,20 @@ module TypeScript {
                 this._cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
             }
 
+            if (this._cachedStringInterfaceType && !this._cachedStringInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedStringInterfaceType, null, new PullTypeResolutionContext());
+            }
+
             return this._cachedStringInterfaceType;            
         }
 
         private cachedBooleanInterfaceType() {
             if (!this._cachedBooleanInterfaceType) {
                 this._cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface);
+            }
+
+            if (this._cachedBooleanInterfaceType && !this._cachedBooleanInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedBooleanInterfaceType, null, new PullTypeResolutionContext());
             }
 
             return this._cachedBooleanInterfaceType;                     
@@ -222,12 +233,20 @@ module TypeScript {
                 this._cachedObjectInterfaceType = this.semanticInfoChain.anyTypeSymbol;
             }
 
+            if (!this._cachedObjectInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedObjectInterfaceType, null, new PullTypeResolutionContext());
+            }
+
             return this._cachedObjectInterfaceType;            
         }
 
         private cachedFunctionInterfaceType() {
             if (!this._cachedFunctionInterfaceType) {
                 this._cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
+            }
+
+            if (this._cachedFunctionInterfaceType && !this._cachedFunctionInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedFunctionInterfaceType, null, new PullTypeResolutionContext());
             }
 
             return this._cachedFunctionInterfaceType;                     
@@ -238,6 +257,10 @@ module TypeScript {
                 this._cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
             }
 
+            if (this._cachedIArgumentsInterfaceType && !this._cachedIArgumentsInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedIArgumentsInterfaceType, null, new PullTypeResolutionContext());
+            }
+
             return this._cachedIArgumentsInterfaceType;               
         }
 
@@ -246,22 +269,11 @@ module TypeScript {
                 this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
             }
 
-            return this._cachedRegExpInterfaceType;               
-        }
-
-        public resolveGlobals() {
-            var context = new PullTypeResolutionContext();
-            if (!this._haveResolvedGlobals) {
-                this.resolveDeclaredSymbol(this.cachedObjectInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedFunctionInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedNumberInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedStringInterfaceType(), null, context);
-                this.resolveDeclaredSymbol(this.cachedRegExpInterfaceType(), null, context);
-                this._haveResolvedGlobals = true;
+            if (!this._cachedRegExpInterfaceType.isResolved()) {
+                this.resolveDeclaredSymbol(this._cachedRegExpInterfaceType, null, new PullTypeResolutionContext());
             }
+
+            return this._cachedRegExpInterfaceType;               
         }
 
         constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
@@ -651,8 +663,6 @@ module TypeScript {
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
 
-            this.resolveGlobals();
-
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
@@ -668,17 +678,17 @@ module TypeScript {
                 return null;
             }
 
-            this.resolveGlobals();
-
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
             var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
+
+            for (var i = 0; i < members.length; i++) {
+                members[i].setUnresolved();
+            }
 
             return members;
         }
 
-        public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[]{
-            
-            this.resolveGlobals();
+        public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
 
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
             context.canUseTypeSymbol = true;
@@ -804,6 +814,7 @@ module TypeScript {
                 if (!members[i].isResolved()) {
                     this.resolveDeclaredSymbol(members[i], enclosingDecl, context);
                 }
+                members[i].setUnresolved();
             }
 
             return members;
@@ -1207,7 +1218,7 @@ module TypeScript {
             }
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
-            if (wasInBaseTypeResolution) {
+            if (wasInBaseTypeResolution && (typeDeclAST.implementsList || typeDeclAST.extendsList)) {
                 // Do not resolve members as yet
                 return typeDeclSymbol;
             }
@@ -5409,7 +5420,7 @@ module TypeScript {
 
         // Assignment Compatibility and Subtyping
 
-        private substituteUpperBoundForType(type: PullTypeSymbol) {
+        public substituteUpperBoundForType(type: PullTypeSymbol) {
             if (!type || !type.isTypeParameter()) {
                 return type;
             }
@@ -5528,8 +5539,6 @@ module TypeScript {
             if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
-
-            this.resolveGlobals();
 
             if (context.specializingToObject) {
                 if (target.isTypeParameter()) {

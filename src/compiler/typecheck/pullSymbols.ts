@@ -404,6 +404,7 @@ module TypeScript {
             this.docComments = null;
 
             this.hasBeenResolved = false;
+            //this.inResolution = false;
             this.isBound = false;
 
             // reset the errors for its decl
@@ -1210,6 +1211,16 @@ module TypeScript {
 
         private constructorMethod: PullSymbol = null;
         private hasDefaultConstructor = false;
+
+        public setUnresolved() {
+            super.setUnresolved();
+
+            var specializations = this.getKnownSpecializations();
+
+            for (var i = 0; i < specializations.length; i++) {
+                specializations[i].setUnresolved();
+            }
+        }
 
         public isType() { return true; }
         public isClass() {
