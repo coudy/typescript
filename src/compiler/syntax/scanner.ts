@@ -994,7 +994,7 @@ module TypeScript {
                 return '"\\"';
             }
 
-            return JSON2.stringify(text);
+            return JSON.stringify(text);
         }
 
         private skipEscapeSequence(diagnostics: Diagnostic[]): void {

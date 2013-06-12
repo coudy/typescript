@@ -14,7 +14,6 @@
 //
 
 /// <reference path='harness.ts'/>
-/// <reference path='external\json2.ts'/>
 
 module DumpAST {
 
@@ -168,15 +167,15 @@ module DumpAST {
     }
 
     var addKey = function (key: string): string {
-        return JSON2.stringify(key);
+        return JSON.stringify(key);
     }
 
     var addString = function (key: string, value: string): string {
-        return addKey(key) + ": " + JSON2.stringify(value);
+        return addKey(key) + ": " + JSON.stringify(value);
     }
 
     var addNumber = function (key: string, value: number): string {
-        return addKey(key) + ": " + JSON2.stringify(value);
+        return addKey(key) + ": " + JSON.stringify(value);
     }
 
     function dumpEntries(entry: DumpEntry, indent: number): string {
@@ -231,7 +230,7 @@ module DumpAST {
             }
             var start = lineStarts[i];
             var end = (i < lineStarts.length - 1 ? lineStarts[i + 1] : sourceText.getLength());
-            text += indentStr + indentStr + JSON2.stringify(sourceText.getText(start, end));
+            text += indentStr + indentStr + JSON.stringify(sourceText.getText(start, end));
         }
         text += "],";
         text += "\r\n";

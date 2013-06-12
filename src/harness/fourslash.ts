@@ -202,7 +202,7 @@ module FourSlash {
         private getAllDiagnostics(): TypeScript.Diagnostic[] {
             var diagnostics: TypeScript.Diagnostic[] = [];
 
-            var fileNames = JSON2.parse(this.languageServiceShimHost.getScriptFileNames());
+            var fileNames = JSON.parse(this.languageServiceShimHost.getScriptFileNames());
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 diagnostics.push.apply(this.getDiagnostics(fileNames[i]));
             }
@@ -512,7 +512,7 @@ module FourSlash {
                 }
             } else {
                 if (actual) {
-                    throw new Error("Expected no signature help, but got '" + JSON2.stringify(actual) + "'");
+                    throw new Error("Expected no signature help, but got '" + JSON.stringify(actual) + "'");
                 }
             }
         }
@@ -561,7 +561,7 @@ module FourSlash {
 
         public getBreakpointStatementLocation(pos: number) {
             var spanInfo = this.languageService.getBreakpointStatementAtPosition(this.activeFile.fileName, pos);
-            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON2.stringify(spanInfo) + "\n** Statement: ";
+            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON.stringify(spanInfo) + "\n** Statement: ";
             if (spanInfo !== null) {
                 resultString = resultString + this.activeFile.content.substr(spanInfo.minChar, spanInfo.limChar - spanInfo.minChar);
             }
@@ -594,12 +594,12 @@ module FourSlash {
 
         public printCurrentParameterHelp() {
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
-            IO.printLine(JSON2.stringify(help));
+            IO.printLine(JSON.stringify(help));
         }
 
         public printCurrentQuickInfo() {
             var quickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
-            IO.printLine(JSON2.stringify(quickInfo));
+            IO.printLine(JSON.stringify(quickInfo));
         }
 
         public printErrorList() {
@@ -636,17 +636,17 @@ module FourSlash {
 
         public printCurrentSignatureHelp() {
             var sigHelp = this.getActiveSignatureHelp();
-            IO.printLine(JSON2.stringify(sigHelp));
+            IO.printLine(JSON.stringify(sigHelp));
         }
 
         public printMemberListMembers() {
             var members = this.getMemberListAtCaret();
-            IO.printLine(JSON2.stringify(members));
+            IO.printLine(JSON.stringify(members));
         }
 
         public printCompletionListMembers() {
             var completions = this.getCompletionListAtCaret();
-            IO.printLine(JSON2.stringify(completions));
+            IO.printLine(JSON.stringify(completions));
         }
 
         private editCheckpoint(filename: string) {
@@ -766,7 +766,7 @@ module FourSlash {
 
         private checkPostEditInvariants() {
             // Get syntactic errors (to force a refresh)
-            var incrSyntaxErrs = JSON2.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
+            var incrSyntaxErrs = JSON.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
 
             // Check syntactic structure
             var compilationSettings = new TypeScript.CompilationSettings();
@@ -774,7 +774,7 @@ module FourSlash {
             var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
             var content = snapshot.getText(0, snapshot.getLength());
             var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), TypeScript.LanguageVersion.EcmaScript5, parseOptions);
-            var fullSyntaxErrs = JSON2.stringify(refSyntaxTree.diagnostics());
+            var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
             var compiler = new TypeScript.TypeScriptCompiler();
 
@@ -796,8 +796,8 @@ module FourSlash {
             }
 
             for (var i = 0; i < this.testData.files.length; i++) {
-                var refSemanticErrs = JSON2.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
-                var incrSemanticErrs = JSON2.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
+                var refSemanticErrs = JSON.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
+                var incrSemanticErrs = JSON.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
 
                 if (incrSyntaxErrs !== fullSyntaxErrs) {
                     throw new Error('Mismatched incremental/full syntactic errors for file ' + this.testData.files[i].fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
@@ -987,7 +987,7 @@ module FourSlash {
 
         private getNameOrDottedNameSpan(pos: number) {
             var spanInfo = this.languageService.getNameOrDottedNameSpan(this.activeFile.fileName, pos, pos);
-            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON2.stringify(spanInfo) + "\n** Statement: ";
+            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON.stringify(spanInfo) + "\n** Statement: ";
             if (spanInfo !== null) {
                 resultString = resultString + this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getText(spanInfo.minChar, spanInfo.limChar);
             }
@@ -1539,7 +1539,7 @@ module FourSlash {
         var markerValue = undefined;
         try {
             // Attempt to parse the marker value as JSON
-            markerValue = JSON2.parse("{ " + text + " }");
+            markerValue = JSON.parse("{ " + text + " }");
         } catch (e) {
             reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text " + e.message);
         }

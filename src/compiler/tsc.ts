@@ -566,7 +566,7 @@ module TypeScript {
             }
             
             var fileContents = this.ioHost.readFile(filePath);
-            TypeScript.LocalizedDiagnosticMessages = JSON3.parse(fileContents.contents());
+            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents());
         }
 
         // Handle -watch switch

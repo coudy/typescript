@@ -1661,7 +1661,7 @@ module Harness {
                 this.lineMap = TypeScript.LineMap.fromString(this.textSnapshot);
             }
 
-            return JSON2.stringify(this.lineMap.lineStarts());
+            return JSON.stringify(this.lineMap.lineStarts());
         }
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): string {
@@ -1670,7 +1670,7 @@ module Harness {
                 return null;
             }
 
-            return JSON2.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
+            return JSON.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
         }
     }
 
@@ -1740,7 +1740,7 @@ module Harness {
         }
 
         public getScriptFileNames(): string {
-            return JSON2.stringify(this.fileNameToScript.getAllKeys());
+            return JSON.stringify(this.fileNameToScript.getAllKeys());
         }
 
         public getScriptSnapshot(fileName: string): Services.IScriptSnapshotShim {

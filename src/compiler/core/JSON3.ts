@@ -315,7 +315,7 @@ module JSON3 {
     };
 
     // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
-    export function stringify(source, filter, width) {
+    export function stringify(source, filter?, width?) {
         var whitespace, callback, properties, index, length, value;
         if (typeof filter == "function" || typeof filter == "object" && filter) {
             if (getClass.call(filter) == "[object Function]") {
@@ -637,4 +637,8 @@ module JSON3 {
         Index = Source = null;
         return callback && getClass.call(callback) == "[object Function]" ? walk((value = {}, value[""] = result, value), "", callback) : result;
     };
+
+    if (typeof JSON === undefined) {
+        JSON = JSON3;
+    }
 }

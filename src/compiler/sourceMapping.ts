@@ -14,7 +14,6 @@
 //
 
 ///<reference path='typescript.ts' />
-///<reference path='..\harness\external\json2Stringify.ts' />
 
 module TypeScript {
     export class SourceMapPosition {
@@ -167,7 +166,7 @@ module TypeScript {
             }
 
             // Write the actual map file
-            sourceMapOut.Write(JSON2.stringify({
+            sourceMapOut.Write(JSON.stringify({
                 version: 3,
                 file: sourceMapper.jsFileName,
                 sources: tsFiles,
