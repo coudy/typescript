@@ -44,9 +44,7 @@ verify.currentLineContentIs("    var z = 2;");
 goTo.marker("4");
 verify.currentLineContentIs("    a = z++ - 2 * x;");
 goTo.marker("5");
-// The expected scenario is failing due to bug 697727 - [TypeScript] Formatting->Spacing options doesn't work well on "for" statement.
-//verify.currentLineContentIs("    for (; ;) {");
-verify.currentLineContentIs("    for (;;) {");
+verify.currentLineContentIs("    for (; ;) {");
 goTo.marker("6");
 verify.currentLineContentIs("        a += (g + g) * a % t;");
 goTo.marker("7");
