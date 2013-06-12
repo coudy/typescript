@@ -257,13 +257,9 @@ module TypeScript {
         public fileNameToDocument = new TypeScript.StringHashTable();
 
         constructor(public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages: IDiagnosticMessages = null) {
+                    public settings: CompilationSettings = new CompilationSettings()) {
             this.emitOptions = new EmitOptions(this.settings);
             globalLogger = logger;
-            if (this.diagnosticMessages) {
-                TypeScript.diagnosticMessages = this.diagnosticMessages;
-            }
         }
 
         public getDocument(fileName: string): Document {

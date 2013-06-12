@@ -2,6 +2,8 @@
 
 ///<reference path='..\resources\references.ts' />
 
+///<reference path='JSON3.ts' />
+
 ///<reference path='arrayUtilities.ts' />
 ///<reference path='constants.ts' />
 ///<reference path='contract.ts' />

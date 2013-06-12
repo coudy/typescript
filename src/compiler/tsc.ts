@@ -17,8 +17,6 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
-declare var localizedDiagnosticMessages: TypeScript.IDiagnosticMessages;
-
 module TypeScript {
     class SourceFile {
         private _scriptSnapshot: IScriptSnapshot;
@@ -198,11 +196,7 @@ module TypeScript {
         /// Do the actual compilation reading from input files and
         /// writing to output file(s).
         private compile(): boolean {
-            if (typeof localizedDiagnosticMessages === "undefined") {
-                localizedDiagnosticMessages = null;
-            }
-
-            var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings, localizedDiagnosticMessages);
+            var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
             var anySyntacticErrors = false;
             var anySemanticErrors = false;
@@ -273,11 +267,7 @@ module TypeScript {
         }
 
         public updateCompile(): boolean {
-            if (typeof localizedDiagnosticMessages === "undefined") {
-                localizedDiagnosticMessages = null;
-            }
-
-            var compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings, localizedDiagnosticMessages);
+            var compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings);
 
             var anySyntacticErrors = false;
             var foundLib = false;
@@ -539,6 +529,14 @@ module TypeScript {
                 }
             }, 'm');
 
+            opts.option('language', {
+                usage: 'Specify language for errors and messages.',
+                type: 'string',
+                set: (value) => {
+                    this.setLanguage(value); 
+                }
+            });
+
             opts.parse(this.ioHost.arguments);
 
             for (var i = 0, n = opts.unnamed.length; i < n; i++) {
@@ -552,6 +550,23 @@ module TypeScript {
                     this.ioHost.quit(1);
                 }
             }
+        }
+
+        private setLanguage(language: string): void {
+            var compilerFilePath = this.ioHost.getExecutingFilePath();
+            var containingDirectoryPath = this.ioHost.dirName(compilerFilePath);
+            var filePath = this.ioHost.resolvePath(
+                IOUtils.combine(
+                    IOUtils.combine(
+                        IOUtils.combine(containingDirectoryPath, "resources"), language), "diagnosticMessages.generated.json"));
+
+            if (!this.ioHost.fileExists(filePath)) {
+                this.ioHost.stderr.WriteLine("Unsupported language: " + language);
+                this.ioHost.quit(1);
+            }
+            
+            var fileContents = this.ioHost.readFile(filePath);
+            TypeScript.LocalizedDiagnosticMessages = JSON3.parse(fileContents.contents());
         }
 
         // Handle -watch switch

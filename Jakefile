@@ -7,12 +7,15 @@ var path = require("path");
 var compilerDirectory = "src/compiler/";
 var servicesDirectory = "src/services/";
 var harnessDirectory = "src/harness/";
+var resourcesDirectory = "src/compiler/resources/";
 var runnersDirectory = "tests/runners/";
 var libraryDirectory = "typings/";
+
 var builtDirectory = "built/";
 var builtLocalDirectory = "built/local/";
 var builtTestDirectory = "built/localtest/";
 var LKGDirectory = "bin/";
+
 var copyright = "CopyrightNotice.txt";
 var thirdParty = "ThirdPartyNoticeText.txt";
 var compilerSources = [

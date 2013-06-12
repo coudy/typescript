@@ -1,6 +1,8 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
+    export var LocalizedDiagnosticMessages: any = null;
+
     export interface IDiagnostic {
         fileName(): string;
         start(): number;
@@ -119,8 +121,11 @@ module TypeScript {
     }
 
     export function getDiagnosticText(diagnosticKey: string, args: any[]): string {
-        var diagnosticMessageText = diagnosticKey;
-        //var diagnosticMessageText = LocalizedDiagnosticMessages[diagnosticKey];
+        if (LocalizedDiagnosticMessages) {
+            Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
+        }
+
+        var diagnosticMessageText = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
         Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
         //var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
 
