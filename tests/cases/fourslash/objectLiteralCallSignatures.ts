@@ -25,4 +25,4 @@ goTo.marker('1');
 verify.quickInfoIs('{ func1(x: number): number; func2: (x: number) => number; func3: (x: number) => number; }');
 
 goTo.marker('2');
-verify.quickInfoIs('{ func4(x: number): numberfunc4(s: string): string; func5: { (x: number): number; (s: string): string; }; }');
+verify.quickInfoIs('{ func4(x: number): number; func4(s: string): string; func5: { (x: number): number; (s: string): string; }; }');

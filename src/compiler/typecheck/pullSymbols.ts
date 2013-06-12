@@ -618,7 +618,7 @@ module TypeScript {
             var type = this.getType();
             if (type && !type.isNamedTypeSymbol() && this.declKind != PullElementKind.Property && this.declKind != PullElementKind.Variable && this.declKind != PullElementKind.Parameter) {
                 var signatures = type.getCallSignatures();
-                if (signatures.length) {
+                if (signatures.length == 1 || (getPrettyTypeName && signatures.length)) {
                     var typeName = new MemberNameArray();
                     var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, prefix, false, false, scopeSymbol, getPrettyTypeName);
                     typeName.addAll(signatureName);
@@ -2306,12 +2306,19 @@ module TypeScript {
                 var curlies = !topLevel || indexSignatures.length != 0;
                 var delim = "; ";
                 for (var i = 0; i < members.length; i++) {
-                    var memberTypeName = members[i].getNameAndTypeNameEx(scopeSymbol);
-
-                    if (memberTypeName.isArray() && (<MemberNameArray>memberTypeName).delim === delim) {
-                        allMemberNames.addAll((<MemberNameArray>memberTypeName).entries);
+                    if (members[i].getKind() == PullElementKind.Method && members[i].getType().hasOnlyOverloadCallSignatures()) {
+                        // Add all Call signatures of the method
+                        var methodCallSignatures = members[i].getType().getCallSignatures();
+                        var nameStr = members[i].getDisplayName(scopeSymbol) + (members[i].getIsOptional() ? "?" : "");;
+                        var methodMemberNames = PullSignatureSymbol.getSignaturesTypeNameEx(methodCallSignatures, nameStr, false, false, scopeSymbol);
+                        allMemberNames.addAll(methodMemberNames);
                     } else {
-                        allMemberNames.add(memberTypeName);
+                        var memberTypeName = members[i].getNameAndTypeNameEx(scopeSymbol);
+                        if (memberTypeName.isArray() && (<MemberNameArray>memberTypeName).delim === delim) {
+                            allMemberNames.addAll((<MemberNameArray>memberTypeName).entries);
+                        } else {
+                            allMemberNames.add(memberTypeName);
+                        }
                     }
                     curlies = true;
                 }

@@ -1,13 +1,13 @@
-0.ts line 9 col 5: error TS2012: Cannot convert 'number' to '{ f(s: string): numberf(n: number): string; }':
-	Type 'Number' is missing property 'f' from type '{ f(s: string): numberf(n: number): string; }'.
+0.ts line 9 col 5: error TS2012: Cannot convert 'number' to '{ f(s: string): number; f(n: number): string; }':
+	Type 'Number' is missing property 'f' from type '{ f(s: string): number; f(n: number): string; }'.
 0.ts line 10 col 5: error TS2012: Cannot convert 'number' to '{ f(s: string): number; }':
 	Type 'Number' is missing property 'f' from type '{ f(s: string): number; }'.
 0.ts line 11 col 5: error TS2012: Cannot convert 'number' to '{ (s: string): number; (n: number): string; }':
 	Type '{ (s: string): number; (n: number): string; }' requires a call signature, but type 'Number' lacks one.
-0.ts line 12 col 5: error TS2012: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; }':
-	Type 'Number' is missing property 'x' from type '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; }'.
-0.ts line 13 col 5: error TS2012: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; (s: string): number; (n: number): string; }':
-	Type 'Number' is missing property 'x' from type '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; (s: string): number; (n: number): string; }'.
+0.ts line 12 col 5: error TS2012: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): string; f(s: string): number; }':
+	Type 'Number' is missing property 'x' from type '{ x: any; y: any; z: number; f(n: number): string; f(s: string): number; }'.
+0.ts line 13 col 5: error TS2012: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): string; f(s: string): number; (s: string): number; (n: number): string; }':
+	Type 'Number' is missing property 'x' from type '{ x: any; y: any; z: number; f(n: number): string; f(s: string): number; (s: string): number; (n: number): string; }'.
 0.ts line 14 col 5: error TS2012: Cannot convert 'number' to '{ z: number; f: { (n: number): string; (s: string): number; }; }':
 	Type 'Number' is missing property 'z' from type '{ z: number; f: { (n: number): string; (s: string): number; }; }'.
 0.ts line 15 col 5: error TS2012: Cannot convert 'number' to '(s: string) => boolean':
