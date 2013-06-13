@@ -1261,9 +1261,9 @@ module FourSlash {
                 }
             }
 
-            var itemsString = items.map((item) => JSON2.stringify({ name: item.name, kind: item.kind })).join(",\n");
+            var itemsString = items.map((item) => JSON.stringify({ name: item.name, kind: item.kind })).join(",\n");
 
-            throw new Error("Marker: " + currentTestState.lastKnownMarker + "\n" + 'Expected "' + JSON2.stringify({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
+            throw new Error("Marker: " + currentTestState.lastKnownMarker + "\n" + 'Expected "' + JSON.stringify({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
         }
 
         private findFile(indexOrName: any) {

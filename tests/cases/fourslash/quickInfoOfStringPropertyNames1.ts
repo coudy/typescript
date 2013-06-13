@@ -21,13 +21,13 @@
 ////var r5/*4*/ = b[1];
 
 goTo.marker('1');
-verify.quickInfoIs('string');
+verify.quickInfoIs('any');
 
 goTo.marker('2');
-verify.quickInfoIs('number');
+verify.quickInfoIs('any');
 
 goTo.marker('3');
-verify.quickInfoIs('string');
+verify.quickInfoIs('any');
 
 goTo.marker('4');
 verify.quickInfoIs('any');
