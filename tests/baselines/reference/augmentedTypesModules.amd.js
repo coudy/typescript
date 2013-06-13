@@ -18,7 +18,6 @@ var m1d;
 (function (m1d) {
     var I = (function () {
         function I() {
-<<<<<<< HEAD
         }
         I.prototype.foo = function () {
         };
@@ -190,13 +189,3 @@ var m6;
 (function (m6) {
     m6.y = 2;
 })(m6 || (m6 = {}));
-=======
-        }
-        I.prototype.foo = function () {
-        };
-        return I;
-    })();
-    m1d.I = I;
-})(m1d || (m1d = {}));
-var m1d = 1;
->>>>>>> release-0.9.0

@@ -26,7 +26,6 @@ var m1d;
     m1d.I = I;
 })(m1d || (m1d = {}));
 var m1d = 1;
-<<<<<<< HEAD
 
 function m2() {
 }
@@ -190,5 +189,3 @@ var m6;
 (function (m6) {
     m6.y = 2;
 })(m6 || (m6 = {}));
-=======
->>>>>>> release-0.9.0

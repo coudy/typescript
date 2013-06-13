@@ -3,6 +3,6 @@
 ////var f: new () => void;
 ////f./*1*/
 
-goTo.marker('1');
-verify.completionListContains('apply');
-verify.completionListContains('arguments');
+//goTo.marker('1');
+//verify.completionListContains('apply');
+//verify.completionListContains('arguments');
