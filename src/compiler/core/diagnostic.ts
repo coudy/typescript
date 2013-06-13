@@ -113,7 +113,6 @@ module TypeScript {
 
         var diagnosticMessageText = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
         Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
-        //var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticCode];
 
         var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
 
@@ -128,6 +127,12 @@ module TypeScript {
 
             if (expectedCount !== actualCount) {
                 throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
+            }
+
+            // This should also be the same number of arguments as the message text
+            var valueCount = 1 + getLargestIndex(diagnosticMessageText);
+            if (valueCount !== expectedCount) {
+                throw new Error('Expected the diagnostic message "' + diagnosticMessageText + '" to have ' + expectedCount + " arguments, but it had " + valueCount);
             }
         }
 
