@@ -39,7 +39,7 @@ module TypeScript {
 
         private scriptName: string;
 
-        private diagnostics: IDiagnostic[] = null;
+        private diagnostics: Diagnostic[] = null;
 
         private parentDecl: PullDecl = null;
         private _parentPath: PullDecl[] = null;
@@ -156,7 +156,7 @@ module TypeScript {
             this.parentDecl = parentDecl;
         }
 
-        public addDiagnostic(diagnostic: IDiagnostic) {
+        public addDiagnostic(diagnostic: Diagnostic) {
             if (diagnostic) {
                 if (!this.diagnostics) {
                     this.diagnostics = [];
@@ -168,20 +168,8 @@ module TypeScript {
             }
         }
 
-        public getDiagnostics(): IDiagnostic[] {
+        public getDiagnostics(): Diagnostic[] {
             return this.diagnostics;
-        }
-
-        public setErrors(diagnostics: SemanticDiagnostic[]) {
-            if (diagnostics) {
-                this.diagnostics = [];
-
-                // adjust the spans as we parent the errors to the new decl
-                for (var i = 0; i < diagnostics.length; i++) {
-                    diagnostics[i].adjustOffset(this.span.start());
-                    this.diagnostics[this.diagnostics.length] = diagnostics[i];
-                }
-            }
         }
 
         public resetErrors() {

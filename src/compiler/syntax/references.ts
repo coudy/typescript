@@ -1,6 +1,5 @@
 ///<reference path='..\text\references.ts' />
 
-///<reference path='..\..\harness\external\json2Stringify.ts' />
 ///<reference path='characterInfo.ts' />
 ///<reference path='constants.ts' />
 ///<reference path='formattingOptions.ts' />
@@ -19,7 +18,6 @@
 ///<reference path='slidingWindow.ts' />
 ///<reference path='strings.ts' />
 ///<reference path='syntax.ts' />
-///<reference path='syntaxDiagnostic.ts' />
 ///<reference path='syntaxElement.ts' />
 ///<reference path='syntaxFactory.generated.ts' />
 ///<reference path='syntaxFacts2.ts' />

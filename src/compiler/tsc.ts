@@ -17,8 +17,6 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
-declare var localizedDiagnosticMessages: TypeScript.IDiagnosticMessages;
-
 module TypeScript {
     class SourceFile {
         private _scriptSnapshot: IScriptSnapshot;
@@ -72,15 +70,15 @@ module TypeScript {
             CompilerDiagnostics.diagnosticWriter = { Alert: (s: string) => { this.ioHost.printLine(s); } };
 
             // Parse command line options
-            this.parseOptions();
+            if (this.parseOptions()) {
+                this.logger = this.compilationSettings.gatherDiagnostics ? <ILogger>new DiagnosticsLogger(this.ioHost) : new NullLogger();
 
-            this.logger = this.compilationSettings.gatherDiagnostics ? <ILogger>new DiagnosticsLogger(this.ioHost) : new NullLogger();
+                if (this.compilationSettings.watch) {
+                    // Watch will cause the program to stick around as long as the files exist
+                    this.watchFiles();
+                    return;
+                }
 
-            if (this.compilationSettings.watch) {
-                // Watch will cause the program to stick around as long as the files exist
-                this.watchFiles();
-            }
-            else {
                 // Resolve the compilation environemnt
                 this.resolve();
 
@@ -133,10 +131,10 @@ module TypeScript {
                         this.run();
                     }
                 }
-
-                // Exit with the appropriate error code
-                this.ioHost.quit(this.hasErrors ? 1 : 0);
             }
+
+            // Exit with the appropriate error code
+            this.ioHost.quit(this.hasErrors ? 1 : 0);
         }
 
         private resolve() {
@@ -198,11 +196,7 @@ module TypeScript {
         /// Do the actual compilation reading from input files and
         /// writing to output file(s).
         private compile(): boolean {
-            if (typeof localizedDiagnosticMessages === "undefined") {
-                localizedDiagnosticMessages = null;
-            }
-
-            var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings, localizedDiagnosticMessages);
+            var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
             var anySyntacticErrors = false;
             var anySemanticErrors = false;
@@ -273,11 +267,7 @@ module TypeScript {
         }
 
         public updateCompile(): boolean {
-            if (typeof localizedDiagnosticMessages === "undefined") {
-                localizedDiagnosticMessages = null;
-            }
-
-            var compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings, localizedDiagnosticMessages);
+            var compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings);
 
             var anySyntacticErrors = false;
             var foundLib = false;
@@ -314,7 +304,7 @@ module TypeScript {
             this.ioHost.stdout.WriteLine("**** Initial type check errors:");
             compiler.pullTypeCheck();
 
-            var semanticDiagnostics: TypeScript.IDiagnostic[];
+            var semanticDiagnostics: TypeScript.Diagnostic[];
 
             for (var i = 0; i < iCode; i++) {
                 semanticDiagnostics = compiler.getSemanticDiagnostics(this.resolvedFiles[i].path);
@@ -478,7 +468,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version__0__not_supported___Using_default__1__code_generation, [type, "ES3"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version_0_not_supported_Using_default_1_code_generation, [type, "ES3"]));
                     }
                 }
             });
@@ -497,7 +487,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation__0__not_supported___Using_default__1__code_generation, [type, "commonjs"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation_0_not_supported_Using_default_1_code_generation, [type, "commonjs"]));
                     }
                 }
             });
@@ -539,7 +529,22 @@ module TypeScript {
                 }
             }, 'm');
 
+            var locale: string = null;
+            opts.option('locale', {
+                usage: "Specify locale for errors and messages. For example 'en' or 'ja-jp'.",
+                type: 'string',
+                set: (value) => {
+                    locale = value;
+                }
+            });
+
             opts.parse(this.ioHost.arguments);
+
+            if (locale) {
+                if (!this.setLocale(locale)) {
+                    return false;
+                }
+            }
 
             for (var i = 0, n = opts.unnamed.length; i < n; i++) {
                 this.inputFiles.push(opts.unnamed[i]);
@@ -549,16 +554,60 @@ module TypeScript {
             if (this.inputFiles.length === 0) {
                 if (!printedUsage) {
                     opts.printUsage();
-                    this.ioHost.quit(1);
+                    return false;
                 }
             }
+
+            return true;
+        }
+
+        private setLocale(locale: string): boolean {
+            var matchResult = /^([a-z]+)([_\-]([a-z]+))?$/.exec(locale.toLowerCase());
+            if (!matchResult) {
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
+                return false;
+            }
+
+            var language = matchResult[1];
+            var territory = matchResult[3];
+
+            // First try the entire locale, then fall back to just language if that's all we have.
+            if (!this.setLanguageAndTerritory(language, territory) &&
+                !this.setLanguageAndTerritory(language, null)) {
+
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Unsupported_locale_0, [locale]));
+                return false;
+            }
+
+            return true;
+        }
+
+        private setLanguageAndTerritory(language: string, territory: string): boolean {
+
+            var compilerFilePath = this.ioHost.getExecutingFilePath();
+            var containingDirectoryPath = this.ioHost.dirName(compilerFilePath);
+
+            var filePath = IOUtils.combine(IOUtils.combine(containingDirectoryPath, "resources"), language);
+            if (territory) {
+                filePath = IOUtils.combine(filePath, territory);
+            }
+
+            filePath = this.ioHost.resolvePath(IOUtils.combine(filePath, "diagnosticMessages.generated.json"));
+
+            if (!this.ioHost.fileExists(filePath)) {
+                return false;
+            }
+
+            var fileContents = this.ioHost.readFile(filePath);
+            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents());
+            return true;
         }
 
         // Handle -watch switch
         private watchFiles() {
             if (!this.ioHost.watchFile) {
                 this.addDiagnostic(
-                    new SemanticDiagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support__w_atch_option, null));
+                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
                 return;
             }
 
@@ -672,7 +721,7 @@ module TypeScript {
                     fileInformation = this.ioHost.readFile(fileName);
                 }
                 catch (e) {
-                    this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_read_file__0__1, [fileName, e.message]));
+                    this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_read_file_0_1, [fileName, e.message]));
                     fileInformation = new FileInformation("", ByteOrderMark.None);
                 }
 
@@ -728,7 +777,7 @@ module TypeScript {
         }
 
         /// IDiagnosticsReporter methods
-        addDiagnostic(diagnostic: IDiagnostic) {
+        addDiagnostic(diagnostic: Diagnostic) {
             this.hasErrors = true;
 
             if (diagnostic.fileName()) {

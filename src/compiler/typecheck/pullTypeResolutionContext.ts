@@ -134,7 +134,7 @@ module TypeScript {
 
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
-        public provisionalDiagnostic: SemanticDiagnostic[] = [];
+        public provisionalDiagnostic: Diagnostic[] = [];
 
         constructor(public contextualType: PullTypeSymbol,
                      public provisional: boolean,
@@ -150,7 +150,7 @@ module TypeScript {
             }
         }
 
-        public postDiagnostic(error: SemanticDiagnostic) {
+        public postDiagnostic(error: Diagnostic) {
             this.provisionalDiagnostic[this.provisionalDiagnostic.length] = error;
         }
 
@@ -287,8 +287,8 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticCode: DiagnosticCode, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
-            var diagnostic = new SemanticDiagnostic(fileName, offset, length, diagnosticCode, arguments);
+        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
+            var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
             this.postDiagnostic(diagnostic, enclosingDecl, addToDecl);
 
             return diagnostic;

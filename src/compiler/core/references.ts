@@ -1,18 +1,19 @@
 ///<reference path='require.ts' />
 
+///<reference path='..\resources\references.ts' />
+
+///<reference path='JSON3.ts' />
+
 ///<reference path='arrayUtilities.ts' />
 ///<reference path='constants.ts' />
 ///<reference path='contract.ts' />
 ///<reference path='debug.ts' />
 ///<reference path='diagnosticCategory.ts' />
-///<reference path='diagnosticCode.ts' />
 ///<reference path='diagnosticInfo.ts' />
-///<reference path='diagnosticMessages.ts' />
 ///<reference path='errors.ts' />
 ///<reference path='hash.ts' />
 ///<reference path='hashTable.ts' />
 ///<reference path='diagnostic.ts' />
-///<reference path='diagnosticMessages.ts' />
 ///<reference path='environment.ts' />
 ///<reference path='integerUtilities.ts' />
 ///<reference path='mathPrototype.ts' />

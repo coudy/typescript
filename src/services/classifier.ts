@@ -52,7 +52,7 @@ module Services {
     export class Classifier {
         private scanner: TypeScript.Scanner;
         private characterWindow: number[] = TypeScript.ArrayUtilities.createArray(2048, 0);
-        private diagnostics: TypeScript.SyntaxDiagnostic[] = [];
+        private diagnostics: TypeScript.Diagnostic[] = [];
 
         constructor(public host: IClassifierHost) {
         }
@@ -103,7 +103,7 @@ module Services {
             if (this.scanner.absoluteIndex() >= text.length) {
                 // We're at the end.
                 if (this.diagnostics.length > 0) {
-                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === TypeScript.DiagnosticCode._StarSlash__expected) {
+                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticKey() === TypeScript.DiagnosticCode.AsteriskSlash_expected) {
                         result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                         return;
                     }

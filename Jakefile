@@ -7,12 +7,17 @@ var path = require("path");
 var compilerDirectory = "src/compiler/";
 var servicesDirectory = "src/services/";
 var harnessDirectory = "src/harness/";
+var resourcesDirectory = "src/compiler/resources/";
 var runnersDirectory = "tests/runners/";
 var libraryDirectory = "typings/";
+
 var builtDirectory = "built/";
 var builtLocalDirectory = "built/local/";
+var builtLocalResourcesDirectory = "built/local/resources/";
 var builtTestDirectory = "built/localtest/";
 var LKGDirectory = "bin/";
+var LKGResourcesDirectory = "bin/resources/";
+
 var copyright = "CopyrightNotice.txt";
 var thirdParty = "ThirdPartyNoticeText.txt";
 var compilerSources = [
@@ -33,7 +38,6 @@ var compilerSources = [
 	"referenceResolution.ts",
 	"referenceResolver.ts",
 	"core/environment.ts",
-	"core/diagnosticMessages.ts",
 	"syntax/parser.ts",
 	"syntax/syntaxTree.ts",
 	"typecheck/pullFlags.ts",
@@ -121,7 +125,6 @@ var harnessSources = [
 	path.join(harnessDirectory, "baselining.ts"),
 	path.join(harnessDirectory, "fourslash.ts"),
 	path.join(harnessDirectory, "dumpAST-baselining.ts"),
-	path.join(harnessDirectory, "external/json2.ts"),
 	path.join(harnessDirectory, "runner.ts"),
 
 	path.join(runnersDirectory, "runnerbase.ts"),
@@ -211,6 +214,15 @@ for (var i in libraryTargets) {
 	})(i);
 }
 
+var copyResources = "copyResources";
+task(copyResources, function() {
+	var paths = fs.readdirSync(resourcesDirectory).map(function(n) { return path.join(resourcesDirectory, n); });
+	var directories = paths.filter(function(p) { return fs.statSync(p).isDirectory(); });
+	directories.map(function(d) {
+		jake.cpR(d, builtLocalResourcesDirectory);
+	});
+});
+
 var typescriptFile = path.join(builtLocalDirectory, "typescript.js");
 compileFile(typescriptFile, compilerSources, [builtLocalDirectory, copyright].concat(compilerSources), [copyright]);
 
@@ -222,7 +234,7 @@ compileFile(serviceFile, compilerSources.concat(servicesSources), [builtLocalDir
 
 // Local target to build the compiler and services
 desc("Builds the full compiler and services");
-task("local", libraryTargets.concat([typescriptFile, tscFile, serviceFile]));
+task("local", libraryTargets.concat([copyResources, typescriptFile, tscFile, serviceFile]));
 
 // Local target to build the compiler and services
 desc("Emit debug mode files with sourcemaps");
@@ -263,6 +275,10 @@ task("LKG", libraryTargets, function() {
 	for (i in expectedFiles) {
 		jake.cpR(expectedFiles[i], LKGDirectory);
 	}
+	var resourceDirectories = fs.readdirSync(builtLocalResourcesDirectory).map(function(p) { return path.join(builtLocalResourcesDirectory, p); });
+	resourceDirectories.map(function(d) {
+		jake.cpR(d, LKGResourcesDirectory);
+	});
 });
 
 // Test directory

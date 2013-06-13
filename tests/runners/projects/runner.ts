@@ -214,7 +214,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     }
 
     /// TypeScript.IDiagnosticReporter methods
-    addDiagnostic(diagnostic: TypeScript.IDiagnostic) {
+    addDiagnostic(diagnostic: TypeScript.Diagnostic) {
         if (diagnostic.fileName()) {
             var scriptSnapshot = this.getScriptSnapshot(diagnostic.fileName());
             var lineMap = new TypeScript.LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());

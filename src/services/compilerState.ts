@@ -249,16 +249,16 @@ module Services {
             return this.compiler.getDocument(fileName);
         }
 
-        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             return this.compiler.getSyntacticDiagnostics(fileName);
         }
 
-        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             return this.compiler.getSemanticDiagnostics(fileName);
         }
 
-        private getAllSyntacticDiagnostics(): TypeScript.IDiagnostic[]{
-            var diagnostics: TypeScript.IDiagnostic[] = [];
+        private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[]{
+            var diagnostics: TypeScript.Diagnostic[] = [];
 
             this.compiler.fileNameToDocument.map((fileName, value, context) => {
                 var fileDiagnostics = this.compiler.getSyntacticDiagnostics(fileName);
@@ -268,8 +268,8 @@ module Services {
             return diagnostics;
         }
 
-        private getAllSemanticDiagnostics(): TypeScript.IDiagnostic[]{
-            var diagnostics: TypeScript.IDiagnostic[] = [];
+        private getAllSemanticDiagnostics(): TypeScript.Diagnostic[]{
+            var diagnostics: TypeScript.Diagnostic[] = [];
 
             this.compiler.fileNameToDocument.map((fileName, value, context) => {
                 var fileDiagnostics = this.compiler.getSemanticDiagnostics(fileName);
@@ -293,7 +293,7 @@ module Services {
                 resolvePath: (fileName: string) => this.host.resolveRelativePath(fileName, null)
             };
 
-            var diagnostics: TypeScript.IDiagnostic[];
+            var diagnostics: TypeScript.Diagnostic[];
 
             // Parse the emit options
             diagnostics = this.compiler.parseEmitOption(emitterIOHost) || [];
@@ -330,10 +330,10 @@ module Services {
             return result;
         }
 
-        private containErrors(diagnostics: TypeScript.IDiagnostic[]): boolean {
+        private containErrors(diagnostics: TypeScript.Diagnostic[]): boolean {
             if (diagnostics && diagnostics.length > 0) {
                 for (var i = 0; i < diagnostics.length; i++) {
-                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromCode(diagnostics[i].diagnosticCode());
+                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromKey(diagnostics[i].diagnosticKey());
                     if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
                         return true;
                     }

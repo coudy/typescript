@@ -668,12 +668,12 @@ module Services {
             return declaration.getDisplayName();
         }
 
-        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             this.compilerState.refresh();
             return this.compilerState.getSyntacticDiagnostics(fileName);
         }
 
-        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+        public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             this.compilerState.refresh();
             return this.compilerState.getSemanticDiagnostics(fileName);
         }

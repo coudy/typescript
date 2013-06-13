@@ -324,7 +324,7 @@ module Services {
             }
         }
 
-        private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; category: string; } {
+        private static realizeDiagnostic(diagnostic: TypeScript.Diagnostic): { message: string; start: number; length: number; category: string; } {
             return {
                 message: diagnostic.text(),
                 start: diagnostic.start(),

@@ -127,7 +127,7 @@ module TypeScript {
             return this.dynamicModuleImports;
         }
 
-        public getDiagnostics(semanticErrors: IDiagnostic[]) {
+        public getDiagnostics(semanticErrors: Diagnostic[]) {
 
             for (var i = 0; i < this.topLevelDecls.length; i++) {
                 getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
@@ -528,8 +528,8 @@ module TypeScript {
             symbol.invalidateCachedIDs(this.symbolCache);
         }
 
-        public postDiagnostics(): IDiagnostic[] {
-            var errors: IDiagnostic[] = [];
+        public postDiagnostics(): Diagnostic[] {
+            var errors: Diagnostic[] = [];
 
             // PULLTODO: Why are we indexing from 1?
             for (var i = 1; i < this.units.length; i++) {

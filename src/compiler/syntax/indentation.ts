@@ -21,7 +21,7 @@ module TypeScript.Indentation {
         // the text array:
         //
         //      var foo = a => bar();
-        //                  ___
+        //                  _
         //                __
         //              __
         //          ____

@@ -399,7 +399,7 @@ module TypeScript.Parser {
 
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
-        tokenDiagnostics(): SyntaxDiagnostic[];
+        tokenDiagnostics(): Diagnostic[];
         
         languageVersion(): LanguageVersion;
     }
@@ -424,7 +424,7 @@ module TypeScript.Parser {
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
         // reparse a / or /= as a regular expression.
-        private _tokenDiagnostics: SyntaxDiagnostic[] = [];
+        private _tokenDiagnostics: Diagnostic[] = [];
 
         // Pool of rewind points we give out if the parser needs one.
         private rewindPointPool: IParserRewindPoint[] = [];
@@ -460,7 +460,7 @@ module TypeScript.Parser {
             return this._previousToken;
         }
 
-        public tokenDiagnostics(): SyntaxDiagnostic[] {
+        public tokenDiagnostics(): Diagnostic[] {
             return this._tokenDiagnostics;
         }
 
@@ -716,7 +716,7 @@ module TypeScript.Parser {
             return this._normalParserSource.previousToken();
         }
 
-        public tokenDiagnostics(): SyntaxDiagnostic[] {
+        public tokenDiagnostics(): Diagnostic[] {
             return this._normalParserSource.tokenDiagnostics();
         }
 
@@ -1078,7 +1078,7 @@ module TypeScript.Parser {
         // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
         // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
         // started at.
-        private diagnostics: SyntaxDiagnostic[] = [];
+        private diagnostics: Diagnostic[] = [];
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
@@ -1356,7 +1356,7 @@ module TypeScript.Parser {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
-                        new SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
+                        new Diagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
                 }
 
                 return semicolonToken;
@@ -1390,23 +1390,23 @@ module TypeScript.Parser {
             return Syntax.emptyToken(expectedKind);
         }
 
-        private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
+        private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, actual: ISyntaxToken): Diagnostic {
             var token = this.currentToken();
 
             // They wanted something specific, just report that that token was missing.
             if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+                return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
             }
             else {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0__is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected_0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
+                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
                 }
             }
 
@@ -1590,7 +1590,7 @@ module TypeScript.Parser {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
+            allDiagnostics.sort((a: Diagnostic, b: Diagnostic) => a.start() - b.start());
 
             return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
         }
@@ -2338,8 +2338,8 @@ module TypeScript.Parser {
                 // "function f() { return expr; }.
                 // 
                 // Detect if the user is typing this and attempt recovery.
-                var diagnostic = new SyntaxDiagnostic(this.fileName,
-                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_, []);
+                var diagnostic = new Diagnostic(this.fileName,
+                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_0_expected, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
                 this.addDiagnostic(diagnostic);
 
                 var token = this.eatAnyToken();
@@ -3810,8 +3810,8 @@ module TypeScript.Parser {
                     // as an arithmetic expression.
                     if (isDot) {
                         // A parameter list must follow a generic type argument list.
-                        var diagnostic = new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(),
-                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected, null);
+                        var diagnostic = new Diagnostic(this.fileName, this.currentTokenStart(), token0.width(),
+                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, null);
                         this.addDiagnostic(diagnostic);
 
                         return this.factory.argumentList(typeArgumentList,
@@ -3858,8 +3858,8 @@ module TypeScript.Parser {
                 inObjectCreation) {
 
                 var end = this.currentTokenStart() + this.currentToken().width();
-                var diagnostic = new SyntaxDiagnostic(this.fileName, start, end - start,
-                    DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead, null);
+                var diagnostic = new Diagnostic(this.fileName, start, end - start,
+                    DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead, null);
                 this.addDiagnostic(diagnostic);
 
                 argumentExpression = Syntax.emptyToken(SyntaxKind.IdentifierName);
@@ -5149,12 +5149,12 @@ module TypeScript.Parser {
         private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
             var token = this.currentToken();
 
-            var diagnostic = new SyntaxDiagnostic(this.fileName,
-                this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
+            var diagnostic = new Diagnostic(this.fileName,
+                this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token_0_expected, [this.getExpectedListElementType(listType)]);
             this.addDiagnostic(diagnostic);
         }
 
-        private addDiagnostic(diagnostic: SyntaxDiagnostic): void {
+        private addDiagnostic(diagnostic: Diagnostic): void {
             // Except: if we already have a diagnostic for this position, don't report another one.
             if (this.diagnostics.length > 0 &&
                 this.diagnostics[this.diagnostics.length - 1].start() === diagnostic.start()) {
@@ -5548,56 +5548,56 @@ module TypeScript.Parser {
         private getExpectedListElementType(currentListType: ListParsingState): string {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
-                    return Strings.module__class__interface__enum__import_or_statement;
+                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                     return '{';
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return Strings.constructor__function__accessor_or_variable;
+                    return getDiagnosticText(DiagnosticCode.constructor_function_accessor_or_variable, null);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
-                    return Strings.module__class__interface__enum__import_or_statement;
+                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.SwitchStatement_SwitchClauses:
-                    return Strings.case_or_default_clause;
+                    return getDiagnosticText(DiagnosticCode.case_or_default_clause, null);
 
                 case ListParsingState.SwitchClause_Statements:
-                    return Strings.statement;
+                    return getDiagnosticText(DiagnosticCode.statement, null);
 
                 case ListParsingState.Block_Statements:
-                    return Strings.statement;
+                    return getDiagnosticText(DiagnosticCode.statement, null);
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                    return Strings.identifier;
+                    return getDiagnosticText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.EnumDeclaration_EnumElements:
-                    return Strings.identifier;
+                    return getDiagnosticText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.ObjectType_TypeMembers:
-                    return Strings.call__construct__index__property_or_function_signature;
+                    return getDiagnosticText(DiagnosticCode.call_construct_index_property_or_function_signature, null);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
-                    return Strings.expression;
+                    return getDiagnosticText(DiagnosticCode.expression, null);
 
                 case ListParsingState.HeritageClause_TypeNameList:
-                    return Strings.type_name;
+                    return getDiagnosticText(DiagnosticCode.type_name, null);
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                    return Strings.property_or_accessor;
+                    return getDiagnosticText(DiagnosticCode.property_or_accessor, null);
 
                 case ListParsingState.ParameterList_Parameters:
-                    return Strings.parameter;
+                    return getDiagnosticText(DiagnosticCode.parameter, null);
 
                 case ListParsingState.TypeArgumentList_Types:
-                    return Strings.type;
+                    return getDiagnosticText(DiagnosticCode.type, null);
 
                 case ListParsingState.TypeParameterList_TypeParameters:
-                    return Strings.type_parameter;
+                    return getDiagnosticText(DiagnosticCode.type_parameter, null);
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                    return Strings.expression;
+                    return getDiagnosticText(DiagnosticCode.expression, null);
 
                 default:
                     throw Errors.invalidOperation();

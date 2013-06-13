@@ -7,14 +7,6 @@
         "category": "NoPrefix",
         "code": 1
     },
-    "{0}{NL}{{1}TB}{2}": {
-        "category": "NoPrefix",
-        "code": 21
-    },
-    "{{0}TB}{1}": {
-        "category": "NoPrefix",
-        "code": 22
-    },
     "Unrecognized escape sequence.": {
         "category": "Error",
         "code": 1000
@@ -279,6 +271,54 @@
         "category": "Error",
         "code": 1066
     },
+    "module, class, interface, enum, import or statement": {
+        "category": "NoPrefix",
+        "code": 1067
+    },
+    "constructor, function, accessor or variable": {
+        "category": "NoPrefix",
+        "code": 1068
+    },
+    "statement": {
+        "category": "NoPrefix",
+        "code": 1069
+    },
+    "case or default clause": {
+        "category": "NoPrefix",
+        "code": 1070
+    },
+    "identifier": {
+        "category": "NoPrefix",
+        "code": 1071
+    },
+    "call, construct, index, property or function signature": {
+        "category": "NoPrefix",
+        "code": 1072
+    },
+    "expression": {
+        "category": "NoPrefix",
+        "code": 1073
+    },
+    "type name": {
+        "category": "NoPrefix",
+        "code": 1074
+    },
+    "property or accessor": {
+        "category": "NoPrefix",
+        "code": 1075
+    },
+    "parameter": {
+        "category": "NoPrefix",
+        "code": 1076
+    },
+    "type": {
+        "category": "NoPrefix",
+        "code": 1077
+    },
+    "type parameter": {
+        "category": "NoPrefix",
+        "code": 1078
+    },
     "Duplicate identifier '{0}'.": {
         "category": "Error",
         "code": 2000
@@ -291,7 +331,7 @@
         "category": "Error",
         "code": 2002
     },
-    "Keyword 'super' can only be used inside a class instance method.": {
+    "'super' can only be used inside a class instance method.": {
         "category": "Error",
         "code": 2003
     },
@@ -735,15 +775,15 @@
         "category": "Error",
         "code": 2114
     },
-    "Variable declarations for for/in expressions cannot contain a type annotation.": {
+    "Variable declarations of a 'for' statement cannot contain a type annotation.": {
         "category": "Error",
         "code": 2115
     },
-    "Variable declarations for for/in expressions must be of types 'string' or 'any'.": {
+    "Variable declarations of a 'for' statement must be of types 'string' or 'any'.": {
         "category": "Error",
         "code": 2116
     },
-    "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.": {
+    "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
         "category": "Error",
         "code": 2117
     },
@@ -803,7 +843,7 @@
         "category": "Error",
         "code": 2133
     },
-    "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'": {
+    "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'.": {
         "category": "Error",
         "code": 2134
     },
@@ -919,7 +959,7 @@
         "category": "Error",
         "code": 2163
     },
-    "Export assignments may only be used at the top-level of external modules": {
+    "Export assignments may only be used at the top-level of external modules.": {
         "category": "Error",
         "code": 2164
     },
@@ -927,11 +967,11 @@
         "category": "Error",
         "code": 2165
     },
-    "Only public instance methods of the base class are accessible via the super keyword": {
+    "Only public instance methods of the base class are accessible via the 'super' keyword.": {
         "category": "Error",
         "code": 2166
     },
-    "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'": {
+    "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'.": {
         "category": "Error",
         "code": 2167
     },
@@ -939,7 +979,7 @@
         "category": "Error",
         "code": 2168
     },
-    "All numerically named properties must be subtypes of numeric indexer type '{0}'": {
+    "All numerically named properties must be subtypes of numeric indexer type '{0}'.": {
         "category": "Error",
         "code": 2169
     },
@@ -947,7 +987,7 @@
         "category": "Error",
         "code": 2170
     },
-    "All named properties must be subtypes of string indexer type '{0}'": {
+    "All named properties must be subtypes of string indexer type '{0}'.": {
         "category": "Error",
         "code": 2171
     },
@@ -955,13 +995,17 @@
         "category": "Error",
         "code": 2172
     },
-    "Generic type references must include all type arguments": {
+    "Generic type references must include all type arguments.": {
         "category": "Error",
         "code": 2173
     },
-    "Default arguments are not allowed in an overload parameter": {
+    "Default arguments are not allowed in an overload parameter.": {
         "category": "Error",
         "code": 2174
+    },
+    "Overloads cannot differ only by return type.": {
+        "category": "Error",
+        "code": 2175
     },
     "Type '{0}' is missing property '{1}' from type '{2}'.": {
         "category": "NoPrefix",
@@ -1087,11 +1131,11 @@
         "category": "Error",
         "code": 5007
     },
-    "Cannot find the common subdirectory path for the input files": {
+    "Cannot find the common subdirectory path for the input files.": {
         "category": "Error",
         "code": 5009
     },
-    "Cannot compile dynamic modules when emitting into single file": {
+    "Cannot compile dynamic modules when emitting into single file.": {
         "category": "Error",
         "code": 5010
     },
@@ -1106,5 +1150,13 @@
     "Unsupported file encoding.": {
         "category": "NoPrefix",
         "code": 5013
-    }
+    },
+    "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.": {
+        "category": "Error",
+        "code": 5014
+    },
+    "Unsupported locale: '{0}'.": {
+        "category": "Error",
+        "code": 5015
+    },
 }

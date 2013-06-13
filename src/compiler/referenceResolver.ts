@@ -104,7 +104,7 @@ module TypeScript {
             if (!this.host.fileExists(normalizedPath)) {
                 if (!referenceLocation.isImported) {
                     resolutionResult.diagnostics.push(
-                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file___0_, [path]));
+                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file_0, [path]));
                 }
 
                 return normalizedPath;

@@ -1253,7 +1253,7 @@ module Harness {
             compileUnit(compilerInstance, lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emitAll(compilerInstance: Harness.Compiler.CompilerInstance, ioHost: TypeScript.EmitterIOHost): TypeScript.IDiagnostic[] {
+        export function emitAll(compilerInstance: Harness.Compiler.CompilerInstance, ioHost: TypeScript.EmitterIOHost): TypeScript.Diagnostic[] {
             var compiler = getCompiler(compilerInstance);
             return compiler.emitAll(ioHost);
         }
@@ -1287,7 +1287,7 @@ module Harness {
 
             var errorTarget = (typeof errAggregator == "undefined") ? stderr : errAggregator;
             var errorReporter = {
-                addDiagnostic: (diagnostic: TypeScript.IDiagnostic) => {
+                addDiagnostic: (diagnostic: TypeScript.Diagnostic) => {
                     if (diagnostic.fileName()) {
                         var document = getDocumentFromCompiler(compilerInstance, diagnostic.fileName());
                         var lineCol = { line: -1, character: -1 };
@@ -1661,7 +1661,7 @@ module Harness {
                 this.lineMap = TypeScript.LineMap.fromString(this.textSnapshot);
             }
 
-            return JSON2.stringify(this.lineMap.lineStarts());
+            return JSON.stringify(this.lineMap.lineStarts());
         }
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): string {
@@ -1670,7 +1670,7 @@ module Harness {
                 return null;
             }
 
-            return JSON2.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
+            return JSON.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
         }
     }
 
@@ -1740,7 +1740,7 @@ module Harness {
         }
 
         public getScriptFileNames(): string {
-            return JSON2.stringify(this.fileNameToScript.getAllKeys());
+            return JSON.stringify(this.fileNameToScript.getAllKeys());
         }
 
         public getScriptSnapshot(fileName: string): Services.IScriptSnapshotShim {

@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+///<reference path='resources\references.ts' />
 ///<reference path='core\references.ts' />
 ///<reference path='text\references.ts' />
 ///<reference path='syntax\references.ts' />
@@ -48,7 +49,7 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
-///<reference path='typecheck\SemanticDiagnostic.ts' />
+///<reference path='typecheck\semanticDiagnostic.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='syntaxTreeToAstVisitor.ts' />
 
@@ -129,7 +130,7 @@ module TypeScript {
     }
 
     export class Document {
-        private _diagnostics: IDiagnostic[] = null;
+        private _diagnostics: Diagnostic[] = null;
         private _syntaxTree: SyntaxTree = null;
         private _bloomFilter: BloomFilter = null;
         public script: Script;
@@ -160,7 +161,7 @@ module TypeScript {
             TypeScript.astTranslationTime += new Date().getTime() - start;
         }
 
-        public diagnostics(): IDiagnostic[]{
+        public diagnostics(): Diagnostic[]{
             if (this._diagnostics === null) {
                 this._diagnostics = this._syntaxTree.diagnostics();
             }
@@ -256,13 +257,9 @@ module TypeScript {
         public fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         constructor(public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages: IDiagnosticMessages = null) {
+                    public settings: CompilationSettings = new CompilationSettings()) {
             this.emitOptions = new EmitOptions(this.settings);
             globalLogger = logger;
-            if (this.diagnosticMessages) {
-                TypeScript.diagnosticMessages = this.diagnosticMessages;
-            }
         }
 
         public getDocument(fileName: string): Document {
@@ -313,7 +310,7 @@ module TypeScript {
             return false;
         }
 
-        private updateCommonDirectoryPath(): IDiagnostic {
+        private updateCommonDirectoryPath(): Diagnostic {
             var commonComponents: string[] = [];
             var commonComponentsLength = -1;
 
@@ -363,7 +360,7 @@ module TypeScript {
             return null;
         }
 
-        public parseEmitOption(ioHost: EmitterIOHost): IDiagnostic {
+        public parseEmitOption(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
             if (this.emitOptions.compilationSettings.outputOption === "") {
                 this.emitOptions.outputMany = true;
@@ -463,7 +460,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAllDeclarations(): IDiagnostic[]{
+        public emitAllDeclarations(): Diagnostic[] {
             var start = new Date().getTime();
 
             if (this.canEmitDeclarations()) {
@@ -508,7 +505,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitUnitDeclarations(fileName: string): IDiagnostic[] {
+        public emitUnitDeclarations(fileName: string): Diagnostic[] {
             if (this.canEmitDeclarations()) {
                 if (this.emitOptions.outputMany) {
                     try {
@@ -587,7 +584,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
+        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
             var start = new Date().getTime();
 
             var optionsDiagnostic = this.parseEmitOption(ioHost);
@@ -640,7 +637,7 @@ module TypeScript {
 
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
-        public emitUnit(fileName: string, ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
+        public emitUnit(fileName: string, ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
             var optionsDiagnostic = this.parseEmitOption(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
@@ -700,7 +697,7 @@ module TypeScript {
             return true;
         }
 
-        public getSyntacticDiagnostics(fileName: string): IDiagnostic[]{
+        public getSyntacticDiagnostics(fileName: string): Diagnostic[]{
             return this.getDocument(fileName).diagnostics();
         }
 
@@ -712,8 +709,8 @@ module TypeScript {
             return this.getDocument(fileName).script;
         }
 
-        public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
-            var errors: IDiagnostic[] = [];
+        public getSemanticDiagnostics(fileName: string): Diagnostic[] {
+            var errors: Diagnostic[] = [];
             var unit = this.semanticInfoChain.getUnit(fileName);
 
             globalSemanticInfoChain = this.semanticInfoChain;
@@ -1665,7 +1662,7 @@ module TypeScript {
             return unit.getTopLevelDecls();
         }
 
-        public reportDiagnostics(errors: IDiagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {
+        public reportDiagnostics(errors: Diagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {
             for (var i = 0; i < errors.length; i++) {
                 errorReporter.addDiagnostic(errors[i]);
             }

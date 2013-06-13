@@ -1836,9 +1836,9 @@ module TypeScript {
             throw error;
         }
 
-        public static handleEmitterError(fileName: string, e: Error): IDiagnostic[] {
+        public static handleEmitterError(fileName: string, e: Error): Diagnostic[] {
             if ((<any>e).isEmitterError === true) {
-                return [new Diagnostic(fileName, 0, 0, DiagnosticCode.Emit_Error__0, [e.message])];
+                return [new Diagnostic(fileName, 0, 0, DiagnosticCode.Emit_Error_0, [e.message])];
             }
 
             throw e;

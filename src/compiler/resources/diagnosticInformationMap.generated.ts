@@ -10,14 +10,6 @@ module TypeScript {
     "code": 1,
     "category": DiagnosticCategory.NoPrefix
   },
-  "{0}{NL}{{1}TB}{2}": {
-    "code": 21,
-    "category": DiagnosticCategory.NoPrefix
-  },
-  "{{0}TB}{1}": {
-    "code": 22,
-    "category": DiagnosticCategory.NoPrefix
-  },
   "Unrecognized escape sequence.": {
     "code": 1000,
     "category": DiagnosticCategory.Error
@@ -282,6 +274,54 @@ module TypeScript {
     "code": 1066,
     "category": DiagnosticCategory.Error
   },
+  "module, class, interface, enum, import or statement": {
+    "code": 1067,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "constructor, function, accessor or variable": {
+    "code": 1068,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "statement": {
+    "code": 1069,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "case or default clause": {
+    "code": 1070,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "identifier": {
+    "code": 1071,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "call, construct, index, property or function signature": {
+    "code": 1072,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "expression": {
+    "code": 1073,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type name": {
+    "code": 1074,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "property or accessor": {
+    "code": 1075,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "parameter": {
+    "code": 1076,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type": {
+    "code": 1077,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "type parameter": {
+    "code": 1078,
+    "category": DiagnosticCategory.NoPrefix
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error
@@ -294,7 +334,7 @@ module TypeScript {
     "code": 2002,
     "category": DiagnosticCategory.Error
   },
-  "Keyword 'super' can only be used inside a class instance method.": {
+  "'super' can only be used inside a class instance method.": {
     "code": 2003,
     "category": DiagnosticCategory.Error
   },
@@ -738,15 +778,15 @@ module TypeScript {
     "code": 2114,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations for for/in expressions cannot contain a type annotation.": {
+  "Variable declarations of a 'for' statement cannot contain a type annotation.": {
     "code": 2115,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations for for/in expressions must be of types 'string' or 'any'.": {
+  "Variable declarations of a 'for' statement must be of types 'string' or 'any'.": {
     "code": 2116,
     "category": DiagnosticCategory.Error
   },
-  "The right operand of a for/in expression must be of type 'any', an object type or a type parameter.": {
+  "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
     "code": 2117,
     "category": DiagnosticCategory.Error
   },
@@ -806,7 +846,7 @@ module TypeScript {
     "code": 2133,
     "category": DiagnosticCategory.Error
   },
-  "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'": {
+  "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'.": {
     "code": 2134,
     "category": DiagnosticCategory.Error
   },
@@ -922,7 +962,7 @@ module TypeScript {
     "code": 2163,
     "category": DiagnosticCategory.Error
   },
-  "Export assignments may only be used at the top-level of external modules": {
+  "Export assignments may only be used at the top-level of external modules.": {
     "code": 2164,
     "category": DiagnosticCategory.Error
   },
@@ -930,11 +970,11 @@ module TypeScript {
     "code": 2165,
     "category": DiagnosticCategory.Error
   },
-  "Only public instance methods of the base class are accessible via the super keyword": {
+  "Only public instance methods of the base class are accessible via the 'super' keyword.": {
     "code": 2166,
     "category": DiagnosticCategory.Error
   },
-  "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'": {
+  "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'.": {
     "code": 2167,
     "category": DiagnosticCategory.Error
   },
@@ -942,7 +982,7 @@ module TypeScript {
     "code": 2168,
     "category": DiagnosticCategory.Error
   },
-  "All numerically named properties must be subtypes of numeric indexer type '{0}'": {
+  "All numerically named properties must be subtypes of numeric indexer type '{0}'.": {
     "code": 2169,
     "category": DiagnosticCategory.Error
   },
@@ -950,7 +990,7 @@ module TypeScript {
     "code": 2170,
     "category": DiagnosticCategory.Error
   },
-  "All named properties must be subtypes of string indexer type '{0}'": {
+  "All named properties must be subtypes of string indexer type '{0}'.": {
     "code": 2171,
     "category": DiagnosticCategory.Error
   },
@@ -958,12 +998,16 @@ module TypeScript {
     "code": 2172,
     "category": DiagnosticCategory.Error
   },
-  "Generic type references must include all type arguments": {
+  "Generic type references must include all type arguments.": {
     "code": 2173,
     "category": DiagnosticCategory.Error
   },
-  "Default arguments are not allowed in an overload parameter": {
+  "Default arguments are not allowed in an overload parameter.": {
     "code": 2174,
+    "category": DiagnosticCategory.Error
+  },
+  "Overloads cannot differ only by return type.": {
+    "code": 2175,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
@@ -1090,11 +1134,11 @@ module TypeScript {
     "code": 5007,
     "category": DiagnosticCategory.Error
   },
-  "Cannot find the common subdirectory path for the input files": {
+  "Cannot find the common subdirectory path for the input files.": {
     "code": 5009,
     "category": DiagnosticCategory.Error
   },
-  "Cannot compile dynamic modules when emitting into single file": {
+  "Cannot compile dynamic modules when emitting into single file.": {
     "code": 5010,
     "category": DiagnosticCategory.Error
   },
@@ -1109,6 +1153,14 @@ module TypeScript {
   "Unsupported file encoding.": {
     "code": 5013,
     "category": DiagnosticCategory.NoPrefix
+  },
+  "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.": {
+    "code": 5014,
+    "category": DiagnosticCategory.Error
+  },
+  "Unsupported locale: '{0}'.": {
+    "code": 5015,
+    "category": DiagnosticCategory.Error
   }
 };
 }

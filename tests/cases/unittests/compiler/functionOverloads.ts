@@ -132,7 +132,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'function foo():number;';
             code += 'function foo():any { if (true) return ""; else return 0;}';
         Harness.Compiler.compileString(code, 'overload', function(result) {
-            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type.');      
             assert.equal(result.errors.length, 1);
         });
     });      
@@ -142,7 +142,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'function foo(bar:number):number;';
             code += 'function foo(bar?:number):any { return "" };';
         Harness.Compiler.compileString(code, 'overload', function(result) {
-            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type.');      
             assert.equal(result.errors.length, 1);
         });
     });   
@@ -152,7 +152,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'function foo():{a:string;};';
             code += 'function foo():{a:any;} { return {a:1} };';
         Harness.Compiler.compileString(code, 'overload', function(result) {
-            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type.');      
             assert.equal(result.errors.length, 1);
         });
     });     
@@ -162,7 +162,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(foo:{a:string; b:number;}):number;";
             code += 'function foo(foo:{a:string; b?:number;}):any { return "" };';
         Harness.Compiler.compileString(code, 'overload', function(result) {
-            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type.');      
             assert.equal(result.errors.length, 1);
         });
     }); 
@@ -172,7 +172,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(foo:{a:string;}):number;";
             code += 'function foo(foo:{a:string; b?:number;}):any { return "" };';
         Harness.Compiler.compileString(code, 'overload', function(result) {
-            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type');      
+            assert.compilerWarning(result, 2, 1, 'error TS2175: Overloads cannot differ only by return type.');      
             assert.equal(result.errors.length, 1);
         });
     }); 
