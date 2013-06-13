@@ -29,7 +29,7 @@ module TypeScript {
 
         public WriteLine(s: string) {
             this.contents += s;
-            this.contents += Environment.newLine;
+            this.contents += TypeScript.newLine();
             this.onNewLine = true;
         }
 

@@ -3,6 +3,13 @@
 module TypeScript {
     export var LocalizedDiagnosticMessages: any = null;
 
+    export function newLine(): string {
+        // TODO: We need to expose an extensibility point on our hosts to have them tell us what 
+        // they want the newline string to be.  That way we can get the correct result regardless
+        // of which host we use
+        return Environment ? Environment.newLine : "\r\n";
+    }
+
     export class Diagnostic {
         private _fileName: string;
         private _start: number;
@@ -143,7 +150,7 @@ module TypeScript {
         });
 
         diagnosticMessageText = diagnosticMessageText.replace(/{(NL)}/g, function (match) {
-            return Environment.newLine;
+            return TypeScript.newLine();
         });
 
         return diagnosticMessageText;
