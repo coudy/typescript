@@ -1412,10 +1412,7 @@ module TypeScript {
 
                     aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeContainer));
 
-                    if (aliasedType) {
-                        this.currentUnit.addDynamicModuleImport(importDeclSymbol);
-                    }
-                    else {
+                    if (!aliasedType) {
                         importDecl.addDiagnostic(
                             new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module__0_, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
