@@ -52,24 +52,18 @@ module Services {
             "with",
         ];
 
-        private static keywordCompletions: CompletionEntry[] = null;
+        private static keywordCompletions: ResolvedCompletionEntry[] = null;
 
-        public static getKeywordCompltions(): CompletionEntry[]{
+        public static getKeywordCompltions(): ResolvedCompletionEntry[]{
             if (KeywordCompletions.keywordCompletions === null) {
-                var completions: CompletionEntry[] = [];
+                var completions: ResolvedCompletionEntry[] = [];
                 for (var i = 0, n = KeywordCompletions.keywords.length; i < n; i++) {
                     var keyword = KeywordCompletions.keywords[i];
-                    var entry = new CompletionEntry();
-                    entry.name = entry.fullSymbolName = keyword;
-                    entry.type = null;
-                    entry.docComment = null;
-                    entry.kind = ScriptElementKind.keyword;
-                    entry.kindModifiers = ScriptElementKindModifier.none;
+                    var entry = new ResolvedCompletionEntry(/*name*/ keyword, ScriptElementKind.keyword, ScriptElementKindModifier.none, /*type*/null, /*fullName*/ keyword, /*docComment*/ null);
                     completions.push(entry);
                 }
 
-                KeywordCompletions.keywordCompletions = completions;
-            }
+                KeywordCompletions.keywordCompletions = completions;            }
 
             return KeywordCompletions.keywordCompletions;
         }

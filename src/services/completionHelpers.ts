@@ -147,9 +147,7 @@ module Services {
             return false;
         }
 
-        public static getValidCompletionEntryDisplayName(symbol: TypeScript.PullSymbol, languageVersion: TypeScript.LanguageVersion): string {
-            var displayName = symbol.getDisplayName();
-
+        public static getValidCompletionEntryDisplayName(displayName: string, languageVersion: TypeScript.LanguageVersion): string {
             if (displayName && displayName.length > 0) {
                 var firstChar = displayName.charCodeAt(0);
                 if (firstChar === TypeScript.CharacterCodes.singleQuote || firstChar === TypeScript.CharacterCodes.doubleQuote) {

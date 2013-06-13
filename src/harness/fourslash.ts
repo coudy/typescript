@@ -399,6 +399,10 @@ module FourSlash {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, false);
         }
 
+        private getCompletionEntryDetails(entryName: string) {
+            return this.languageService.getCompletionEntryDetails(this.activeFile.fileName, this.currentCaretPosition, entryName);
+        }
+
         private getReferencesAtCaret() {
             return this.languageService.getReferencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
         }
@@ -1231,65 +1235,35 @@ module FourSlash {
             return result;
         }
 
-        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
-            var items: { name: string; type: string; docComment: string; fullSymbolName: string; kind: string; }[] = completionList.map(element => {
-                return {
-                    name: element.name,
-                    type: element.type,
-                    docComment: element.docComment,
-                    fullSymbolName: element.fullSymbolName,
-                    kind: element.kind
-                };
-            });
-
+        private assertItemInCompletionList(items: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 if (item.name == name) {
-                    if (docComment != undefined) {
-                        assert.equal(item.docComment, docComment);
+                    if (docComment != undefined || type !== undefined || fullSymbolName !== undefined) {
+                        var details = this.getCompletionEntryDetails(item.name);
+
+                        if (docComment != undefined) {
+                            assert.equal(details.docComment, docComment);
+                        }
+                        if (type !== undefined) {
+                            assert.equal(details.type, type);
+                        }
+                        if (fullSymbolName !== undefined) {
+                            assert.equal(details.fullSymbolName, fullSymbolName);
+                        }
                     }
-                    if (type !== undefined) {
-                        assert.equal(item.type, type);
-                    }
-                    if (fullSymbolName !== undefined) {
-                        assert.equal(item.fullSymbolName, fullSymbolName);
-                    }
+
                     if (kind !== undefined) {
                         assert.equal(item.kind, kind);
                     }
+
                     return;
                 }
             }
 
-            var getItemString = (item: { name: string; type: string; docComment: string; fullSymbolName: string; kind: string; }) => {
-                if (docComment === undefined && type === undefined && fullSymbolName === undefined && kind === undefined) {
-                    return item.name;
-                }
+            var itemsString = items.map((item) => JSON2.stringify({ name: item.name, kind: item.kind })).join(",\n");
 
-                var returnString = "\n{ name: " + item.name;
-                if (type !== undefined) {
-                    returnString += ",type: " + item.type;
-                }
-                if (docComment != undefined) {
-                    returnString += ",docComment: " + item.docComment;
-                }
-                if (fullSymbolName !== undefined) {
-                    returnString += ",fullSymbolName: " + item.fullSymbolName;
-                }
-                if (kind !== undefined) {
-                    returnString += ",kind: " + item.kind;
-                }
-                returnString += " }"
-
-                return returnString;
-            };
-
-            var itemsDigest = items.slice(0, 10);
-            var itemsString = items.map(elem => getItemString(elem)).join(",");
-            if (items.length > 10) {
-                itemsString += ', ...';
-            }
-            throw new Error("Marker: " + currentTestState.lastKnownMarker + "\n" + 'Expected "' + getItemString({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
+            throw new Error("Marker: " + currentTestState.lastKnownMarker + "\n" + 'Expected "' + JSON2.stringify({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
         }
 
         private findFile(indexOrName: any) {

@@ -13,6 +13,8 @@ module Services {
         private currentFileVersion: number = -1;
         private currentFileSyntaxTree: TypeScript.SyntaxTree = null;
 
+        private activeCompletionSession: CompletionSession = null;
+
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
@@ -871,8 +873,6 @@ module Services {
         public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo {
             this.refresh();
 
-            var completions = new CompletionInfo();
-
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
@@ -900,6 +900,7 @@ module Services {
             }
 
             // Get the completions
+            var entries = new TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>();
 
             // Right of dot member completion list
             if (isRightOfDot) {
@@ -907,8 +908,9 @@ module Services {
                 if (!members) {
                     return null;
                 }
-                completions.isMemberCompletion = true;
-                completions.entries = this.getCompletionEntriesFromSymbols(members);
+
+                isMemberCompletion = true;
+                this.getCompletionEntriesFromSymbols(members, entries);
             }
             else {
                 var containingObjectLiteral = CompletionHelpers.getContaingingObjectLiteralApplicableForCompletion(document.syntaxTree().sourceUnit(), position);
@@ -927,7 +929,7 @@ module Services {
                         throw TypeScript.Errors.invalidOperation("AST Path look up did not result in the same node as Fidelity Syntax Tree look up.");
                     }
 
-                    completions.isMemberCompletion = true;
+                    isMemberCompletion = true;
 
                     // Try to get the object members form contextual typing
                     var contextualMembers = this.compilerState.geContextualMembersFromPath(path, document);
@@ -936,44 +938,65 @@ module Services {
                         var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
 
                         // Add filtterd items to the completion list
-                        completions.entries = this.getCompletionEntriesFromSymbols({
+                        this.getCompletionEntriesFromSymbols({
                             symbols: CompletionHelpers.filterContextualMembersList(contextualMembers.symbols, existingMembers),
                             enclosingScopeSymbol: contextualMembers.enclosingScopeSymbol
-                        });
+                        }, entries);
                     }
                 }
                 // Get scope memebers
                 else {
-                    completions.isMemberCompletion = false;
-                    var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
-                    completions.entries = this.getCompletionEntriesFromSymbols(symbols);
+                    isMemberCompletion = false;
+                    var decls = this.compilerState.getVisibleDeclsFromPath(path, document);
+                    this.getCompletionEntriesFromDecls(decls, entries);
                 }
             }
 
             // Add keywords if this is not a member completion list
-            if (!completions.isMemberCompletion) {
-                completions.entries = completions.entries.concat(KeywordCompletions.getKeywordCompltions());
+            if (!isMemberCompletion) {
+                this.getCompletionEntriesForKeywords(KeywordCompletions.getKeywordCompltions(), entries);
             }
+
+            // Prepare the completion result
+            var completions = new CompletionInfo();
+            completions.isMemberCompletion = isMemberCompletion;
+            completions.entries = [];
+            entries.map((key, value) => {
+                completions.entries.push({
+                    name: value.name,
+                    kind: value.kind,
+                    kindModifiers: value.kindModifiers
+                });
+            }, null);
+
+            // Store this completion list as the active completion list
+            this.activeCompletionSession = new CompletionSession(fileName, position, entries);
 
             return completions;
         }
 
-        private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo): CompletionEntry[] {
-            var result: CompletionEntry[] = [];
-
+        private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo, result: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>): void {
             for (var i = 0, n = symbolInfo.symbols.length; i < n; i++) {
                 var symbol = symbolInfo.symbols[i];
 
-                var symboDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol, this.compilerState.compilationSettings().codeGenTarget);
+                var symboDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
                 if (!symboDisplaylName) {
                     continue;
                 }
 
-                var entry = new CompletionEntry();
-                entry.name = symboDisplaylName;
-                entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
-                entry.kind = this.mapPullElementKind(symbol.getKind(), symbol, true);
-                entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+                var symbolKind = symbol.getKind();
+
+                var exitingEntry = result.lookup(symboDisplaylName);
+
+                if (exitingEntry && (symbolKind & TypeScript.PullElementKind.SomeValue)) {
+                    // We have two decls with the same name. Do not overwrite types and containers with thier variable delcs.
+                    continue;
+                }
+
+                var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
+                var kindName = this.mapPullElementKind(symbolKind, symbol, true);
+                var kindModifiersName = this.getScriptElementKindModifiers(symbol);
+                var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
                 var type = symbol.getType();
                 var symbolForDocComments = symbol;
@@ -981,12 +1004,97 @@ module Services {
                     symbolForDocComments = type.getCallSignatures()[0];
                 }
 
-                entry.docComment = this.compilerState.getDocComments(symbolForDocComments, true);
-                entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
-                result.push(entry);
+                var docComments = this.compilerState.getDocComments(symbolForDocComments, true);
+
+                var entry = new ResolvedCompletionEntry(symboDisplaylName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
+                result.addOrUpdate(symboDisplaylName, entry);
+            }
+        }
+
+        private getCompletionEntriesFromDecls(decls: TypeScript.PullDecl[], result: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>): void {
+            for (var i = 0, n = decls.length; i < n; i++) {
+                var decl = decls[i];
+
+                var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
+                if (!declDisplaylName) {
+                    continue;
+                }
+
+                var declKind = decl.getKind();
+
+                var exitingEntry = result.lookup(declDisplaylName);
+
+                if (exitingEntry && (declKind & TypeScript.PullElementKind.SomeValue)) {
+                    // We have two decls with the same name. Do not overwrite types and containers with thier variable delcs.
+                    continue;
+                }
+
+                var kindName = this.mapPullElementKind(declKind, /*symbol*/ null, true);
+                var kindModifiersName = this.getScriptElementKindModifiersFromFlgas(decl.getFlags());
+
+                var entry = new DeclReferenceCompletionEntry(declDisplaylName, kindName, kindModifiersName, decl);
+
+                result.addOrUpdate(declDisplaylName, entry);
+            }
+        }
+
+        private getCompletionEntriesForKeywords(keywords: CompletionEntry[], result): void {
+            for (var i = 0, n = keywords.length; i < n; i++) {
+                var keyword = keywords[i];
+                result.addOrUpdate(keyword.name, keyword); 
+            }
+        }
+
+        public getCompletionEntryDetails(fileName: string, position: number, entryName: string): CompletionEntryDetails {
+            // Ensure that the current active completion session is still valid for this request
+            if (!this.activeCompletionSession ||
+                this.activeCompletionSession.fileName !== fileName ||
+                this.activeCompletionSession.position !== position) {
+                    return null;
             }
 
-            return result;
+            var entry = this.activeCompletionSession.entries.lookup(entryName);
+            if (!entry) {
+                return null;
+            }
+
+            if (!entry.isResolved()) {
+                // This entry has not been resolved yet. Resolve it.
+                var unResolvedEntry = <DeclReferenceCompletionEntry>(entry);
+                var decl = unResolvedEntry.decl;
+
+                var document = this.compilerState.getDocument(fileName);
+                var path = this.getAstPathToPosition(document.script, position);
+                var symbolInfo = this.compilerState.pullGetDeclInformation(decl, path, document);
+
+                if (!symbolInfo) {
+                    return null;
+                }
+
+                var symbol = symbolInfo.symbol;
+                var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
+                var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+
+                var type = symbol.getType();
+                var symbolForDocComments = symbol;
+                if (type && type.hasOnlyOverloadCallSignatures()) {
+                    symbolForDocComments = type.getCallSignatures()[0];
+                }
+
+                var docComment = this.compilerState.getDocComments(symbolForDocComments, true);
+
+                // Store the information for next lookup
+                unResolvedEntry.resolve(typeName, fullSymbolName, docComment);
+            }
+
+            return {
+                name: entry.name,
+                kind: entry.kind,
+                kindModifiers: entry.kindModifiers,
+                type: entry.type,
+                fullSymbolName: entry.fullSymbolName,
+                docComment: entry.docComment
+            };
         }
 
         private isLocal(symbol: TypeScript.PullSymbol) {
@@ -1154,6 +1262,32 @@ module Services {
                 result.push(ScriptElementKindModifier.privateMemberModifier);
             }
             if (symbol.hasFlag(TypeScript.PullElementFlags.Static)) {
+                result.push(ScriptElementKindModifier.staticModifier);
+            }
+
+            return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
+        }
+
+        private getScriptElementKindModifiersFromFlgas(flags: TypeScript.PullElementFlags): string {
+            var result = [];
+
+            if (flags & TypeScript.PullElementFlags.Exported) {
+                result.push(ScriptElementKindModifier.exportedModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Ambient) {
+                result.push(ScriptElementKindModifier.ambientModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Public) {
+                result.push(ScriptElementKindModifier.publicMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Private) {
+                result.push(ScriptElementKindModifier.privateMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Static) {
                 result.push(ScriptElementKindModifier.staticModifier);
             }
 

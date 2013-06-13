@@ -146,6 +146,7 @@ verify.quickInfoIs("m3", "", "m3", "module");
 
 goTo.marker('13');
 verify.memberListContains("m4", "m3.m4", "", "m3.m4", "module");
+
 verify.quickInfoIs("m3.m4", "", "m3.m4", "module");
 
 goTo.marker('14');

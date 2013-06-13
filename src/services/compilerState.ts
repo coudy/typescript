@@ -45,11 +45,11 @@ module Services {
     // set of scripts handled by the host changes.
     //
     export class HostCache {
-        private map: TypeScript.StringHashTable;
+        private map: TypeScript.StringHashTable<HostCacheEntry>;
 
         constructor(public host: ILanguageServiceHost) {
             // script id => script index
-            this.map = new TypeScript.StringHashTable();
+            this.map = new TypeScript.StringHashTable<HostCacheEntry>();
 
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
@@ -376,12 +376,16 @@ module Services {
             return this.compiler.pullGetVisibleMemberSymbolsFromPath(path, document);
         }
 
-        public getVisibleSymbolsFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
-            return this.compiler.pullGetVisibleSymbolsFromPath(path, document);
+        public getVisibleDeclsFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetVisibleDeclsFromPath(path, document);
         }
 
         public geContextualMembersFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
             return this.compiler.pullGetContextualMembersFromPath(path, document);
+        }
+
+        public pullGetDeclInformation(decl: TypeScript.PullDecl, path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetDeclInformation(decl, path, document);
         }
 
         public getTopLevelDeclarations(fileName: string): TypeScript.PullDecl[]{

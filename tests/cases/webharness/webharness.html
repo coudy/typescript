@@ -6,17 +6,12 @@
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
     <script src='perfCompiler.js'></script>
     <script>
-<<<<<<< HEAD
         var repeat = 10;
         var batch;
-=======
-        var repeat = 20;
-        var batch;
 
-        if (!batch) {
-            batch = new BatchCompiler();
-        }
->>>>>>> release-0.9.0
+
+        var languageService = batch.createLanguageService();
+        languageService.refresh();
 
         var languageService = batch.createLanguageService();
         languageService.refresh();
@@ -166,11 +161,8 @@
     <button onclick="newIncrementalParse()">Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
-<<<<<<< HEAD
     <button onclick="fullCompile()">Compile</button>
-=======
     <button onclick="completion()">Completion</button>
->>>>>>> release-0.9.0
     <button onclick="clear1()">Clear</button>
 </body>
 </html>

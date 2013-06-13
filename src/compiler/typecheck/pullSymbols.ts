@@ -996,6 +996,33 @@ module TypeScript {
             return true;
         }
 
+        public isFixed(): boolean {
+
+            if (!this.isGeneric()) {
+                return true;
+            }
+
+            if (this.parameterLinks) {
+                var parameterType: PullTypeSymbol = null;
+                
+                for (var i = 0; i < this.parameterLinks.length; i++) {
+                    parameterType = this.parameterLinks[i].end.getType();
+                    
+                    if (parameterType && !parameterType.isFixed()) {
+                        return false;
+                    }    
+                }
+            }
+
+            if (this.returnTypeLink) {
+                var returnType = <PullTypeSymbol>this.returnTypeLink.end;
+
+                return returnType.isFixed();
+            }
+
+            return true;
+        }
+
         public invalidate() {
 
             this.parameterLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.Parameter);
@@ -1275,6 +1302,16 @@ module TypeScript {
 
         private constructorMethod: PullSymbol = null;
         private hasDefaultConstructor = false;
+
+        public setUnresolved() {
+            super.setUnresolved();
+
+            var specializations = this.getKnownSpecializations();
+
+            for (var i = 0; i < specializations.length; i++) {
+                specializations[i].setUnresolved();
+            }
+        }
 
         public isType() { return true; }
         public isClass() {
@@ -1930,8 +1967,7 @@ module TypeScript {
             return <PullTypeSymbol[]>members;
         }
 
-        public getExtendingTypes(): PullTypeSymbol[] {
-            var extendingTypes: PullTypeSymbol[] = [];
+        public hasBase(potentialBase: PullTypeSymbol, origin=null) {
 
             var matchingLinks: TypeScript.PullSymbolLink[] = this.findIncomingLinks(psl => psl.kind === SymbolLinkKind.Extends);
 

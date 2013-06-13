@@ -4,3 +4,4 @@ goTo.marker('2');
 edit.deleteAtCaret(':string'.length);
 goTo.marker('1');
 edit.insert('declare ');
+

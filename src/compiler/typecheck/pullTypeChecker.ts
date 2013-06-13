@@ -1877,6 +1877,7 @@ module TypeScript {
             this.context.popContextualType();
 
             var comparisonInfo = new TypeComparisonInfo();
+
             var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, exprType, this.context, comparisonInfo) ||
                 this.resolver.sourceIsAssignableToTarget(exprType, returnType, this.context, comparisonInfo);
 

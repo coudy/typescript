@@ -20,14 +20,14 @@
 ////var r4/*3*/ = b['1'];
 ////var r5/*4*/ = b[1];
 
-//goTo.marker('1');
-//verify.quickInfoIs('string');
+goTo.marker('1');
+verify.quickInfoIs('string');
 
-//goTo.marker('2');
-//verify.quickInfoIs('number');
+goTo.marker('2');
+verify.quickInfoIs('number');
 
-//goTo.marker('3');
-//verify.quickInfoIs('string');
+goTo.marker('3');
+verify.quickInfoIs('string');
 
-//goTo.marker('4');
-//verify.quickInfoIs('string');
+goTo.marker('4');
+verify.quickInfoIs('any');

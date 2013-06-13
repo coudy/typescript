@@ -44,6 +44,7 @@ module Services {
         getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
 
         getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo;
+        getCompletionEntryDetails(fileName: string, position: number, entryName: string): CompletionEntryDetails;
 
         getTypeAtPosition(fileName: string, position: number): TypeInfo;
 
@@ -238,14 +239,21 @@ module Services {
         public entries: CompletionEntry[] = [];
     }
 
-    export class CompletionEntry {
-        public name = "";
-        public type = "";
-        public kind = "";            // see ScriptElementKind
-        public kindModifiers = "";   // see ScriptElementKindModifier, comma separated
-        public fullSymbolName = "";
-        public docComment = "";
+    export interface CompletionEntry {
+        name: string;
+        kind: string;            // see ScriptElementKind
+        kindModifiers: string;   // see ScriptElementKindModifier, comma separated
     }
+
+    export interface CompletionEntryDetails {
+        name: string;
+        kind: string;            // see ScriptElementKind
+        kindModifiers: string;   // see ScriptElementKindModifier, comma separated
+        type: string;
+        fullSymbolName: string;
+        docComment: string;
+    }
+
 
     export class ScriptElementKind {
         static unknown = "";

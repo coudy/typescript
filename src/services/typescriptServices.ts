@@ -23,6 +23,7 @@
 ///<reference path='completionHelpers.ts' />
 ///<reference path='keywordCompletions.ts' />
 ///<reference path='signatureInfoHelpers.ts' />
+///<reference path='completionSession.ts' />
 ///<reference path='pullLanguageService.ts' />
 ///<reference path='findReferenceHelpers.ts' />
 ///<reference path='shims.ts' />
