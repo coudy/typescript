@@ -438,7 +438,12 @@ module TypeScript {
                     }
                 }
                 path[path.length] = node;
-                node = node.getContainer();
+                var nodeKind = node.getKind();
+                if (nodeKind == PullElementKind.Parameter) {
+                    break;
+                } else {
+                    node = node.getContainer();
+                }
             }
             return path;
         }
