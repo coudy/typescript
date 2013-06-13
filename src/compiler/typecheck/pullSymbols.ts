@@ -1306,6 +1306,8 @@ module TypeScript {
         public setUnresolved() {
             super.setUnresolved();
 
+            this.invalidatedSpecializations = false;
+
             var specializations = this.getKnownSpecializations();
 
             for (var i = 0; i < specializations.length; i++) {
@@ -1372,11 +1374,6 @@ module TypeScript {
             this.arrayType = arrayType;
 
             arrayType.addOutgoingLink(this, SymbolLinkKind.ArrayOf);
-        }
-
-        public setUnresolved() {
-            this.invalidatedSpecializations = false;
-            super.setUnresolved();
         }
 
         public addContainedByLink(containedByLink: PullSymbolLink) {
@@ -1967,7 +1964,8 @@ module TypeScript {
             return <PullTypeSymbol[]>members;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, origin=null) {
+        public getExtendingTypes(): PullTypeSymbol[] {
+            var extendingTypes: PullTypeSymbol[] = [];
 
             var matchingLinks: TypeScript.PullSymbolLink[] = this.findIncomingLinks(psl => psl.kind === SymbolLinkKind.Extends);
 
@@ -1983,13 +1981,13 @@ module TypeScript {
             }
 
             var returnTypes: PullTypeSymbol[] = [];
-            
+
             extendingTypes.forEach( extender => {
                 var recursiveExtenders = extender.getExtendingTypes();
                 returnTypes.push.apply(returnTypes, recursiveExtenders);
                 returnTypes.push( extender);
             });
-            
+
             return returnTypes;
         }
 

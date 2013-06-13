@@ -670,12 +670,6 @@ module TypeScript {
             }
             
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
-            
-            var symbols = this.getVisibleSymbolsFromDeclPath(declPath, declSearchKind);
-
-            for (var i = 0; i < symbols.length; i++) {
-                this.resolveDeclaredSymbol(symbols[i], enclosingDecl, context);
-            }
 
             return this.getVisibleDeclsFromDeclPath(declPath, declSearchKind);
         }
@@ -685,8 +679,6 @@ module TypeScript {
             if (!contextualTypeSymbol || this.isAnyOrEquivalent(contextualTypeSymbol)) {
                 return null;
             }
-
-            this.resolveGlobals();
 
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
             var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
@@ -1082,7 +1074,7 @@ module TypeScript {
                 var members = ast.members.members;
 
                 for (var i = 0; i < members.length; i++) {
-                    if (members[i].nodeType == NodeType.ExportAssignment) {
+                    if (members[i].nodeType() == NodeType.ExportAssignment) {
                         this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
                         break;
                     }
@@ -1724,7 +1716,7 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceSymbol: PullTypeSymbol = null;
 
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
@@ -5617,8 +5609,6 @@ module TypeScript {
             if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
-
-            this.resolveGlobals();
 
             if (context.specializingToObject) {
                 if (target.isTypeParameter()) {

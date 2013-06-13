@@ -1583,7 +1583,7 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+        public pullGetVisibleDeclsFromPath(path: AstPath, document: Document): PullDecl[] {
 
             globalSemanticInfoChain = this.semanticInfoChain;
             if (globalBinder) {

@@ -123,58 +123,6 @@ class BatchCompiler implements Services.ILanguageServiceHost {
         return new Services.LanguageService(this);
     }
 
-    public information(): boolean {
-        return true;
-    }
-    public debug(): boolean {
-        return true;
-    }
-    public warning(): boolean {
-        return true;
-    }
-    public error(): boolean {
-        return true;
-    }
-    public fatal(): boolean {
-        return true;
-    }
-    public log(s: string): void {
-
-    }
-
-    public getCompilationSettings(): TypeScript.CompilationSettings {
-        return new TypeScript.CompilationSettings();
-    }
-
-    public getScriptFileNames(): string[] {
-        return [libraryFileName, compilerFileName];
-    }
-
-    public getScriptVersion(fileName: string): number {
-        return 1;
-    }
-
-    public getScriptIsOpen(fileName: string): boolean {
-        return fileName !== libraryFileName;
-    }
-
-    public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-        switch (fileName) {
-            case libraryFileName: return this.libScriptSnapshot;
-            case compilerFileName: return this.compilerScriptSnapshot;
-        }
-
-        throw new Error("Invalid file name");
-    }
-
-    public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {
-        return null;
-    }
-
-    public createLanguageService() {
-        return new Services.LanguageService(this);
-    }
-
     // use this to test "clean" re-typecheck speed
     public reTypeCheck() {
         this.compiler.pullTypeCheck();
