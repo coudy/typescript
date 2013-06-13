@@ -16,7 +16,7 @@ module Encyclopedia {
 
         public element = <HTMLElement>null;
         public home = "";
-        public lastViewstate = 0;       
+        public lastViewstate = 0;
 
         // Define the constructor function for the PageControlNavigator.
         constructor(element: Element, options: { home: string; }) {

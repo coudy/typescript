@@ -49,7 +49,7 @@ module GroupedItemsPage {
 
             var appbarControl = (<any> document.querySelector('#appbar')).winControl;
             appbarControl.hideCommands(['addfavorite', 'removefavorite', 'pin']);
-    
+            
             this.initializeLayout(listView, appView.value);
             listView.element.focus();
         },
@@ -63,7 +63,7 @@ module GroupedItemsPage {
             var listView = element.querySelector(".groupeditemslist").winControl;
             if (lastViewState !== viewState) {
                 if (lastViewState === appViewState.snapped || viewState === appViewState.snapped) {
-                    var handler: (e: Event)=>void = function (e) {
+                    var handler: (e: Event) => void = function (e) {
                         listView.removeEventListener("contentanimating", handler, false);
                         e.preventDefault();
                     }
@@ -73,41 +73,41 @@ module GroupedItemsPage {
             }
         }
     });
-    
-    
-    
+
+
+
     //"use strict";
 
     //var appView = Windows.UI.ViewManagement.ApplicationView;
-	//var appViewState = Windows.UI.ViewManagement.ApplicationViewState;
-	//var nav = WinJS.Navigation;
-	//var ui = WinJS.UI;
-	//var utils = WinJS.Utilities;
+    //var appViewState = Windows.UI.ViewManagement.ApplicationViewState;
+    //var nav = WinJS.Navigation;
+    //var ui = WinJS.UI;
+    //var utils = WinJS.Utilities;
 
-	//function updateLayout(element: HTMLElement) {
-	//    var listView = element.querySelector(".landingList").winControl;
-	//    if (appLayout.value === appLayoutState.snapped) {
-	//        ui.setOptions(listView, {
-	//            itemDataSource: data.items.dataSource,
-	//            itemTemplate: element.querySelector(".itemTemplate"),
-	//            groupDataSource: null,
-	//            oniteminvoked: itemInvoked
-	//        });
+    //function updateLayout(element: HTMLElement) {
+    //    var listView = element.querySelector(".landingList").winControl;
+    //    if (appLayout.value === appLayoutState.snapped) {
+    //        ui.setOptions(listView, {
+    //            itemDataSource: data.items.dataSource,
+    //            itemTemplate: element.querySelector(".itemTemplate"),
+    //            groupDataSource: null,
+    //            oniteminvoked: itemInvoked
+    //        });
 
-	//        listView.layout = new ui.ListLayout();
-	//    } else {
-	//        var groupDataSource = data.items.createGrouped(groupKeySelector, groupDataSelector).groups;
+    //        listView.layout = new ui.ListLayout();
+    //    } else {
+    //        var groupDataSource = data.items.createGrouped(groupKeySelector, groupDataSelector).groups;
 
-	//        ui.setOptions(listView, {
-	//            itemDataSource: data.items.dataSource,
-	//            itemTemplate: element.querySelector(".itemTemplate"),
-	//            groupDataSource: groupDataSource.dataSource,
-	//            groupHeaderTemplate: element.querySelector(".headerTemplate"),
-	//            oniteminvoked: itemInvoked
-	//        });
-	//        listView.layout = new ui.GridLayout({ groupHeaderPosition: "top" });
-	//    }
-	//}
+    //        ui.setOptions(listView, {
+    //            itemDataSource: data.items.dataSource,
+    //            itemTemplate: element.querySelector(".itemTemplate"),
+    //            groupDataSource: groupDataSource.dataSource,
+    //            groupHeaderTemplate: element.querySelector(".headerTemplate"),
+    //            oniteminvoked: itemInvoked
+    //        });
+    //        listView.layout = new ui.GridLayout({ groupHeaderPosition: "top" });
+    //    }
+    //}
 
     //function groupKeySelector(item) {
     //    return item.group.key;
@@ -125,7 +125,7 @@ module GroupedItemsPage {
     //function ready(element: HTMLElement, options) {
     //    var appbarControl = (<any> document.querySelector('#appbar')).winControl;
     //    appbarControl.hideCommands(['addfavorite', 'removefavorite', 'pin']);
-        
+
     //    setupMenu(element);
     //}
 

@@ -9,13 +9,13 @@ interface Topic {
     htmlContent: any;
 }
 
-var topiccache: { [name: string]: Topic } = {}  
+var topiccache: { [name: string]: Topic } = {};
 
 function createTopicFromUrl(url: string, group: Data.Group): Topic {
     var encodedName = url.slice(url.lastIndexOf('/') + 1);
     var title = decodeURIComponent(encodedName).replace('_', ' ');
     return createTopicFromTitle(title, group);
-} 
+}
 
 function downloadImageAndStoreLocal(bodyInnerText: string, topic: Topic) {
     var imageSrc = findImage(bodyInnerText);
@@ -28,10 +28,10 @@ function downloadImageAndStoreLocal(bodyInnerText: string, topic: Topic) {
             file.openAsync(Windows.Storage.FileAccessMode.readWrite).then(function (ras) {
                 var inputStream = blob.msDetachStream().getInputStreamAt(0);
                 var outputStream = ras.getOutputStreamAt(0);
-                Windows.Storage.Streams.RandomAccessStream.copyAsync(inputStream, outputStream).then(function() {
-					inputStream.close();
-					return outputStream.flushAsync()
-				}).done();
+                Windows.Storage.Streams.RandomAccessStream.copyAsync(inputStream, outputStream).then(function () {
+                    inputStream.close();
+                    return outputStream.flushAsync();
+                }).done();
             }).then(function () {
                 Windows.Storage.ApplicationData.current.localSettings.values[topic.title + "image"] = encodedImageUri;
             });
@@ -59,10 +59,7 @@ function createTopicFromTitle(title: string, group: Data.Group): Topic {
     var localContent = Windows.Storage.ApplicationData.current.localSettings.values[title];
 
     // 
-    htmlContentPromise =
-        localContent
-            ? retrieveCached(topic)
-            : downloadAndCacheLocally(topic);
+    htmlContentPromise = localContent ? retrieveCached(topic) : downloadAndCacheLocally(topic);
 
     // Don't want the topic to be tracked by the observable (TODO: I'm sure there is a 'better' way to do this)
     topic.htmlContent = htmlContentPromise;
@@ -75,7 +72,7 @@ function retrieveCached(topic: Topic) {
     // If content is already available locally:
     // 1) set the htmlContentPromise to read it from disk
     // 2) in parallel, grab the image from disk and display it.
-    var title = topic.title; 
+    var title = topic.title;
     var encodedTitle = encodeURIComponent(title);
     var htmlContentPromise = WinJS.Application.local.readText(encodedTitle + ".html");
     var localImageSrc = <string>Windows.Storage.ApplicationData.current.localSettings.values[title + "image"];
@@ -83,17 +80,17 @@ function retrieveCached(topic: Topic) {
 
     Windows.Storage.ApplicationData.current.localFolder.getFileAsync(localImageSrc)
         .then(function (file) {
-              return file.openAsync(Windows.Storage.FileAccessMode.read);
-          }).then(function (ras) {
-              var blob = MSApp.createBlobFromRandomAccessStream("image/png", ras);
-              topic.imageSrc = URL.createObjectURL(blob);
-          }).then(null, function (err) {
-              // The image file wasn't available for some reason,
-              // retry downloading the image.
-              return htmlContentPromise.then(function (bodyInnerHtml) {
-                  downloadImageAndStoreLocal(bodyInnerHtml, topic);
-              });
-          }).done();
+            return file.openAsync(Windows.Storage.FileAccessMode.read);
+        }).then(function (ras) {
+            var blob = MSApp.createBlobFromRandomAccessStream("image/png", ras);
+            topic.imageSrc = URL.createObjectURL(blob);
+        }).then(null, function (err) {
+            // The image file wasn't available for some reason,
+            // retry downloading the image.
+            return htmlContentPromise.then(function (bodyInnerHtml) {
+                downloadImageAndStoreLocal(bodyInnerHtml, topic);
+            });
+        }).done();
 
     return htmlContentPromise;
 }
@@ -110,15 +107,15 @@ function downloadAndCacheLocally(topic: Topic) {
     var title = topic.title;
     var url = "http://en.wikipedia.org/w/index.php?title=" + encodeURI(title);
     var htmlContentPromise = WinJS.xhr({ url: url })
-          .then(function (result) {
-              var text = <string>result.response;
-              var bodyStartStart = text.indexOf("<body");
-              var bodyStartEnd = text.indexOf(">", bodyStartStart) + 1;
-              var bodyEndStart = text.indexOf("</body>");
-              text = text.slice(bodyStartEnd, bodyEndStart);
-              text = text.replace(/"\/\//g, '"http://');
-              return text;
-          })
+        .then(function (result) {
+            var text = <string>result.response;
+            var bodyStartStart = text.indexOf("<body");
+            var bodyStartEnd = text.indexOf(">", bodyStartStart) + 1;
+            var bodyEndStart = text.indexOf("</body>");
+            text = text.slice(bodyStartEnd, bodyEndStart);
+            text = text.replace(/"\/\//g, '"http://');
+            return text;
+        });
 
     var encodedTitle = encodeURIComponent(title);
 
@@ -128,10 +125,10 @@ function downloadAndCacheLocally(topic: Topic) {
         // Store text to local storage
         return WinJS.Application.local.writeText(encodedTitle + ".html", bodyInnerText);
     }).then(function () {
-        Windows.Storage.ApplicationData.current.localSettings.values[title] = encodedTitle + ".html";
-        // Download the image and store to local storage
-        return downloadImageAndStoreLocal(bodyInnerText, topic);
-    }).done(null, function (err) { 
+            Windows.Storage.ApplicationData.current.localSettings.values[title] = encodedTitle + ".html";
+            // Download the image and store to local storage
+            return downloadImageAndStoreLocal(bodyInnerText, topic);
+    }).done(null, function (err) {
         if (err instanceof XMLHttpRequest) {
             return;
         } else {
@@ -139,7 +136,7 @@ function downloadAndCacheLocally(topic: Topic) {
         }
     });
     return htmlContentPromise;
-} 
+}
 
 function findImage(bodyHtml: string) {
     var dummyDiv = document.createElement('div');
@@ -150,11 +147,11 @@ function findImage(bodyHtml: string) {
         if (!widthAttr) return false;
         var keep = (+widthAttr.value) > 100;
         return keep;
-    })
+    });
     imgs.forEach(function (img, i) {
-        <any>img.attributes["width"].value *= (1 - (i / imgs.length)/2);
-        <any>img.attributes["height"].value *= (1 - (i / imgs.length)/2);
-    })
+        <any>img.attributes["width"].value *= (1 - (i / imgs.length) / 2);
+        <any>img.attributes["height"].value *= (1 - (i / imgs.length) / 2);
+    });
     imgs.sort(function (img1, img2) {
         var awidth = +img1.attributes["width"].value;
         var aheight = +img1.attributes["height"].value;
@@ -171,11 +168,11 @@ function findImage(bodyHtml: string) {
     if (jpgs.length > 0 && (+jpgs[0].attributes["width"].value > 100) && (+jpgs[0].attributes["height"].value > 100)) {
         return jpgs[0].src;
     } else if (imgs.length > 0) {
-        return (<HTMLImageElement>imgs[0]).src
+        return (<HTMLImageElement>imgs[0]).src;
     } else {
         return "http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
     }
-} 
+}
 
 function noInternetConnection(err) {
     var flyout = new Windows.UI.Popups.MessageDialog("No internet connection");

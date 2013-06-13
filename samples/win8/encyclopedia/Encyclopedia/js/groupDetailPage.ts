@@ -4,11 +4,11 @@
 module GroupDetailPage {
     "use strict";
 
-	var nav = WinJS.Navigation;
+    var nav = WinJS.Navigation;
     var ui = WinJS.UI;
     var utils = WinJS.Utilities;
     var views = Windows.UI.ViewManagement;
-	var group: Data.Group;
+    var group: Data.Group;
     var items;
 
     function updateLayout(element: HTMLElement) {
@@ -21,7 +21,7 @@ module GroupDetailPage {
         }
     }
 
-    function ready(element: HTMLElement, options: {group: Data.Group; }) {
+    function ready(element: HTMLElement, options: { group: Data.Group; }) {
         group = (options && options.group) ? options.group : Data.groups.getAt(0);
         items = Data.getItemsFromGroup(group);
         var pageList = items.createGrouped(

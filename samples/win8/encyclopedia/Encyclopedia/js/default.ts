@@ -2,19 +2,19 @@
 ///<reference path='topic.ts'/> 
 
 module Default {
-    "use strict"; 
+    "use strict";
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
     var nav = WinJS.Navigation;
     //WinJS.strictProcessing();
-	 
+    
     var searchPane = Windows.ApplicationModel.Search.SearchPane.getForCurrentView();
     searchPane.onquerysubmitted = function (ev: Windows.ApplicationModel.Search.ISearchPaneQuerySubmittedEventArgs) {
         var topic = createTopicFromTitle(ev.queryText, null);
         WinJS.Navigation.navigate('/html/itemDetailPage.html', { item: topic });
     }
-	
+
     searchPane.onsuggestionsrequested = function (ev: Windows.ApplicationModel.Search.SearchPaneSuggestionsRequestedEventArgs) {
         var deferral = ev.request.getDeferral();
         var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&limit=20&search='
@@ -25,14 +25,14 @@ module Default {
             deferral.complete();
         });
     }
-    
+
     var settingsPane = Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView();
-    settingsPane.oncommandsrequested = function(ev: Windows.UI.ApplicationSettings.SettingsPaneCommandsRequestedEventArgs) {
-        ev.request.applicationCommands.push(new Windows.UI.ApplicationSettings.SettingsCommand("1", "Encyclopedia Settings", function(a) {
-           var panel = document.getElementById('KnownSettingsCommand.Preferences');
-           WinJS.UI.process(panel); 
+    settingsPane.oncommandsrequested = function (ev: Windows.UI.ApplicationSettings.SettingsPaneCommandsRequestedEventArgs) {
+        ev.request.applicationCommands.push(new Windows.UI.ApplicationSettings.SettingsCommand("1", "Encyclopedia Settings", function (a) {
+            var panel = document.getElementById('KnownSettingsCommand.Preferences');
+            WinJS.UI.process(panel);
         }));
-	}
+    };
 
     app.addEventListener("activated", function (args: WinJS.Application.ApplicationActivationEvent) {
         if (args.detail.kind === activation.ActivationKind.launch) {
@@ -62,12 +62,12 @@ module Default {
                     }
                 }
             }));
-        } else if(args.detail.kind === Windows.ApplicationModel.Activation.ActivationKind.search) {
-			var searchEv = <Windows.ApplicationModel.Activation.SearchActivatedEventArgs>args.detail;
+        } else if (args.detail.kind === Windows.ApplicationModel.Activation.ActivationKind.search) {
+            var searchEv = <Windows.ApplicationModel.Activation.SearchActivatedEventArgs>args.detail;
             WinJS.UI.processAll();
-			var topic = createTopicFromTitle(searchEv.queryText, null);
-			WinJS.Navigation.navigate('/html/itemDetailPage.html', { item: topic });
-		}
+            var topic = createTopicFromTitle(searchEv.queryText, null);
+            WinJS.Navigation.navigate('/html/itemDetailPage.html', { item: topic });
+        }
     });
 
     app.oncheckpoint = function (args) {

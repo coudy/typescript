@@ -53,7 +53,7 @@ module ItemDetailPage {
                         ev.preventDefault();
                         var url = a.href;
                         if (url.indexOf('ms-appx:') == 0) {
-                            var i = a.href.lastIndexOf('\/')
+                            var i = a.href.lastIndexOf('\/');
                             var topicRef = decodeURIComponent(a.href.slice(i + 1)).replace(/_/g, " ");
                             var topic = createTopicFromTitle(topicRef, null);
                             WinJS.Navigation.navigate("/html/itemDetailPage.html", { item: topic });
@@ -84,5 +84,5 @@ module ItemDetailPage {
     ui.Pages.define("/html/itemDetailPage.html", {
         ready: ready,
         refreshCurrent: refreshCurrent
-    })
+    });
 }
