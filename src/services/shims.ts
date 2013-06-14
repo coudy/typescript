@@ -329,7 +329,7 @@ module Services {
                 message: diagnostic.text(),
                 start: diagnostic.start(),
                 length: diagnostic.length(),
-                category: LanguageServiceShim.realizeDiagnosticCategory(TypeScript.getDiagnosticInfoFromCode(diagnostic.diagnosticCode()).category)
+                category: LanguageServiceShim.realizeDiagnosticCategory(TypeScript.getDiagnosticInfoFromKey(diagnostic.diagnosticKey()).category)
             };
         }
 
