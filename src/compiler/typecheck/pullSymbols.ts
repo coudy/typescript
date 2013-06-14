@@ -2760,33 +2760,6 @@ module TypeScript {
         public isDefinition() { return true; }
     }
 
-    export class PullFunctionTypeSymbol extends PullTypeSymbol {
-
-        constructor() {
-            super("", PullElementKind.FunctionType);
-        }
-
-        public isFunction() { return (this.getKind() & (PullElementKind.ConstructorType | PullElementKind.FunctionType)) != 0; }
-        public isConstructor() { return this.getKind() == PullElementKind.ConstructorType; }
-
-        public invalidate() {
-
-            var callSignatures = this.getCallSignatures();
-
-            if (callSignatures.length) {
-                for (var i = 0; i < callSignatures.length; i++) {
-                    callSignatures[i].invalidate();
-                }
-            }
-
-            super.invalidate();
-        }
-
-        public addSignature(signature: PullSignatureSymbol) {
-            this.addCallSignature(signature);
-        }
-    }
-
     export class PullTypeParameterSymbol extends PullTypeSymbol {
         private constraintLink: PullSymbolLink = null;
 
@@ -3017,9 +2990,9 @@ module TypeScript {
         var fieldType: PullTypeSymbol = null;
 
         var method: PullSymbol = null;
-        var methodType: PullFunctionTypeSymbol = null;
+        var methodType: PullTypeSymbol = null;
         var newMethod: PullSymbol = null;
-        var newMethodType: PullFunctionTypeSymbol = null;
+        var newMethodType: PullTypeSymbol = null;
 
         var signatures: PullSignatureSymbol[] = null;
         var newSignature: PullSignatureSymbol = null;
@@ -3037,14 +3010,14 @@ module TypeScript {
             resolver.resolveDeclaredSymbol(members[i], null, context);
 
             if (members[i].getKind() === PullElementKind.Method) { // must be a method
-                method = <PullFunctionTypeSymbol> members[i];
+                method = <PullTypeSymbol>members[i];
 
                 resolver.resolveDeclaredSymbol(method, null, context);
 
-                methodType = <PullFunctionTypeSymbol>method.getType();
+                methodType = method.getType();
 
                 newMethod = new PullSymbol(method.getName(), PullElementKind.Method);
-                newMethodType = new PullFunctionTypeSymbol();
+                newMethodType = new PullTypeSymbol("", PullElementKind.FunctionType);
                 newMethod.setType(newMethodType);
 
                 newMethod.addDeclaration(method.getDeclarations()[0]);
@@ -3085,7 +3058,7 @@ module TypeScript {
                         newSignature.addParameter(newParameter);
                     }
 
-                    newMethodType.addSignature(newSignature);
+                    newMethodType.addCallSignature(newSignature);
                 }
 
                 newArrayType.addMember(newMethod, SymbolLinkKind.PublicMember);

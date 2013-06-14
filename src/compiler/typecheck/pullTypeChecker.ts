@@ -2163,9 +2163,9 @@ module TypeScript {
 
         private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
             var funcDeclSymbolAndDiagnostics = this.resolver.getSymbolAndDiagnosticsForAST(funcDeclAST);
-            var funcDeclSymbol = funcDeclSymbolAndDiagnostics && <PullFunctionTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
+            var funcDeclSymbol = funcDeclSymbolAndDiagnostics && <PullTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
             if (!funcDeclSymbol) {
-                funcDeclSymbol = <PullFunctionTypeSymbol>this.resolver.resolveFunctionTypeSignature(<FunctionDeclaration>funcDeclAST, enclosingDecl, this.context);
+                funcDeclSymbol = <PullTypeSymbol>this.resolver.resolveFunctionTypeSignature(<FunctionDeclaration>funcDeclAST, enclosingDecl, this.context);
             }
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
