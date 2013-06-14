@@ -319,7 +319,6 @@ module TypeScript {
                 }
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
-
             }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -331,6 +330,7 @@ module TypeScript {
             // If we have an enum with more than one declaration, then this enum's first element
             // must have an initializer.
             var moduleDeclarations = moduleContainerTypeSymbol.getDeclarations();
+
             if (isEnum && moduleDeclarations.length > 1 && moduleAST.members.members.length > 0) {
                 var multipleEnums = ArrayUtilities.where(moduleDeclarations, d => d.getKind() === PullElementKind.Enum).length > 1;
                 if (multipleEnums) {
@@ -344,7 +344,6 @@ module TypeScript {
             }
 
             if (createdNewSymbol) {
-
                 if (parent) {
                     var linkKind = moduleContainerDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
@@ -750,9 +749,6 @@ module TypeScript {
             var declKind = constructorTypeDeclaration.getKind();
             var declFlags = constructorTypeDeclaration.getFlags();
             var constructorTypeAST = this.semanticInfo.getASTForDecl(constructorTypeDeclaration);
-
-            // 1. Test for existing decl - if it exists, use its symbol
-            // 2. If no other decl exists, create a new symbol and use that one
 
             var constructorTypeSymbol = new PullTypeSymbol("", PullElementKind.ConstructorType);
 
