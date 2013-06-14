@@ -42,7 +42,6 @@
 ///<reference path='typecheck\pullSymbolBindingContext.ts' />
 ///<reference path='typecheck\pullTypeResolutionContext.ts' />
 ///<reference path='typecheck\pullTypeResolution.ts' />
-///<reference path='typecheck\pullTypeResolution2.ts' />
 ///<reference path='typecheck\pullTypeChecker.ts' />
 ///<reference path='typecheck\pullDeclDiffer.ts' />
 ///<reference path='typecheck\pullSemanticInfo.ts' />
