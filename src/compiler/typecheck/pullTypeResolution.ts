@@ -1300,7 +1300,7 @@ module TypeScript {
         //
         private resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
-            var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
+            var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
             }
@@ -1321,7 +1321,7 @@ module TypeScript {
 
                     // inherit parent's constructor signatures
                     if (parentType) {
-                        var parentClass = <PullClassTypeSymbol>parentType;
+                        var parentClass = parentType;
                         var parentConstructor = parentClass.getConstructorMethod();
                         var parentConstructorType = parentConstructor.getType();
                         var parentConstructSignatures = parentConstructorType.getConstructSignatures();
@@ -1378,7 +1378,7 @@ module TypeScript {
                 }
 
                 if (parentType) {
-                    var parentConstructorSymbol = (<PullClassTypeSymbol>parentType).getConstructorMethod();
+                    var parentConstructorSymbol = parentType.getConstructorMethod();
                     var parentConstructorTypeSymbol = parentConstructorSymbol.getType();
 
                     if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
@@ -3071,7 +3071,7 @@ module TypeScript {
             if (!nameSymbol) {
                 // could be a static
                 if (lhsType.isClass()) {
-                    var staticType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
+                    var staticType = lhsType.getConstructorMethod().getType();
 
                     nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, staticType);
 
@@ -3646,7 +3646,7 @@ module TypeScript {
                                 break;
                             }
                             else if (declKind === PullElementKind.Class) {
-                                var classSymbol = <PullClassTypeSymbol>decl.getSymbol();
+                                var classSymbol = <PullTypeSymbol>decl.getSymbol();
                                 return SymbolAndDiagnostics.fromSymbol(classSymbol);
                             }
                         }
@@ -3664,7 +3664,7 @@ module TypeScript {
             }
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
-            var classSymbol: PullClassTypeSymbol = null;
+            var classSymbol: PullTypeSymbol = null;
 
             // work back up the decl path, until you can find a class
             if (declPath.length) {
@@ -3681,7 +3681,7 @@ module TypeScript {
                         break;
                     }
                     else if (decl.getKind() === PullElementKind.Class) {
-                        classSymbol = <PullClassTypeSymbol>decl.getSymbol();
+                        classSymbol = <PullTypeSymbol>decl.getSymbol();
 
                         break;
                     }
@@ -4347,7 +4347,7 @@ module TypeScript {
                 isSuperCall = true;
 
                 if (targetTypeSymbol.isClass()) {
-                    targetSymbol = (<PullClassTypeSymbol>targetTypeSymbol).getConstructorMethod();
+                    targetSymbol = targetTypeSymbol.getConstructorMethod();
                     targetTypeSymbol = targetSymbol.getType();
                 }
                 else {
@@ -4689,7 +4689,7 @@ module TypeScript {
             // we'll have gotten a 'GenericType' node, which will be resolved as the class type and not
             // the constructor type.  In this case, set the targetTypeSymbol to the constructor type
             if (targetTypeSymbol.isClass()) {
-                targetTypeSymbol = (<PullClassTypeSymbol>targetTypeSymbol).getConstructorMethod().getType();
+                targetTypeSymbol = targetTypeSymbol.getConstructorMethod().getType();
             }
 
             var constructSignatures = targetTypeSymbol.getConstructSignatures();

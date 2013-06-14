@@ -1153,10 +1153,10 @@ module TypeScript {
 
             if (!foundError && typeSymbol.isClass()) {
                 // If there is base class verify the constructor type is subtype of base class
-                var typeConstructorType = (<PullClassTypeSymbol>typeSymbol).getConstructorMethod().getType();
+                var typeConstructorType = typeSymbol.getConstructorMethod().getType();
                 var typeConstructorTypeMembers = typeConstructorType.getMembers();
                 if (typeConstructorTypeMembers.length) {
-                    var extendedConstructorType = (<PullClassTypeSymbol>extendedType).getConstructorMethod().getType();
+                    var extendedConstructorType = extendedType.getConstructorMethod().getType();
                     var comparisonInfoForPropTypeCheck = new TypeComparisonInfo(comparisonInfo);
 
                     // Verify that all the overriden members of the constructor type are compatible
@@ -1329,7 +1329,7 @@ module TypeScript {
         private typeCheckClass(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var classAST = <ClassDeclaration>ast;
             // resolving the class also resolves its members...
-            var classSymbol = <PullClassTypeSymbol>this.resolveSymbolAndReportDiagnostics(ast, false, typeCheckContext.getEnclosingDecl()).getType();
+            var classSymbol = <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(ast, false, typeCheckContext.getEnclosingDecl()).getType();
             this.checkForResolutionError(classSymbol, typeCheckContext.getEnclosingDecl());
 
             this.typeCheckAST(classAST.typeParameters, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -1592,7 +1592,7 @@ module TypeScript {
             var enclosingClass = typeCheckContext.getEnclosingDecl(PullElementKind.Class);
 
             if (enclosingClass) {
-                var classSymbol = <PullClassTypeSymbol>enclosingClass.getSymbol();
+                var classSymbol = <PullTypeSymbol>enclosingClass.getSymbol();
                 if (classSymbol.getExtendedTypes().length > 0) {
                     return true;
                 }
@@ -1630,7 +1630,7 @@ module TypeScript {
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
             if (enclosingConstructor && enclosingClass) {
-                var classSymbol = <PullClassTypeSymbol>enclosingClass.getSymbol();
+                var classSymbol = <PullTypeSymbol>enclosingClass.getSymbol();
                 if (classSymbol.getExtendedTypes().length === 0) {
                     return false;
                 }

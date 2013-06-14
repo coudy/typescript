@@ -1137,7 +1137,7 @@ module TypeScript {
 
                             if (foundAST.nodeType() === NodeType.SuperExpression) {
                                 if (symbol.getKind() === PullElementKind.Class) {
-                                    callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
+                                    callSignatures = (<PullTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
                                 }
                             } else {
                                 callSignatures = callExpression.nodeType() === NodeType.InvocationExpression ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();

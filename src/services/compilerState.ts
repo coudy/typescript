@@ -438,12 +438,12 @@ module Services {
             return docComments;
         }
 
-        static getDefaultConstructorSymbolForDocComments(classSymbol: TypeScript.PullClassTypeSymbol) {
+        static getDefaultConstructorSymbolForDocComments(classSymbol: TypeScript.PullTypeSymbol) {
             if (classSymbol.getHasDefaultConstructor()) {
                 // get from parent if possible
                 var extendedTypes = classSymbol.getExtendedTypes();
                 if (extendedTypes.length) {
-                    return CompilerState.getDefaultConstructorSymbolForDocComments(<TypeScript.PullClassTypeSymbol>extendedTypes[0]);
+                    return CompilerState.getDefaultConstructorSymbolForDocComments(extendedTypes[0]);
                 }
             }
 
@@ -464,10 +464,10 @@ module Services {
                 var docComments: string = "";
                 if (!useConstructorAsClass && symbol.getKind() == TypeScript.PullElementKind.ConstructSignature &&
                     decls.length && decls[0].getKind() == TypeScript.PullElementKind.Class) {
-                    var classSymbol = <TypeScript.PullClassTypeSymbol>(<TypeScript.PullSignatureSymbol>symbol).getReturnType();
+                    var classSymbol = (<TypeScript.PullSignatureSymbol>symbol).getReturnType();
                     var extendedTypes = classSymbol.getExtendedTypes();
                     if (extendedTypes.length) {
-                        docComments = this.getDocComments((<TypeScript.PullClassTypeSymbol>extendedTypes[0]).getConstructorMethod());
+                        docComments = this.getDocComments(extendedTypes[0].getConstructorMethod());
                     } else {
                         docComments = "";
                     }
