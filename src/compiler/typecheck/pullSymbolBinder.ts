@@ -97,9 +97,6 @@ module TypeScript {
 
         public semanticInfo: SemanticInfo = null;
 
-        public startingDeclForRebind = pullDeclID; // note that this gets set on creation
-        public startingSymbolForRebind = pullSymbolID; // note that this gets set on creation
-
         constructor(public semanticInfoChain: SemanticInfoChain) {
         }
 
@@ -163,12 +160,6 @@ module TypeScript {
 
             // finally, try searching globally
             return this.semanticInfoChain.findDecls([name], declKind);
-        }
-
-        public symbolIsRedeclaration(sym: PullSymbol): boolean {
-            var symID = sym.getSymbolID();
-            return (symID >= this.startingSymbolForRebind) ||
-                ((sym.getRebindingID() === this.bindingPhase) && (symID !== this.startingSymbolForRebind));
         }
 
         //
@@ -440,7 +431,7 @@ module TypeScript {
                 parentHadSymbol = true;
             }
 
-            if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
+            if (importSymbol) {
                 importDeclaration.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), importDeclAST.minChar, importDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [importDeclaration.getDisplayName()]));
                 importSymbol = null;
@@ -601,18 +592,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        classDecl.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    classDecl.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -702,27 +684,17 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-
-                        // Because interface declarations can be "split", it's safe to re-use type parameters
-                        // of the same name across interface declarations in the same binding phase
-                        for (var j = 0; j < typeParameterDecls.length; j++) {
-                            var typeParameterDeclParent = typeParameterDecls[j].getParentDecl();
-
-                            if (typeParameterDeclParent && typeParameterDeclParent === interfaceDecl) {
-                                var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                                interfaceDecl.addDiagnostic(
-                                    new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-
-                                break;
-                            }
-                        }
-                    }
-
-                    // clean the decls
+                    // Because interface declarations can be "split", it's safe to re-use type parameters
+                    // of the same name across interface declarations in the same binding phase
                     for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        var typeParameterDeclParent = typeParameterDecls[j].getParentDecl();
+
+                        if (typeParameterDeclParent && typeParameterDeclParent === interfaceDecl) {
+                            var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                            interfaceDecl.addDiagnostic(
+                                new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
+
+                            break;
                         }
                     }
                 }
@@ -772,18 +744,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        objectDecl.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    objectDecl.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -836,18 +799,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        constructorTypeDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    constructorTypeDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -922,7 +876,7 @@ module TypeScript {
             var members: PullSymbol[];
 
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
-            if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
+            if (variableSymbol) {
 
                 var prevKind = variableSymbol.getKind();
                 var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
@@ -1350,7 +1304,7 @@ module TypeScript {
 
             if (functionSymbol &&
                 (functionSymbol.getKind() !== PullElementKind.Function ||
-                (this.symbolIsRedeclaration(functionSymbol) && !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 functionDeclaration.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]));
                 functionSymbol = null;
@@ -1414,18 +1368,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    functionDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1493,20 +1438,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionExpressionDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    functionExpressionDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1557,22 +1491,9 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        functionTypeDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    functionTypeDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1618,7 +1539,7 @@ module TypeScript {
 
             if (methodSymbol &&
                 (methodSymbol.getKind() !== PullElementKind.Method ||
-                (this.symbolIsRedeclaration(methodSymbol) && !isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 methodDeclaration.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), methodAST.minChar, methodAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [methodDeclaration.getDisplayName()]));
                 methodSymbol = null;
@@ -1693,20 +1614,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        methodDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    methodDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1826,14 +1736,6 @@ module TypeScript {
             var parent = this.getParent(constructSignatureDeclaration, true);
             var constructorAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(constructSignatureDeclaration);
 
-            var constructSigs = parent.getConstructSignatures();
-
-            for (var i = 0; i < constructSigs.length; i++) {
-                if (constructSigs[i].getSymbolID() < this.startingSymbolForRebind) {
-                    parent.removeConstructSignature(constructSigs[i], false);
-                }
-            }
-
             // update the construct signature list
             parent.recomputeConstructSignatures();
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
@@ -1858,18 +1760,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        constructSignatureDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    constructSignatureDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1889,16 +1782,6 @@ module TypeScript {
         public bindCallSignatureDeclarationToPullSymbol(callSignatureDeclaration: PullDecl) {
             var parent = this.getParent(callSignatureDeclaration, true);
             var callSignatureAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(callSignatureDeclaration);
-
-            // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
-            // incremental parsing comes online
-            var callSigs = parent.getCallSignatures();
-
-            for (var i = 0; i < callSigs.length; i++) {
-                if (callSigs[i].getSymbolID() < this.startingSymbolForRebind) {
-                    parent.removeCallSignature(callSigs[i], false);
-                }
-            }
 
             // update the call signature list
             parent.recomputeCallSignatures();
@@ -1925,18 +1808,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        callSignatureDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    callSignatureDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -1955,14 +1829,6 @@ module TypeScript {
 
         public bindIndexSignatureDeclarationToPullSymbol(indexSignatureDeclaration: PullDecl) {
             var parent = this.getParent(indexSignatureDeclaration, true);
-
-            var indexSigs = parent.getIndexSignatures();
-
-            for (var i = 0; i < indexSigs.length; i++) {
-                if (indexSigs[i].getSymbolID() < this.startingSymbolForRebind) {
-                    parent.removeIndexSignature(indexSigs[i], false);
-                }
-            }
 
             // update the index signature list
             parent.recomputeIndexSignatures();
@@ -1985,20 +1851,9 @@ module TypeScript {
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
 
-                    if (this.symbolIsRedeclaration(typeParameter)) {
-                        var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                        indexSignatureDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
-                    }
-
-                    // clean the decls
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    for (var j = 0; j < typeParameterDecls.length; j++) {
-                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
-                            typeParameter.removeDeclaration(typeParameterDecls[j]);
-                        }
-                    }
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    indexSignatureDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
                 typeParameter.addDeclaration(typeParameters[i]);
@@ -2231,11 +2086,6 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl, rebind = false) {
-
-            if (rebind) {
-                this.startingDeclForRebind = lastBoundPullDeclId;
-                this.startingSymbolForRebind = lastBoundPullSymbolID;
-            }
 
             if (decl.isBound()) {
                 return;
