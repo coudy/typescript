@@ -22,6 +22,7 @@ module TypeScript {
 
         private indentString(): string {
             var result = "";
+
             for (var i = 0; i < this.indent; i++) {
                 result += "\t";
             }

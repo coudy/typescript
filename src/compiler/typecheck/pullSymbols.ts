@@ -1337,8 +1337,8 @@ module TypeScript {
 
             return false;
         }
-        public isFunction() { return false; }
-        public isConstructor() { return false; }
+        public isFunction() { return (this.getKind() & (PullElementKind.ConstructorType | PullElementKind.FunctionType)) != 0; }
+        public isConstructor() { return this.getKind() == PullElementKind.ConstructorType; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
         public isError() { return false; }
@@ -1448,6 +1448,17 @@ module TypeScript {
                     this.memberTypeNameCache[memberSymbol.getName()] = memberSymbol;
                     this.memberCache[this.memberCache.length] = memberSymbol;
                 }
+            }
+        }
+
+        public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol, doNotChangeContainer?: boolean) {
+
+            this.addMember(typeParameter, SymbolLinkKind.TypeParameter, doNotChangeContainer);
+
+            var constructSignatures = this.getConstructSignatures();
+
+            for (var i = 0; i < constructSignatures.length; i++) {
+                constructSignatures[i].addTypeParameter(typeParameter);
             }
         }
 
@@ -2773,36 +2784,6 @@ module TypeScript {
 
         public addSignature(signature: PullSignatureSymbol) {
             this.addCallSignature(signature);
-        }
-    }
-
-    export class PullConstructorTypeSymbol extends PullTypeSymbol {
-
-        constructor() {
-            super("", PullElementKind.ConstructorType);
-        }
-
-        public isFunction() { return (this.getKind() & (PullElementKind.ConstructorType | PullElementKind.FunctionType)) != 0; }
-        public isConstructor() { return this.getKind() == PullElementKind.ConstructorType; }
-
-        public invalidate() {
-
-            super.invalidate();
-        }
-
-        public addSignature(signature: PullSignatureSymbol) {
-            this.addConstructSignature(signature);
-        }
-
-        public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol, doNotChangeContainer?: boolean) {
-
-            this.addMember(typeParameter, SymbolLinkKind.TypeParameter, doNotChangeContainer);
-
-            var constructSignatures = this.getConstructSignatures();
-
-            for (var i = 0; i < constructSignatures.length; i++) {
-                constructSignatures[i].addTypeParameter(typeParameter);
-            }
         }
     }
 
