@@ -2750,13 +2750,13 @@ module TypeScript {
     }
 
     export class PullFunctionTypeSymbol extends PullTypeSymbol {
-        private definitionSignature: PullDefinitionSignatureSymbol = null;
 
         constructor() {
             super("", PullElementKind.FunctionType);
         }
 
-        public isFunction() { return true; }
+        public isFunction() { return (this.getKind() & (PullElementKind.ConstructorType | PullElementKind.FunctionType)) != 0; }
+        public isConstructor() { return this.getKind() == PullElementKind.ConstructorType; }
 
         public invalidate() {
 
@@ -2768,48 +2768,33 @@ module TypeScript {
                 }
             }
 
-            this.definitionSignature = null;
-
             super.invalidate();
         }
 
         public addSignature(signature: PullSignatureSymbol) {
             this.addCallSignature(signature);
-
-            if (signature.isDefinition()) {
-                this.definitionSignature = <PullDefinitionSignatureSymbol>signature;
-            }
         }
-
-        public getDefinitionSignature() { return this.definitionSignature; }
     }
 
     export class PullConstructorTypeSymbol extends PullTypeSymbol {
-        private definitionSignature: PullDefinitionSignatureSymbol = null;
 
         constructor() {
             super("", PullElementKind.ConstructorType);
         }
 
-        public isFunction() { return true; }
-        public isConstructor() { return true; }
+        public isFunction() { return (this.getKind() & (PullElementKind.ConstructorType | PullElementKind.FunctionType)) != 0; }
+        public isConstructor() { return this.getKind() == PullElementKind.ConstructorType; }
 
         public invalidate() {
-
-            this.definitionSignature = null;
 
             super.invalidate();
         }
 
         public addSignature(signature: PullSignatureSymbol) {
             this.addConstructSignature(signature);
-
-            if (signature.isDefinition()) {
-                this.definitionSignature = <PullDefinitionSignatureSymbol>signature;
-            }
         }
 
-        public addTypeParameter(typeParameter: PullTypeParameterSymbol, doNotChangeContainer?: boolean) {
+        public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol, doNotChangeContainer?: boolean) {
 
             this.addMember(typeParameter, SymbolLinkKind.TypeParameter, doNotChangeContainer);
 
@@ -2819,8 +2804,6 @@ module TypeScript {
                 constructSignatures[i].addTypeParameter(typeParameter);
             }
         }
-
-        public getDefinitionSignature() { return this.definitionSignature; }
     }
 
     export class PullTypeParameterSymbol extends PullTypeSymbol {

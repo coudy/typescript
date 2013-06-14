@@ -6,7 +6,7 @@
 module TypeScript {
     export var globalBindingPhase = 0;
 
-    export function getPathToDecl(decl: PullDecl): PullDecl[]{
+    export function getPathToDecl(decl: PullDecl): PullDecl[] {
         if (!decl) {
             return [];
         }
@@ -75,7 +75,7 @@ module TypeScript {
         time_in_findSymbol += endTime - startTime;
 
         return symbol;
-    }    
+    }
 
     export class PullSymbolBinder {
 
@@ -163,7 +163,7 @@ module TypeScript {
         //    }
         //}
 
-        public findDeclsInContext(startingDecl: PullDecl, declKind: PullElementKind, searchGlobally: boolean): PullDecl[]{
+        public findDeclsInContext(startingDecl: PullDecl, declKind: PullElementKind, searchGlobally: boolean): PullDecl[] {
 
             if (!searchGlobally) {
                 var parentDecl = startingDecl.getParentDecl();
@@ -193,7 +193,7 @@ module TypeScript {
         public symbolIsRedeclaration(sym: PullSymbol): boolean {
             var symID = sym.getSymbolID();
             return (symID >= this.startingSymbolForRebind) ||
-                    ((sym.getRebindingID() === this.bindingPhase) && (symID !== this.startingSymbolForRebind));
+                ((sym.getRebindingID() === this.bindingPhase) && (symID !== this.startingSymbolForRebind));
         }
 
         //
@@ -256,7 +256,7 @@ module TypeScript {
             if (moduleContainerTypeSymbol) {
                 moduleInstanceSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
             }
-            else { 
+            else {
                 moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName, moduleKind);
                 createdNewSymbol = true;
 
@@ -354,7 +354,7 @@ module TypeScript {
                     moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
                     moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
                 }
-                
+
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
 
             }
@@ -460,7 +460,7 @@ module TypeScript {
             }
 
             var otherDecls = this.findDeclsInContext(moduleContainerDecl, moduleContainerDecl.getKind(), true);
-            
+
             if (otherDecls && otherDecls.length) {
                 for (var i = 0; i < otherDecls.length; i++) {
                     otherDecls[i].ensureSymbolIsBound();
@@ -617,7 +617,7 @@ module TypeScript {
 
             // just invalidate this once, so we don't pay the cost of rebuilding caches
             // for each signature removed
-            classSymbol.invalidate();            
+            classSymbol.invalidate();
         }
 
         // classes
@@ -738,7 +738,7 @@ module TypeScript {
 
             if (!parentHadSymbol) {
                 classSymbol = new PullTypeSymbol(className, PullElementKind.Class);
-                
+
                 if (!parent) {
                     this.semanticInfoChain.cacheGlobalSymbol(classSymbol, acceptableSharedKind);
                 }
@@ -774,7 +774,7 @@ module TypeScript {
 
                     for (var i = 0; i < specializations.length; i++) {
                         this.cleanClassSignatures(specializations[i]);
-                    }                 
+                    }
                 }
             }
 
@@ -836,7 +836,7 @@ module TypeScript {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
                     classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
-                    constructorTypeSymbol.addTypeParameter(typeParameter, true);
+                    constructorTypeSymbol.addConstructorTypeParameter(typeParameter, true);
                 }
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -864,7 +864,7 @@ module TypeScript {
 
             if (valueDecl) {
                 valueDecl.ensureSymbolIsBound();
-            }            
+            }
 
             classSymbol.setIsBound(this.bindingPhase);
         }
@@ -976,7 +976,7 @@ module TypeScript {
                     typeParameterDecls = typeParameter.getDeclarations();
 
                     if (this.symbolIsRedeclaration(typeParameter)) {
-                        
+
                         // Because interface declarations can be "split", it's safe to re-use type parameters
                         // of the same name across interface declarations in the same binding phase
                         for (var j = 0; j < typeParameterDecls.length; j++) {
@@ -1104,7 +1104,7 @@ module TypeScript {
                 if (!typeParameter) {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
-                    constructorTypeSymbol.addTypeParameter(typeParameter);
+                    constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
                 }
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -1388,7 +1388,7 @@ module TypeScript {
                         }
                         if (!moduleContainerTypeSymbol) {
                             moduleContainerTypeSymbol = <PullContainerTypeSymbol>findSymbolInContext(declName, PullElementKind.SomeContainer, variableDeclaration);
-                            
+
                             if (!moduleContainerTypeSymbol) {
                                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>findSymbolInContext(declName, PullElementKind.Enum, variableDeclaration);
                             }
@@ -1502,7 +1502,7 @@ module TypeScript {
                 // }                
             }
             // else {
-                propertySymbol = parent.findMember(declName, false);
+            propertySymbol = parent.findMember(declName, false);
             // }
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
@@ -1558,7 +1558,7 @@ module TypeScript {
                     //     this.staticClassMembers[this.staticClassMembers.length] = propertySymbol;
                     // }
                     // else {
-                        classTypeSymbol.addMember(propertySymbol, linkKind);
+                    classTypeSymbol.addMember(propertySymbol, linkKind);
                     //}
                 }
                 else {
@@ -1614,7 +1614,7 @@ module TypeScript {
                             if (valDecl) {
                                 valDecl.setSymbol(parameterSymbol);
                                 parameterSymbol.addDeclaration(valDecl);
-                            }                            
+                            }
                         }
                         else {
                             parameterSymbol.addDeclaration(decl);
@@ -1699,9 +1699,9 @@ module TypeScript {
                 functionSymbol = findSymbolInContext(funcName, PullElementKind.SomeValue, functionDeclaration);
             }
 
-            if (functionSymbol && 
+            if (functionSymbol &&
                 (functionSymbol.getKind() !== PullElementKind.Function ||
-                    (this.symbolIsRedeclaration(functionSymbol) && !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (this.symbolIsRedeclaration(functionSymbol) && !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 functionDeclaration.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]));
                 functionSymbol = null;
@@ -1879,8 +1879,8 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
 
             var functionName = declKind == PullElementKind.FunctionExpression ?
-                                    (<PullFunctionExpressionDecl>functionExpressionDeclaration).getFunctionExpressionName() :
-                                    functionExpressionDeclaration.getName();
+                (<PullFunctionExpressionDecl>functionExpressionDeclaration).getFunctionExpressionName() :
+                functionExpressionDeclaration.getName();
             var functionSymbol: PullSymbol = new PullSymbol(functionName, PullElementKind.Function);
             var functionTypeSymbol = new PullFunctionTypeSymbol();
 
@@ -2063,7 +2063,7 @@ module TypeScript {
 
             }
             //else {
-                methodSymbol = parent.findMember(methodName, false);
+            methodSymbol = parent.findMember(methodName, false);
             //}
 
             if (methodSymbol &&
@@ -2141,7 +2141,7 @@ module TypeScript {
                 //     this.staticClassMembers[this.staticClassMembers.length] = methodSymbol;
                 // }
                 // else {
-                    parent.addMember(methodSymbol, linkKind);
+                parent.addMember(methodSymbol, linkKind);
                 //}
             }
 
@@ -2284,19 +2284,29 @@ module TypeScript {
             var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             var linkKind = SymbolLinkKind.ConstructorMethod;
-            
+
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||
-                (!isSignature && 
-                    constructorSymbol.getType() && 
-                    constructorSymbol.getType().hasOwnConstructSignatures() && 
-                    (<PullConstructorTypeSymbol>constructorSymbol.getType()).getDefinitionSignature() &&
-                    !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+                (!isSignature &&
+                constructorSymbol.getType() &&
+                constructorSymbol.getType().hasOwnConstructSignatures()))) {
 
-                constructorDeclaration.addDiagnostic(
-                    new Diagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));
+                var hasDefinitionSignature = false;
+                var constructorSigs = constructorSymbol.getType().getConstructSignatures();
 
-                constructorSymbol = null;
+                for (var i = 0; i < constructorSigs.length; i++) {
+                    if (!constructorSigs[i].hasFlag(PullElementFlags.Signature)) {
+                        hasDefinitionSignature = true;
+                        break;
+                    }
+                }
+
+                if (hasDefinitionSignature) {
+                    constructorDeclaration.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));
+
+                    constructorSymbol = null;
+                }
             }
 
             if (constructorSymbol) {
@@ -2333,7 +2343,7 @@ module TypeScript {
                         for (var i = 0; i < specializations.length; i++) {
                             specializations[i].invalidate();
                         }
-                    }                          
+                    }
 
                     constructorSymbol.invalidate();
                     constructorTypeSymbol.invalidate();
@@ -2660,7 +2670,7 @@ module TypeScript {
 
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
                         getAccessorDeclaration.addDiagnostic(
-                            new Diagnostic(this.semanticInfo.getPath(),funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Getter_0_already_declared, [getAccessorDeclaration.getDisplayName()]));
+                            new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Getter_0_already_declared, [getAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         getterSymbol = null;
                     }
