@@ -722,7 +722,11 @@ module TypeScript {
                 var script = document.script;
 
                 if (script) {
+                    var startTime = (new Date()).getTime();
                     this.pullTypeChecker.typeCheckScript(script, fileName, this);
+                    var endTime = (new Date()).getTime();
+
+                    typeCheckTime += endTime - startTime;
 
                     unit.getDiagnostics(errors);
                 }
