@@ -31,7 +31,7 @@ module TypeScript {
 
         public addMessage(message) {
             if (!this.onlyCaptureFirstError && this.message) {
-                this.message = this.message + Environment.newLine + this.indentString() + message;
+                this.message = this.message + TypeScript.newLine() + this.indentString() + message;
             }
             else {
                 this.message = this.indentString() + message;

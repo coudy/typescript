@@ -1256,6 +1256,11 @@ module TypeScript {
 
                 // Resolve members
                 var typeDeclMembers = typeDeclSymbol.getMembers();
+
+                if (globalBinder) {
+                    globalBinder.resetTypeParameterCache();
+                }
+
                 for (var i = 0; i < typeDeclMembers.length; i++) {
                     this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
                 }

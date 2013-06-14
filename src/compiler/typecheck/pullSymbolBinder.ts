@@ -93,7 +93,7 @@ module TypeScript {
             this.functionTypeParameterCache[typeParameter.getName()] = typeParameter;
         }
 
-        private resetTypeParameterCache() {
+        public resetTypeParameterCache() {
             this.functionTypeParameterCache = new BlockIntrinsics();
         }
 
@@ -782,12 +782,6 @@ module TypeScript {
 
             this.resetTypeParameterCache();
 
-            // for (var i = 0; i < childDecls.length; i++) {
-            //     this.bindDeclToPullSymbol(childDecls[i]);
-            // }
-
-            this.resetTypeParameterCache();
-
             // create the default constructor symbol, if necessary
 
             // even if we've already tried to set these, we want to try again after we've walked the class members
@@ -961,12 +955,6 @@ module TypeScript {
             }
 
             // var childDecls = interfaceDecl.getChildDecls();
-
-            this.resetTypeParameterCache();
-
-            // for (var i = 0; i < childDecls.length; i++) {
-            //     this.bindDeclToPullSymbol(childDecls[i]);
-            // }
 
             this.resetTypeParameterCache();
 
