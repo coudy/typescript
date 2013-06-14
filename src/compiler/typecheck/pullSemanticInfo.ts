@@ -160,7 +160,6 @@ module TypeScript {
         public stringTypeSymbol: PullTypeSymbol = null;
         public nullTypeSymbol: PullTypeSymbol = null;
         public undefinedTypeSymbol: PullTypeSymbol = null;
-        public elementTypeSymbol: PullTypeSymbol = null;
         public voidTypeSymbol: PullTypeSymbol = null;
 
         public addPrimitiveType(name: string, globalDecl: PullDecl) {
@@ -203,7 +202,6 @@ module TypeScript {
             this.numberTypeSymbol = this.addPrimitiveType("number", globalDecl);
             this.stringTypeSymbol = this.addPrimitiveType("string", globalDecl);
             this.voidTypeSymbol = this.addPrimitiveType("void", globalDecl);
-            this.elementTypeSymbol = this.addPrimitiveType("_element", globalDecl);
 
             // add the global primitive values for "null" and "undefined"
             this.nullTypeSymbol = this.addPrimitiveType("null", null);

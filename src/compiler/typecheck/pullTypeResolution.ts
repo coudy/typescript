@@ -1673,7 +1673,7 @@ module TypeScript {
             else {
                 if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
                     if (this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType(), paramSymbol.getType(), this, context));
+                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [paramSymbol.getType()], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
                     }
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.getType());
@@ -1704,7 +1704,7 @@ module TypeScript {
             else {
                 if (paramSymbol.getIsVarArg() && paramSymbol.getType()) {
                     if (this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, specializeToArrayType(this.cachedArrayInterfaceType(), paramSymbol.getType(), this, context));
+                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [paramSymbol.getType()], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
                     }
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.getType());
@@ -1898,7 +1898,7 @@ module TypeScript {
                         typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
                     }
 
-                    arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, typeDeclSymbol, this, context);
+                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, typeRef);
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -1910,7 +1910,7 @@ module TypeScript {
                         var existingArraySymbol = arraySymbol.getArrayType();
 
                         if (!existingArraySymbol) {
-                            arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, arraySymbol, this, context);
+                            arraySymbol = specializeType(this.cachedArrayInterfaceType(), [arraySymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, typeRef);
                         }
                         else {
                             arraySymbol = existingArraySymbol;
@@ -2085,7 +2085,7 @@ module TypeScript {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 if (declSymbol.getIsVarArg()) {
-                    defaultType = specializeToArrayType(this.cachedArrayInterfaceType(), defaultType, this, context);
+                    defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
                 }
 
                 context.setTypeInContext(declSymbol, defaultType);
@@ -3980,7 +3980,7 @@ module TypeScript {
                     this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                 }
 
-                arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, elementType, this, context);
+                arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, arrayLit);
 
                 if (!arraySymbol) {
                     arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -5125,7 +5125,7 @@ module TypeScript {
                         var mergedArrayType = mergedET.getArrayType();
 
                         if (!mergedArrayType) {
-                            mergedArrayType = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, mergedET, this, context);
+                            mergedArrayType = specializeType(this.cachedArrayInterfaceType(), [mergedET], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
                         }
 
                         return mergedArrayType;
