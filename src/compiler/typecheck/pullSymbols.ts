@@ -40,10 +40,6 @@ module TypeScript {
 
         private isSynthesized = false;
 
-        private isBound = false;
-
-        private rebindingID = 0;
-
         private isVarArg = false;
 
         private isSpecialized = false;
@@ -186,17 +182,6 @@ module TypeScript {
             this.isSynthesized = value;
         }
         public getIsSynthesized() { return this.isSynthesized; }
-
-        public setIsBound(rebindingID: number) {
-            this.isBound = true;
-            this.rebindingID = rebindingID;
-        }
-
-        public getRebindingID() {
-            return this.rebindingID;
-        }
-
-        public getIsBound() { return this.isBound; }
 
         public addCacheID(cacheID: string) {
             if (!this.cachedPathIDs[cacheID]) {
@@ -409,7 +394,6 @@ module TypeScript {
 
         public setUnresolved() {
             this.hasBeenResolved = false;
-            this.isBound = false;
             this.inResolution = false;
         }
 
@@ -418,7 +402,6 @@ module TypeScript {
             this.docComments = null;
 
             this.hasBeenResolved = false;
-            this.isBound = false;
 
             // reset the errors for its decl
             this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);
@@ -1647,9 +1630,6 @@ module TypeScript {
                     specializations[i].removeIndexSignature(signatures[j], false);
                 }
 
-                specializations[i].recomputeCallSignatures();
-                specializations[i].recomputeConstructSignatures();
-                specializations[i].recomputeIndexSignatures();
                 specializations[i].invalidate();
             }
 
@@ -1863,10 +1843,6 @@ module TypeScript {
             }
         }
 
-        public recomputeCallSignatures() {
-            this.callSignatureLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.CallSignature);
-        }
-
         public removeConstructSignature(signature: PullSignatureSymbol, invalidate = true) {
             var signatureLink: PullSymbolLink;
 
@@ -1885,10 +1861,6 @@ module TypeScript {
             }
         }
 
-        public recomputeConstructSignatures() {
-            this.constructSignatureLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.ConstructSignature);
-        }
-
         public removeIndexSignature(signature: PullSignatureSymbol, invalidate = true) {
             var signatureLink: PullSymbolLink;
 
@@ -1905,10 +1877,6 @@ module TypeScript {
             if (invalidate) {
                 this.invalidate();
             }
-        }
-
-        public recomputeIndexSignatures() {
-            this.indexSignatureLinks = this.findOutgoingLinks(psl => psl.kind === SymbolLinkKind.IndexSignature);
         }
 
         public addImplementedType(interfaceType: PullTypeSymbol) {

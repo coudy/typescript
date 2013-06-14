@@ -4,7 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export var globalBindingPhase = 0;
 
     export function getPathToDecl(decl: PullDecl): PullDecl[] {
         if (!decl) {
@@ -78,8 +77,6 @@ module TypeScript {
     }
 
     export class PullSymbolBinder {
-
-        private bindingPhase = globalBindingPhase++;
 
         private functionTypeParameterCache: any = new BlockIntrinsics();
 
@@ -372,8 +369,6 @@ module TypeScript {
                 enumIndexSignature.setReturnType(this.semanticInfoChain.stringTypeSymbol);
 
                 moduleInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
-
-                moduleInstanceTypeSymbol.recomputeIndexSignatures();
             }
 
             var valueDecl = moduleContainerDecl.getValueDecl();
@@ -459,8 +454,6 @@ module TypeScript {
                     importSymbol.setContainer(parent);
                 }
             }
-
-            importSymbol.setIsBound(this.bindingPhase);
         }
 
         // classes
@@ -607,8 +600,6 @@ module TypeScript {
             if (valueDecl) {
                 valueDecl.ensureSymbolIsBound();
             }
-
-            classSymbol.setIsBound(this.bindingPhase);
         }
 
         // interfaces
@@ -1110,8 +1101,6 @@ module TypeScript {
                 parent.removeMember(previousProperty);
                 parent.addMember(variableSymbol, linkKind);
             }
-
-            variableSymbol.setIsBound(this.bindingPhase);
         }
 
         // properties
@@ -1190,8 +1179,6 @@ module TypeScript {
                     parent.addMember(propertySymbol, linkKind);
                 }
             }
-
-            propertySymbol.setIsBound(this.bindingPhase);
         }
 
         // parameters
@@ -1379,8 +1366,6 @@ module TypeScript {
 
             // add the implicit call member for this function type
             functionTypeSymbol.addCallSignature(signature);
-
-            functionSymbol.setIsBound(this.bindingPhase);
 
             var otherDecls = this.findDeclsInContext(functionDeclaration, functionDeclaration.getKind(), false);
 
@@ -1736,8 +1721,6 @@ module TypeScript {
             var parent = this.getParent(constructSignatureDeclaration, true);
             var constructorAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(constructSignatureDeclaration);
 
-            // update the construct signature list
-            parent.recomputeConstructSignatures();
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
             if (constructorAST.variableArgList) {
@@ -1783,9 +1766,6 @@ module TypeScript {
             var parent = this.getParent(callSignatureDeclaration, true);
             var callSignatureAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(callSignatureDeclaration);
 
-            // update the call signature list
-            parent.recomputeCallSignatures();
-
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
             if (callSignatureAST.variableArgList) {
@@ -1829,9 +1809,6 @@ module TypeScript {
 
         public bindIndexSignatureDeclarationToPullSymbol(indexSignatureDeclaration: PullDecl) {
             var parent = this.getParent(indexSignatureDeclaration, true);
-
-            // update the index signature list
-            parent.recomputeIndexSignatures();
 
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
 
@@ -1974,8 +1951,6 @@ module TypeScript {
 
             // add the implicit call member for this function type
             getterTypeSymbol.addCallSignature(signature);
-
-            getterSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
@@ -2080,12 +2055,10 @@ module TypeScript {
 
             // add the implicit call member for this function type
             setterTypeSymbol.addCallSignature(signature);
-
-            setterSymbol.setIsBound(this.bindingPhase);
         }
 
         // binding
-        public bindDeclToPullSymbol(decl: PullDecl, rebind = false) {
+        public bindDeclToPullSymbol(decl: PullDecl) {
 
             if (decl.isBound()) {
                 return;
@@ -2196,13 +2169,13 @@ module TypeScript {
             }
         }
 
-        public bindDeclsForUnit(filePath: string, rebind = false) {
+        public bindDeclsForUnit(filePath: string) {
             this.setUnit(filePath);
 
             var topLevelDecls = this.semanticInfo.getTopLevelDecls();
 
             for (var i = 0; i < topLevelDecls.length; i++) {
-                this.bindDeclToPullSymbol(topLevelDecls[i], rebind);
+                this.bindDeclToPullSymbol(topLevelDecls[i]);
             }
         }
     }
