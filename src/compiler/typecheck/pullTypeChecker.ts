@@ -2650,7 +2650,7 @@ module TypeScript {
             }
 
             if (typeSymbol.isArray()) {
-                this.checkTypePrivacy(declSymbol, (<PullArrayTypeSymbol>typeSymbol).getElementType(), typeCheckContext, privacyErrorReporter);
+                this.checkTypePrivacy(declSymbol, typeSymbol.getElementType(), typeCheckContext, privacyErrorReporter);
                 return;
             }
 

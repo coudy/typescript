@@ -1260,6 +1260,7 @@ module TypeScript {
         private typeParameterLinks: PullSymbolLink[] = null;
         private specializationLinks: PullSymbolLink[] = null;
         private containedByLinks: PullSymbolLink[] = null;
+        private elementType: PullTypeSymbol = null;
 
         private memberNameCache: any = null;
         private memberTypeNameCache: any = null;
@@ -1361,15 +1362,14 @@ module TypeScript {
 
         public getArrayType() { return this.arrayType; }
 
-        public getElementType(): PullTypeSymbol {
-            var arrayOfLinks = this.findOutgoingLinks(link => link.kind === SymbolLinkKind.ArrayOf);
-
-            if (arrayOfLinks.length) {
-                return <PullTypeSymbol>arrayOfLinks[0].end;
-            }
-
-            return null;
+        public getElementType(): PullTypeSymbol {            
+            return this.elementType;
         }
+
+        public setElementType(type: PullTypeSymbol) {
+            this.elementType = type;
+        }
+
         public setArrayType(arrayType: PullTypeSymbol) {
             this.arrayType = arrayType;
 
@@ -1537,7 +1537,8 @@ module TypeScript {
             return (this.typeParameterLinks && this.typeParameterLinks.length != 0) ||
                 this.hasGenericSignature ||
                 this.hasGenericMember ||
-                (this.typeArguments && this.typeArguments.length);
+                (this.typeArguments && this.typeArguments.length) ||
+                this.isArray();
         }
 
         public isFixed() {
@@ -2316,6 +2317,16 @@ module TypeScript {
         }
 
         public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
+
+            if (this.isArray()) {
+                var elementMemberName = this.elementType ?
+                    (this.elementType.isArray() || this.elementType.isNamedTypeSymbol() ?
+                    this.elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
+                    this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
+                    MemberName.create("any");
+                return MemberName.create(elementMemberName, "", "[]");
+            }
+
             if (!this.isNamedTypeSymbol()) {
                 return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
             }
@@ -2341,6 +2352,12 @@ module TypeScript {
         }
 
         public getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
+
+            if (this.isArray()) {
+                var elementMemberName = this.elementType ? this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : MemberName.create("any");
+                return MemberName.create(elementMemberName, "", "[]");
+            }
+
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
             var constructSignatures = this.getConstructSignatures();
@@ -2927,36 +2944,6 @@ module TypeScript {
         }
     }
 
-    export class PullArrayTypeSymbol extends PullTypeSymbol {
-        private elementType: PullTypeSymbol = null;
-
-        public isArray() { return true; }
-        public getElementType() { return this.elementType; }
-        public isGeneric() { return true; }
-
-        constructor() {
-            super("Array", PullElementKind.Array);
-        }
-
-        public setElementType(type: PullTypeSymbol) {
-            this.elementType = type;
-        }
-
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?:boolean) {
-            var elementMemberName = this.elementType ?
-                (this.elementType.isArray() || this.elementType.isNamedTypeSymbol() ?
-                this.elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
-                this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
-                MemberName.create("any");
-            return MemberName.create(elementMemberName, "", "[]");
-        }
-
-        public getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
-            var elementMemberName = this.elementType ? this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : MemberName.create("any");
-            return MemberName.create(elementMemberName, "", "[]");
-        }
-    }
-
     // PULLTODO: This should be a part of the resolver class
     export function specializeToArrayType(typeToReplace: PullTypeSymbol, typeToSpecializeTo: PullTypeSymbol, resolver: PullTypeResolver, context: PullTypeResolutionContext) {
 
@@ -2979,7 +2966,7 @@ module TypeScript {
         }
 
         // PULLTODO: Recursive reference bug
-        var newArrayType: PullTypeSymbol = new PullArrayTypeSymbol();
+        var newArrayType: PullTypeSymbol = new PullTypeSymbol("Array", PullElementKind.Array);
         newArrayType.addDeclaration(arrayInterfaceType.getDeclarations()[0]);
 
         typeToSpecializeTo.setArrayType(newArrayType);
@@ -3197,7 +3184,7 @@ module TypeScript {
             var newElementType: PullTypeSymbol = null;
 
             if (!context.specializingToAny) {
-                var elementType = (<PullArrayTypeSymbol>typeToSpecialize).getElementType();
+                var elementType = typeToSpecialize.getElementType();
 
                 newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context, ast);
             }
@@ -3321,7 +3308,7 @@ module TypeScript {
             nSpecializationsCreated++;
 
             newType = typeToSpecialize.isClass() ? new PullTypeSymbol(typeToSpecialize.getName(), PullElementKind.Class) :
-                                                    isArray ? new PullArrayTypeSymbol() :
+                                                    isArray ? new PullTypeSymbol("Array", PullElementKind.Array) :
                                                         typeToSpecialize.isTypeParameter() ? // watch out for replacing one tyvar with another
                                                             new PullTypeVariableSymbol(typeToSpecialize.getName(), (<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter()) :
                                                                 new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
@@ -3335,7 +3322,7 @@ module TypeScript {
         rootType.addSpecialization(newType, typeArguments);
 
         if (isArray) {
-            (<PullArrayTypeSymbol>newType).setElementType(typeArguments[0]);
+            newType.setElementType(typeArguments[0]);
             typeArguments[0].setArrayType(newType);
         }
 

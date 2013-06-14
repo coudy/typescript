@@ -870,7 +870,7 @@ module TypeScript {
             }
 
             if (type.isArray()) {
-                return this.isTypeArgumentOrWrapper((<PullArrayTypeSymbol>type).getElementType());
+                return this.isTypeArgumentOrWrapper(type.getElementType());
             }
 
             var typeArguments = type.getTypeArguments();
@@ -892,7 +892,7 @@ module TypeScript {
         }
 
         public isArrayOrEquivalent(type: PullTypeSymbol) {
-            return (type.isArray() && (<PullArrayTypeSymbol>type).getElementType()) || type == this.cachedArrayInterfaceType();
+            return (type.isArray() && type.getElementType()) || type == this.cachedArrayInterfaceType();
         }
 
         private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
@@ -3553,7 +3553,7 @@ module TypeScript {
                         contextParam = contextParams[i];
                     }
                     else if (contextParams.length && contextParams[contextParams.length - 1].getIsVarArg()) {
-                        contextParam = (<PullArrayTypeSymbol>contextParams[contextParams.length - 1].getType()).getElementType();
+                        contextParam = contextParams[contextParams.length - 1].getType().getElementType();
                     }
 
                     // use the function decl as the enclosing decl, so as to properly resolve type parameters
