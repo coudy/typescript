@@ -178,10 +178,21 @@ module TypeScript {
             this.sourceMapper = mapper;
         }
 
+        private updateLineAndColumn(s: string) {
+            var lineNumbers = TextUtilities.parseLineStarts(TextFactory.createText(s));
+            if (lineNumbers.length > 1) {
+                // There are new lines in the string, update the line and column number accordingly
+                this.emitState.line += lineNumbers.length - 1;
+                this.emitState.column = s.length - lineNumbers[lineNumbers.length - 1];
+            } else {
+                // No new lines in the string
+                this.emitState.column += s.length;
+            }
+        }
+
         public writeToOutput(s: string) {
             this.outfile.Write(s);
-            // TODO: check s for newline
-            this.emitState.column += s.length;
+            this.updateLineAndColumn(s);
         }
 
         public writeToOutputTrimmable(s: string) {
@@ -201,6 +212,7 @@ module TypeScript {
             }
             else {
                 this.outfile.WriteLine(s);
+                this.updateLineAndColumn(s);
                 this.emitState.column = 0;
                 this.emitState.line++;
             }
