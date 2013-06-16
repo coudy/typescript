@@ -999,6 +999,9 @@ module TypeScript {
         private _implementedTypes: PullTypeSymbol[] = null;
         private _extendedTypes: PullTypeSymbol[] = null;
 
+        private _typesThatExplicitlyImplementThisType: PullTypeSymbol[] = null;
+        private _typesThatExtendThisType: PullTypeSymbol[] = null;
+
         private _callSignatures: PullSignatureSymbol[] = null;
         private _constructSignatures: PullSignatureSymbol[] = null;
         private _indexSignatures: PullSignatureSymbol[] = null;
@@ -1378,6 +1381,8 @@ module TypeScript {
             if (callSignature.isGeneric()) {
                 this._hasGenericSignature = true;
             }
+
+            callSignature.setContainer(this);
         }
 
         public addConstructSignature(constructSignature: PullSignatureSymbol) {
@@ -1391,6 +1396,8 @@ module TypeScript {
             if (constructSignature.isGeneric()) {
                 this._hasGenericSignature = true;
             }
+
+            constructSignature.setContainer(this);
         }
 
         public addIndexSignature(indexSignature: PullSignatureSymbol) {
@@ -1403,6 +1410,8 @@ module TypeScript {
             if (indexSignature.isGeneric()) {
                 this._hasGenericSignature = true;
             }
+
+            indexSignature.setContainer(this);
         }
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
@@ -1436,11 +1445,17 @@ module TypeScript {
         }
 
         public addImplementedType(implementedType: PullTypeSymbol) {
+            if (!implementedType) {
+                return;
+            }
+
             if (!this._implementedTypes) {
                 this._implementedTypes = [];
             }
 
             this._implementedTypes[this._implementedTypes.length] = implementedType;
+
+            implementedType.addTypeThatExplicitlyImplementsThisType(this);
         }
 
         public getImplementedTypes(): PullTypeSymbol[]{
@@ -1452,11 +1467,17 @@ module TypeScript {
         }
 
         public addExtendedType(extendedType: PullTypeSymbol) {
+            if (!extendedType) {
+                return;
+            }
+
             if (!this._extendedTypes) {
                 this._extendedTypes = [];
             }
 
             this._extendedTypes[this._extendedTypes.length] = extendedType;
+
+            extendedType.addTypeThatExtendsThisType(this);
         }
 
         public getExtendedTypes(): PullTypeSymbol[]{
@@ -1465,6 +1486,46 @@ module TypeScript {
             }
 
             return this._extendedTypes;
+        }
+
+        public addTypeThatExtendsThisType(type: PullTypeSymbol) {
+            if (!type) {
+                return;
+            }
+
+            if (!this._typesThatExtendThisType) {
+                this._typesThatExtendThisType = [];
+            }
+
+            this._typesThatExtendThisType[this._typesThatExtendThisType.length] = type;
+        }
+
+        public getTypesThatExtendThisType(): PullTypeSymbol[]{
+            if (!this._typesThatExplicitlyImplementThisType) {
+                this._typesThatExplicitlyImplementThisType = [];
+            }
+
+            return this._typesThatExtendThisType;
+        }
+
+        public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol) {
+            if (!type) {
+                return;
+            }
+
+            if (!this._typesThatExplicitlyImplementThisType) {
+                this._typesThatExplicitlyImplementThisType = [];
+            }
+
+            this._typesThatExplicitlyImplementThisType[this._typesThatExplicitlyImplementThisType.length] = type;
+        }
+
+        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[]{
+            if (!this._typesThatExplicitlyImplementThisType) {
+                this._typesThatExplicitlyImplementThisType = [];
+            }
+
+            return this._typesThatExplicitlyImplementThisType;
         }
 
         public hasBase(potentialBase: PullTypeSymbol, origin=null) {

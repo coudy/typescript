@@ -473,15 +473,14 @@ module Services {
                     }
                 } else if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
                     var parameterComments: string[] = [];
-                    var funcContainerList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.Parameter);
-                    for (var i = 0; i < funcContainerList.length; i++) {
-                        var funcContainer = funcContainerList[i].start;
-                        var funcDocComments = this.getDocCommentArray(funcContainer);
-                        var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getDisplayName(), funcDocComments);
-                        if (paramComment != "") {
-                            parameterComments.push(paramComment);
-                        }
+
+                    var funcContainer = symbol.getContainer();
+                    var funcDocComments = this.getDocCommentArray(funcContainer);
+                    var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getDisplayName(), funcDocComments);
+                    if (paramComment != "") {
+                        parameterComments.push(paramComment);
                     }
+
                     var paramSelfComment = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
                     if (paramSelfComment != "") {
                         parameterComments.push(paramSelfComment);
@@ -490,9 +489,9 @@ module Services {
                 } else {
                     var getSymbolComments = true;
                     if (symbol.getKind() == TypeScript.PullElementKind.FunctionType) {
-                        var declarationList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.TypedAs);
+                        var declarationList = symbol.getDeclarations();
                         if (declarationList.length > 0) {
-                            docComments = this.getDocComments(declarationList[0].start);
+                            docComments = this.getDocComments(declarationList[0].getSymbol());
                             getSymbolComments = false;
                         }
                     }
@@ -500,13 +499,11 @@ module Services {
                         docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
                         if (docComments == "") {
                             if (symbol.getKind() == TypeScript.PullElementKind.CallSignature) {
-                                var callList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.CallSignature);
-                                if (callList.length == 1) {
-                                    var callTypeSymbol = <TypeScript.PullTypeSymbol>callList[0].start;
-                                    if (callTypeSymbol.getCallSignatures().length == 1) {
-                                        docComments = this.getDocComments(callTypeSymbol);
-                                    }
+                                var callTypeSymbol = symbol.getContainer();
+                                if (callTypeSymbol.getCallSignatures().length == 1) {
+                                    docComments = this.getDocComments(callTypeSymbol);
                                 }
+
                             }
                         }
                     }

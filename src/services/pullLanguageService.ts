@@ -124,7 +124,7 @@ module Services {
             var typesToSearch: TypeScript.PullTypeSymbol[];
 
             if (typeSymbol.isClass() || typeSymbol.isInterface()) {
-                typesToSearch = typeSymbol.getExtendingTypes();
+                typesToSearch = typeSymbol.getTypesThatExtendThisType();
             } 
             else if (symbol.getKind() == TypeScript.PullElementKind.Property ||
                 symbol.getKind() == TypeScript.PullElementKind.Function ||
@@ -134,7 +134,7 @@ module Services {
                 var classSymbol: TypeScript.PullTypeSymbol = declaration.getParentDecl().getSymbol().getType();
 
                 typesToSearch = [];
-                var extendingTypes = classSymbol.getExtendingTypes();
+                var extendingTypes = classSymbol.getTypesThatExtendThisType();
                 var extendedTypes = classSymbol.getExtendedTypes();
                 extendingTypes.forEach(type => {
                     var overrides = this.getOverrides(type, symbol);
