@@ -2032,6 +2032,12 @@ module TypeScript {
                         declParameterSymbol.setType(typeExprSymbol);
                     }
 
+                    // We associate the value with the function type here because we couldn't do so at biding
+                    // but need this information to get correct doc comments
+                    if (typeExprSymbol.getKind() == PullElementKind.FunctionType) {
+                        typeExprSymbol.setFunctionSymbol(declSymbol);
+                    }
+
                     // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                     // we filter out arrays, since for those we just want to know if their element type is a type parameter...
                     if ((varDecl.nodeType() === NodeType.Parameter) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {

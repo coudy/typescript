@@ -1281,6 +1281,7 @@ module TypeScript {
             if (!functionTypeSymbol) {
                 functionTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
                 functionSymbol.setType(functionTypeSymbol);
+                functionTypeSymbol.setFunctionSymbol(functionSymbol);
             }
 
             functionDeclaration.setSymbol(functionSymbol);
@@ -1360,6 +1361,7 @@ module TypeScript {
                 functionExpressionDeclaration.getName();
             var functionSymbol: PullSymbol = new PullSymbol(functionName, PullElementKind.Function);
             var functionTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
+            functionTypeSymbol.setFunctionSymbol(functionSymbol);
 
             functionSymbol.setType(functionTypeSymbol);
 
@@ -1512,6 +1514,7 @@ module TypeScript {
             if (!methodTypeSymbol) {
                 methodTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
                 methodSymbol.setType(methodTypeSymbol);
+                methodTypeSymbol.setFunctionSymbol(methodSymbol);
             }
 
             methodDeclaration.setSymbol(methodSymbol);
@@ -1881,6 +1884,7 @@ module TypeScript {
             if (!getterSymbol) {
                 getterSymbol = new PullSymbol(funcName, PullElementKind.Function);
                 getterTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
+                getterTypeSymbol.setFunctionSymbol(getterSymbol);
 
                 getterSymbol.setType(getterTypeSymbol);
 
@@ -1980,6 +1984,7 @@ module TypeScript {
             if (!setterSymbol) {
                 setterSymbol = new PullSymbol(funcName, PullElementKind.Function);
                 setterTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
+                setterTypeSymbol.setFunctionSymbol(setterSymbol);
 
                 setterSymbol.setType(setterTypeSymbol);
 

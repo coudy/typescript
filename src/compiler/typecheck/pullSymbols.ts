@@ -43,6 +43,7 @@ module TypeScript {
         private rootSymbol: PullSymbol = null;
 
         private _parentAccessorSymbol: PullSymbol = null;
+        private _enclosingSignature: PullSignatureSymbol = null;
 
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
@@ -188,6 +189,14 @@ module TypeScript {
         }
         public getIsSynthesized() { return this.isSynthesized; }
 
+        public setEnclosingSignature(signature: PullSignatureSymbol) {
+            this._enclosingSignature = signature;
+        }
+
+        public getEnclosingSignature(): PullSignatureSymbol {
+            return this._enclosingSignature;
+        }
+
         public addCacheID(cacheID: string) {
             if (!this.cachedPathIDs[cacheID]) {
                 this.cachedPathIDs[cacheID] = true;
@@ -238,8 +247,6 @@ module TypeScript {
             }
 
             this._container = containerSymbol;
-
-            containerSymbol.addContainedNonMember(this);
         }
 
         public getContainer(): PullTypeSymbol {
@@ -251,7 +258,6 @@ module TypeScript {
         }
 
         public setType(type: PullTypeSymbol) {
-
             this._type = type;
         }
 
@@ -282,8 +288,6 @@ module TypeScript {
         }
 
         public invalidate() {
-
-            this.docComments = null;
 
             this.hasBeenResolved = false;
 
@@ -624,6 +628,7 @@ module TypeScript {
         private _parameters: PullSymbol[] = null;
         private _typeParameters: PullTypeParameterSymbol[] = null;
         private _returnType: PullTypeSymbol = null;
+        private _functionType: PullTypeSymbol = null;
 
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
@@ -639,6 +644,14 @@ module TypeScript {
 
         constructor(kind: PullElementKind) {
             super("", kind);
+        }
+
+        public setFunctionType(type: PullTypeSymbol) {
+            this._functionType = type;
+        }
+
+        public getFunctionType() {
+            return this._functionType;
         }
 
         public isDefinition() { return false; }
@@ -658,6 +671,10 @@ module TypeScript {
 
             this._parameters[this._parameters.length] = parameter;
             this.hasOptionalParam = isOptional;
+
+            if (!parameter.getEnclosingSignature()) {
+                parameter.setEnclosingSignature(this); 
+            }
 
             if (!isOptional) {
                 this.nonOptionalParamCount++;
@@ -1035,6 +1052,9 @@ module TypeScript {
 
         private _constructorMethod: PullSymbol = null;
         private _hasDefaultConstructor = false;
+        
+        // TODO: Really only used to track doc comments...
+        private _functionSymbol: PullSymbol = null;
 
         public isType() { return true; }
         public isClass() {
@@ -1114,6 +1134,16 @@ module TypeScript {
 
         public setArrayType(arrayType: PullTypeSymbol) {
             this._arrayVersionOfThisType = arrayType;
+        }
+
+        public getFunctionSymbol() {
+            return this._functionSymbol;
+        }
+
+        public setFunctionSymbol(symbol: PullSymbol) {
+            if (symbol) {
+                this._functionSymbol = symbol;
+            }
         }
 
         public addContainedNonMember(nonMember: PullSymbol) {
@@ -1237,7 +1267,9 @@ module TypeScript {
                 return;
             }
 
-            typeParameter.setContainer(this);
+            if (!typeParameter.getContainer()) {
+                typeParameter.setContainer(this);
+            }
 
             if (!this._typeParameterNameCache) {
                 this._typeParameterNameCache = new BlockIntrinsics();
@@ -1390,7 +1422,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            callSignature.setContainer(this);
+            callSignature.setFunctionType(this);
         }
 
         public addConstructSignature(constructSignature: PullSignatureSymbol) {
@@ -1405,7 +1437,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            constructSignature.setContainer(this);
+            constructSignature.setFunctionType(this);
         }
 
         public addIndexSignature(indexSignature: PullSignatureSymbol) {
@@ -1419,7 +1451,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            indexSignature.setContainer(this);
+            indexSignature.setFunctionType(this);
         }
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
@@ -1709,6 +1741,12 @@ module TypeScript {
                             allMembers[allMembers.length] = extendedMember;
                         }
                     }
+                }
+            }
+
+            if (this.isContainer() && this._enclosedMemberTypes) {
+                for (var i = 0; i < this._enclosedMemberTypes.length; i++) {
+                    allMembers[allMembers.length] = this._enclosedMemberTypes[i];
                 }
             }
 

@@ -474,7 +474,7 @@ module Services {
                 } else if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
                     var parameterComments: string[] = [];
 
-                    var funcContainer = symbol.getContainer();
+                    var funcContainer = symbol.getEnclosingSignature();
                     var funcDocComments = this.getDocCommentArray(funcContainer);
                     var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getDisplayName(), funcDocComments);
                     if (paramComment != "") {
@@ -489,18 +489,26 @@ module Services {
                 } else {
                     var getSymbolComments = true;
                     if (symbol.getKind() == TypeScript.PullElementKind.FunctionType) {
-                        var declarationList = symbol.getDeclarations();
-                        if (declarationList.length > 0) {
-                            docComments = this.getDocComments(declarationList[0].getSymbol());
+                        var functionSymbol = (<TypeScript.PullTypeSymbol>symbol).getFunctionSymbol();
+
+                        if (functionSymbol) {
+                            docComments = functionSymbol.docComments || "";
                             getSymbolComments = false;
+                        }
+                        else {
+                            var declarationList = symbol.getDeclarations();
+                            if (declarationList.length > 0) {
+                                docComments = declarationList[0].getSymbol().docComments || "";
+                                getSymbolComments = false;
+                            }
                         }
                     }
                     if (getSymbolComments) {
                         docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
                         if (docComments == "") {
                             if (symbol.getKind() == TypeScript.PullElementKind.CallSignature) {
-                                var callTypeSymbol = symbol.getContainer();
-                                if (callTypeSymbol.getCallSignatures().length == 1) {
+                                var callTypeSymbol = (<TypeScript.PullSignatureSymbol>symbol).getFunctionType();
+                                if (callTypeSymbol && callTypeSymbol.getCallSignatures().length == 1) {
                                     docComments = this.getDocComments(callTypeSymbol);
                                 }
 
