@@ -640,8 +640,6 @@ module TypeScript {
             if (createdNewSymbol) {
 
                 if (parent) {
-                    var linkKind = interfaceDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
-
                     if (interfaceDecl.getFlags() & PullElementFlags.Exported) {
                         parent.addEnclosedMemberType(interfaceSymbol);
                     }

@@ -233,12 +233,20 @@ module TypeScript {
         // link methods
 
         public setContainer(containerSymbol: PullTypeSymbol) {
+            if (this.rootSymbol) {
+                return;
+            }
+
             this._container = containerSymbol;
 
             containerSymbol.addContainedNonMember(this);
         }
 
         public getContainer(): PullTypeSymbol {
+            if (this.rootSymbol) {
+                return this.rootSymbol.getContainer();
+            }
+
             return this._container;
         }
 
