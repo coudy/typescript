@@ -1416,32 +1416,59 @@ module TypeScript {
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
 
-        public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            if (!this._callSignatures) {
-                return [];
+        public getCallSignatures(collectBaseSignatures=true): PullSignatureSymbol[]{
+            var signatures: PullSignatureSymbol[] = [];
+
+            if (this._callSignatures) {
+                signatures = signatures.concat(this._callSignatures);
             }
 
-            return this._callSignatures;
+            if (collectBaseSignatures && this._extendedTypes) {
+                for (var i = 0; i < this._extendedTypes.length; i++) {
+                    signatures = signatures.concat(this._extendedTypes[i].getCallSignatures());
+                }
+            }
+
+            return signatures;
         }
 
         public hasOwnConstructSignatures() { return !!this._constructSignatures; }
 
-        public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            if (!this._constructSignatures) {
-                return [];
+        public getConstructSignatures(collectBaseSignatures=true): PullSignatureSymbol[]{
+            var signatures: PullSignatureSymbol[] = [];
+
+            if (this._constructSignatures) {
+                signatures = signatures.concat(this._constructSignatures);
             }
 
-            return this._constructSignatures;
+            // If it's a constructor type, we don't inherit construct signatures
+            // (E.g., we'd be looking at the statics on a class, where we want
+            // to inherit members, but not construct signatures
+            if (collectBaseSignatures && this._extendedTypes && !(this.getKind() == PullElementKind.ConstructorType)) {
+                for (var i = 0; i < this._extendedTypes.length; i++) {
+                    signatures = signatures.concat(this._extendedTypes[i].getConstructSignatures());
+                }
+            }
+
+            return signatures;
         }
 
         public hasOwnIndexSignatures() { return !!this._indexSignatures; }
 
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            if (!this._indexSignatures) {
-                return [];
+            var signatures: PullSignatureSymbol[] = [];
+
+            if (this._indexSignatures) {
+                signatures = signatures.concat(this._indexSignatures);
             }
 
-            return this._indexSignatures;
+            if (collectBaseSignatures && this._extendedTypes) {
+                for (var i = 0; i < this._extendedTypes.length; i++) {
+                    signatures = signatures.concat(this._extendedTypes[i].getIndexSignatures());
+                }
+            }
+
+            return signatures;
         }
 
         public addImplementedType(implementedType: PullTypeSymbol) {
