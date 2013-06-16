@@ -1433,6 +1433,10 @@ module TypeScript {
 
             if (collectBaseSignatures && this._extendedTypes) {
                 for (var i = 0; i < this._extendedTypes.length; i++) {
+                    if (this._extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+
                     signatures = signatures.concat(this._extendedTypes[i].getCallSignatures());
                 }
             }
@@ -1454,6 +1458,10 @@ module TypeScript {
             // to inherit members, but not construct signatures
             if (collectBaseSignatures && this._extendedTypes && !(this.getKind() == PullElementKind.ConstructorType)) {
                 for (var i = 0; i < this._extendedTypes.length; i++) {
+                    if (this._extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+
                     signatures = signatures.concat(this._extendedTypes[i].getConstructSignatures());
                 }
             }
@@ -1472,6 +1480,10 @@ module TypeScript {
 
             if (collectBaseSignatures && this._extendedTypes) {
                 for (var i = 0; i < this._extendedTypes.length; i++) {
+                    if (this._extendedTypes[i].hasBase(this)) {
+                        continue;
+                    }
+
                     signatures = signatures.concat(this._extendedTypes[i].getIndexSignatures());
                 }
             }
