@@ -1186,22 +1186,22 @@ module TypeScript {
             }
 
             // Remove any extends links that are not in the AST extendsList if this is the first pass after a re-bind
-            if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
-                for (var i = 0; i < baseTypeSymbols.length; i++) {
-                    var baseType = baseTypeSymbols[i];
+            //if (!typeDeclSymbol.isResolved() && !wasResolving) {
+            //    var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
+            //    for (var i = 0; i < baseTypeSymbols.length; i++) {
+            //        var baseType = baseTypeSymbols[i];
 
-                    for (var j = 0; j < extendedTypes.length; j++) {
-                        if (baseType == extendedTypes[j]) {
-                            break;
-                        }
-                    }
+            //        for (var j = 0; j < extendedTypes.length; j++) {
+            //            if (baseType == extendedTypes[j]) {
+            //                break;
+            //            }
+            //        }
 
-                    if (j == extendedTypes.length) {
-                        typeDeclSymbol.removeExtendedType(baseType);
-                    }
-                }
-            }
+            //        if (j == extendedTypes.length) {
+            //            typeDeclSymbol.removeExtendedType(baseType);
+            //        }
+            //    }
+            //}
             
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
@@ -1229,22 +1229,22 @@ module TypeScript {
             }
 
             // On the first pass after a re-binding, remove any stale implements links that are not in the AST implementsList
-            if (!typeDeclSymbol.isResolved() && !wasResolving) {
-                var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
-                for (var i = 0; i < baseTypeSymbols.length; i++) {
-                    var baseType = baseTypeSymbols[i];
+            //if (!typeDeclSymbol.isResolved() && !wasResolving) {
+            //    var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
+            //    for (var i = 0; i < baseTypeSymbols.length; i++) {
+            //        var baseType = baseTypeSymbols[i];
 
-                    for (var j = 0; j < implementedTypes.length; j++) {
-                        if (baseType == implementedTypes[j]) {
-                            break;
-                        }
-                    }
+            //        for (var j = 0; j < implementedTypes.length; j++) {
+            //            if (baseType == implementedTypes[j]) {
+            //                break;
+            //            }
+            //        }
 
-                    if (j == implementedTypes.length) {
-                        typeDeclSymbol.removeImplementedType(baseType);
-                    }
-                }
-            }
+            //        if (j == implementedTypes.length) {
+            //            typeDeclSymbol.removeImplementedType(baseType);
+            //        }
+            //    }
+            //}
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
             if (wasInBaseTypeResolution && (typeDeclAST.implementsList || typeDeclAST.extendsList)) {
@@ -2060,11 +2060,9 @@ module TypeScript {
                 else {
 
                     context.setTypeInContext(declSymbol, this.widenType(initExprSymbol.getType()));
-                    initExprSymbol.addOutgoingLink(declSymbol, SymbolLinkKind.ProvidesInferredType);
 
                     if (declParameterSymbol) {
                         context.setTypeInContext(declParameterSymbol, initExprSymbol.getType());
-                        initExprSymbol.addOutgoingLink(declParameterSymbol, SymbolLinkKind.ProvidesInferredType);
                     }
                 }
             }
@@ -2248,11 +2246,6 @@ module TypeScript {
                         if (functionSymbol) {
                             functionSymbol.getType().setHasGenericSignature();
                         }
-                    }
-
-                    // link return expressions to signature type to denote inference
-                    for (var i = 0; i < returnExpressionSymbols.length; i++) {
-                        returnExpressionSymbols[i].addOutgoingLink(signature, SymbolLinkKind.ProvidesInferredType);
                     }
                 }
             }
@@ -3587,11 +3580,6 @@ module TypeScript {
                 }
             }
 
-            // set contextual type link
-            if (assigningFunctionTypeSymbol) {
-                funcDeclSymbol.addOutgoingLink(assigningFunctionTypeSymbol, SymbolLinkKind.ContextuallyTypedAs);
-            }
-
             funcDeclSymbol.setResolved();
 
             return funcDeclSymbol;
@@ -3858,7 +3846,7 @@ module TypeScript {
                         memberSymbol.setResolved();
 
                         this.setSymbolAndDiagnosticsForAST(binex.operand1, SymbolAndDiagnostics.fromSymbol(memberSymbol), context);
-                        typeSymbol.addMember(memberSymbol, SymbolLinkKind.PublicMember);
+                        typeSymbol.addMember(memberSymbol);
                     }
 
                 }
@@ -4464,7 +4452,7 @@ module TypeScript {
                                 // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
                                 if (triedToInferTypeArgs) {
 
-                                    if (signatures[i].parametersAreFixed()) {
+                                    if (signatures[i].isFixed()) {
                                         if (signatures[i].hasGenericParameter()) {
                                             context.specializingToAny = true;
                                         }
@@ -4799,7 +4787,7 @@ module TypeScript {
 
                                     if (triedToInferTypeArgs) {
 
-                                        if (constructSignatures[i].parametersAreFixed()) {
+                                        if (constructSignatures[i].isFixed()) {
                                             if (!constructSignatures[i].hasGenericParameter()) {
                                                 resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                                             }

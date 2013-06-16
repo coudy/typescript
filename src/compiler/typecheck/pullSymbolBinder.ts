@@ -195,7 +195,7 @@ module TypeScript {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, searchKind);
                 }
                 else {
-                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedMember(modName);
+                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedNonMemberType(modName);
 
                     if (moduleContainerTypeSymbol && !(moduleContainerTypeSymbol.getKind() & searchKind)) {
                         moduleContainerTypeSymbol = null;
@@ -239,11 +239,11 @@ module TypeScript {
                             variableSymbol = parentInstanceSymbol.findMember(modName, false);
 
                             if (!variableSymbol) {
-                                variableSymbol = parentInstanceSymbol.findContainedMember(modName);
+                                variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
                             }
                         }
                         else {
-                            variableSymbol = parentInstanceSymbol.findContainedMember(modName);
+                            variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
 
                             if (!variableSymbol) {
                                 variableSymbol = parentInstanceSymbol.findMember(modName, false);
@@ -345,13 +345,11 @@ module TypeScript {
 
             if (createdNewSymbol) {
                 if (parent) {
-                    var linkKind = moduleContainerDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
-
-                    if (linkKind === SymbolLinkKind.PublicMember) {
-                        parent.addMember(moduleContainerTypeSymbol, linkKind);
+                    if (moduleContainerDecl.getFlags() & PullElementFlags.Exported) {
+                        parent.addEnclosedMemberType(moduleContainerTypeSymbol);
                     }
                     else {
-                        moduleContainerTypeSymbol.setContainer(parent);
+                        parent.addEnclosedNonMemberType(moduleContainerTypeSymbol);
                     }
                 }
             }
@@ -402,7 +400,7 @@ module TypeScript {
                 importSymbol = <PullTypeAliasSymbol>parent.findMember(declName, false);
 
                 if (!importSymbol) {
-                    importSymbol = <PullTypeAliasSymbol>parent.findContainedMember(declName);
+                    importSymbol = <PullTypeAliasSymbol>parent.findContainedNonMemberType(declName);
 
                     if (importSymbol) {
                         var declarations = importSymbol.getDeclarations();
@@ -447,10 +445,10 @@ module TypeScript {
             if (parent && !parentHadSymbol) {
 
                 if (declFlags & PullElementFlags.Exported) {
-                    parent.addMember(importSymbol, SymbolLinkKind.PublicMember);
+                    parent.addEnclosedMemberType(importSymbol);
                 }
                 else {
-                    importSymbol.setContainer(parent);
+                    parent.addEnclosedNonMemberType(importSymbol);
                 }
             }
         }
@@ -480,7 +478,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    classSymbol = <PullTypeSymbol>parent.findContainedMember(className);
+                    classSymbol = <PullTypeSymbol>parent.findContainedNonMemberType(className);
 
                     if (classSymbol && (classSymbol.getKind() & PullElementKind.Class)) {
 
@@ -526,13 +524,11 @@ module TypeScript {
             this.semanticInfo.setSymbolAndDiagnosticsForAST(classAST, SymbolAndDiagnostics.fromSymbol(classSymbol));
 
             if (parent) {
-                var linkKind = classDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
-
-                if (linkKind === SymbolLinkKind.PublicMember) {
-                    parent.addMember(classSymbol, linkKind);
+                if (classDecl.getFlags() & PullElementFlags.Exported) {
+                    parent.addEnclosedMemberType(classSymbol);
                 }
                 else {
-                    classSymbol.setContainer(parent);
+                    parent.addEnclosedNonMemberType(classSymbol);
                 }
             }
 
@@ -578,8 +574,8 @@ module TypeScript {
                 if (!typeParameter) {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
-                    classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
-                    constructorTypeSymbol.addConstructorTypeParameter(typeParameter, true);
+                    classSymbol.addTypeParameter(typeParameter);
+                    constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
                 }
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -646,11 +642,11 @@ module TypeScript {
                 if (parent) {
                     var linkKind = interfaceDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
-                    if (linkKind === SymbolLinkKind.PublicMember) {
-                        parent.addMember(interfaceSymbol, linkKind);
+                    if (interfaceDecl.getFlags() & PullElementFlags.Exported) {
+                        parent.addEnclosedMemberType(interfaceSymbol);
                     }
                     else {
-                        interfaceSymbol.setContainer(parent);
+                        parent.addEnclosedNonMemberType(interfaceSymbol);
                     }
                 }
             }
@@ -669,7 +665,7 @@ module TypeScript {
                 if (!typeParameter) {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
-                    interfaceSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                    interfaceSymbol.addTypeParameter(typeParameter);
                 }
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -729,7 +725,7 @@ module TypeScript {
                 if (!typeParameter) {
                     typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName(), false);
 
-                    objectSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                    objectSymbol.addTypeParameter(typeParameter);
                 }
                 else {
                     typeParameterDecls = typeParameter.getDeclarations();
@@ -833,7 +829,7 @@ module TypeScript {
                     variableSymbol = parent.findMember(declName, false);
                 }
                 else {
-                    variableSymbol = parent.findContainedMember(declName);
+                    variableSymbol = parent.findContainedNonMember(declName);
                 }
 
                 if (variableSymbol) {
@@ -912,9 +908,6 @@ module TypeScript {
                 parentHadSymbol = false;
             }
 
-            var replaceProperty = false;
-            var previousProperty: PullSymbol = null;
-
             if ((declFlags & PullElementFlags.ImplicitVariable) === 0) {
                 if (!variableSymbol) {
                     variableSymbol = new PullSymbol(declName, declKind);
@@ -974,11 +967,11 @@ module TypeScript {
                     }
 
                     if (classTypeSymbol && classTypeSymbol.isClass()) { // protect against duplicate declarations
-                        replaceProperty = variableSymbol && variableSymbol.getIsSynthesized();
+                        //replaceProperty = variableSymbol && variableSymbol.getIsSynthesized();
 
-                        if (replaceProperty) {
-                            previousProperty = variableSymbol;
-                        }
+                        //if (replaceProperty) {
+                        //    previousProperty = variableSymbol;
+                        //}
 
                         variableSymbol = classTypeSymbol.getConstructorMethod();
                         variableDeclaration.setSymbol(variableSymbol);
@@ -1087,15 +1080,11 @@ module TypeScript {
             if (parent && !parentHadSymbol) {
 
                 if (declFlags & PullElementFlags.Exported) {
-                    parent.addMember(variableSymbol, SymbolLinkKind.PublicMember);
+                    parent.addMember(variableSymbol);
                 }
                 else {
-                    variableSymbol.setContainer(parent);
+                    parent.addEnclosedNonMember(variableSymbol);
                 }
-            }
-            else if (replaceProperty) {
-                parent.removeMember(previousProperty);
-                parent.addMember(variableSymbol, linkKind);
             }
         }
 
@@ -1108,16 +1097,10 @@ module TypeScript {
             var isStatic = false;
             var isOptional = false;
 
-            var linkKind = SymbolLinkKind.PublicMember;
-
             var propertySymbol: PullSymbol = null;
 
             if (hasFlag(declFlags, PullElementFlags.Static)) {
                 isStatic = true;
-            }
-
-            if (hasFlag(declFlags, PullElementFlags.Private)) {
-                linkKind = SymbolLinkKind.PrivateMember;
             }
 
             if (hasFlag(declFlags, PullElementFlags.Optional)) {
@@ -1167,13 +1150,7 @@ module TypeScript {
             }
 
             if (parent && !parentHadSymbol) {
-                if (parent.isClass()) {
-                    classTypeSymbol = parent;
-                    classTypeSymbol.addMember(propertySymbol, linkKind);
-                }
-                else {
-                    parent.addMember(propertySymbol, linkKind);
-                }
+                parent.addMember(propertySymbol);
             }
         }
 
@@ -1233,7 +1210,7 @@ module TypeScript {
                     signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
 
                     if (signatureSymbol.isDefinition()) {
-                        parameterSymbol.setContainer(funcType);
+                        funcType.addEnclosedNonMember(parameterSymbol);
                     }
                 }
             }
@@ -1266,7 +1243,7 @@ module TypeScript {
                 functionSymbol = parent.findMember(funcName, false);
 
                 if (!functionSymbol) {
-                    functionSymbol = parent.findContainedMember(funcName);
+                    functionSymbol = parent.findContainedNonMember(funcName);
 
                     if (functionSymbol) {
                         var declarations = functionSymbol.getDeclarations();
@@ -1317,10 +1294,10 @@ module TypeScript {
 
             if (parent && !parentHadSymbol) {
                 if (isExported) {
-                    parent.addMember(functionSymbol, SymbolLinkKind.PublicMember);
+                    parent.addMember(functionSymbol);
                 }
                 else {
-                    functionSymbol.setContainer(parent);
+                    parent.addEnclosedNonMember(functionSymbol);
                 }
             }
 
@@ -1510,8 +1487,6 @@ module TypeScript {
             var methodSymbol: PullSymbol = null;
             var methodTypeSymbol: PullTypeSymbol = null;
 
-            var linkKind = isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember;
-
             if (parent.isClass() && isStatic) {
                 parent = parent.getConstructorMethod().getType();
             }
@@ -1552,7 +1527,7 @@ module TypeScript {
             }
 
             if (!parentHadSymbol) {
-                parent.addMember(methodSymbol, linkKind);
+                parent.addMember(methodSymbol);
             }
 
             var sigKind = PullElementKind.CallSignature;
@@ -1856,14 +1831,9 @@ module TypeScript {
 
             var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
             var isStatic = false;
-            var linkKind = SymbolLinkKind.PublicMember;
 
             if (hasFlag(declFlags, PullElementFlags.Static)) {
                 isStatic = true;
-            }
-
-            if (hasFlag(declFlags, PullElementFlags.Private)) {
-                linkKind = SymbolLinkKind.PrivateMember;
             }
 
             var parent = this.getParent(getAccessorDeclaration, true);
@@ -1927,7 +1897,7 @@ module TypeScript {
             this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST, SymbolAndDiagnostics.fromSymbol(getterSymbol));
 
             if (!parentHadSymbol) {
-                parent.addMember(accessorSymbol, linkKind);
+                parent.addMember(accessorSymbol);
             }
 
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -1960,14 +1930,9 @@ module TypeScript {
 
             var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
             var isStatic = false;
-            var linkKind = SymbolLinkKind.PublicMember;
 
             if (hasFlag(declFlags, PullElementFlags.Static)) {
                 isStatic = true;
-            }
-
-            if (hasFlag(declFlags, PullElementFlags.Private)) {
-                linkKind = SymbolLinkKind.PrivateMember;
             }
 
             var parent = this.getParent(setAccessorDeclaration, true);
@@ -2031,7 +1996,7 @@ module TypeScript {
             this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST, SymbolAndDiagnostics.fromSymbol(setterSymbol));
 
             if (!parentHadSymbol) {
-                parent.addMember(accessorSymbol, linkKind);
+                parent.addMember(accessorSymbol);
             }
 
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);

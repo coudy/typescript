@@ -819,12 +819,6 @@ module TypeScript {
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
 
-                //var diffStartTime = new Date().getTime();
-                //var diffResults = PullDeclDiffer.diffDecls(oldTopLevelDecl, oldScriptSemanticInfo, newTopLevelDecl, newScriptSemanticInfo);
-
-                //var diffEndTime = new Date().getTime();
-                //this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));
-
                 // If we havne't yet created a new resolver, clean any cached symbols
                 if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
                     this.pullTypeChecker.resolver.cleanCachedGlobals();
@@ -833,11 +827,6 @@ module TypeScript {
                 // replace the old semantic info               
                 this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
 
-                // Re-bind - we do this even if there aren't changes in the decls so as to relate the
-                // existing symbols to new decls and ASTs
-                //var innerBindStartTime = new Date().getTime();
-
-                //var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
                 this.logger.log("Cleaning symbols...");
                 var cleanStart = new Date().getTime();
                 this.semanticInfoChain.update();
@@ -849,48 +838,6 @@ module TypeScript {
                 if (this.pullTypeChecker && this.pullTypeChecker.resolver) {
                     this.pullTypeChecker.resolver.setUnitPath(oldDocument.fileName);
                 }
-
-                //var binder = new PullSymbolBinder(this.semanticInfoChain);
-                //binder.setUnit(oldDocument.fileName);
-
-                //for (var i = 0; i < topLevelDecls.length; i++) {
-                //    binder.bindDeclToPullSymbol(topLevelDecls[i], true);
-                //}
-
-                //var innerBindEndTime = new Date().getTime();
-
-                //this.logger.log("Update Script - Inner bind time: " + (innerBindEndTime - innerBindStartTime));
-                //if (diffResults.length) {
-
-                //    // propagate changes
-                //    var graphUpdater = new PullSymbolGraphUpdater(this.semanticInfoChain);
-                //    var diff: PullDeclDiff;
-
-                //    var traceStartTime = new Date().getTime();
-                //    for (var i = 0; i < diffResults.length; i++) {
-                //        diff = diffResults[i];
-
-                //        if (diff.kind === PullDeclEdit.DeclRemoved) {
-                //            graphUpdater.removeDecl(diff.oldDecl);
-                //        }
-                //        else if (diff.kind === PullDeclEdit.DeclAdded) {
-                //            graphUpdater.addDecl(diff.newDecl);
-                //            graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                //        }
-                //        else {
-                //            // PULLTODO: Other kinds of edits
-                //            graphUpdater.invalidateType(diff.newDecl.getSymbol());
-                //        }
-                //    }
-
-                //    var traceEndTime = new Date().getTime();
-
-                //    // Don't re-typecheck or re-report errors just yet
-                //    //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
-
-                //    this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
-                //    this.logger.log("Update Script - Number of diffs: " + diffResults.length);
-                //}
             } );
         }
 
