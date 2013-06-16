@@ -47,7 +47,6 @@
 ///<reference path='typecheck\pullSemanticInfo.ts' />
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
-///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='typecheck\semanticDiagnostic.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='syntaxTreeToAstVisitor.ts' />
