@@ -6,7 +6,6 @@
 
 ///<reference path='arrayUtilities.ts' />
 ///<reference path='constants.ts' />
-///<reference path='contract.ts' />
 ///<reference path='debug.ts' />
 ///<reference path='diagnosticCategory.ts' />
 ///<reference path='diagnosticInfo.ts' />

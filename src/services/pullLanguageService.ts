@@ -416,7 +416,7 @@ module Services {
             // Get the identifier information
             var path = this.getAstPathToPosition(script, genericTypeArgumentListInfo.genericIdentifer.start());
             if (path.count() == 0 || path.ast().nodeType() !== TypeScript.NodeType.Name) {
-                throw new Error("getTypeParameterSignatureAtPosition: Looking up path for identifier token did not result in an identifer.");
+                throw new Error("getTypeParameterSignatureAtPosition: " + TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Looking_up_path_for_identifier_token_did_not_result_in_an_identifer, null));
             }
 
             var symbolInformation = this.compilerState.getSymbolInformationFromPath(path, document);

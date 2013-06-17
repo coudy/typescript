@@ -136,7 +136,7 @@ var Environment = (function () {
                         message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unsupported_file_encoding, null);
                     }
                     else {
-                        message = err.message;
+                        message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Cannot_read_file_0_1, [path, err.message]);
                     }
 
                     throw new Error(message);

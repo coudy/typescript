@@ -1154,7 +1154,7 @@ module TypeScript {
                         break;
                     }
                 }
-                var overloadString = " (+ " + (foundDefinition ? len - 2 : len - 1) + " overload(s))";
+                var overloadString = getLocalizedText(DiagnosticCode._0_overload_s, [foundDefinition ? len - 2 : len - 1]);
                 lastMemberName.add(MemberName.create(overloadString));
             }
 

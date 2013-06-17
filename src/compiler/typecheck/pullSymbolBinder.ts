@@ -2161,7 +2161,7 @@ module TypeScript {
                     break;
 
                 default:
-                    throw new Error("Unrecognized type declaration");
+                    CompilerDiagnostics.assert(false, "Unrecognized type declaration");
             }
         }
 

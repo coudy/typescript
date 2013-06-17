@@ -815,7 +815,7 @@
         "category": "Error",
         "code": 2124
     },
-    "Function {0} declared a non-void return type, but has no return expression.": {
+    "Function '{0}' declared a non-void return type, but has no return expression.": {
         "category": "Error",
         "code": 2125
     },
@@ -1007,6 +1007,10 @@
         "category": "Error",
         "code": 2175
     },
+    "Function expression declared a non-void return type, but has no return expression.": {
+        "category": "Error",
+        "code": 2176
+    },
     "Type '{0}' is missing property '{1}' from type '{2}'.": {
         "category": "NoPrefix",
         "code": 4000
@@ -1107,6 +1111,10 @@
         "category": "Error",
         "code": 4024
     },
+    " (+ {0} overload(s))": {
+        "category": "Message",
+        "code": 4025
+    },
     "Current host does not support -w[atch] option.": {
         "category": "Error",
         "code": 5001
@@ -1158,5 +1166,249 @@
     "Unsupported locale: '{0}'.": {
         "category": "Error",
         "code": 5015
+    },
+    "Execution Failed.{NL}": {
+        "category": "Error",
+        "code": 5016
+    },
+    "Should not emit a type query": {
+        "category": "Error",
+        "code": 5017
+    },
+    "Should not emit a type reference": {
+        "category": "Error",
+        "code": 5018
+    },
+    "Invalid call to 'up'": {
+        "category": "Error",
+        "code": 5019
+    },
+    "Invalid call to 'down'": {
+        "category": "Error",
+        "code": 5020
+    },
+    "Base64 value '{0}' finished with a continuation bit": {
+        "category": "Error",
+        "code": 5021
+    },
+    "Key was already in table": {
+        "category": "Error",
+        "code": 5022
+    },
+    "Unknown option '{0}'": {
+        "category": "Error",
+        "code": 5023
+    },
+    "Expected {0} arguments to message, got {1} instead": {
+        "category": "Error",
+        "code": 5024
+    },
+    "Expected the message '{0}' to have {1} arguments, but it had {2}": {
+        "category": "Error",
+        "code": 5025
+    },
+    "Invalid argument: {0}. {1}": {
+        "category": "Error",
+        "code": 5026
+    },
+    "Invalid argument: {0}.": {
+        "category": "Error",
+        "code": 5027
+    },
+    "Argument out of range: {0}.": {
+        "category": "Error",
+        "code": 5028
+    },
+    "Argument null: {0}.": {
+        "category": "Error",
+        "code": 5029
+    },
+    "Operation not implemented properly by subclass.": {
+        "category": "Error",
+        "code": 5030
+    },
+    "Not yet implemented.": {
+        "category": "Error",
+        "code": 5031
+    },
+    "Invalid operation: {0}": {
+        "category": "Error",
+        "code": 5032
+    },
+    "Invalid operation.": {
+        "category": "Error",
+        "code": 5033
+    },
+    "Couldn't delete file '{0}'": {
+        "category": "Error",
+        "code": 5034
+    },
+    "Couldn't create directory '{0}'": {
+        "category": "Error",
+        "code": 5035
+    },
+    "Error while executing file '{0}': ": {
+        "category": "Error",
+        "code": 5036
+    },
+    "Concatenate and emit output to single file | Redirect output structure to the directory": {
+        "category": "Message",
+        "code": 6000
+    },
+    "Generates corresponding .map file": {
+        "category": "Message",
+        "code": 6001
+    },
+    "Writes the full path of map file in the generated js file": {
+        "category": "Message",
+        "code": 6002
+    },
+    "Generates corresponding .d.ts file": {
+        "category": "Message",
+        "code": 6003
+    },
+    "Watch input files": {
+        "category": "Message",
+        "code": 6004
+    },
+    "Execute the script after compilation": {
+        "category": "Message",
+        "code": 6005
+    },
+    "Minimize whitespace": {
+        "category": "Message",
+        "code": 6006
+    },
+    "Propagate constants to emitted code": {
+        "category": "Message",
+        "code": 6007
+    },
+    "Emit comments to output": {
+        "category": "Message",
+        "code": 6008
+    },
+    "Skip resolution and preprocessing": {
+        "category": "Message",
+        "code": 6009
+    },
+    "Print debug output": {
+        "category": "Message",
+        "code": 6010
+    },
+    "Do not include a default lib.d.ts with global declarations": {
+        "category": "Message",
+        "code": 6011
+    },
+    "Gather diagnostic info about the compilation process": {
+        "category": "Message",
+        "code": 6012
+    },
+    "Typecheck each file as an update on the first": {
+        "category": "Message",
+        "code": 6013
+    },
+    "Specify ECMAScript target version: \"ES3\" (default), or \"ES5\"": {
+        "category": "Message",
+        "code": 6014
+    },
+    "Specify module code generation: \"commonjs\" (default) or \"amd\"": {
+        "category": "Message",
+        "code": 6015
+    },
+    "Print this message": {
+        "category": "Message",
+        "code": 6016
+    },
+    "Force file resolution to be case sensitive": {
+        "category": "Message",
+        "code": 6017
+    },
+    "Print the compiler's version: {0}": {
+        "category": "Message",
+        "code": 6018
+    },
+    "Allow use of deprecated \"bool\" type": {
+        "category": "Message",
+        "code": 6019
+    },
+    "Allow use of deprecated \"module\" keyword when referencing an external module": {
+        "category": "Message",
+        "code": 6020
+    },
+    "Specify locale for errors and messages. For example 'en' or 'ja-jp'": {
+        "category": "Message",
+        "code": 6021
+    },
+    "Syntax:   {0}": {
+        "category": "Message",
+        "code": 6022
+    },
+    "options": {
+        "category": "Message",
+        "code": 6023
+    },
+    "file": {
+        "category": "Message",
+        "code": 6024
+    },
+    "Examples: {0}": {
+        "category": "Message",
+        "code": 6025
+    },
+    "Options:": {
+        "category": "Message",
+        "code": 6026
+    },
+    "Insert command line options and files from a file.": {
+        "category": "Message",
+        "code": 6027
+    },
+    "Version {0}": {
+        "category": "Message",
+        "code": 6028
+    },
+    "Insert command line options and files from a file.": {
+        "category": "Message",
+        "code": 6029
+    },
+    "Use the '{0}' flag to see options": {
+        "category": "Message",
+        "code": 6030
+    },
+    "{NL}Recompiling ({0}):": {
+        "category": "Message",
+        "code": 6031
+    },
+    "STRING": {
+        "category": "Message",
+        "code": 6032
+    },
+    "KIND": {
+        "category": "Message",
+        "code": 6033
+    },
+    "FILE|DIRECTORY": {
+        "category": "Message",
+        "code": 6034
+    },
+    "VERSION": {
+        "category": "Message",
+        "code": 6035
+    },
+    "This version of the Javascript runtime doesn't support the '{0}' function.": {
+        "category": "Error",
+        "code": 7000
+    },
+    "Looking up path for identifier token did not result in an identifer.": {
+        "category": "Error",
+        "code": 7001
+    },
+    "Unknown rule": {
+        "category": "Error",
+        "code": 7002
+    },
+    "Invalid line number ({0})": {
+        "category": "Error",
+        "code": 7003
     },
 }
