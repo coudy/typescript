@@ -754,7 +754,8 @@ module TypeScript {
             var createDeclsStartTime = new Date().getTime();
 
             var fileNames = this.fileNameToDocument.getAllKeys();
-            for (var i = 0, n = fileNames.length; i < n; i++) {
+            var n = fileNames.length;
+            for (var i = 0; i < n; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileName);
                 var semanticInfo = new SemanticInfo(fileName);

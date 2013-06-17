@@ -2840,11 +2840,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            // We don't want to cache symbols of type 'any', in case we need to contextually
-            // type the symbols again later on
-            if (!foundCached && !this.isAnyOrEquivalent(nameSymbol.getType())) {
-                this.setSymbolForAST(nameAST, nameSymbol, context);
-            }
+            this.setSymbolForAST(nameAST, nameSymbol, context);
 
             return nameSymbol;
         }
@@ -2897,7 +2893,10 @@ module TypeScript {
                 }
             }
 
-            // PERFREVIEW: What to do about alias symbol
+            if (aliasSymbol) {
+                this.currentUnit.setAliasSymbolForAST(nameAST, aliasSymbol);
+            }
+
             return nameSymbol;
         }
 
@@ -2913,15 +2912,8 @@ module TypeScript {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
             }
 
-            // Associate the result with both the dotted expression and the name on the right.
-            // TODO(cyrusn): We should not be associating the result with anything but the node
-            // passed in.  A higher layer should be responsible for mapping between nodes.
-            // Also, we don't want to cache symbols of type 'any', in case we need to contextually
-            // type the symbols again later on
-            if (!foundCached && !this.isAnyOrEquivalent(symbol.getType())) {
-                this.setSymbolForAST(dottedNameAST, symbol, context);
-                this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
-            }
+            this.setSymbolForAST(dottedNameAST, symbol, context);
+            this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
 
             return symbol;
         }
@@ -4239,15 +4231,22 @@ module TypeScript {
         }
 
         public resolveInvocationExpression(callEx: InvocationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
-            if (additionalResults) {
-                return this.computeInvocationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
-            }
-
             var symbol = this.getSymbolForAST(callEx);
+            var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
 
             if (!symbol || !symbol.isResolved()) {
-                symbol = this.computeInvocationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
+                symbol = this.computeInvocationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
                 this.setSymbolForAST(callEx, symbol, context);
+                this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
+            }
+            else {
+                if (additionalResults && callResolutionData && (callResolutionData != additionalResults)) {
+                    additionalResults.actualParametersContextTypeSymbols = callResolutionData.actualParametersContextTypeSymbols;
+                    additionalResults.candidateSignature = callResolutionData.candidateSignature;
+                    additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
+                    additionalResults.targetSymbol = callResolutionData.targetSymbol;
+                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
+                }
             }
 
             return symbol;
@@ -4597,15 +4596,22 @@ module TypeScript {
         }
 
         public resolveObjectCreationExpression(callEx: ObjectCreationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
-            if (additionalResults) {
-                return this.computeObjectCreationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
-            }
-
             var symbol = this.getSymbolForAST(callEx);
-            if (!symbol || !symbol.isResolved()) {
+            var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
 
-                symbol = this.computeObjectCreationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, null);
+            if (!symbol || !symbol.isResolved()) {
+                symbol = this.computeObjectCreationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
                 this.setSymbolForAST(callEx, symbol, context);
+                this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
+            }
+            else {
+                if (additionalResults && callResolutionData && (callResolutionData != additionalResults)) {
+                    additionalResults.actualParametersContextTypeSymbols = callResolutionData.actualParametersContextTypeSymbols;
+                    additionalResults.candidateSignature = callResolutionData.candidateSignature;
+                    additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
+                    additionalResults.targetSymbol = callResolutionData.targetSymbol;
+                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
+                }
             }
 
             return symbol;

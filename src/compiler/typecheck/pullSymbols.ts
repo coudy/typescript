@@ -1028,8 +1028,11 @@ module TypeScript {
         private _typesThatExtendThisType: PullTypeSymbol[] = null;
 
         private _callSignatures: PullSignatureSymbol[] = null;
+        private _allCallSignatures: PullSignatureSymbol[] = null;
         private _constructSignatures: PullSignatureSymbol[] = null;
+        private _allConstructSignatures: PullSignatureSymbol[] = null;
         private _indexSignatures: PullSignatureSymbol[] = null;
+        private _allIndexSignatures: PullSignatureSymbol[] = null;
 
         private _elementType: PullTypeSymbol = null;
 
@@ -1456,7 +1459,16 @@ module TypeScript {
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
 
-        public getCallSignatures(collectBaseSignatures=true): PullSignatureSymbol[]{
+        public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
+
+            if (!collectBaseSignatures) {
+                return this._callSignatures || [];
+            }
+
+            if (this._allCallSignatures) {
+                return this._allCallSignatures;
+            }
+
             var signatures: PullSignatureSymbol[] = [];
 
             if (this._callSignatures) {
@@ -1473,12 +1485,19 @@ module TypeScript {
                 }
             }
 
+            this._allCallSignatures = signatures;
+
             return signatures;
         }
 
         public hasOwnConstructSignatures() { return !!this._constructSignatures; }
 
-        public getConstructSignatures(collectBaseSignatures=true): PullSignatureSymbol[]{
+        public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
+
+            if (!collectBaseSignatures) {
+                return this._constructSignatures || [];
+            }
+
             var signatures: PullSignatureSymbol[] = [];
 
             if (this._constructSignatures) {
@@ -1504,6 +1523,15 @@ module TypeScript {
         public hasOwnIndexSignatures() { return !!this._indexSignatures; }
 
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
+
+            if (!collectBaseSignatures) {
+                return this._indexSignatures || [];
+            }
+
+            if (this._allIndexSignatures) {
+                return this._allIndexSignatures;
+            }
+
             var signatures: PullSignatureSymbol[] = [];
 
             if (this._indexSignatures) {
@@ -1519,6 +1547,8 @@ module TypeScript {
                     signatures = signatures.concat(this._extendedTypes[i].getIndexSignatures());
                 }
             }
+
+            this._allIndexSignatures = signatures;
 
             return signatures;
         }

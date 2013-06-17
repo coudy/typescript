@@ -28,10 +28,16 @@ module TypeScript {
             Collections.createHashTable<number, PullDecl>(Collections.DefaultHashTableCapacity, k => k);
 
         private astSymbolMap: Collections.HashTable<number, PullSymbol> =
+        Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
+
+        private astAliasSymbolMap: Collections.HashTable<number, PullSymbol> =
             Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
 
         private symbolASTMap: Collections.HashTable<number, AST> =
             Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);
+
+        private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
+            Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
@@ -106,6 +112,14 @@ module TypeScript {
             return this.symbolASTMap.get(symbol.getSymbolID());
         }
 
+        public setAliasSymbolForAST(ast: AST, symbol: PullSymbol): void {
+            this.astAliasSymbolMap.set(ast.getID(), symbol);
+        }
+
+        public getAliasSymbolForAST(ast: IAST): PullSymbol {
+            return <PullSymbol>this.astAliasSymbolMap.get(ast.getID());
+        }
+
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
             return <ISyntaxElement> this.symbolSyntaxElementMap.read(symbol.getSymbolID().toString());
         }
@@ -117,6 +131,16 @@ module TypeScript {
         public setSymbolForSyntaxElement(syntaxElement: ISyntaxElement, symbol: PullSymbol) {
             this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
+        }
+
+        public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
+            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.getID());
+        }
+
+        public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
+            if (callResolutionData) {
+                this.astCallResolutionDataMap.set(ast.getID(), callResolutionData);
+            }
         }
 
         public addDynamicModuleImport(importSymbol: PullTypeAliasSymbol) {
@@ -503,6 +527,16 @@ module TypeScript {
             if (unit) {
                 unit.setSymbolForAST(ast, symbol);
             }
+        }
+
+        public getAliasSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
+            var unit = <SemanticInfo>this.unitCache[unitPath];
+
+            if (unit) {
+                return unit.getAliasSymbolForAST(ast);
+            }
+
+            return null;
         }
 
         public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {

@@ -1169,10 +1169,14 @@ module TypeScript {
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 this.setTypeCheckerUnit(this.document.fileName);
-                var pullSymbol = this.resolvingContext.resolvingTypeReference
-                    ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
-                    : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
-                var pullSymbolAlias = null; // PERFREVIEW: pullSymbol.symbolAlias;
+                var pullSymbol = this.semanticInfoChain.getSymbolForAST(name, this.document.fileName);
+
+                if (!pullSymbol) {
+                    pullSymbol = this.resolvingContext.resolvingTypeReference
+                        ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
+                        : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
+                }
+                var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
                 var pullSymbolKind = pullSymbol.getKind();
                 var isLocalAlias = pullSymbolAlias && (pullSymbolAlias.getDeclarations()[0].getParentDecl() == this.getEnclosingDecl());
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
