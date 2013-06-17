@@ -709,6 +709,7 @@ module Services {
             }
 
             if (symbolKind != TypeScript.PullElementKind.Property &&
+                symbolKind != TypeScript.PullElementKind.EnumMember &&
                 symbolKind != TypeScript.PullElementKind.Method &&
                 symbolKind != TypeScript.PullElementKind.TypeParameter &&
                 !symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
@@ -1113,18 +1114,26 @@ module Services {
             return false;
         }
 
-        private isModule(symbol: TypeScript.PullSymbol) {
-            var declarations = symbol.getDeclarations();
-            for (var i = 0; i < declarations.length; i++) {
-                var declKind = declarations[i].getKind();
-                if (declKind == TypeScript.PullElementKind.Container) {
-                    return true;
-                } else if (declKind == TypeScript.PullElementKind.Variable && declarations[i].getFlags() & TypeScript.PullElementFlags.InitializedModule) {
-                    return true;
+        private getModuleOrEnumKind(symbol: TypeScript.PullSymbol) {
+            if (symbol) {
+                var declarations = symbol.getDeclarations();
+                for (var i = 0; i < declarations.length; i++) {
+                    var declKind = declarations[i].getKind();
+                    if (declKind == TypeScript.PullElementKind.Container) {
+                        return ScriptElementKind.moduleElement;
+                    } else if (declKind == TypeScript.PullElementKind.Enum) {
+                        return ScriptElementKind.enumElement;
+                    } else if (declKind == TypeScript.PullElementKind.Variable) {
+                        var declFlags = declarations[i].getFlags();
+                        if (declFlags & TypeScript.PullElementFlags.InitializedModule) {
+                            return ScriptElementKind.moduleElement;
+                        } else if (declFlags & TypeScript.PullElementFlags.InitializedEnum) {
+                            return ScriptElementKind.enumElement;
+                        }
+                    }
                 }
             }
-
-            return false;
+            return ScriptElementKind.unknown;
         }
 
         private isDynamicModule(symbol: TypeScript.PullSymbol) {
@@ -1208,8 +1217,9 @@ module Services {
                     case TypeScript.PullElementKind.Enum:
                         return ScriptElementKind.enumElement;
                     case TypeScript.PullElementKind.Variable:
-                        if (symbol && this.isModule(symbol)) {
-                            return ScriptElementKind.moduleElement;
+                        var scriptElementKind = this.getModuleOrEnumKind(symbol);
+                        if (scriptElementKind != ScriptElementKind.unknown) {
+                            return scriptElementKind;
                         }
                         return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
                     case TypeScript.PullElementKind.Parameter:
