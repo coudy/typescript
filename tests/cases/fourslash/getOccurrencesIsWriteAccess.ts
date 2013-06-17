@@ -23,5 +23,5 @@ var firstRange = test.ranges()[0];
 goTo.position(firstRange.start, firstRange.fileName);
 
 test.ranges().forEach((range) => {
-    verify.occurancesAtPositionContains(range, range.marker.data.isWriteAccess);
+    verify.occurrencesAtPositionContains(range, range.marker.data.isWriteAccess);
 });

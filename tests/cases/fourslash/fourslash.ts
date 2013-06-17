@@ -287,8 +287,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
         }
 
-        public occurancesAtPositionContains(range: Range, isWriteAccess?: boolean) {
-            FourSlash.currentTestState.verifyOccurancesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
+        public occurrencesAtPositionContains(range: Range, isWriteAccess?: boolean) {
+            FourSlash.currentTestState.verifyOccurrencesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
         }
     }
    
