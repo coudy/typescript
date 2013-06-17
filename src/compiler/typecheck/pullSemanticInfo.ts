@@ -27,8 +27,8 @@ module TypeScript {
         private astDeclMap: Collections.HashTable<number, PullDecl> =
             Collections.createHashTable<number, PullDecl>(Collections.DefaultHashTableCapacity, k => k);
 
-        private astSymbolMap: Collections.HashTable<number, SymbolAndDiagnostics<any>> =
-            Collections.createHashTable<number, SymbolAndDiagnostics<any>>(Collections.DefaultHashTableCapacity, k => k);
+        private astSymbolMap: Collections.HashTable<number, PullSymbol> =
+            Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
 
         private symbolASTMap: Collections.HashTable<number, AST> =
             Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);
@@ -57,7 +57,7 @@ module TypeScript {
             return this.hasBeenTypeChecked;
         }
         public invalidate() {
-            this.astSymbolMap = Collections.createHashTable<number, SymbolAndDiagnostics<any>>(Collections.DefaultHashTableCapacity, k => k);
+            this.astSymbolMap = Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
             this.symbolASTMap = Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);            
             //this.hasBeenTypeChecked = false;
         }
@@ -93,13 +93,13 @@ module TypeScript {
             this.declASTMap.set(decl, ast);
         }
 
-        public setSymbolAndDiagnosticsForAST<TSymbol extends PullSymbol>(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<TSymbol>): void {
-            this.astSymbolMap.set(ast.getID(), <SymbolAndDiagnostics<any>>symbolAndDiagnostics);
-            this.symbolASTMap.set(symbolAndDiagnostics.symbol.getSymbolID(), ast);
+        public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
+            this.astSymbolMap.set(ast.getID(), symbol);
+            this.symbolASTMap.set(symbol.getSymbolID(), ast);
         }
 
-        public getSymbolAndDiagnosticsForAST(ast: IAST): SymbolAndDiagnostics<PullSymbol> {
-            return <SymbolAndDiagnostics<PullSymbol>>this.astSymbolMap.get(ast.getID());
+        public getSymbolForAST(ast: IAST): PullSymbol {
+            return <PullSymbol>this.astSymbolMap.get(ast.getID());
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
@@ -477,11 +477,11 @@ module TypeScript {
             return null;
         }
 
-        public getSymbolAndDiagnosticsForAST(ast: IAST, unitPath: string): SymbolAndDiagnostics<PullSymbol> {
+        public getSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
-                return unit.getSymbolAndDiagnosticsForAST(ast);
+                return unit.getSymbolForAST(ast);
             }
 
             return null;
@@ -497,11 +497,11 @@ module TypeScript {
             return null;
         }
 
-        public setSymbolAndDiagnosticsForAST(ast: AST, symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, unitPath: string): void {
+        public setSymbolForAST(ast: AST, symbol: PullSymbol, unitPath: string): void {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
-                unit.setSymbolAndDiagnosticsForAST(ast, symbolAndDiagnostics);
+                unit.setSymbolForAST(ast, symbol);
             }
         }
 

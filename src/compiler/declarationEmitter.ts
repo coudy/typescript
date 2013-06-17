@@ -147,7 +147,7 @@ module TypeScript {
             if (container.nodeType() === NodeType.ModuleDeclaration) {
                 if (!hasFlag(pullDecl.getFlags(), PullElementFlags.Exported)) {
                     var start = new Date().getTime();
-                    var declSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(declAST, this.fileName).symbol;
+                    var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST, this.fileName);
                     var result = declSymbol && declSymbol.isExternallyVisible();
                     TypeScript.declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
 
@@ -476,7 +476,7 @@ module TypeScript {
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
 
             var start = new Date().getTime();
-            var funcSymbol = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(funcDecl, this.fileName).symbol;
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
             var funcTypeSymbol = funcSymbol.getType();
@@ -604,10 +604,10 @@ module TypeScript {
 
         public emitBaseExpression(bases: ASTList, index: number) {
             var start = new Date().getTime();
-            var baseTypeAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(bases.members[index], this.fileName);
+            var baseTypeAndDiagnostics = this.semanticInfoChain.getSymbolForAST(bases.members[index], this.fileName);
             TypeScript.declarationEmitGetBaseTypeTime += new Date().getTime() - start;
 
-            var baseType = baseTypeAndDiagnostics && <PullTypeSymbol>baseTypeAndDiagnostics.symbol;
+            var baseType = baseTypeAndDiagnostics && <PullTypeSymbol>baseTypeAndDiagnostics;
             this.emitTypeSignature(baseType);
         }
 

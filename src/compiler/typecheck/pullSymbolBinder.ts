@@ -324,8 +324,8 @@ module TypeScript {
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(moduleAST.name, SymbolAndDiagnostics.fromSymbol(moduleContainerTypeSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(moduleAST, SymbolAndDiagnostics.fromSymbol(moduleContainerTypeSymbol));
+            this.semanticInfo.setSymbolForAST(moduleAST.name, moduleContainerTypeSymbol);
+            this.semanticInfo.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
 
             // If we have an enum with more than one declaration, then this enum's first element
             // must have an initializer.
@@ -440,7 +440,7 @@ module TypeScript {
             importSymbol.addDeclaration(importDeclaration);
             importDeclaration.setSymbol(importSymbol);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(importDeclAST, SymbolAndDiagnostics.fromSymbol(importSymbol));
+            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
 
             if (parent && !parentHadSymbol) {
 
@@ -520,8 +520,8 @@ module TypeScript {
 
             classDecl.setSymbol(classSymbol);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(classAST.name, SymbolAndDiagnostics.fromSymbol(classSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(classAST, SymbolAndDiagnostics.fromSymbol(classSymbol));
+            this.semanticInfo.setSymbolForAST(classAST.name, classSymbol);
+            this.semanticInfo.setSymbolForAST(classAST, classSymbol);
 
             if (parent) {
                 if (classDecl.getFlags() & PullElementFlags.Exported) {
@@ -704,7 +704,7 @@ module TypeScript {
             objectSymbol.addDeclaration(objectDecl);
             objectDecl.setSymbol(objectSymbol);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(objectSymbolAST, SymbolAndDiagnostics.fromSymbol(objectSymbol));
+            this.semanticInfo.setSymbolForAST(objectSymbolAST, objectSymbol);
 
             var childDecls = objectDecl.getChildDecls();
 
@@ -748,7 +748,7 @@ module TypeScript {
 
             constructorTypeDeclaration.setSymbol(constructorTypeSymbol);
             constructorTypeSymbol.addDeclaration(constructorTypeDeclaration);
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(constructorTypeAST, SymbolAndDiagnostics.fromSymbol(constructorTypeSymbol));
+            this.semanticInfo.setSymbolForAST(constructorTypeAST, constructorTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
@@ -915,8 +915,8 @@ module TypeScript {
                 variableSymbol.addDeclaration(variableDeclaration);
                 variableDeclaration.setSymbol(variableSymbol);
 
-                this.semanticInfo.setSymbolAndDiagnosticsForAST(varDeclAST.id, SymbolAndDiagnostics.fromSymbol(variableSymbol));
-                this.semanticInfo.setSymbolAndDiagnosticsForAST(varDeclAST, SymbolAndDiagnostics.fromSymbol(variableSymbol));
+                this.semanticInfo.setSymbolForAST(varDeclAST.id, variableSymbol);
+                this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
             }
             else if (!parentHadSymbol) {
 
@@ -1140,8 +1140,8 @@ module TypeScript {
             propertySymbol.addDeclaration(propertyDeclaration);
             propertyDeclaration.setSymbol(propertySymbol);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(propDeclAST.id, SymbolAndDiagnostics.fromSymbol(propertySymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(propDeclAST, SymbolAndDiagnostics.fromSymbol(propertySymbol));
+            this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
+            this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
 
             if (isOptional) {
                 propertySymbol.setIsOptional();
@@ -1288,8 +1288,8 @@ module TypeScript {
             functionSymbol.addDeclaration(functionDeclaration);
             functionTypeSymbol.addDeclaration(functionDeclaration);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST.name, SymbolAndDiagnostics.fromSymbol(functionSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST, SymbolAndDiagnostics.fromSymbol(functionSymbol));
+            this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
+            this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
 
             if (parent && !parentHadSymbol) {
                 if (isExported) {
@@ -1370,9 +1370,9 @@ module TypeScript {
             functionTypeSymbol.addDeclaration(functionExpressionDeclaration);
 
             if (funcExpAST.name) {
-                this.semanticInfo.setSymbolAndDiagnosticsForAST(funcExpAST.name, SymbolAndDiagnostics.fromSymbol(functionSymbol));
+                this.semanticInfo.setSymbolForAST(funcExpAST.name, functionSymbol);
             }
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcExpAST, SymbolAndDiagnostics.fromSymbol(functionSymbol));
+            this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
@@ -1426,7 +1426,7 @@ module TypeScript {
 
             functionTypeDeclaration.setSymbol(functionTypeSymbol);
             functionTypeSymbol.addDeclaration(functionTypeDeclaration);
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcTypeAST, SymbolAndDiagnostics.fromSymbol(functionTypeSymbol));
+            this.semanticInfo.setSymbolForAST(funcTypeAST, functionTypeSymbol);
 
             var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -1520,8 +1520,8 @@ module TypeScript {
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
             methodTypeSymbol.addDeclaration(methodDeclaration);
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(methodAST.name, SymbolAndDiagnostics.fromSymbol(methodSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(methodAST, SymbolAndDiagnostics.fromSymbol(methodSymbol));
+            this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
+            this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
 
             if (isOptional) {
                 methodSymbol.setIsOptional();
@@ -1656,7 +1656,7 @@ module TypeScript {
             constructorSymbol.addDeclaration(constructorDeclaration);
             constructorTypeSymbol.addDeclaration(constructorDeclaration);
             constructorSymbol.setIsSynthesized(false);
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(constructorAST, SymbolAndDiagnostics.fromSymbol(constructorSymbol));
+            this.semanticInfo.setSymbolForAST(constructorAST, constructorSymbol);
 
             // add a call signature to the constructor method, and a construct signature to the parent class type
             var constructSignature = isSignature ? new PullSignatureSymbol(PullElementKind.ConstructSignature) : new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
@@ -1729,7 +1729,7 @@ module TypeScript {
 
             this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(constructSignatureDeclaration), null, constructSignature);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(this.semanticInfo.getASTForDecl(constructSignatureDeclaration), SymbolAndDiagnostics.fromSymbol(constructSignature));
+            this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(constructSignatureDeclaration), constructSignature);
 
             parent.addConstructSignature(constructSignature);
         }
@@ -1774,7 +1774,7 @@ module TypeScript {
 
             this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(callSignatureDeclaration), null, callSignature);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(this.semanticInfo.getASTForDecl(callSignatureDeclaration), SymbolAndDiagnostics.fromSymbol(callSignature));
+            this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(callSignatureDeclaration), callSignature);
 
             parent.addCallSignature(callSignature);
         }
@@ -1814,7 +1814,7 @@ module TypeScript {
 
             this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(indexSignatureDeclaration), null, indexSignature);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(this.semanticInfo.getASTForDecl(indexSignatureDeclaration), SymbolAndDiagnostics.fromSymbol(indexSignature));
+            this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
             parent.addIndexSignature(indexSignature);
         }
@@ -1895,8 +1895,8 @@ module TypeScript {
             accessorSymbol.addDeclaration(getAccessorDeclaration);
             getterSymbol.addDeclaration(getAccessorDeclaration);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST.name, SymbolAndDiagnostics.fromSymbol(getterSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST, SymbolAndDiagnostics.fromSymbol(getterSymbol));
+            this.semanticInfo.setSymbolForAST(funcDeclAST.name, getterSymbol);
+            this.semanticInfo.setSymbolForAST(funcDeclAST, getterSymbol);
 
             if (!parentHadSymbol) {
                 parent.addMember(accessorSymbol);
@@ -1995,8 +1995,8 @@ module TypeScript {
             accessorSymbol.addDeclaration(setAccessorDeclaration);
             setterSymbol.addDeclaration(setAccessorDeclaration);
 
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST.name, SymbolAndDiagnostics.fromSymbol(setterSymbol));
-            this.semanticInfo.setSymbolAndDiagnosticsForAST(funcDeclAST, SymbolAndDiagnostics.fromSymbol(setterSymbol));
+            this.semanticInfo.setSymbolForAST(funcDeclAST.name, setterSymbol);
+            this.semanticInfo.setSymbolForAST(funcDeclAST, setterSymbol);
 
             if (!parentHadSymbol) {
                 parent.addMember(accessorSymbol);

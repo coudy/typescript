@@ -115,7 +115,7 @@ module TypeScript {
         }
 
         public setUnit(unitPath: string) {
-            this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
+            this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath, true);
         }
 
         private getScriptDecl(fileName: string): PullDecl {
@@ -450,19 +450,8 @@ module TypeScript {
             }
         }
 
-        private reportDiagnostics(symbolAndDiagnostics: SymbolAndDiagnostics<PullSymbol>, enclosingDecl: PullDecl): void {
-            if (symbolAndDiagnostics && symbolAndDiagnostics.diagnostics) {
-                for (var i = 0, n = symbolAndDiagnostics.diagnostics.length; i < n; i++) {
-                    this.context.postDiagnostic(symbolAndDiagnostics.diagnostics[i], enclosingDecl, /*addToDecl:*/ true);
-                }
-            }
-        }
-
         private resolveSymbolAndReportDiagnostics(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl): PullSymbol {
-            var symbolAndDiagnostics = this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context);
-
-            this.reportDiagnostics(symbolAndDiagnostics, enclosingDecl);
-            return symbolAndDiagnostics && symbolAndDiagnostics.symbol;
+            return this.resolver.resolveAST(ast, inContextuallyTypedAssignment, enclosingDecl, this.context);
         }
 
         // variable and argument declarations
@@ -1777,9 +1766,8 @@ module TypeScript {
             var inSuperConstructorCall = (callExpression.target.nodeType() === NodeType.SuperExpression);
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultTypeAndDiagnostics = this.resolver.resolveInvocationExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
-            this.reportDiagnostics(resultTypeAndDiagnostics, enclosingDecl);
-            var resultType = resultTypeAndDiagnostics.symbol.getType();
+            var resultType = <PullTypeSymbol>this.resolver.resolveInvocationExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
+            //this.reportDiagnostics(resultTypeAndDiagnostics, enclosingDecl);
 
             // Type check the type arguments
             this.typeCheckAST(callExpression.typeArguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -1837,10 +1825,8 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var callResolutionData = new PullAdditionalCallResolutionData();
-            var resultAndDiagnostics = this.resolver.resolveObjectCreationExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
-            this.reportDiagnostics(resultAndDiagnostics, typeCheckContext.getEnclosingDecl());
-
-            var result = resultAndDiagnostics.symbol.getType();
+            var resultType = <PullTypeSymbol>this.resolver.resolveObjectCreationExpression(callExpression, false, enclosingDecl, this.context, callResolutionData);
+            //this.reportDiagnostics(resultAndDiagnostics, typeCheckContext.getEnclosingDecl());
 
             this.typeCheckAST(callExpression.target, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
 
@@ -1866,7 +1852,7 @@ module TypeScript {
                 }
             }
 
-            return result;
+            return resultType;
         }
 
         // Type assertion expressions 
@@ -2162,8 +2148,7 @@ module TypeScript {
         }
 
         private typeCheckFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
-            var funcDeclSymbolAndDiagnostics = this.resolver.getSymbolAndDiagnosticsForAST(funcDeclAST);
-            var funcDeclSymbol = funcDeclSymbolAndDiagnostics && <PullTypeSymbol>funcDeclSymbolAndDiagnostics.symbol;
+            var funcDeclSymbol = this.resolver.getSymbolForAST(funcDeclAST);
             if (!funcDeclSymbol) {
                 funcDeclSymbol = <PullTypeSymbol>this.resolver.resolveFunctionTypeSignature(<FunctionDeclaration>funcDeclAST, enclosingDecl, this.context);
             }
@@ -2173,7 +2158,7 @@ module TypeScript {
             this.typeCheckAST(funcDeclAST.arguments, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
             typeCheckContext.popEnclosingDecl();
 
-            var functionSignature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
+            var functionSignature = funcDeclSymbol.getKind() === PullElementKind.ConstructorType ? funcDeclSymbol.getType().getConstructSignatures()[0] : funcDeclSymbol.getType().getCallSignatures()[0];
             var parameters = functionSignature.getParameters();
             for (var i = 0; i < parameters.length; i++) {
                 this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
@@ -2189,8 +2174,7 @@ module TypeScript {
         }
 
         private typeCheckInterfaceTypeReference(interfaceAST: InterfaceDeclaration, enclosingDecl: PullDecl, typeCheckContext: PullTypeCheckContext) {
-            var interfaceSymbolAndDiagnostics = this.resolver.getSymbolAndDiagnosticsForAST(interfaceAST);
-            var interfaceSymbol = interfaceSymbolAndDiagnostics && <PullTypeSymbol>interfaceSymbolAndDiagnostics.symbol;
+            var interfaceSymbol = <PullTypeSymbol>this.resolver.getSymbolForAST(interfaceAST);
             if (!interfaceSymbol) {
                 interfaceSymbol = this.resolver.resolveInterfaceTypeReference(interfaceAST, enclosingDecl, this.context);
             }
@@ -2417,7 +2401,7 @@ module TypeScript {
                 enclosingDeclAST = <FunctionDeclaration>this.resolver.getASTForDecl(enclosingDecl);
                 if (enclosingDeclAST.returnTypeAnnotation) {
                     // The containing function has a type annotation, propagate it as the contextual type
-                    var returnTypeAnnotationSymbol = this.resolver.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, this.context).symbol;
+                    var returnTypeAnnotationSymbol = this.resolver.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, this.context);
                     if (returnTypeAnnotationSymbol) {
                         inContextuallyTypedAssignment = true;
                         this.context.pushContextualType(returnTypeAnnotationSymbol, this.context.inProvisionalResolution(), null);
@@ -2606,7 +2590,7 @@ module TypeScript {
                 for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
                     var caseClause = <CaseClause>switchStatement.caseList.members[i];
                     if (caseClause !== switchStatement.defaultCase) {
-                        var caseClauseExpressionType = this.resolver.resolveAST(caseClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, this.context).symbol.getType();
+                        var caseClauseExpressionType = this.resolver.resolveAST(caseClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, this.context).getType();
 
                         var comparisonInfo = new TypeComparisonInfo();
                         if (!this.resolver.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, this.context, comparisonInfo) &&
@@ -3043,8 +3027,7 @@ module TypeScript {
                 if (declAST.returnTypeAnnotation) {
                     // NOTE: we don't want to report this diagnostics.  They'll already have been 
                     // reported when we first hit the return statement.
-                    var returnExpressionSymbolAndDiagnostics = this.resolver.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, contextForReturnTypeResolution);
-                    var returnExpressionSymbol = returnExpressionSymbolAndDiagnostics && returnExpressionSymbolAndDiagnostics.symbol;
+                    var returnExpressionSymbol = this.resolver.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, contextForReturnTypeResolution);
                     if (returnExpressionSymbol === funcReturnType) {
                         // Error coming from return annotation
                         this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl, true);
@@ -3063,7 +3046,7 @@ module TypeScript {
 
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
-                                var returnExpressionSymbol = this.resolver.resolveAST(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).symbol.getType();
+                                var returnExpressionSymbol = this.resolver.resolveAST(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
                                 // Check if return statement's type matches the one that we concluded
                                 if (returnExpressionSymbol === funcReturnType) {
                                     this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);

@@ -853,7 +853,7 @@ module TypeScript {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
             var resolutionContext = new PullTypeResolutionContext();
-            return this.pullTypeChecker.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, resolutionContext).symbol;
+            return this.pullTypeChecker.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, resolutionContext);
         }
 
         public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -1040,8 +1040,7 @@ module TypeScript {
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
                             this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
-                            var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
-                            var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
+                            var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
 
                             if (varSymbol && inContextuallyTypedAssignment) {
                                 var contextualType = varSymbol.getType();
@@ -1073,7 +1072,7 @@ module TypeScript {
                         enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
                     }
 
-                    symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol;
+                    symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
                         var isPropertyOrVar = symbol.getKind() === PullElementKind.Property || symbol.getKind() === PullElementKind.Variable;
                         var typeSymbol = symbol.getType();
@@ -1177,8 +1176,7 @@ module TypeScript {
                         inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
 
                         this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
-                        var varSymbolAndDiagnostics = this.semanticInfoChain.getSymbolAndDiagnosticsForAST(assigningAST, scriptName);
-                        var varSymbol = varSymbolAndDiagnostics && varSymbolAndDiagnostics.symbol;
+                        var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
 
                         var contextualType: PullTypeSymbol = null;
                         if (varSymbol && inContextuallyTypedAssignment) {
@@ -1287,7 +1285,7 @@ module TypeScript {
 
                         if (path.asts[i + 1] && path.asts[i + 1] === assignmentExpression.operand2) {
                             // propagate the left hand side type as a contextual type
-                            var leftType = this.pullTypeChecker.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol.getType();
+                            var leftType = this.pullTypeChecker.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).getType();
                             if (leftType) {
                                 inContextuallyTypedAssignment = true;
                                 contextualType = leftType;
@@ -1307,7 +1305,7 @@ module TypeScript {
                             resolutionContext.resolvingTypeReference = true;
                         }
 
-                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).symbol;
+                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
                         // Set the context type
                         if (typeSymbol) {
@@ -1329,7 +1327,7 @@ module TypeScript {
                                 // The containing function has a type annotation, propagate it as the contextual type
                                 var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
                                 resolutionContext.resolvingTypeReference = true;
-                                var returnTypeSymbol = this.pullTypeChecker.resolver.resolveTypeReference(<TypeReference>functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext).symbol;
+                                var returnTypeSymbol = this.pullTypeChecker.resolver.resolveTypeReference(<TypeReference>functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
                                 resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
                                 if (returnTypeSymbol) {
                                     inContextuallyTypedAssignment = true;
@@ -1424,8 +1422,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }            
 
-            var symbolAndDiagnostics = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
-            var symbol = symbolAndDiagnostics && symbolAndDiagnostics.symbol;
+            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
             return {
                 symbol: symbol,
