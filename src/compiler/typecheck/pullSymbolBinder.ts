@@ -390,7 +390,6 @@ module TypeScript {
             var importDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(importDeclaration);
 
             var isExported = false;
-            var linkKind = SymbolLinkKind.PrivateMember;
             var importSymbol: PullTypeAliasSymbol = null;
             var declName = importDeclaration.getName();
             var parentHadSymbol = false;
@@ -797,8 +796,6 @@ module TypeScript {
             var varDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(variableDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;
-
-            var linkKind = SymbolLinkKind.PrivateMember;
 
             var variableSymbol: PullSymbol = null;
 
@@ -1613,8 +1610,6 @@ module TypeScript {
 
             var constructorSymbol: PullSymbol = parent.getConstructorMethod();
             var constructorTypeSymbol: PullTypeSymbol = null;
-
-            var linkKind = SymbolLinkKind.ConstructorMethod;
 
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||

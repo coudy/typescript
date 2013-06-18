@@ -1017,6 +1017,7 @@ module TypeScript {
                     childDecls[j].ensureSymbolIsBound();
                 }
             }
+            var members = ast.members.members;
 
             if (containerDecl.getKind() != PullElementKind.Enum) {
 
@@ -1028,13 +1029,20 @@ module TypeScript {
                 }
 
                 // resolve any export assignments up-front
-                var members = ast.members.members;
-
-                for (var i = 0; i < members.length; i++) {
-                    if (members[i].nodeType() == NodeType.ExportAssignment) {
-                        this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
-                        break;
+                // (if we're in typecheck, we'll do this anyway
+                if (!context.typeCheck()) {
+                    for (var i = 0; i < members.length; i++) {
+                        if (members[i].nodeType() == NodeType.ExportAssignment) {
+                            this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
+                            break;
+                        }
                     }
+                }
+            }
+
+            if (context.typeCheck()) {
+                for (var i = 0; i < members.length; i++) {
+                    this.resolveAST(members[i], false, containerDecl, context);
                 }
             }
 
@@ -1502,7 +1510,7 @@ module TypeScript {
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
                 // Error
                 context.postError(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [id]);
-                return this.semanticInfoChain.voidTypeSymbol;                    
+                return this.semanticInfoChain.voidTypeSymbol;
             }
 
             if (valueSymbol) {
@@ -1884,7 +1892,6 @@ module TypeScript {
 
             var decl: PullDecl = this.getDeclForAST(varDecl);
 
-
             // if the enlosing decl is a lambda, we may not have bound the parent symbol
             if (enclosingDecl && decl.getKind() == PullElementKind.Parameter) {
                 enclosingDecl.ensureSymbolIsBound();
@@ -1925,9 +1932,13 @@ module TypeScript {
 
             var diagnostic: Diagnostic = null;
 
+            var typeExprSymbol: PullTypeSymbol = null;
+            var initExprSymbol: PullSymbol = null;
+            var initTypeSymbol: PullTypeSymbol = null;
+
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
-                var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
+                typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
                     diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText], decl);
@@ -2004,10 +2015,10 @@ module TypeScript {
                     }
                 }
             }
-            // Does it have an initializer? If so, typecheck and use that
-            else if (varDecl.init) {
-                var initExprSymbol = this.resolveAST(varDecl.init, false, wrapperDecl, context);
-                var initExprSymbol = initExprSymbol && initExprSymbol;
+            
+            // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
+            if (varDecl.init && (context.typeCheck() || !varDecl.typeExpr)) {
+                initExprSymbol = this.resolveAST(varDecl.init, false, wrapperDecl, context);
 
                 if (!initExprSymbol) {
                     diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText], decl);
@@ -2019,28 +2030,30 @@ module TypeScript {
                     }
                 }
                 else {
+                    initTypeSymbol = initExprSymbol.getType();
 
-                    context.setTypeInContext(declSymbol, this.widenType(initExprSymbol.getType()));
+                    context.setTypeInContext(declSymbol, this.widenType(initTypeSymbol));
 
                     if (declParameterSymbol) {
-                        context.setTypeInContext(declParameterSymbol, initExprSymbol.getType());
+                        context.setTypeInContext(declParameterSymbol, initTypeSymbol);
                     }
                 }
             }
-            else if (declSymbol.getKind() === PullElementKind.Container) { // module instance value
-                instanceSymbol = (<PullContainerTypeSymbol>declSymbol).getInstanceSymbol();
-                var instanceType = instanceSymbol.getType();
+            //else if (declSymbol.getKind() === PullElementKind.Container) { // module instance value
+            //    instanceSymbol = (<PullContainerTypeSymbol>declSymbol).getInstanceSymbol();
+            //    var instanceType = instanceSymbol.getType();
 
-                if (instanceType) {
-                    context.setTypeInContext(declSymbol, instanceType);
-                }
-                else {
-                    context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
-                }
-            }
+            //    if (instanceType) {
+            //        context.setTypeInContext(declSymbol, instanceType);
+            //    }
+            //    else {
+            //        context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
+            //    }
+            //}
             //else if () {} // class instance value
-            // Otherwise, it's of type 'any'
-            else {
+
+            // If we're lacking both a type annotation and an initialization expression, the type is 'any'
+            if (!(varDecl.typeExpr || varDecl.init)) {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 if (declSymbol.getIsVarArg()) {
@@ -2051,6 +2064,56 @@ module TypeScript {
 
                 if (declParameterSymbol) {
                     declParameterSymbol.setType(defaultType);
+                }
+            }
+
+            // Otherwise, if we're type checking, test the initializer and type annotation for assignment compatibility
+            else if (context.typeCheck()) {
+                if (typeExprSymbol && typeExprSymbol.isContainer()) {
+
+                    var exportedTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
+
+                    if (exportedTypeSymbol) {
+                        typeExprSymbol = exportedTypeSymbol;
+                    }
+                    else {
+                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol().getType();
+
+                        if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_container_type_0, [typeExprSymbol.toString()], enclosingDecl);
+                            typeExprSymbol = null;
+                        }
+                        else {
+                            typeExprSymbol = instanceTypeSymbol.getType();
+                        }
+                    }
+                }
+
+                if (initTypeSymbol && initTypeSymbol.isContainer()) {
+
+                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol).getInstanceSymbol().getType();
+
+                    if (!instanceTypeSymbol) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
+                        initTypeSymbol = null;
+                    }
+                    else {
+                        initTypeSymbol = instanceTypeSymbol.getType();
+                    }
+                }
+
+                if (initTypeSymbol && typeExprSymbol) {
+                    var comparisonInfo = new TypeComparisonInfo();
+
+                    var isAssignable = this.sourceIsAssignableToTarget(initTypeSymbol, typeExprSymbol, context, comparisonInfo);
+
+                    if (!isAssignable) {
+                        if (comparisonInfo.message) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [initTypeSymbol.toString(), typeExprSymbol.toString(), comparisonInfo.message], enclosingDecl);
+                        } else {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [initTypeSymbol.toString(), typeExprSymbol.toString()], enclosingDecl);
+                        }
+                    }
                 }
             }
 
@@ -2077,7 +2140,12 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
 
-                if (constraintTypeSymbol.isNamedTypeSymbol() &&
+
+                if (constraintTypeSymbol && constraintTypeSymbol.isPrimitive() && !constraintTypeSymbol.isError()) {
+                    context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null, this.getEnclosingDecl(typeParameterDecl));
+                    constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
+                }
+                else if (constraintTypeSymbol.isNamedTypeSymbol() &&
                     constraintTypeSymbol.isGeneric() &&
                     !constraintTypeSymbol.isTypeParameter() &&
                     constraintTypeSymbol.getTypeParameters().length &&
@@ -2118,6 +2186,7 @@ module TypeScript {
 
                     case NodeType.ReturnStatement:
                         var returnStatement: ReturnStatement = <ReturnStatement>ast;
+                        enclosingDecl.setFlag(PullElementFlags.HasReturnStatement);
                         returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] };
                         go = false;
                         break;
@@ -2349,7 +2418,36 @@ module TypeScript {
                 }
             }
 
-            // don't resolve anything here that's not relevant to the type of the function!
+            if (context.typeCheck()) {
+                this.resolveAST(funcDeclAST.block, false, this.getEnclosingDecl(funcDecl), context);
+
+                if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+                    //return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+                }
+                else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
+                    //return this.typeCheckIndexer(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+                }
+                else if (funcDeclAST.isAccessor()) {
+                    //return this.typeCheckAccessor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+                }
+                else {
+                    var hasReturn = (funcDecl.getFlags() & PullElementFlags.HasReturnStatement) != 0;
+
+                    if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+                        var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
+
+                        if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                            var funcName = funcDecl.getDisplayName();
+                            funcName = funcName ? "'" + funcName + "'" : "expression";
+
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], this.getEnclosingDecl(funcDecl));
+                        }
+                    }
+
+                    this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                }
+            }
 
             return funcSymbol;
         }
@@ -2565,7 +2663,7 @@ module TypeScript {
         }
 
         private resolveList(list: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            if (this.inTypeCheck) {
+            if (context.typeCheck()) {
                 // Visit members   
                 for (var i = 0; i < list.members.length; i++) {
                     this.resolveAST(list.members[i], /*inContextuallyTypedAssignment*/ false, enclosingDecl, context);
@@ -2584,6 +2682,10 @@ module TypeScript {
 
             if (globalBinder) {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
+            }
+
+            if (!ast) {
+                return;
             }
 
             switch (ast.nodeType()) {
@@ -7053,6 +7155,669 @@ module TypeScript {
             context.specializingToAny = prevSpecialize;
 
             return sig;
+        }
+
+        // type check infrastructure
+        public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
+            var unit = semanticInfoChain.getUnit(scriptName);
+
+            if (unit.getTypeChecked()) {
+                return;
+            }
+
+            var scriptDecl = unit.getTopLevelDecls()[0];
+
+            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName, /*inTypeCheck*/ true);
+            var context = new PullTypeResolutionContext(true);
+
+            resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
+
+            resolver.validateVariableDeclarationGroups(scriptDecl, context);
+
+            unit.setTypeChecked();
+
+        }
+
+        private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
+            var decl: PullDecl;
+            var firstSymbol: PullSymbol;
+            var symbol: PullSymbol;
+            var boundDeclAST: AST;
+
+            for (var i = 0; i < declGroups.length; i++) {
+                for (var j = 0; j < declGroups[i].length; j++) {
+                    decl = declGroups[i][j];
+                    symbol = decl.getSymbol();
+                    boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
+                    this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context);
+                    if (!j) {
+                        firstSymbol = decl.getSymbol();
+
+                        if (this.isAnyOrEquivalent(this.widenType(firstSymbol.getType()))) {
+                            return;
+                        }
+                        continue;
+                    }
+
+                    if (!this.typesAreIdentical(symbol.getType(), firstSymbol.getType())) {
+                        context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbol.getType().toString(), symbol.getType().toString()], enclosingDecl);
+                    }
+                }
+            }
+        }
+
+        private typeCheckFunctionOverloads(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext, signature?: PullSignatureSymbol, allSignatures?: PullSignatureSymbol[]) {
+            if (!signature) {
+                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.currentUnit);
+                signature = functionSignatureInfo.signature;
+                allSignatures = functionSignatureInfo.allSignatures;
+            }
+            var functionDeclaration = this.currentUnit.getDeclForAST(funcDecl);
+            var funcSymbol = functionDeclaration.getSymbol();
+
+            // Find the definition signature for this signature group
+            var definitionSignature: PullSignatureSymbol = null;
+            for (var i = allSignatures.length - 1; i >= 0; i--) {
+                if (allSignatures[i].isDefinition()) {
+                    definitionSignature = allSignatures[i];
+                    break;
+                }
+            }
+
+            if (!signature.isDefinition()) {
+                // Check for if the signatures are identical, check with the signatures before the current current one
+                for (var i = 0; i < allSignatures.length; i++) {
+                    if (allSignatures[i] === signature) {
+                        break;
+                    }
+
+                    if (this.signaturesAreIdentical(allSignatures[i], signature, /*includingReturnType*/ false)) {
+                        if (!this.typesAreIdentical(allSignatures[i].getReturnType(), signature.getReturnType())) {
+                            context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overloads_cannot_differ_only_by_return_type, null, functionDeclaration);
+                        } else if (funcDecl.isConstructor) {
+                            context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_constructor_overload_signature, null, functionDeclaration);
+                        } else if (funcDecl.isConstructMember()) {
+                            context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_construct_signature, null, functionDeclaration);
+                        } else if (funcDecl.isCallMember()) {
+                            context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_call_signature, null, functionDeclaration);
+                        } else {
+                            context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_signature_for_0, [funcSymbol.getScopedNameEx().toString()], functionDeclaration);
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            // Verify assignment compatibility or in case of constantOverload signature, if its subtype of atleast one signature
+            var isConstantOverloadSignature = signature.isStringConstantOverloadSignature();
+            if (isConstantOverloadSignature) {
+                if (signature.isDefinition()) {
+                    // Report error - definition signature cannot specify constant type
+                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(),DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type, null, functionDeclaration);
+                } else {
+                    // PERFREVIEW: Why create a new resolution context?
+                    //var resolutionContext = new PullTypeResolutionContext(true);
+                    var foundSubtypeSignature = false;
+                    for (var i = 0; i < allSignatures.length; i++) {
+                        if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
+                            continue;
+                        }
+
+                        if (!allSignatures[i].isResolved()) {
+                            this.resolveDeclaredSymbol(allSignatures[i], this.getEnclosingDecl(functionDeclaration), context);
+                        }
+
+                        if (allSignatures[i].isStringConstantOverloadSignature()) {
+                            continue;
+                        }
+
+                        if (this.signatureIsSubtypeOfTarget(signature, allSignatures[i], context)) {
+                            foundSubtypeSignature = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundSubtypeSignature) {
+                        // Could not find the overload signature subtype
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null, this.getEnclosingDecl(functionDeclaration));
+                    }
+                }
+            } else if (definitionSignature && definitionSignature != signature) {
+                var comparisonInfo = new TypeComparisonInfo();
+                //var resolutionContext = new PullTypeResolutionContext();
+                if (!definitionSignature.isResolved()) {
+                    this.resolveDeclaredSymbol(definitionSignature, this.getEnclosingDecl(functionDeclaration), context);
+                }
+
+                if (!this.signatureIsAssignableToTarget(definitionSignature, signature, context, comparisonInfo)) {
+                    // definition signature is not assignable to functionSignature then its incorrect overload signature
+                    if (comparisonInfo.message) {
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition_NL_0, [comparisonInfo.message], this.getEnclosingDecl(functionDeclaration));
+                    } else {
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition, null, this.getEnclosingDecl(functionDeclaration));
+                    }
+                }
+            }
+
+            var signatureForVisibilityCheck = definitionSignature;
+            if (!definitionSignature) {
+                if (allSignatures[0] === signature) {
+                    return;
+                }
+                signatureForVisibilityCheck = allSignatures[0];
+            }
+
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
+                var errorCode: string;
+                // verify it satisfies all the properties of first signature
+                if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_public_or_private;
+                }
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) != signature.hasFlag(PullElementFlags.Exported)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_exported_or_local;
+                }
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Ambient) != signature.hasFlag(PullElementFlags.Ambient)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient;
+                }
+                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Optional) != signature.hasFlag(PullElementFlags.Optional)) {
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_optional_or_required;
+                }
+
+                if (errorCode) {
+                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), errorCode, null, this.getEnclosingDecl(functionDeclaration));
+                }
+            }
+        }
+
+        // Privacy checking
+
+        private checkTypePrivacy(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
+            if (!typeSymbol || typeSymbol.getKind() === PullElementKind.Primitive) {
+                return;
+            }
+
+            if (typeSymbol.isArray()) {
+                this.checkTypePrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
+                return;
+            }
+
+            if (!typeSymbol.isNamedTypeSymbol()) {
+                // Check the privacy of members, constructors, calls, index signatures
+                var members = typeSymbol.getMembers();
+                for (var i = 0; i < members.length; i++) {
+                    this.checkTypePrivacy(declSymbol, members[i].getType(), context, privacyErrorReporter);
+                }
+
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+
+                return;
+            }
+
+            // Check flags for the symbol itself
+            if (declSymbol.isExternallyVisible()) {
+                // Check if type symbol is externally visible
+                var typeSymbolIsVisible = typeSymbol.isExternallyVisible();
+                // If Visible check if the type is part of dynamic module
+                if (typeSymbolIsVisible) {
+                    var typeSymbolPath = typeSymbol.pathToRoot();
+                    if (typeSymbolPath.length && typeSymbolPath[typeSymbolPath.length - 1].getKind() === PullElementKind.DynamicModule) {
+                        // Type from the dynamic module
+                        var declSymbolPath = declSymbol.pathToRoot();
+                        if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != typeSymbolPath[typeSymbolPath.length - 1]) {
+                            // Declaration symbol is from different unit
+                            // Type may not be visible without import statement
+                            typeSymbolIsVisible = false;
+                            for (var i = typeSymbolPath.length - 1; i >= 0; i--) {
+                                var aliasSymbol = typeSymbolPath[i].getAliasedSymbol(declSymbol);
+                                if (aliasSymbol) {
+                                    // Visible type.
+                                    // Also mark this Import declaration as visible
+                                    CompilerDiagnostics.assert(aliasSymbol.getKind() === PullElementKind.TypeAlias, "dynamic module need to be referenced by type alias");
+                                    (<PullTypeAliasSymbol>aliasSymbol).setIsTypeUsedExternally();
+                                    typeSymbolIsVisible = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!typeSymbolIsVisible) {
+                    // declaration is visible from outside but the type isnt - Report error
+                    privacyErrorReporter(typeSymbol);
+                }
+            }
+        }
+
+        private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], context: PullTypeResolutionContext, privacyErrorReporter: (typeSymbol: PullTypeSymbol) => void ) {
+            for (var i = 0; i < signatures.length; i++) {
+                var signature = signatures[i];
+                if (signatures.length && signature.isDefinition()) {
+                    continue;
+                }
+
+                var typeParams = signature.getTypeParameters();
+                for (var j = 0; j < typeParams.length; j++) {
+                    this.checkTypePrivacy(declSymbol, typeParams[j], context, privacyErrorReporter);
+                }
+
+                var params = signature.getParameters();
+                for (var j = 0; j < params.length; j++) {
+                    var paramType = params[j].getType();
+                    this.checkTypePrivacy(declSymbol, paramType, context, privacyErrorReporter);
+                }
+
+                var returnType = signature.getReturnType();
+                this.checkTypePrivacy(declSymbol, returnType, context, privacyErrorReporter);
+            }
+        }
+
+        private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, baseAst: AST, isExtendedType: boolean, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext) {
+            var decl: PullDecl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var messageCode: string;
+            var messageArguments: any[];
+
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (declAST.nodeType() === NodeType.ClassDeclaration) {
+                    // Class
+                    if (isExtendedType) {
+                        messageCode = DiagnosticCode.Exported_class_0_extends_class_from_inaccessible_module_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Exported_class_0_implements_interface_from_inaccessible_module_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    }
+                } else {
+                    // Interface
+                    messageCode = DiagnosticCode.Exported_interface_0_extends_interface_from_inaccessible_module_1;
+                    messageArguments = [declSymbol.toString(), typeSymbolName];
+                }
+            } else {
+                if (declAST.nodeType() === NodeType.ClassDeclaration) {
+                    // Class
+                    if (isExtendedType) {
+                        messageCode = DiagnosticCode.Exported_class_0_extends_private_class_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Exported_class_0_implements_private_interface_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    }
+                } else {
+                    // Interface
+                    messageCode = DiagnosticCode.Exported_interface_0_extends_private_interface_1;
+                    messageArguments = [declSymbol.toString(), typeSymbolName];
+                }
+            }
+
+            context.postError(this.unitPath, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl, true);
+        }
+
+        private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext) {
+            var declAST = <VariableDeclarator>this.getASTForSymbol(declSymbol);
+            var enclosingDecl = this.getEnclosingDecl(declSymbol.getDeclarations()[0]);
+
+            var isProperty = declSymbol.getKind() === PullElementKind.Property;
+            var isPropertyOfClass = false;
+            var declParent = declSymbol.getContainer();
+            if (declParent && (declParent.getKind() === PullElementKind.Class || declParent.getKind() === PullElementKind.ConstructorMethod)) {
+                isPropertyOfClass = true;
+            }
+
+            var messageCode: string;
+            var messageArguments: any[];
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+
+                if (declSymbol.hasFlag(PullElementFlags.Static)) {
+                    messageCode = DiagnosticCode.Public_static_property_0_of_exported_class_is_using_inaccessible_module_1;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                } else if (isProperty) {
+                    if (isPropertyOfClass) {
+                        messageCode = DiagnosticCode.Public_property_0_of_exported_class_is_using_inaccessible_module_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Property_0_of_exported_interface_is_using_inaccessible_module_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    }
+                } else {
+                    messageCode = DiagnosticCode.Exported_variable_0_is_using_inaccessible_module_1;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                }
+            } else {
+                if (declSymbol.hasFlag(PullElementFlags.Static)) {
+                    messageCode = DiagnosticCode.Public_static_property_0_of_exported_class_has_or_is_using_private_type_1;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                } else if (isProperty) {
+                    if (isPropertyOfClass) {
+                        messageCode = DiagnosticCode.Public_property_0_of_exported_class_has_or_is_using_private_type_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Property_0_of_exported_interface_has_or_is_using_private_type_1;
+                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                    }
+                } else {
+                    messageCode = DiagnosticCode.Exported_variable_0_has_or_is_using_private_type_1;
+                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
+                }
+            }
+
+            context.postError(this.unitPath, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
+        }
+
+        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, context: PullTypeResolutionContext) {
+            if (inContextuallyTypedAssignment ||
+                (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                return;
+            }
+
+            var functionDecl = this.currentUnit.getDeclForAST(funcDeclAST);
+            var functionSymbol = functionDecl.getSymbol();;
+            var functionSignature: PullSignatureSymbol;
+
+            var isGetter = funcDeclAST.isGetAccessor();
+            var isSetter = funcDeclAST.isSetAccessor();
+
+            if (isGetter || isSetter) {
+                var accessorSymbol = <PullAccessorSymbol> functionSymbol;
+                functionSignature = (isGetter ? accessorSymbol.getGetter() : accessorSymbol.getSetter()).getType().getCallSignatures()[0];
+            } else {
+                if (!functionSymbol) {
+                    var parentDecl = functionDecl.getParentDecl();
+                    functionSymbol = parentDecl.getSymbol();
+                    if (functionSymbol && functionSymbol.isType() && !(<PullTypeSymbol>functionSymbol).isNamedTypeSymbol()) {
+                        // Call Signature from the non named type
+                        return;
+                    }
+                } else if (functionSymbol.getKind() == PullElementKind.Method && !functionSymbol.getContainer().isNamedTypeSymbol()) {
+                    // method of the unnmaed type
+                    return;
+                }
+                functionSignature = functionDecl.getSignatureSymbol();
+            }
+
+            // Check function parameters
+            if (!isGetter) {
+                var funcParams = functionSignature.getParameters();
+                for (var i = 0; i < funcParams.length; i++) {
+                    this.checkTypePrivacy(functionSymbol, funcParams[i].getType(), context, (typeSymbol: PullTypeSymbol) =>
+                        this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, context));
+                }
+            }
+
+            // Check return type
+            if (!isSetter) {
+                this.checkTypePrivacy(functionSymbol, functionSignature.getReturnType(), context, (typeSymbol: PullTypeSymbol) =>
+                    this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.getReturnType(), typeSymbol, context));
+            }
+        }
+
+        private functionArgumentTypePrivacyErrorReporter(declAST: FunctionDeclaration, argIndex: number, paramSymbol: PullSymbol, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext) {
+            var decl: PullDecl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+
+            var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
+            var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
+            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isMethod = decl.getKind() === PullElementKind.Method;
+            var isMethodOfClass = false;
+            var declParent = decl.getParentDecl();
+            if (declParent && (declParent.getKind() === PullElementKind.Class || declParent.getKind() === PullElementKind.ConstructorMethod)) {
+                isMethodOfClass = true;
+            }
+
+            var start = declAST.arguments.members[argIndex].minChar;
+            var length = declAST.arguments.members[argIndex].getLength();
+
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+
+                if (declAST.isConstructor) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (isSetter) {
+                    if (isStatic) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (declAST.isCallMember()) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else if (isMethodOfClass) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    }
+                } else if (!isGetter) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                }
+            } else {
+                if (declAST.isConstructor) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (isSetter) {
+                    if (isStatic) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (declAST.isCallMember()) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else if (isMethodOfClass) {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    } else {
+                        context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    }
+                } else if (!isGetter && !declAST.isIndexerMember()) {
+                    context.postError(this.unitPath, start, length, DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                }
+            }
+        }
+
+        private functionReturnTypePrivacyErrorReporter(declAST: FunctionDeclaration, funcReturnType: PullTypeSymbol, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext) {
+            var decl: PullDecl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+
+            var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
+            var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
+            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isMethod = decl.getKind() === PullElementKind.Method;
+            var isMethodOfClass = false;
+            var declParent = decl.getParentDecl();
+            if (declParent && (declParent.getKind() === PullElementKind.Class || declParent.getKind() === PullElementKind.ConstructorMethod)) {
+                isMethodOfClass = true;
+            }
+
+            var messageCode: string = null;
+            var messageArguments: any[];
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+
+                if (isGetter) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module_0;
+                        messageArguments = [typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module_0;
+                        messageArguments = [typeSymbolName];
+                    }
+                } else if (declAST.isConstructMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0;
+                    messageArguments = [typeSymbolName];
+                } else if (declAST.isCallMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
+                    messageArguments = [typeSymbolName];
+                } else if (declAST.isIndexerMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
+                    messageArguments = [typeSymbolName];
+                } else if (isMethod) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module_0;
+                        messageArguments = [typeSymbolName];
+                    } else if (isMethodOfClass) {
+                        messageCode = DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module_0;
+                        messageArguments = [typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module_0;
+                        messageArguments = [typeSymbolName];
+                    }
+                } else if (!isSetter && !declAST.isConstructor) {
+                    messageCode = DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module_0;
+                    messageArguments = [typeSymbolName];
+                }
+            } else {
+                if (isGetter) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type_0;
+                        messageArguments = [typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type_0;
+                        messageArguments = [typeSymbolName];
+                    }
+                } else if (declAST.isConstructMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0;
+                    messageArguments = [typeSymbolName];
+                } else if (declAST.isCallMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
+                    messageArguments = [typeSymbolName];
+                } else if (declAST.isIndexerMember()) {
+                    messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;
+                    messageArguments = [typeSymbolName];
+                } else if (isMethod) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type_0;
+                        messageArguments = [typeSymbolName];
+                    } else if (isMethodOfClass) {
+                        messageCode = DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type_0;
+                        messageArguments = [typeSymbolName];
+                    } else {
+                        messageCode = DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type_0;
+                        messageArguments = [typeSymbolName];
+                    }
+                } else if (!isSetter && !declAST.isConstructor) {
+                    messageCode = DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type_0;
+                    messageArguments = [typeSymbolName];
+                }
+            }
+
+            if (messageCode) {
+                var reportOnFuncDecl = false;
+                // PERFREVIEW: Why the new context?
+                //var contextForReturnTypeResolution = new PullTypeResolutionContext();
+                if (declAST.returnTypeAnnotation) {
+                    // NOTE: we don't want to report this diagnostics.  They'll already have been 
+                    // reported when we first hit the return statement.
+                    var returnExpressionSymbol = this.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, context);
+                    if (returnExpressionSymbol === funcReturnType) {
+                        // Error coming from return annotation
+                        context.postError(this.unitPath, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                    }
+                }
+
+                if (declAST.block) {
+                    var reportErrorOnReturnExpressions = (ast: AST, parent: AST, walker: IAstWalker) => {
+                        var go = true;
+                        switch (ast.nodeType()) {
+                            case NodeType.FunctionDeclaration:
+                                // don't recurse into a function decl - we don't want to confuse a nested
+                                // return type with the top-level function's return type
+                                go = false;
+                                break;
+
+                            case NodeType.ReturnStatement:
+                                var returnStatement: ReturnStatement = <ReturnStatement>ast;
+                                var returnExpressionSymbol = this.resolveAST(returnStatement.returnExpression, false, decl, context).getType();
+                                // Check if return statement's type matches the one that we concluded
+                                if (returnExpressionSymbol === funcReturnType) {
+                                    context.postError(this.unitPath, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                                } else {
+                                    reportOnFuncDecl = true;
+                                }
+                                go = false;
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        walker.options.goChildren = go;
+                        return ast;
+                    };
+
+                    getAstWalkerFactory().walk(declAST.block, reportErrorOnReturnExpressions);
+                }
+
+                if (reportOnFuncDecl) {
+                    // Show on function decl
+                    context.postError(this.unitPath, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                }
+            }
+        }
+    }
+
+    export class TypeComparisonInfo {
+        public onlyCaptureFirstError = false;
+        public flags: TypeRelationshipFlags = TypeRelationshipFlags.SuccessfulComparison;
+        public message = "";
+        public stringConstantVal: AST = null;
+        private indent = 1;
+
+        constructor(sourceComparisonInfo?: TypeComparisonInfo) {
+            if (sourceComparisonInfo) {
+                this.flags = sourceComparisonInfo.flags;
+                this.onlyCaptureFirstError = sourceComparisonInfo.onlyCaptureFirstError;
+                this.stringConstantVal = sourceComparisonInfo.stringConstantVal;
+                this.indent = sourceComparisonInfo.indent + 1;
+            }
+        }
+
+        private indentString(): string {
+            var result = "";
+
+            for (var i = 0; i < this.indent; i++) {
+                result += "\t";
+            }
+
+            return result;
+        }
+
+        public addMessage(message) {
+            if (!this.onlyCaptureFirstError && this.message) {
+                this.message = this.message + TypeScript.newLine() + this.indentString() + message;
+            }
+            else {
+                this.message = this.indentString() + message;
+            }
+        }
+
+        public setMessage(message) {
+            this.message = this.indentString() + message;
         }
     }
 }

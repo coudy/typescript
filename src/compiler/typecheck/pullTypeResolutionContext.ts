@@ -178,7 +178,7 @@ module TypeScript {
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
 
-        constructor() {}
+        constructor(public inTypeCheck = false) {}
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -287,7 +287,7 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = false): Diagnostic {
+        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null, enclosingDecl: PullDecl = null, addToDecl = true): Diagnostic {
             var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
             this.postDiagnostic(diagnostic, enclosingDecl, addToDecl);
 
@@ -298,9 +298,13 @@ module TypeScript {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
-            else if (!this.suppressErrors && enclosingDecl && addToDecl) {
+            else if (this.inTypeCheck && !this.suppressErrors && enclosingDecl && addToDecl) {
                 enclosingDecl.addDiagnostic(diagnostic);
             }
+        }
+
+        public typeCheck() {
+            return this.inTypeCheck && !this.inSpecialization;
         }
 
         public startResolvingTypeArguments(ast: AST) {

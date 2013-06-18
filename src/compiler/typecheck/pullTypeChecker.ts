@@ -4,45 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export class TypeComparisonInfo {
-        public onlyCaptureFirstError = false;
-        public flags: TypeRelationshipFlags = TypeRelationshipFlags.SuccessfulComparison;
-        public message = "";
-        public stringConstantVal: AST = null;
-        private indent = 1;
-
-        constructor(sourceComparisonInfo?: TypeComparisonInfo) {
-            if (sourceComparisonInfo) {
-                this.flags = sourceComparisonInfo.flags;
-                this.onlyCaptureFirstError = sourceComparisonInfo.onlyCaptureFirstError;
-                this.stringConstantVal = sourceComparisonInfo.stringConstantVal;
-                this.indent = sourceComparisonInfo.indent + 1;
-            }
-        }
-
-        private indentString(): string {
-            var result = "";
-
-            for (var i = 0; i < this.indent; i++) {
-                result += "\t";
-            }
-
-            return result;
-        }
-
-        public addMessage(message) {
-            if (!this.onlyCaptureFirstError && this.message) {
-                this.message = this.message + TypeScript.newLine() + this.indentString() + message;
-            }
-            else {
-                this.message = this.indentString() + message;
-            }
-        }
-
-        public setMessage(message) {
-            this.message = this.indentString() + message;
-        }
-    }
 
     export class PullTypeCheckContext {
         public enclosingDeclStack: PullDecl[] = [];

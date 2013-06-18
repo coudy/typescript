@@ -58,6 +58,7 @@ module TypeScript {
         private fileNameToSourceFile = new StringHashTable();
         private hasErrors: boolean = false;
         private logger: ILogger = null;
+        private tcOnly = false;
 
         constructor(private ioHost: IIO) {
             this.compilationSettings = new CompilationSettings();
@@ -246,21 +247,23 @@ module TypeScript {
                 return true;
             }
 
-            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-            };
+            if (!this.tcOnly) {
+                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                    this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+                };
 
-            // TODO: if there are any emit diagnostics.  Don't proceed.
-            var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
-            compiler.reportDiagnostics(emitDiagnostics, this);
-            if (emitDiagnostics.length > 0) {
-                return true;
-            }
+                // TODO: if there are any emit diagnostics.  Don't proceed.
+                var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
+                compiler.reportDiagnostics(emitDiagnostics, this);
+                if (emitDiagnostics.length > 0) {
+                    return true;
+                }
 
-            var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
-            compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
-            if (emitDeclarationsDiagnostics.length > 0) {
-                return true;
+                var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
+                compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
+                if (emitDeclarationsDiagnostics.length > 0) {
+                    return true;
+                }
             }
 
             return false;
@@ -536,6 +539,11 @@ module TypeScript {
                 set: (value) => {
                     locale = value;
                 }
+            });
+
+            opts.flag('noemit', {
+                usage: '',
+                set: () => { this.tcOnly = true; }
             });
 
             opts.parse(this.ioHost.arguments);

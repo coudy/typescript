@@ -722,7 +722,8 @@ module TypeScript {
 
                 if (script) {
                     var startTime = (new Date()).getTime();
-                    this.pullTypeChecker.typeCheckScript(script, fileName, this);
+                    PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
+                    //this.pullTypeChecker.typeCheckScript(script, fileName, this);
                     var endTime = (new Date()).getTime();
 
                     typeCheckTime += endTime - startTime;

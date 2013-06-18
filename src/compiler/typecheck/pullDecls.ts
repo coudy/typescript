@@ -130,6 +130,7 @@ module TypeScript {
 
         public getFlags(): PullElementFlags { return this.declFlags; }
         public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
+        public setFlag(flags: PullElementFlags) { this.declFlags |= flags; }
 
         public getSpan(): TextSpan { return this.span; }
         public setSpan(span: TextSpan) { this.span = span; }

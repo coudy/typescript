@@ -34,6 +34,8 @@ module TypeScript {
 
         DeclaredInAWithBlock = 1 << 21,
 
+        HasReturnStatement = 1 << 22,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }
@@ -116,46 +118,5 @@ module TypeScript {
         InterfaceTypeExtension = Interface | Class | Enum,
         ClassTypeExtension = Interface | Class,
         EnumTypeExtension = Interface | Enum,
-    }
-
-    export enum SymbolLinkKind {
-        TypedAs,
-        ContextuallyTypedAs,
-        ProvidesInferredType,
-        ArrayType,
-
-        ArrayOf,
-
-        PublicMember,
-        PrivateMember,
-
-        ConstructorMethod,
-
-        Aliases,
-        ExportAliases,
-
-        ContainedBy,
-
-        Extends,
-        Implements,
-
-        Parameter,
-        ReturnType,
-
-        CallSignature,
-        ConstructSignature,
-        IndexSignature,
-
-        TypeParameter,
-        TypeArgument,
-        TypeParameterSpecializedTo,
-        SpecializedTo,
-
-        TypeConstraint,
-
-        ContributesToExpression,
-
-        GetterFunction,
-        SetterFunction,
     }
 }
