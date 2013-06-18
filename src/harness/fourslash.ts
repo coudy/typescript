@@ -1335,7 +1335,7 @@ module FourSlash {
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(fileName: string) {
         var content = IO.readFile(fileName);
-        runFourSlashTestContent(content.contents(), fileName)
+        runFourSlashTestContent(content.contents, fileName)
     }
 
     export function runFourSlashTestContent(content: string, fileName: string) {
@@ -1364,7 +1364,7 @@ module FourSlash {
         fsOutput.reset();
         fsErrors.reset();
 
-        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents(), tsFn);
+        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents, tsFn);
         Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
         Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
 

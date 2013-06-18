@@ -18,20 +18,7 @@ enum ByteOrderMark {
 }
 
 class FileInformation {
-    private _contents: string;
-    private _byteOrderMark: ByteOrderMark;
-
-    constructor(contents: string, byteOrderMark: ByteOrderMark) {
-        this._contents = contents;
-        this._byteOrderMark = byteOrderMark;
-    }
-
-    public contents(): string {
-        return this._contents;
-    }
-
-    public byteOrderMark(): ByteOrderMark {
-        return this._byteOrderMark;
+    constructor(public contents: string, public byteOrderMark: ByteOrderMark) {
     }
 }
 

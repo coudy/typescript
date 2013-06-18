@@ -19,20 +19,7 @@
 
 module TypeScript {
     class SourceFile {
-        private _scriptSnapshot: IScriptSnapshot;
-        private _byteOrderMark: ByteOrderMark;
-
-        constructor(scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark) {
-            this._scriptSnapshot = scriptSnapshot;
-            this._byteOrderMark = byteOrderMark;
-        }
-
-        public scriptSnapshot(): IScriptSnapshot {
-            return this._scriptSnapshot;
-        }
-
-        public byteOrderMark(): ByteOrderMark {
-            return this._byteOrderMark;
+        constructor(public scriptSnapshot: IScriptSnapshot, public byteOrderMark: ByteOrderMark) {
         }
     }
 
@@ -50,7 +37,7 @@ module TypeScript {
     }
 
     export class BatchCompiler implements IReferenceResolverHost, IDiagnosticReporter, EmitterIOHost {
-        public compilerVersion = "0.9.0.0";
+        public compilerVersion = "0.9.0.1";
         private inputFiles: string[] = [];
         private compilationSettings: CompilationSettings;
         private resolvedFiles: IResolvedFile[] = [];
@@ -204,7 +191,7 @@ module TypeScript {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var resolvedFile = this.resolvedFiles[i];
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);
@@ -287,7 +274,7 @@ module TypeScript {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);
@@ -323,7 +310,7 @@ module TypeScript {
                     var sourceFile = this.getSourceFile(resolvedFile.path);
                     this.ioHost.stdout.WriteLine("**** Update type check and errors for " + resolvedFile.path + ":");
 
-                    compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot(), /*version:*/ 0, /*isOpen:*/ true, null);
+                    compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot, /*version:*/ 0, /*isOpen:*/ true, null);
                     // resolve the file to simulate an IDE-driven pull
                     //compiler.pullResolveFile(lastTypecheckedFileName);
                     semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
@@ -340,7 +327,7 @@ module TypeScript {
                 var outputFileName: string = this.inputFileNameToOutputFileName.lookup(this.resolvedFiles[i].path);
                 if (this.ioHost.fileExists(outputFileName)) {
                     var outputFileInformation = this.ioHost.readFile(outputFileName);
-                    this.ioHost.run(outputFileInformation.contents(), outputFileName);
+                    this.ioHost.run(outputFileInformation.contents, outputFileName);
                 }
             }
         }
@@ -599,7 +586,7 @@ module TypeScript {
             }
 
             var fileContents = this.ioHost.readFile(filePath);
-            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents());
+            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents);
             return true;
         }
 
@@ -724,8 +711,8 @@ module TypeScript {
                     fileInformation = new FileInformation("", ByteOrderMark.None);
                 }
 
-                var snapshot = ScriptSnapshot.fromString(fileInformation.contents());
-                var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark());
+                var snapshot = ScriptSnapshot.fromString(fileInformation.contents);
+                var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark);
                 this.fileNameToSourceFile.add(fileName, sourceFile);
             }
 
@@ -742,7 +729,7 @@ module TypeScript {
 
         /// IReferenceResolverHost methods
         getScriptSnapshot(fileName: string): IScriptSnapshot {
-            return this.getSourceFile(fileName).scriptSnapshot();
+            return this.getSourceFile(fileName).scriptSnapshot;
         }
 
         resolveRelativePath(path: string, directory: string): string {

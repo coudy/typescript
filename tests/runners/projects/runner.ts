@@ -3,20 +3,7 @@
 ///<reference path="../runnerbase.ts" />
 
 class SourceFile {
-    private _scriptSnapshot: TypeScript.IScriptSnapshot;
-    private _byteOrderMark: ByteOrderMark;
-
-    constructor(scriptSnapshot: TypeScript.IScriptSnapshot, byteOrderMark: ByteOrderMark) {
-        this._scriptSnapshot = scriptSnapshot;
-        this._byteOrderMark = byteOrderMark;
-    }
-
-    public scriptSnapshot(): TypeScript.IScriptSnapshot {
-        return this._scriptSnapshot;
-    }
-
-    public byteOrderMark(): ByteOrderMark {
-        return this._byteOrderMark;
+    constructor(public scriptSnapshot: TypeScript.IScriptSnapshot, public byteOrderMark: ByteOrderMark) {
     }
 }
 
@@ -73,7 +60,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
 
             try {
                 var sourceFile = this.getSourceFile(code.path);
-                var soruceScriptSnapshot = sourceFile.scriptSnapshot();
+                var soruceScriptSnapshot = sourceFile.scriptSnapshot;
                 var sourceText = soruceScriptSnapshot.getText(0, soruceScriptSnapshot.getLength());
 
                 // Log any bugs associated with the test
@@ -82,7 +69,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
                     bugs.forEach(bug => Harness.Assert.bug(bug));
                 }
 
-                compiler.addSourceUnit(code.path, soruceScriptSnapshot, sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true);
+                compiler.addSourceUnit(code.path, soruceScriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true);
             }
             catch (err) {
                 // This includes syntax errors thrown from error callback if not in recovery mode
@@ -133,7 +120,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         for (var i = 0; i < this.resolvedFiles.length; i++) {
             var unit = this.resolvedFiles[i];
             var outputFileName = unit.path.replace(/\.ts$/, ".js");
-            var unitRes = this.host.readFile(outputFileName).contents();
+            var unitRes = this.host.readFile(outputFileName).contents;
             this.host.run(unitRes, outputFileName);
         }
     }
@@ -169,8 +156,8 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         var sourceFile = this.fileNameToSourceFile.lookup(fileName);
         if (!sourceFile) {
             var fileInformation = this.host.readFile(fileName);
-            var snapshot = TypeScript.ScriptSnapshot.fromString(fileInformation.contents());
-            var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark());
+            var snapshot = TypeScript.ScriptSnapshot.fromString(fileInformation.contents);
+            var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark);
             this.fileNameToSourceFile.add(fileName, sourceFile);
         }
 
@@ -179,7 +166,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
 
     /// TypeScript.IReferenceResolverHost methods
     getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-        return this.getSourceFile(fileName).scriptSnapshot();
+        return this.getSourceFile(fileName).scriptSnapshot;
     }
 
     resolveRelativePath(path: string, directory: string): string {
@@ -352,7 +339,7 @@ class ProjectRunner extends RunnerBase {
                         var localFileName = baseFileName + "local/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
                         var localFile = IOUtils.writeFileAndFolderStructure(IO, localFileName, fileContents, /*writeByteOrderMark:*/ false);
                         var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + expectedFiles[i];
-                        Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName).contents());
+                        Harness.Assert.noDiff(fileContents, IO.readFile(referenceFileName).contents);
                     }
                 }
 
@@ -413,8 +400,8 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents(),
-                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents());
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents,
+                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents);
                         });
                     }
 
@@ -486,8 +473,8 @@ class ProjectRunner extends RunnerBase {
 
                     if (spec.baselineCheck) {
                         it("checks baseline", function () {
-                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents(),
-                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents());
+                            Harness.Assert.noDiff(Harness.readFile(spec.path + spec.outputFiles[0] + "").contents,
+                                 Harness.readFile(spec.path + spec.baselineFiles[0] + "." + codeGenType).contents);
                         });
                     }
 
