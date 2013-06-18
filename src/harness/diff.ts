@@ -770,7 +770,7 @@ module Diff {
         }
 
         static fullHtmlEncode(text: string) {
-            return text.replace('<', '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+            return text.replace(/</g, '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
         }
 
         static whitespaceEquivalent(input: string): string {
