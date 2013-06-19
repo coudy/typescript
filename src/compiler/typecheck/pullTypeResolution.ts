@@ -3764,16 +3764,17 @@ module TypeScript {
                     var id = binex.operand1;
                     var text: string;
                     var actualText: string;
-
-                    if (id.nodeType() === NodeType.Name) {
+                    var idNodeType = id.nodeType();
+                    if (idNodeType === NodeType.Name) {
                         actualText = (<Identifier>id).actualText;
                         text = (<Identifier>id).text();
-                    }
-                    else if (id.nodeType() === NodeType.StringLiteral) {
+                    } else if (idNodeType === NodeType.StringLiteral) {
                         actualText = (<StringLiteral>id).actualText;
                         text = (<StringLiteral>id).text();
-                    }
-                    else {
+                    } else if (idNodeType === NodeType.NumericLiteral) {
+                        text = (<NumberLiteral>id).text();
+                        actualText = text;
+                    } else {
                         // TODO: no error for this?  What if it's a numeric literal?
                         return SymbolAndDiagnostics.fromSymbol(this.semanticInfoChain.anyTypeSymbol);
                     }

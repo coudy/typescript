@@ -1525,11 +1525,13 @@ module TypeScript {
 
                     if (contextualType) {
                         var text: string;
-                        if (binex.operand1.nodeType() === NodeType.Name) {
+                        var nodeType = binex.operand1.nodeType();
+                        if (nodeType === NodeType.Name) {
                             text = (<Identifier>binex.operand1).text();
-                        }
-                        else if (binex.operand1.nodeType() === NodeType.StringLiteral) {
+                        } else if (nodeType === NodeType.StringLiteral) {
                             text = (<StringLiteral>binex.operand1).text();
+                        } else if (nodeType === NodeType.NumericLiteral) {
+                            text = (<NumberLiteral>binex.operand1).text();
                         }
 
                         member = contextualType.findMember(text);
