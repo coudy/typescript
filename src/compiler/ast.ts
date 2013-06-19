@@ -1218,10 +1218,6 @@ module TypeScript {
         }
 
         public shouldEmit(): boolean {
-            if (hasFlag(this.getFlags(), ASTFlags.EnumMapElement)) {
-                return false;
-            }
-
             var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
             return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }

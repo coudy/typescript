@@ -834,12 +834,15 @@ module TypeScript {
             var membersLen = moduleDecl.members.members.length;
             for (var j = 0; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType() === NodeType.VariableStatement && !hasFlag(memberDecl.getFlags(), ASTFlags.EnumMapElement)) {
-                    var variableStatement = <VariableStatement>memberDecl;
-                    this.emitDeclarationComments(variableStatement.declaration.declarators.members[0]);
-                    this.emitIndent();
-                    this.declFile.WriteLine((<VariableDeclarator>variableStatement.declaration.declarators.members[0]).id.actualText + ",");
+                var variableStatement = <VariableStatement>memberDecl;
+                var varDeclarator = <VariableDeclarator>variableStatement.declaration.declarators.members[0];
+                this.emitDeclarationComments(varDeclarator);
+                this.emitIndent();
+                this.declFile.Write(varDeclarator.id.actualText);
+                if (varDeclarator.init && varDeclarator.init.nodeType() == NodeType.NumericLiteral) {
+                    this.declFile.Write(" = " + (<NumberLiteral>varDeclarator.init).text());
                 }
+                this.declFile.WriteLine(",");
             }
             this.indenter.decreaseIndent();
 
