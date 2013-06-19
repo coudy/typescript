@@ -1118,7 +1118,7 @@ module TypeScript {
     "code": 4025,
     "category": DiagnosticCategory.Message
   },
-  "Current host does not support -w[atch] option.": {
+  "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error
   },
@@ -1162,7 +1162,7 @@ module TypeScript {
     "code": 5013,
     "category": DiagnosticCategory.NoPrefix
   },
-  "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.": {
+  "Locale must be of the form <language> or <language>-<territory>. For example '{0}' or '{1}'.": {
     "code": 5014,
     "category": DiagnosticCategory.Error
   },
@@ -1258,16 +1258,12 @@ module TypeScript {
     "code": 6000,
     "category": DiagnosticCategory.Message
   },
-  "Generates corresponding .map file": {
-    "code": 6001,
-    "category": DiagnosticCategory.Message
-  },
-  "Writes the full path of map file in the generated js file": {
-    "code": 6002,
-    "category": DiagnosticCategory.Message
-  },
-  "Generates corresponding .d.ts file": {
+  "Generates corresponding {0} file": {
     "code": 6003,
+    "category": DiagnosticCategory.Message
+  },
+  "Writes the full path of map file in the generated {0} file": {
+    "code": 6002,
     "category": DiagnosticCategory.Message
   },
   "Watch input files": {
@@ -1298,7 +1294,7 @@ module TypeScript {
     "code": 6010,
     "category": DiagnosticCategory.Message
   },
-  "Do not include a default lib.d.ts with global declarations": {
+  "Do not include a default {0} with global declarations": {
     "code": 6011,
     "category": DiagnosticCategory.Message
   },
@@ -1310,11 +1306,11 @@ module TypeScript {
     "code": 6013,
     "category": DiagnosticCategory.Message
   },
-  "Specify ECMAScript target version: \"ES3\" (default), or \"ES5\"": {
+  "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
     "code": 6014,
     "category": DiagnosticCategory.Message
   },
-  "Specify module code generation: \"commonjs\" (default) or \"amd\"": {
+  "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
     "code": 6015,
     "category": DiagnosticCategory.Message
   },
@@ -1330,15 +1326,15 @@ module TypeScript {
     "code": 6018,
     "category": DiagnosticCategory.Message
   },
-  "Allow use of deprecated \"bool\" type": {
+  "Allow use of deprecated \"{0}\" type": {
     "code": 6019,
     "category": DiagnosticCategory.Message
   },
-  "Allow use of deprecated \"module\" keyword when referencing an external module": {
+  "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
     "code": 6020,
     "category": DiagnosticCategory.Message
   },
-  "Specify locale for errors and messages. For example 'en' or 'ja-jp'": {
+  "Specify locale for errors and messages. For example '{0}' or '{1}'": {
     "code": 6021,
     "category": DiagnosticCategory.Message
   },

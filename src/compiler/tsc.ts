@@ -359,14 +359,14 @@ module TypeScript {
             });
 
             opts.flag('sourcemap', {
-                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_map_file, null),
+                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_0_file, ['.map']),
                 set: () => {
                     this.compilationSettings.mapSourceFiles = true;
                 }
             });
 
             opts.flag('fullSourceMapPath', {
-                usage: getLocalizedText(DiagnosticCode.Writes_the_full_path_of_map_file_in_the_generated_js_file, null),
+                usage: getLocalizedText(DiagnosticCode.Writes_the_full_path_of_map_file_in_the_generated_0_file, ['js']),
                 experimental: true,
                 set: () => {
                     this.compilationSettings.emitFullSourceMapPath = true;
@@ -374,7 +374,7 @@ module TypeScript {
             });
 
             opts.flag('declaration', {
-                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_d_ts_file, null),
+                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_0_file, ['.d.ts']),
                 set: () => {
                     this.compilationSettings.generateDeclarationFiles = true;
                 }
@@ -432,7 +432,7 @@ module TypeScript {
             });
 
             opts.flag('nolib', {
-                usage: getLocalizedText(DiagnosticCode.Do_not_include_a_default_lib_d_ts_with_global_declarations, null),
+                usage: getLocalizedText(DiagnosticCode.Do_not_include_a_default_0_with_global_declarations, ['lib.d.ts']),
                 set: () => {
                     this.compilationSettings.useDefaultLib = false;
                 }
@@ -455,7 +455,7 @@ module TypeScript {
             });
 
             opts.option('target', {
-                usage: getLocalizedText(DiagnosticCode.Specify_ECMAScript_target_version_ES3_default_or_ES5, null),
+                usage: getLocalizedText(DiagnosticCode.Specify_ECMAScript_target_version_0_default_or_1, ['ES3', 'ES5']),
                 type: getLocalizedText(DiagnosticCode.VERSION, null),
                 set: (type) => {
                     type = type.toLowerCase();
@@ -474,7 +474,7 @@ module TypeScript {
             });
 
             opts.option('module', {
-                usage: getLocalizedText(DiagnosticCode.Specify_module_code_generation_commonjs_default_or_amd, null),
+                usage: getLocalizedText(DiagnosticCode.Specify_module_code_generation_0_default_or_1, ['commonjs', 'amd']),
                 type: getLocalizedText(DiagnosticCode.KIND, null),
                 set: (type) => {
                     type = type.toLowerCase();
@@ -516,14 +516,14 @@ module TypeScript {
             }, 'v');
 
             opts.flag('allowbool', {
-                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_bool_type, null),
+                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_0_type, ['bool']),
                 set: () => {
                     this.compilationSettings.allowBool = true;
                 }
             }, 'b');
 
             opts.flag('allowimportmodule', {
-                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_module_keyword_when_referencing_an_external_module, null),
+                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module, ['module']),
                 set: () => {
                     this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
                 }
@@ -531,7 +531,7 @@ module TypeScript {
 
             var locale: string = null;
             opts.option('locale', {
-                usage: getLocalizedText(DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_en_or_ja_jp, null),
+                usage: getLocalizedText(DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_0_or_1, ['en', 'ja-jp']),
                 type: getLocalizedText(DiagnosticCode.STRING, null),
                 set: (value) => {
                     locale = value;
@@ -564,7 +564,7 @@ module TypeScript {
         private setLocale(locale: string): boolean {
             var matchResult = /^([a-z]+)([_\-]([a-z]+))?$/.exec(locale.toLowerCase());
             if (!matchResult) {
-                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1, ['en', 'ja-jp']));
                 return false;
             }
 
@@ -607,7 +607,7 @@ module TypeScript {
         private watchFiles() {
             if (!this.ioHost.watchFile) {
                 this.addDiagnostic(
-                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
+                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_0_option, ['-w[atch]']));
                 return;
             }
 
