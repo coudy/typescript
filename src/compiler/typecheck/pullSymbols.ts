@@ -1543,6 +1543,20 @@ module TypeScript {
 
                 return true;
             }
+            else if (this.hasGenericMember) {
+                var members = this.getMembers();
+                var memberType: PullTypeSymbol = null;
+
+                for (var i = 0; i < members.length; i++) {
+                    memberType = members[i].getType();
+
+                    if (memberType && !memberType.isFixed()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
 
             return false;
         }
