@@ -1255,15 +1255,15 @@ module TypeScript {
     "category": DiagnosticCategory.Error
   },
   "Concatenate and emit output to single file | Redirect output structure to the directory": {
-    "code": 6000,
+    "code": 6001,
     "category": DiagnosticCategory.Message
   },
   "Generates corresponding {0} file": {
-    "code": 6003,
+    "code": 6002,
     "category": DiagnosticCategory.Message
   },
   "Writes the full path of map file in the generated {0} file": {
-    "code": 6002,
+    "code": 6003,
     "category": DiagnosticCategory.Message
   },
   "Watch input files": {
