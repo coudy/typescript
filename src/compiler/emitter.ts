@@ -879,7 +879,8 @@ module TypeScript {
 
         public emitEnumElement(varDecl: VariableDeclarator): void {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
-
+            this.emitComments(varDecl, true);
+            this.recordSourceMappingStart(varDecl);
             var name = varDecl.id.actualText;
             var quoted = isQuoted(name);
             this.writeToOutput(this.moduleName);
@@ -901,6 +902,8 @@ module TypeScript {
 
             this.writeToOutput('] = ');
             this.writeToOutput(quoted ? name : '"' + name + '"');
+            this.recordSourceMappingEnd(varDecl);
+            this.emitComments(varDecl, false);
             this.writeToOutput(';');
         }
 

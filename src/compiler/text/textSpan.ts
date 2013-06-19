@@ -163,8 +163,8 @@ module TypeScript {
         /// name="end"/> positions as opposed to a position and length.
         /// </summary>
         public static fromBounds(start: number, end: number): TextSpan {
-            Contract.requires(start >= 0);
-            Contract.requires(end - start >= 0);
+            Debug.assert(start >= 0);
+            Debug.assert(end - start >= 0);
             return new TextSpan(start, end - start);
         }
     }

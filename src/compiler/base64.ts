@@ -87,7 +87,7 @@ module TypeScript {
                 }
             }
 
-            throw new Error('Base64 value "' + inString + '" finished with a continuation bit');
+            throw new Error(getDiagnosticMessage(DiagnosticCode.Base64_value_0_finished_with_a_continuation_bit, [inString]));
         }
     }
 }

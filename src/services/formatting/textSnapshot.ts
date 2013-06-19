@@ -56,7 +56,7 @@ module TypeScript.Formatting {
             var lineMap = this.snapshot.lineMap().lineStarts();
             var lineMapIndex = lineNumber; //Note: lineMap is 0-based
             if (lineMapIndex < 0 || lineMapIndex >= lineMap.length)
-                throw new Error("invalid line number (" + lineMapIndex + ")");
+                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Invalid_line_number_0, [lineMapIndex]));
             var start = lineMap[lineMapIndex];
 
             var end: number;

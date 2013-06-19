@@ -71,7 +71,7 @@ module Diff {
         }
 
         public equals(otherChunk: Chunk): boolean {
-            if (otherChunk === null) throw new Error("otherChunk is null");
+            TypeScript.CompilerDiagnostics.assert(otherChunk !== null, "otherChunk is null");
 
             if (this.hashCode != otherChunk.hashCode) return false;
             return this.content === otherChunk.content;
@@ -770,7 +770,7 @@ module Diff {
         }
 
         static fullHtmlEncode(text: string) {
-            return text.replace('<', '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+            return text.replace(/</g, '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
         }
 
         static whitespaceEquivalent(input: string): string {

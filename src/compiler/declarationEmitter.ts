@@ -836,7 +836,7 @@ module TypeScript {
                 var memberDecl: AST = moduleDecl.members.members[j];
                 if (memberDecl.nodeType() === NodeType.VariableStatement && !hasFlag(memberDecl.getFlags(), ASTFlags.EnumMapElement)) {
                     var variableStatement = <VariableStatement>memberDecl;
-                    this.emitDeclarationComments(memberDecl);
+                    this.emitDeclarationComments(variableStatement.declaration.declarators.members[0]);
                     this.emitIndent();
                     this.declFile.WriteLine((<VariableDeclarator>variableStatement.declaration.declarators.members[0]).id.actualText + ",");
                 }

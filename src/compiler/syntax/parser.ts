@@ -5548,56 +5548,56 @@ module TypeScript.Parser {
         private getExpectedListElementType(currentListType: ListParsingState): string {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
-                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
+                    return getLocalizedText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                     return '{';
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return getDiagnosticText(DiagnosticCode.constructor_function_accessor_or_variable, null);
+                    return getLocalizedText(DiagnosticCode.constructor_function_accessor_or_variable, null);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
-                    return getDiagnosticText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
+                    return getLocalizedText(DiagnosticCode.module_class_interface_enum_import_or_statement, null);
 
                 case ListParsingState.SwitchStatement_SwitchClauses:
-                    return getDiagnosticText(DiagnosticCode.case_or_default_clause, null);
+                    return getLocalizedText(DiagnosticCode.case_or_default_clause, null);
 
                 case ListParsingState.SwitchClause_Statements:
-                    return getDiagnosticText(DiagnosticCode.statement, null);
+                    return getLocalizedText(DiagnosticCode.statement, null);
 
                 case ListParsingState.Block_Statements:
-                    return getDiagnosticText(DiagnosticCode.statement, null);
+                    return getLocalizedText(DiagnosticCode.statement, null);
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                    return getDiagnosticText(DiagnosticCode.identifier, null);
+                    return getLocalizedText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.EnumDeclaration_EnumElements:
-                    return getDiagnosticText(DiagnosticCode.identifier, null);
+                    return getLocalizedText(DiagnosticCode.identifier, null);
 
                 case ListParsingState.ObjectType_TypeMembers:
-                    return getDiagnosticText(DiagnosticCode.call_construct_index_property_or_function_signature, null);
+                    return getLocalizedText(DiagnosticCode.call_construct_index_property_or_function_signature, null);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
-                    return getDiagnosticText(DiagnosticCode.expression, null);
+                    return getLocalizedText(DiagnosticCode.expression, null);
 
                 case ListParsingState.HeritageClause_TypeNameList:
-                    return getDiagnosticText(DiagnosticCode.type_name, null);
+                    return getLocalizedText(DiagnosticCode.type_name, null);
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                    return getDiagnosticText(DiagnosticCode.property_or_accessor, null);
+                    return getLocalizedText(DiagnosticCode.property_or_accessor, null);
 
                 case ListParsingState.ParameterList_Parameters:
-                    return getDiagnosticText(DiagnosticCode.parameter, null);
+                    return getLocalizedText(DiagnosticCode.parameter, null);
 
                 case ListParsingState.TypeArgumentList_Types:
-                    return getDiagnosticText(DiagnosticCode.type, null);
+                    return getLocalizedText(DiagnosticCode.type, null);
 
                 case ListParsingState.TypeParameterList_TypeParameters:
-                    return getDiagnosticText(DiagnosticCode.type_parameter, null);
+                    return getLocalizedText(DiagnosticCode.type_parameter, null);
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
-                    return getDiagnosticText(DiagnosticCode.expression, null);
+                    return getLocalizedText(DiagnosticCode.expression, null);
 
                 default:
                     throw Errors.invalidOperation();

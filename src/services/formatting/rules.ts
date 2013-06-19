@@ -24,7 +24,7 @@ module TypeScript.Formatting {
                     return name;
                 }
             }
-            throw new Error("Unknown rule");
+            throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unknown_rule, null));
         }
 
         public IgnoreBeforeComment: Rule;

@@ -55,13 +55,17 @@ module TypeScript {
         public printUsage() {
             this.printVersion();
 
-            this.host.printLine("Syntax:   tsc [options] [file ..]");
+            var optionsWord = getLocalizedText(DiagnosticCode.options, null);
+            var fileWord = getLocalizedText(DiagnosticCode.file, null);
+            var tscSyntax = "tsc [" + optionsWord + "] [" + fileWord + " ..]";
+            var syntaxHelp = getLocalizedText(DiagnosticCode.Syntax_0, [tscSyntax]);
+            this.host.printLine(syntaxHelp);
             this.host.printLine("");
-            this.host.printLine("Examples: tsc hello.ts");
+            this.host.printLine(getLocalizedText(DiagnosticCode.Examples_0, ["tsc hello.ts"]));
             this.host.printLine("          tsc --out foo.js foo.ts");
             this.host.printLine("          tsc @args.txt");
             this.host.printLine("");
-            this.host.printLine("Options:");
+            this.host.printLine(getLocalizedText(DiagnosticCode.Options, null));
 
             var output = [];
             var maxLength = 0;
@@ -108,7 +112,8 @@ module TypeScript {
                 }
             }
 
-            output.push(["  @<file>", "Insert command line options and files from a file."]);
+            var fileDescription = getLocalizedText(DiagnosticCode.Insert_command_line_options_and_files_from_a_file, null);
+            output.push(["  @<" + fileWord + ">", fileDescription]);
 
             // Print padded output
             for (i = 0; i < output.length; i++) {
@@ -230,8 +235,8 @@ module TypeScript {
                         var option = this.findOption(arg);
 
                         if (option === null) {
-                            this.host.printLine("Unknown option '" + arg + "'");
-                            this.host.printLine("Use the '--help' flag to see options");
+                            this.host.printLine(getDiagnosticMessage(DiagnosticCode.Unknown_option_0, [arg]));
+                            this.host.printLine(getLocalizedText(DiagnosticCode.Use_the_0_flag_to_see_options, ["--help"]));
                         } else {
                             if (!option.flag)
                                 value = consume();

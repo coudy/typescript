@@ -1164,7 +1164,7 @@ module FourSlash {
             }
         }
 
-        public verifyOccurancesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
+        public verifyOccurrencesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
             var occurances = this.languageService.getOccurrencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
 
             if (!occurances || occurances.length === 0) {

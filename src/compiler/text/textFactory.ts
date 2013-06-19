@@ -44,9 +44,11 @@ module TypeScript.TextFactory {
         private _lineNumber: number;
 
         constructor(text: IText, body: TextSpan, lineBreakLength: number, lineNumber: number) {
-            Contract.throwIfNull(text);
-            Contract.throwIfFalse(lineBreakLength >= 0);
-            Contract.requires(lineNumber >= 0);
+            if (text === null) {
+                throw Errors.argumentNull('text');
+            }
+            Debug.assert(lineBreakLength >= 0);
+            Debug.assert(lineNumber >= 0);
             this._text = text;
             this._textSpan = body;
             this._lineBreakLength = lineBreakLength;
