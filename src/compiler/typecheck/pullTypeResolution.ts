@@ -1,5 +1,3 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='..\typescript.ts' />
 
@@ -100,6 +98,8 @@ module TypeScript {
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
+
+        private seenSuperConstructorCall = false;
 
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
@@ -2285,7 +2285,7 @@ module TypeScript {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
 
-            var funcSymbol = <PullTypeSymbol>funcDecl.getSymbol();
+            var funcSymbol = funcDecl.getSymbol();
 
             var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
 
@@ -2419,19 +2419,143 @@ module TypeScript {
             }
 
             if (context.typeCheck()) {
+                this.seenSuperConstructorCall = false;
+
                 this.resolveAST(funcDeclAST.block, false, this.getEnclosingDecl(funcDecl), context);
 
+                this.validateVariableDeclarationGroups(funcDecl, context);
+
+                var enclosingDecl = this.getEnclosingDecl(funcDecl);
+
+                var hasReturn = (funcDecl.getFlags() & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+
+                var parameters = signature.getParameters();
+
+                // Is it a constructor?
                 if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-                    //return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+                    if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
+                        // Constructors for derived classes must contain a call to the class's 'super' constructor
+                        if (!this.seenSuperConstructorCall) {
+                            context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
+                                DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call, null, enclosingDecl);
+                        }
+                        // The first statement in the body of a constructor must be a super call if both of the following are true:
+                        //  - The containing class is a derived class.
+                        //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                        else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
+                            var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
+                            if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
+                                context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
+                                    DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties, null, enclosingDecl);
+                            }
+                        }
+                    }
                 }
+
+                // Is it an indexer?
                 else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-                    //return this.typeCheckIndexer(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+
+                    var allIndexSignatures = enclosingDecl.getSymbol().getType().getIndexSignatures();
+
+                    for (var i = 0; i < allIndexSignatures.length; i++) {
+                        if (!allIndexSignatures[i].isResolved()) {
+                            this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
+                        }
+
+                        if (allIndexSignatures[i].getParameters()[0].getType() !== parameters[0].getType()) {
+                            var stringIndexSignature: PullSignatureSymbol = null;
+                            var numberIndexSignature: PullSignatureSymbol = null;
+
+                            var indexSignature = signature;
+
+                            var isNumericIndexer = parameters[0].getType() === this.semanticInfoChain.numberTypeSymbol;
+
+                            if (isNumericIndexer) {
+                                numberIndexSignature = indexSignature;
+                                stringIndexSignature = allIndexSignatures[i];
+                            }
+                            else {
+                                numberIndexSignature = allIndexSignatures[i];
+                                stringIndexSignature = indexSignature;
+
+                                // If we are a string indexer sharing a container with a number index signature, the number will report the error
+                                // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
+                                if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
+                                    break;
+                                }
+                            }
+                            var comparisonInfo = new TypeComparisonInfo();
+                            var resolutionContext = new PullTypeResolutionContext();
+                            if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.getReturnType(), stringIndexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+                                if (comparisonInfo.message) {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
+                                        [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString(), comparisonInfo.message], enclosingDecl);
+                                } else {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
+                                        [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString()], enclosingDecl);
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    // Check that property names comply with indexer constraints (both string and numeric)
+                    var allMembers = enclosingDecl.getSymbol().getType().getAllMembers(PullElementKind.All, /*includePrivate*/ true);
+                    for (var i = 0; i < allMembers.length; i++) {
+                        var name = allMembers[i].getName();
+                        if (name) {
+                            if (!allMembers[i].isResolved()) {
+                                this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
+                            }
+                            // Skip members in the same container, they will be checked during their member type check
+                            if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
+                                // Check if the member name is numerical
+                                var isMemberNumeric = isFinite(+name);
+                                if (isNumericIndexer === isMemberNumeric) {
+                                    this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
+                                }
+                            }
+                        }
+                    }
                 }
+
+                // Is it an accessor?
                 else if (funcDeclAST.isAccessor()) {
-                    //return this.typeCheckAccessor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
+                    var accessorSymbol = <PullAccessorSymbol>funcSymbol;
+
+                    var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
+                    var isSetter = !isGetter;
+
+                    var getter = accessorSymbol.getGetter();
+                    var setter = accessorSymbol.getSetter();
+
+                    var parameters = signature.getParameters();
+
+                    var funcNameAST = funcDeclAST.name;
+
+                    if (isGetter && !hasReturn) {
+                        if (!(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                            context.postError(this.unitPath, funcNameAST.minChar, funcNameAST.getLength(), DiagnosticCode.Getters_must_return_a_value, null, enclosingDecl);
+                        }
+                    }
+
+                    // Setter with return value is checked in typeCheckReturnExpression
+
+                    if (getter && setter) {
+                        var getterDecl = getter.getDeclarations()[0];
+                        var setterDecl = setter.getDeclarations()[0];
+
+                        var getterIsPrivate = getterDecl.getFlags() & PullElementFlags.Private;
+                        var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
+
+                        if (getterIsPrivate != setterIsPrivate) {
+                            context.postError(this.unitPath, funcNameAST.minChar, funcNameAST.getLength(), DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, enclosingDecl);
+                        }
+                    }
                 }
+
+                // It's just a conventional function or method
                 else {
-                    var hasReturn = (funcDecl.getFlags() & PullElementFlags.HasReturnStatement) != 0;
 
                     if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                         var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
@@ -2440,13 +2564,13 @@ module TypeScript {
                             var funcName = funcDecl.getDisplayName();
                             funcName = funcName ? "'" + funcName + "'" : "expression";
 
-                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], this.getEnclosingDecl(funcDecl));
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
                         }
                     }
-
-                    this.typeCheckFunctionOverloads(funcDeclAST, context);
-                    this.checkFunctionTypePrivacy(funcDeclAST, false, context);
                 }
+
+                this.typeCheckFunctionOverloads(funcDeclAST, context);
+                this.checkFunctionTypePrivacy(funcDeclAST, false, context);
             }
 
             return funcSymbol;
@@ -2690,10 +2814,40 @@ module TypeScript {
 
             switch (ast.nodeType()) {
 
+                /*
+
+                PERFREVIEW:
+
+                Here's what's left TODO:
+                    resolveVoidExpression
+                    resolveLogicalOperation
+                    resolveBinaryArithmeticOperation
+                    resolveTypeOfExpression
+                    resolveThrowStatement
+                    resolveDeleteStatement
+                    resolveInstanceOfExpression
+                    resolveCommaExpression
+                    resolveInExpression
+                    resolveForStatement
+                    resolveForInStatement
+                    resolveWhileStatement
+                    resolveDoStatement
+                    resolveIfStatement
+                    resolveBlock
+                    resolveVariableStatement
+                    resolveWithStatement
+                    resolveTryStatement
+                    resolveCatchClause
+                    resolveReturnStatement
+                    resolveSwitchStatement
+                    resolveCaseClasue
+                    resolveLabeledStatement
+
+                */
+
                 case NodeType.List:
                     return this.resolveList(<ASTList>ast, enclosingDecl, context);
-                case NodeType.CatchClause:
-                case NodeType.WithStatement:
+
                 case NodeType.Script:
                     return null;
 
@@ -2797,6 +2951,7 @@ module TypeScript {
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.booleanTypeSymbol;
                 case NodeType.VoidExpression:
+                    // PERFREVIEW: resolveVoidExpression
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 // assignment
@@ -2813,11 +2968,13 @@ module TypeScript {
                 case NodeType.LessThanOrEqualExpression:
                 case NodeType.GreaterThanOrEqualExpression:
                 case NodeType.GreaterThanExpression:
+                    // PERFREVIEW
+                    //  resolveLogicalOperation
                     return this.semanticInfoChain.booleanTypeSymbol;
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
-                    return this.resolveArithmeticExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.SubtractAssignmentExpression:
                 case NodeType.MultiplyAssignmentExpression:
@@ -2839,7 +2996,6 @@ module TypeScript {
                 case NodeType.PreIncrementExpression:
                 case NodeType.PostDecrementExpression:
                 case NodeType.PreDecrementExpression:
-                    return this.semanticInfoChain.numberTypeSymbol;
 
                 case NodeType.LeftShiftExpression:
                 case NodeType.SignedRightShiftExpression:
@@ -2847,6 +3003,8 @@ module TypeScript {
                 case NodeType.LeftShiftAssignmentExpression:
                 case NodeType.SignedRightShiftAssignmentExpression:
                 case NodeType.UnsignedRightShiftAssignmentExpression:
+                    // PERFREVIEW
+                    // resolveBinaryArithmeticOperation
                     return this.semanticInfoChain.numberTypeSymbol;
 
                 case NodeType.ElementAccessExpression:
@@ -2859,12 +3017,15 @@ module TypeScript {
                     return this.resolveLogicalAndExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeOfExpression:
+                    // PERFREVIEW: resolveTypeOfExpression
                     return this.semanticInfoChain.stringTypeSymbol;
 
                 case NodeType.ThrowStatement:
+                    // PERFREVIEW: resolveThrowStatement
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 case NodeType.DeleteExpression:
+                    // PERFREVIEW: resolveDeleteStatement
                     return this.semanticInfoChain.booleanTypeSymbol;
 
                 case NodeType.ConditionalExpression:
@@ -2880,7 +3041,28 @@ module TypeScript {
                     return this.resolveExpressionStatement(<ExpressionStatement>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.InstanceOfExpression:
+                    // PERFREVIEW: ResolveInstanceOfExpression
                     return this.semanticInfoChain.booleanTypeSymbol;
+
+                // PERFREVIEW
+                case NodeType.CommaExpression:
+                case NodeType.InExpression:
+                case NodeType.ForStatement:
+                case NodeType.ForInStatement:
+                case NodeType.WhileStatement:
+                case NodeType.DoStatement:
+                case NodeType.IfStatement:
+                case NodeType.Block:
+                case NodeType.VariableStatement:
+                case NodeType.WithStatement:
+                case NodeType.TryStatement:
+                case NodeType.CatchClause:
+                case NodeType.ReturnStatement:
+                case NodeType.SwitchStatement:
+
+                case NodeType.CaseClause:
+                case NodeType.LabeledStatement:
+                    break;
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
@@ -4174,7 +4356,7 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        private resolveArithmeticExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveBinaryAdditionOperation(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var leftType = <PullTypeSymbol>this.resolveAST(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).getType();
             var rightType = <PullTypeSymbol>this.resolveAST(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).getType();
 
@@ -4383,6 +4565,7 @@ module TypeScript {
                 isSuperCall = true;
 
                 if (targetTypeSymbol.isClass()) {
+                    this.seenSuperConstructorCall = true;
                     targetSymbol = targetTypeSymbol.getConstructorMethod();
                     targetTypeSymbol = targetSymbol.getType();
                 }
@@ -7777,6 +7960,426 @@ module TypeScript {
                     // Show on function decl
                     context.postError(this.unitPath, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
                 }
+            }
+        }
+
+        public enclosingClassIsDerived(decl: PullDecl): boolean {
+            if (decl) {
+                var parentDecl = decl.getParentDecl();
+                var classSymbol: PullTypeSymbol = null;
+
+                while (parentDecl) {
+                    if (parentDecl.getKind() == PullElementKind.Class) {
+                        classSymbol = <PullTypeSymbol>parentDecl.getSymbol();
+                        if (classSymbol.getExtendedTypes().length > 0) {
+                            return true;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private isSuperCallNode(node: AST): boolean {
+            if (node && node.nodeType() === NodeType.ExpressionStatement) {
+                var expressionStatement = <ExpressionStatement>node;
+                if (expressionStatement.expression && expressionStatement.expression.nodeType() === NodeType.InvocationExpression) {
+                    var callExpression = <InvocationExpression>expressionStatement.expression;
+                    if (callExpression.target && callExpression.target.nodeType() === NodeType.SuperExpression) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private getFirstStatementFromFunctionDeclAST(funcDeclAST: FunctionDeclaration): AST {
+            if (funcDeclAST.block && funcDeclAST.block.statements && funcDeclAST.block.statements.members) {
+                return funcDeclAST.block.statements.members[0];
+            }
+
+            return null;
+        }
+
+        private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
+            /*
+            The first statement in the body of a constructor must be a super call if both of the following are true:
+                •	The containing class is a derived class.
+                •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+            In such a required super call, it is a compile-time error for argument expressions to reference this.
+            */
+            if (enclosingConstructor && enclosingClass) {
+                var classSymbol = <PullTypeSymbol>enclosingClass.getSymbol();
+                if (classSymbol.getExtendedTypes().length === 0) {
+                    return false;
+                }
+
+                var classMembers = classSymbol.getMembers();
+                for (var i = 0, n1 = classMembers.length; i < n1; i++) {
+                    var member = classMembers[i];
+
+                    if (member.getKind() === PullElementKind.Property) {
+                        var declarations = member.getDeclarations();
+                        for (var j = 0, n2 = declarations.length; j < n2; j++) {
+                            var declaration = declarations[j];
+                            var ast = this.semanticInfoChain.getASTForDecl(declaration);
+                            if (ast.nodeType() === NodeType.Parameter) {
+                                return true;
+                            }
+
+                            if (ast.nodeType() === NodeType.VariableDeclarator) {
+                                var variableDeclarator = <VariableDeclarator>ast;
+                                if (variableDeclarator.init) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private checkForThisOrSuperCaptureInArrowFunction(expression: AST, typeCheckContext: PullTypeCheckContext): void {
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var declPath: PullDecl[] = typeCheckContext.enclosingDeclStack;
+
+            // work back up the decl path, until you can find a class
+            // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
+            if (declPath.length) {
+                var inFatArrow = false;
+                for (var i = declPath.length - 1; i >= 0; i--) {
+                    var decl = declPath[i];
+                    var declKind = decl.getKind();
+                    var declFlags = decl.getFlags();
+
+                    if (declKind === PullElementKind.FunctionExpression &&
+                        hasFlag(declFlags, PullElementFlags.FatArrow)) {
+
+                        inFatArrow = true;
+                        continue;
+                    }
+
+                    if (inFatArrow) {
+                        if (declKind === PullElementKind.Function ||
+                            declKind === PullElementKind.Method ||
+                            declKind === PullElementKind.ConstructorMethod ||
+                            declKind === PullElementKind.GetAccessor ||
+                            declKind === PullElementKind.SetAccessor ||
+                            declKind === PullElementKind.FunctionExpression ||
+                            declKind === PullElementKind.Class ||
+                            declKind === PullElementKind.Container ||
+                            declKind === PullElementKind.DynamicModule ||
+                            declKind === PullElementKind.Script) {
+
+                            decl.setFlags(decl.getFlags() | PullElementFlags.MustCaptureThis);
+
+                            // If we're accessing 'this' in a class, then the class constructor 
+                            // needs to be marked as capturing 'this'.
+                            if (declKind === PullElementKind.Class) {
+                                decl.getChildDecls().filter(d => d.getKind() === PullElementKind.ConstructorMethod)
+                                    .map(d => d.setFlags(d.getFlags() | PullElementFlags.MustCaptureThis));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, context: PullTypeResolutionContext, enclosingDecl: PullDecl) {
+            // Check all the members defined in this symbol's declarations (no base classes)
+            var indexSignatures = containerType.getIndexSignatures();
+
+            if (indexSignatures.length > 0) {
+                var members = enclosingDecl.getChildDecls();
+                for (var i = 0; i < members.length; i++) {
+                    // Nothing to check if the member has no name or is a signature
+                    var member = members[i];
+                    if (!member.getName() || member.getKind() & PullElementKind.SomeSignature) {
+                        continue;
+                    }
+
+                    // Get all index signatures, and check against the first that matters for this field name (string vs number)
+                    var isMemberNumeric = isFinite(+member.getName());
+                    for (var j = 0; j < indexSignatures.length; j++) {
+                        if (!indexSignatures[j].isResolved()) {
+                            this.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), context);
+                        }
+                        if ((indexSignatures[j].getParameters()[0].getType() === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
+                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), context, enclosingDecl, isMemberNumeric);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private checkThatMemberIsSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, context: PullTypeResolutionContext, enclosingDecl: PullDecl, isNumeric: boolean) {
+
+            var comparisonInfo = new TypeComparisonInfo();
+            var resolutionContext = new PullTypeResolutionContext();
+
+            if (!this.sourceIsSubtypeOfTarget(member.getType(), indexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+                if (isNumeric) {
+                    if (comparisonInfo.message) {
+                        context.postError(this.unitPath, astForError.minChar, astForError.getLength(), DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0_NL_1,
+                            [indexSignature.getReturnType().toString(), comparisonInfo.message], enclosingDecl);
+                    } else {
+                        context.postError(this.unitPath, astForError.minChar, astForError.getLength(), DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0,
+                            [indexSignature.getReturnType().toString()], enclosingDecl);
+                    }
+                }
+                else {
+                    if (comparisonInfo.message) {
+                        context.postError(this.unitPath, astForError.minChar, astForError.getLength(), DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type_0_NL_1,
+                            [indexSignature.getReturnType().toString(), comparisonInfo.message], enclosingDecl);
+                    } else {
+                        context.postError(this.unitPath, astForError.minChar, astForError.getLength(), DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type_0,
+                            [indexSignature.getReturnType().toString()], enclosingDecl);
+                    }
+                }
+            }
+        }
+
+        private typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol: PullTypeSymbol, extendedType: PullTypeSymbol, typeMember: PullSymbol, extendedTypeMember: PullSymbol, enclosingDecl: PullDecl, comparisonInfo: TypeComparisonInfo) {
+
+            if (!typeSymbol.isClass()) {
+                return true;
+            }
+
+            var typeMemberKind = typeMember.getKind();
+            var extendedMemberKind = extendedTypeMember.getKind();
+
+            if (typeMemberKind === extendedMemberKind) {
+                return true;
+            }
+
+            var errorCode: string;
+            if (typeMemberKind === PullElementKind.Property) {
+                if (typeMember.isAccessor()) {
+                    errorCode = DiagnosticCode.Class_0_defines_instance_member_accessor_1_but_extended_class_2_defines_it_as_instance_member_function;
+                } else {
+                    errorCode = DiagnosticCode.Class_0_defines_instance_member_property_1_but_extended_class_2_defines_it_as_instance_member_function;
+                }
+            } else if (typeMemberKind === PullElementKind.Method) {
+                if (extendedTypeMember.isAccessor()) {
+                    errorCode = DiagnosticCode.Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_accessor;
+                } else {
+                    errorCode = DiagnosticCode.Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_property;
+                }
+            }
+
+            var message = getDiagnosticMessage(errorCode, [typeSymbol.toString(), typeMember.getScopedNameEx().toString(), extendedType.toString()]);
+            comparisonInfo.addMessage(message);
+            return false;
+        }
+
+        private typeCheckIfTypeExtendsType(typeDecl: TypeDeclaration, typeSymbol: PullTypeSymbol, extendedType: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var typeMembers = typeSymbol.getMembers();
+
+            var resolutionContext = new PullTypeResolutionContext();
+            var comparisonInfo = new TypeComparisonInfo();
+            var foundError = false;
+
+            // Check members
+            for (var i = 0; i < typeMembers.length; i++) {
+                var propName = typeMembers[i].getName();
+                var extendedTypeProp = extendedType.findMember(propName);
+                if (extendedTypeProp) {
+                    foundError = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
+
+                    if (!foundError) {
+                        foundError = !this.sourcePropertyIsSubtypeOfTargetProperty(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, resolutionContext, comparisonInfo);
+                    }
+
+                    if (foundError) {
+                        break;
+                    }
+                }
+            }
+
+            // Check call signatures
+            if (!foundError && typeSymbol.hasOwnCallSignatures()) {
+                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+            }
+
+            // Check construct signatures
+            if (!foundError && typeSymbol.hasOwnConstructSignatures()) {
+                foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+            }
+
+            // Check index signatures
+            if (!foundError && typeSymbol.hasOwnIndexSignatures()) {
+                foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+            }
+
+            if (!foundError && typeSymbol.isClass()) {
+                // If there is base class verify the constructor type is subtype of base class
+                var typeConstructorType = typeSymbol.getConstructorMethod().getType();
+                var typeConstructorTypeMembers = typeConstructorType.getMembers();
+                if (typeConstructorTypeMembers.length) {
+                    var extendedConstructorType = extendedType.getConstructorMethod().getType();
+                    var comparisonInfoForPropTypeCheck = new TypeComparisonInfo(comparisonInfo);
+
+                    // Verify that all the overriden members of the constructor type are compatible
+                    for (var i = 0; i < typeConstructorTypeMembers.length; i++) {
+                        var propName = typeConstructorTypeMembers[i].getName();
+                        var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
+                        if (extendedConstructorTypeProp) {
+                            if (!extendedConstructorTypeProp.isResolved()) {
+                                var extendedClassAst = this.currentUnit.getASTForSymbol(extendedType);
+                                var extendedClassDecl = this.currentUnit.getDeclForAST(extendedClassAst);
+                                this.resolveDeclaredSymbol(extendedConstructorTypeProp, extendedClassDecl, resolutionContext);
+                            }
+
+                            // check if type of property is subtype of extended type's property type
+                            var typeConstructorTypePropType = typeConstructorTypeMembers[i].getType();
+                            var extendedConstructorTypePropType = extendedConstructorTypeProp.getType();
+                            if (!this.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
+                                var propMessage: string;
+                                if (comparisonInfoForPropTypeCheck.message) {
+                                    propMessage = getDiagnosticMessage(DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3,
+                                        [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString(), comparisonInfoForPropTypeCheck.message]);
+                                } else {
+                                    propMessage = getDiagnosticMessage(DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible,
+                                        [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(), extendedType.toString()]);
+                                }
+                                comparisonInfo.addMessage(propMessage);
+                                foundError = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (foundError) {
+                var errorCode: string;
+                if (typeSymbol.isClass()) {
+                    errorCode = DiagnosticCode.Class_0_cannot_extend_class_1_NL_2;
+                } else {
+                    if (extendedType.isClass()) {
+                        errorCode = DiagnosticCode.Interface_0_cannot_extend_class_1_NL_2;
+                    } else {
+                        errorCode = DiagnosticCode.Interface_0_cannot_extend_interface_1_NL_2;
+                    }
+                }
+
+                context.postError(this.unitPath, typeDecl.name.minChar, typeDecl.name.getLength(), errorCode, [typeSymbol.getScopedName(), extendedType.getScopedName(), comparisonInfo.message], enclosingDecl);
+            }
+        }
+
+        private typeCheckIfClassImplementsType(classDecl: TypeDeclaration, classSymbol: PullTypeSymbol, implementedType: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+
+            var resolutionContext = new PullTypeResolutionContext();
+            var comparisonInfo = new TypeComparisonInfo();
+            var foundError = !this.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
+            if (!foundError) {
+                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                if (!foundError) {
+                    foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                    if (!foundError) {
+                        foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                    }
+                }
+            }
+
+            // Report error
+            if (foundError) {
+                var errorCode = implementedType.isClass() ?
+                    DiagnosticCode.Class_0_declares_class_1_as_an_implemented_interface_but_does_not_implement_it_NL_2 :
+                    DiagnosticCode.Class_0_declares_interface_1_but_does_not_implement_it_NL_2;
+
+                context.postError(this.unitPath, classDecl.name.minChar, classDecl.name.getLength(), errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message], enclosingDecl);
+            }
+        }
+
+        private typeCheckBase(typeDeclAst: TypeDeclaration,
+            typeSymbol: PullTypeSymbol, baseDeclAST: AST,
+            isExtendedType: boolean,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext) {
+
+            var typeDecl = this.getDeclForAST(typeDeclAst);
+            var contextForBaseTypeResolution = new PullTypeResolutionContext();
+            contextForBaseTypeResolution.isResolvingClassExtendedType = true;
+
+            var baseType = <PullTypeSymbol>this.resolveAST(baseDeclAST, false, enclosingDecl, context);
+            contextForBaseTypeResolution.isResolvingClassExtendedType = false;
+
+            var typeDeclIsClass = typeSymbol.isClass();
+
+            if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
+                // Report error about invalid base kind
+                if (baseType.isError()) {
+                    var error = (<PullErrorTypeSymbol>baseType).getDiagnostic();
+                    if (error) {
+                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), error.diagnosticKey(), error.arguments(), enclosingDecl);
+                    }
+                } else if (isExtendedType) {
+                    if (typeDeclIsClass) {
+                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_extend_another_class, null, enclosingDecl);
+                    } else {
+                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null, enclosingDecl);
+                    }
+                } else {
+                    context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null, enclosingDecl);
+                }
+                return;
+            }
+
+            // Check if its a recursive extend/implement type
+            if ((<PullTypeSymbol>baseType.getRootSymbol()).hasBase(<PullTypeSymbol>typeSymbol.getRootSymbol())) {
+                typeSymbol.setHasBaseTypeConflict();
+                baseType.setHasBaseTypeConflict();
+                // Report error
+                context.postError(this.unitPath,
+                    typeDeclAst.name.minChar,
+                    typeDeclAst.name.getLength(),
+                    typeDeclIsClass ? DiagnosticCode.Class_0_is_recursively_referenced_as_a_base_type_of_itself : DiagnosticCode.Interface_0_is_recursively_referenced_as_a_base_type_of_itself, [typeSymbol.getScopedName()],
+                    enclosingDecl);
+                return;
+            }
+
+            if (isExtendedType) {
+                // Verify all own overriding members are subtype
+                this.typeCheckIfTypeExtendsType(typeDeclAst, typeSymbol, baseType, enclosingDecl, context);
+            } else {
+                // If class implementes interface or class, verify all the public members are implemented
+                this.typeCheckIfClassImplementsType(typeDeclAst, typeSymbol, baseType, enclosingDecl, context);
+            }
+
+            // Privacy error:
+            this.checkTypePrivacy(typeSymbol, baseType, context, (errorTypeSymbol: PullTypeSymbol) =>
+                this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, context));
+        }
+
+        private typeCheckBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            if (!typeDeclAst.extendsList && !typeDeclAst.implementsList) {
+                return;
+            }
+
+            if (typeDeclAst.extendsList) {
+                for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {
+                    this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.extendsList.members[i], true, enclosingDecl, context);
+                }
+            }
+
+            if (typeSymbol.isClass()) {
+                if (typeDeclAst.implementsList) {
+                    for (var i = 0; i < typeDeclAst.implementsList.members.length; i++) {
+                        this.typeCheckBase(typeDeclAst, typeSymbol, typeDeclAst.implementsList.members[i], false, enclosingDecl, context);
+                    }
+                }
+            }
+            else if (typeDeclAst.implementsList) {
+                context.postError(this.unitPath, typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), DiagnosticCode.An_interface_cannot_implement_another_type, null, enclosingDecl);
             }
         }
     }
