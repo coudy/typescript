@@ -231,23 +231,23 @@ module TypeScript {
                 }
             }
 
-            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-            };
-
-            // TODO: if there are any emit diagnostics.  Don't proceed.
-            var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
-            compiler.reportDiagnostics(emitDiagnostics, this);
-            if (emitDiagnostics.length > 0) {
-                return true;
-            }
-
-            // Don't emit declarations if we have any semantic diagnostics.
-            if (anySemanticErrors) {
-                return true;
-            }
-
             if (!this.tcOnly) {
+                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                    this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+                };
+
+                // TODO: if there are any emit diagnostics.  Don't proceed.
+                var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
+                compiler.reportDiagnostics(emitDiagnostics, this);
+                if (emitDiagnostics.length > 0) {
+                    return true;
+                }
+
+                // Don't emit declarations if we have any semantic diagnostics.
+                if (anySemanticErrors) {
+                    return true;
+                }
+
                 var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                     this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
                 };

@@ -53,6 +53,8 @@ module TypeScript {
 
         public isPrinting = false;
 
+        public typeCheckPhase = -1;
+
         // public surface area
         public getSymbolID() { return this.pullSymbolID; }
 
@@ -1297,7 +1299,7 @@ module TypeScript {
             }
         }
 
-        public getMembers(): PullSymbol[]{
+        public getMembers(): PullSymbol[] {
             if (!this._members) {
                 return [];
             }
