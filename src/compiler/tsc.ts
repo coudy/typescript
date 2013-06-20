@@ -335,25 +335,33 @@ module TypeScript {
         // Parse command line options
         private parseOptions() {
             var opts = new OptionsParser(this.ioHost, this.compilerVersion);
-            var printedUsage = false;
 
             opts.option('out', {
-                usage: getLocalizedText(DiagnosticCode.Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory, null),
-                type: getLocalizedText(DiagnosticCode.FILE_DIRECTORY, null),
+                usage: {
+                    locCode: DiagnosticCode.Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory, 
+                    args: null
+                },
+                type: DiagnosticCode.FILE_DIRECTORY,
                 set: (str) => {
                     this.compilationSettings.outputOption = str;
                 }
             });
 
             opts.flag('sourcemap', {
-                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_0_file, ['.map']),
+                usage: {
+                    locCode: DiagnosticCode.Generates_corresponding_0_file,
+                    args: ['.map']
+                },
                 set: () => {
                     this.compilationSettings.mapSourceFiles = true;
                 }
             });
 
             opts.flag('fullSourceMapPath', {
-                usage: getLocalizedText(DiagnosticCode.Writes_the_full_path_of_map_file_in_the_generated_0_file, ['js']),
+                usage: {
+                    locCode: DiagnosticCode.Writes_the_full_path_of_map_file_in_the_generated_0_file,
+                    args: ['js']
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.emitFullSourceMapPath = true;
@@ -361,7 +369,10 @@ module TypeScript {
             });
 
             opts.flag('declaration', {
-                usage: getLocalizedText(DiagnosticCode.Generates_corresponding_0_file, ['.d.ts']),
+                usage: {
+                    locCode: DiagnosticCode.Generates_corresponding_0_file,
+                    args: ['.d.ts']
+                },
                 set: () => {
                     this.compilationSettings.generateDeclarationFiles = true;
                 }
@@ -369,7 +380,10 @@ module TypeScript {
 
             if (this.ioHost.watchFile) {
                 opts.flag('watch', {
-                    usage: getLocalizedText(DiagnosticCode.Watch_input_files, null),
+                    usage: {
+                        locCode: DiagnosticCode.Watch_input_files,
+                        args: null
+                    },
                     set: () => {
                         this.compilationSettings.watch = true;
                     }
@@ -377,33 +391,48 @@ module TypeScript {
             }
 
             opts.flag('exec', {
-                usage: getLocalizedText(DiagnosticCode.Execute_the_script_after_compilation, null),
+                usage: {
+                    locCode: DiagnosticCode.Execute_the_script_after_compilation,
+                    args: null
+                },
                 set: () => {
                     this.compilationSettings.exec = true;
                 }
             }, 'e');
 
             opts.flag('minw', {
-                usage: getLocalizedText(DiagnosticCode.Minimize_whitespace, null),
+                usage: {
+                    locCode: DiagnosticCode.Minimize_whitespace,
+                    args: null
+                },
                 experimental: true,
                 set: () => { this.compilationSettings.minWhitespace = true; }
             }, 'mw');
 
             opts.flag('const', {
-                usage: getLocalizedText(DiagnosticCode.Propagate_constants_to_emitted_code, null),
+                usage: {
+                    locCode: DiagnosticCode.Propagate_constants_to_emitted_code,
+                    args: null
+                },
                 experimental: true,
                 set: () => { this.compilationSettings.propagateConstants = true; }
             });
 
             opts.flag('comments', {
-                usage: getLocalizedText(DiagnosticCode.Emit_comments_to_output, null),
+                usage: {
+                    locCode: DiagnosticCode.Emit_comments_to_output,
+                    args: null
+                },
                 set: () => {
                     this.compilationSettings.emitComments = true;
                 }
             }, 'c');
 
             opts.flag('noresolve', {
-                usage: getLocalizedText(DiagnosticCode.Skip_resolution_and_preprocessing, null),
+                usage: {
+                    locCode: DiagnosticCode.Skip_resolution_and_preprocessing,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.resolve = false;
@@ -411,7 +440,10 @@ module TypeScript {
             });
 
             opts.flag('debug', {
-                usage: getLocalizedText(DiagnosticCode.Print_debug_output, null),
+                usage: {
+                    locCode: DiagnosticCode.Print_debug_output,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     CompilerDiagnostics.debug = true;
@@ -419,14 +451,20 @@ module TypeScript {
             });
 
             opts.flag('nolib', {
-                usage: getLocalizedText(DiagnosticCode.Do_not_include_a_default_0_with_global_declarations, ['lib.d.ts']),
+                usage: {
+                    locCode: DiagnosticCode.Do_not_include_a_default_0_with_global_declarations,
+                    args: ['lib.d.ts']
+                },
                 set: () => {
                     this.compilationSettings.useDefaultLib = false;
                 }
             });
 
             opts.flag('diagnostics', {
-                usage: getLocalizedText(DiagnosticCode.Gather_diagnostic_info_about_the_compilation_process, null),
+                usage: {
+                    locCode: DiagnosticCode.Gather_diagnostic_info_about_the_compilation_process,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.gatherDiagnostics = true;
@@ -434,7 +472,10 @@ module TypeScript {
             });
 
             opts.flag('update', {
-                usage: getLocalizedText(DiagnosticCode.Typecheck_each_file_as_an_update_on_the_first, null),
+                usage: {
+                    locCode: DiagnosticCode.Typecheck_each_file_as_an_update_on_the_first,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.updateTC = true;
@@ -442,8 +483,11 @@ module TypeScript {
             });
 
             opts.option('target', {
-                usage: getLocalizedText(DiagnosticCode.Specify_ECMAScript_target_version_0_default_or_1, ['ES3', 'ES5']),
-                type: getLocalizedText(DiagnosticCode.VERSION, null),
+                usage: {
+                    locCode: DiagnosticCode.Specify_ECMAScript_target_version_0_default_or_1,
+                    args: ['ES3', 'ES5']
+                },
+                type: DiagnosticCode.VERSION,
                 set: (type) => {
                     type = type.toLowerCase();
 
@@ -461,8 +505,11 @@ module TypeScript {
             });
 
             opts.option('module', {
-                usage: getLocalizedText(DiagnosticCode.Specify_module_code_generation_0_default_or_1, ['commonjs', 'amd']),
-                type: getLocalizedText(DiagnosticCode.KIND, null),
+                usage: {
+                    locCode: DiagnosticCode.Specify_module_code_generation_0_default_or_1,
+                    args: ['commonjs', 'amd']
+                },
+                type: DiagnosticCode.KIND,
                 set: (type) => {
                     type = type.toLowerCase();
 
@@ -479,38 +526,53 @@ module TypeScript {
                 }
             });
 
+            var needsHelp = false;
             opts.flag('help', {
-                usage: getLocalizedText(DiagnosticCode.Print_this_message, null),
+                usage: {
+                    locCode: DiagnosticCode.Print_this_message,
+                    args: null
+                },
                 set: () => {
-                    opts.printUsage();
-                    printedUsage = true;
+                    needsHelp = true;
                 }
             }, 'h');
 
             opts.flag('useCaseSensitiveFileResolution', {
-                usage: getLocalizedText(DiagnosticCode.Force_file_resolution_to_be_case_sensitive, null),
+                usage: {
+                    locCode: DiagnosticCode.Force_file_resolution_to_be_case_sensitive,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.useCaseSensitiveFileResolution = true;
                 }
             });
-
+            var shouldPrintVersionOnly = false;
             opts.flag('version', {
-                usage: getLocalizedText(DiagnosticCode.Print_the_compiler_s_version_0, [this.compilerVersion]),
+                usage: {
+                    locCode: DiagnosticCode.Print_the_compiler_s_version_0,
+                    args: [this.compilerVersion]
+                },
                 set: () => {
-                    opts.printVersion();
+                    shouldPrintVersionOnly = true;
                 }
             }, 'v');
 
             opts.flag('allowbool', {
-                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_0_type, ['bool']),
+                usage: {
+                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_type,
+                    args: ['bool']
+                },
                 set: () => {
                     this.compilationSettings.allowBool = true;
                 }
             }, 'b');
 
             opts.flag('allowimportmodule', {
-                usage: getLocalizedText(DiagnosticCode.Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module, ['module']),
+                usage: {
+                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module,
+                    args: ['module']
+                },
                 set: () => {
                     this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
                 }
@@ -518,8 +580,11 @@ module TypeScript {
 
             var locale: string = null;
             opts.option('locale', {
-                usage: getLocalizedText(DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_0_or_1, ['en', 'ja-jp']),
-                type: getLocalizedText(DiagnosticCode.STRING, null),
+                usage: {
+                    locCode: DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_0_or_1,
+                    args: ['en', 'ja-jp']
+                },
+                type: DiagnosticCode.STRING,
                 set: (value) => {
                     locale = value;
                 }
@@ -538,11 +603,12 @@ module TypeScript {
             }
 
             // If no source files provided to compiler - print usage information
-            if (this.inputFiles.length === 0) {
-                if (!printedUsage) {
-                    opts.printUsage();
-                    return false;
-                }
+            if (this.inputFiles.length === 0 || needsHelp) {
+                opts.printUsage();
+                return false;
+            }
+            else if (shouldPrintVersionOnly) {
+                opts.printVersion();
             }
 
             return true;

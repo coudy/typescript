@@ -338,7 +338,7 @@ module TypeScript {
         Syntax_0: "Syntax:   {0}",
         options: "options",
         file: "file",
-        Examples_0: "Examples: {0}",
+        Examples: "Examples:",
         Options: "Options:",
         Insert_command_line_options_and_files_from_a_file: "Insert command line options and files from a file.",
         Version_0: "Version {0}",

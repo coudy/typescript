@@ -1350,7 +1350,7 @@ module TypeScript {
     "code": 6024,
     "category": DiagnosticCategory.Message
   },
-  "Examples: {0}": {
+  "Examples:": {
     "code": 6025,
     "category": DiagnosticCategory.Message
   },

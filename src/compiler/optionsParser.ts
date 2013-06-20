@@ -20,9 +20,12 @@ module TypeScript {
         name?: string;
         flag?: boolean;
         short?: string;
-        usage?: string;
+        usage?: {
+            locCode: string; // DiagnosticCode
+            args: string[]
+        };
         set?: (s: string) => void;
-        type?: string;
+        type?: string; // DiagnosticCode
         experimental?: boolean;
     }
 
@@ -61,7 +64,7 @@ module TypeScript {
             var syntaxHelp = getLocalizedText(DiagnosticCode.Syntax_0, [tscSyntax]);
             this.host.printLine(syntaxHelp);
             this.host.printLine("");
-            this.host.printLine(getLocalizedText(DiagnosticCode.Examples_0, ["tsc hello.ts"]));
+            this.host.printLine(getLocalizedText(DiagnosticCode.Examples, null) + " tsc hello.ts");
             this.host.printLine("          tsc --out foo.js foo.ts");
             this.host.printLine("          tsc @args.txt");
             this.host.printLine("");
@@ -97,7 +100,7 @@ module TypeScript {
                 }
 
                 var usageString = "  ";
-                var type = option.type ? " " + option.type.toUpperCase() : "";
+                var type = option.type ? (" " + TypeScript.getLocalizedText(option.type, null)) : "";
 
                 if (option.short) {
                     usageString += this.DEFAULT_SHORT_FLAG + option.short + type + ", ";
@@ -105,7 +108,7 @@ module TypeScript {
 
                 usageString += this.DEFAULT_LONG_FLAG + option.name + type;
 
-                output.push([usageString, option.usage]);
+                output.push([usageString, TypeScript.getLocalizedText(option.usage.locCode, option.usage.args)]);
 
                 if (usageString.length > maxLength) {
                     maxLength = usageString.length;
@@ -123,7 +126,7 @@ module TypeScript {
 
         public printVersion() {
             if (!this.printedVersion) {
-                this.host.printLine("Version " + this.version);
+                this.host.printLine(getLocalizedText(DiagnosticCode.Version_0, [this.version]));
                 this.printedVersion = true;
             }
         }
