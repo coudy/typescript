@@ -599,7 +599,7 @@ module TypeScript {
 
     export class PullSignatureSymbol extends PullSymbol {
 
-        public parameters: PullSymbol[] = null;
+        public parameters: PullSymbol[] = []; // PERFREVIEW: Need to set this to null, eventually
         public typeParameters: PullTypeParameterSymbol[] = null;
         public returnType: PullTypeSymbol = null;
         public functionType: PullTypeSymbol = null;
@@ -675,29 +675,26 @@ module TypeScript {
         }
         
         // TODO: Why copy?
-        public getParameters() {
-            var params: PullSymbol[] = [];
+        //public getParameters() {
+        //    var params: PullSymbol[] = [];
 
-            if (this.parameters) {
-                for (var i = 0; i < this.parameters.length; i++) {
-                    params[params.length] = this.parameters[i];
-                }
-            }
+        //    if (this.parameters) {
+        //        for (var i = 0; i < this.parameters.length; i++) {
+        //            params[params.length] = this.parameters[i];
+        //        }
+        //    }
 
-            return params;
-        }
+        //    return params;
+        //}
 
         // TODO: Why copy?
-        public getTypeParameters(): PullTypeParameterSymbol[] {
-            var params: PullTypeParameterSymbol[] = [];
+        public getTypeParameters(): PullTypeParameterSymbol[]{
 
-            if (this.typeParameters) {
-                for (var i = 0; i < this.typeParameters.length; i++) {
-                    params[params.length] = <PullTypeParameterSymbol>this.typeParameters[i];
-                }
+            if (!this.typeParameters) {
+                this.typeParameters = [];
             }
 
-            return params;
+            return this.typeParameters;
         }
 
         public findTypeParameter(name: string): PullTypeParameterSymbol {
@@ -732,7 +729,7 @@ module TypeScript {
             }
 
             // mimic paremeteres (optionality, varargs)
-            var parameters = signature.getParameters();
+            var parameters = signature.parameters;
             var parameter: PullSymbol;
 
             if (parameters) {
@@ -800,7 +797,7 @@ module TypeScript {
 
         public isStringConstantOverloadSignature() {
             if (this.stringConstantOverload === undefined) {
-                var params = this.getParameters();
+                var params = this.parameters;
                 this.stringConstantOverload = false;
                 for (var i = 0; i < params.length; i++) {
                     var paramType = params[i].type;
@@ -905,7 +902,7 @@ module TypeScript {
                 builder.prefix = prefix + typeParamterBuilder.toString();
             }
 
-            var params = this.getParameters();
+            var params = this.parameters;
             var paramLen = params.length;
             for (var i = 0; i < paramLen; i++) {
                 var paramType = params[i].type;
@@ -2752,8 +2749,8 @@ module TypeScript {
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
-                parameters = signature.getParameters();
-                newParameters = newSignature.getParameters();
+                parameters = signature.parameters;
+                newParameters = newSignature.parameters;
 
                 for (var p = 0; p < parameters.length; p++) {
                     newParameters[p].type = parameters[p].type;
@@ -2822,8 +2819,8 @@ module TypeScript {
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
-                parameters = signature.getParameters();
-                newParameters = newSignature.getParameters();
+                parameters = signature.parameters;
+                newParameters = newSignature.parameters;
 
                 // we need to clone the parameter types, but the return type
                 // was set during resolution
@@ -2894,8 +2891,8 @@ module TypeScript {
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
-                parameters = signature.getParameters();
-                newParameters = newSignature.getParameters();
+                parameters = signature.parameters;
+                newParameters = newSignature.parameters;
 
                 // we need to clone the parameter types, but the return type
                 // was set during resolution
@@ -3082,7 +3079,7 @@ module TypeScript {
 
         signature.addSpecialization(newSignature, typeArguments);      
 
-        var parameters = signature.getParameters();
+        var parameters = signature.parameters;
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.returnType;
 

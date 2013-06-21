@@ -589,7 +589,7 @@ module TypeScript {
             var functionSignature = functionDecl.getSignatureSymbol();
 
             // check for optionality
-            var parameters = functionSignature.getParameters();
+            var parameters = functionSignature.parameters;
 
             if (parameters.length) {
                 for (var i = 0; i < parameters.length; i++) {
@@ -785,7 +785,7 @@ module TypeScript {
             var functionSignature = functionDecl.getSignatureSymbol();
 
             // check for optionality
-            var parameters = functionSignature.getParameters();
+            var parameters = functionSignature.parameters;
 
             var returnType = functionSignature.returnType;
 
@@ -849,7 +849,7 @@ module TypeScript {
             var constructorSignature = functionDecl.getSignatureSymbol();
 
             // check for optionality
-            var parameters = constructorSignature.getParameters();
+            var parameters = constructorSignature.parameters;
 
             if (parameters.length) {
                 for (var i = 0, n = parameters.length; i < n; i++) {
@@ -901,7 +901,7 @@ module TypeScript {
             typeCheckContext.popEnclosingDecl();
 
             var indexSignature = functionDecl.getSignatureSymbol();
-            var parameters = indexSignature.getParameters();
+            var parameters = indexSignature.parameters;
 
             if (parameters.length) {
                 var parameterType: PullTypeSymbol = null;
@@ -922,7 +922,7 @@ module TypeScript {
                 if (!allIndexSignatures[i].isResolved) {
                     this.resolver.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), this.context);
                 }
-                if (allIndexSignatures[i].getParameters()[0].type !== parameters[0].type) {
+                if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
                     var stringIndexSignature: PullSignatureSymbol;
                     var numberIndexSignature: PullSignatureSymbol;
                     if (isNumericIndexer) {
@@ -994,7 +994,7 @@ module TypeScript {
                         if (!indexSignatures[j].isResolved) {
                             this.resolver.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), this.context);
                         }
-                        if ((indexSignatures[j].getParameters()[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
+                        if ((indexSignatures[j].parameters[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
                             this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), typeCheckContext, isMemberNumeric);
                             break;
                         }
@@ -2120,7 +2120,7 @@ module TypeScript {
             typeCheckContext.popEnclosingDecl();
 
             var functionSignature = funcDeclSymbol.kind === PullElementKind.ConstructorType ? funcDeclSymbol.type.getConstructSignatures()[0] : funcDeclSymbol.type.getCallSignatures()[0];
-            var parameters = functionSignature.getParameters();
+            var parameters = functionSignature.parameters;
             for (var i = 0; i < parameters.length; i++) {
                 this.checkForResolutionError(parameters[i].type, enclosingDecl);
             }
@@ -2661,7 +2661,7 @@ module TypeScript {
                     this.checkTypePrivacy(declSymbol, typeParams[j], typeCheckContext, privacyErrorReporter);
                 }
 
-                var params = signature.getParameters();
+                var params = signature.parameters;
                 for (var j = 0; j < params.length; j++) {
                     var paramType = params[j].type;
                     this.checkTypePrivacy(declSymbol, paramType, typeCheckContext, privacyErrorReporter);
@@ -2806,7 +2806,7 @@ module TypeScript {
 
             // Check function parameters
             if (!isGetter) {
-                var funcParams = functionSignature.getParameters();
+                var funcParams = functionSignature.parameters;
                 for (var i = 0; i < funcParams.length; i++) {
                     this.checkTypePrivacy(functionSymbol, funcParams[i].type, typeCheckContext, (typeSymbol: PullTypeSymbol) =>
                         this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, typeCheckContext));

@@ -1296,7 +1296,7 @@ module TypeScript {
                         for (var i = 0; i < parentConstructSignatures.length; i++) {
                             // create a new signature for each parent constructor
                             parentConstructSignature = parentConstructSignatures[i];
-                            parentParameters = parentConstructSignature.getParameters();
+                            parentParameters = parentConstructSignature.parameters;
 
                             constructorSignature = parentConstructSignature.isDefinition() ?
                             new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
@@ -2432,7 +2432,7 @@ module TypeScript {
 
                 var hasReturn = (funcDecl.getFlags() & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                var parameters = signature.getParameters();
+                var parameters = signature.parameters;
 
                 // Is it a constructor?
                 if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
@@ -2465,7 +2465,7 @@ module TypeScript {
                             this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
                         }
 
-                        if (allIndexSignatures[i].getParameters()[0].type !== parameters[0].type) {
+                        if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
                             var stringIndexSignature: PullSignatureSymbol = null;
                             var numberIndexSignature: PullSignatureSymbol = null;
 
@@ -2532,7 +2532,7 @@ module TypeScript {
                     var getter = accessorSymbol.getGetter();
                     var setter = accessorSymbol.getSetter();
 
-                    var parameters = signature.getParameters();
+                    var parameters = signature.parameters;
 
                     var funcNameAST = funcDeclAST.name;
 
@@ -2676,7 +2676,7 @@ module TypeScript {
 
                 if (setterSig.isResolved) {
                     // compare setter parameter type and getter return type
-                    var setterParameters = setterSig.getParameters();
+                    var setterParameters = setterSig.parameters;
 
                     if (setterParameters.length) {
                         var setterParameter = setterParameters[0];
@@ -2747,7 +2747,7 @@ module TypeScript {
                 }
             }
 
-            var parameters = signature.getParameters();
+            var parameters = signature.parameters;
 
             var getter = accessorSymbol.getGetter();
 
@@ -4279,7 +4279,7 @@ module TypeScript {
                 var contextParam: PullSymbol = null;
 
                 if (assigningFunctionSignature) {
-                    contextParams = assigningFunctionSignature.getParameters();
+                    contextParams = assigningFunctionSignature.parameters;
                 }
 
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
@@ -4805,7 +4805,7 @@ module TypeScript {
 
                 signature = signatures[i];
 
-                paramSymbols = signature.getParameters();
+                paramSymbols = signature.parameters;
 
                 if (paramSymbols.length) {
                     paramType = paramSymbols[0].type;
@@ -5353,7 +5353,7 @@ module TypeScript {
             var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
             if (callEx.arguments) {
                 var len = callEx.arguments.members.length;
-                var params = signature.getParameters();
+                var params = signature.parameters;
                 var contextualType: PullTypeSymbol = null;
                 var signatureDecl = signature.getDeclarations()[0];
 
@@ -5699,7 +5699,7 @@ module TypeScript {
                 var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
-                    var params = signature.getParameters();
+                    var params = signature.parameters;
                     var contextualType: PullTypeSymbol = null;
                     var signatureDecl = signature.getDeclarations()[0];
 
@@ -6240,8 +6240,8 @@ module TypeScript {
                 return false;
             }
 
-            var s1Params = s1.getParameters();
-            var s2Params = s2.getParameters();
+            var s1Params = s1.parameters;
+            var s2Params = s2.parameters;
 
             if (s1Params.length != s2Params.length) {
                 return false;
@@ -6833,7 +6833,7 @@ module TypeScript {
                         break;
                     }
 
-                    params = targetIndex[i].getParameters();
+                    params = targetIndex[i].parameters;
 
                     if (params.length) {
                         if (!targetStringSig && params[0].type === this.semanticInfoChain.stringTypeSymbol) {
@@ -6852,7 +6852,7 @@ module TypeScript {
                         break;
                     }
 
-                    params = sourceIndex[i].getParameters();
+                    params = sourceIndex[i].parameters;
 
                     if (params.length) {
                         if (!sourceStringSig && params[0].type === this.semanticInfoChain.stringTypeSymbol) {
@@ -6971,8 +6971,8 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
 
-            var sourceParameters = sourceSig.getParameters();
-            var targetParameters = targetSig.getParameters();
+            var sourceParameters = sourceSig.parameters;
+            var targetParameters = targetSig.parameters;
 
             if (!sourceParameters || !targetParameters) {
                 return false;
@@ -7167,7 +7167,7 @@ module TypeScript {
         }
 
         private getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], args: ASTList, exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
-            var parameters = signature.getParameters();
+            var parameters = signature.parameters;
             var lowerBound = signature.nonOptionalParamCount; // required parameters
             var upperBound = parameters.length; // required and optional parameters
             var formalLen = lowerBound;
@@ -7261,7 +7261,7 @@ module TypeScript {
                 miss = false;
 
                 signature = candidateSignatures[i];
-                parameters = signature.getParameters();
+                parameters = signature.parameters;
 
                 for (var j = 0; j < args.members.length; j++) {
 
@@ -7421,8 +7421,8 @@ module TypeScript {
                     // invalidate the argument so that we may correctly resolve it later as part of the call expression
                     argSym.invalidate();
 
-                    bestParams = best.signature.getParameters();
-                    qParams = Q.signature.getParameters();
+                    bestParams = best.signature.parameters;
+                    qParams = Q.signature.parameters;
 
                     PType = i < bestParams.length ? bestParams[i].type : bestParams[bestParams.length - 1].type.getElementType();
                     QType = i < qParams.length ? qParams[i].type : qParams[qParams.length - 1].type.getElementType();
@@ -7503,7 +7503,7 @@ module TypeScript {
             }
             var functionSymbol = this.getDeclForAST(funcDecl).getSymbol();
             var signature = functionSymbol.type.getCallSignatures()[0];
-            var parameters = signature.getParameters();
+            var parameters = signature.parameters;
             var paramLen = parameters.length;
 
             // Check that the argument declarations have no type annotations
@@ -7541,7 +7541,7 @@ module TypeScript {
             var cxt: PullContextualTypeContext = null;
             var hadProvisionalErrors = false;
 
-            var parameters = signature.getParameters();
+            var parameters = signature.parameters;
             var typeParameters = signature.getTypeParameters();
             var argContext = new ArgumentInferenceContext();
 
@@ -7739,10 +7739,10 @@ module TypeScript {
             //    return;
             //}
 
-            var expressionParams = expressionSignature.getParameters();
+            var expressionParams = expressionSignature.parameters;
             var expressionReturnType = expressionSignature.returnType;
             
-            var parameterParams = parameterSignature.getParameters();
+            var parameterParams = parameterSignature.parameters;
             var parameterReturnType = parameterSignature.returnType;
 
             var len = parameterParams.length < expressionParams.length ? parameterParams.length : expressionParams.length;
@@ -8130,7 +8130,7 @@ module TypeScript {
                     this.checkTypePrivacy(declSymbol, typeParams[j], context, privacyErrorReporter);
                 }
 
-                var params = signature.getParameters();
+                var params = signature.parameters;
                 for (var j = 0; j < params.length; j++) {
                     var paramType = params[j].type;
                     this.checkTypePrivacy(declSymbol, paramType, context, privacyErrorReporter);
@@ -8275,7 +8275,7 @@ module TypeScript {
 
             // Check function parameters
             if (!isGetter) {
-                var funcParams = functionSignature.getParameters();
+                var funcParams = functionSignature.parameters;
                 for (var i = 0; i < funcParams.length; i++) {
                     this.checkTypePrivacy(functionSymbol, funcParams[i].type, context, (typeSymbol: PullTypeSymbol) =>
                         this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, context));
@@ -8653,7 +8653,7 @@ module TypeScript {
                         if (!indexSignatures[j].isResolved) {
                             this.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), context);
                         }
-                        if ((indexSignatures[j].getParameters()[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
+                        if ((indexSignatures[j].parameters[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
                             this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), context, enclosingDecl, isMemberNumeric);
                             break;
                         }

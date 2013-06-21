@@ -179,7 +179,7 @@ module Services {
                     }
                 }
 
-                var parameters = signature.getParameters();
+                var parameters = signature.parameters;
                 for (var j = 0, m = parameters.length; j < m; j++) {
                     var parameter = parameters[j];
                     var signatureParameterInfo = new FormalParameterInfo();
