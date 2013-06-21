@@ -464,7 +464,7 @@ module Services {
                 var docComments: string = "";
                 if (!useConstructorAsClass && symbol.kind == TypeScript.PullElementKind.ConstructSignature &&
                     decls.length && decls[0].kind == TypeScript.PullElementKind.Class) {
-                    var classSymbol = (<TypeScript.PullSignatureSymbol>symbol).getReturnType();
+                    var classSymbol = (<TypeScript.PullSignatureSymbol>symbol).returnType;
                     var extendedTypes = classSymbol.getExtendedTypes();
                     if (extendedTypes.length) {
                         docComments = this.getDocComments(extendedTypes[0].getConstructorMethod());
@@ -507,7 +507,7 @@ module Services {
                         docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
                         if (docComments == "") {
                             if (symbol.kind == TypeScript.PullElementKind.CallSignature) {
-                                var callTypeSymbol = (<TypeScript.PullSignatureSymbol>symbol).getFunctionType();
+                                var callTypeSymbol = (<TypeScript.PullSignatureSymbol>symbol).functionType;
                                 if (callTypeSymbol && callTypeSymbol.getCallSignatures().length == 1) {
                                     docComments = this.getDocComments(callTypeSymbol);
                                 }

@@ -1340,7 +1340,7 @@ module TypeScript {
                                 var currentContextualType = resolutionContext.getContextualType();
                                 if (currentContextualType && currentContextualType.isFunction()) {
                                     var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                                    var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                                    var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
                                     if (currentContextualTypeReturnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
                                         contextualType = currentContextualTypeReturnTypeSymbol;

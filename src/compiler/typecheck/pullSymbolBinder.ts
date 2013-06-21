@@ -363,7 +363,7 @@ module TypeScript {
                 var enumIndexParameterSymbol = new PullSymbol("x", PullElementKind.Parameter);
                 enumIndexParameterSymbol.type = this.semanticInfoChain.numberTypeSymbol;
                 enumIndexSignature.addParameter(enumIndexParameterSymbol);
-                enumIndexSignature.setReturnType(this.semanticInfoChain.stringTypeSymbol);
+                enumIndexSignature.returnType = this.semanticInfoChain.stringTypeSymbol;
 
                 moduleInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
             }
@@ -752,7 +752,7 @@ module TypeScript {
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
             if ((<FunctionDeclaration>constructorTypeAST).variableArgList) {
-                signature.setHasVariableParamList();
+                signature.hasVarArgs = true;
             }
 
             signature.addDeclaration(constructorTypeDeclaration);
@@ -1141,7 +1141,7 @@ module TypeScript {
             this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
 
             if (isOptional) {
-                propertySymbol.setIsOptional();
+                propertySymbol.isOptional = true;
             }
 
             if (parent && !parentHadSymbol) {
@@ -1169,11 +1169,11 @@ module TypeScript {
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 
                     if (funcDecl.variableArgList && i === funcDecl.arguments.members.length - 1) {
-                        parameterSymbol.setIsVarArg();
+                        parameterSymbol.isVarArg = true;
                     }
 
                     if (decl.getFlags() & PullElementFlags.Optional) {
-                        parameterSymbol.setIsOptional();
+                        parameterSymbol.isOptional = true;
                     }
 
                     if (params[argDecl.id.text()]) {
@@ -1202,7 +1202,7 @@ module TypeScript {
                         }
                     }
 
-                    signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
+                    signatureSymbol.addParameter(parameterSymbol, parameterSymbol.isOptional);
 
                     if (signatureSymbol.isDefinition()) {
                         funcType.addEnclosedNonMember(parameterSymbol);
@@ -1303,7 +1303,7 @@ module TypeScript {
             functionDeclaration.setSignatureSymbol(signature);
 
             if (funcDeclAST.variableArgList) {
-                signature.setHasVariableParamList();
+                signature.hasVarArgs = true;
             }
 
             this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(functionDeclaration), functionTypeSymbol, signature);
@@ -1374,7 +1374,7 @@ module TypeScript {
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
             if (funcExpAST.variableArgList) {
-                signature.setHasVariableParamList();
+                signature.hasVarArgs = true;
             }
 
             var typeParameters = functionExpressionDeclaration.getTypeParameters();
@@ -1429,7 +1429,7 @@ module TypeScript {
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
             if (funcTypeAST.variableArgList) {
-                signature.setHasVariableParamList();
+                signature.hasVarArgs = true;
             }
 
             var typeParameters = functionTypeDeclaration.getTypeParameters();
@@ -1521,7 +1521,7 @@ module TypeScript {
             this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
 
             if (isOptional) {
-                methodSymbol.setIsOptional();
+                methodSymbol.isOptional = true;
             }
 
             if (!parentHadSymbol) {
@@ -1533,7 +1533,7 @@ module TypeScript {
             var signature = isSignature ? new PullSignatureSymbol(sigKind) : new PullDefinitionSignatureSymbol(sigKind);
 
             if (methodAST.variableArgList) {
-                signature.setHasVariableParamList();
+                signature.hasVarArgs = true;
             }
 
             var typeParameters = methodDeclaration.getTypeParameters();
@@ -1656,7 +1656,7 @@ module TypeScript {
             // add a call signature to the constructor method, and a construct signature to the parent class type
             var constructSignature = isSignature ? new PullSignatureSymbol(PullElementKind.ConstructSignature) : new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
-            constructSignature.setReturnType(parent);
+            constructSignature.returnType = parent;
 
             constructSignature.addDeclaration(constructorDeclaration);
             constructorDeclaration.setSignatureSymbol(constructSignature);
@@ -1670,7 +1670,7 @@ module TypeScript {
             }
 
             if (constructorAST.variableArgList) {
-                constructSignature.setHasVariableParamList();
+                constructSignature.hasVarArgs = true;
             }
 
             constructorTypeSymbol.addConstructSignature(constructSignature);
@@ -1691,7 +1691,7 @@ module TypeScript {
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
             if (constructorAST.variableArgList) {
-                constructSignature.setHasVariableParamList();
+                constructSignature.hasVarArgs = true;
             }
 
             var typeParameters = constructSignatureDeclaration.getTypeParameters();
@@ -1736,7 +1736,7 @@ module TypeScript {
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
             if (callSignatureAST.variableArgList) {
-                callSignature.setHasVariableParamList();
+                callSignature.hasVarArgs = true;
             }
 
             var typeParameters = callSignatureDeclaration.getTypeParameters();

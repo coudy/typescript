@@ -27,28 +27,23 @@ module TypeScript {
         // much faster)
         private _declarations: PullDecl[] = null;
 
-        private hasBeenResolved = false;
+        public isResolved = false;
 
-        private isOptional = false;
+        public isOptional = false;
 
-        private inResolution = false;
+        public inResolution = false;
 
         private isSynthesized = false;
 
-        private isVarArg = false;
+        public isVarArg = false;
 
         private isSpecialized = false;
-        private isBeingSpecialized = false;
+        public isBeingSpecialized = false;
 
         private rootSymbol: PullSymbol = null;
 
         private _parentAccessorSymbol: PullSymbol = null;
         private _enclosingSignature: PullSignatureSymbol = null;
-
-        public typeChangeUpdateVersion = -1;
-        public addUpdateVersion = -1;
-        public removeUpdateVersion = -1;
-
         public docComments: string = null;
 
         public isPrinting = false;
@@ -161,12 +156,6 @@ module TypeScript {
             return this.getDeclarations()[0].getDisplayName();
         }
 
-        public setIsOptional() { this.isOptional = true; }
-        public getIsOptional() { return this.isOptional; }
-
-        public getIsVarArg() { return this.isVarArg; }
-        public setIsVarArg() { this.isVarArg = true; }
-
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
         public getIsSpecialized() { return this.isSpecialized; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
@@ -259,26 +248,22 @@ module TypeScript {
         }
 
         public setResolved() {
-            this.hasBeenResolved = true;
+            this.isResolved = true;
             this.inResolution = false;
         }
-        public isResolved() { return this.hasBeenResolved; }
 
         public startResolving() {
             this.inResolution = true;
         }
-        public isResolving() {
-            return this.inResolution;
-        }
 
         public setUnresolved() {
-            this.hasBeenResolved = false;
+            this.isResolved = false;
             this.inResolution = false;
         }
 
         public invalidate() {
 
-            this.hasBeenResolved = false;
+            this.isResolved = false;
 
             var declarations = this.getDeclarations();
 
@@ -502,7 +487,7 @@ module TypeScript {
             var type = this.type;
             var nameStr = this.getDisplayName(scopeSymbol);
             if (type) {
-                nameStr = nameStr + (this.getIsOptional() ? "?" : "");
+                nameStr = nameStr + (this.isOptional ? "?" : "");
                 var memberName: MemberName = this.getTypeNameForFunctionSignature(nameStr, scopeSymbol);
                 if (!memberName) {
                     var typeNameEx = type.getScopedNameEx(scopeSymbol);
@@ -614,51 +599,37 @@ module TypeScript {
 
     export class PullSignatureSymbol extends PullSymbol {
 
-        private _parameters: PullSymbol[] = null;
-        private _typeParameters: PullTypeParameterSymbol[] = null;
-        private _returnType: PullTypeSymbol = null;
-        private _functionType: PullTypeSymbol = null;
+        public parameters: PullSymbol[] = null;
+        public typeParameters: PullTypeParameterSymbol[] = null;
+        public returnType: PullTypeSymbol = null;
+        public functionType: PullTypeSymbol = null;
 
-        private hasOptionalParam = false;
-        private nonOptionalParamCount = 0;
+        public hasOptionalParam = false;
+        public nonOptionalParamCount = 0;
 
-        private hasVarArgs = false;
+        public hasVarArgs = false;
 
         private specializationCache: any = {};
 
         private memberTypeParameterNameCache: any = null;
 
-        private hasAGenericParameter = false;
+        public hasAGenericParameter = false;
         private stringConstantOverload: boolean = undefined;
 
         constructor(kind: PullElementKind) {
             super("", kind);
         }
 
-        public setFunctionType(type: PullTypeSymbol) {
-            this._functionType = type;
-        }
-
-        public getFunctionType() {
-            return this._functionType;
-        }
-
         public isDefinition() { return false; }
 
-        public hasVariableParamList() { return this.hasVarArgs; }
-        public setHasVariableParamList() { this.hasVarArgs = true; }
-
-        public setHasGenericParameter() { this.hasAGenericParameter = true; }
-        public hasGenericParameter() { return this.hasAGenericParameter; }
-
-        public isGeneric() { return this.hasAGenericParameter || (this._typeParameters && this._typeParameters.length != 0); }
+        public isGeneric() { return this.hasAGenericParameter || (this.typeParameters && this.typeParameters.length != 0); }
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
-            if (!this._parameters) {
-                this._parameters = [];
+            if (!this.parameters) {
+                this.parameters = [];
             }
 
-            this._parameters[this._parameters.length] = parameter;
+            this.parameters[this.parameters.length] = parameter;
             this.hasOptionalParam = isOptional;
 
             if (!parameter.getEnclosingSignature()) {
@@ -690,33 +661,26 @@ module TypeScript {
         }
 
         public addTypeParameter(typeParameter: PullTypeParameterSymbol) {
-            if (!this._typeParameters) {
-                this._typeParameters = [];
+            if (!this.typeParameters) {
+                this.typeParameters = [];
             }
 
             if (!this.memberTypeParameterNameCache) {
                 this.memberTypeParameterNameCache = new BlockIntrinsics();
             }
 
-            this._typeParameters[this._typeParameters.length] = typeParameter;
+            this.typeParameters[this.typeParameters.length] = typeParameter;
 
             this.memberTypeParameterNameCache[typeParameter.getName()] = typeParameter;
         }
-
-        public getNonOptionalParameterCount() { return this.nonOptionalParamCount; }
-
-        public setReturnType(returnType: PullTypeSymbol) {
-
-            this._returnType = returnType;
-        }
-
+        
         // TODO: Why copy?
         public getParameters() {
             var params: PullSymbol[] = [];
 
-            if (this._parameters) {
-                for (var i = 0; i < this._parameters.length; i++) {
-                    params[params.length] = this._parameters[i];
+            if (this.parameters) {
+                for (var i = 0; i < this.parameters.length; i++) {
+                    params[params.length] = this.parameters[i];
                 }
             }
 
@@ -727,9 +691,9 @@ module TypeScript {
         public getTypeParameters(): PullTypeParameterSymbol[] {
             var params: PullTypeParameterSymbol[] = [];
 
-            if (this._typeParameters) {
-                for (var i = 0; i < this._typeParameters.length; i++) {
-                    params[params.length] = <PullTypeParameterSymbol>this._typeParameters[i];
+            if (this.typeParameters) {
+                for (var i = 0; i < this.typeParameters.length; i++) {
+                    params[params.length] = <PullTypeParameterSymbol>this.typeParameters[i];
                 }
             }
 
@@ -742,9 +706,9 @@ module TypeScript {
             if (!this.memberTypeParameterNameCache) {
                 this.memberTypeParameterNameCache = new BlockIntrinsics();
 
-                if (this._typeParameters) {
-                    for (var i = 0; i < this._typeParameters.length; i++) {
-                        this.memberTypeParameterNameCache[this._typeParameters[i].getName()] = this._typeParameters[i];
+                if (this.typeParameters) {
+                    for (var i = 0; i < this.typeParameters.length; i++) {
+                        this.memberTypeParameterNameCache[this.typeParameters[i].getName()] = this.typeParameters[i];
                     }
                 }
             }
@@ -776,12 +740,12 @@ module TypeScript {
                     parameter = new PullSymbol(parameters[j].name, PullElementKind.Parameter);
                     parameter.setRootSymbol(parameters[j]);
                     //parameter.addDeclaration(parameters[j].getDeclarations()[0]);
-                    if (parameters[j].getIsOptional()) {
-                        parameter.setIsOptional();
+                    if (parameters[j].isOptional) {
+                        parameter.isOptional = true;
                     }
-                    if (parameters[j].getIsVarArg()) {
-                        parameter.setIsVarArg();
-                        this.setHasVariableParamList();
+                    if (parameters[j].isVarArg) {
+                        parameter.isVarArg = true;
+                        this.hasVarArgs = true;
                     }
                     this.addParameter(parameter);
                 }
@@ -791,15 +755,11 @@ module TypeScript {
             // calls to setReturnType when we re-resolve the signature for
             // specialization
 
-             var returnType = signature.getReturnType();
+            var returnType = signature.returnType;
 
              if (!resolver.isTypeArgumentOrWrapper(returnType)) {
-                 this.setReturnType(returnType);
+                 this.returnType = returnType;
              }
-        }
-
-        public getReturnType(): PullTypeSymbol {
-            return this._returnType;
         }
 
         public isFixed(): boolean {
@@ -808,10 +768,10 @@ module TypeScript {
                 return true;
             }
 
-            if (this._parameters) {
+            if (this.parameters) {
                 var paramType: PullTypeSymbol;
-                for (var i = 0; i < this._parameters.length; i++) {
-                    paramType = this._parameters[i].type;
+                for (var i = 0; i < this.parameters.length; i++) {
+                    paramType = this.parameters[i].type;
 
                     if (paramType && !paramType.isFixed()) {
                         return false;
@@ -819,8 +779,8 @@ module TypeScript {
                 }
             }
 
-            if (this._returnType) {
-                if (!this._returnType.isFixed()) {
+            if (this.returnType) {
+                if (!this.returnType.isFixed()) {
                     return false;
                 }
             }
@@ -950,9 +910,9 @@ module TypeScript {
             for (var i = 0; i < paramLen; i++) {
                 var paramType = params[i].type;
                 var typeString = paramType ? ": " : "";
-                var paramIsVarArg = params[i].getIsVarArg();
+                var paramIsVarArg = params[i].isVarArg;
                 var varArgPrefix = paramIsVarArg ? "..." : "";
-                var optionalString = (!paramIsVarArg && params[i].getIsOptional()) ? "?" : "";
+                var optionalString = (!paramIsVarArg && params[i].isOptional) ? "?" : "";
                 if (getParamMarkerInfo) {
                     builder.add(new MemberName());
                 }
@@ -985,10 +945,8 @@ module TypeScript {
                 }
             }
 
-            var returnType = this.getReturnType();
-
-            if (returnType) {
-                builder.add(returnType.getScopedNameEx(scopeSymbol));
+            if (this.returnType) {
+                builder.add(this.returnType.getScopedNameEx(scopeSymbol));
             }
             else {
                 builder.add(MemberName.create("any"));
@@ -1417,7 +1375,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            callSignature.setFunctionType(this);
+            callSignature.functionType = this;
         }
 
         public addConstructSignature(constructSignature: PullSignatureSymbol) {
@@ -1432,7 +1390,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            constructSignature.setFunctionType(this);
+            constructSignature.functionType = this;
         }
 
         public addIndexSignature(indexSignature: PullSignatureSymbol) {
@@ -1446,7 +1404,7 @@ module TypeScript {
                 this._hasGenericSignature = true;
             }
 
-            indexSignature.setFunctionType(this);
+            indexSignature.functionType = this;
         }
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
@@ -1890,7 +1848,7 @@ module TypeScript {
                     if (members[i].kind == PullElementKind.Method && members[i].type.hasOnlyOverloadCallSignatures()) {
                         // Add all Call signatures of the method
                         var methodCallSignatures = members[i].type.getCallSignatures();
-                        var nameStr = members[i].getDisplayName(scopeSymbol) + (members[i].getIsOptional() ? "?" : "");;
+                        var nameStr = members[i].getDisplayName(scopeSymbol) + (members[i].isOptional ? "?" : "");;
                         var methodMemberNames = PullSignatureSymbol.getSignaturesTypeNameEx(methodCallSignatures, nameStr, false, false, scopeSymbol);
                         allMemberNames.addAll(methodMemberNames);
                     } else {
@@ -1976,9 +1934,9 @@ module TypeScript {
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
         constructor(name: string) {
             super(name, PullElementKind.Primitive);
-        }
 
-        public isResolved() { return true; }
+            this.isResolved = true;
+        }
 
         public isStringConstant() { return false; }
 
@@ -2005,6 +1963,8 @@ module TypeScript {
 
         constructor(private diagnostic: Diagnostic, public delegateType: PullTypeSymbol, private _data = null) {
             super("error");
+
+            this.isResolved = true;
         }
 
         public isError() {
@@ -2025,10 +1985,6 @@ module TypeScript {
 
         public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
             return this.delegateType.toString(scopeSymbol, useConstraintInName);
-        }
-
-        public isResolved() {
-            return false;
         }
 
         public setData(data: any) {
@@ -2655,7 +2611,7 @@ module TypeScript {
         }   
 
         if (newType) {
-            if (!newType.isResolved() && !newType.currentlyBeingSpecialized()) {
+            if (!newType.isResolved && !newType.currentlyBeingSpecialized()) {
                 //typeToSpecialize.invalidateSpecializations();
             }
             else {
@@ -2806,10 +2762,10 @@ module TypeScript {
 
                 resolver.setUnitPath(unitPath);
 
-                returnType = newSignature.getReturnType();
+                returnType = newSignature.returnType;
 
                 if (!returnType) {
-                    newSignature.setReturnType(signature.getReturnType());
+                    newSignature.returnType = signature.returnType;
                 }
 
                 signature.setIsBeingSpecialized();
@@ -2837,7 +2793,7 @@ module TypeScript {
 
             newType.addCallSignature(newSignature);
 
-            if (newSignature.hasGenericParameter()) {
+            if (newSignature.hasAGenericParameter) {
                 newType.setHasGenericSignature();
             }
         }
@@ -2878,10 +2834,10 @@ module TypeScript {
 
                 resolver.setUnitPath(unitPath);
 
-                returnType = newSignature.getReturnType();
+                returnType = newSignature.returnType;
 
                 if (!returnType) {
-                    newSignature.setReturnType(signature.getReturnType());
+                    newSignature.returnType = signature.returnType;
                 }
 
                 signature.setIsBeingSpecialized();
@@ -2909,7 +2865,7 @@ module TypeScript {
 
             newType.addConstructSignature(newSignature);
 
-            if (newSignature.hasGenericParameter()) {
+            if (newSignature.hasAGenericParameter) {
                 newType.setHasGenericSignature();
             }
         }
@@ -2950,10 +2906,10 @@ module TypeScript {
 
                 resolver.setUnitPath(unitPath);
 
-                returnType = newSignature.getReturnType();
+                returnType = newSignature.returnType;
 
                 if (!returnType) {
-                    newSignature.setReturnType(signature.getReturnType());
+                    newSignature.returnType = signature.returnType;
                 }
 
                 signature.setIsBeingSpecialized();
@@ -2981,7 +2937,7 @@ module TypeScript {
             
             newType.addIndexSignature(newSignature);
 
-            if (newSignature.hasGenericParameter()) {
+            if (newSignature.hasAGenericParameter) {
                 newType.setHasGenericSignature();
             }
         }        
@@ -3007,11 +2963,11 @@ module TypeScript {
 
             newField.setRootSymbol(field);
 
-            if (field.getIsOptional()) {
-                newField.setIsOptional();
+            if (field.isOptional) {
+                newField.isOptional = true;
             }
 
-            if (!field.isResolved()) {
+            if (!field.isResolved) {
                 resolver.resolveDeclaredSymbol(field, newTypeDecl, context);
             }            
 
@@ -3056,7 +3012,7 @@ module TypeScript {
 
             // If we haven't yet resolved the constructor method, we need to resolve it *without* substituting
             // for any type variables, so as to avoid accidentally specializing the root declaration
-            if (!constructorMethod.isResolved()) {
+            if (!constructorMethod.isResolved) {
                 var prevIsSpecializingConstructorMethod = context.isSpecializingConstructorMethod;
                 context.isSpecializingConstructorMethod = true;
                 resolver.resolveDeclaredSymbol(constructorMethod, enclosingDecl, context);
@@ -3097,7 +3053,7 @@ module TypeScript {
             return signature;
         }
 
-        if (!signature.isResolved() && !signature.isResolving()) {
+        if (!signature.isResolved && !signature.inResolution) {
             resolver.resolveDeclaredSymbol(signature, enclosingDecl, context);
         }
 
@@ -3116,26 +3072,26 @@ module TypeScript {
         nSpecializedSignaturesCreated++;
         newSignature.setRootSymbol(signature);
 
-        if (signature.hasVariableParamList()) {
-            newSignature.setHasVariableParamList();
+        if (signature.hasVarArgs) {
+            newSignature.hasVarArgs = true;
         }
 
-        if (signature.hasGenericParameter()) {
-            newSignature.setHasGenericParameter();
+        if (signature.hasAGenericParameter) {
+            newSignature.hasAGenericParameter = true;
         }
 
         signature.addSpecialization(newSignature, typeArguments);      
 
         var parameters = signature.getParameters();
         var typeParameters = signature.getTypeParameters();
-        var returnType = signature.getReturnType();
+        var returnType = signature.returnType;
 
         for (var i = 0; i < typeParameters.length; i++) {
             newSignature.addTypeParameter(typeParameters[i]);
         }
 
-        if (signature.hasGenericParameter()) {
-            newSignature.setHasGenericParameter();
+        if (signature.hasAGenericParameter) {
+            newSignature.hasAGenericParameter = true;
         }
 
         var newParameter: PullSymbol;
@@ -3170,7 +3126,7 @@ module TypeScript {
         }
         context.popTypeSpecializationCache();
 
-        newSignature.setReturnType(newReturnType);
+        newSignature.returnType = newReturnType;
 
         for (var k = 0; k < parameters.length; k++) {
 
@@ -3189,21 +3145,21 @@ module TypeScript {
             }
             context.popTypeSpecializationCache();
 
-            if (parameters[k].getIsOptional()) {
-                newParameter.setIsOptional();
+            if (parameters[k].isOptional) {
+                newParameter.isOptional = true;
             }
 
-            if (parameters[k].getIsVarArg()) {
-                newParameter.setIsVarArg();
-                newSignature.setHasVariableParamList();
+            if (parameters[k].isVarArg) {
+                newParameter.isVarArg = true;
+                newSignature.hasVarArgs = true;
             }
 
             if (resolver.isTypeArgumentOrWrapper(newParameterType)) {
-                newSignature.setHasGenericParameter();
+                newSignature.hasAGenericParameter = true;
             }
 
             newParameter.type = newParameterType;
-            newSignature.addParameter(newParameter, newParameter.getIsOptional());
+            newSignature.addParameter(newParameter, newParameter.isOptional);
         }
 
         signature.setIsSpecialized();

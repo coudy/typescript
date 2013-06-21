@@ -183,7 +183,7 @@ module Services {
                 for (var j = 0, m = parameters.length; j < m; j++) {
                     var parameter = parameters[j];
                     var signatureParameterInfo = new FormalParameterInfo();
-                    signatureParameterInfo.isVariable = signature.hasVariableParamList() && (j === parameters.length - 1);
+                    signatureParameterInfo.isVariable = signature.hasVarArgs && (j === parameters.length - 1);
                     signatureParameterInfo.name = parameter.getDisplayName();
                     signatureParameterInfo.docComment = compilerState.getDocComments(parameter);
                     signatureParameterInfo.minChar = paramIndexInfo[2 * parameterMarkerIndex];

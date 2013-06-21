@@ -432,7 +432,7 @@ module TypeScript {
                     typeExprSymbol.isGeneric() &&
                     !typeExprSymbol.isTypeParameter() &&
                     !this.resolver.isArrayOrEquivalent(typeExprSymbol) &&
-                    typeExprSymbol.isResolved() &&
+                    typeExprSymbol.isResolved &&
                     typeExprSymbol.getTypeParameters().length &&
                     typeExprSymbol.getTypeArguments() == null &&
                     !typeExprSymbol.getIsSpecialized() &&
@@ -598,7 +598,7 @@ module TypeScript {
             }
 
 
-            var returnType = functionSignature.getReturnType();
+            var returnType = functionSignature.returnType;
 
             this.checkForResolutionError(returnType, enclosingDecl);
 
@@ -645,7 +645,7 @@ module TypeScript {
                     }
 
                     if (this.resolver.signaturesAreIdentical(allSignatures[i], signature, /*includingReturnType*/ false)) {
-                        if (!this.resolver.typesAreIdentical(allSignatures[i].getReturnType(), signature.getReturnType())) {
+                        if (!this.resolver.typesAreIdentical(allSignatures[i].returnType, signature.returnType)) {
                             this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Overloads_cannot_differ_only_by_return_type, null, typeCheckContext.getEnclosingDecl());
                         } else if (funcDecl.isConstructor) {
                             this.postError(funcDecl.minChar, funcDecl.getLength(), typeCheckContext.scriptName, DiagnosticCode.Duplicate_constructor_overload_signature, null, typeCheckContext.getEnclosingDecl());
@@ -676,7 +676,7 @@ module TypeScript {
                             continue;
                         }
 
-                        if (!allSignatures[i].isResolved()) {
+                        if (!allSignatures[i].isResolved) {
                             this.resolver.resolveDeclaredSymbol(allSignatures[i], typeCheckContext.getEnclosingDecl(), resolutionContext);
                         }
                         
@@ -698,7 +698,7 @@ module TypeScript {
             } else if (definitionSignature && definitionSignature != signature) {
                 var comparisonInfo = new TypeComparisonInfo();
                 var resolutionContext = new PullTypeResolutionContext();
-                if (!definitionSignature.isResolved()) {
+                if (!definitionSignature.isResolved) {
                     this.resolver.resolveDeclaredSymbol(definitionSignature, typeCheckContext.getEnclosingDecl(), resolutionContext);
                 }
 
@@ -787,7 +787,7 @@ module TypeScript {
             // check for optionality
             var parameters = functionSignature.getParameters();
 
-            var returnType = functionSignature.getReturnType();
+            var returnType = functionSignature.returnType;
 
             this.checkForResolutionError(returnType, enclosingDecl);
 
@@ -857,7 +857,7 @@ module TypeScript {
                 }
             }
 
-            this.checkForResolutionError(constructorSignature.getReturnType(), enclosingDecl);
+            this.checkForResolutionError(constructorSignature.returnType, enclosingDecl);
 
             if (functionDecl.getSignatureSymbol() && functionDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(typeCheckContext)) {
                 // Constructors for derived classes must contain a call to the class's 'super' constructor
@@ -911,7 +911,7 @@ module TypeScript {
                 }
             }
 
-            this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
+            this.checkForResolutionError(indexSignature.returnType, enclosingDecl);
             this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
@@ -919,7 +919,7 @@ module TypeScript {
             // Make sure that a numeric index signature is a subtype of the string indexer, or vice versa
             var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
             for (var i = 0; i < allIndexSignatures.length; i++) {
-                if (!allIndexSignatures[i].isResolved()) {
+                if (!allIndexSignatures[i].isResolved) {
                     this.resolver.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), this.context);
                 }
                 if (allIndexSignatures[i].getParameters()[0].type !== parameters[0].type) {
@@ -941,13 +941,13 @@ module TypeScript {
                     }
                     var comparisonInfo = new TypeComparisonInfo();
                     var resolutionContext = new PullTypeResolutionContext();
-                    if (!this.resolver.sourceIsSubtypeOfTarget(numberIndexSignature.getReturnType(), stringIndexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+                    if (!this.resolver.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
                         if (comparisonInfo.message) {
                             this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
-                                [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                                [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                         } else {
                             this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
-                                [numberIndexSignature.getReturnType().toString(), stringIndexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
+                                [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()], typeCheckContext.getEnclosingDecl());
                         }
                     }
                     break;
@@ -959,7 +959,7 @@ module TypeScript {
             for (var i = 0; i < allMembers.length; i++) {
                 var name = allMembers[i].name;
                 if (name) {
-                    if (!allMembers[i].isResolved()) {
+                    if (!allMembers[i].isResolved) {
                         this.resolver.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), this.context);
                     }
                     // Skip members in the same container, they will be checked during their member type check
@@ -991,7 +991,7 @@ module TypeScript {
                     // Get all index signatures, and check against the first that matters for this field name (string vs number)
                     var isMemberNumeric = isFinite(+member.name);
                     for (var j = 0; j < indexSignatures.length; j++) {
-                        if (!indexSignatures[j].isResolved()) {
+                        if (!indexSignatures[j].isResolved) {
                             this.resolver.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), this.context);
                         }
                         if ((indexSignatures[j].getParameters()[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
@@ -1006,23 +1006,23 @@ module TypeScript {
         private checkThatMemberIsSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, typeCheckContext: PullTypeCheckContext, isNumeric: boolean) {
             var comparisonInfo = new TypeComparisonInfo();
             var resolutionContext = new PullTypeResolutionContext();
-            if (!this.resolver.sourceIsSubtypeOfTarget(member.type, indexSignature.getReturnType(), resolutionContext, comparisonInfo)) {
+            if (!this.resolver.sourceIsSubtypeOfTarget(member.type, indexSignature.returnType, resolutionContext, comparisonInfo)) {
                 if (isNumeric) {
                     if (comparisonInfo.message) {
                         this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0_NL_1,
-                            [indexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                            [indexSignature.returnType.toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                     } else {
                         this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0,
-                            [indexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
+                            [indexSignature.returnType.toString()], typeCheckContext.getEnclosingDecl());
                     }
                 }
                 else {
                     if (comparisonInfo.message) {
                         this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type_0_NL_1,
-                            [indexSignature.getReturnType().toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
+                            [indexSignature.returnType.toString(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
                     } else {
                         this.postError(astForError.minChar, astForError.getLength(), typeCheckContext.scriptName, DiagnosticCode.All_named_properties_must_be_subtypes_of_string_indexer_type_0,
-                            [indexSignature.getReturnType().toString()], typeCheckContext.getEnclosingDecl());
+                            [indexSignature.returnType.toString()], typeCheckContext.getEnclosingDecl());
                     }
                 }
             }
@@ -1115,7 +1115,7 @@ module TypeScript {
                         var propName = typeConstructorTypeMembers[i].name;
                         var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
                         if (extendedConstructorTypeProp) {
-                            if (!extendedConstructorTypeProp.isResolved()) {
+                            if (!extendedConstructorTypeProp.isResolved) {
                                 var extendedClassAst = typeCheckContext.semanticInfo.getASTForSymbol(extendedType);
                                 var extendedClassDecl = typeCheckContext.semanticInfo.getDeclForAST(extendedClassAst);
                                 this.resolver.resolveDeclaredSymbol(extendedConstructorTypeProp, extendedClassDecl, resolutionContext);
@@ -2126,7 +2126,7 @@ module TypeScript {
             }
 
             if (funcDeclAST.returnTypeAnnotation) {
-                var returnType = functionSignature.getReturnType();
+                var returnType = functionSignature.returnType;
                 this.checkForResolutionError(returnType, enclosingDecl);
             }
 
@@ -2373,7 +2373,7 @@ module TypeScript {
                     var currentContextualType = this.context.getContextualType();
                     if (currentContextualType && currentContextualType.isFunction()) {
                         var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.getReturnType();
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
                         if (currentContextualTypeReturnTypeSymbol) {
                             inContextuallyTypedAssignment = true;
                             this.context.pushContextualType(currentContextualTypeReturnTypeSymbol, this.context.inProvisionalResolution(), null);
@@ -2398,7 +2398,7 @@ module TypeScript {
 
                 if (enclosingDeclAST.returnTypeAnnotation) {
                     var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                    var sigReturnType = signatureSymbol.getReturnType();
+                    var sigReturnType = signatureSymbol.returnType;
 
                     if (returnType && sigReturnType) {
                         var comparisonInfo = new TypeComparisonInfo();
@@ -2420,11 +2420,11 @@ module TypeScript {
                             }
                         }
 
-                        if (!returnType.isResolved()) {
+                        if (!returnType.isResolved) {
                             this.resolver.resolveDeclaredSymbol(returnType, enclosingDecl, this.context);
                         }
 
-                        if (!sigReturnType.isResolved()) {
+                        if (!sigReturnType.isResolved) {
                             this.resolver.resolveDeclaredSymbol(sigReturnType, enclosingDecl, this.context);
                         }
 
@@ -2667,7 +2667,7 @@ module TypeScript {
                     this.checkTypePrivacy(declSymbol, paramType, typeCheckContext, privacyErrorReporter);
                 }
 
-                var returnType = signature.getReturnType();
+                var returnType = signature.returnType;
                 this.checkTypePrivacy(declSymbol, returnType, typeCheckContext, privacyErrorReporter);
             }
         }
@@ -2815,8 +2815,8 @@ module TypeScript {
 
             // Check return type
             if (!isSetter) {
-                this.checkTypePrivacy(functionSymbol, functionSignature.getReturnType(), typeCheckContext, (typeSymbol: PullTypeSymbol) =>
-                    this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.getReturnType(), typeSymbol, typeCheckContext));
+                this.checkTypePrivacy(functionSymbol, functionSignature.returnType, typeCheckContext, (typeSymbol: PullTypeSymbol) =>
+                    this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.returnType, typeSymbol, typeCheckContext));
             }
         }
 
