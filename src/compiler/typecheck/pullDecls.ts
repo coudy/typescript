@@ -8,9 +8,9 @@ module TypeScript {
     export var lastBoundPullDeclId = 0;
 
     export class PullDecl {
-        private declType: PullElementKind;
+        public kind: PullElementKind;
 
-        private declName: string;
+        public name: string;
 
         private declDisplayName: string;
 
@@ -50,20 +50,20 @@ module TypeScript {
         // edits and updates we don't leak the val decl or symbol
         private synthesizedValDecl: PullDecl = null;
 
-        constructor(declName: string, displayName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
-            this.declName = declName;
-            this.declType = declType;
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+            this.name = declName;
+            this.kind = kind;
             this.declFlags = declFlags;
             this.span = span;
             this.scriptName = scriptName;
 
-            if (displayName !== this.declName) {
+            if (displayName !== this.name) {
                 this.declDisplayName = displayName;
             }
         }
 
         public hashCode(): number {
-            return this.getDeclID() ^ this.getKind();
+            return this.getDeclID() ^ this.kind;
         }
 
         public getDeclID() { return this.declID; }
@@ -71,18 +71,16 @@ module TypeScript {
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
-        public getName(): string { return this.declName; }
-        public getKind(): PullElementKind { return this.declType; }
 
         public getDisplayName() {
-            return this.declDisplayName === undefined ? this.declName : this.declDisplayName;
+            return this.declDisplayName === undefined ? this.name : this.declDisplayName;
         }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
 
         public ensureSymbolIsBound(bindSignatureSymbol=false) {
 
-            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.declType != PullElementKind.Script) {
+            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.kind != PullElementKind.Script) {
                 //var binder = new PullSymbolBinder(globalSemanticInfoChain);
                 var prevUnit = globalBinder.semanticInfo;
                 globalBinder.setUnit(this.scriptName);
@@ -95,7 +93,7 @@ module TypeScript {
 
         public getSymbol(): PullSymbol {
 
-            if (this.declType == PullElementKind.Script) {
+            if (this.kind == PullElementKind.Script) {
                 return null;
             }
 
@@ -141,8 +139,8 @@ module TypeScript {
         public getValueDecl() { return this.synthesizedValDecl; }
 
         public isEqual(other: PullDecl) {
-            return  (this.declName === other.declName) &&
-                    (this.declType === other.declType) &&
+            return  (this.name === other.name) &&
+                    (this.kind === other.kind) &&
                     (this.declFlags === other.declFlags) &&
                     (this.scriptName === other.scriptName) &&
                     (this.span.start() === other.span.start()) &&
@@ -193,7 +191,7 @@ module TypeScript {
             // check if decl exists
             // merge if necessary
 
-            if (childDecl.getKind() === PullElementKind.TypeParameter) {
+            if (childDecl.kind === PullElementKind.TypeParameter) {
                 this.typeParameters[this.typeParameters.length] = childDecl;
             }
             else {
@@ -201,8 +199,8 @@ module TypeScript {
             }
 
             // add to the appropriate cache
-            var declName = childDecl.getName();
-            var cache = this.getChildDeclCache(childDecl.getKind());
+            var declName = childDecl.name;
+            var cache = this.getChildDeclCache(childDecl.kind);
             var childrenOfName = <PullDecl[]>cache[declName];
             if (!childrenOfName) {
                 childrenOfName = [];
@@ -256,14 +254,14 @@ module TypeScript {
         public getTypeParameters() { return this.typeParameters; }
 
         public addVariableDeclToGroup(decl: PullDecl) {
-            var declGroup = this.declGroups[decl.getName()];
+            var declGroup = this.declGroups[decl.name];
             if (declGroup) {
                 declGroup.addDecl(decl);
             }
             else {
-                declGroup = new PullDeclGroup(decl.getName());
+                declGroup = new PullDeclGroup(decl.name);
                 declGroup.addDecl(decl);
-                this.declGroups[decl.getName()] = declGroup;
+                this.declGroups[decl.name] = declGroup;
             }
         }
 
@@ -317,7 +315,7 @@ module TypeScript {
         }
 
         public addDecl(decl: PullDecl) {
-            if (decl.getName() === this.name) {
+            if (decl.name === this.name) {
                 this._decls[this._decls.length] = decl;
             }
         }

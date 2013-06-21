@@ -412,7 +412,7 @@ module Services {
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
             var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
-            if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration || decl.getKind() != TypeScript.PullElementKind.Variable)) {
+            if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration || decl.kind != TypeScript.PullElementKind.Variable)) {
                 return ast.docComments();
             }
 
@@ -425,10 +425,10 @@ module Services {
                 return docComments;
             }
 
-            var isParameter = symbol.getKind() == TypeScript.PullElementKind.Parameter;
+            var isParameter = symbol.kind == TypeScript.PullElementKind.Parameter;
             var decls = symbol.getDeclarations();
             for (var i = 0; i < decls.length; i++) {
-                if (isParameter && decls[i].getKind() == TypeScript.PullElementKind.Property) {
+                if (isParameter && decls[i].kind == TypeScript.PullElementKind.Property) {
                     // Ignore declaration for property that was defined as parameter because they both 
                     // point to same doc comment
                     continue;
@@ -455,15 +455,15 @@ module Services {
                 return "";
             }
             var decls = symbol.getDeclarations();
-            if (useConstructorAsClass && decls.length && decls[0].getKind() == TypeScript.PullElementKind.ConstructorMethod) {
+            if (useConstructorAsClass && decls.length && decls[0].kind == TypeScript.PullElementKind.ConstructorMethod) {
                 var classDecl = decls[0].getParentDecl();
                 return TypeScript.Comment.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
             }
 
             if (symbol.docComments === null) {
                 var docComments: string = "";
-                if (!useConstructorAsClass && symbol.getKind() == TypeScript.PullElementKind.ConstructSignature &&
-                    decls.length && decls[0].getKind() == TypeScript.PullElementKind.Class) {
+                if (!useConstructorAsClass && symbol.kind == TypeScript.PullElementKind.ConstructSignature &&
+                    decls.length && decls[0].kind == TypeScript.PullElementKind.Class) {
                     var classSymbol = (<TypeScript.PullSignatureSymbol>symbol).getReturnType();
                     var extendedTypes = classSymbol.getExtendedTypes();
                     if (extendedTypes.length) {
@@ -471,7 +471,7 @@ module Services {
                     } else {
                         docComments = "";
                     }
-                } else if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
+                } else if (symbol.kind == TypeScript.PullElementKind.Parameter) {
                     var parameterComments: string[] = [];
 
                     var funcContainer = symbol.getEnclosingSignature();
@@ -488,7 +488,7 @@ module Services {
                     docComments = parameterComments.join("\n");
                 } else {
                     var getSymbolComments = true;
-                    if (symbol.getKind() == TypeScript.PullElementKind.FunctionType) {
+                    if (symbol.kind == TypeScript.PullElementKind.FunctionType) {
                         var functionSymbol = (<TypeScript.PullTypeSymbol>symbol).getFunctionSymbol();
 
                         if (functionSymbol) {
@@ -506,7 +506,7 @@ module Services {
                     if (getSymbolComments) {
                         docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
                         if (docComments == "") {
-                            if (symbol.getKind() == TypeScript.PullElementKind.CallSignature) {
+                            if (symbol.kind == TypeScript.PullElementKind.CallSignature) {
                                 var callTypeSymbol = (<TypeScript.PullSignatureSymbol>symbol).getFunctionType();
                                 if (callTypeSymbol && callTypeSymbol.getCallSignatures().length == 1) {
                                     docComments = this.getDocComments(callTypeSymbol);

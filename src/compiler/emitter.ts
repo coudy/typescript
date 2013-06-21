@@ -492,7 +492,7 @@ module TypeScript {
             this.recordSourceMappingStart(funcDecl);
             var accessorSymbol = funcDecl.isAccessor() ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.document.fileName) : null;
             var container = accessorSymbol ? accessorSymbol.getContainer() : null;
-            var containerKind = container ? container.getKind() : PullElementKind.None;
+            var containerKind = container ? container.kind : PullElementKind.None;
             if (!(funcDecl.isAccessor() && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
                 this.writeToOutput("function ");
             }
@@ -786,7 +786,7 @@ module TypeScript {
                 var exportAssignmentValueSymbol = (<PullContainerTypeSymbol>pullDecl.getSymbol()).getExportAssignedValueSymbol();
 
                 if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                    if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                    if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
                         // indent was decreased for AMD above
                         this.indenter.increaseIndent();
                         this.emitIndent();
@@ -795,7 +795,7 @@ module TypeScript {
                     }
                     this.writeToOutput("});");
                 }
-                else if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.getKind() & PullElementKind.SomeTypeReference)) {
+                else if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
                     this.emitIndent();
                     this.writeLineToOutput("module.exports = " + exportAssignmentIdentifier + ";");
                 }
@@ -1007,7 +1007,7 @@ module TypeScript {
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
 
             var parentSymbol = symbol ? symbol.getContainer() : null;
-            var parentKind = parentSymbol ? parentSymbol.getKind() : PullElementKind.None;
+            var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
             var inClass = parentKind === PullElementKind.Class;
 
             this.emitComments(declaration, true);
@@ -1050,9 +1050,9 @@ module TypeScript {
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
-                var parentKind = parentSymbol ? parentSymbol.getKind() : PullElementKind.None;
+                var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
                 var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
-                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.getKind() : PullElementKind.None;
+                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : PullElementKind.None;
                 if (parentKind === PullElementKind.Class) {
                     // class
                     if (this.emitState.container !== EmitContainer.Args) {
@@ -1129,7 +1129,7 @@ module TypeScript {
 
                         // compute the closing container of the symbol's declaration
                         while (symbolDeclarationEnclosingContainer) {
-                            if (symbolDeclarationEnclosingContainer.getKind() === (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
+                            if (symbolDeclarationEnclosingContainer.kind === (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
                                 break;
                             }
                             symbolDeclarationEnclosingContainer = symbolDeclarationEnclosingContainer.getParentDecl();
@@ -1139,7 +1139,7 @@ module TypeScript {
                         // enclosing declaration from the point of usage
                         if (symbolDeclarationEnclosingContainer) {
                             while (enclosingContainer) {
-                                if (enclosingContainer.getKind() === (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
+                                if (enclosingContainer.kind === (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
                                     break;
                                 }
 
@@ -1177,13 +1177,13 @@ module TypeScript {
                         : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
                 }
                 var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
-                var pullSymbolKind = pullSymbol.getKind();
+                var pullSymbolKind = pullSymbol.kind;
                 var isLocalAlias = pullSymbolAlias && (pullSymbolAlias.getDeclarations()[0].getParentDecl() == this.getEnclosingDecl());
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
                     var pullSymbolContainer = pullSymbol.getContainer();
 
                     if (pullSymbolContainer) {
-                        var pullSymbolContainerKind = pullSymbolContainer.getKind();
+                        var pullSymbolContainerKind = pullSymbolContainer.kind;
 
                         if (pullSymbolContainerKind === PullElementKind.Class) {
                             if (pullSymbol.hasFlag(PullElementFlags.Static)) {
@@ -1225,14 +1225,14 @@ module TypeScript {
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
                                      !isLocalAlias &&
                                      !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
-                                     pullSymbol.getKind() !== PullElementKind.ConstructorMethod &&
-                                     pullSymbol.getKind() !== PullElementKind.Class &&
-                                     pullSymbol.getKind() !== PullElementKind.Enum) {
+                                     pullSymbol.kind !== PullElementKind.ConstructorMethod &&
+                                     pullSymbol.kind !== PullElementKind.Class &&
+                                     pullSymbol.kind !== PullElementKind.Enum) {
                                 this.writeToOutput("exports.");
                             }
                         }
                         else if (pullSymbolKind === PullElementKind.Property) {
-                            if (pullSymbolContainer.getKind() === PullElementKind.Class) {
+                            if (pullSymbolContainer.kind === PullElementKind.Class) {
                                 this.emitThis();
                                 this.writeToOutput(".");
                             }

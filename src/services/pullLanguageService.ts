@@ -126,8 +126,8 @@ module Services {
             if (typeSymbol.isClass() || typeSymbol.isInterface()) {
                 typesToSearch = typeSymbol.getTypesThatExtendThisType();
             } 
-            else if (symbol.getKind() == TypeScript.PullElementKind.Property ||
-                symbol.getKind() == TypeScript.PullElementKind.Function ||
+            else if (symbol.kind == TypeScript.PullElementKind.Property ||
+                symbol.kind == TypeScript.PullElementKind.Function ||
                 typeSymbol.isMethod() || typeSymbol.isProperty()) {
 
                 var declaration: TypeScript.PullDecl = symbol.getDeclarations()[0];
@@ -210,7 +210,7 @@ module Services {
                     if (searchSymbolInfoAtPosition !== null) {
                         
                         var normalizedSymbol;
-                        if (symbol.getKind() === TypeScript.PullElementKind.Class || symbol.getKind() === TypeScript.PullElementKind.Interface) {
+                        if (symbol.kind === TypeScript.PullElementKind.Class || symbol.kind === TypeScript.PullElementKind.Interface) {
                             normalizedSymbol = searchSymbolInfoAtPosition.symbol.type;
                         }
                         else {
@@ -430,8 +430,8 @@ module Services {
 
             var typeSymbol = symbolInformation.symbol.type;
 
-            if (typeSymbol.getKind() === TypeScript.PullElementKind.FunctionType ||
-                (isNew && typeSymbol.getKind() === TypeScript.PullElementKind.ConstructorType)) {
+            if (typeSymbol.kind === TypeScript.PullElementKind.FunctionType ||
+                (isNew && typeSymbol.kind === TypeScript.PullElementKind.ConstructorType)) {
 
                 var signatures = isNew ? typeSymbol.getConstructSignatures() : typeSymbol.getCallSignatures();
 
@@ -448,7 +448,7 @@ module Services {
                 // The symbol is a generic type
 
                 // Get the class symbol for constuctor symbol
-                if (typeSymbol.getKind() === TypeScript.PullElementKind.ConstructorType) {
+                if (typeSymbol.kind === TypeScript.PullElementKind.ConstructorType) {
                     typeSymbol = typeSymbol.getAssociatedContainerType();
                 }
 
@@ -490,10 +490,10 @@ module Services {
             }
 
             var symbolName = symbolInfo.symbol.getDisplayName();
-            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind(), symbolInfo.symbol);
+            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.kind, symbolInfo.symbol);
             var container = symbolInfo.symbol.getContainer();
             var containerName = container ? container.fullName() : "";
-            var containerKind = container ? this.mapPullElementKind(container.getKind(), container): "";
+            var containerKind = container ? this.mapPullElementKind(container.kind, container): "";
 
             var result: DefinitionInfo[] = [];
             var lastAddedSingature: { isDefinition: boolean; index: number; } = null;
@@ -541,7 +541,7 @@ module Services {
         private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentName?: string, parentkindName?: string, includeSubcontainers:boolean = true): void {
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
-                var kindName = this.mapPullElementKind(declaration.getKind(), /*symbol*/ null);
+                var kindName = this.mapPullElementKind(declaration.kind, /*symbol*/ null);
                 var fileName = declaration.getScriptName();
 
                 if (this.shouldIncludeDeclarationInNavigationItems(declaration, includeSubcontainers)) {
@@ -613,7 +613,7 @@ module Services {
         }
 
         private isContainerDeclaration(declaration: TypeScript.PullDecl): boolean {
-            switch (declaration.getKind()) {
+            switch (declaration.kind) {
                 case TypeScript.PullElementKind.Script:
                 case TypeScript.PullElementKind.Container:
                 case TypeScript.PullElementKind.Class:
@@ -627,7 +627,7 @@ module Services {
         }
 
         private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl, includeSubcontainers: boolean): boolean {
-            switch (declaration.getKind()) {
+            switch (declaration.kind) {
                 case TypeScript.PullElementKind.Script:
                     // Do not include the script item
                     return false;
@@ -643,7 +643,7 @@ module Services {
                 case TypeScript.PullElementKind.FunctionExpression:
                 case TypeScript.PullElementKind.Function:
                     // Ignore anonomus functions
-                    return declaration.getName() !== "";
+                    return declaration.name !== "";
             }
 
             if (this.isContainerDeclaration(declaration)) {
@@ -654,7 +654,7 @@ module Services {
         }
 
         private getNavigationItemDispalyName(declaration: TypeScript.PullDecl): string {
-            switch (declaration.getKind()) {
+            switch (declaration.kind) {
                 case TypeScript.PullElementKind.ConstructorMethod:
                     return "constructor";
                 case TypeScript.PullElementKind.CallSignature:
@@ -697,13 +697,13 @@ module Services {
         private getFullNameOfSymbol(symbol: TypeScript.PullSymbol, enclosingScopeSymbol: TypeScript.PullSymbol) {
             var container = symbol.getContainer();
             if (this.isLocal(symbol) ||
-                symbol.getKind() == TypeScript.PullElementKind.Parameter) {
+                symbol.kind == TypeScript.PullElementKind.Parameter) {
                 // Local var
                 return symbol.getScopedName(enclosingScopeSymbol, true);
             }
 
-            var symbolKind = symbol.getKind();
-            if (symbol.getKind() == TypeScript.PullElementKind.Primitive) {
+            var symbolKind = symbol.kind;
+            if (symbol.kind == TypeScript.PullElementKind.Primitive) {
                 // Primitive type symbols - do not use symbol name
                 return "";
             }
@@ -783,7 +783,7 @@ module Services {
 
                 if (path.ast().nodeType() === TypeScript.NodeType.FunctionDeclaration) {
                     var funcDecl = <TypeScript.FunctionDeclaration>(path.ast());
-                    if (symbol && symbol.getKind() != TypeScript.PullElementKind.Property) {
+                    if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
                         var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(fileName));
                         isCallExpression = true;
                         candidateSignature = signatureInfo.signature;
@@ -810,13 +810,13 @@ module Services {
                 enclosingScopeSymbol = callExpressionInformation.enclosingScopeSymbol;
 
                 // Check if this is a property or a variable, if so do not treat it as a fuction, but rather as a variable with function type
-                var isPropertyOrVar = symbol.getKind() == TypeScript.PullElementKind.Property || symbol.getKind() == TypeScript.PullElementKind.Variable;
+                var isPropertyOrVar = symbol.kind == TypeScript.PullElementKind.Property || symbol.kind == TypeScript.PullElementKind.Variable;
                 typeSymbol = symbol.type;
                 if (isPropertyOrVar) {
                     if (typeSymbol.getName() != "") {
                         symbol = typeSymbol;
                     }
-                    isPropertyOrVar = (typeSymbol.getKind() != TypeScript.PullElementKind.Interface && typeSymbol.getKind() != TypeScript.PullElementKind.ObjectType) || typeSymbol.getName() == "";
+                    isPropertyOrVar = (typeSymbol.kind != TypeScript.PullElementKind.Interface && typeSymbol.kind != TypeScript.PullElementKind.ObjectType) || typeSymbol.getName() == "";
                 }
 
                 if (!isPropertyOrVar) {
@@ -838,7 +838,7 @@ module Services {
                 enclosingScopeSymbol = symbolInformation.enclosingScopeSymbol;
 
                
-                if (symbol.getKind() === TypeScript.PullElementKind.Method || symbol.getKind() == TypeScript.PullElementKind.Function) {
+                if (symbol.kind === TypeScript.PullElementKind.Method || symbol.kind == TypeScript.PullElementKind.Function) {
                     typeSymbol = symbol.type;
                     if (typeSymbol) {
                         isCallExpression = true;
@@ -861,7 +861,7 @@ module Services {
             var memberName = isCallExpression
                 ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, enclosingScopeSymbol)
                 : symbol.getTypeNameEx(enclosingScopeSymbol, true);
-            var kind = this.mapPullElementKind(symbol.getKind(), symbol, !isCallExpression, isCallExpression, isConstructorCall);
+            var kind = this.mapPullElementKind(symbol.kind, symbol, !isCallExpression, isCallExpression, isConstructorCall);
             var docComment = this.compilerState.getDocComments(candidateSignature || symbol, !isCallExpression);
             var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
             var minChar = ast ? ast.minChar : -1;
@@ -984,7 +984,7 @@ module Services {
                     continue;
                 }
 
-                var symbolKind = symbol.getKind();
+                var symbolKind = symbol.kind;
 
                 var exitingEntry = result.lookup(symboDisplaylName);
 
@@ -1020,7 +1020,7 @@ module Services {
                     continue;
                 }
 
-                var declKind = decl.getKind();
+                var declKind = decl.kind;
 
                 var exitingEntry = result.lookup(declDisplaylName);
 
@@ -1100,7 +1100,7 @@ module Services {
         private isLocal(symbol: TypeScript.PullSymbol) {
             var container = symbol.getContainer();
             if (container) {
-                var containerKind = container.getKind();
+                var containerKind = container.kind;
                 if (containerKind & (TypeScript.PullElementKind.SomeFunction | TypeScript.PullElementKind.FunctionType)) {
                     return true;
                 }
@@ -1116,7 +1116,7 @@ module Services {
         private isModule(symbol: TypeScript.PullSymbol) {
             var declarations = symbol.getDeclarations();
             for (var i = 0; i < declarations.length; i++) {
-                var declKind = declarations[i].getKind();
+                var declKind = declarations[i].kind;
                 if (declKind == TypeScript.PullElementKind.Container) {
                     return true;
                 } else if (declKind == TypeScript.PullElementKind.Variable && declarations[i].getFlags() & TypeScript.PullElementFlags.InitializedModule) {
@@ -1130,7 +1130,7 @@ module Services {
         private isDynamicModule(symbol: TypeScript.PullSymbol) {
             var symbolType = symbol.type;
             var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
-            return associatedSymbol && associatedSymbol.getKind() === TypeScript.PullElementKind.Container;
+            return associatedSymbol && associatedSymbol.kind === TypeScript.PullElementKind.Container;
         }
 
         private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {
@@ -1144,7 +1144,7 @@ module Services {
         private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): boolean {
             var decls = symbol.getDeclarations();
             for (var i = 0; i < decls.length; i++) {
-                if (decls[i].getKind() === kind) {
+                if (decls[i].kind === kind) {
                     return true;
                 }
             }

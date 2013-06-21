@@ -39,7 +39,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -139,7 +139,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -205,7 +205,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -256,7 +256,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -289,7 +289,7 @@ module TypeScript {
     function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
-        var declType = parent.getKind() === PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
+        var declType = parent.kind === PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
 
         if (hasFlag(propertyDecl.id.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
@@ -386,7 +386,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -441,7 +441,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -484,7 +484,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -539,7 +539,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -584,7 +584,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -684,7 +684,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -726,7 +726,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -768,7 +768,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -823,7 +823,7 @@ module TypeScript {
             }
         }
 
-        var decl = new PullDecl(parent.getName(), parent.getDisplayName(), declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(parent.name, parent.getDisplayName(), declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
@@ -875,7 +875,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -933,7 +933,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -959,7 +959,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.getKind() === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -1145,17 +1145,17 @@ module TypeScript {
     }
 
     function isContainer(decl: PullDecl): boolean {
-        return decl.getKind() === PullElementKind.Container || decl.getKind() === PullElementKind.DynamicModule || decl.getKind() === PullElementKind.Enum;
+        return decl.kind === PullElementKind.Container || decl.kind === PullElementKind.DynamicModule || decl.kind === PullElementKind.Enum;
     }
 
     function getInitializationFlag(decl: PullDecl): PullElementFlags {
-        if (decl.getKind() & PullElementKind.Container) {
+        if (decl.kind & PullElementKind.Container) {
             return PullElementFlags.InitializedModule;
         }
-        else if (decl.getKind() & PullElementKind.Enum) {
+        else if (decl.kind & PullElementKind.Enum) {
             return PullElementFlags.InitializedEnum;
         }
-        else if (decl.getKind() & PullElementKind.DynamicModule) {
+        else if (decl.kind & PullElementKind.DynamicModule) {
             return PullElementFlags.InitializedDynamicModule;
         }
 
@@ -1163,7 +1163,7 @@ module TypeScript {
     }
 
     function hasInitializationFlag(decl: PullDecl): boolean {
-        var kind = decl.getKind();
+        var kind = decl.kind;
 
         if (kind & PullElementKind.Container) {
             return (decl.getFlags() & PullElementFlags.InitializedModule) !== 0;
@@ -1203,7 +1203,7 @@ module TypeScript {
                 }
 
                 // create the value decl
-                var valueDecl = new PullDecl(thisModule.getName(), thisModule.getDisplayName(), PullElementKind.Variable, thisModule.getFlags(), thisModule.getSpan(), context.scriptName);
+                var valueDecl = new PullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.getFlags(), thisModule.getSpan(), context.scriptName);
 
                 thisModule.setValueDecl(valueDecl);
 

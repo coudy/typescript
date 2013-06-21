@@ -405,7 +405,7 @@ module TypeScript {
 
         public cacheGlobalSymbol(symbol: PullSymbol, kind: PullElementKind) {
             var cacheID1 = this.getDeclPathCacheID([symbol.name], kind);
-            var cacheID2 = this.getDeclPathCacheID([symbol.name], symbol.getKind());
+            var cacheID2 = this.getDeclPathCacheID([symbol.name], symbol.kind);
 
             if (!this.symbolCache[cacheID1]) {
                 this.symbolCache[cacheID1] = symbol;
@@ -549,10 +549,10 @@ module TypeScript {
         public removeSymbolFromCache(symbol: PullSymbol) {
 
             var path = [symbol.name];
-            var kind = (symbol.getKind() & PullElementKind.SomeType) !== 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
+            var kind = (symbol.kind & PullElementKind.SomeType) !== 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
 
             var kindID = this.getDeclPathCacheID(path, kind);
-            var symID = this.getDeclPathCacheID(path, symbol.getKind());
+            var symID = this.getDeclPathCacheID(path, symbol.kind);
 
             symbol.addCacheID(kindID);
             symbol.addCacheID(symID);

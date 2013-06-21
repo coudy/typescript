@@ -71,7 +71,7 @@ module TypeScript {
         }
 
         export function symbolIsEnum(source: PullSymbol) {
-            return source && ((source.getKind() & (PullElementKind.Enum | PullElementKind.EnumMember)) || source.hasFlag(PullElementFlags.InitializedEnum));
+            return source && ((source.kind & (PullElementKind.Enum | PullElementKind.EnumMember)) || source.hasFlag(PullElementFlags.InitializedEnum));
         }
     }
 }

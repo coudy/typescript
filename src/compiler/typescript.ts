@@ -986,7 +986,7 @@ module TypeScript {
 
                     // first, find the enclosing decl
                     for (var i = declStack.length - 1; i >= 0; i--) {
-                        if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
+                        if (!(declStack[i].kind & (PullElementKind.Variable | PullElementKind.Parameter))) {
                             enclosingDecl = declStack[i];
                             break;
                         }
@@ -1075,17 +1075,17 @@ module TypeScript {
 
                     symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
-                        var isPropertyOrVar = symbol.getKind() === PullElementKind.Property || symbol.getKind() === PullElementKind.Variable;
+                        var isPropertyOrVar = symbol.kind === PullElementKind.Property || symbol.kind === PullElementKind.Variable;
                         var typeSymbol = symbol.type;
                         if (isPropertyOrVar) {
-                            isPropertyOrVar = (typeSymbol.getKind() !== PullElementKind.Interface && typeSymbol.getKind() !== PullElementKind.ObjectType) || typeSymbol.name === "";
+                            isPropertyOrVar = (typeSymbol.kind !== PullElementKind.Interface && typeSymbol.kind !== PullElementKind.ObjectType) || typeSymbol.name === "";
                         }
 
                         if (!isPropertyOrVar) {
                             isConstructorCall = foundAST.nodeType() === NodeType.SuperExpression || callExpression.nodeType() === NodeType.ObjectCreationExpression;
 
                             if (foundAST.nodeType() === NodeType.SuperExpression) {
-                                if (symbol.getKind() === PullElementKind.Class) {
+                                if (symbol.kind === PullElementKind.Class) {
                                     callSignatures = (<PullTypeSymbol>symbol).getConstructorMethod().type.getConstructSignatures();
                                 }
                             } else {
@@ -1111,13 +1111,13 @@ module TypeScript {
                 }
 
                 if (funcDecl) {
-                    if (symbol && symbol.getKind() !== PullElementKind.Property) {
+                    if (symbol && symbol.kind !== PullElementKind.Property) {
                         var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain.getUnit(scriptName));
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
                 } else if (!callSignatures && symbol &&
-                (symbol.getKind() === PullElementKind.Method || symbol.getKind() === PullElementKind.Function)) {
+                (symbol.kind === PullElementKind.Method || symbol.kind === PullElementKind.Function)) {
                     var typeSym = symbol.type;
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();
@@ -1322,7 +1322,7 @@ module TypeScript {
                         var returnStatement = <ReturnStatement>current;
                         var contextualType: PullTypeSymbol = null;
 
-                        if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                        if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
                             var functionDeclaration = <FunctionDeclaration>enclosingDeclAST;
                             if (functionDeclaration.returnTypeAnnotation) {
                                 // The containing function has a type annotation, propagate it as the contextual type
@@ -1384,7 +1384,7 @@ module TypeScript {
 
                 // Record enclosing Decl
                 var decl = semanticInfo.getDeclForAST(current);
-                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
+                if (decl && !(decl.kind & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
                     enclosingDecl = decl;
                     enclosingDeclAST = current;
                 }
@@ -1454,7 +1454,7 @@ module TypeScript {
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var decl = semanticInfo.getDeclForAST(ast);
-            var symbol = (decl.getKind() & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
+            var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
             this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, context.resolutionContext);
 
             // we set the symbol as unresolved so as not to interfere with typecheck

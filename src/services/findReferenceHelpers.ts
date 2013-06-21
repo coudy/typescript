@@ -24,12 +24,12 @@ module Services {
         }
 
         public static compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
-            if (firstSymbol.getKind() === secondSymbol.getKind())
+            if (firstSymbol.kind === secondSymbol.kind)
             {
                 return firstSymbol === secondSymbol;
             }
             else {
-                switch (firstSymbol.getKind()) {
+                switch (firstSymbol.kind) {
                     case TypeScript.PullElementKind.Class: {
                         return this.checkSymbolsForDeclarationEquality(firstSymbol, secondSymbol);
                     }

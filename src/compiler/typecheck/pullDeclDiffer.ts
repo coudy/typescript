@@ -35,8 +35,8 @@ module TypeScript {
         // For now, just check for there/not there - we'll invalidate the inference symbols anyway
         // next up, we'll want to use this data to find the decl that changed
         private diff(oldDecl: PullDecl, newDecl: PullDecl): void {
-            Debug.assert(oldDecl.getName() === newDecl.getName());
-            Debug.assert(oldDecl.getKind() === newDecl.getKind());
+            Debug.assert(oldDecl.name === newDecl.name);
+            Debug.assert(oldDecl.kind === newDecl.kind);
 
             var oldAST = this.oldSemanticInfo.getASTForDecl(oldDecl);
             var newAST = this.newSemanticInfo.getASTForDecl(newDecl);
@@ -108,7 +108,7 @@ module TypeScript {
                 for (var i = 0, n = oldChildrenOfName.length; i < n; i++) {
                     oldChild = oldChildrenOfName[i];
 
-                    switch (oldChild.getKind()) {
+                    switch (oldChild.kind) {
                         // These are decls created for ephemeral expressions.  The new decl tree
                         // won't have them yet.  So we don't want to find diffs here.  The 
                         // compiler already knows to remove these decls and compute new ones
@@ -127,7 +127,7 @@ module TypeScript {
                         // a remove/add.
                         newChild = newChildrenOfName[i];
 
-                        if (oldChild.getKind() === newChild.getKind()) {
+                        if (oldChild.kind === newChild.kind) {
                             this.diff(oldChild, newChildrenOfName[i]);
                         }
                         else {
