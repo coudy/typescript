@@ -23,7 +23,7 @@ module TypeScript {
         public pushParent(parentDecl: PullTypeSymbol) {
             if (parentDecl) {
                 this.parentChain[this.parentChain.length] = parentDecl;
-                this.declPath[this.declPath.length] = parentDecl.getName();
+                this.declPath[this.declPath.length] = parentDecl.name;
             }
         }
 

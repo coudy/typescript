@@ -357,7 +357,7 @@ module TypeScript {
             var pullSymbol = decl.getSymbol();
             TypeScript.declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
-            var type = this.widenType(pullSymbol.getType());
+            var type = this.widenType(pullSymbol.type);
             if (!type) {
                 // PULLTODO
                 return;
@@ -457,7 +457,7 @@ module TypeScript {
             var funcSymbol = functionDecl.getSymbol();
             TypeScript.declarationEmitIsOverloadedCallSignatureTime += new Date().getTime() - start;
 
-            var funcTypeSymbol = funcSymbol.getType();
+            var funcTypeSymbol = funcSymbol.type;
             var signatures = funcTypeSymbol.getCallSignatures();
             var result = signatures && signatures.length > 1;
 
@@ -479,7 +479,7 @@ module TypeScript {
             var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
-            var funcTypeSymbol = funcSymbol.getType();
+            var funcTypeSymbol = funcSymbol.type;
             if (funcDecl.block) {
                 var constructSignatures = funcTypeSymbol.getConstructSignatures();
                 if (constructSignatures && constructSignatures.length > 1) {
@@ -661,7 +661,7 @@ module TypeScript {
             this.declFile.Write(funcDecl.name.actualText);
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 this.declFile.Write(" : ");
-                var type = accessorSymbol.getType();
+                var type = accessorSymbol.type;
                 this.emitTypeSignature(type);
             }
             this.declFile.WriteLine(";");

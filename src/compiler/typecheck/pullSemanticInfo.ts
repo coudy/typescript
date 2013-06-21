@@ -101,7 +101,7 @@ module TypeScript {
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             this.astSymbolMap.set(ast.getID(), symbol);
-            this.symbolASTMap.set(symbol.getSymbolID(), ast);
+            this.symbolASTMap.set(symbol.pullSymbolID, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
@@ -109,7 +109,7 @@ module TypeScript {
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
-            return this.symbolASTMap.get(symbol.getSymbolID());
+            return this.symbolASTMap.get(symbol.pullSymbolID);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullSymbol): void {
@@ -121,7 +121,7 @@ module TypeScript {
         }
 
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
-            return <ISyntaxElement> this.symbolSyntaxElementMap.read(symbol.getSymbolID().toString());
+            return <ISyntaxElement> this.symbolSyntaxElementMap.read(symbol.pullSymbolIDString);
         }
 
         public getSymbolForSyntaxElement(syntaxElement: ISyntaxElement): PullSymbol {
@@ -130,7 +130,7 @@ module TypeScript {
 
         public setSymbolForSyntaxElement(syntaxElement: ISyntaxElement, symbol: PullSymbol) {
             this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
-            this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
+            this.symbolSyntaxElementMap.link(symbol.pullSymbolIDString, syntaxElement);
         }
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
@@ -210,7 +210,7 @@ module TypeScript {
 
             symbol.addDeclaration(decl);
             decl.setSymbol(symbol);
-            symbol.setType(type);
+            symbol.type = type;
             symbol.setResolved();
 
             globalDecl.addChildDecl(decl);
@@ -404,8 +404,8 @@ module TypeScript {
         }
 
         public cacheGlobalSymbol(symbol: PullSymbol, kind: PullElementKind) {
-            var cacheID1 = this.getDeclPathCacheID([symbol.getName()], kind);
-            var cacheID2 = this.getDeclPathCacheID([symbol.getName()], symbol.getKind());
+            var cacheID1 = this.getDeclPathCacheID([symbol.name], kind);
+            var cacheID2 = this.getDeclPathCacheID([symbol.name], symbol.getKind());
 
             if (!this.symbolCache[cacheID1]) {
                 this.symbolCache[cacheID1] = symbol;
@@ -548,7 +548,7 @@ module TypeScript {
 
         public removeSymbolFromCache(symbol: PullSymbol) {
 
-            var path = [symbol.getName()];
+            var path = [symbol.name];
             var kind = (symbol.getKind() & PullElementKind.SomeType) !== 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
 
             var kindID = this.getDeclPathCacheID(path, kind);

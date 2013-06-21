@@ -120,7 +120,7 @@ module Services {
                 return [];
             }
 
-            var typeSymbol: TypeScript.PullTypeSymbol = symbol.getType();
+            var typeSymbol: TypeScript.PullTypeSymbol = symbol.type;
             var typesToSearch: TypeScript.PullTypeSymbol[];
 
             if (typeSymbol.isClass() || typeSymbol.isInterface()) {
@@ -131,7 +131,7 @@ module Services {
                 typeSymbol.isMethod() || typeSymbol.isProperty()) {
 
                 var declaration: TypeScript.PullDecl = symbol.getDeclarations()[0];
-                var classSymbol: TypeScript.PullTypeSymbol = declaration.getParentDecl().getSymbol().getType();
+                var classSymbol: TypeScript.PullTypeSymbol = declaration.getParentDecl().getSymbol().type;
 
                 typesToSearch = [];
                 var extendingTypes = classSymbol.getTypesThatExtendThisType();
@@ -211,7 +211,7 @@ module Services {
                         
                         var normalizedSymbol;
                         if (symbol.getKind() === TypeScript.PullElementKind.Class || symbol.getKind() === TypeScript.PullElementKind.Interface) {
-                            normalizedSymbol = searchSymbolInfoAtPosition.symbol.getType();
+                            normalizedSymbol = searchSymbolInfoAtPosition.symbol.type;
                         }
                         else {
                             var declaration = searchSymbolInfoAtPosition.symbol.getDeclarations()[0];
@@ -428,7 +428,7 @@ module Services {
             // TODO: are we in an new expression?
             var isNew = SignatureInfoHelpers.isTargetOfObjectCreationExpression(genericTypeArgumentListInfo.genericIdentifer);
 
-            var typeSymbol = symbolInformation.symbol.getType();
+            var typeSymbol = symbolInformation.symbol.type;
 
             if (typeSymbol.getKind() === TypeScript.PullElementKind.FunctionType ||
                 (isNew && typeSymbol.getKind() === TypeScript.PullElementKind.ConstructorType)) {
@@ -811,7 +811,7 @@ module Services {
 
                 // Check if this is a property or a variable, if so do not treat it as a fuction, but rather as a variable with function type
                 var isPropertyOrVar = symbol.getKind() == TypeScript.PullElementKind.Property || symbol.getKind() == TypeScript.PullElementKind.Variable;
-                typeSymbol = symbol.getType();
+                typeSymbol = symbol.type;
                 if (isPropertyOrVar) {
                     if (typeSymbol.getName() != "") {
                         symbol = typeSymbol;
@@ -839,7 +839,7 @@ module Services {
 
                
                 if (symbol.getKind() === TypeScript.PullElementKind.Method || symbol.getKind() == TypeScript.PullElementKind.Function) {
-                    typeSymbol = symbol.getType()
+                    typeSymbol = symbol.type;
                     if (typeSymbol) {
                         isCallExpression = true;
                         resolvedSignatures = typeSymbol.getCallSignatures();
@@ -998,7 +998,7 @@ module Services {
                 var kindModifiersName = this.getScriptElementKindModifiers(symbol);
                 var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
-                var type = symbol.getType();
+                var type = symbol.type;
                 var symbolForDocComments = symbol;
                 if (type && type.hasOnlyOverloadCallSignatures()) {
                     symbolForDocComments = type.getCallSignatures()[0];
@@ -1075,7 +1075,7 @@ module Services {
                 var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
-                var type = symbol.getType();
+                var type = symbol.type;
                 var symbolForDocComments = symbol;
                 if (type && type.hasOnlyOverloadCallSignatures()) {
                     symbolForDocComments = type.getCallSignatures()[0];
@@ -1128,7 +1128,7 @@ module Services {
         }
 
         private isDynamicModule(symbol: TypeScript.PullSymbol) {
-            var symbolType = symbol.getType();
+            var symbolType = symbol.type;
             var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
             return associatedSymbol && associatedSymbol.getKind() === TypeScript.PullElementKind.Container;
         }

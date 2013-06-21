@@ -24,10 +24,10 @@ module TypeScript {
             if (funcSymbol.isSignature()) {
                 functionSignature = <PullSignatureSymbol>funcSymbol;
                 var parent = functionDecl.getParentDecl();
-                typeSymbolWithAllSignatures = parent.getSymbol().getType();                
+                typeSymbolWithAllSignatures = parent.getSymbol().type;                
             } else {
                 functionSignature = functionDecl.getSignatureSymbol();
-                typeSymbolWithAllSignatures = funcSymbol.getType();
+                typeSymbolWithAllSignatures = funcSymbol.type;
             }
             var signatures: PullSignatureSymbol[];
             if (funcDecl.isConstructor || funcDecl.isConstructMember()) {

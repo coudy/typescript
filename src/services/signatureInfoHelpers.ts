@@ -209,7 +209,7 @@ module Services {
 
             var parameterMarkerIndex = 0;
 
-            var typeSymbol = symbol.getType();
+            var typeSymbol = symbol.type;
 
             var typeParameters = typeSymbol.getTypeParameters();
             for (var i = 0, n = typeParameters.length; i < n; i++) {

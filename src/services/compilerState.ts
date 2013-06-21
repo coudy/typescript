@@ -447,7 +447,7 @@ module Services {
                 }
             }
 
-            return classSymbol.getType().getConstructSignatures()[0];
+            return classSymbol.type.getConstructSignatures()[0];
         }
 
         public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: boolean): string {

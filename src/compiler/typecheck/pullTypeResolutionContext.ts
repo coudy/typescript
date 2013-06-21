@@ -22,7 +22,7 @@ module TypeScript {
 
 
         public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
-            var comboID = objectType.getSymbolID().toString() + "#" + parameterType.getSymbolID().toString();
+            var comboID = objectType.pullSymbolIDString + "#" + parameterType.pullSymbolIDString;
 
             if (this.inferenceCache[comboID]) {
                 return true;
@@ -38,17 +38,17 @@ module TypeScript {
         }
 
         public addInferenceRoot(param: PullTypeParameterSymbol) {
-            var info = <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];
+            var info = <CandidateInferenceInfo>this.candidateCache[param.pullSymbolIDString];
 
             if (!info) {
                 info = new CandidateInferenceInfo();
                 info.typeParameter = param;
-                this.candidateCache[param.getSymbolID().toString()] = info;
+                this.candidateCache[param.pullSymbolIDString] = info;
             }        
         }
 
         public getInferenceInfo(param: PullTypeParameterSymbol) {
-            return <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];
+            return <CandidateInferenceInfo>this.candidateCache[param.pullSymbolIDString];
         }
 
         public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: boolean) {
@@ -76,7 +76,7 @@ module TypeScript {
 
                 for (var i = 0; i < info.inferenceCandidates.length; i++) {
                     val = {};
-                    val[info.typeParameter.getSymbolID().toString()] = info.inferenceCandidates[i];
+                    val[info.typeParameter.pullSymbolIDString] = info.inferenceCandidates[i];
                     inferenceCandidates[inferenceCandidates.length] = val;
                 }
             }
@@ -107,7 +107,7 @@ module TypeScript {
                     getLength: () => { return info.inferenceCandidates.length; },
                     setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
                     getTypeAtIndex: (index: number) => {
-                        return info.inferenceCandidates[index].getType();
+                        return info.inferenceCandidates[index].type;
                     }
                 };
 
@@ -198,7 +198,7 @@ module TypeScript {
             if (this.contextStack.length) {
                 for (var i = this.contextStack.length - 1; i >= 0; i--) {
                     if (this.contextStack[i].substitutions) {
-                        substitution = this.contextStack[i].substitutions[type.getSymbolID().toString()];
+                        substitution = this.contextStack[i].substitutions[type.pullSymbolIDString];
 
                         if (substitution) {
                             break;
@@ -256,7 +256,7 @@ module TypeScript {
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = this.findSubstitution(type);
 
-            symbol.setType(substitution ? substitution : type);
+            symbol.type = substitution ? substitution : type;
 
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);
@@ -277,7 +277,7 @@ module TypeScript {
             var specialization: PullTypeSymbol = null;
 
             for (var i = this.typeSpecializationStack.length - 1; i >= 0; i--) {
-                specialization = (this.typeSpecializationStack[i])[type.getSymbolID().toString()];
+                specialization = (this.typeSpecializationStack[i])[type.pullSymbolIDString];
 
                 if (specialization) {
                     return specialization;

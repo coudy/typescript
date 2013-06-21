@@ -122,11 +122,11 @@ module TypeScript {
                     var instanceSymbol = (<PullContainerTypeSymbol>parent).getInstanceSymbol();
 
                     if (instanceSymbol) {
-                        return instanceSymbol.getType();
+                        return instanceSymbol.type;
                     }
                 }
 
-                return parent.getType();
+                return parent.type;
             }
 
             return null;
@@ -293,7 +293,7 @@ module TypeScript {
                     var acceptableRedeclaration = (prevKind == PullElementKind.Function) || (prevKind == PullElementKind.ConstructorMethod) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
 
                     if (acceptableRedeclaration) {
-                        moduleInstanceTypeSymbol = variableSymbol.getType();
+                        moduleInstanceTypeSymbol = variableSymbol.type;
                     }
                     else {
                         variableSymbol = null;
@@ -315,7 +315,7 @@ module TypeScript {
                 }
                 else {
                     moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
-                    moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+                    moduleInstanceSymbol.type = moduleInstanceTypeSymbol;
                 }
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
@@ -357,11 +357,11 @@ module TypeScript {
             // if it's an enum, freshen the index signature
             if (isEnum) {
 
-                moduleInstanceTypeSymbol = moduleContainerTypeSymbol.getInstanceSymbol().getType();
+                moduleInstanceTypeSymbol = moduleContainerTypeSymbol.getInstanceSymbol().type;
 
                 var enumIndexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
                 var enumIndexParameterSymbol = new PullSymbol("x", PullElementKind.Parameter);
-                enumIndexParameterSymbol.setType(this.semanticInfoChain.numberTypeSymbol);
+                enumIndexParameterSymbol.type = this.semanticInfoChain.numberTypeSymbol;
                 enumIndexSignature.addParameter(enumIndexParameterSymbol);
                 enumIndexSignature.setReturnType(this.semanticInfoChain.stringTypeSymbol);
 
@@ -537,7 +537,7 @@ module TypeScript {
 
             // even if we've already tried to set these, we want to try again after we've walked the class members
             constructorSymbol = classSymbol.getConstructorMethod();
-            constructorTypeSymbol = constructorSymbol ? constructorSymbol.getType() : null;
+            constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
 
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
@@ -545,7 +545,7 @@ module TypeScript {
 
                 constructorSymbol.setIsSynthesized();
 
-                constructorSymbol.setType(constructorTypeSymbol);
+                constructorSymbol.type = constructorTypeSymbol;
                 classSymbol.setConstructorMethod(constructorSymbol);
 
                 classSymbol.setHasDefaultConstructor();
@@ -929,7 +929,7 @@ module TypeScript {
                         members = parent.getMembers();
 
                         for (var i = 0; i < members.length; i++) {
-                            if ((members[i].getName() === declName) && (members[i].getKind() === PullElementKind.Class)) {
+                            if ((members[i].name === declName) && (members[i].getKind() === PullElementKind.Class)) {
                                 classTypeSymbol = <PullTypeSymbol>members[i];
                                 break;
                             }
@@ -993,7 +993,7 @@ module TypeScript {
                         variableSymbol.addDeclaration(variableDeclaration);
                         variableDeclaration.setSymbol(variableSymbol);
 
-                        variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                        variableSymbol.type = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
                 else if (declFlags & PullElementFlags.SomeInitializedModule) {
@@ -1004,7 +1004,7 @@ module TypeScript {
                         members = moduleParent.getMembers();
 
                         for (var i = 0; i < members.length; i++) {
-                            if ((members[i].getName() === declName) && (members[i].isContainer())) {
+                            if ((members[i].name === declName) && (members[i].isContainer())) {
                                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>members[i];
                                 break;
                             }
@@ -1109,7 +1109,7 @@ module TypeScript {
             var parent = this.getParent(propertyDeclaration, true);
 
             if (parent.isClass() && isStatic) {
-                parent = parent.getConstructorMethod().getType();           
+                parent = parent.getConstructorMethod().type;           
             }
 
             propertySymbol = parent.findMember(declName, false);
@@ -1266,7 +1266,7 @@ module TypeScript {
             }
 
             if (functionSymbol) {
-                functionTypeSymbol = functionSymbol.getType();
+                functionTypeSymbol = functionSymbol.type;
                 parentHadSymbol = true;
             }
 
@@ -1277,7 +1277,7 @@ module TypeScript {
 
             if (!functionTypeSymbol) {
                 functionTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
-                functionSymbol.setType(functionTypeSymbol);
+                functionSymbol.type = functionTypeSymbol;
                 functionTypeSymbol.setFunctionSymbol(functionSymbol);
             }
 
@@ -1360,7 +1360,7 @@ module TypeScript {
             var functionTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
             functionTypeSymbol.setFunctionSymbol(functionSymbol);
 
-            functionSymbol.setType(functionTypeSymbol);
+            functionSymbol.type = functionTypeSymbol;
 
             functionExpressionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionExpressionDeclaration);
@@ -1485,7 +1485,7 @@ module TypeScript {
             var methodTypeSymbol: PullTypeSymbol = null;
 
             if (parent.isClass() && isStatic) {
-                parent = parent.getConstructorMethod().getType();
+                parent = parent.getConstructorMethod().type;
             }
 
             methodSymbol = parent.findMember(methodName, false);
@@ -1499,7 +1499,7 @@ module TypeScript {
             }
 
             if (methodSymbol) {
-                methodTypeSymbol = methodSymbol.getType();
+                methodTypeSymbol = methodSymbol.type;
                 parentHadSymbol = true;
             }
 
@@ -1510,7 +1510,7 @@ module TypeScript {
 
             if (!methodTypeSymbol) {
                 methodTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
-                methodSymbol.setType(methodTypeSymbol);
+                methodSymbol.type = methodTypeSymbol;
                 methodTypeSymbol.setFunctionSymbol(methodSymbol);
             }
 
@@ -1614,11 +1614,11 @@ module TypeScript {
             if (constructorSymbol &&
                 (constructorSymbol.getKind() !== PullElementKind.ConstructorMethod ||
                 (!isSignature &&
-                constructorSymbol.getType() &&
-                constructorSymbol.getType().hasOwnConstructSignatures()))) {
+                constructorSymbol.type &&
+                constructorSymbol.type.hasOwnConstructSignatures()))) {
 
                 var hasDefinitionSignature = false;
-                var constructorSigs = constructorSymbol.getType().getConstructSignatures();
+                var constructorSigs = constructorSymbol.type.getConstructSignatures();
 
                 for (var i = 0; i < constructorSigs.length; i++) {
                     if (!constructorSigs[i].hasFlag(PullElementFlags.Signature)) {
@@ -1636,7 +1636,7 @@ module TypeScript {
             }
 
             if (constructorSymbol) {
-                constructorTypeSymbol = constructorSymbol.getType();
+                constructorTypeSymbol = constructorSymbol.type;
             }
             else {
                 constructorSymbol = new PullSymbol(constructorName, PullElementKind.ConstructorMethod);
@@ -1645,7 +1645,7 @@ module TypeScript {
 
             // Even if we're reusing the symbol, it would have been cleared by the call to invalidate above
             parent.setConstructorMethod(constructorSymbol);
-            constructorSymbol.setType(constructorTypeSymbol);
+            constructorSymbol.type = constructorTypeSymbol;
 
             constructorDeclaration.setSymbol(constructorSymbol);
             constructorSymbol.addDeclaration(constructorDeclaration);
@@ -1840,7 +1840,7 @@ module TypeScript {
             var getterTypeSymbol: PullTypeSymbol = null;
 
             if (isStatic) {
-                parent = parent.getConstructorMethod().getType();
+                parent = parent.getConstructorMethod().type;
             }
 
             accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
@@ -1869,7 +1869,7 @@ module TypeScript {
 
             // we have an accessor we can use...
             if (accessorSymbol && getterSymbol) {
-                getterTypeSymbol = getterSymbol.getType();
+                getterTypeSymbol = getterSymbol.type;
             }
 
             if (!accessorSymbol) {
@@ -1881,7 +1881,7 @@ module TypeScript {
                 getterTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
                 getterTypeSymbol.setFunctionSymbol(getterSymbol);
 
-                getterSymbol.setType(getterTypeSymbol);
+                getterSymbol.type = getterTypeSymbol;
 
                 accessorSymbol.setGetter(getterSymbol);
             }
@@ -1940,7 +1940,7 @@ module TypeScript {
             var setterTypeSymbol: PullTypeSymbol = null;
 
             if (isStatic) {
-                parent = parent.getConstructorMethod().getType();
+                parent = parent.getConstructorMethod().type;
             }
 
             accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
@@ -1967,7 +1967,7 @@ module TypeScript {
                 parentHadSymbol = true;
                 // we have an accessor we can use...
                 if (setterSymbol) {
-                    setterTypeSymbol = setterSymbol.getType();
+                    setterTypeSymbol = setterSymbol.type;
                 }
             }
 
@@ -1981,7 +1981,7 @@ module TypeScript {
                 setterTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
                 setterTypeSymbol.setFunctionSymbol(setterSymbol);
 
-                setterSymbol.setType(setterTypeSymbol);
+                setterSymbol.type = setterTypeSymbol;
 
                 accessorSymbol.setSetter(setterSymbol);
             }
