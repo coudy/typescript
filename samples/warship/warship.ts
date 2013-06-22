@@ -8,6 +8,7 @@ class Cell {
 
     constructor (public row: number, public column: number) {
         this.element = $("<div class='cell notBombed'></div>")[0];
+
     }
 
     // Parse a cell location of the format "row,column"

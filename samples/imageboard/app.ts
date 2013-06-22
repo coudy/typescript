@@ -6,7 +6,7 @@ import routes = require("./routes/index")
 import db = require("./db")
 import express = require("express")
 
-var app = express.createServer();
+var app = express();
 
 // Configuration
 app.configure(function(){
