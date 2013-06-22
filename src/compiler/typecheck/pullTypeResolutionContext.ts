@@ -313,7 +313,7 @@ module TypeScript {
 
         public isResolvingTypeArguments(ast: AST): boolean {
             for (var i = 0; i < this.genericASTResolutionStack.length; i++) {
-                if (this.genericASTResolutionStack[i].getID() === ast.getID()) {
+                if (this.genericASTResolutionStack[i].astID === ast.astID) {
                     return true;
                 }
             }

@@ -55,7 +55,7 @@ module TypeScript {
 
     export interface IAST extends IASTSpan {
         nodeType(): NodeType;
-        getID(): number;
+        astID: number;
         getLength(): number;
     }
 
@@ -68,7 +68,7 @@ module TypeScript {
 
         public typeCheckPhase = -1;
 
-        private astID: number = -1;
+        public astID: number = astID++;
 
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
@@ -128,15 +128,15 @@ module TypeScript {
             return this.limChar - this.minChar;
         }
 
-        public getID(): number {
-            var result = this.astID;
-            if (result === -1) {
-                result = astID++;
-                this.astID = result;
-            }
+        //public getID(): number {
+        //    var result = this.astID;
+        //    if (result === -1) {
+        //        result = astID++;
+        //        this.astID = result;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public isDeclaration() { return false; }
 

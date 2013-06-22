@@ -84,11 +84,11 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
-            return this.astDeclMap.get(ast.getID());
+            return this.astDeclMap.get(ast.astID);
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
-            this.astDeclMap.set(ast.getID(), decl);
+            this.astDeclMap.set(ast.astID, decl);
         }
 
         public getASTForDecl(decl: PullDecl): AST {
@@ -100,12 +100,12 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap.set(ast.getID(), symbol);
+            this.astSymbolMap.set(ast.astID, symbol);
             this.symbolASTMap.set(symbol.pullSymbolID, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            return <PullSymbol>this.astSymbolMap.get(ast.getID());
+            return <PullSymbol>this.astSymbolMap.get(ast.astID);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
@@ -113,11 +113,11 @@ module TypeScript {
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astAliasSymbolMap.set(ast.getID(), symbol);
+            this.astAliasSymbolMap.set(ast.astID, symbol);
         }
 
         public getAliasSymbolForAST(ast: IAST): PullSymbol {
-            return <PullSymbol>this.astAliasSymbolMap.get(ast.getID());
+            return <PullSymbol>this.astAliasSymbolMap.get(ast.astID);
         }
 
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
@@ -134,12 +134,12 @@ module TypeScript {
         }
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
-            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.getID());
+            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
         }
 
         public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
             if (callResolutionData) {
-                this.astCallResolutionDataMap.set(ast.getID(), callResolutionData);
+                this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         }
 
@@ -540,10 +540,10 @@ module TypeScript {
         }
 
         public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
-            this.declSymbolMap.link(decl.getDeclID().toString(), symbol);
+            this.declSymbolMap.link(decl.declIDString, symbol);
         }
         public getSymbolForDecl(decl): PullSymbol {
-            return <PullSymbol>this.declSymbolMap.read(decl.getDeclID().toString());
+            return <PullSymbol>this.declSymbolMap.read(decl.declIDString);
         }
 
         public removeSymbolFromCache(symbol: PullSymbol) {

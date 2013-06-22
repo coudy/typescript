@@ -6,6 +6,7 @@
 module TypeScript {
     export var pullSymbolID = 0;
     export var globalTyvarID = 0;
+    export var sentinelEmptyArray = [];
 
     export class PullSymbol {
 
@@ -599,7 +600,7 @@ module TypeScript {
 
     export class PullSignatureSymbol extends PullSymbol {
 
-        public parameters: PullSymbol[] = []; // PERFREVIEW: Need to set this to null, eventually
+        public parameters: PullSymbol[] = sentinelEmptyArray;
         public typeParameters: PullTypeParameterSymbol[] = null;
         public returnType: PullTypeSymbol = null;
         public functionType: PullTypeSymbol = null;
@@ -625,7 +626,7 @@ module TypeScript {
         public isGeneric() { return this.hasAGenericParameter || (this.typeParameters && this.typeParameters.length != 0); }
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
-            if (!this.parameters) {
+            if (this.parameters == sentinelEmptyArray) {
                 this.parameters = [];
             }
 
@@ -674,20 +675,6 @@ module TypeScript {
             this.memberTypeParameterNameCache[typeParameter.getName()] = typeParameter;
         }
         
-        // TODO: Why copy?
-        //public getParameters() {
-        //    var params: PullSymbol[] = [];
-
-        //    if (this.parameters) {
-        //        for (var i = 0; i < this.parameters.length; i++) {
-        //            params[params.length] = this.parameters[i];
-        //        }
-        //    }
-
-        //    return params;
-        //}
-
-        // TODO: Why copy?
         public getTypeParameters(): PullTypeParameterSymbol[]{
 
             if (!this.typeParameters) {
@@ -955,7 +942,7 @@ module TypeScript {
 
     export class PullTypeSymbol extends PullSymbol {
 
-        private _members: PullSymbol[] = null;
+        private _members: PullSymbol[] = sentinelEmptyArray;
         private _enclosedMemberTypes: PullTypeSymbol[] = null;
         private _typeParameters: PullTypeParameterSymbol[] = null;
         private _typeArguments: PullTypeSymbol[] = null;
@@ -1043,7 +1030,7 @@ module TypeScript {
 
         public hasMembers() {
 
-            if (this._members != null) {
+            if (this._members != sentinelEmptyArray) {
                 return true;
             }
 
@@ -1143,7 +1130,7 @@ module TypeScript {
                 this._memberNameCache = new BlockIntrinsics();
             }
 
-            if (!this._members) {
+            if (this._members == sentinelEmptyArray) {
                 this._members = [];
             }
 
@@ -1245,10 +1232,6 @@ module TypeScript {
         }
 
         public getMembers(): PullSymbol[] {
-            if (!this._members) {
-                return [];
-            }
-
             return this._members;
         }
 
@@ -1270,7 +1253,7 @@ module TypeScript {
 
         public getTypeParameters(): PullTypeParameterSymbol[]{
             if (!this._typeParameters) {
-                return [];
+                return sentinelEmptyArray;
             }
 
             return this._typeParameters;
@@ -1349,7 +1332,7 @@ module TypeScript {
 
         public getKnownSpecializations(): PullTypeSymbol[]{
             if (!this._specializedVersionsOfThisType) {
-                return [];
+                return sentinelEmptyArray;
             }
 
             return this._specializedVersionsOfThisType;
@@ -1516,7 +1499,7 @@ module TypeScript {
 
         public getImplementedTypes(): PullTypeSymbol[]{
             if (!this._implementedTypes) {
-                return [];
+                return sentinelEmptyArray;
             }
 
             return this._implementedTypes;
@@ -1538,7 +1521,7 @@ module TypeScript {
 
         public getExtendedTypes(): PullTypeSymbol[]{
             if (!this._extendedTypes) {
-                return [];
+                return sentinelEmptyArray;
             }
 
             return this._extendedTypes;
@@ -1696,7 +1679,7 @@ module TypeScript {
             var n = 0;
 
             // Add members
-            if (this._members) {
+            if (this._members != sentinelEmptyArray) {
 
                 for (var i = 0, n = this._members.length; i < n; i++) {
                     var member = this._members[i];
@@ -2180,7 +2163,7 @@ module TypeScript {
                 return this._aliasedType.getMembers();
             }
 
-            return [];
+            return sentinelEmptyArray;
         }
 
         public getCallSignatures(): PullSignatureSymbol[] {
@@ -2188,7 +2171,7 @@ module TypeScript {
                 return this._aliasedType.getCallSignatures();
             }
 
-            return [];
+            return sentinelEmptyArray;
         }
 
         public getConstructSignatures(): PullSignatureSymbol[] {
@@ -2196,7 +2179,7 @@ module TypeScript {
                 return this._aliasedType.getConstructSignatures();
             }
 
-            return [];
+            return sentinelEmptyArray;
         }
 
         public getIndexSignatures(): PullSignatureSymbol[] {
@@ -2204,7 +2187,7 @@ module TypeScript {
                 return this._aliasedType.getIndexSignatures();
             }
 
-            return [];
+            return sentinelEmptyArray;
         }
 
         public findMember(name: string): PullSymbol {
@@ -2228,7 +2211,7 @@ module TypeScript {
                 return this._aliasedType.getAllMembers(searchDeclKind, includePrivate);
             }
 
-            return [];
+            return sentinelEmptyArray;
         }
 
         public invalidate() {

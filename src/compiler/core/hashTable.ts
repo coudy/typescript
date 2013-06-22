@@ -46,7 +46,7 @@ module TypeScript.Collections {
 
         private computeHashCode(key: TKey): number {
             var hashCode = this.hash === null
-                ? (<any>key).hashCode()
+                ? (<any>key).hashCode
                 : this.hash(key);
 
             hashCode = hashCode & 0x7FFFFFFF;

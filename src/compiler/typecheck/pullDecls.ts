@@ -31,7 +31,8 @@ module TypeScript {
         public childDeclNamespaceCache: any = new BlockIntrinsics();
         public childDeclTypeParameterCache: any = new BlockIntrinsics();
 
-        private declID = pullDeclID++;
+        public declID = pullDeclID++;
+        public declIDString = null;
 
         private declFlags: PullElementFlags = PullElementFlags.None;
 
@@ -50,6 +51,8 @@ module TypeScript {
         // edits and updates we don't leak the val decl or symbol
         private synthesizedValDecl: PullDecl = null;
 
+        public hashCode = -1;
+
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.name = declName;
             this.kind = kind;
@@ -60,13 +63,10 @@ module TypeScript {
             if (displayName !== this.name) {
                 this.declDisplayName = displayName;
             }
-        }
 
-        public hashCode(): number {
-            return this.getDeclID() ^ this.kind;
+            this.hashCode = this.declID ^ this.kind;
+            this.declIDString = this.declID.toString();
         }
-
-        public getDeclID() { return this.declID; }
 
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
