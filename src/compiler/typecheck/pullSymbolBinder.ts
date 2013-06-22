@@ -183,10 +183,10 @@ module TypeScript {
             var parentDecl = moduleContainerDecl.getParentDecl();
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
-            var isExported = moduleContainerDecl.getFlags() & PullElementFlags.Exported;
+            var isExported = moduleContainerDecl.flags & PullElementFlags.Exported;
             var isEnum = (moduleKind & PullElementKind.Enum) != 0;
             var searchKind = isEnum ? PullElementKind.Enum : PullElementKind.SomeContainer;
-            var isInitializedModule = (moduleContainerDecl.getFlags() & PullElementFlags.SomeInitializedModule) != 0;
+            var isInitializedModule = (moduleContainerDecl.flags & PullElementFlags.SomeInitializedModule) != 0;
 
             var createdNewSymbol = false;
 
@@ -262,7 +262,7 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
+                    else if (!(moduleContainerDecl.flags & PullElementFlags.Exported)) {
                         // Search locally to this file for a previous declaration that's suitable for augmentation
                         var siblingDecls = parentDecl.getChildDecls();
                         var augmentedDecl: PullDecl = null;
@@ -345,7 +345,7 @@ module TypeScript {
 
             if (createdNewSymbol) {
                 if (parent) {
-                    if (moduleContainerDecl.getFlags() & PullElementFlags.Exported) {
+                    if (moduleContainerDecl.flags & PullElementFlags.Exported) {
                         parent.addEnclosedMemberType(moduleContainerTypeSymbol);
                     }
                     else {
@@ -385,7 +385,7 @@ module TypeScript {
 
         // aliases
         public bindImportDeclaration(importDeclaration: PullDecl) {
-            var declFlags = importDeclaration.getFlags();
+            var declFlags = importDeclaration.flags;
             var declKind = importDeclaration.kind;
             var importDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(importDeclaration);
 
@@ -414,7 +414,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
+            else if (!(importDeclaration.flags & PullElementFlags.Exported)) {
                 importSymbol = <PullTypeAliasSymbol>findSymbolInContext(declName, PullElementKind.SomeContainer, importDeclaration);
             }
 
@@ -465,7 +465,7 @@ module TypeScript {
 
             var parent = this.getParent(classDecl);
             var parentDecl = classDecl.getParentDecl();
-            var isExported = classDecl.getFlags() & PullElementFlags.Exported;
+            var isExported = classDecl.flags & PullElementFlags.Exported;
             var isGeneric = false;
 
             if (parent) {
@@ -523,7 +523,7 @@ module TypeScript {
             this.semanticInfo.setSymbolForAST(classAST, classSymbol);
 
             if (parent) {
-                if (classDecl.getFlags() & PullElementFlags.Exported) {
+                if (classDecl.flags & PullElementFlags.Exported) {
                     parent.addEnclosedMemberType(classSymbol);
                 }
                 else {
@@ -614,7 +614,7 @@ module TypeScript {
             if (parent) {
                 interfaceSymbol = parent.findNestedType(interfaceName);
             }
-            else if (!(interfaceDecl.getFlags() & PullElementFlags.Exported)) {
+            else if (!(interfaceDecl.flags & PullElementFlags.Exported)) {
                 interfaceSymbol = <PullTypeSymbol>findSymbolInContext(interfaceName, acceptableSharedKind, interfaceDecl);
             }
 
@@ -639,7 +639,7 @@ module TypeScript {
             if (createdNewSymbol) {
 
                 if (parent) {
-                    if (interfaceDecl.getFlags() & PullElementFlags.Exported) {
+                    if (interfaceDecl.flags & PullElementFlags.Exported) {
                         parent.addEnclosedMemberType(interfaceSymbol);
                     }
                     else {
@@ -740,7 +740,7 @@ module TypeScript {
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
             var declKind = constructorTypeDeclaration.kind;
-            var declFlags = constructorTypeDeclaration.getFlags();
+            var declFlags = constructorTypeDeclaration.flags;
             var constructorTypeAST = this.semanticInfo.getASTForDecl(constructorTypeDeclaration);
 
             var constructorTypeSymbol = new PullTypeSymbol("", PullElementKind.ConstructorType);
@@ -791,7 +791,7 @@ module TypeScript {
 
         // variables
         public bindVariableDeclarationToPullSymbol(variableDeclaration: PullDecl) {
-            var declFlags = variableDeclaration.getFlags();
+            var declFlags = variableDeclaration.flags;
             var declKind = variableDeclaration.kind;
             var varDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(variableDeclaration);
 
@@ -839,7 +839,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
+            else if (!(variableDeclaration.flags & PullElementFlags.Exported)) {
                 variableSymbol = findSymbolInContext(declName, PullElementKind.SomeValue, variableDeclaration);
             }
 
@@ -862,7 +862,7 @@ module TypeScript {
                 var prevIsClass = prevKind == PullElementKind.ConstructorMethod;
                 var prevIsContainer = variableSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule);
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
-                var isAmbient = (variableDeclaration.getFlags() & PullElementFlags.Ambient) != 0;
+                var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
                 var isClass = variableDeclaration.kind == PullElementKind.ConstructorMethod;
                 var prevDecl = variableSymbol.getDeclarations()[0];
                 var bothAreGlobal = prevKind == PullElementKind.Script && declKind == prevKind;
@@ -1085,7 +1085,7 @@ module TypeScript {
 
         // properties
         public bindPropertyDeclarationToPullSymbol(propertyDeclaration: PullDecl) {
-            var declFlags = propertyDeclaration.getFlags();
+            var declFlags = propertyDeclaration.flags;
             var declKind = propertyDeclaration.kind;
             var propDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(propertyDeclaration);
 
@@ -1172,7 +1172,7 @@ module TypeScript {
                         parameterSymbol.isVarArg = true;
                     }
 
-                    if (decl.getFlags() & PullElementFlags.Optional) {
+                    if (decl.flags & PullElementFlags.Optional) {
                         parameterSymbol.isOptional = true;
                     }
 
@@ -1214,7 +1214,7 @@ module TypeScript {
         // function declarations
         public bindFunctionDeclarationToPullSymbol(functionDeclaration: PullDecl) {
             var declKind = functionDeclaration.kind;
-            var declFlags = functionDeclaration.getFlags();
+            var declFlags = functionDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;
@@ -1253,7 +1253,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (!(functionDeclaration.getFlags() & PullElementFlags.Exported)) {
+            else if (!(functionDeclaration.flags & PullElementFlags.Exported)) {
                 functionSymbol = findSymbolInContext(funcName, PullElementKind.SomeValue, functionDeclaration);
             }
 
@@ -1347,7 +1347,7 @@ module TypeScript {
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
             var declKind = functionExpressionDeclaration.kind;
-            var declFlags = functionExpressionDeclaration.getFlags();
+            var declFlags = functionExpressionDeclaration.flags;
             var funcExpAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionExpressionDeclaration);
 
             // 1. Test for existing decl - if it exists, use its symbol
@@ -1413,7 +1413,7 @@ module TypeScript {
 
         public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
             var declKind = functionTypeDeclaration.kind;
-            var declFlags = functionTypeDeclaration.getFlags();
+            var declFlags = functionTypeDeclaration.flags;
             var funcTypeAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionTypeDeclaration);
 
             // 1. Test for existing decl - if it exists, use its symbol
@@ -1467,7 +1467,7 @@ module TypeScript {
         // method declarations
         public bindMethodDeclarationToPullSymbol(methodDeclaration: PullDecl) {
             var declKind = methodDeclaration.kind;
-            var declFlags = methodDeclaration.getFlags();
+            var declFlags = methodDeclaration.flags;
             var methodAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(methodDeclaration);
 
             var isPrivate = (declFlags & PullElementFlags.Private) !== 0;
@@ -1597,7 +1597,7 @@ module TypeScript {
         // class constructor declarations
         public bindConstructorDeclarationToPullSymbol(constructorDeclaration: PullDecl) {
             var declKind = constructorDeclaration.kind;
-            var declFlags = constructorDeclaration.getFlags();
+            var declFlags = constructorDeclaration.flags;
             var constructorAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(constructorDeclaration);
 
             var constructorName = constructorDeclaration.name;
@@ -1818,7 +1818,7 @@ module TypeScript {
 
         public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
             var declKind = getAccessorDeclaration.kind;
-            var declFlags = getAccessorDeclaration.getFlags();
+            var declFlags = getAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(getAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;
@@ -1918,7 +1918,7 @@ module TypeScript {
 
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
             var declKind = setAccessorDeclaration.kind;
-            var declFlags = setAccessorDeclaration.getFlags();
+            var declFlags = setAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(setAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;

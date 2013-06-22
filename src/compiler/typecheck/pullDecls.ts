@@ -34,7 +34,7 @@ module TypeScript {
         public declID = pullDeclID++;
         public declIDString = null;
 
-        private declFlags: PullElementFlags = PullElementFlags.None;
+        public flags: PullElementFlags = PullElementFlags.None;
 
         private span: TextSpan;
 
@@ -56,7 +56,7 @@ module TypeScript {
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.name = declName;
             this.kind = kind;
-            this.declFlags = declFlags;
+            this.flags = declFlags;
             this.span = span;
             this.scriptName = scriptName;
 
@@ -126,9 +126,8 @@ module TypeScript {
             return this.signatureSymbol;
         }
 
-        public getFlags(): PullElementFlags { return this.declFlags; }
-        public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
-        public setFlag(flags: PullElementFlags) { this.declFlags |= flags; }
+        public setFlags(flags: PullElementFlags) { this.flags = flags; }
+        public setFlag(flags: PullElementFlags) { this.flags |= flags; }
 
         public getSpan(): TextSpan { return this.span; }
         public setSpan(span: TextSpan) { this.span = span; }
@@ -141,7 +140,7 @@ module TypeScript {
         public isEqual(other: PullDecl) {
             return  (this.name === other.name) &&
                     (this.kind === other.kind) &&
-                    (this.declFlags === other.declFlags) &&
+                    (this.flags === other.flags) &&
                     (this.scriptName === other.scriptName) &&
                     (this.span.start() === other.span.start()) &&
                     (this.span.end() === other.span.end());

@@ -39,7 +39,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -139,7 +139,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -205,7 +205,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -256,7 +256,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -386,7 +386,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -441,7 +441,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -484,7 +484,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -539,7 +539,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -584,7 +584,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -684,7 +684,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -726,7 +726,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -768,7 +768,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -816,7 +816,7 @@ module TypeScript {
 
         if (parent) {
             // if the parent is exported, the constructor decl must be as well
-            var parentFlags = parent.getFlags();
+            var parentFlags = parent.flags;
 
             if (parentFlags & PullElementFlags.Exported) {
                 declFlags |= PullElementFlags.Exported;
@@ -875,7 +875,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -933,7 +933,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -959,7 +959,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.getFlags() & PullElementFlags.DeclaredInAWithBlock))) {
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
@@ -1166,13 +1166,13 @@ module TypeScript {
         var kind = decl.kind;
 
         if (kind & PullElementKind.Container) {
-            return (decl.getFlags() & PullElementFlags.InitializedModule) !== 0;
+            return (decl.flags & PullElementFlags.InitializedModule) !== 0;
         }
         else if (kind & PullElementKind.Enum) {
-            return (decl.getFlags() & PullElementFlags.InitializedEnum) != 0;
+            return (decl.flags & PullElementFlags.InitializedEnum) != 0;
         }
         else if (kind & PullElementKind.DynamicModule) {
-            return (decl.getFlags() & PullElementFlags.InitializedDynamicModule) !== 0;
+            return (decl.flags & PullElementFlags.InitializedDynamicModule) !== 0;
         }
 
         return false;
@@ -1199,11 +1199,11 @@ module TypeScript {
 
                 if (parentDecl && isContainer(parentDecl)) {
                     initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                    parentDecl.setFlags(parentDecl.flags | initFlag);
                 }
 
                 // create the value decl
-                var valueDecl = new PullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.getFlags(), thisModule.getSpan(), context.scriptName);
+                var valueDecl = new PullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, thisModule.getSpan(), context.scriptName);
 
                 thisModule.setValueDecl(valueDecl);
 
@@ -1222,7 +1222,7 @@ module TypeScript {
 
             if (parentDecl && isContainer(parentDecl)) {
                 initFlag = getInitializationFlag(parentDecl);
-                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                parentDecl.setFlags(parentDecl.flags | initFlag);
             }
         }
         else if (ast.nodeType() === NodeType.InterfaceDeclaration) {
@@ -1235,7 +1235,7 @@ module TypeScript {
 
             if (parentDecl && isContainer(parentDecl)) {
                 initFlag = getInitializationFlag(parentDecl);
-                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                parentDecl.setFlags(parentDecl.flags | initFlag);
             }
         }
         else if (ast.nodeType() === NodeType.VariableDeclarator) { // PULLREVIEW: What if we just have a for loop in a module body?
@@ -1243,7 +1243,7 @@ module TypeScript {
 
             if (parentDecl && isContainer(parentDecl)) {
                 initFlag = getInitializationFlag(parentDecl);
-                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                parentDecl.setFlags(parentDecl.flags | initFlag);
             }
         }
         else if (ast.nodeType() === NodeType.CatchClause) {
@@ -1251,7 +1251,7 @@ module TypeScript {
 
             if (parentDecl && isContainer(parentDecl)) {
                 initFlag = getInitializationFlag(parentDecl);
-                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                parentDecl.setFlags(parentDecl.flags | initFlag);
             }
 
             context.popParent();
@@ -1261,7 +1261,7 @@ module TypeScript {
 
             if (parentDecl && isContainer(parentDecl)) {
                 initFlag = getInitializationFlag(parentDecl);
-                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
+                parentDecl.setFlags(parentDecl.flags | initFlag);
             }
 
             context.popParent();

@@ -688,12 +688,12 @@ module TypeScript {
         public shouldCaptureThis(ast: AST) {
             if (ast.nodeType() === NodeType.Script) {
                 var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecls()[0];
-                return (scriptDecl.getFlags() & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
+                return (scriptDecl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
 
             var decl = this.semanticInfoChain.getDeclForAST(ast, this.document.fileName);
             if (decl) {
-                return (decl.getFlags() & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
+                return (decl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
 
             return false;
@@ -717,7 +717,7 @@ module TypeScript {
             var prevColumn = this.emitState.column;
             var prevLine = this.emitState.line;
             var temp = this.setContainer(EmitContainer.Module);
-            var isExported = hasFlag(pullDecl.getFlags(), PullElementFlags.Exported);
+            var isExported = hasFlag(pullDecl.flags, PullElementFlags.Exported);
             var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
 
             // prologue
@@ -952,7 +952,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(pullFunctionDecl.getFlags(), PullElementFlags.Exported)) {
+                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
@@ -1015,7 +1015,7 @@ module TypeScript {
             this.setInVarBlock(declaration.declarators.members.length);
 
             var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
-            var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.getFlags(), PullElementFlags.Ambient) && varDecl.init === null;
+            var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.flags, PullElementFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
                 for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
                     var declarator = declaration.declarators.members[i];
@@ -1040,7 +1040,7 @@ module TypeScript {
         public emitVariableDeclarator(varDecl: VariableDeclarator) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
             this.pushDecl(pullDecl);
-            if ((pullDecl.getFlags() & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
+            if ((pullDecl.flags & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             }
@@ -1070,7 +1070,7 @@ module TypeScript {
                     associatedParentSymbolKind === PullElementKind.DynamicModule ||
                     associatedParentSymbolKind === PullElementKind.Enum) {
                     // module
-                    if (!hasFlag(pullDecl.getFlags(), PullElementFlags.Exported) && !varDecl.isProperty()) {
+                        if (!hasFlag(pullDecl.flags, PullElementFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
                     }
                     else {
@@ -1692,7 +1692,7 @@ module TypeScript {
             this.writeToOutput(");");
             this.recordSourceMappingEnd(classDecl);
 
-            if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(pullDecl.getFlags(), PullElementFlags.Exported)) {
+            if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
                 this.writeLineToOutput("");
                 this.emitIndent();
                 var modName = temp === EmitContainer.Module ? this.moduleName : "exports";

@@ -277,7 +277,7 @@ module TypeScript {
         public hasFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
-                if ((declarations[i].getFlags() & flag) !== PullElementFlags.None) {
+                if ((declarations[i].flags & flag) !== PullElementFlags.None) {
                     return true;
                 }
             }
@@ -287,7 +287,7 @@ module TypeScript {
         public allDeclsHaveFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
-                if (!((declarations[i].getFlags() & flag) !== PullElementFlags.None)) {
+                if (!((declarations[i].flags & flag) !== PullElementFlags.None)) {
                     return false;
                 }
             }
@@ -2422,7 +2422,7 @@ module TypeScript {
 
         // if the target parent encloses the specialization type, we don't want to specialize
         while (parent) {
-            if (parent.getFlags() & PullElementFlags.Static) {
+            if (parent.flags & PullElementFlags.Static) {
                 return true;
             }
 

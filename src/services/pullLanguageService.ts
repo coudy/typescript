@@ -587,7 +587,7 @@ module Services {
 
         private getScriptElementKindModifiersFromDecl(decl: TypeScript.PullDecl): string {
             var result = [];
-            var flags = decl.getFlags();
+            var flags = decl.flags;
 
             if (flags & TypeScript.PullElementFlags.Exported) {
                 result.push(ScriptElementKindModifier.exportedModifier);
@@ -634,7 +634,7 @@ module Services {
                 case TypeScript.PullElementKind.Variable:
                 case TypeScript.PullElementKind.Property:
                     // Do not include the value side of modules or classes, as thier types has already been included
-                    return (declaration.getFlags() & (TypeScript.PullElementFlags.ClassConstructorVariable |
+                    return (declaration.flags & (TypeScript.PullElementFlags.ClassConstructorVariable |
                         TypeScript.PullElementFlags.InitializedModule |
                         TypeScript.PullElementFlags.InitializedDynamicModule |
                         TypeScript.PullElementFlags.InitializedEnum)) === 0;
@@ -1030,7 +1030,7 @@ module Services {
                 }
 
                 var kindName = this.mapPullElementKind(declKind, /*symbol*/ null, true);
-                var kindModifiersName = this.getScriptElementKindModifiersFromFlgas(decl.getFlags());
+                var kindModifiersName = this.getScriptElementKindModifiersFromFlgas(decl.flags);
 
                 var entry = new DeclReferenceCompletionEntry(declDisplaylName, kindName, kindModifiersName, decl);
 
@@ -1119,7 +1119,7 @@ module Services {
                 var declKind = declarations[i].kind;
                 if (declKind == TypeScript.PullElementKind.Container) {
                     return true;
-                } else if (declKind == TypeScript.PullElementKind.Variable && declarations[i].getFlags() & TypeScript.PullElementFlags.InitializedModule) {
+                } else if (declKind == TypeScript.PullElementKind.Variable && declarations[i].flags & TypeScript.PullElementFlags.InitializedModule) {
                     return true;
                 }
             }

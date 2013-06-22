@@ -42,7 +42,7 @@ module TypeScript {
         public getEnclosingNonLambdaDecl() {
             for (var i = this.enclosingDeclStack.length - 1; i >= 0; i--) {
                 var decl = this.enclosingDeclStack[i];
-                if (!(decl.kind === PullElementKind.FunctionExpression && (decl.getFlags() & PullElementFlags.FatArrow))) {
+                if (!(decl.kind === PullElementKind.FunctionExpression && (decl.flags & PullElementFlags.FatArrow))) {
                     return decl;
                 }
             }
@@ -805,8 +805,8 @@ module TypeScript {
                 var getterDecl = getter.getDeclarations()[0];
                 var setterDecl = setter.getDeclarations()[0];
 
-                var getterIsPrivate = getterDecl.getFlags() & PullElementFlags.Private;
-                var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
+                var getterIsPrivate = getterDecl.flags & PullElementFlags.Private;
+                var setterIsPrivate = setterDecl.flags & PullElementFlags.Private;
 
                 if (getterIsPrivate != setterIsPrivate) {
                     this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, typeCheckContext.getEnclosingDecl());
@@ -1625,7 +1625,7 @@ module TypeScript {
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     var decl = declPath[i];
                     var declKind = decl.kind;
-                    var declFlags = decl.getFlags();
+                    var declFlags = decl.flags;
 
                     if (declKind === PullElementKind.FunctionExpression &&
                         hasFlag(declFlags, PullElementFlags.FatArrow)) {
@@ -1646,13 +1646,13 @@ module TypeScript {
                             declKind === PullElementKind.DynamicModule ||
                             declKind === PullElementKind.Script) {
 
-                            decl.setFlags(decl.getFlags() | PullElementFlags.MustCaptureThis);
+                                decl.setFlags(decl.flags | PullElementFlags.MustCaptureThis);
 
                             // If we're accessing 'this' in a class, then the class constructor 
                             // needs to be marked as capturing 'this'.
                             if (declKind === PullElementKind.Class) {
                                 decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
-                                    .map(d => d.setFlags(d.getFlags() | PullElementFlags.MustCaptureThis));
+                                    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
                             }
                             break;
                         }
@@ -1705,7 +1705,7 @@ module TypeScript {
             }
             // A super property access is permitted only in a constructor, instance member function, or instance member accessor
             else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
-                ((nonLambdaEnclosingDecl.getFlags() & PullElementFlags.Static) !== 0)) {
+                ((nonLambdaEnclosingDecl.flags & PullElementFlags.Static) !== 0)) {
                 this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_instance_member_function_or_instance_member_accessor_of_a_derived_class, null, enclosingDecl);
             }
             // A super is permitted only in a derived class 
@@ -2826,7 +2826,7 @@ module TypeScript {
 
             var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
@@ -2899,7 +2899,7 @@ module TypeScript {
 
             var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();

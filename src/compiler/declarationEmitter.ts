@@ -145,7 +145,7 @@ module TypeScript {
             
             var pullDecl = this.semanticInfoChain.getDeclForAST(declAST, this.fileName);
             if (container.nodeType() === NodeType.ModuleDeclaration) {
-                if (!hasFlag(pullDecl.getFlags(), PullElementFlags.Exported)) {
+                if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
                     var start = new Date().getTime();
                     var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST, this.fileName);
                     var result = declSymbol && declSymbol.isExternallyVisible();
@@ -155,7 +155,7 @@ module TypeScript {
                 }
             }
 
-            if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(pullDecl.getFlags(), PullElementFlags.Ambient)) {
+            if (!canEmitGlobalAmbientDecl && container.nodeType() === NodeType.Script && hasFlag(pullDecl.flags, PullElementFlags.Ambient)) {
                 return false;
             }
 
@@ -179,7 +179,7 @@ module TypeScript {
 
         private getDeclFlagsString(declFlags: DeclFlags, pullDecl: PullDecl, typeString: string) {
             var result = this.getIndentString();
-            var pullFlags = pullDecl.getFlags();
+            var pullFlags = pullDecl.flags;
 
             // Static/public/private/global declare
             if (hasFlag(declFlags, DeclFlags.Static)) {

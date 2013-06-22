@@ -388,7 +388,7 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.kind;
 
-                if (decl.getFlags() & PullElementFlags.DeclaredInAWithBlock) {
+                if (decl.flags & PullElementFlags.DeclaredInAWithBlock) {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
@@ -532,7 +532,7 @@ module TypeScript {
                                 var otherDeclChildren = otherDecl.getChildDecls();
                                 for (var k = 0, s = otherDeclChildren.length; k < s; k++) {
                                     var otherDeclChild = otherDeclChildren[k];
-                                    if ((otherDeclChild.getFlags() & PullElementFlags.Exported) && (otherDeclChild.kind & declSearchKind)) {
+                                    if ((otherDeclChild.flags & PullElementFlags.Exported) && (otherDeclChild.kind & declSearchKind)) {
                                         result.push(otherDeclChild);
                                     }
                                 }
@@ -770,7 +770,7 @@ module TypeScript {
                     var prototypeStr = "prototype";
                     var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
                     var parentDecl = lhsType.getDeclarations()[0];
-                    var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.getFlags(), parentDecl.getSpan(), parentDecl.getScriptName());
+                    var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
                     this.currentUnit.addSynthesizedDecl(prototypeDecl);
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
@@ -965,7 +965,16 @@ module TypeScript {
                 }
 
                 this.setUnitPath(decl.getScriptName());
-                this.resolveAST(ast, /*inContextuallyTypedAssignment*/false, enclosingDecl, context);
+                var resolvedSym = this.resolveAST(ast, /*inContextuallyTypedAssignment*/false, enclosingDecl, context);
+
+                if (resolvedSym &&
+                    resolvedSym != symbol &&
+                    resolvedSym.kind == PullElementKind.Property &&
+                    resolvedSym.isResolved &&
+                    resolvedSym.type) {
+                    symbol.type = resolvedSym.type;
+                    symbol.setResolved();
+                }
             }
 
             var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
@@ -1041,9 +1050,18 @@ module TypeScript {
             }
 
             if (context.typeCheck()) {
-                for (var i = 0; i < members.length; i++) {
-                    this.resolveAST(members[i], false, containerDecl, context);
+                var subModuleAST: ModuleDeclaration = null;
+                var currentPath = this.unitPath;
+                for (var i = 0; i < containerDecls.length; i++) {
+
+                    subModuleAST = <ModuleDeclaration>this.getASTForDecl(containerDecls[i]);
+
+                    if (subModuleAST) {
+                        this.setUnitPath(containerDecls[i].getScriptName());
+                        this.resolveAST(subModuleAST.members, false, containerDecls[i], context);
+                    }
                 }
+                this.setUnitPath(currentPath);
             }
 
             return containerSymbol;
@@ -2430,7 +2448,7 @@ module TypeScript {
 
                 var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-                var hasReturn = (funcDecl.getFlags() & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+                var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
                 var parameters = signature.parameters;
 
@@ -2548,8 +2566,8 @@ module TypeScript {
                         var getterDecl = getter.getDeclarations()[0];
                         var setterDecl = setter.getDeclarations()[0];
 
-                        var getterIsPrivate = getterDecl.getFlags() & PullElementFlags.Private;
-                        var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
+                        var getterIsPrivate = getterDecl.flags & PullElementFlags.Private;
+                        var setterIsPrivate = setterDecl.flags & PullElementFlags.Private;
 
                         if (getterIsPrivate != setterIsPrivate) {
                             context.postError(this.unitPath, funcNameAST.minChar, funcNameAST.getLength(), DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, enclosingDecl);
@@ -3310,7 +3328,7 @@ module TypeScript {
 
             var symbol = this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
 
-            if (symbol && (symbol.isPrimitive() || symbol.typeCheckPhase >= PullTypeResolver.globalTypeCheckPhase)) {
+            if (symbol && (symbol.isPrimitive() || ast.typeCheckPhase >= PullTypeResolver.globalTypeCheckPhase)) {
                 // WScript.Echo("Resolved again: name: " + symbol.getName() + ", symbol id: " + symbol.getSymbolID() + ", ast ID: " + ast.getID());
                 return symbol;
             }
@@ -3318,7 +3336,7 @@ module TypeScript {
                 ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
             }                
 
-            if (symbol && (symbol.isResolved || symbol.inResolution)) {
+            if (symbol && symbol.isResolved) {
                 return symbol;
             }
 
@@ -3989,7 +4007,7 @@ module TypeScript {
                 }
 
                 if (typeNameSymbol.isTypeParameter()) {
-                    if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
+                    if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction) && (enclosingDecl.flags & PullElementFlags.Static)) {
                         var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
                         if (parentDecl.kind == PullElementKind.Class) {
@@ -4331,7 +4349,7 @@ module TypeScript {
 
                 this.validateVariableDeclarationGroups(functionDecl, context);
 
-                var hasReturn = (functionDecl.getFlags() & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+                var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
             
                 if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                     var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
@@ -4385,7 +4403,7 @@ module TypeScript {
                         for (var i = declPath.length - 1; i >= 0; i--) {
                             var decl = declPath[i];
                             var declKind = decl.kind;
-                            var declFlags = decl.getFlags();
+                            var declFlags = decl.flags;
 
                             if (declFlags & PullElementFlags.Static) {
                                 break;
@@ -4421,7 +4439,7 @@ module TypeScript {
             if (declPath.length) {
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     var decl = declPath[i];
-                    var declFlags = decl.getFlags();
+                    var declFlags = decl.flags;
 
                     if (decl.kind === PullElementKind.FunctionExpression &&
                         !(declFlags & PullElementFlags.FatArrow)) {
@@ -5088,6 +5106,9 @@ module TypeScript {
             var targetTypeSymbol = targetSymbol.type;
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
 
+                // resolve any arguments
+                this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 if (callEx.typeArguments) {
                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments)
                     return this.getNewErrorTypeSymbol(null);
@@ -5464,6 +5485,8 @@ module TypeScript {
             var couldNotAssignToConstraint: boolean;
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
+                // resolve any arguments
+                this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
                 return targetTypeSymbol;
             }
 
@@ -8295,7 +8318,7 @@ module TypeScript {
 
             var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
@@ -8368,7 +8391,7 @@ module TypeScript {
 
             var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.getFlags() & PullElementFlags.Static) === PullElementFlags.Static;
+            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
@@ -8598,7 +8621,7 @@ module TypeScript {
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     var decl = declPath[i];
                     var declKind = decl.kind;
-                    var declFlags = decl.getFlags();
+                    var declFlags = decl.flags;
 
                     if (declKind === PullElementKind.FunctionExpression &&
                         hasFlag(declFlags, PullElementFlags.FatArrow)) {
@@ -8619,13 +8642,13 @@ module TypeScript {
                             declKind === PullElementKind.DynamicModule ||
                             declKind === PullElementKind.Script) {
 
-                            decl.setFlags(decl.getFlags() | PullElementFlags.MustCaptureThis);
+                                decl.setFlags(decl.flags | PullElementFlags.MustCaptureThis);
 
                             // If we're accessing 'this' in a class, then the class constructor 
                             // needs to be marked as capturing 'this'.
                             if (declKind === PullElementKind.Class) {
                                 decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
-                                    .map(d => d.setFlags(d.getFlags() | PullElementFlags.MustCaptureThis));
+                                    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
                             }
                             break;
                         }
