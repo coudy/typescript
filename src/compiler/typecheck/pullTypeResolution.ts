@@ -4361,6 +4361,8 @@ module TypeScript {
                 this.setSymbolForAST(ast, symbol, context);
             }
 
+            this.checkForThisOrSuperCaptureInArrowFunction(ast, enclosingDecl);
+
             return symbol;
         }
 
@@ -8626,10 +8628,9 @@ module TypeScript {
             return false;
         }
 
-        private checkForThisOrSuperCaptureInArrowFunction(expression: AST, typeCheckContext: PullTypeCheckContext): void {
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+        private checkForThisOrSuperCaptureInArrowFunction(expression: AST, enclosingDecl: PullDecl): void {
 
-            var declPath: PullDecl[] = typeCheckContext.enclosingDeclStack;
+            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
 
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
