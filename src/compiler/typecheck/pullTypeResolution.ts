@@ -2404,6 +2404,7 @@ module TypeScript {
             }
 
             if (context.typeCheck()) {
+                var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
                 this.seenSuperConstructorCall = false;
 
                 this.resolveAST(funcDeclAST.block, false, funcDecl, context);
@@ -2556,6 +2557,7 @@ module TypeScript {
 
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
                 this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
             }
 
             return funcSymbol;
@@ -4002,15 +4004,6 @@ module TypeScript {
             return typeNameSymbol;
         }
 
-        private addDiagnostic(diagnostics: Diagnostic[], diagnostic: Diagnostic): Diagnostic[] {
-            if (!diagnostics) {
-                diagnostics = [];
-            }
-
-            diagnostics.push(diagnostic);
-            return diagnostics;
-        }
-
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = true;
@@ -4069,7 +4062,6 @@ module TypeScript {
             // check constraints, if appropriate
             var typeConstraint: PullTypeSymbol = null;
             var upperBound: PullTypeSymbol = null;
-            var diagnostics: Diagnostic[] = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
@@ -4098,9 +4090,7 @@ module TypeScript {
                         return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
-                        // POST
-                        diagnostics = this.addDiagnostic(diagnostics,
-                            context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(null, true), typeConstraint.toString(null, true), typeParameters[iArg].toString(null, true)]));
+                        context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(null, true), typeConstraint.toString(null, true), typeParameters[iArg].toString(null, true)]);
                     }
                 }
             }
@@ -5102,8 +5092,7 @@ module TypeScript {
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
-
-            var diagnostics: Diagnostic[] = [];
+            
             var isSuperCall = false;
 
             if (callEx.target.nodeType() === NodeType.SuperExpression) {
@@ -5124,8 +5113,7 @@ module TypeScript {
             var signatures = isSuperCall ? targetTypeSymbol.getConstructSignatures() : targetTypeSymbol.getCallSignatures();
 
             if (!signatures.length && (targetTypeSymbol.kind == PullElementKind.ConstructorType)) {
-                diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type_0_is_not_callable_Did_you_mean_to_include_new, [targetTypeSymbol.toString()]));
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Value_of_type_0_is_not_callable_Did_you_mean_to_include_new, [targetTypeSymbol.toString()]);
             }
 
             var typeArgs: PullTypeSymbol[] = null;
@@ -5212,8 +5200,7 @@ module TypeScript {
                                         }
                                         context.isComparingSpecializedSignatures = true;
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            diagnostics = this.addDiagnostic(diagnostics,
-                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]));
+                                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
                                             couldNotAssignToConstraint = true;
                                         }
                                         context.isComparingSpecializedSignatures = false;
@@ -5299,23 +5286,22 @@ module TypeScript {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
-                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures));
+                    context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_type_with_no_call_signatures);
                     errorCondition = this.getNewErrorTypeSymbol(null);
                 }
                 else {
-                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression));
+                    context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression);
                     errorCondition = this.getNewErrorTypeSymbol(null);
                 }
 
                 return errorCondition;
             }
 
-            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
+            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
             var useBeforeResolutionSignatures = signature == null;
 
             if (!signature) {
-                diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression));
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression);
 
                 // Remember the error state
                 // POST diagnostics
@@ -5350,8 +5336,7 @@ module TypeScript {
             }
 
             if (!signature.isGeneric() && callEx.typeArguments) {
-                diagnostics = this.addDiagnostic(diagnostics,
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments));
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments);
             }
 
             var returnType = signature.returnType;
@@ -5481,7 +5466,6 @@ module TypeScript {
                 usedCallSignaturesInstead = true;
             }
 
-            var diagnostics: Diagnostic[] = [];
             if (constructSignatures.length) {
                 // resolve the type arguments, specializing if necessary
                 if (callEx.typeArguments) {
@@ -5556,8 +5540,7 @@ module TypeScript {
 
                                             context.isComparingSpecializedSignatures = true;
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                                diagnostics = this.addDiagnostic(diagnostics,
-                                                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]));
+                                                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
                                                 couldNotAssignToConstraint = true;
                                             }
                                             context.isComparingSpecializedSignatures = false;
@@ -5618,7 +5601,7 @@ module TypeScript {
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
 
-                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
+                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context);
 
                 // Store any additional resolution results if needed before we return
                 if (additionalResults) {
@@ -5629,8 +5612,7 @@ module TypeScript {
                     additionalResults.actualParametersContextTypeSymbols = [];
                 }
 
-                if (!constructSignatures.length && diagnostics) {
-                    // POST diagnostics
+                if (!constructSignatures.length) {
                     return this.getNewErrorTypeSymbol(null);
                 }
 
@@ -5638,8 +5620,7 @@ module TypeScript {
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
-                    diagnostics = this.addDiagnostic(diagnostics,
-                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_new_expression));
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_new_expression);
 
                     // Remember the error
                     errorCondition = this.getNewErrorTypeSymbol(null);
@@ -5686,8 +5667,7 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        diagnostics = this.addDiagnostic(diagnostics,
-                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a_new_expression_must_have_a_void_return_type));
+                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Call_signatures_used_in_a_new_expression_must_have_a_void_return_type);
                         // POST diagnostics
                         return this.getNewErrorTypeSymbol(null);
                     }
@@ -5772,8 +5752,7 @@ module TypeScript {
                 return returnType;
             }
 
-            diagnostics = this.addDiagnostic(diagnostics,
-                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid_new_expression));
+            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid_new_expression);
 
             // POST diagnostics
             return this.getNewErrorTypeSymbol(null);
@@ -5792,6 +5771,10 @@ module TypeScript {
                 context.pushContextualType(returnType, context.inProvisionalResolution(), null);
                 var exprType = this.resolveAST(assertionExpression.operand, true, enclosingDecl, context).type;
                 context.popContextualType();
+
+                if (!exprType.isResolved) {
+                    this.resolveDeclaredSymbol(exprType, enclosingDecl, context);
+                }
 
                 var comparisonInfo = new TypeComparisonInfo();
 
@@ -6607,8 +6590,15 @@ module TypeScript {
                 return true;
             }
             else if (context.isInBaseTypeResolution()) {
-                if (context.getExtendedType(source) == target) {
-                    return true;
+                var extendedTypes = context.getExtendedTypes(source);
+
+                if (extendedTypes && extendedTypes.length) {
+
+                    for (var i = 0; i < extendedTypes.length; i++) {
+                        if (extendedTypes[i] == target) {
+                            return true;
+                        }
+                    }
                 }
             }
 
@@ -7111,8 +7101,7 @@ module TypeScript {
             application: AST, group: PullSignatureSymbol[],
             enclosingDecl: PullDecl,
             haveTypeArgumentsAtCallSite: boolean,
-            context: PullTypeResolutionContext,
-            diagnostics: Diagnostic[]): PullSignatureSymbol {
+            context: PullTypeResolutionContext): PullSignatureSymbol {
             var rd = this.resolutionDataCache.getResolutionData();
             var actuals = rd.actuals;
             var exactCandidates = rd.exactCandidates;
@@ -7173,12 +7162,12 @@ module TypeScript {
                 }
                 else {
                     if (comparisonInfo.message) {
-                        diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),
-                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0, [comparisonInfo.message]));
+                        context.postError(this.unitPath, target.minChar, target.getLength(),
+                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0, [comparisonInfo.message]);
                     }
                     else {
-                        diagnostics.push(context.postError(this.unitPath, target.minChar, target.getLength(),
-                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null));
+                        context.postError(this.unitPath, target.minChar, target.getLength(),
+                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null);
                     }
                 }
             }

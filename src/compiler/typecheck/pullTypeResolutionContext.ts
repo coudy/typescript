@@ -184,17 +184,18 @@ module TypeScript {
 
         public pushTypeBeingExtended(type: PullTypeSymbol) {
             this.extendsTypeStack[this.extendsTypeStack.length] = type;
-            this.extendsMap[type.pullSymbolIDString] = null;
+            this.extendsMap[type.pullSymbolIDString] = [];
         }
 
         public addExtendedType(extendedType: PullTypeSymbol) {
             if (this.extendsTypeStack.length) {
-                this.extendsMap[this.extendsTypeStack[this.extendsTypeStack.length - 1].pullSymbolIDString] = extendedType;
+                var map = <PullTypeSymbol[]>this.extendsMap[this.extendsTypeStack[this.extendsTypeStack.length - 1].pullSymbolIDString];
+                map[map.length] = extendedType;
             }
         }
 
-        public getExtendedType(type: PullTypeSymbol): PullTypeSymbol {
-            return <PullTypeSymbol>this.extendsMap[type.pullSymbolIDString];
+        public getExtendedTypes(type: PullTypeSymbol): PullTypeSymbol[] {
+            return <PullTypeSymbol[]>this.extendsMap[type.pullSymbolIDString];
         }
 
         public popTypeBeingExtended() {
