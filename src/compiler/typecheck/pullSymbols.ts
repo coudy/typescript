@@ -90,7 +90,7 @@ module TypeScript {
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.kind = declKind;
-            this.pullSymbolIDString = this.pullSymbolIDString;
+            this.pullSymbolIDString = this.pullSymbolID.toString();
         }
 
         public isAlias() { return false; }
@@ -2058,7 +2058,7 @@ module TypeScript {
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {
 
-        private _aliasedType: PullTypeSymbol = null;
+        public aliasedType: PullTypeSymbol = null;
         private isUsedAsValue = false;
         private typeUsedExternally = false;
         private retrievingExportAssignment = false;
@@ -2073,11 +2073,11 @@ module TypeScript {
         public setAliasedType(type: PullTypeSymbol) {
             Debug.assert(!type.isError(), "Attempted to alias an error");
 
-            this._aliasedType = type;
+            this.aliasedType = type;
         }
 
         public getExportAssignedValueSymbol(): PullSymbol {
-            if (!this._aliasedType) {
+            if (!this.aliasedType) {
                 return null;
             }
 
@@ -2085,9 +2085,9 @@ module TypeScript {
                 return null;
             }
 
-            if (this._aliasedType.isContainer()) {
+            if (this.aliasedType.isContainer()) {
                 this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this._aliasedType).getExportAssignedValueSymbol();
+                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedValueSymbol();
                 this.retrievingExportAssignment = false;
                 return sym;
             }
@@ -2096,7 +2096,7 @@ module TypeScript {
         }
 
         public getExportAssignedTypeSymbol(): PullTypeSymbol {
-            if (!this._aliasedType) {
+            if (!this.aliasedType) {
                 return null;
             }
 
@@ -2104,9 +2104,9 @@ module TypeScript {
                 return null;
             }
 
-            if (this._aliasedType.isContainer()) {
+            if (this.aliasedType.isContainer()) {
                 this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this._aliasedType).getExportAssignedTypeSymbol();
+                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedTypeSymbol();
                 this.retrievingExportAssignment = false;
                 return sym;
             }
@@ -2115,7 +2115,7 @@ module TypeScript {
         }
 
         public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
-            if (!this._aliasedType) {
+            if (!this.aliasedType) {
                 return null;
             }
 
@@ -2123,9 +2123,9 @@ module TypeScript {
                 return null;
             }
 
-            if (this._aliasedType.isContainer()) {
+            if (this.aliasedType.isContainer()) {
                 this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this._aliasedType).getExportAssignedContainerSymbol();
+                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedContainerSymbol();
                 this.retrievingExportAssignment = false;
                 return sym;
             }
@@ -2135,7 +2135,7 @@ module TypeScript {
 
         public getType(): PullTypeSymbol {
 
-            return this._aliasedType;
+            return this.aliasedType;
         }
 
         public setType(type: PullTypeSymbol) {
@@ -2159,56 +2159,56 @@ module TypeScript {
         }
 
         public getMembers(): PullSymbol[] {
-            if (this._aliasedType) {
-                return this._aliasedType.getMembers();
+            if (this.aliasedType) {
+                return this.aliasedType.getMembers();
             }
 
             return sentinelEmptyArray;
         }
 
         public getCallSignatures(): PullSignatureSymbol[] {
-            if (this._aliasedType) {
-                return this._aliasedType.getCallSignatures();
+            if (this.aliasedType) {
+                return this.aliasedType.getCallSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public getConstructSignatures(): PullSignatureSymbol[] {
-            if (this._aliasedType) {
-                return this._aliasedType.getConstructSignatures();
+            if (this.aliasedType) {
+                return this.aliasedType.getConstructSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public getIndexSignatures(): PullSignatureSymbol[] {
-            if (this._aliasedType) {
-                return this._aliasedType.getIndexSignatures();
+            if (this.aliasedType) {
+                return this.aliasedType.getIndexSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public findMember(name: string): PullSymbol {
-            if (this._aliasedType) {
-                return this._aliasedType.findMember(name);
+            if (this.aliasedType) {
+                return this.aliasedType.findMember(name);
             }
 
             return null;
         }
 
         public findNestedType(name: string): PullTypeSymbol {
-            if (this._aliasedType) {
-                return this._aliasedType.findNestedType(name);
+            if (this.aliasedType) {
+                return this.aliasedType.findNestedType(name);
             }
 
             return null;
         }
 
         public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
-            if (this._aliasedType) {
-                return this._aliasedType.getAllMembers(searchDeclKind, includePrivate);
+            if (this.aliasedType) {
+                return this.aliasedType.getAllMembers(searchDeclKind, includePrivate);
             }
 
             return sentinelEmptyArray;

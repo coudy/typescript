@@ -163,6 +163,8 @@ module TypeScript {
         private contextStack: PullContextualTypeContext[] = [];
         private typeSpecializationStack: any[] = [];
         private genericASTResolutionStack: AST[] = [];
+        private extendsMap: any = {};
+        private extendsTypeStack: PullTypeSymbol[] = [];
 
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
@@ -178,7 +180,27 @@ module TypeScript {
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
 
-        constructor(public inTypeCheck = false) {}
+        constructor(public inTypeCheck = false) { }
+
+        public pushTypeBeingExtended(type: PullTypeSymbol) {
+            this.extendsTypeStack[this.extendsTypeStack.length] = type;
+            this.extendsMap[type.pullSymbolIDString] = null;
+        }
+
+        public addExtendedType(extendedType: PullTypeSymbol) {
+            if (this.extendsTypeStack.length) {
+                this.extendsMap[this.extendsTypeStack[this.extendsTypeStack.length - 1].pullSymbolIDString] = extendedType;
+            }
+        }
+
+        public getExtendedType(type: PullTypeSymbol): PullTypeSymbol {
+            return <PullTypeSymbol>this.extendsMap[type.pullSymbolIDString];
+        }
+
+        public popTypeBeingExtended() {
+            this.extendsMap[this.extendsTypeStack[this.extendsTypeStack.length - 1].pullSymbolIDString] = undefined;
+            this.extendsTypeStack.length--;
+        }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
