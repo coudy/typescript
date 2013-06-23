@@ -477,6 +477,7 @@ module TypeScript {
 
             var start = new Date().getTime();
             var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
+
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
             var funcTypeSymbol = funcSymbol.type;

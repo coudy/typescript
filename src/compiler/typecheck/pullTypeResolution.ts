@@ -1173,24 +1173,6 @@ module TypeScript {
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
-            // Remove any extends links that are not in the AST extendsList if this is the first pass after a re-bind
-            //if (!typeDeclSymbol.isResolved() && !wasResolving) {
-            //    var baseTypeSymbols = typeDeclSymbol.getExtendedTypes();
-            //    for (var i = 0; i < baseTypeSymbols.length; i++) {
-            //        var baseType = baseTypeSymbols[i];
-
-            //        for (var j = 0; j < extendedTypes.length; j++) {
-            //            if (baseType == extendedTypes[j]) {
-            //                break;
-            //            }
-            //        }
-
-            //        if (j == extendedTypes.length) {
-            //            typeDeclSymbol.removeExtendedType(baseType);
-            //        }
-            //    }
-            //}
-
             if (typeDeclAST.implementsList && typeDeclIsClass) {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < typeDeclAST.implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
@@ -1216,27 +1198,10 @@ module TypeScript {
                 }
             }
 
-            // On the first pass after a re-binding, remove any stale implements links that are not in the AST implementsList
-            //if (!typeDeclSymbol.isResolved() && !wasResolving) {
-            //    var baseTypeSymbols = typeDeclSymbol.getImplementedTypes();
-            //    for (var i = 0; i < baseTypeSymbols.length; i++) {
-            //        var baseType = baseTypeSymbols[i];
-
-            //        for (var j = 0; j < implementedTypes.length; j++) {
-            //            if (baseType == implementedTypes[j]) {
-            //                break;
-            //            }
-            //        }
-
-            //        if (j == implementedTypes.length) {
-            //            typeDeclSymbol.removeImplementedType(baseType);
-            //        }
-            //    }
-            //}
-
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
             if (wasInBaseTypeResolution && (typeDeclAST.implementsList || typeDeclAST.extendsList)) {
                 // Do not resolve members as yet
+                typeDeclSymbol.inResolution = false;
                 return typeDeclSymbol;
             }
 
@@ -3333,17 +3298,17 @@ module TypeScript {
 
             var symbol = this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
 
-            if (context.typeCheck()) {
-                if (symbol && symbol.type && (symbol.isPrimitive() || ast.typeCheckPhase >= PullTypeResolver.globalTypeCheckPhase)) {
-                    // WScript.Echo("Resolved again: name: " + symbol.getName() + ", symbol id: " + symbol.getSymbolID() + ", ast ID: " + ast.getID());
-                    return symbol;
-                }
-                else {
-                    ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
-                }
-            }
+            //if (context.typeCheck()) {
+            //    if (symbol && symbol.type && (symbol.isPrimitive() || ast.typeCheckPhase >= PullTypeResolver.globalTypeCheckPhase)) {
+            //        // WScript.Echo("Resolved again: name: " + symbol.getName() + ", symbol id: " + symbol.getSymbolID() + ", ast ID: " + ast.getID());
+            //        return symbol;
+            //    }
+            //    else {
+            //        ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
+            //    }
+            //}
 
-            if (symbol && symbol.type && (symbol.isResolved || symbol.inResolution)) {
+            if (symbol && symbol.type && (symbol.isResolved /* || symbol.inResolution*/)) {
                 return symbol;
             }
 
