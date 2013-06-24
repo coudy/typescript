@@ -325,9 +325,21 @@ module TypeScript {
         private run() {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var outputFileName: string = this.inputFileNameToOutputFileName.lookup(this.resolvedFiles[i].path);
-                if (this.ioHost.fileExists(outputFileName)) {
+                if (outputFileName && this.ioHost.fileExists(outputFileName)) {
                     var outputFileInformation = this.ioHost.readFile(outputFileName);
-                    this.ioHost.run(outputFileInformation.contents, outputFileName);
+
+                    try {
+                        this.ioHost.run(outputFileInformation.contents, outputFileName);
+                    }
+                    catch (e) {
+                        this.hasErrors = true;
+                        this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Error_while_executing_file_0, [outputFileName]));
+                        if (e.stack) {
+                            this.ioHost.stderr.WriteLine(e.stack);
+                        }
+
+                        break;
+                    }
                 }
             }
         }
@@ -735,8 +747,8 @@ module TypeScript {
 
                 // Print header
                 if (!firstTime) {
-                    this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, null));
-                    lastResolvedFileSet.forEach((f) => this.ioHost.printLine("    " + f));
+                    var fileNames = "";
+                    lastResolvedFileSet.forEach((f) => { fileNames += Environment.newLine + "    " + f; });                    this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, [fileNames]));
                 }
                 else {
                     firstTime = false;
@@ -747,12 +759,7 @@ module TypeScript {
 
                 if (!this.hasErrors) {
                     if (this.compilationSettings.exec) {
-                        try {
-                            this.run();
-                        }
-                        catch (e) {
-                            this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Execution_Failed_NL, null) + (e.stack || ""));
-                        }
+                        this.run();
                     }
                 }
             };
