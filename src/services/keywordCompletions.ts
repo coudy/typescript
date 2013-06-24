@@ -46,7 +46,7 @@ module Services {
             "throw",
             "true",
             "try",
-            "typeOf",
+            "typeof",
             "var",
             "while",
             "with",
