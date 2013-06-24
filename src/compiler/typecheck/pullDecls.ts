@@ -6,6 +6,7 @@
 module TypeScript {
     export var pullDeclID = 0;
     export var lastBoundPullDeclId = 0;
+    var sentinelEmptyPullDeclArray = [];
 
     export class PullDecl {
         public kind: PullElementKind;
@@ -22,8 +23,8 @@ module TypeScript {
         private signatureSymbol: PullSignatureSymbol = null;
         private specializingSignatureSymbol: PullSignatureSymbol = null;
 
-        private childDecls: PullDecl[] = [];
-        private typeParameters: PullDecl[] = [];
+        private childDecls: PullDecl[] = null;
+        private typeParameters: PullDecl[] = null;
 
         // Mappings from names to decls.  Public only for diffing purposes.
         public childDeclTypeCache: any = new BlockIntrinsics();
@@ -167,11 +168,11 @@ module TypeScript {
         }
 
         public getDiagnostics(): Diagnostic[] {
-            return this.diagnostics;
+            return this.diagnostics ? this.diagnostics : sentinelEmptyPullDeclArray;
         }
 
         public resetErrors() {
-            this.diagnostics = [];
+            this.diagnostics = null;
         }
 
         private getChildDeclCache(declKind: PullElementKind): any {
@@ -191,9 +192,15 @@ module TypeScript {
             // merge if necessary
 
             if (childDecl.kind === PullElementKind.TypeParameter) {
+                if (!this.typeParameters) {
+                    this.typeParameters = [];
+                }
                 this.typeParameters[this.typeParameters.length] = childDecl;
             }
             else {
+                if (!this.childDecls) {
+                    this.childDecls = [];
+                }
                 this.childDecls[this.childDecls.length] = childDecl;
             }
 
@@ -245,12 +252,12 @@ module TypeScript {
                     }
                 }
 
-                return [];
+                return sentinelEmptyPullDeclArray;
             }
          }
 
-        public getChildDecls() { return this.childDecls; }
-        public getTypeParameters() { return this.typeParameters; }
+        public getChildDecls() { return this.childDecls ? this.childDecls : sentinelEmptyPullDeclArray; }
+        public getTypeParameters() { return this.typeParameters ? this.typeParameters : sentinelEmptyPullDeclArray; }
 
         public addVariableDeclToGroup(decl: PullDecl) {
             var declGroup = this.declGroups[decl.name];
@@ -265,15 +272,19 @@ module TypeScript {
         }
 
         public getVariableDeclGroups(): PullDecl[][] {
-            var declGroups: PullDecl[][] = [];
+            var declGroups: PullDecl[][] = null;
 
             for (var declName in this.declGroups) {
                 if (this.declGroups[declName]) {
+                    if (!declGroups) {
+                        declGroups = [];
+                    }
+
                     declGroups[declGroups.length] = this.declGroups[declName].getDecls();
                 }
             }
 
-            return declGroups;
+            return declGroups ? declGroups : sentinelEmptyPullDeclArray;
         }
 
         public getParentPath() {

@@ -22,19 +22,15 @@ module TypeScript {
         private topLevelDecls: PullDecl[] = [];
         private topLevelSynthesizedDecls: PullDecl[] = [];
 
-        private declASTMap: Collections.HashTable<PullDecl, AST> = Collections.createHashTable<PullDecl, AST>();
+        private declASTMap: DataMap = new DataMap();
 
-        private astDeclMap: Collections.HashTable<number, PullDecl> =
-            Collections.createHashTable<number, PullDecl>(Collections.DefaultHashTableCapacity, k => k);
+        private astDeclMap: DataMap = new DataMap();
 
-        private astSymbolMap: Collections.HashTable<number, PullSymbol> =
-        Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
+        private astSymbolMap: DataMap = new DataMap();
 
-        private astAliasSymbolMap: Collections.HashTable<number, PullSymbol> =
-            Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
+        private astAliasSymbolMap: DataMap = new DataMap();
 
-        private symbolASTMap: Collections.HashTable<number, AST> =
-            Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);
+        private symbolASTMap: DataMap = new DataMap();
 
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
             Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
@@ -63,8 +59,8 @@ module TypeScript {
             return this.hasBeenTypeChecked;
         }
         public invalidate() {
-            this.astSymbolMap = Collections.createHashTable<number, PullSymbol>(Collections.DefaultHashTableCapacity, k => k);
-            this.symbolASTMap = Collections.createHashTable<number, AST>(Collections.DefaultHashTableCapacity, k => k);            
+            this.astSymbolMap = new DataMap();
+            this.symbolASTMap = new DataMap();
             //this.hasBeenTypeChecked = false;
         }
 
@@ -84,40 +80,40 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
-            return this.astDeclMap.get(ast.astID);
+            return this.astDeclMap.read(ast.astIDString);
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
-            this.astDeclMap.set(ast.astID, decl);
+            this.astDeclMap.link(ast.astIDString, decl);
         }
 
         public getASTForDecl(decl: PullDecl): AST {
-            return this.declASTMap.get(decl);
+            return this.declASTMap.read(decl.declIDString);
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
-            this.declASTMap.set(decl, ast);
+            this.declASTMap.link(decl.declIDString, ast);
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap.set(ast.astID, symbol);
-            this.symbolASTMap.set(symbol.pullSymbolID, ast);
+            this.astSymbolMap.link(ast.astIDString, symbol);
+            this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            return <PullSymbol>this.astSymbolMap.get(ast.astID);
+            return <PullSymbol>this.astSymbolMap.read(ast.astIDString);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
-            return this.symbolASTMap.get(symbol.pullSymbolID);
+            return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astAliasSymbolMap.set(ast.astID, symbol);
+            this.astAliasSymbolMap.link(ast.astIDString, symbol);
         }
 
         public getAliasSymbolForAST(ast: IAST): PullSymbol {
-            return <PullSymbol>this.astAliasSymbolMap.get(ast.astID);
+            return <PullSymbol>this.astAliasSymbolMap.read(ast.astIDString);
         }
 
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {

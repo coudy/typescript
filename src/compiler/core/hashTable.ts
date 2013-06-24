@@ -1,7 +1,7 @@
 ///<reference path='references.ts' />
 
 module TypeScript.Collections {
-    export var DefaultHashTableCapacity = 256;
+    export var DefaultHashTableCapacity = 1024;
 
     class HashTableEntry<TKey, TValue> {
         constructor(public Key: TKey,
