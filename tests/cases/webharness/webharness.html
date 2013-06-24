@@ -129,9 +129,11 @@
         }
 
         function typeCheck() {
-            var batch = new BatchCompiler();
+            if (!self.tcBatch) {
+                self.tcBatch = new BatchCompiler();
+            }
             var start = new Date().getTime();
-            batch.reTypeCheck();
+            self.tcBatch.reTypeCheck();
             var end = new Date().getTime();
             appendTime("Type Check", end - start);
         }

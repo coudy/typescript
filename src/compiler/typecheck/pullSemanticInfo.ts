@@ -56,8 +56,8 @@ module TypeScript {
             this.topLevelDecls[this.topLevelDecls.length] = decl;
         }
 
-        public setTypeChecked() {
-            this.hasBeenTypeChecked = true;
+        public setTypeChecked(shouldTC=true) {
+            this.hasBeenTypeChecked = shouldTC;
         }
         public getTypeChecked() {
             return this.hasBeenTypeChecked;
@@ -471,13 +471,20 @@ module TypeScript {
                 if (this.unitCache[unit]) {
                     this.unitCache[unit].invalidate();
                 }
-            }
+            } 
         }
 
         public invalidateUnit(compilationUnitPath: string) {
             var unit = this.unitCache[compilationUnitPath];
             if (unit) {
                 unit.invalidate();
+            }
+        }
+
+        public forceTypeCheck(compilationUnitPath: string) {
+            var unit = this.unitCache[compilationUnitPath];
+            if (unit) {
+                unit.setTypeChecked(false);
             }
         }
 
