@@ -3314,262 +3314,258 @@ module TypeScript {
                 return symbol;
             }
 
-            switch (ast.nodeType()) {
+            var nodeType = ast.nodeType();
 
-                case NodeType.List:
-                    return this.resolveList(<ASTList>ast, enclosingDecl, context);
-
-                case NodeType.Script:
-                    return null;
-
-                case NodeType.ModuleDeclaration:
-                    return this.resolveModuleDeclaration(<ModuleDeclaration>ast, context);
-
-                case NodeType.InterfaceDeclaration:
-                    return this.resolveInterfaceDeclaration(<TypeDeclaration>ast, context);
-
-                case NodeType.ClassDeclaration:
-                    return this.resolveClassDeclaration(<ClassDeclaration>ast, context);
-
-                case NodeType.VariableDeclaration:
-                    return this.resolveVariableDeclarationList(ast, enclosingDecl, context);
-
-                case NodeType.VariableDeclarator:
-                case NodeType.Parameter:
-                    return this.resolveVariableDeclaration(<BoundDecl>ast, context, enclosingDecl);
-
-                case NodeType.TypeParameter:
-                    return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
-
-                case NodeType.ImportDeclaration:
-                    return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
-
-                case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.GenericType:
-                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
-
-                case NodeType.Name:
-                    if (context.resolvingTypeReference) {
-                        return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
-                    }
-                    else {
-                        return this.resolveNameExpression(<Identifier>ast, enclosingDecl, context);
-                    }
-
-                case NodeType.MemberAccessExpression:
-                    if (context.resolvingTypeReference) {
-                        return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
-                    else {
-                        return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
-
-                case NodeType.GenericType:
-                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
-
-                case NodeType.FunctionDeclaration:
-                    {
-                        var funcDecl = <FunctionDeclaration>ast;
-
-                        if (funcDecl.isGetAccessor()) {
-                            return this.resolveGetAccessorDeclaration(funcDecl, context);
-                        }
-                        else if (funcDecl.isSetAccessor()) {
-                            return this.resolveSetAccessorDeclaration(funcDecl, context);
-                        }
-                        else if (inContextuallyTypedAssignment ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
-                            return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
-                        }
-                        else {
-                            return this.resolveFunctionDeclaration(funcDecl, context);
-                        }
-                    }
-
-                case NodeType.ArrayLiteralExpression:
-                    return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.ThisExpression:
-                    return this.resolveThisExpression(ast, enclosingDecl, context);
-
-                case NodeType.SuperExpression:
-                    return this.resolveSuperExpression(ast, enclosingDecl, context);
-
-                case NodeType.InvocationExpression:
-                    return this.resolveInvocationExpression(<InvocationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.ObjectCreationExpression:
-                    return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.CastExpression:
-                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.TypeRef:
-                    return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
-
-                case NodeType.ExportAssignment:
-                    return this.resolveExportAssignmentStatement(<ExportAssignment>ast, enclosingDecl, context);
-
-                // primitives
-                case NodeType.NumericLiteral:
-                    return this.semanticInfoChain.numberTypeSymbol;
-                case NodeType.StringLiteral:
-                    return this.semanticInfoChain.stringTypeSymbol;
-                case NodeType.NullLiteral:
-                    return this.semanticInfoChain.nullTypeSymbol;
-                case NodeType.TrueLiteral:
-                case NodeType.FalseLiteral:
-                    return this.semanticInfoChain.booleanTypeSymbol;
-                case NodeType.VoidExpression:
-                    // PERFREVIEW: resolveVoidExpression
-                    return this.resolveVoidExpression(ast, enclosingDecl, context);
-                    //return this.semanticInfoChain.voidTypeSymbol;
-
-                // assignment
-                case NodeType.AssignmentExpression:
-                    return this.resolveAssignmentStatement(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                // boolean operations
-                case NodeType.LogicalNotExpression:
-                    return this.resolveUnaryLogicalOperation(ast, enclosingDecl, context);
-                    
-                case NodeType.NotEqualsWithTypeConversionExpression:
-                case NodeType.EqualsWithTypeConversionExpression:
-                case NodeType.EqualsExpression:
-                case NodeType.NotEqualsExpression:
-                case NodeType.LessThanExpression:
-                case NodeType.LessThanOrEqualExpression:
-                case NodeType.GreaterThanOrEqualExpression:
-                case NodeType.GreaterThanExpression:
-                    // PERFREVIEW
-                    return this.resolveLogicalOperation(ast, enclosingDecl, context);
-                    //return this.semanticInfoChain.booleanTypeSymbol;
-
-                case NodeType.AddExpression:
-                case NodeType.AddAssignmentExpression:
-                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-
-                case NodeType.PlusExpression:
-                case NodeType.NegateExpression:
-                case NodeType.BitwiseNotExpression:
-                case NodeType.PostIncrementExpression:
-                case NodeType.PreIncrementExpression:
-                case NodeType.PostDecrementExpression:
-                case NodeType.PreDecrementExpression:
-                    return this.resolveUnaryArithmeticOperation(ast, enclosingDecl, context);
-
-                case NodeType.SubtractAssignmentExpression:
-                case NodeType.MultiplyAssignmentExpression:
-                case NodeType.DivideAssignmentExpression:
-                case NodeType.ModuloAssignmentExpression:
-                case NodeType.OrAssignmentExpression:
-                case NodeType.AndAssignmentExpression:
-
-                case NodeType.SubtractExpression:
-                case NodeType.MultiplyExpression:
-                case NodeType.DivideExpression:
-                case NodeType.ModuloExpression:
-                case NodeType.BitwiseOrExpression:
-                case NodeType.BitwiseAndExpression:
-
-                case NodeType.LeftShiftExpression:
-                case NodeType.SignedRightShiftExpression:
-                case NodeType.UnsignedRightShiftExpression:
-                case NodeType.LeftShiftAssignmentExpression:
-                case NodeType.SignedRightShiftAssignmentExpression:
-                case NodeType.UnsignedRightShiftAssignmentExpression:
-                    // PERFREVIEW
-                    return this.resolveBinaryArithmeticExpression(ast, enclosingDecl, context);
-                    //return this.semanticInfoChain.numberTypeSymbol;
-
-                case NodeType.ElementAccessExpression:
-                    return this.resolveIndexExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.LogicalOrExpression:
-                    return this.resolveLogicalOrExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.LogicalAndExpression:
-                    return this.resolveLogicalAndExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.TypeOfExpression:
-                    return this.resolveTypeOfExpression(ast, enclosingDecl, context);
-                    //return this.semanticInfoChain.stringTypeSymbol;
-
-                case NodeType.ThrowStatement:
-                    return this.resolveThrowStatement(ast, enclosingDecl, context);
-                    //return this.semanticInfoChain.voidTypeSymbol;
-
-                case NodeType.DeleteExpression:
-                    return this.resolveDeleteStatement(ast, enclosingDecl, context); 
-
-                case NodeType.ConditionalExpression:
-                    return this.resolveConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
-
-                case NodeType.RegularExpressionLiteral:
-                    return this.resolveRegularExpressionLiteral();
-
-                case NodeType.ParenthesizedExpression:
-                    return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, enclosingDecl, context);
-
-                case NodeType.ExpressionStatement:
-                    return this.resolveExpressionStatement(<ExpressionStatement>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.InstanceOfExpression:
-                    return this.resolveInstanceOfExpression(ast, enclosingDecl, context);
-
-                case NodeType.CommaExpression:
-                    return this.resolveCommaExpression(ast, enclosingDecl, context);
-
-                case NodeType.InExpression:
-                    return this.resolveInExpression(ast, enclosingDecl, context);
-
-                case NodeType.ForStatement:
-                    return this.resolveForStatement(ast, enclosingDecl, context);
-
-                case NodeType.ForInStatement:
-                    return this.resolveForInStatement(ast, enclosingDecl, context);
-
-                case NodeType.WhileStatement:
-                    return this.resolveWhileStatement(ast, enclosingDecl, context);
-
-                case NodeType.DoStatement:
-                    return this.resolveDoStatement(ast, enclosingDecl, context);
-
-                case NodeType.IfStatement:
-                    return this.resolveIfStatement(ast, enclosingDecl, context);
-
-                case NodeType.Block:
-                    return this.resolveBlock(ast, enclosingDecl, context);
-
-                case NodeType.VariableStatement:
-                    return this.resolveVariableStatement(ast, enclosingDecl, context);
-
-                case NodeType.WithStatement:
-                    return this.resolveWithStatement(ast, enclosingDecl, context);
-
-                case NodeType.TryStatement:
-                    return this.resolveTryStatement(ast, enclosingDecl, context);
-
-                case NodeType.CatchClause:
-                    return this.resolveCatchClause(ast, enclosingDecl, context);
-
-                case NodeType.ReturnStatement:
-                    return this.resolveReturnStatement(ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
-                case NodeType.SwitchStatement:
-                    return this.resolveSwitchStatement(ast, enclosingDecl, context);
-
-                case NodeType.CaseClause:
-                    return this.resolveCaseClause(ast, enclosingDecl, context);
-
-                case NodeType.LabeledStatement:
-                    return this.resolveLabeledStatement(ast, enclosingDecl, context);
+            if (nodeType == NodeType.List) {
+                return this.resolveList(<ASTList>ast, enclosingDecl, context);
             }
+            else if (nodeType == NodeType.Script) {
+                return null;
+            }
+            else if (nodeType == NodeType.ModuleDeclaration) {
+                return this.resolveModuleDeclaration(<ModuleDeclaration>ast, context);
+            }
+            else if (nodeType == NodeType.InterfaceDeclaration) {
+                return this.resolveInterfaceDeclaration(<TypeDeclaration>ast, context);
+            }
+            else if (nodeType == NodeType.ClassDeclaration) {
+                return this.resolveClassDeclaration(<ClassDeclaration>ast, context);
+            }
+            else if (nodeType == NodeType.VariableDeclaration) {
+                return this.resolveVariableDeclarationList(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.VariableDeclarator || nodeType == NodeType.Parameter) {
+                return this.resolveVariableDeclaration(<BoundDecl>ast, context, enclosingDecl);
+            }
+            else if (nodeType == NodeType.TypeParameter) {
+                return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
+            }
+            else if (nodeType == NodeType.ImportDeclaration) {
+                return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
+            }
+            else if (nodeType == NodeType.ObjectLiteralExpression) {
+                return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.Name) {
+                if (context.resolvingTypeReference) {
+                    return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
+                }
+                else {
+                    return this.resolveNameExpression(<Identifier>ast, enclosingDecl, context);
+                }
+            }
+            else if (nodeType == NodeType.MemberAccessExpression) {
+                if (context.resolvingTypeReference) {
+                    return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                }
+                else {
+                    return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                }
+            }
+            else if (nodeType == NodeType.GenericType) {
+                return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.FunctionDeclaration) {
+                {
+                    var funcDecl = <FunctionDeclaration>ast;
+
+                    if (funcDecl.isGetAccessor()) {
+                        return this.resolveGetAccessorDeclaration(funcDecl, context);
+                    }
+                    else if (funcDecl.isSetAccessor()) {
+                        return this.resolveSetAccessorDeclaration(funcDecl, context);
+                    }
+                    else if (inContextuallyTypedAssignment ||
+                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
+                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                        return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveFunctionDeclaration(funcDecl, context);
+                    }
+                }
+            }
+            else if (nodeType == NodeType.ArrayLiteralExpression) {
+                return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ThisExpression) {
+                return this.resolveThisExpression(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.SuperExpression) {
+                return this.resolveSuperExpression(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.InvocationExpression) {
+                return this.resolveInvocationExpression(<InvocationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ObjectCreationExpression) {
+                return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.CastExpression) {
+                return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.TypeRef) {
+                return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ReturnStatement) {
+                return this.resolveReturnStatement(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.NumericLiteral) {
+                return this.semanticInfoChain.numberTypeSymbol;
+            }
+            else if (nodeType == NodeType.StringLiteral) {
+                return this.semanticInfoChain.stringTypeSymbol;
+            }
+            else if (nodeType == NodeType.NullLiteral) {
+                return this.semanticInfoChain.nullTypeSymbol;
+            }
+            else if (nodeType == NodeType.TrueLiteral || nodeType == NodeType.FalseLiteral) {
+                return this.semanticInfoChain.booleanTypeSymbol;
+            }
+            else if (nodeType == NodeType.VoidExpression) {
+                // PERFREVIEW: resolveVoidExpression
+                return this.resolveVoidExpression(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.voidTypeSymbol;
+            }
+            else if (nodeType == NodeType.AssignmentExpression) {
+                return this.resolveAssignmentStatement(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.LogicalNotExpression) {
+                return this.resolveUnaryLogicalOperation(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.NotEqualsWithTypeConversionExpression ||
+                nodeType == NodeType.EqualsWithTypeConversionExpression ||
+                nodeType == NodeType.EqualsExpression ||
+                nodeType == NodeType.NotEqualsExpression ||
+                nodeType == NodeType.LessThanExpression ||
+                nodeType == NodeType.LessThanOrEqualExpression ||
+                nodeType == NodeType.GreaterThanOrEqualExpression ||
+                nodeType == NodeType.GreaterThanExpression) {
+                // PERFREVIEW
+                return this.resolveLogicalOperation(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.booleanTypeSymbol;
+            }
+            else if (nodeType == NodeType.AddExpression ||
+                nodeType == NodeType.AddAssignmentExpression) {
+                return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.PlusExpression ||
+                nodeType == NodeType.NegateExpression ||
+                nodeType == NodeType.BitwiseNotExpression ||
+                nodeType == NodeType.PostIncrementExpression ||
+                nodeType == NodeType.PreIncrementExpression ||
+                nodeType == NodeType.PostDecrementExpression ||
+                nodeType == NodeType.PreDecrementExpression) {
+                return this.resolveUnaryArithmeticOperation(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.SubtractAssignmentExpression ||
+                nodeType == NodeType.MultiplyAssignmentExpression ||
+                nodeType == NodeType.DivideAssignmentExpression ||
+                nodeType == NodeType.ModuloAssignmentExpression ||
+                nodeType == NodeType.OrAssignmentExpression ||
+                nodeType == NodeType.AndAssignmentExpression ||
+
+                nodeType == NodeType.SubtractExpression ||
+                nodeType == NodeType.MultiplyExpression ||
+                nodeType == NodeType.DivideExpression ||
+                nodeType == NodeType.ModuloExpression ||
+                nodeType == NodeType.BitwiseOrExpression ||
+                nodeType == NodeType.BitwiseAndExpression ||
+
+                nodeType == NodeType.LeftShiftExpression ||
+                nodeType == NodeType.SignedRightShiftExpression ||
+                nodeType == NodeType.UnsignedRightShiftExpression ||
+                nodeType == NodeType.LeftShiftAssignmentExpression ||
+                nodeType == NodeType.SignedRightShiftAssignmentExpression ||
+                nodeType == NodeType.UnsignedRightShiftAssignmentExpression) {
+                // PERFREVIEW
+                return this.resolveBinaryArithmeticExpression(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.numberTypeSymbol;
+            }
+            else if (nodeType == NodeType.ParenthesizedExpression) {
+                return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ExpressionStatement) {
+                return this.resolveExpressionStatement(<ExpressionStatement>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ElementAccessExpression) {
+                return this.resolveIndexExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.LogicalOrExpression) {
+                return this.resolveLogicalOrExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.LogicalAndExpression) {
+                return this.resolveLogicalAndExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.TypeOfExpression) {
+                return this.resolveTypeOfExpression(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.stringTypeSymbol;
+            }
+            else if (nodeType == NodeType.ThrowStatement) {
+                return this.resolveThrowStatement(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.voidTypeSymbol;
+            }
+            else if (nodeType == NodeType.DeleteExpression) {
+                return this.resolveDeleteStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ConditionalExpression) {
+                return this.resolveConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ExportAssignment) {
+                return this.resolveExportAssignmentStatement(<ExportAssignment>ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.RegularExpressionLiteral) {
+                return this.resolveRegularExpressionLiteral();
+            }
+            else if (nodeType == NodeType.InstanceOfExpression) {
+                return this.resolveInstanceOfExpression(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.CommaExpression) {
+                return this.resolveCommaExpression(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.InExpression) {
+                return this.resolveInExpression(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ForStatement) {
+                return this.resolveForStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.ForInStatement) {
+                return this.resolveForInStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.WhileStatement) {
+                return this.resolveWhileStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.DoStatement) {
+                return this.resolveDoStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.IfStatement) {
+                return this.resolveIfStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.Block) {
+                return this.resolveBlock(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.VariableStatement) {
+                return this.resolveVariableStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.WithStatement) {
+                return this.resolveWithStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.TryStatement) {
+                return this.resolveTryStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.CatchClause) {
+                return this.resolveCatchClause(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.SwitchStatement) {
+                return this.resolveSwitchStatement(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.CaseClause) {
+                return this.resolveCaseClause(ast, enclosingDecl, context);
+            }
+            else if (nodeType == NodeType.LabeledStatement) {
+                return this.resolveLabeledStatement(ast, enclosingDecl, context);
+            }
+            
 
             return this.semanticInfoChain.anyTypeSymbol;
         }
