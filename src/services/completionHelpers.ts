@@ -40,7 +40,7 @@ module Services {
                 CompletionHelpers.isRightOfIllegalDot(sourceUnit, position);
         }
 
-        public static getContaingingObjectLiteralApplicableForCompletion(sourceUnit: TypeScript.SourceUnitSyntax, position: number): TypeScript.PositionedElement {
+        public static getContainingObjectLiteralApplicableForCompletion(sourceUnit: TypeScript.SourceUnitSyntax, position: number): TypeScript.PositionedElement {
             // The locations in an object literal expression that are applicable for completion are property name definition locations.
             var previousToken = CompletionHelpers.getNonIdentifierCompleteTokenOnLeft(sourceUnit, position);
 

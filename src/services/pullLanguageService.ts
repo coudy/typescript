@@ -914,7 +914,7 @@ module Services {
                 this.getCompletionEntriesFromSymbols(members, entries);
             }
             else {
-                var containingObjectLiteral = CompletionHelpers.getContaingingObjectLiteralApplicableForCompletion(document.syntaxTree().sourceUnit(), position);
+                var containingObjectLiteral = CompletionHelpers.getContainingObjectLiteralApplicableForCompletion(document.syntaxTree().sourceUnit(), position);
 
                 // Object literal expression, look up possible property names from contextual type
                 if (containingObjectLiteral) {
