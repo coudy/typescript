@@ -3991,137 +3991,6 @@ var TypeScript;
     })();
     TypeScript.TextChangeRange = TextChangeRange;
 })(TypeScript || (TypeScript = {}));
-var JSON2 = {};
-
-((function () {
-    'use strict';
-
-    function f(n) {
-        return n < 10 ? '0' + n : n;
-    }
-
-    if (typeof Date.prototype.toJSON !== 'function') {
-        (Date.prototype.toJSON) = function (key) {
-            return isFinite(this.valueOf()) ? this.getUTCFullYear() + '-' + f(this.getUTCMonth() + 1) + '-' + f(this.getUTCDate()) + 'T' + f(this.getUTCHours()) + ':' + f(this.getUTCMinutes()) + ':' + f(this.getUTCSeconds()) + 'Z' : null;
-        };
-
-        var strProto = String.prototype;
-        var numProto = Number.prototype;
-        numProto.JSON = strProto.JSON = (Boolean).prototype.toJSON = function (key) {
-            return this.valueOf();
-        };
-    }
-
-    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
-        '\b': '\\b',
-        '\t': '\\t',
-        '\n': '\\n',
-        '\f': '\\f',
-        '\r': '\\r',
-        '"': '\\"',
-        '\\': '\\\\'
-    }, rep;
-
-    function quote(string) {
-        escapable.lastIndex = 0;
-        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
-            var c = meta[a];
-            return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-        }) + '"' : '"' + string + '"';
-    }
-
-    function str(key, holder) {
-        var i, k = null, v, length, mind = gap, partial, value = holder[key];
-
-        if (value && typeof value === 'object' && typeof value.toJSON === 'function') {
-            value = value.toJSON(key);
-        }
-
-        if (typeof rep === 'function') {
-            value = rep.call(holder, key, value);
-        }
-
-        switch (typeof value) {
-            case 'string':
-                return quote(value);
-
-            case 'number':
-                return isFinite(value) ? String(value) : 'null';
-
-            case 'boolean':
-            case 'null':
-                return String(value);
-
-            case 'object':
-                if (!value) {
-                    return 'null';
-                }
-
-                gap += indent;
-                partial = [];
-
-                if (Object.prototype.toString.apply(value, []) === '[object Array]') {
-                    length = value.length;
-                    for (var i = 0; i < length; i += 1) {
-                        partial[i] = str(i, value) || 'null';
-                    }
-
-                    v = partial.length === 0 ? '[]' : gap ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' : '[' + partial.join(',') + ']';
-                    gap = mind;
-                    return v;
-                }
-
-                if (rep && typeof rep === 'object') {
-                    length = rep.length;
-                    for (var i = 0; i < length; i += 1) {
-                        if (typeof rep[i] === 'string') {
-                            k = rep[i];
-                            v = str(k, value);
-                            if (v) {
-                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                            }
-                        }
-                    }
-                } else {
-                    for (k in value) {
-                        if (Object.prototype.hasOwnProperty.call(value, k)) {
-                            v = str(k, value);
-                            if (v) {
-                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                            }
-                        }
-                    }
-                }
-
-                v = partial.length === 0 ? '{}' : gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' : '{' + partial.join(',') + '}';
-                gap = mind;
-                return v;
-        }
-    }
-
-    if (typeof JSON2.stringify !== 'function') {
-        JSON2.stringify = function (value, replacer, space) {
-            var i;
-            gap = '';
-            indent = '';
-
-            if (typeof space === 'number') {
-                for (var i = 0; i < space; i += 1) {
-                    indent += ' ';
-                }
-            } else if (typeof space === 'string') {
-                indent = space;
-            }
-
-            rep = replacer;
-            if (replacer && typeof replacer !== 'function' && (typeof replacer !== 'object' || typeof replacer.length !== 'number')) {
-                throw new Error('JSON.stringify');
-            }
-
-            return str('', { '': value });
-        };
-    }
-})());
 var TypeScript;
 (function (TypeScript) {
     var CharacterInfo = (function () {
@@ -5540,7 +5409,7 @@ var TypeScript;
                 return '"\\"';
             }
 
-            return JSON2.stringify(text);
+            return JSON.stringify(text);
         };
 
         Scanner.prototype.skipEscapeSequence = function (diagnostics) {
@@ -29550,7 +29419,7 @@ var TypeScript;
                 namesCount = namesCount + sourceMapper.names.length;
             }
 
-            sourceMapOut.Write(JSON2.stringify({
+            sourceMapOut.Write(JSON.stringify({
                 version: 3,
                 file: sourceMapper.jsFileName,
                 sources: tsFiles,
@@ -30175,25 +30044,55 @@ var TypeScript;
             }
         };
 
+        Emitter.prototype.getImportDecls = function (fileName) {
+            var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
+            var result = [];
+
+            var queue = semanticInfo.getTopLevelDecls();
+
+            while (queue.length > 0) {
+                var decl = queue.shift();
+
+                if (decl.getKind() & 256 /* TypeAlias */) {
+                    var importStatementAST = semanticInfo.getASTForDecl(decl);
+                    if (importStatementAST.alias.nodeType === 20 /* Name */) {
+                        var text = (importStatementAST.alias).actualText;
+                        if (TypeScript.isQuoted(text)) {
+                            var symbol = decl.getSymbol();
+                            var typeSymbol = symbol && symbol.getType();
+                            if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
+                                result.push(decl);
+                            }
+                        }
+                    }
+                }
+
+                queue = queue.concat(decl.getChildDecls());
+            }
+
+            return result;
+        };
+
         Emitter.prototype.getModuleImportAndDependencyList = function (moduleDecl) {
             var importList = "";
             var dependencyList = "";
 
             var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
-            var imports = semanticInfo.getDynamicModuleImports();
+            var importDecls = this.getImportDecls(this.document.fileName);
 
-            if (imports.length) {
-                for (var i = 0; i < imports.length; i++) {
-                    var importStatement = imports[i];
-                    var importStatementAST = semanticInfo.getASTForDecl(importStatement.getDeclarations()[0]);
+            if (importDecls.length) {
+                for (var i = 0; i < importDecls.length; i++) {
+                    var importStatementDecl = importDecls[i];
+                    var importStatementSymbol = importStatementDecl.getSymbol();
+                    var importStatementAST = semanticInfo.getASTForDecl(importStatementDecl);
 
-                    if (importStatement.getIsUsedAsValue()) {
-                        if (i <= imports.length - 1) {
+                    if (importStatementSymbol.getIsUsedAsValue()) {
+                        if (i <= importDecls.length - 1) {
                             dependencyList += ", ";
                             importList += ", ";
                         }
 
-                        importList += "__" + importStatement.getName() + "__";
+                        importList += "__" + importStatementDecl.getName() + "__";
                         dependencyList += importStatementAST.firstAliasedModToString();
                     }
                 }
@@ -38516,7 +38415,7 @@ var TypeScript;
 
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
-            if (!typeDeclIsClass && !hasVisited && typeDeclSymbol.isResolved()) {
+            if (!typeDeclIsClass && !hasVisited) {
                 typeDeclSymbol.resetKnownBaseTypeCount();
             }
 
@@ -38774,9 +38673,7 @@ var TypeScript;
                         return _this.getSymbolFromDeclPath(s, declPath, TypeScript.PullElementKind.SomeContainer);
                     });
 
-                    if (aliasedType) {
-                        this.currentUnit.addDynamicModuleImport(importDeclSymbol);
-                    } else {
+                    if (!aliasedType) {
                         importDecl.addDiagnostic(new TypeScript.SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), 140 /* Unable_to_resolve_external_module__0_ */, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
@@ -42586,8 +42483,10 @@ var TypeScript;
                 var sourceDecl = sourceProp.getDeclarations()[0];
 
                 if (!targetDecl.isEqual(sourceDecl)) {
-                    comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
-                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(245 /* Types__0__and__1__define_property__2__as_private */, [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
+                    if (comparisonInfo) {
+                        comparisonInfo.flags |= 128 /* InconsistantPropertyAccesibility */;
+                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(245 /* Types__0__and__1__define_property__2__as_private */, [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
+                    }
                     return false;
                 }
             }
@@ -46543,7 +46442,6 @@ var TypeScript;
             this.symbolASTMap = new TypeScript.DataMap();
             this.syntaxElementSymbolMap = new TypeScript.DataMap();
             this.symbolSyntaxElementMap = new TypeScript.DataMap();
-            this.dynamicModuleImports = [];
             this.properties = new SemanticInfoProperties();
             this.hasBeenTypeChecked = false;
             this.compilationUnitPath = compilationUnitPath;
@@ -46644,14 +46542,6 @@ var TypeScript;
         SemanticInfo.prototype.setSymbolForSyntaxElement = function (syntaxElement, symbol) {
             this.syntaxElementSymbolMap.link(TypeScript.Collections.identityHashCode(syntaxElement).toString(), symbol);
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
-        };
-
-        SemanticInfo.prototype.addDynamicModuleImport = function (importSymbol) {
-            this.dynamicModuleImports[this.dynamicModuleImports.length] = importSymbol;
-        };
-
-        SemanticInfo.prototype.getDynamicModuleImports = function () {
-            return this.dynamicModuleImports;
         };
 
         SemanticInfo.prototype.getDiagnostics = function (semanticErrors) {

@@ -34,8 +34,6 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        private dynamicModuleImports: PullTypeAliasSymbol[] = [];
-
         private properties = new SemanticInfoProperties();
 
         private hasBeenTypeChecked = false;
@@ -141,14 +139,6 @@ module TypeScript {
         public setSymbolForSyntaxElement(syntaxElement: ISyntaxElement, symbol: PullSymbol) {
             this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
-        }
-
-        public addDynamicModuleImport(importSymbol: PullTypeAliasSymbol) {
-            this.dynamicModuleImports[this.dynamicModuleImports.length] = importSymbol;
-        }
-
-        public getDynamicModuleImports() {
-            return this.dynamicModuleImports;
         }
 
         public getDiagnostics(semanticErrors: IDiagnostic[]) {

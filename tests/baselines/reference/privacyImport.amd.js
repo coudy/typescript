@@ -1,4 +1,4 @@
-define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "m2_M4_private", "glo_M2_public", "glo_M4_private"], function(require, exports, __m1_im3_private__, __m1_im4_private__, __m1_im3_private__, __m1_im4_private__, __glo_im2_private__, __glo_im4_private__) {
+define(["require", "exports", "glo_M2_public", "glo_M4_private", "m1_M3_public", "m1_M4_private", "m2_M3_public", "m2_M4_private"], function(require, exports, __glo_im2_private__, __glo_im4_private__, __m1_im3_private__, __m1_im4_private__, __m1_im3_private__, __m1_im4_private__) {
     (function (m1) {
         (function (m1_M1_public) {
             var c1 = (function () {

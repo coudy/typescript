@@ -1412,10 +1412,7 @@ module TypeScript {
 
                     aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeContainer));
 
-                    if (aliasedType) {
-                        this.currentUnit.addDynamicModuleImport(importDeclSymbol);
-                    }
-                    else {
+                    if (!aliasedType) {
                         importDecl.addDiagnostic(
                             new SemanticDiagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module__0_, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
@@ -5899,10 +5896,12 @@ module TypeScript {
                 var sourceDecl = sourceProp.getDeclarations()[0];
 
                 if (!targetDecl.isEqual(sourceDecl)) {
-                    // Both types define property with same name as private
-                    comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
-                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types__0__and__1__define_property__2__as_private,
-                        [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
+                    if (comparisonInfo) {
+                        // Both types define property with same name as private
+                        comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types__0__and__1__define_property__2__as_private,
+                            [sourceProp.getContainer().toString(), targetProp.getContainer().toString(), targetProp.getScopedNameEx().toString()]));
+                    }
                     return false;
                 }
             }
