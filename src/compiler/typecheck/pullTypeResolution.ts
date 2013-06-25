@@ -1146,9 +1146,7 @@ module TypeScript {
 
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < typeDeclAST.extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    context.pushTypeBeingExtended(typeDeclSymbol);
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
-                    context.popTypeBeingExtended();
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         var resolvedParentType = parentType;
@@ -3882,10 +3880,6 @@ module TypeScript {
             }
 
             if (!typeNameSymbol.isResolved) {
-                if (context.isInBaseTypeResolution()) {
-                    context.addExtendedType(typeNameSymbol);
-                }
-
                 var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
                 context.resolvingNamespaceMemberAccess = false;
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
@@ -4102,9 +4096,6 @@ module TypeScript {
             }
 
             if (!symbol.isResolved) {
-                if (context.isInBaseTypeResolution()) {
-                    context.addExtendedType(symbol);
-                }
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
             }
 
@@ -6307,6 +6298,41 @@ module TypeScript {
             return false;
         }
 
+        private sourceExtendsTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext) {
+            if (source.hasBase(target)) {
+                return true;
+            }
+
+            // We need to jump through hoops here because, if we're type checking, we may attempt to compare a child type against
+            // its parent before we've finished resolving either.  (Say, through a recursive resolution of the return type of a
+            // child type's method)
+            if (context.isInBaseTypeResolution() &&
+                (source.kind & (PullElementKind.Interface | PullElementKind.Class)) &&
+                (target.kind & (PullElementKind.Interface | PullElementKind.Class))) {
+                var sourceDecls = source.getDeclarations();
+                var sourceAST: TypeDeclaration = null;
+                var extendsSymbol: PullTypeSymbol = null;
+                var extendsList: ASTList = null;
+
+                for (var i = 0; i < sourceDecls.length; i++) {
+                    sourceAST = <TypeDeclaration>this.semanticInfoChain.getASTForDecl(sourceDecls[i]);
+                    extendsList = sourceAST.extendsList;
+
+                    if (extendsList && extendsList.members && extendsList.members.length) {
+                        for (var j = 0; j < extendsList.members.length; j++) {
+                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsList.members[j], sourceDecls[i].getScriptName());
+
+                            if (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+        }
+
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
@@ -6581,21 +6607,8 @@ module TypeScript {
 
             comparisonCache[comboId] = false;
 
-            if (sourceSubstitution.hasBase(target)) {
-                comparisonCache[comboId] = true;
+            if (this.sourceExtendsTarget(source, target, context)) {
                 return true;
-            }
-            else if (context.isInBaseTypeResolution()) {
-                var extendedTypes = context.getExtendedTypes(source);
-
-                if (extendedTypes && extendedTypes.length) {
-
-                    for (var i = 0; i < extendedTypes.length; i++) {
-                        if (extendedTypes[i] == target) {
-                            return true;
-                        }
-                    }
-                }
             }
 
             if (this.cachedObjectInterfaceType() && target === this.cachedObjectInterfaceType()) {
