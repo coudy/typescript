@@ -369,14 +369,23 @@ module TypeScript {
                 }
             });
 
-            opts.flag('fullSourceMapPath', {
+            opts.flag('mapRoot', {
                 usage: {
-                    locCode: DiagnosticCode.Writes_the_full_path_of_map_file_in_the_generated_0_file,
-                    args: ['js']
+                    locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations,
+                    args: null
                 },
-                experimental: true,
-                set: () => {
-                    this.compilationSettings.emitFullSourceMapPath = true;
+                set: (str) => {
+                    this.compilationSettings.mapRoot = str;
+                }
+            });
+
+            opts.flag('sourceRoot', {
+                usage: {
+                    locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations,
+                    args: null
+                },
+                set: (str) => {
+                    this.compilationSettings.sourceRoot = str;
                 }
             });
 

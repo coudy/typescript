@@ -38,7 +38,8 @@ module TypeScript {
         // Default is the "" which leads to multiple files generated next to the.ts files
         public outputOption: string = "";
         public mapSourceFiles = false;
-        public emitFullSourceMapPath = false; // By default emit relative path of the soucemap
+        public mapRoot: string = ""; 
+        public sourceRoot: string = "";
         public generateDeclarationFiles = false;
 
         public useCaseSensitiveFileResolution = false;

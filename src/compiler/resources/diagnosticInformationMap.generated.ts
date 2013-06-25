@@ -1262,132 +1262,136 @@ module TypeScript {
     "code": 6002,
     "category": DiagnosticCategory.Message
   },
-  "Writes the full path of map file in the generated {0} file": {
+  "Specifies the location where debugger should locate map files instead of generated locations.": {
     "code": 6003,
     "category": DiagnosticCategory.Message
   },
-  "Watch input files": {
+  "Specifies the location where debugger should locate TypeScript files instead of source locations.": {
     "code": 6004,
     "category": DiagnosticCategory.Message
   },
-  "Execute the script after compilation": {
+  "Watch input files": {
     "code": 6005,
     "category": DiagnosticCategory.Message
   },
-  "Minimize whitespace": {
+  "Execute the script after compilation": {
     "code": 6006,
     "category": DiagnosticCategory.Message
   },
-  "Propagate constants to emitted code": {
+  "Minimize whitespace": {
     "code": 6007,
     "category": DiagnosticCategory.Message
   },
-  "Emit comments to output": {
+  "Propagate constants to emitted code": {
     "code": 6008,
     "category": DiagnosticCategory.Message
   },
-  "Skip resolution and preprocessing": {
+  "Emit comments to output": {
     "code": 6009,
     "category": DiagnosticCategory.Message
   },
-  "Print debug output": {
+  "Skip resolution and preprocessing": {
     "code": 6010,
     "category": DiagnosticCategory.Message
   },
-  "Do not include a default {0} with global declarations": {
+  "Print debug output": {
     "code": 6011,
     "category": DiagnosticCategory.Message
   },
-  "Gather diagnostic info about the compilation process": {
+  "Do not include a default {0} with global declarations": {
     "code": 6012,
     "category": DiagnosticCategory.Message
   },
-  "Typecheck each file as an update on the first": {
+  "Gather diagnostic info about the compilation process": {
     "code": 6013,
     "category": DiagnosticCategory.Message
   },
-  "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
+  "Typecheck each file as an update on the first": {
     "code": 6014,
     "category": DiagnosticCategory.Message
   },
-  "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+  "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
     "code": 6015,
     "category": DiagnosticCategory.Message
   },
-  "Print this message": {
+  "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
     "code": 6016,
     "category": DiagnosticCategory.Message
   },
-  "Force file resolution to be case sensitive": {
+  "Print this message": {
     "code": 6017,
     "category": DiagnosticCategory.Message
   },
-  "Print the compiler's version: {0}": {
+  "Force file resolution to be case sensitive": {
     "code": 6018,
     "category": DiagnosticCategory.Message
   },
-  "Allow use of deprecated \"{0}\" type": {
+  "Print the compiler's version: {0}": {
     "code": 6019,
     "category": DiagnosticCategory.Message
   },
-  "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
+  "Allow use of deprecated \"{0}\" type": {
     "code": 6020,
     "category": DiagnosticCategory.Message
   },
-  "Specify locale for errors and messages. For example '{0}' or '{1}'": {
+  "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
     "code": 6021,
     "category": DiagnosticCategory.Message
   },
-  "Syntax:   {0}": {
+  "Specify locale for errors and messages. For example '{0}' or '{1}'": {
     "code": 6022,
     "category": DiagnosticCategory.Message
   },
-  "options": {
+  "Syntax:   {0}": {
     "code": 6023,
     "category": DiagnosticCategory.Message
   },
-  "file": {
+  "options": {
     "code": 6024,
     "category": DiagnosticCategory.Message
   },
-  "Examples:": {
+  "file": {
     "code": 6025,
     "category": DiagnosticCategory.Message
   },
-  "Options:": {
+  "Examples:": {
     "code": 6026,
     "category": DiagnosticCategory.Message
   },
+  "Options:": {
+    "code": 6027,
+    "category": DiagnosticCategory.Message
+  },
   "Insert command line options and files from a file.": {
-    "code": 6029,
-    "category": DiagnosticCategory.Message
-  },
-  "Version {0}": {
-    "code": 6028,
-    "category": DiagnosticCategory.Message
-  },
-  "Use the '{0}' flag to see options": {
     "code": 6030,
     "category": DiagnosticCategory.Message
   },
-  "{NL}Recompiling ({0}):": {
+  "Version {0}": {
+    "code": 6029,
+    "category": DiagnosticCategory.Message
+  },
+  "Use the '{0}' flag to see options": {
     "code": 6031,
     "category": DiagnosticCategory.Message
   },
-  "STRING": {
+  "{NL}Recompiling ({0}):": {
     "code": 6032,
     "category": DiagnosticCategory.Message
   },
-  "KIND": {
+  "STRING": {
     "code": 6033,
     "category": DiagnosticCategory.Message
   },
-  "FILE|DIRECTORY": {
+  "KIND": {
     "code": 6034,
     "category": DiagnosticCategory.Message
   },
-  "VERSION": {
+  "FILE|DIRECTORY": {
     "code": 6035,
+    "category": DiagnosticCategory.Message
+  },
+  "VERSION": {
+    "code": 6036,
     "category": DiagnosticCategory.Message
   },
   "This version of the Javascript runtime doesn't support the '{0}' function.": {

@@ -60,6 +60,54 @@ module TypeScript {
                 return extensionChanger(this.compilationSettings.outputOption, true);
             }
         }
+
+        public decodeSourceMapOptions(tsFilePath: string, jsFilePath: string, oldSourceMapSourceInfo?: SourceMapSourceInfo): SourceMapSourceInfo {
+            var sourceMapSourceInfo = new SourceMapSourceInfo(oldSourceMapSourceInfo);
+
+            tsFilePath = switchToForwardSlashes(tsFilePath);
+
+            // Decode mapRoot and sourceRoot
+            if (!oldSourceMapSourceInfo) {
+                // Js File Name = pretty name of js file
+                var prettyJsFileName = TypeScript.getPrettyName(jsFilePath, false, true);
+                var prettyMapFileName = prettyJsFileName + SourceMapper.MapFileExtension;
+                sourceMapSourceInfo.jsFileName = prettyJsFileName;
+
+                // Figure out sourceMapPath and sourceMapDirectory
+                if (this.compilationSettings.mapRoot) {
+                    if (this.outputMany) {
+                        var sourceMapPath = tsFilePath.replace(this.commonDirectoryPath, "");
+                        sourceMapPath = this.compilationSettings.mapRoot + sourceMapPath;
+                        sourceMapPath = TypeScriptCompiler.mapToJSFileName(sourceMapPath, false) + SourceMapper.MapFileExtension;
+                        sourceMapSourceInfo.sourceMapPath = sourceMapPath;
+
+                        if (isRelative(sourceMapSourceInfo.sourceMapPath)) {
+                            sourceMapPath = this.commonDirectoryPath + sourceMapSourceInfo.sourceMapPath;
+                        }
+                        sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(sourceMapPath);
+                    } else {
+                        sourceMapSourceInfo.sourceMapPath = this.compilationSettings.mapRoot + prettyMapFileName;
+                        sourceMapSourceInfo.sourceMapDirectory = this.compilationSettings.mapRoot;
+                        if (isRelative(sourceMapSourceInfo.sourceMapDirectory)) {
+                            sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(jsFilePath) + this.compilationSettings.mapRoot;
+                        }
+                    }
+                } else {
+                    sourceMapSourceInfo.sourceMapPath = prettyMapFileName;
+                    sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(jsFilePath);
+                }
+                sourceMapSourceInfo.sourceRoot =  this.compilationSettings.sourceRoot;
+            }
+
+            if (this.compilationSettings.sourceRoot) {
+                // Use the relative path corresponding to the common directory path
+                sourceMapSourceInfo.tsFilePath = getRelativePathToFixedPath(this.commonDirectoryPath, tsFilePath);
+            } else {
+                // Source locations relative to map file location
+                sourceMapSourceInfo.tsFilePath = getRelativePathToFixedPath(sourceMapSourceInfo.sourceMapDirectory, tsFilePath);
+            }
+            return sourceMapSourceInfo;
+        }
     }
 
     export class Indenter {
