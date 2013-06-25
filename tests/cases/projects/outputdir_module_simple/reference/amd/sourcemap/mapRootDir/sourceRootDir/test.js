@@ -16,4 +16,4 @@ define(["require", "exports", "m1"], function(require, exports, __m1__) {
 
     exports.a2 = m1.m1_c1;
 });
-//@ sourceMappingURL=http://www.typescriptlang.org/test.js.map
+//# sourceMappingURL=http://www.typescriptlang.org/test.js.map

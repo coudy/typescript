@@ -9,4 +9,4 @@ var instance1 = new c1();
 function f1() {
     return instance1;
 }
-//@ sourceMappingURL=/tests/cases/projects/outputdir_singleFile/mapFiles/test.js.map
+//# sourceMappingURL=C:/VSClient_1/src/typescript/public/tests/cases/projects/outputdir_singleFile/mapFiles/test.js.map

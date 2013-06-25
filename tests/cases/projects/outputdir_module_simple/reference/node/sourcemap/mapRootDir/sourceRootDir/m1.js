@@ -12,4 +12,4 @@ function m1_f1() {
 }
 exports.m1_f1 = m1_f1;
 
-//@ sourceMappingURL=http://www.typescriptlang.org/m1.js.map
+//# sourceMappingURL=http://www.typescriptlang.org/m1.js.map

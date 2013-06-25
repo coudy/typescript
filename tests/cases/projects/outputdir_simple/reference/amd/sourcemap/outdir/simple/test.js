@@ -9,4 +9,4 @@ var instance1 = new c1();
 function f1() {
     return instance1;
 }
-//@ sourceMappingURL=test.js.map
+//# sourceMappingURL=test.js.map

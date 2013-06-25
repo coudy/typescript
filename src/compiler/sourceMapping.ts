@@ -71,7 +71,7 @@ module TypeScript {
 
             // Output map file name into the js file
             var sourceMapper = allSourceMappers[0];
-            sourceMapper.jsFile.WriteLine("//@ sourceMappingURL=" + sourceMapper.sourceMapSourceInfo.sourceMapPath);
+            sourceMapper.jsFile.WriteLine("//# sourceMappingURL=" + sourceMapper.sourceMapSourceInfo.sourceMapPath);
 
             // Now output map file
             var sourceMapOut = sourceMapper.sourceMapOut;

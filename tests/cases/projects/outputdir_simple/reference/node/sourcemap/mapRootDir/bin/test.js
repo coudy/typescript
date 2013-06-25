@@ -20,4 +20,4 @@ var instance1 = new c1();
 function f1() {
     return instance1;
 }
-//@ sourceMappingURL=http://www.typescriptlang.org/test.js.map
+//# sourceMappingURL=http://www.typescriptlang.org/test.js.map

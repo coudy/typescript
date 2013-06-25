@@ -12,4 +12,4 @@ function m1_f1() {
 }
 exports.m1_f1 = m1_f1;
 
-//@ sourceMappingURL=m1.js.map
+//# sourceMappingURL=m1.js.map

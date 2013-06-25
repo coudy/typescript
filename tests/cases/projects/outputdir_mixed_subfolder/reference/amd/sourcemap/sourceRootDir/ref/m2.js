@@ -13,4 +13,4 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.m2_f1 = m2_f1;
 });
-//@ sourceMappingURL=m2.js.map
+//# sourceMappingURL=m2.js.map
