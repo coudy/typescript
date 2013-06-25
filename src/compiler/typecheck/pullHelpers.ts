@@ -73,5 +73,20 @@ module TypeScript {
         export function symbolIsEnum(source: PullSymbol) {
             return source && ((source.getKind() & (PullElementKind.Enum | PullElementKind.EnumMember)) || source.hasFlag(PullElementFlags.InitializedEnum));
         }
+
+        export function symbolIsModule(symbol: PullSymbol) {
+            return symbol.getKind() == PullElementKind.Container || isOneDeclarationOfKind(symbol, PullElementKind.Container);
+        }
+
+        function isOneDeclarationOfKind(symbol: PullSymbol, kind: TypeScript.PullElementKind): boolean {
+            var decls = symbol.getDeclarations();
+            for (var i = 0; i < decls.length; i++) {
+                if (decls[i].getKind() === kind) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

@@ -730,6 +730,21 @@ module TypeScript {
             // Visible if parent is visible
             return PullSymbol.getIsExternallyVisible(container, this, inIsExternallyVisibleSymbols);
         }
+
+        public isModule() {
+            return this.getKind() == PullElementKind.Container || this.isOneDeclarationOfKind(PullElementKind.Container);
+        }
+
+        private isOneDeclarationOfKind(kind: TypeScript.PullElementKind): boolean {
+            var decls = this.getDeclarations();
+            for (var i = 0; i < decls.length; i++) {
+                if (decls[i].getKind() === kind) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     export class PullExpressionSymbol extends PullSymbol {

@@ -974,33 +974,6 @@ module Services {
             return false;
         }
 
-        private isModule(symbol: TypeScript.PullSymbol) {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Container);
-        }
-
-        private isDynamicModule(symbol: TypeScript.PullSymbol) {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.DynamicModule);
-        }
-
-        private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {
-            return symbol.hasFlag(TypeScript.PullElementFlags.ClassConstructorVariable | TypeScript.PullElementFlags.Constructor);
-        }
-
-        private isClass(symbol: TypeScript.PullSymbol): boolean {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Class);
-        }
-
-        private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): boolean {
-            var decls = symbol.getDeclarations();
-            for (var i = 0; i < decls.length; i++) {
-                if (decls[i].getKind() === kind) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private mapPullElementKind(kind: TypeScript.PullElementKind, symbol?: TypeScript.PullSymbol, useConstructorAsClass?: boolean, varIsFunction?: boolean, functionIsConstructor?: boolean): string {
             if (functionIsConstructor) {
                 return ScriptElementKind.constructorImplementationElement;
@@ -1057,7 +1030,7 @@ module Services {
                     case TypeScript.PullElementKind.Enum:
                         return ScriptElementKind.enumElement;
                     case TypeScript.PullElementKind.Variable:
-                        if (symbol && this.isModule(symbol)) {
+                        if (symbol && TypeScript.PullHelpers.symbolIsModule(symbol)) {
                             return ScriptElementKind.moduleElement;
                         }
                         return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
