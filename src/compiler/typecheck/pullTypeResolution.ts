@@ -1964,6 +1964,9 @@ module TypeScript {
                 }
                 else if (typeExprSymbol.isError()) {
                     context.setTypeInContext(declSymbol, typeExprSymbol);
+                    if (declParameterSymbol) {
+                        context.setTypeInContext(declParameterSymbol, typeExprSymbol);
+                    }
                 }
                 else {
                     if (typeExprSymbol.isNamedTypeSymbol() &&
@@ -3287,8 +3290,13 @@ module TypeScript {
                                 context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
                                 typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
                         }
-
-                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                        // typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)
+                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {
+                            typeArgs[i] = context.findSpecializationForType(typeArg);
+                        }
+                        else {
+                            typeArgs[i] = typeArg;
+                        }
                     }
                 }
 

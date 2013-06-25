@@ -3390,6 +3390,13 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                // if the signature is not yet specialized, specialize the signature using an empty context first - that way, no type parameters
+                // will be accidentally specialized
+                if (!(signature.isResolved() || signature.isResolving())) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext);
+                }   
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
@@ -3455,6 +3462,11 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                if (!(signature.isResolved() || signature.isResolving())) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext);
+                } 
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
@@ -3522,6 +3534,11 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                if (!(signature.isResolved() || signature.isResolving())) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext);
+                } 
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
