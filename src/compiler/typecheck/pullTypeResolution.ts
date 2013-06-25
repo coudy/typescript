@@ -3297,7 +3297,7 @@ module TypeScript {
                                 context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl, true);
                                 typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
                         }
-                        // typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite  && !context.isSpecializingConstructorMethod)
+
                         if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {
                             typeArgs[i] = context.findSpecializationForType(typeArg);
                         }
