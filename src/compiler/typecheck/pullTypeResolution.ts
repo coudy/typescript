@@ -2884,6 +2884,16 @@ module TypeScript {
                 }
             }
 
+            // Try looking up a type alias with an associated instance type
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
+
+                // Modules are also picked up when searching for aliases
+                if (nameSymbol && !nameSymbol.isAlias()) {
+                    nameSymbol = null;
+                }
+            }
+
             if (!nameSymbol) {
                 return SymbolAndDiagnostics.create(
                     this.getNewErrorTypeSymbol(null, id),
