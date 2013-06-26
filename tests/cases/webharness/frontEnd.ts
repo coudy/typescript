@@ -106,6 +106,10 @@ class BatchCompiler implements Services.ILanguageServiceHost {
         return fileName !== libraryFileName;
     }
 
+    public getScriptByteOrderMark(fileName: string): ByteOrderMark {
+        return ByteOrderMark.None;
+    }
+
     public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
         switch (fileName) {
             case libraryFileName: return this.libScriptSnapshot;

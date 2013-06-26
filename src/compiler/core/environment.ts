@@ -11,10 +11,10 @@ module TypeScript {
 }
 
 enum ByteOrderMark {
-    None,
-    Utf8,
-    Utf16BigEndian,
-    Utf16LittleEndian,
+    None = 0,
+    Utf8 = 1,
+    Utf16BigEndian = 2,
+    Utf16LittleEndian = 3,
 }
 
 class FileInformation {

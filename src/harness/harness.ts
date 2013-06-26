@@ -1591,7 +1591,7 @@ module Harness {
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
         public lineMap: TypeScript.LineMap = null;
 
-        constructor(public fileName: string, public content: string, public isOpen = true) {
+        constructor(public fileName: string, public content: string, public isOpen = true, public byteOrderMark: ByteOrderMark = ByteOrderMark.None) {
             this.setContent(content);
         }
 
@@ -1753,6 +1753,10 @@ module Harness {
 
         public getScriptIsOpen(fileName: string): boolean {
             return this.getScriptInfo(fileName).isOpen;
+        }
+
+        public getScriptByteOrderMark(fileName: string): ByteOrderMark {
+            return this.getScriptInfo(fileName).byteOrderMark;
         }
 
         public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {
