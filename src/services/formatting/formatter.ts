@@ -211,7 +211,8 @@ module TypeScript.Formatting {
                 }
             } 
             
-            if (token1Line != token2Line) {
+            // We need to trim trailing whitespace between the tokens if they were on different lines, and no rule was applied to put them on the same line
+            if (token1Line != token2Line && (!rule || (rule.Operation.Action != RuleAction.Delete && rule.Flag != RuleFlags.CanDeleteNewLines))) {
                 this.trimWhitespaceInLineRange(token1Line, token2Line, t1);
             }
         }
