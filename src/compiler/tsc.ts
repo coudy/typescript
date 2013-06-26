@@ -171,7 +171,16 @@ class BatchCompiler {
             // if file resolving is disabled, the file's content will not yet be loaded
 
             if (!this.compilationSettings.resolve) {
-                code.fileInformation = this.ioHost.readFile(code.path);
+                try {
+                    code.fileInformation = this.ioHost.readFile(code.path);
+                }
+                catch (e) {
+                    if (e.isUnsupportedEncoding) {
+                        this.errorReporter.addDiagnostic(
+                            new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Unsupported_encoding_for_file__0, [code.path]));
+                    }
+                }
+
                 // If declaration files are going to be emitted, 
                 // preprocess the file contents and add in referenced files as well
                 if (this.compilationSettings.generateDeclarationFiles) {
@@ -267,7 +276,15 @@ class BatchCompiler {
             // if file resolving is disabled, the file's content will not yet be loaded
 
             if (!this.compilationSettings.resolve) {
-                code.fileInformation = this.ioHost.readFile(code.path);
+                try {
+                    code.fileInformation = this.ioHost.readFile(code.path);
+                }
+                catch (e) {
+                    if (e.isUnsupportedEncoding) {
+                        this.errorReporter.addDiagnostic(
+                            new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Unsupported_encoding_for_file__0, [code.path]));
+                    }
+                }
                 // If declaration files are going to be emitted, 
                 // preprocess the file contents and add in referenced files as well
                 if (this.compilationSettings.generateDeclarationFiles) {

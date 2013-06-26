@@ -139,18 +139,31 @@ module TypeScript {
                             resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                         }
                         catch (err1) {
+                            if (err1.isUnsupportedEncoding) {
+                                resolutionDispatcher.errorReporter.addDiagnostic(
+                                    new TypeScript.Diagnostic(null, 0, 0, DiagnosticCode.Unsupported_encoding_for_file__0, [normalizedPath]));
+                                return;
+                            }
+
                             if (isTSFile(normalizedPath)) {
                                 normalizedPath = changePathToDTS(normalizedPath);
                                 CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
                                 resolvedFile.fileInformation = ioHost.readFile(normalizedPath);
                             }
                         }
+
                         CompilerDiagnostics.debugPrint("   Found code at " + normalizedPath);
 
                         resolvedFile.path = normalizedPath;
                         this.visited[absoluteModuleID] = true;
                     }
                     catch (err4) {
+                        if (err4.isUnsupportedEncoding) {
+                            resolutionDispatcher.errorReporter.addDiagnostic(
+                                new TypeScript.Diagnostic(null, 0, 0, DiagnosticCode.Unsupported_encoding_for_file__0, [normalizedPath]));
+                            return;
+                        }
+
                         CompilerDiagnostics.debugPrint("   Did not find code for " + referencePath);
                         // Resolution failed
                         return false;

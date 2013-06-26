@@ -295,5 +295,6 @@ module TypeScript {
         Cannot_find_the_common_subdirectory_path_for_the_input_files,
         Cannot_compile_dynamic_modules_when_emitting_into_single_file,
         Emit_Error__0,
+        Unsupported_encoding_for_file__0,
     }
 }

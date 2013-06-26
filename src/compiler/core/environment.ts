@@ -117,7 +117,15 @@ var Environment = (function () {
                     return new FileInformation(contents, byteOrderMark);
                 }
                 catch (err) {
-                    throw new Error("Error reading file \"" + path + "\": " + err.message);
+                    var error: any = new Error(err.message);
+                    // -2147024809 is the javascript value for 0x80070057 which is the HRESULT for 
+                    // "the parameter is incorrect".
+                    var message: string;
+                    if (err.number === -2147024809) {
+                        error.isUnsupportedEncoding = true;
+                    }
+
+                    throw error;
                 }
             },
 

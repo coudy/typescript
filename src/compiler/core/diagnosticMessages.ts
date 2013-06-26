@@ -287,6 +287,7 @@ module TypeScript {
         Cannot_find_the_common_subdirectory_path_for_the_input_files: DiagnosticInfo;
         Cannot_compile_dynamic_modules_when_emitting_into_single_file: DiagnosticInfo;
         Emit_Error__0: DiagnosticInfo;
+        Unsupported_encoding_for_file__0: DiagnosticInfo;
     }
 
     export var diagnosticMessages: IDiagnosticMessages = {
@@ -1698,7 +1699,7 @@ module TypeScript {
             message: "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}",
             code: 4021
         },
-        
+
         Type_reference_cannot_refer_to_container__0_: {
             category: DiagnosticCategory.Error,
             message: "Type reference cannot refer to container '{0}'.",
@@ -1776,6 +1777,11 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Emit Error: {0}.",
             code: 5011
+        },
+        Unsupported_encoding_for_file__0: {
+            category: DiagnosticCategory.Error,
+            message: "Unsupported encoding for file: '{0}'.",
+            code: 5013
         },
     };
 
