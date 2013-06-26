@@ -36,6 +36,8 @@ module TypeScript {
 
         HasReturnStatement = 1 << 22,
 
+        PropertyParameter = 1 << 23,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }

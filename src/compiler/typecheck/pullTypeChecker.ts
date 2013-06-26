@@ -2714,7 +2714,7 @@ module TypeScript {
                 }
             }
 
-            this.context.postError(typeCheckContext.scriptName, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl, true);
+            this.context.postError(typeCheckContext.scriptName, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl);
         }
 
         private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
@@ -2769,7 +2769,7 @@ module TypeScript {
                 }
             }
 
-            this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
+            this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl);
         }
 
         private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, typeCheckContext: PullTypeCheckContext) {
@@ -2844,51 +2844,51 @@ module TypeScript {
                 }
 
                 if (declAST.isConstructor) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (isSetter) {
                     if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     }
                 } else if (declAST.isConstructMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (declAST.isCallMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (isMethod) {
                     if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else if (isMethodOfClass) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     }
                 } else if (!isGetter) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 }
             } else {
                 if (declAST.isConstructor) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (isSetter) {
                     if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     }
                 } else if (declAST.isConstructMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (declAST.isCallMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 } else if (isMethod) {
                     if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else if (isMethodOfClass) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                     }
                 } else if (!isGetter && !declAST.isIndexerMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, start, length, DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
                 }
             }
         }
@@ -2991,7 +2991,7 @@ module TypeScript {
                     var returnExpressionSymbol = this.resolver.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, contextForReturnTypeResolution);
                     if (returnExpressionSymbol === funcReturnType) {
                         // Error coming from return annotation
-                        this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                        this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl);
                     }
                 }
 
@@ -3010,7 +3010,7 @@ module TypeScript {
                                 var returnExpressionSymbol = this.resolver.resolveAST(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).type;
                                 // Check if return statement's type matches the one that we concluded
                                 if (returnExpressionSymbol === funcReturnType) {
-                                    this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                                    this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl);
                                 } else {
                                     reportOnFuncDecl = true;
                                 }
@@ -3030,7 +3030,7 @@ module TypeScript {
 
                 if (reportOnFuncDecl) {
                     // Show on function decl
-                    this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl, true);
+                    this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl);
                 }
             }
         }
