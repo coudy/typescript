@@ -359,7 +359,7 @@ class ProjectRunner extends RunnerBase {
 
                             if (expectedFiles[i].lastIndexOf(".js") == expectedFiles[i].length - 3) {
                                 // JS file
-                                var indexOfMap = fileContents.lastIndexOf("//@ sourceMappingURL=");
+                                var indexOfMap = fileContents.lastIndexOf("//# sourceMappingURL=");
                                 if (indexOfMap != -1) {
                                     var mapFileName = fileContents.substring(indexOfMap + 21);
                                     if (mapFileName.indexOf(baseFileName) == 0) {
