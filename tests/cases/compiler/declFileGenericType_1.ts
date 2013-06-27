@@ -1,5 +1,5 @@
 // @declaration: true
-export module C {
+module C {
     export class A<T>{ }
     export class B { }
     
@@ -19,21 +19,21 @@ export module C {
     }
 }
 
-export var a: C.A<C.B>;
+var a: C.A<C.B>;
 
-export var b = C.F;
-export var c = C.F2;
-export var d = C.F3;
-export var e = C.F4;
+var b = C.F;
+var c = C.F2;
+var d = C.F3;
+var e = C.F4;
 
-export var x = (new C.D<C.A<C.B>>(new C.A<C.B>())).val;
+var x = (new C.D<C.A<C.B>>(new C.A<C.B>())).val;
 
-export function f<T extends C.A<C.B>>() { }
+function f<T extends C.A<C.B>>() { }
 
-export var g = C.F5<C.A<C.B>>();
+var g = C.F5<C.A<C.B>>();
 
-export class h extends C.A<C.B>{ }
+class h extends C.A<C.B>{ }
 
-export interface i extends C.A<C.B> { }
+interface i extends C.A<C.B> { }
 
-export var j = C.F6;
+var j = C.F6;
