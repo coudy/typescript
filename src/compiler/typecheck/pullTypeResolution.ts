@@ -2045,7 +2045,9 @@ module TypeScript {
             }
             // Does it have an initializer? If so, typecheck and use that
             else if (varDecl.init) {
+                context.isInStaticInitializer = (decl.getFlags() & PullElementFlags.Static) != 0;
                 var initExprSymbolAndDiagnostics = this.resolveAST(varDecl.init, false, wrapperDecl, context);
+                context.isInStaticInitializer = false;
                 var initExprSymbol = initExprSymbolAndDiagnostics && initExprSymbolAndDiagnostics.symbol;
 
                 if (!initExprSymbol) {
@@ -3614,14 +3616,10 @@ module TypeScript {
                 var diagnostics: Diagnostic[];
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                    return SymbolAndDiagnostics.create(
-                        this.getNewErrorTypeSymbol(null),
-                        [context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies)]);
+                    return SymbolAndDiagnostics.fromSymbol(this.getNewErrorTypeSymbol(null));
                 }
-                else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                    return SymbolAndDiagnostics.create(
-                        this.getNewErrorTypeSymbol(null),
-                        [context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_must_only_be_used_inside_a_function_or_script_context)]);
+                else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock | PullElementKind.Class))) {
+                    return SymbolAndDiagnostics.fromSymbol(this.getNewErrorTypeSymbol(null));
                 }
                 else {
                     var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
@@ -3630,13 +3628,14 @@ module TypeScript {
                     // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
                     // PULLTODO: Why is this 'obviously not completely correct'.  
                     if (declPath.length) {
+                        var isStaticContext = false;
                         for (var i = declPath.length - 1; i >= 0; i--) {
                             var decl = declPath[i];
                             var declKind = decl.getKind();
                             var declFlags = decl.getFlags();
 
                             if (declFlags & PullElementFlags.Static) {
-                                break;
+                                isStaticContext = true;
                             }
                             else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
                                 break;
@@ -3645,8 +3644,17 @@ module TypeScript {
                                 break;
                             }
                             else if (declKind === PullElementKind.Class) {
+                                if (context.isInStaticInitializer) {
+                                    return SymbolAndDiagnostics.fromSymbol(this.getNewErrorTypeSymbol(null));
+                                }
                                 var classSymbol = <PullTypeSymbol>decl.getSymbol();
-                                return SymbolAndDiagnostics.fromSymbol(classSymbol);
+                                if (isStaticContext) {
+                                    var constructorSymbol = classSymbol.getConstructorMethod();
+                                    return SymbolAndDiagnostics.fromSymbol(constructorSymbol.getType());
+                                }
+                                else {
+                                    return SymbolAndDiagnostics.fromSymbol(classSymbol);
+                                }
                             }
                         }
                     }

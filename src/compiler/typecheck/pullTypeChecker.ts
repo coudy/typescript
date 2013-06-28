@@ -470,6 +470,7 @@ module TypeScript {
         //  - lhs and rhs types agree (if lhs has no type annotation)
         private typeCheckBoundDecl(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var boundDeclAST = <BoundDecl>ast;
+            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -507,7 +508,9 @@ module TypeScript {
                     this.context.pushContextualType(typeExprSymbol, this.context.inProvisionalResolution(), null);
                 }
 
+                this.context.isInStaticInitializer = (decl.getFlags() & PullElementFlags.Static) != 0;
                 var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, !!typeExprSymbol);
+                this.context.isInStaticInitializer = false;
 
                 if (typeExprSymbol) {
                     this.context.popContextualType();
@@ -563,7 +566,6 @@ module TypeScript {
             // now resolve the actual symbol, but supress the errors since we've already surfaced them above
             var prevSupressErrors = this.context.suppressErrors;
             this.context.suppressErrors = true;
-            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
 
             var varTypeSymbol = this.resolveSymbolAndReportDiagnostics(boundDeclAST, false, enclosingDecl).getType();
 
@@ -1706,11 +1708,17 @@ module TypeScript {
                             // If we're accessing 'this' in a class, then the class constructor 
                             // needs to be marked as capturing 'this'.
                             if (declKind === PullElementKind.Class) {
-                                decl.getChildDecls().filter(d => d.getKind() === PullElementKind.ConstructorMethod)
-                                    .map(d => d.setFlags(d.getFlags() | PullElementFlags.MustCaptureThis));
+                                var constructorSymbol = (<PullTypeSymbol> decl.getSymbol()).getConstructorMethod();
+                                var constructorDecls = constructorSymbol.getDeclarations();
+                                for (var i = 0; i < constructorDecls.length; i++) {
+                                    constructorDecls[i].setFlags(constructorDecls[i].getFlags() | PullElementFlags.MustCaptureThis);
+                                }
                             }
                             break;
                         }
+                    }
+                    else if (declKind === PullElementKind.Function || declKind === PullElementKind.FunctionExpression) {
+                        break;
                     }
                 }
             }
@@ -1729,8 +1737,8 @@ module TypeScript {
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
             }
             else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_initializers_in_a_class_body, null, enclosingDecl);
+                if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class && this.context.isInStaticInitializer) {
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body, null, enclosingDecl);
                 }
                 else if (enclosingNonLambdaDecl.getKind() === PullElementKind.Container || enclosingNonLambdaDecl.getKind() === PullElementKind.DynamicModule) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);

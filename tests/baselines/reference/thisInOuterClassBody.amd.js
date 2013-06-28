@@ -1,14 +1,22 @@
-var Foo2 = (function () {
-    function Foo2() {
-        this.x = this.fgoo;
+var Foo = (function () {
+    function Foo() {
+        this.x = this;
     }
-    Foo2.prototype.bar = function () {
+    Foo.prototype.bar = function () {
         var _this = this;
         this.x;
 
         var f = function () {
             return _this.x;
         };
+        var p = this.y;
+        return this;
     };
-    return Foo2;
+
+    Foo.bar2 = function () {
+        var a = this.y;
+        var b = this.x;
+    };
+    Foo.y = this;
+    return Foo;
 })();

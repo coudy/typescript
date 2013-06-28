@@ -708,6 +708,10 @@ module Services {
                 return "";
             }
 
+            if (symbolKind == TypeScript.PullElementKind.ConstructorType) {
+                symbol = (<TypeScript.PullTypeSymbol>symbol).getAssociatedContainerType();
+            }
+
             if (symbolKind != TypeScript.PullElementKind.Property &&
                 symbolKind != TypeScript.PullElementKind.EnumMember &&
                 symbolKind != TypeScript.PullElementKind.Method &&

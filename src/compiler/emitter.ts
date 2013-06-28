@@ -1722,6 +1722,10 @@ module TypeScript {
                     this.writeLineToOutput("_super.apply(this, arguments);");
                 }
 
+                if (this.shouldCaptureThis(classDecl)) {
+                    this.writeCaptureThisStatement(classDecl);
+                }
+
                 this.emitParameterPropertyAndMemberVariableAssignments();
 
                 this.indenter.decreaseIndent();

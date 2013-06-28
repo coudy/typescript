@@ -758,10 +758,6 @@ module TypeScript {
     "code": 2108,
     "category": DiagnosticCategory.Error
   },
-  "'this' must only be used inside a function or script context.": {
-    "code": 2109,
-    "category": DiagnosticCategory.Error
-  },
   "Invalid '+' expression - types not known to support the addition operator.": {
     "code": 2111,
     "category": DiagnosticCategory.Error
@@ -870,7 +866,7 @@ module TypeScript {
     "code": 2139,
     "category": DiagnosticCategory.Error
   },
-  "'this' cannot be referenced in initializers in a class body.": {
+  "'this' cannot be referenced in static initializers in a class body.": {
     "code": 2140,
     "category": DiagnosticCategory.Error
   },
