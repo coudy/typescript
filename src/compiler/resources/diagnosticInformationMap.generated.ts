@@ -1405,6 +1405,42 @@ module TypeScript {
   "Invalid line number ({0})": {
     "code": 7003,
     "category": DiagnosticCategory.Error
+  },
+  "Disallow implicit any type and report an error when there is implicit any type.": {
+    "code": 7004,
+    "category": DiagnosticCategory.Message
+  },
+  "Variable '{0}' implicitly has an any type.": {
+    "code": 7005,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of '{1}' implicitly has an any type.": {
+    "code": 7006,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of function type implicitly has an any type.": {
+    "code": 7007,
+    "category": DiagnosticCategory.Error
+  },
+  "Member '{0}' of object type implicitly has an any type.": {
+    "code": 7008,
+    "category": DiagnosticCategory.Error
+  },
+  "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+    "code": 7009,
+    "category": DiagnosticCategory.Error
+  },
+  "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7010,
+    "category": DiagnosticCategory.Error
+  },
+  "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7011,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of lambda function implicitly has an any type.": {
+    "code": 7012,
+    "category": DiagnosticCategory.Error
   }
 };
 }
