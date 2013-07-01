@@ -611,6 +611,16 @@ module TypeScript {
                 }
             });
 
+            opts.flag('disallowimplicitany', {
+                usage: {
+                    locCode: DiagnosticCode.Disallow_implicit_any_type_and_report_an_error_when_there_is_implicit_any_type,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.disallowImplicitAny = true;
+                }
+            }, 'i');
+
             opts.parse(this.ioHost.arguments);
 
             if (locale) {
@@ -757,7 +767,8 @@ module TypeScript {
                 // Print header
                 if (!firstTime) {
                     var fileNames = "";
-                    lastResolvedFileSet.forEach((f) => { fileNames += Environment.newLine + "    " + f; });                    this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, [fileNames]));
+                    lastResolvedFileSet.forEach((f) => { fileNames += Environment.newLine + "    " + f; });
+                    this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, [fileNames]));
                 }
                 else {
                     firstTime = false;

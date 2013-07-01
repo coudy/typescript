@@ -28,6 +28,7 @@ module TypeScript {
         public allowBool = false;
         public allowAutomaticSemicolonInsertion = true;
         public allowModuleKeywordInExternalModuleReference = false;
+        public disallowImplicitAny = false;
 
         public useDefaultLib = true;
 
