@@ -1447,6 +1447,7 @@ module Harness {
             { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
             { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
             { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
+            { flag: 'disallowimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.disallowImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
         ];
     }
 
@@ -1470,10 +1471,10 @@ module Harness {
         }
 
         // Regex for parsing options in the format "@Alpha: Value of any sort"
-        var optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
+        var optionRegex = /^[\/]{2}\s*@(\w+)\s*:\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out"];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "disallowimplicitany"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
