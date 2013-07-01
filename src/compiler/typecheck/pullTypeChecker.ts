@@ -543,6 +543,16 @@ module TypeScript {
                     }
                 }
 
+                // if disallowimplicitany flag is set to be true, report an error
+                if (this.compilationSettings.disallowImplicitAny) {
+
+                    // No type expression; if the initializer is resolved into any type, it must be implicit any
+                    if (!typeExprSymbol && (initTypeSymbol.getType() == this.semanticInfoChain.anyTypeSymbol || initTypeSymbol.getElementType() == this.semanticInfoChain.anyTypeSymbol)) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName,
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [boundDeclAST.id.actualText], enclosingDecl);
+                    }
+                }
+
                 if (initTypeSymbol && typeExprSymbol) {
                     var comparisonInfo = new TypeComparisonInfo();
 
@@ -560,8 +570,7 @@ module TypeScript {
 
             // now resolve the actual symbol, but supress the errors since we've already surfaced them above
             var prevSupressErrors = this.context.suppressErrors;
-            this.context.suppressErrors = true;
-
+            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var varTypeSymbol = this.resolveSymbolAndReportDiagnostics(boundDeclAST, false, enclosingDecl).getType();
 
             if (typeExprSymbol && typeExprSymbol.isContainer() && varTypeSymbol.isError()) {
