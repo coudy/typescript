@@ -2,7 +2,7 @@
 // these should be errors
 class GetAndSet {
     getAndSet = null;             // error at "getAndSet"
-    public get haveGetAndSet() {  // error at "GetAndSet"
+    public get haveGetAndSet() {  // error at "haveGetAndSet"
         return this.getAndSet;
     }
     
