@@ -1441,6 +1441,10 @@ module TypeScript {
   "Parameter '{0}' of lambda function implicitly has an any type.": {
     "code": 7012,
     "category": DiagnosticCategory.Error
+  },
+  "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7013,
+    "category": DiagnosticCategory.Error
   }
 };
 }
