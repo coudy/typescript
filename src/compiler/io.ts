@@ -423,7 +423,25 @@ var IO = (function() {
             getExecutingFilePath: function () {
                 return process.mainModule.filename;
             },
-            quit: process.exit
+            quit: function(code?: number) {
+                var stderrFlushed = process.stderr.write('');
+                var stdoutFlushed = process.stdout.write('');
+                process.stderr.on('drain', function() {
+                    stderrFlushed = true;
+                    if (stdoutFlushed) {
+                        process.exit(code);
+                    }
+                });
+                process.stdout.on('drain', function() {
+                    stdoutFlushed = true;
+                    if (stderrFlushed) {
+                        process.exit(code);
+                    }
+                });
+                setTimeout(function() {
+                    process.exit(code);
+                }, 5);
+            }
         }
     };
 
