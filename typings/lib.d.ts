@@ -15,9 +15,9 @@ and limitations under the License.
 
 /// <reference no-default-lib="true"/>
 
-////////////////
+/////////////////////////////
 /// ECMAScript APIs
-////////////////
+/////////////////////////////
 
 declare var NaN: number;
 declare var Infinity: number;
@@ -935,9 +935,9 @@ interface JSON {
   */
 declare var JSON: JSON;
 
-////////////////
+/////////////////////////////
 /// ECMAScript Array API (specially handled by compiler)
-////////////////
+/////////////////////////////
 
 interface Array<T> {
     toString(): string;
@@ -980,9 +980,9 @@ declare var Array: {
 }
 
 
-////////////////
+/////////////////////////////
 /// IE10 ECMAScript Extensions
-////////////////
+/////////////////////////////
 
 interface ArrayBuffer {
     byteLength: number;
@@ -1174,9 +1174,9 @@ declare var DataView: {
     new (buffer: ArrayBuffer, byteOffset?: number, length?: number): DataView;
 }
 
-////////////////
-/// IE9 DOM APIs (note that 
-////////////////
+/////////////////////////////
+/// IE9 DOM APIs 
+/////////////////////////////
 
 interface NavigatorID {
     appVersion: string;
