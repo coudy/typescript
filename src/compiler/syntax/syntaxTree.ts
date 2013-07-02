@@ -127,7 +127,7 @@ module TypeScript {
                 this.pushDiagnostic(
                     this.childStart(node, node.typeAnnotation),
                     node.typeAnnotation.width(),
-                    DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation);
+                    DiagnosticCode.Parameter_of_a_catch_clause_cannot_have_a_type_annotation);
             }
 
             super.visitCatchClause(node);
@@ -214,7 +214,7 @@ module TypeScript {
                     if (parameter.publicOrPrivateKeyword) {
                         var keywordFullStart = parameterFullStart + Syntax.childOffset(parameter, parameter.publicOrPrivateKeyword);
                         this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
-                            DiagnosticCode.Overload_and_ambient_signatures_cannot_specify_parameter_properties);
+                            DiagnosticCode.Parameter_properties_can_only_be_used_in_constructors);
                     }
                 }
 
@@ -405,7 +405,7 @@ module TypeScript {
 
                     if (heritageClause.typeNames.nonSeparatorCount() > 1) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
-                            DiagnosticCode.Class_can_only_extend_single_type);
+                            DiagnosticCode.Classes_can_only_extend_a_single_type);
                         return true;
                     }
 
@@ -776,7 +776,7 @@ module TypeScript {
         }
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_when_targeting_EcmaScript5_and_higher) ||
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_0_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkGetMemberAccessorParameter(node)) {
                 this.skip(node);
@@ -826,7 +826,7 @@ module TypeScript {
         }
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_when_targeting_EcmaScript5_and_higher) ||
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_0_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkSetMemberAccessorParameter(node)) {
                 this.skip(node);
@@ -837,7 +837,7 @@ module TypeScript {
         }
 
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_when_targeting_EcmaScript5_and_higher)) {
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_0_and_higher)) {
                 this.skip(node);
                 return;
             }
@@ -846,7 +846,7 @@ module TypeScript {
         }
 
         public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_when_targeting_EcmaScript5_and_higher)) {
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_0_and_higher)) {
                 this.skip(node);
                 return;
             }
@@ -1013,7 +1013,7 @@ module TypeScript {
             if (node.stringLiteral && !this.inAmbientDeclaration && !SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
                 this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
-                    DiagnosticCode.Non_ambient_modules_cannot_use_quoted_names);
+                    DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
                 this.skip(node);
                 return;
             }
