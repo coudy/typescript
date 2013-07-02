@@ -62,7 +62,7 @@ module TypeScript {
     "code": 1012,
     "category": DiagnosticCategory.Error
   },
-  "A catch clause variable cannot have a type annotation.": {
+  "Parameter of a catch clause cannot have a type annotation.": {
     "code": 1013,
     "category": DiagnosticCategory.Error
   },
@@ -114,7 +114,7 @@ module TypeScript {
     "code": 1025,
     "category": DiagnosticCategory.Error
   },
-  "Class can only extend single type.": {
+  "Classes can only extend a single type.": {
     "code": 1026,
     "category": DiagnosticCategory.Error
   },
@@ -146,7 +146,7 @@ module TypeScript {
     "code": 1034,
     "category": DiagnosticCategory.Error
   },
-  "Non ambient modules cannot use quoted names.": {
+  "Only ambient modules can use quoted names.": {
     "code": 1035,
     "category": DiagnosticCategory.Error
   },
@@ -166,7 +166,7 @@ module TypeScript {
     "code": 1039,
     "category": DiagnosticCategory.Error
   },
-  "Overload and ambient signatures cannot specify parameter properties.": {
+  "Parameter properties can only be used in constructors.": {
     "code": 1040,
     "category": DiagnosticCategory.Error
   },
@@ -230,7 +230,7 @@ module TypeScript {
     "code": 1055,
     "category": DiagnosticCategory.Error
   },
-  "Accessors are only when targeting EcmaScript5 and higher.": {
+  "Accessors are only available when targeting ECMAScript 5.0 and higher.": {
     "code": 1056,
     "category": DiagnosticCategory.Error
   },
@@ -674,7 +674,7 @@ module TypeScript {
     "code": 2087,
     "category": DiagnosticCategory.Error
   },
-  "Unable to invoke type with no call signatures.": {
+  "Unable to invoke an expression whose type lacks a call signature.": {
     "code": 2088,
     "category": DiagnosticCategory.Error
   },
