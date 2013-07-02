@@ -239,6 +239,9 @@ module TypeScript {
                 case NodeType.TypeRef:
                     return this.typeCheckTypeReference(<TypeReference>ast, typeCheckContext);
 
+                case NodeType.TypeQuery:
+                    return this.typeCheckTypeQuery(<TypeQuery>ast, typeCheckContext);
+
                 case NodeType.ExportAssignment:
                     return this.typeCheckExportAssignment(ast, typeCheckContext);
 
@@ -524,27 +527,19 @@ module TypeScript {
                         typeExprSymbol = exportedTypeSymbol;
                     }
                     else {
-                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol().getType();
-
-                        if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
-                            this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_container_type_0, [typeExprSymbol.toString()], enclosingDecl);
-                            typeExprSymbol = null;
-                        }
-                        else {
-                            typeExprSymbol = instanceTypeSymbol.getType();
-                        }
+                        typeExprSymbol = (<PullContainerTypeSymbol>typeExprSymbol.getType()).getInstanceSymbol().getType();
                     }
                 }
 
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
-                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol().getType();
+                    var instanceSymbol = (<PullContainerTypeSymbol>initTypeSymbol.getType()).getInstanceSymbol();
 
-                    if (!instanceTypeSymbol) {
+                    if (!instanceSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
                         initTypeSymbol = null;
                     }
                     else {
-                        initTypeSymbol = instanceTypeSymbol.getType();
+                        initTypeSymbol = instanceSymbol.getType();
                     }
                 }
 
@@ -2123,6 +2118,33 @@ module TypeScript {
             return this.semanticInfoChain.stringTypeSymbol;
         }
 
+        private typeCheckTypeQuery(typeQuery: TypeQuery, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            // TODO: This is a workaround if we encounter a TypeReference AST node. Remove it when we remove the AST.
+            var typeQueryTerm = typeQuery.name;
+            if (typeQueryTerm.nodeType() === NodeType.TypeRef) {
+                typeQueryTerm = (<TypeReference>typeQueryTerm).term;
+            }
+
+            var savedResolvingTypeReference = this.context.resolvingTypeReference;
+            this.context.resolvingTypeReference = false;
+            var type = this.typeCheckAST(typeQueryTerm, typeCheckContext, false);
+            this.context.resolvingTypeReference = savedResolvingTypeReference;
+
+            // If it's a module, get the instance type
+            if (type && type.isContainer()) {
+                var instanceSymbol = (<PullContainerTypeSymbol>type).getInstanceSymbol();
+                if (!instanceSymbol) {
+                    this.postError(typeQuery.minChar, typeQuery.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_query_type_of_uninitialized_module_0, [type.toString()], typeCheckContext.getEnclosingDecl());
+                    type = null;
+                }
+                else {
+                    type = instanceSymbol.getType();
+                }
+            }
+
+            return type;
+        }
+
         // Type reference expression
         // validate:
         //  -
@@ -2158,7 +2180,7 @@ module TypeScript {
                         }
                         else {
                             this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName,
-                                DiagnosticCode.Type_reference_cannot_must_refer_to_type, null, typeCheckContext.getEnclosingDecl());
+                                DiagnosticCode.Type_reference_must_refer_to_type, null, typeCheckContext.getEnclosingDecl());
                         }
                     }
                 }

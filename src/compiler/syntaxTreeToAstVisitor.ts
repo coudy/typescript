@@ -1060,7 +1060,13 @@ module TypeScript {
             this.movePast(node.typeOfKeyword);
             var name = node.name.accept(this);
 
-            return new TypeReference(new TypeQuery(name), 0);
+            var typeQuery = new TypeQuery(name);
+            this.setSpan(typeQuery, start, node);
+
+            var result = new TypeReference(typeQuery, 0);
+            this.copySpan(typeQuery, result);
+
+            return result;
         }
 
         public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {

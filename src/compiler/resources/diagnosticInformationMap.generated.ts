@@ -806,7 +806,7 @@ module TypeScript {
     "code": 2122,
     "category": DiagnosticCategory.Error
   },
-  "Tried to set variable type to container type '{0}'.": {
+  "Tried to query type of uninitialized module '{0}'.": {
     "code": 2123,
     "category": DiagnosticCategory.Error
   },
@@ -1102,7 +1102,7 @@ module TypeScript {
     "code": 4022,
     "category": DiagnosticCategory.Error
   },
-  "Type reference cannot must refer to type.": {
+  "Type reference must refer to type.": {
     "code": 4023,
     "category": DiagnosticCategory.Error
   },

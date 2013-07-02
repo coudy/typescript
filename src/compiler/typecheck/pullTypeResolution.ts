@@ -1799,6 +1799,7 @@ module TypeScript {
             // an interface
             // a dotted name
             // an array of any of the above
+            // a type query
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var diagnostic: Diagnostic = null;
@@ -1856,6 +1857,36 @@ module TypeScript {
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
                 this.currentUnit.addSynthesizedDecl(decl);
                 typeDeclSymbol.addDeclaration(decl);
+            }
+            else if (typeRef.term.nodeType() === NodeType.TypeQuery) {
+                var typeQuery = <TypeQuery>typeRef.term;
+
+                // TODO: This is a workaround if we encounter a TypeReference AST node. Remove it when we remove the AST.
+                var typeQueryTerm = typeQuery.name;
+                if (typeQueryTerm.nodeType() === NodeType.TypeRef) {
+                    typeQueryTerm = (<TypeReference>typeQueryTerm).term;
+                }
+
+                var savedResolvingTypeReference = context.resolvingTypeReference;
+                context.resolvingTypeReference = false;
+                var valueSymbolAndDiagnostic = this.resolveAST(typeQueryTerm, false, enclosingDecl, context);
+                context.resolvingTypeReference = savedResolvingTypeReference;
+
+                // If it is an alias symbol, get the instance symbol
+                var valueSymbol: PullSymbol = valueSymbolAndDiagnostic.symbol;
+                if (valueSymbol && valueSymbol.isAlias()) {
+                    var containerSymbol = <PullContainerTypeSymbol>valueSymbol.getType();
+                    valueSymbol = (containerSymbol && containerSymbol.isContainer()) ? containerSymbol.getInstanceSymbol() : null;
+                }
+
+                // Get the type of the symbol
+                if (valueSymbol) {
+                    typeDeclSymbol = valueSymbol.getType();
+                    symbolAndDiagnostic = SymbolAndDiagnostics.create(typeDeclSymbol, valueSymbolAndDiagnostic.diagnostics);
+                }
+                else {
+                    typeDeclSymbol = this.getNewErrorTypeSymbol(null);
+                }
             }
 
             if (!typeDeclSymbol) {

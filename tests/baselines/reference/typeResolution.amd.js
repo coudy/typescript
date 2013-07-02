@@ -309,3 +309,18 @@ define(["require", "exports"], function(require, exports) {
 {"version":3,"file":"modulesImportedForTypeArgumentPosition_1.js","sourceRoot":"","sources":["file:///modulesImportedForTypeArgumentPosition_1.ts"],"names":[],"mappings":""}
 ////[modulesImportedForTypeArgumentPosition_1.js]
 //# sourceMappingURL=modulesImportedForTypeArgumentPosition_1.js.map
+
+////[typeofExternalModules_external.js.map]
+{"version":3,"file":"typeofExternalModules_external.js","sourceRoot":"","sources":["file:///typeofExternalModules_external.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_external.js]
+//# sourceMappingURL=typeofExternalModules_external.js.map
+
+////[typeofExternalModules_exportAssign.js.map]
+{"version":3,"file":"typeofExternalModules_exportAssign.js","sourceRoot":"","sources":["file:///typeofExternalModules_exportAssign.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_exportAssign.js]
+//# sourceMappingURL=typeofExternalModules_exportAssign.js.map
+
+////[typeofExternalModules_core.js.map]
+{"version":3,"file":"typeofExternalModules_core.js","sourceRoot":"","sources":["file:///typeofExternalModules_core.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_core.js]
+//# sourceMappingURL=typeofExternalModules_core.js.map
