@@ -2046,7 +2046,8 @@ module TypeScript {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
-                else if (typeExprSymbol.isError()) {                    context.setTypeInContext(declSymbol, typeExprSymbol);
+                else if (typeExprSymbol.isError()) {
+                    context.setTypeInContext(declSymbol, typeExprSymbol);
                 }
                 else {
                     if (typeExprSymbol.isNamedTypeSymbol() &&
@@ -2515,8 +2516,8 @@ module TypeScript {
 
                         // if the disallowimplicitany flag is set to be true, report an error
                         if (this.compilationSettings.disallowImplicitAny) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
-                                ["Constructor signature"], funcDecl, true);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
                         }
                     }
                 }
@@ -2744,6 +2745,18 @@ module TypeScript {
             }
             else {
                 accessorSymbol.setType(accessorType);
+
+                // Only report disallowimplicitany error message on setter if there is no getter
+                // if the disallowimplicitany flag is set to be true, report an error
+                if (this.compilationSettings.disallowImplicitAny) {
+                    // if setter has an any type, it must be implicit any
+                    if (accessorSymbol.getType() == this.semanticInfoChain.anyTypeSymbol) {
+                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText],
+                            this.getEnclosingDecl(funcDecl), true);
+                        accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
+                    }
+                }
             }
 
             return accessorSymbol;
