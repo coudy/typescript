@@ -9,7 +9,7 @@
 ////r2./*6*/
 
 goTo.marker('1');
-// BUG 697192
+// BUG 697192 - bug is fixed but fourslash won't report the right results...
 //verify.completionListContains('I');
 verify.not.completionListContains('I');
 verify.not.completionListContains('foo');
