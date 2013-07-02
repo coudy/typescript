@@ -1689,6 +1689,8 @@ module TypeScript {
     export class TypeReference extends AST {
         constructor(public term: AST, public arrayCount: number) {
             super();
+            this.minChar = term.minChar;
+            this.limChar = term.limChar;
         }
 
         public nodeType(): NodeType {
