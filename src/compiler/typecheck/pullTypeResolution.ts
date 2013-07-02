@@ -97,6 +97,8 @@ module TypeScript {
         private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
+        static typeCheckCallBacks: { (): void ; }[] = [];
+
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
 
         private seenSuperConstructorCall = false;
@@ -1198,85 +1200,7 @@ module TypeScript {
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
 
-            if (!typeDeclSymbol.isResolved && typeDeclIsClass) {
-                var constructorMethod = typeDeclSymbol.getConstructorMethod();
-                var extendedTypes = typeDeclSymbol.getExtendedTypes();
-                var parentType = extendedTypes.length ? extendedTypes[0] : null;
-
-                if (constructorMethod) {
-                    var constructorTypeSymbol = constructorMethod.type;
-
-                    var constructSignatures = constructorTypeSymbol.getConstructSignatures();
-
-                    if (!constructSignatures.length) {
-                        var constructorSignature: PullSignatureSymbol;
-
-                        // inherit parent's constructor signatures
-                        if (parentType) {
-                            var parentClass = parentType;
-                            var parentConstructor = parentClass.getConstructorMethod();
-                            var parentConstructorType = parentConstructor.type;
-                            var parentConstructSignatures = parentConstructorType.getConstructSignatures();
-
-                            var parentConstructSignature: PullSignatureSymbol;
-                            var parentParameters: PullSymbol[];
-                            for (var i = 0; i < parentConstructSignatures.length; i++) {
-                                // create a new signature for each parent constructor
-                                parentConstructSignature = parentConstructSignatures[i];
-                                parentParameters = parentConstructSignature.parameters;
-
-                                constructorSignature = parentConstructSignature.isDefinition() ?
-                                new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                                constructorSignature.returnType = typeDeclSymbol;
-
-                                for (var j = 0; j < parentParameters.length; j++) {
-                                    constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
-                                }
-
-                                var typeParameters = constructorTypeSymbol.getTypeParameters();
-
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    constructorSignature.addTypeParameter(typeParameters[j]);
-                                }
-
-                                constructorTypeSymbol.addConstructSignature(constructorSignature);
-                                constructorSignature.addDeclaration(typeDecl);
-
-                                constructorMethod.setResolved();
-                                constructorTypeSymbol.setResolved();
-                                constructorSignature.setResolved();
-                            }
-                        }
-                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues
-                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                            constructorSignature.returnType = typeDeclSymbol;
-                            constructorTypeSymbol.addConstructSignature(constructorSignature);
-                            constructorSignature.addDeclaration(typeDecl);
-
-                            var typeParameters = constructorTypeSymbol.getTypeParameters();
-
-                            for (var i = 0; i < typeParameters.length; i++) {
-                                constructorSignature.addTypeParameter(typeParameters[i]);
-                            }
-
-                            constructorMethod.setResolved();
-                            constructorTypeSymbol.setResolved();
-                            constructorSignature.setResolved();
-                        }
-                    }
-
-                    if (parentType) {
-                        var parentConstructorSymbol = parentType.getConstructorMethod();
-                        var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
-                        if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
-                            constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
-                        }
-                    }
-                }
-            }
-
-            if (wasInBaseTypeResolution && (typeDeclAST.implementsList || typeDeclAST.extendsList)) {
+            if (wasInBaseTypeResolution /*&& (typeDeclAST.implementsList || typeDeclAST.extendsList)*/) {
                 // Do not resolve members as yet
                 typeDeclSymbol.inResolution = false;
                 return typeDeclSymbol;
@@ -1337,18 +1261,83 @@ module TypeScript {
 
             this.resolveReferenceTypeDeclaration(classDeclAST, context);
 
-            if (classDeclSymbol.isResolved) {
-                var constructorMethod = classDeclSymbol.getConstructorMethod();
+            var constructorMethod = classDeclSymbol.getConstructorMethod(); 
+            var extendedTypes = classDeclSymbol.getExtendedTypes();
+            var parentType = extendedTypes.length ? extendedTypes[0] : null;
+
+            if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.type;
+
+                var constructSignatures = constructorTypeSymbol.getConstructSignatures();
+
+                if (!constructSignatures.length) {
+                    var constructorSignature: PullSignatureSymbol;
+
+                    // inherit parent's constructor signatures   
+                    if (parentType) {
+                        var parentClass = parentType;
+                        var parentConstructor = parentClass.getConstructorMethod();
+                        var parentConstructorType = parentConstructor.type;
+                        var parentConstructSignatures = parentConstructorType.getConstructSignatures();
+
+                        var parentConstructSignature: PullSignatureSymbol;
+                        var parentParameters: PullSymbol[];
+                        for (var i = 0; i < parentConstructSignatures.length; i++) {
+                            // create a new signature for each parent constructor   
+                            parentConstructSignature = parentConstructSignatures[i];
+                            parentParameters = parentConstructSignature.parameters;
+
+                            constructorSignature = parentConstructSignature.isDefinition() ?
+                            new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                            constructorSignature.returnType = classDeclSymbol;
+
+                            for (var j = 0; j < parentParameters.length; j++) {
+                                constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
+                            }
+
+                            var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                constructorSignature.addTypeParameter(typeParameters[j]);
+                            }
+
+                            constructorTypeSymbol.addConstructSignature(constructorSignature);
+                            constructorSignature.addDeclaration(classDecl);
+                        }
+                    }
+                    else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
+                        constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                        constructorSignature.returnType = classDeclSymbol;
+                        constructorTypeSymbol.addConstructSignature(constructorSignature);
+                        constructorSignature.addDeclaration(classDecl);
+
+                        var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+                        for (var i = 0; i < typeParameters.length; i++) {
+                            constructorSignature.addTypeParameter(typeParameters[i]);
+                        }
+                    }
+                }
+
+                if (!classDeclSymbol.isResolved) {
+                    return classDeclSymbol;
+                }
 
                 var constructorMembers = constructorTypeSymbol.getMembers();
 
-                if (constructorMembers.length) {
-                    this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
+                this.resolveDeclaredSymbol(constructorMethod, classDecl, context); 
 
-                    for (var i = 0; i < constructorMembers.length; i++) {
-                        this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
-                    }
+                for (var i = 0; i < constructorMembers.length; i++) {
+                    this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                }
+            }
+
+            if (parentType) {
+                var parentConstructorSymbol = parentType.getConstructorMethod();
+                var parentConstructorTypeSymbol = parentConstructorSymbol.type;
+
+                if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                    constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
                 }
             }
 
@@ -2417,124 +2406,128 @@ module TypeScript {
 
             if (context.typeCheck()) {
                 var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
-                this.seenSuperConstructorCall = false;
 
-                this.resolveAST(funcDeclAST.block, false, funcDecl, context);
+                PullTypeResolver.typeCheckCallBacks.push(() => {
+                    this.setUnitPath(funcDecl.getScriptName());
+                    this.seenSuperConstructorCall = false;
 
-                this.validateVariableDeclarationGroups(funcDecl, context);
+                    this.resolveAST(funcDeclAST.block, false, funcDecl, context);
 
-                var enclosingDecl = this.getEnclosingDecl(funcDecl);
+                    this.validateVariableDeclarationGroups(funcDecl, context);
 
-                var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+                    var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-                var parameters = signature.parameters;
+                    var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                // Is it a constructor?
-                if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-                    if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
-                        // Constructors for derived classes must contain a call to the class's 'super' constructor
-                        if (!this.seenSuperConstructorCall) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
-                                DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call, null, enclosingDecl);
-                        }
-                        // The first statement in the body of a constructor must be a super call if both of the following are true:
-                        //  - The containing class is a derived class.
-                        //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
-                        else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
-                            var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
-                            if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
+                    var parameters = signature.parameters;
+
+                    // Is it a constructor?
+                    if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+                        if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
+                            // Constructors for derived classes must contain a call to the class's 'super' constructor
+                            if (!this.seenSuperConstructorCall) {
                                 context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
-                                    DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties, null, enclosingDecl);
+                                    DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call, null, enclosingDecl);
                             }
-                        }
-                    }
-                }
-
-                // Is it an indexer?
-                else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-
-                    var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
-
-                    for (var i = 0; i < allIndexSignatures.length; i++) {
-                        if (!allIndexSignatures[i].isResolved) {
-                            this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
-                        }
-
-                        if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
-                            var stringIndexSignature: PullSignatureSymbol = null;
-                            var numberIndexSignature: PullSignatureSymbol = null;
-
-                            var indexSignature = signature;
-
-                            var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
-
-                            if (isNumericIndexer) {
-                                numberIndexSignature = indexSignature;
-                                stringIndexSignature = allIndexSignatures[i];
-                            }
-                            else {
-                                numberIndexSignature = allIndexSignatures[i];
-                                stringIndexSignature = indexSignature;
-
-                                // If we are a string indexer sharing a container with a number index signature, the number will report the error
-                                // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
-                                if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
-                                    break;
-                                }
-                            }
-                            var comparisonInfo = new TypeComparisonInfo();
-                            var resolutionContext = new PullTypeResolutionContext();
-                            if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
-                                if (comparisonInfo.message) {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
-                                        [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message], enclosingDecl);
-                                } else {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
-                                        [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()], enclosingDecl);
-                                }
-                            }
-                            break;
-                        }
-                    }
-
-                    // Check that property names comply with indexer constraints (both string and numeric)
-                    var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, /*includePrivate*/ true);
-                    for (var i = 0; i < allMembers.length; i++) {
-                        var name = allMembers[i].name;
-                        if (name) {
-                            if (!allMembers[i].isResolved) {
-                                this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
-                            }
-                            // Skip members in the same container, they will be checked during their member type check
-                            if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
-                                // Check if the member name is numerical
-                                var isMemberNumeric = isFinite(+name);
-                                if (isNumericIndexer === isMemberNumeric) {
-                                    this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
+                            // The first statement in the body of a constructor must be a super call if both of the following are true:
+                            //  - The containing class is a derived class.
+                            //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                            else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
+                                var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
+                                if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
+                                        DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties, null, enclosingDecl);
                                 }
                             }
                         }
                     }
-                }
 
-                // It's just a conventional function or method
-                else {
+                    // Is it an indexer?
+                    else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
 
-                    if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
-                        var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
+                        var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
 
-                        if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
-                            var funcName = funcDecl.getDisplayName();
-                            funcName = funcName ? "'" + funcName + "'" : "expression";
+                        for (var i = 0; i < allIndexSignatures.length; i++) {
+                            if (!allIndexSignatures[i].isResolved) {
+                                this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
+                            }
 
-                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
+                            if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
+                                var stringIndexSignature: PullSignatureSymbol = null;
+                                var numberIndexSignature: PullSignatureSymbol = null;
+
+                                var indexSignature = signature;
+
+                                var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
+
+                                if (isNumericIndexer) {
+                                    numberIndexSignature = indexSignature;
+                                    stringIndexSignature = allIndexSignatures[i];
+                                }
+                                else {
+                                    numberIndexSignature = allIndexSignatures[i];
+                                    stringIndexSignature = indexSignature;
+
+                                    // If we are a string indexer sharing a container with a number index signature, the number will report the error
+                                    // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
+                                    if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
+                                        break;
+                                    }
+                                }
+                                var comparisonInfo = new TypeComparisonInfo();
+                                var resolutionContext = new PullTypeResolutionContext();
+                                if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
+                                    if (comparisonInfo.message) {
+                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
+                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message], enclosingDecl);
+                                    } else {
+                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
+                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()], enclosingDecl);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        // Check that property names comply with indexer constraints (both string and numeric)
+                        var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, /*includePrivate*/ true);
+                        for (var i = 0; i < allMembers.length; i++) {
+                            var name = allMembers[i].name;
+                            if (name) {
+                                if (!allMembers[i].isResolved) {
+                                    this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
+                                }
+                                // Skip members in the same container, they will be checked during their member type check
+                                if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
+                                    // Check if the member name is numerical
+                                    var isMemberNumeric = isFinite(+name);
+                                    if (isNumericIndexer === isMemberNumeric) {
+                                        this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
+                                    }
+                                }
+                            }
                         }
                     }
-                }
 
-                this.typeCheckFunctionOverloads(funcDeclAST, context);
-                this.checkFunctionTypePrivacy(funcDeclAST, false, context);
-                this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+                    // It's just a conventional function or method
+                    else {
+
+                        if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+                            var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
+
+                            if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                                var funcName = funcDecl.getDisplayName();
+                                funcName = funcName ? "'" + funcName + "'" : "expression";
+
+                                context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
+                            }
+                        }
+                    }
+
+                    this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                    this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+                });
             }
 
             return funcSymbol;
@@ -3205,90 +3198,93 @@ module TypeScript {
                     parentDecl = parentDecl.getParentDecl();
                 }
 
-                // push contextual type
-                var inContextuallyTypedAssignment = false;
-                var enclosingDeclAST: FunctionDeclaration;
+                //PullTypeResolver.typeCheckCallBacks.push(() => {
 
-                if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                    enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-                    if (enclosingDeclAST.returnTypeAnnotation) {
-                        // The containing function has a type annotation, propagate it as the contextual type
-                        var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
-                        if (returnTypeAnnotationSymbol) {
-                            inContextuallyTypedAssignment = true;
-                            context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
-                        }
-                    }
-                    else {
-                        // No type annotation, check if there is a contextual type enforced on the function, and propagate that
-                        var currentContextualType = context.getContextualType();
-                        if (currentContextualType && currentContextualType.isFunction()) {
-                            var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                            var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
-                            if (currentContextualTypeReturnTypeSymbol) {
+                    // push contextual type
+                    var inContextuallyTypedAssignment = false;
+                    var enclosingDeclAST: FunctionDeclaration;
+
+                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                        enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+                        if (enclosingDeclAST.returnTypeAnnotation) {
+                            // The containing function has a type annotation, propagate it as the contextual type
+                            var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
+                            if (returnTypeAnnotationSymbol) {
                                 inContextuallyTypedAssignment = true;
-                                context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
+                                context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
                             }
                         }
-                    }
-                }
-
-                if (inContextuallyTypedAssignment) {
-                    context.popContextualType();
-                }
-
-                if (enclosingDecl.kind === PullElementKind.SetAccessor && returnExpr) {
-                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null, enclosingDecl);
-                }
-
-                if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-
-                    enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-
-                    if (enclosingDeclAST.returnTypeAnnotation) {
-                        var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                        var sigReturnType = signatureSymbol.returnType;
-
-                        if (returnType && sigReturnType) {
-                            var comparisonInfo = new TypeComparisonInfo();
-                            var upperBound: PullTypeSymbol = null;
-
-                            if (returnType.isTypeParameter()) {
-                                upperBound = (<PullTypeParameterSymbol>returnType).getConstraint();
-
-                                if (upperBound) {
-                                    returnType = upperBound;
-                                }
-                            }
-
-                            if (sigReturnType.isTypeParameter()) {
-                                upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
-
-                                if (upperBound) {
-                                    sigReturnType = upperBound;
-                                }
-                            }
-
-                            if (!returnType.isResolved) {
-                                this.resolveDeclaredSymbol(returnType, enclosingDecl, context);
-                            }
-
-                            if (!sigReturnType.isResolved) {
-                                this.resolveDeclaredSymbol(sigReturnType, enclosingDecl, context);
-                            }
-
-                            var isAssignable = this.sourceIsAssignableToTarget(returnType, sigReturnType, context, comparisonInfo);
-
-                            if (!isAssignable) {
-                                if (comparisonInfo.message) {
-                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message], enclosingDecl);
-                                } else {
-                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [returnType.toString(), sigReturnType.toString()], enclosingDecl);
+                        else {
+                            // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                            var currentContextualType = context.getContextualType();
+                            if (currentContextualType && currentContextualType.isFunction()) {
+                                var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                                var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
+                                if (currentContextualTypeReturnTypeSymbol) {
+                                    inContextuallyTypedAssignment = true;
+                                    context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
                                 }
                             }
                         }
                     }
-                }
+
+                    if (inContextuallyTypedAssignment) {
+                        context.popContextualType();
+                    }
+
+                    if (enclosingDecl.kind === PullElementKind.SetAccessor && returnExpr) {
+                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null, enclosingDecl);
+                    }
+
+                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+
+                        enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+
+                        if (enclosingDeclAST.returnTypeAnnotation) {
+                            var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                            var sigReturnType = signatureSymbol.returnType;
+
+                            if (returnType && sigReturnType) {
+                                var comparisonInfo = new TypeComparisonInfo();
+                                var upperBound: PullTypeSymbol = null;
+
+                                if (returnType.isTypeParameter()) {
+                                    upperBound = (<PullTypeParameterSymbol>returnType).getConstraint();
+
+                                    if (upperBound) {
+                                        returnType = upperBound;
+                                    }
+                                }
+
+                                if (sigReturnType.isTypeParameter()) {
+                                    upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+
+                                    if (upperBound) {
+                                        sigReturnType = upperBound;
+                                    }
+                                }
+
+                                if (!returnType.isResolved) {
+                                    this.resolveDeclaredSymbol(returnType, enclosingDecl, context);
+                                }
+
+                                if (!sigReturnType.isResolved) {
+                                    this.resolveDeclaredSymbol(sigReturnType, enclosingDecl, context);
+                                }
+
+                                var isAssignable = this.sourceIsAssignableToTarget(returnType, sigReturnType, context, comparisonInfo);
+
+                                if (!isAssignable) {
+                                    if (comparisonInfo.message) {
+                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [returnType.toString(), sigReturnType.toString(), comparisonInfo.message], enclosingDecl);
+                                    } else {
+                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [returnType.toString(), sigReturnType.toString()], enclosingDecl);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                //});
             }
 
             this.setSymbolForAST(ast, returnType, context);
@@ -3377,256 +3373,317 @@ module TypeScript {
 
             var nodeType = ast.nodeType();
 
-            if (nodeType == NodeType.List) {
-                return this.resolveList(<ASTList>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.Script) {
-                return null;
-            }
-            else if (nodeType == NodeType.ModuleDeclaration) {
-                return this.resolveModuleDeclaration(<ModuleDeclaration>ast, context);
-            }
-            else if (nodeType == NodeType.InterfaceDeclaration) {
-                return this.resolveInterfaceDeclaration(<TypeDeclaration>ast, context);
-            }
-            else if (nodeType == NodeType.ClassDeclaration) {
-                return this.resolveClassDeclaration(<ClassDeclaration>ast, context);
-            }
-            else if (nodeType == NodeType.VariableDeclaration) {
-                return this.resolveVariableDeclarationList(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.VariableDeclarator || nodeType == NodeType.Parameter) {
-                return this.resolveVariableDeclaration(<BoundDecl>ast, context, enclosingDecl);
-            }
-            else if (nodeType == NodeType.TypeParameter) {
-                return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
-            }
-            else if (nodeType == NodeType.ImportDeclaration) {
-                return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
-            }
-            else if (nodeType == NodeType.ObjectLiteralExpression) {
-                return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.Name) {
-                if (context.resolvingTypeReference) {
-                    return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
-                }
-                else {
-                    return this.resolveNameExpression(<Identifier>ast, enclosingDecl, context);
-                }
-            }
-            else if (nodeType == NodeType.MemberAccessExpression) {
-                if (context.resolvingTypeReference) {
-                    return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                }
-                else {
-                    return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                }
-            }
-            else if (nodeType == NodeType.GenericType) {
-                return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.FunctionDeclaration) {
-                {
-                    var funcDecl = <FunctionDeclaration>ast;
+            switch (nodeType) {
+                case NodeType.List:
+                    return this.resolveList(<ASTList>ast, enclosingDecl, context);
 
-                    if (funcDecl.isGetAccessor()) {
-                        return this.resolveGetAccessorDeclaration(funcDecl, context);
-                    }
-                    else if (funcDecl.isSetAccessor()) {
-                        return this.resolveSetAccessorDeclaration(funcDecl, context);
-                    }
-                    else if (inContextuallyTypedAssignment ||
-                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
-                        (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
-                        return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
+                case NodeType.Script:
+                    return null;
+
+                case NodeType.ModuleDeclaration:
+                    return this.resolveModuleDeclaration(<ModuleDeclaration>ast, context);
+
+                case NodeType.InterfaceDeclaration:
+                    return this.resolveInterfaceDeclaration(<TypeDeclaration>ast, context);
+
+                case NodeType.ClassDeclaration:
+                    return this.resolveClassDeclaration(<ClassDeclaration>ast, context);
+
+                case NodeType.VariableDeclaration:
+                    return this.resolveVariableDeclarationList(ast, enclosingDecl, context);
+
+                case NodeType.VariableDeclarator:
+                case NodeType.Parameter:
+                    return this.resolveVariableDeclaration(<BoundDecl>ast, context, enclosingDecl);
+
+                case NodeType.TypeParameter:
+                    return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
+
+                case NodeType.ImportDeclaration:
+                    return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
+
+                case NodeType.ObjectLiteralExpression:
+                    return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
+
+                case NodeType.Name:
+                    if (context.resolvingTypeReference) {
+                        return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
                     }
                     else {
-                        return this.resolveFunctionDeclaration(funcDecl, context);
+                        return this.resolveNameExpression(<Identifier>ast, enclosingDecl, context);
                     }
-                }
-            }
-            else if (nodeType == NodeType.ArrayLiteralExpression) {
-                return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ThisExpression) {
-                return this.resolveThisExpression(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.SuperExpression) {
-                return this.resolveSuperExpression(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.InvocationExpression) {
-                return this.resolveInvocationExpression(<InvocationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ObjectCreationExpression) {
-                return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.CastExpression) {
-                return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.TypeRef) {
-                return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ReturnStatement) {
-                return this.resolveReturnStatement(ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.NumericLiteral) {
-                return this.semanticInfoChain.numberTypeSymbol;
-            }
-            else if (nodeType == NodeType.StringLiteral) {
-                return this.semanticInfoChain.stringTypeSymbol;
-            }
-            else if (nodeType == NodeType.NullLiteral) {
-                return this.semanticInfoChain.nullTypeSymbol;
-            }
-            else if (nodeType == NodeType.TrueLiteral || nodeType == NodeType.FalseLiteral) {
-                return this.semanticInfoChain.booleanTypeSymbol;
-            }
-            else if (nodeType == NodeType.VoidExpression) {
-                // PERFREVIEW: resolveVoidExpression
-                return this.resolveVoidExpression(ast, enclosingDecl, context);
-                //return this.semanticInfoChain.voidTypeSymbol;
-            }
-            else if (nodeType == NodeType.AssignmentExpression) {
-                return this.resolveAssignmentStatement(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.LogicalNotExpression) {
-                return this.resolveUnaryLogicalOperation(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.NotEqualsWithTypeConversionExpression ||
-                nodeType == NodeType.EqualsWithTypeConversionExpression ||
-                nodeType == NodeType.EqualsExpression ||
-                nodeType == NodeType.NotEqualsExpression ||
-                nodeType == NodeType.LessThanExpression ||
-                nodeType == NodeType.LessThanOrEqualExpression ||
-                nodeType == NodeType.GreaterThanOrEqualExpression ||
-                nodeType == NodeType.GreaterThanExpression) {
-                // PERFREVIEW
-                return this.resolveLogicalOperation(ast, enclosingDecl, context);
+
+                case NodeType.MemberAccessExpression:
+                    if (context.resolvingTypeReference) {
+                        return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    }
+
+                case NodeType.GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
+
+                case NodeType.FunctionDeclaration:
+                    {
+                        var funcDecl = <FunctionDeclaration>ast;
+
+                        if (funcDecl.isGetAccessor()) {
+                            return this.resolveGetAccessorDeclaration(funcDecl, context);
+                        }
+                        else if (funcDecl.isSetAccessor()) {
+                            return this.resolveSetAccessorDeclaration(funcDecl, context);
+                        }
+                        else if (inContextuallyTypedAssignment ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                            return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
+                        }
+                        else {
+                            return this.resolveFunctionDeclaration(funcDecl, context);
+                        }
+                    }
+
+                case NodeType.VariableDeclarator:
+                case NodeType.Parameter:
+                    return this.resolveVariableDeclaration(<BoundDecl>ast, context, enclosingDecl);
+
+                case NodeType.TypeParameter:
+                    return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
+
+                case NodeType.ImportDeclaration:
+                    return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
+
+                case NodeType.ObjectLiteralExpression:
+                    return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
+
+                case NodeType.Name:
+                    if (context.resolvingTypeReference) {
+                        return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveNameExpression(<Identifier>ast, enclosingDecl, context);
+                    }
+
+                case NodeType.MemberAccessExpression:
+                    if (context.resolvingTypeReference) {
+                        return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    }
+
+                case NodeType.GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
+
+                case NodeType.FunctionDeclaration:
+                    {
+                        var funcDecl = <FunctionDeclaration>ast;
+
+                        if (funcDecl.isGetAccessor()) {
+                            return this.resolveGetAccessorDeclaration(funcDecl, context);
+                        }
+                        else if (funcDecl.isSetAccessor()) {
+                            return this.resolveSetAccessorDeclaration(funcDecl, context);
+                        }
+                        else if (inContextuallyTypedAssignment ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                            return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
+                        }
+                        else {
+                            return this.resolveFunctionDeclaration(funcDecl, context);
+                        }
+                    }
+
+                case NodeType.ArrayLiteralExpression:
+                    return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.ThisExpression:
+                    return this.resolveThisExpression(ast, enclosingDecl, context);
+
+                case NodeType.SuperExpression:
+                    return this.resolveSuperExpression(ast, enclosingDecl, context);
+
+                case NodeType.InvocationExpression:
+                    return this.resolveInvocationExpression(<InvocationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.ObjectCreationExpression:
+                    return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.CastExpression:
+                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.TypeRef:
+                    return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
+
+                case NodeType.ExportAssignment:
+                    return this.resolveExportAssignmentStatement(<ExportAssignment>ast, enclosingDecl, context);
+
+                // primitives
+                case NodeType.NumericLiteral:
+                    return this.semanticInfoChain.numberTypeSymbol;
+                case NodeType.StringLiteral:
+                    return this.semanticInfoChain.stringTypeSymbol;
+                case NodeType.NullLiteral:
+                    return this.semanticInfoChain.nullTypeSymbol;
+                case NodeType.TrueLiteral:
+                case NodeType.FalseLiteral:
+                    return this.semanticInfoChain.booleanTypeSymbol;
+                case NodeType.VoidExpression:
+                    // PERFREVIEW: resolveVoidExpression   
+                    return this.resolveVoidExpression(ast, enclosingDecl, context);
+                //return this.semanticInfoChain.voidTypeSymbol;   
+
+                // assignment
+                case NodeType.AssignmentExpression:
+                    return this.resolveAssignmentStatement(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                // boolean operations
+                case NodeType.LogicalNotExpression:
+                    return this.resolveUnaryLogicalOperation(ast, enclosingDecl, context);
+
+                case NodeType.NotEqualsWithTypeConversionExpression:
+                case NodeType.EqualsWithTypeConversionExpression:
+                case NodeType.EqualsExpression:
+                case NodeType.NotEqualsExpression:
+                case NodeType.LessThanExpression:
+                case NodeType.LessThanOrEqualExpression:
+                case NodeType.GreaterThanOrEqualExpression:
+                case NodeType.GreaterThanExpression:
+                    // PERFREVIEW   
+                    return this.resolveLogicalOperation(ast, enclosingDecl, context);
                 //return this.semanticInfoChain.booleanTypeSymbol;
-            }
-            else if (nodeType == NodeType.AddExpression ||
-                nodeType == NodeType.AddAssignmentExpression) {
-                return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.PlusExpression ||
-                nodeType == NodeType.NegateExpression ||
-                nodeType == NodeType.BitwiseNotExpression ||
-                nodeType == NodeType.PostIncrementExpression ||
-                nodeType == NodeType.PreIncrementExpression ||
-                nodeType == NodeType.PostDecrementExpression ||
-                nodeType == NodeType.PreDecrementExpression) {
-                return this.resolveUnaryArithmeticOperation(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.SubtractAssignmentExpression ||
-                nodeType == NodeType.MultiplyAssignmentExpression ||
-                nodeType == NodeType.DivideAssignmentExpression ||
-                nodeType == NodeType.ModuloAssignmentExpression ||
-                nodeType == NodeType.OrAssignmentExpression ||
-                nodeType == NodeType.AndAssignmentExpression ||
 
-                nodeType == NodeType.SubtractExpression ||
-                nodeType == NodeType.MultiplyExpression ||
-                nodeType == NodeType.DivideExpression ||
-                nodeType == NodeType.ModuloExpression ||
-                nodeType == NodeType.BitwiseOrExpression ||
-                nodeType == NodeType.BitwiseAndExpression ||
+                case NodeType.AddExpression:
+                case NodeType.AddAssignmentExpression:
+                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                nodeType == NodeType.LeftShiftExpression ||
-                nodeType == NodeType.SignedRightShiftExpression ||
-                nodeType == NodeType.UnsignedRightShiftExpression ||
-                nodeType == NodeType.LeftShiftAssignmentExpression ||
-                nodeType == NodeType.SignedRightShiftAssignmentExpression ||
-                nodeType == NodeType.UnsignedRightShiftAssignmentExpression) {
-                // PERFREVIEW
-                return this.resolveBinaryArithmeticExpression(ast, enclosingDecl, context);
+
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
+                case NodeType.BitwiseNotExpression:
+                case NodeType.PostIncrementExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                case NodeType.PreDecrementExpression:
+                    return this.resolveUnaryArithmeticOperation(ast, enclosingDecl, context);
+
+                case NodeType.SubtractAssignmentExpression:
+                case NodeType.MultiplyAssignmentExpression:
+                case NodeType.DivideAssignmentExpression:
+                case NodeType.ModuloAssignmentExpression:
+                case NodeType.OrAssignmentExpression:
+                case NodeType.AndAssignmentExpression:
+
+                case NodeType.SubtractExpression:
+                case NodeType.MultiplyExpression:
+                case NodeType.DivideExpression:
+                case NodeType.ModuloExpression:
+                case NodeType.BitwiseOrExpression:
+                case NodeType.BitwiseAndExpression:
+
+                case NodeType.LeftShiftExpression:
+                case NodeType.SignedRightShiftExpression:
+                case NodeType.UnsignedRightShiftExpression:
+                case NodeType.LeftShiftAssignmentExpression:
+                case NodeType.SignedRightShiftAssignmentExpression:
+                case NodeType.UnsignedRightShiftAssignmentExpression:
+                    // PERFREVIEW   
+                    return this.resolveBinaryArithmeticExpression(ast, enclosingDecl, context);
                 //return this.semanticInfoChain.numberTypeSymbol;
-            }
-            else if (nodeType == NodeType.ParenthesizedExpression) {
-                return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ExpressionStatement) {
-                return this.resolveExpressionStatement(<ExpressionStatement>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ElementAccessExpression) {
-                return this.resolveIndexExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.LogicalOrExpression) {
-                return this.resolveLogicalOrExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.LogicalAndExpression) {
-                return this.resolveLogicalAndExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.TypeOfExpression) {
-                return this.resolveTypeOfExpression(ast, enclosingDecl, context);
+
+                case NodeType.ElementAccessExpression:
+                    return this.resolveIndexExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.LogicalOrExpression:
+                    return this.resolveLogicalOrExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.LogicalAndExpression:
+                    return this.resolveLogicalAndExpression(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.TypeOfExpression:
+                    return this.resolveTypeOfExpression(ast, enclosingDecl, context);
                 //return this.semanticInfoChain.stringTypeSymbol;
-            }
-            else if (nodeType == NodeType.ThrowStatement) {
-                return this.resolveThrowStatement(ast, enclosingDecl, context);
+
+                case NodeType.ThrowStatement:
+                    return this.resolveThrowStatement(ast, enclosingDecl, context);
                 //return this.semanticInfoChain.voidTypeSymbol;
+
+                case NodeType.DeleteExpression:
+                    return this.resolveDeleteStatement(ast, enclosingDecl, context);
+
+                case NodeType.ConditionalExpression:
+                    return this.resolveConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
+
+                case NodeType.RegularExpressionLiteral:
+                    return this.resolveRegularExpressionLiteral();
+
+                case NodeType.ParenthesizedExpression:
+                    return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, enclosingDecl, context);
+
+                case NodeType.ExpressionStatement:
+                    return this.resolveExpressionStatement(<ExpressionStatement>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.InstanceOfExpression:
+                    return this.resolveInstanceOfExpression(ast, enclosingDecl, context);
+
+                case NodeType.CommaExpression:
+                    return this.resolveCommaExpression(ast, enclosingDecl, context);
+
+                case NodeType.InExpression:
+                    return this.resolveInExpression(ast, enclosingDecl, context);
+
+                case NodeType.ForStatement:
+                    return this.resolveForStatement(ast, enclosingDecl, context);
+
+                case NodeType.ForInStatement:
+                    return this.resolveForInStatement(ast, enclosingDecl, context);
+
+                case NodeType.WhileStatement:
+                    return this.resolveWhileStatement(ast, enclosingDecl, context);
+
+                case NodeType.DoStatement:
+                    return this.resolveDoStatement(ast, enclosingDecl, context);
+
+                case NodeType.IfStatement:
+                    return this.resolveIfStatement(ast, enclosingDecl, context);
+
+                case NodeType.Block:
+                    return this.resolveBlock(ast, enclosingDecl, context);
+
+                case NodeType.VariableStatement:
+                    return this.resolveVariableStatement(ast, enclosingDecl, context);
+
+                case NodeType.WithStatement:
+                    return this.resolveWithStatement(ast, enclosingDecl, context);
+
+                case NodeType.TryStatement:
+                    return this.resolveTryStatement(ast, enclosingDecl, context);
+
+                case NodeType.CatchClause:
+                    return this.resolveCatchClause(ast, enclosingDecl, context);
+
+                case NodeType.ReturnStatement:
+                    return this.resolveReturnStatement(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.SwitchStatement:
+                    return this.resolveSwitchStatement(ast, enclosingDecl, context);
+
+                case NodeType.CaseClause:
+                    return this.resolveCaseClause(ast, enclosingDecl, context);
+
+                case NodeType.LabeledStatement:
+                    return this.resolveLabeledStatement(ast, enclosingDecl, context);
             }
-            else if (nodeType == NodeType.DeleteExpression) {
-                return this.resolveDeleteStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ConditionalExpression) {
-                return this.resolveConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ExportAssignment) {
-                return this.resolveExportAssignmentStatement(<ExportAssignment>ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.RegularExpressionLiteral) {
-                return this.resolveRegularExpressionLiteral();
-            }
-            else if (nodeType == NodeType.InstanceOfExpression) {
-                return this.resolveInstanceOfExpression(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.CommaExpression) {
-                return this.resolveCommaExpression(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.InExpression) {
-                return this.resolveInExpression(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ForStatement) {
-                return this.resolveForStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.ForInStatement) {
-                return this.resolveForInStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.WhileStatement) {
-                return this.resolveWhileStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.DoStatement) {
-                return this.resolveDoStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.IfStatement) {
-                return this.resolveIfStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.Block) {
-                return this.resolveBlock(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.VariableStatement) {
-                return this.resolveVariableStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.WithStatement) {
-                return this.resolveWithStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.TryStatement) {
-                return this.resolveTryStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.CatchClause) {
-                return this.resolveCatchClause(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.SwitchStatement) {
-                return this.resolveSwitchStatement(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.CaseClause) {
-                return this.resolveCaseClause(ast, enclosingDecl, context);
-            }
-            else if (nodeType == NodeType.LabeledStatement) {
-                return this.resolveLabeledStatement(ast, enclosingDecl, context);
-            }
-            
 
             return this.semanticInfoChain.anyTypeSymbol;
         }
@@ -4367,27 +4424,30 @@ module TypeScript {
             funcDeclSymbol.setResolved();
 
             if (context.typeCheck()) {
-                this.seenSuperConstructorCall = false;
+                PullTypeResolver.typeCheckCallBacks.push(() => {
+                    this.setUnitPath(functionDecl.getScriptName());
+                    this.seenSuperConstructorCall = false;
 
-                this.resolveAST(funcDeclAST.block, false, functionDecl, context);
+                    this.resolveAST(funcDeclAST.block, false, functionDecl, context);
 
-                this.validateVariableDeclarationGroups(functionDecl, context);
+                    this.validateVariableDeclarationGroups(functionDecl, context);
 
-                var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
-            
-                if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
-                    var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
+                    var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                    if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
-                        var funcName = functionDecl.getDisplayName();
-                        funcName = funcName ? "'" + funcName + "'" : "expression";
+                    if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+                        var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
 
-                        context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
+                        if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                            var funcName = functionDecl.getDisplayName();
+                            funcName = funcName ? "'" + funcName + "'" : "expression";
+
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
+                        }
                     }
-                }                
 
-                //this.typeCheckFunctionOverloads(funcDeclAST, context);
-                //this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                    //this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    //this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                });
             }
 
             return funcDeclSymbol;
@@ -8001,6 +8061,13 @@ module TypeScript {
             resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
             PullTypeResolver.globalTypeCheckPhase++;
+            var callBack: { (): void } = null;
+
+            while (PullTypeResolver.typeCheckCallBacks.length) {
+                callBack = PullTypeResolver.typeCheckCallBacks[PullTypeResolver.typeCheckCallBacks.length - 1];
+                PullTypeResolver.typeCheckCallBacks.pop();
+                callBack();
+            }
 
             unit.setTypeChecked();
 
