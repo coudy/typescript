@@ -1,13 +1,24 @@
 //@disallowimplicitany: true
 // these should be errors
-class C {
-    nullMember = null;         // error at "nullMember"
-    public get NullMember() {  // error at "NullMember"
-        return this.nullMember;
+class GetAndSet {
+    getAndSet = null;             // error at "getAndSet"
+    public get haveGetAndSet() {  // error at "GetAndSet"
+        return this.getAndSet;
     }
     
     // this shouldn't be an error
-    public set NullMember(value) {
-        this.nullMember = value;
+    public set haveGetAndSet(value) {  // error at "value"
+        this.getAndSet = value;
+    }
+}
+
+class SetterOnly {
+    public set haveOnlySet(newXValue) {  // error at "haveOnlySet, newXValue"
+    }
+}
+
+class GetterOnly {
+    public get haveOnlyGet() {  // error at "haveOnlyGet"
+        return null;
     }
 }

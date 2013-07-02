@@ -1,17 +1,42 @@
-var C = (function () {
-    function C() {
-        this.nullMember = null;
+var GetAndSet = (function () {
+    function GetAndSet() {
+        this.getAndSet = null;
     }
-    Object.defineProperty(C.prototype, "NullMember", {
+    Object.defineProperty(GetAndSet.prototype, "haveGetAndSet", {
         get: function () {
-            return this.nullMember;
+            return this.getAndSet;
         },
         set: function (value) {
-            this.nullMember = value;
+            this.getAndSet = value;
         },
         enumerable: true,
         configurable: true
     });
 
-    return C;
+    return GetAndSet;
+})();
+
+var SetterOnly = (function () {
+    function SetterOnly() {
+    }
+    Object.defineProperty(SetterOnly.prototype, "haveOnlySet", {
+        set: function (newXValue) {
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SetterOnly;
+})();
+
+var GetterOnly = (function () {
+    function GetterOnly() {
+    }
+    Object.defineProperty(GetterOnly.prototype, "haveOnlyGet", {
+        get: function () {
+            return null;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return GetterOnly;
 })();
