@@ -14,6 +14,11 @@ function func3() {
     }
 }
 ;
+function func4(z, w) {
+    if (typeof z === "undefined") { z = null; }
+    if (typeof w === "undefined") { w = undefined; }
+}
+;
 
 function noError1(x, y) {
     if (typeof x === "undefined") { x = 3; }
