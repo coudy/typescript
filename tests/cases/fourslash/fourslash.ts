@@ -207,6 +207,15 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyTextAtCaretIs(text);
         }
 
+        /**
+            Compiles the current file and evaluates 'expr' in a context containing
+            the emitted output, then compares (using ===) the result of that expression
+            to 'value'. Do not use this function with external modules as it is not supported.
+        */
+        public eval(expr: string, value: any) {
+            FourSlash.currentTestState.verifyEval(expr, value);
+        }
+
         public currentLineContentIs(text: string) {
             FourSlash.currentTestState.verifyCurrentLineContent(text);
         }
