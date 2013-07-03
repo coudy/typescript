@@ -21,13 +21,12 @@
 ////var c2: Collection<number>;
 ////var c3: Collection<Collection<number>>;
 ////var c4: Collection<A>;
-////var c5: Collection<B>;
+////var c5: Collection<B<any>>;
 
 ////var _: Combinators;
 ////var rf1 = (x: number) => { return x.toFixed() };
 ////var rf2 = (x: Collection<number>) => { return x.length };
 ////var rf3 = (x: A) => { return x.foo() };
-////var rf4 = <T>(x: B<T>) => { return x.foo<number>(1); }; // error
 
 ////var r1a/*9*/ = _.map(c2, (x/*1*/) => { return x.toFixed() });
 ////var r1b/*10*/ = _.map(c2, rf1);
@@ -39,7 +38,6 @@
 ////var r3b/*14*/ = _.map(c4, rf3);
 
 ////var r4a/*15*/ = _.map(c5, (x/*4*/) => { return x.foo(1) });
-////var r4b/*16*/ = _.map(c5, rf4);
 
 ////var r5a/*17*/ = _.map<number, string>(c2, (x/*5*/) => { return x.toFixed() });
 ////var r5b/*18*/ = _.map<number, string>(c2, rf1);
@@ -51,7 +49,6 @@
 ////var r7b/*22*/ = _.map<A, A>(c4, rf3);
 
 ////var r8a/*23*/ = _.map<B, string>(c5, (x/*8*/) => { return x.foo() });
-////var r8b/*24*/ = _.map<B, string>(c5, rf4); 
 
 
 goTo.marker('1');
@@ -65,18 +62,13 @@ verify.quickInfoIs('B<any>');
 goTo.marker('5');
 verify.quickInfoIs('number');
 goTo.marker('6');
-// VS shows Collection<number>, fourslash does not...
-//verify.quickInfoIs('Collection<number>');
 verify.quickInfoIs('Collection<Collection<number>>');
 goTo.marker('7');
 verify.quickInfoIs('A');
 goTo.marker('8');
 verify.quickInfoIs('B<T>');
-
 goTo.marker('9');
-// VS shows Collection<string>, fourslash does not...
-//verify.quickInfoIs('Collection<string>');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<any>'); // ambiguous so we chose first overload
 goTo.marker('10');
 verify.quickInfoIs('Collection<string>');
 goTo.marker('11');
@@ -84,14 +76,10 @@ verify.quickInfoIs('Collection<number>');
 goTo.marker('12');
 verify.quickInfoIs('Collection<number>');
 goTo.marker('13');
-// VS shows Collection<A>, fourslash does not...
-//verify.quickInfoIs('Collection<A>');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<any>'); // ambiguous so we chose first overload
 goTo.marker('14');
 verify.quickInfoIs('Collection<A>');
 goTo.marker('15');
-verify.quickInfoIs('Collection<any>');
-goTo.marker('16');
 verify.quickInfoIs('Collection<any>');
 goTo.marker('17');
 verify.quickInfoIs('Collection<string>');
@@ -106,6 +94,4 @@ verify.quickInfoIs('Collection<A>');
 goTo.marker('22');
 verify.quickInfoIs('Collection<A>');
 goTo.marker('23');
-verify.quickInfoIs('Collection<string>');
-goTo.marker('24');
 verify.quickInfoIs('Collection<string>');
