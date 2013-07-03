@@ -1888,7 +1888,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                     , negative: true
                     , errors: [
-                        'error TS5010: Cannot compile dynamic modules when emitting into single file.']
+                        'error TS5010: Cannot compile external modules when emitting into single file.']
             });
 
             tests.push({
@@ -2025,7 +2025,7 @@ class ProjectRunner extends RunnerBase {
                     , skipRun: true
                     , negative: true
                     , errors: [
-                        'error TS5010: Cannot compile dynamic modules when emitting into single file.']
+                        'error TS5010: Cannot compile external modules when emitting into single file.']
             });
 
             tests.push({
@@ -2160,7 +2160,7 @@ class ProjectRunner extends RunnerBase {
                 , skipRun: true
                 , negative: true
                 , errors: [
-                    'error TS5010: Cannot compile dynamic modules when emitting into single file.']
+                    'error TS5010: Cannot compile external modules when emitting into single file.']
             });
 
             tests.push({
@@ -2223,7 +2223,7 @@ class ProjectRunner extends RunnerBase {
                 , skipRun: true
                 , negative: true
                 , errors: [
-                    'error TS5010: Cannot compile dynamic modules when emitting into single file.']
+                    'error TS5010: Cannot compile external modules when emitting into single file.']
             });
 
             tests.push({
