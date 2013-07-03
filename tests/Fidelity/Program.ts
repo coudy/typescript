@@ -126,7 +126,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -187,7 +187,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -299,7 +299,7 @@ class Program {
         var actualFile = fileName + ".actual";
 
         if (generateBaseline) {
-            actualResult = justText ? result : JSON2.stringify(result, null, 4);
+            actualResult = justText ? result : JSON3.stringify(result, null, 4);
             expectedFile = fileName + ".expected";
 
             // Environment.standardOut.WriteLine("Generating baseline for: " + fileName);
@@ -310,14 +310,14 @@ class Program {
             }
         }
         else if (verify) {
-            actualResult = justText ? result : JSON2.stringify(result, null, 4);
+            actualResult = justText ? result : JSON3.stringify(result, null, 4);
 
             var expectedResult = null;
             if (!Environment.fileExists(expectedFile)) {
                 Environment.writeFile(expectedFile, "", false);
             }
             else {
-                expectedResult = Environment.readFile(expectedFile).contents();
+                expectedResult = Environment.readFile(expectedFile).contents;
             }
 
             if (expectedResult !== actualResult) {
@@ -354,7 +354,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -382,7 +382,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -410,7 +410,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         totalSize += contents.length;
@@ -448,7 +448,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -472,7 +472,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
         // Environment.standardOut.WriteLine(fileName);
 
         var text = TypeScript.TextFactory.createText(contents);
@@ -533,7 +533,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -559,7 +559,7 @@ class Program {
             return;
         }
 
-        var contents = Environment.readFile(fileName).contents();
+        var contents = Environment.readFile(fileName).contents;
 
         var text = TypeScript.TextFactory.createText(contents);
         var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
@@ -622,7 +622,7 @@ class Program {
 
             // All 262 files are utf8.  But they dont' have a BOM.  Force them to be read in
             // as UTF8.
-            var contents = Environment.readFile(fileName).contents();
+            var contents = Environment.readFile(fileName).contents;
 
             var isNegative = contents.indexOf("@negative") >= 0
 
@@ -678,14 +678,14 @@ class Program {
 }
 
 var diagnostics = {};
-for (var d in TypeScript.diagnosticMessages) {
-    if (TypeScript.diagnosticMessages.hasOwnProperty(d)) {
-        var info: TypeScript.DiagnosticInfo = TypeScript.diagnosticMessages[d];
+for (var d in TypeScript.LocalizedDiagnosticMessages) {
+    if (TypeScript.LocalizedDiagnosticMessages.hasOwnProperty(d)) {
+        var info: TypeScript.DiagnosticInfo = TypeScript.LocalizedDiagnosticMessages[d];
         diagnostics[info.message] = { category: TypeScript.DiagnosticCategory[info.category], code: info.code };
     }
 }
 
-var whatever = JSON2.stringify(diagnostics, null, 4);
+var whatever = JSON3.stringify(diagnostics, null, 4);
 
 var totalTime = 0;
 var totalSize = 0;
