@@ -59,7 +59,7 @@
         "category": "Error",
         "code": 1012
     },
-    "Parameter of a catch clause cannot have a type annotation.": {
+    "Catch clause parameter cannot have a type annotation.": {
         "category": "Error",
         "code": 1013
     },
@@ -111,7 +111,7 @@
         "category": "Error",
         "code": 1025
     },
-    "Classes can only extend a single type.": {
+    "Classes can only extend a single class.": {
         "category": "Error",
         "code": 1026
     },
@@ -163,7 +163,7 @@
         "category": "Error",
         "code": 1039
     },
-    "Parameter properties can only be used in constructors.": {
+    "Parameter property declarations can only be used in constructors.": {
         "category": "Error",
         "code": 1040
     },
@@ -195,7 +195,7 @@
         "category": "Error",
         "code": 1047
     },
-    "Rest parameter cannot have initializer.": {
+    "Rest parameter cannot have an initializer.": {
         "category": "Error",
         "code": 1048
     },
@@ -211,7 +211,7 @@
         "category": "Error",
         "code": 1051
     },
-    "'set' accessor parameter cannot have initializer.": {
+    "'set' accessor parameter cannot have an initializer.": {
         "category": "Error",
         "code": 1052
     },
@@ -227,7 +227,7 @@
         "category": "Error",
         "code": 1055
     },
-    "Accessors are only available when targeting ECMAScript 5.0 and higher.": {
+    "Accessors are only available when targeting ECMAScript 5 and higher.": {
         "category": "Error",
         "code": 1056
     },
@@ -255,7 +255,7 @@
         "category": "Warning",
         "code": 1062
     },
-    "Export assignments cannot be used in internal modules.": {
+    "Export assignment cannot be used in internal modules.": {
         "category": "Error",
         "code": 1063
     },
@@ -671,7 +671,7 @@
         "category": "Error",
         "code": 2087
     },
-    "Unable to invoke an expression whose type lacks a call signature.": {
+    "Cannot invoke an expression whose type lacks a call signature.": {
         "category": "Error",
         "code": 2088
     },
@@ -682,14 +682,6 @@
     "Generic type '{0}' requires {1} type argument(s).": {
         "category": "Error",
         "code": 2090
-    },
-    "Type of conditional expression cannot be determined. Best common type could not be found between '{0}' and '{1}'.": {
-        "category": "Error",
-        "code": 2091
-    },
-    "Type of array literal cannot be determined. Best common type could not be found for array elements.": {
-        "category": "Error",
-        "code": 2092
     },
     "Could not find enclosing symbol for dotted name '{0}'.": {
         "category": "Error",
@@ -771,7 +763,7 @@
         "category": "Error",
         "code": 2114
     },
-    "Variable declarations of a 'for' statement cannot contain a type annotation.": {
+    "Variable declarations of a 'for' statement cannot use a type annotation.": {
         "category": "Error",
         "code": 2115
     },
@@ -779,7 +771,7 @@
         "category": "Error",
         "code": 2116
     },
-    "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
+    "The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter.": {
         "category": "Error",
         "code": 2117
     },
@@ -791,11 +783,11 @@
         "category": "Error",
         "code": 2119
     },
-    "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.": {
+    "The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.": {
         "category": "Error",
         "code": 2120
     },
-    "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
+    "The right-hand side of an 'instanceof' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
         "category": "Error",
         "code": 2121
     },
@@ -854,10 +846,6 @@
     "Class {0} declares interface {1} but does not implement it:{NL}{2}": {
         "category": "Error",
         "code": 2137
-    },
-    "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}": {
-        "category": "Error",
-        "code": 2138
     },
     "The operand of an increment or decrement operator must be a variable, property or indexer.": {
         "category": "Error",
@@ -1067,7 +1055,7 @@
         "category": "NoPrefix",
         "code": 4014
     },
-    "Could not apply type'{0}' to argument {1} which is of type '{2}'.": {
+    "Could not apply type '{0}' to argument {1} which is of type '{2}'.": {
         "category": "NoPrefix",
         "code": 4015
     },
@@ -1095,7 +1083,7 @@
         "category": "NoPrefix",
         "code": 4021
     },
-    "Type reference cannot refer to container '{0}'.": {
+    "Type reference cannot refer to a container '{0}'.": {
         "category": "Error",
         "code": 4022
     },
@@ -1139,7 +1127,7 @@
         "category": "Error",
         "code": 5009
     },
-    "Cannot compile dynamic modules when emitting into single file.": {
+    "Cannot compile external modules when emitting into single file.": {
         "category": "Error",
         "code": 5010
     },
