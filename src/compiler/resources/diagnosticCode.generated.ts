@@ -352,7 +352,7 @@ module TypeScript {
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: "Looking up path for identifier token did not result in an identifer.",
         Unknown_rule: "Unknown rule",
         Invalid_line_number_0: "Invalid line number ({0})",
-        Disallow_implicit_any_type_and_report_an_error_when_there_is_implicit_any_type: "Disallow implicit any type and report an error when there is implicit any type.",
+        Warn_on_expressions_and_declarations_with_an_implied_any_type: "Warn on expressions and declarations with an implied 'any' type.",
         Variable_0_implicitly_has_an_any_type: "Variable '{0}' implicitly has an any type.",
         Parameter_0_of_1_implicitly_has_an_any_type: "Parameter '{0}' of '{1}' implicitly has an any type.",
         Parameter_0_of_function_type_implicitly_has_an_any_type: "Parameter '{0}' of function type implicitly has an any type.",

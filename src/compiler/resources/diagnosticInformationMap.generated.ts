@@ -1406,7 +1406,7 @@ module TypeScript {
     "code": 7003,
     "category": DiagnosticCategory.Error
   },
-  "Disallow implicit any type and report an error when there is implicit any type.": {
+  "Warn on expressions and declarations with an implied 'any' type.": {
     "code": 7004,
     "category": DiagnosticCategory.Message
   },

@@ -613,7 +613,7 @@ module TypeScript {
 
             opts.flag('disallowimplicitany', {
                 usage: {
-                    locCode: DiagnosticCode.Disallow_implicit_any_type_and_report_an_error_when_there_is_implicit_any_type,
+                    locCode: DiagnosticCode.Warn_on_expressions_and_declarations_with_an_implied_any_type,
                     args: null
                 },
                 set: () => {
