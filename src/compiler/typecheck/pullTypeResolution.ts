@@ -4574,7 +4574,7 @@ module TypeScript {
                         return SymbolAndDiagnostics.create(this.semanticInfoChain.anyTypeSymbol, diagnostics);
                     }
 
-                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Unable_to_invoke_an_expression_whose_type_lacks_a_call_signature));
+                    diagnostics = this.addDiagnostic(diagnostics, context.postError(this.unitPath, callEx.minChar, callEx.getLength(), DiagnosticCode.Cannot_invoke_an_expression_whose_type_lacks_a_call_signature));
                     errorCondition = this.getNewErrorTypeSymbol(null);
                 }
                 else {

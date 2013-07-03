@@ -404,7 +404,7 @@ module TypeScript {
 
             // Verify if options are correct
             if (!this.emitOptions.outputMany && this.isDynamicModuleCompilation()) {
-                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_dynamic_modules_when_emitting_into_single_file, null);
+                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_when_emitting_into_single_file, null);
             }
 
             // Parse the directory structure

@@ -62,7 +62,7 @@ module TypeScript {
     "code": 1012,
     "category": DiagnosticCategory.Error
   },
-  "Parameter of a catch clause cannot have a type annotation.": {
+  "Catch clause parameter cannot have a type annotation.": {
     "code": 1013,
     "category": DiagnosticCategory.Error
   },
@@ -114,7 +114,7 @@ module TypeScript {
     "code": 1025,
     "category": DiagnosticCategory.Error
   },
-  "Classes can only extend a single type.": {
+  "Classes can only extend a single class.": {
     "code": 1026,
     "category": DiagnosticCategory.Error
   },
@@ -166,7 +166,7 @@ module TypeScript {
     "code": 1039,
     "category": DiagnosticCategory.Error
   },
-  "Parameter properties can only be used in constructors.": {
+  "Parameter property declarations can only be used in constructors.": {
     "code": 1040,
     "category": DiagnosticCategory.Error
   },
@@ -198,7 +198,7 @@ module TypeScript {
     "code": 1047,
     "category": DiagnosticCategory.Error
   },
-  "Rest parameter cannot have initializer.": {
+  "Rest parameter cannot have an initializer.": {
     "code": 1048,
     "category": DiagnosticCategory.Error
   },
@@ -214,7 +214,7 @@ module TypeScript {
     "code": 1051,
     "category": DiagnosticCategory.Error
   },
-  "'set' accessor parameter cannot have initializer.": {
+  "'set' accessor parameter cannot have an initializer.": {
     "code": 1052,
     "category": DiagnosticCategory.Error
   },
@@ -230,7 +230,7 @@ module TypeScript {
     "code": 1055,
     "category": DiagnosticCategory.Error
   },
-  "Accessors are only available when targeting ECMAScript 5.0 and higher.": {
+  "Accessors are only available when targeting ECMAScript 5 and higher.": {
     "code": 1056,
     "category": DiagnosticCategory.Error
   },
@@ -258,7 +258,7 @@ module TypeScript {
     "code": 1062,
     "category": DiagnosticCategory.Warning
   },
-  "Export assignments cannot be used in internal modules.": {
+  "Export assignment cannot be used in internal modules.": {
     "code": 1063,
     "category": DiagnosticCategory.Error
   },
@@ -674,7 +674,7 @@ module TypeScript {
     "code": 2087,
     "category": DiagnosticCategory.Error
   },
-  "Unable to invoke an expression whose type lacks a call signature.": {
+  "Cannot invoke an expression whose type lacks a call signature.": {
     "code": 2088,
     "category": DiagnosticCategory.Error
   },
@@ -774,7 +774,7 @@ module TypeScript {
     "code": 2114,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations of a 'for' statement cannot contain a type annotation.": {
+  "Variable declarations of a 'for' statement cannot use a type annotation.": {
     "code": 2115,
     "category": DiagnosticCategory.Error
   },
@@ -782,7 +782,7 @@ module TypeScript {
     "code": 2116,
     "category": DiagnosticCategory.Error
   },
-  "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
+  "The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter.": {
     "code": 2117,
     "category": DiagnosticCategory.Error
   },
@@ -794,11 +794,11 @@ module TypeScript {
     "code": 2119,
     "category": DiagnosticCategory.Error
   },
-  "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.": {
+  "The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.": {
     "code": 2120,
     "category": DiagnosticCategory.Error
   },
-  "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
+  "The right-hand side of an 'instanceof' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
     "code": 2121,
     "category": DiagnosticCategory.Error
   },
@@ -858,7 +858,7 @@ module TypeScript {
     "code": 2137,
     "category": DiagnosticCategory.Error
   },
-  "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}": {
+  "Class {0} declares class {1} as an interface but does not implement it:{NL}{2}": {
     "code": 2138,
     "category": DiagnosticCategory.Error
   },
@@ -1070,7 +1070,7 @@ module TypeScript {
     "code": 4014,
     "category": DiagnosticCategory.NoPrefix
   },
-  "Could not apply type'{0}' to argument {1} which is of type '{2}'.": {
+  "Could not apply type '{0}' to argument {1} which is of type '{2}'.": {
     "code": 4015,
     "category": DiagnosticCategory.NoPrefix
   },
@@ -1142,7 +1142,7 @@ module TypeScript {
     "code": 5009,
     "category": DiagnosticCategory.Error
   },
-  "Cannot compile dynamic modules when emitting into single file.": {
+  "Cannot compile external modules when emitting into single file.": {
     "code": 5010,
     "category": DiagnosticCategory.Error
   },

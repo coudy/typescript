@@ -1227,7 +1227,7 @@ module TypeScript {
             // Report error
             if (foundError) {
                 var errorCode = implementedType.isClass() ?
-                    DiagnosticCode.Class_0_declares_class_1_as_an_implemented_interface_but_does_not_implement_it_NL_2 :
+                    DiagnosticCode.Class_0_declares_class_1_as_an_interface_but_does_not_implement_it_NL_2 :
                     DiagnosticCode.Class_0_declares_interface_1_but_does_not_implement_it_NL_2;
 
                 this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
@@ -2307,7 +2307,7 @@ module TypeScript {
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
-                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_contain_a_type_annotation, null, typeCheckContext.getEnclosingDecl());
+                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation, null, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -2323,7 +2323,7 @@ module TypeScript {
             }
 
             if (!isValidRHS) {
-                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_operand_of_a_for_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
+                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
             }
 
             this.typeCheckAST(forInStatement.body, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -2360,11 +2360,11 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context));
 
             if (!isValidLHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_left_hand_side_of_an_instanceOf_expression_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_an_instanceOf_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type, null, typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_an_instanceof_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type, null, typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;
