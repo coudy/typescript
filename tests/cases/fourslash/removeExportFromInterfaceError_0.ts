@@ -1,5 +1,5 @@
 //bug 703448: retyper: remove export from interface doesn't show error on incremental
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// module M {
 //// export class C1 { }
@@ -11,6 +11,6 @@
 
 edit.disableFormatting();
 
-goTo.marker(1);
+goTo.marker("1");
 
-//edit.deleteAtCaret(6);
+edit.deleteAtCaret(6);

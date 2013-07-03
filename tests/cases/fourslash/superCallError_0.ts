@@ -1,5 +1,5 @@
 //bug 703653: retyper: changing errors on invalid super call after edit
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 ////class T5<T>{
 ////    constructor(public bar: T) { }
@@ -11,5 +11,5 @@
 ////    }
 ////}/*1*/
 
-goTo.marker(1);
-//edit.insert('/n');
+goTo.marker("1");
+edit.insert('/n');

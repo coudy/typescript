@@ -1,5 +1,5 @@
 //bug 703289: retyper: Pull/Full typecheck diff between extends clause on type parameter
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// class A<T, U extends T> { }
 //// class B<T extends Object, U extends T> {
@@ -26,5 +26,5 @@
 //// 
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(34);
+diagnostics.validateTypesAtPositions(34);
 

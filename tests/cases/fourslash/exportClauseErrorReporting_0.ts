@@ -1,5 +1,5 @@
 //bug 703308: retyper: add/remove export clause changes reported error
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// module M {
 ////     /*1*/class C<T> { }
@@ -10,8 +10,8 @@
 
 edit.disableFormatting();
 
-goTo.marker(1);
+goTo.marker("1");
 edit.insert("export ");
-goTo.marker(1);
+goTo.marker("1");
 
-//edit.deleteAtCaret(8);
+edit.deleteAtCaret(8);
