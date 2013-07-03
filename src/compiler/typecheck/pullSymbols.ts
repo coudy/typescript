@@ -2133,7 +2133,7 @@ module TypeScript {
             return null;
         }
 
-        public getType(): PullTypeSymbol {
+        public getAliasedType(): PullTypeSymbol {
 
             return this.aliasedType;
         }
