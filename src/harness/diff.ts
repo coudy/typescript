@@ -17,9 +17,9 @@
 /// <reference path='..\services\es5compat.ts' />
 
 module Diff {
-    /// <summary>
-    ///  Enum indicating what happened to a Segment of text analyzed in a diff.
-    /// </summary>
+    /**
+     * Enum indicating what happened to a Segment of text analyzed in a diff.
+     */
     export enum SegmentType {
         Unchanged,
         Added,
@@ -33,28 +33,28 @@ module Diff {
         LowercaseLetter
     }
 
-    /// <summary>
-    ///  Data structure representing a distinct portion of a body of text passed
-    ///  to the diff algorithm. Identifies the content and what happened to it between
-    ///  the old and new states of the string diff'd.
-    /// </summary>
+    /**
+     * Data structure representing a distinct portion of a body of text passed
+     * to the diff algorithm. Identifies the content and what happened to it between
+     * the old and new states of the string diff'd.
+     */
     export class Segment {
         constructor(public content = '', public type = SegmentType.Unchanged) { }
     }
 
-    /// <summary>
-    ///  Data structure identifying what happened to a portion of a string passed
-    ///  to the diff algorithm. Identifies the index and length in the parent text,
-    ///  and what happened to it between the old and new states of the string diff'd.
-    /// </summary>
+    /**
+     * Data structure identifying what happened to a portion of a string passed
+     * to the diff algorithm. Identifies the index and length in the parent text,
+     * and what happened to it between the old and new states of the string diff'd.
+     */
     export class Region {
         constructor(public index: number, public length: number, public type: SegmentType) { }
     }
 
-    /// <summary>
-    ///  Represents any subset of the file content. Files are split into
-    ///  Chunks for the algorithm to associate.
-    /// </summary>
+    /**
+     * Represents any subset of the file content. Files are split into
+     * Chunks for the algorithm to associate.
+     */
     export class Chunk {
         public hashCode: string;
         public matchingIndex: number;
@@ -81,13 +81,12 @@ module Diff {
             return delimiters.indexOf(c) >= 0;
         }
 
-        /// <summary>
-        ///  Split a string into chunks. Chunks are broken on the delimiter
-        ///  to non-delimiter boundary, with delimiters excluded
-        /// </summary>
-        /// <param name="content">String to parse</param>
-        /// <param name="delimiters">Delimiter characters</param>
-        /// <returns>Array of chunks broken on delimiter boundaries.</returns>
+        /**
+         * Split a string and return an array of chunks. Chunks are broken on the delimiter
+         * to non-delimiter boundary, with delimiters excluded.
+         * @param content String to parse.
+         * @param delimiters Delimiter characters.
+         */
         static Split(content: string, delimiters: string[]): Chunk[] {
             var set: Chunk[] = [];
 
@@ -120,13 +119,12 @@ module Diff {
             return set;
         }
 
-        /// <summary>
-        ///  Split a string into chunks. Chunks are broken on the delimiter
-        ///  / non-delimiter boundaries, so each contains non-delimiters or delimiters.
-        /// </summary>
-        /// <param name="content">String to parse</param>
-        /// <param name="delimiters">Delimiter characters</param>
-        /// <returns>Array of chunks broken on delimiter boundaries.</returns>
+        /**
+         * Split a string and return an array of chunks. Chunks are broken on the delimiter/non-delimiter
+         * boundaries, so each contains non-delimiters or delimiters.
+         * @param content String to parse.
+         * @param delimiters Delimiter characters.
+         */
         static SplitSeparateDelimiters(content: string, delimiters: string[]): Chunk[] {
             if (content === null || content.length === 0) return [];
             var set: Chunk[] = [];
@@ -160,14 +158,13 @@ module Diff {
             return Chunk.SplitCategory(content);
         }
 
-        /// <summary>
-        ///  Split method which breaks each chunk on Unicode character
-        ///  category boundaries. It uses some modifications to the raw
-        ///  Unicode categories to cluster logical parts of lines more
-        ///  effectively.
-        /// </summary>
-        /// <param name="content">String to Split</param>
-        /// <returns>Chunk array broken up on Unicode category boundaries</returns>
+        /**
+         * Split method which breaks each chunk on Unicode character
+         * category boundaries. It uses some modifications to the raw
+         * Unicode categories to cluster logical parts of lines more
+         * effectively.
+         * @param content String to Split.
+         */
         static SplitCategory(content: string): Chunk[] {
             if (content === null || content.length === 0) return [];
 
@@ -206,12 +203,11 @@ module Diff {
             return left === right;
         }
 
-        /// <summary>
-        ///  Similar to Char.GetUnicodeCategory, but lumps a few together for better
-        ///  breakdowns. (Upper and lower case characters, for example)
-        /// </summary>
-        /// <param name="c">Char to classify</param>
-        /// <returns>UnicodeCategory of the char (with some modifications)</returns>
+        /**
+         * Similar to Char.GetUnicodeCategory, but lumps a few together for better
+         * breakdowns. (Upper and lower case characters, for example). Returns the UnicodeCategory of the char (with some modifications).
+         * @param c Char to classify.
+         */
         static GetCategory(c: string): UnicodeCategory {
             if (c === ' ' || c === '\r' || c === '\n' || c === '\t') {
                 return UnicodeCategory.SpaceSeparator;
@@ -507,12 +503,11 @@ module Diff {
             }
         }
 
-        /// <summary>
-        ///  Decide whether two chunks matched with the inner algorithm were
-        ///  similar enough to consider associated.
-        /// </summary>
-        /// <param name="difference">The diff result of the comparison</param>
-        /// <returns>True if they are similar enough to map, False otherwise</returns>
+        /**
+         * Decide whether two chunks matched with the inner algorithm were
+         * similar enough to consider associated. Returns true if they are similar enough to map, false otherwise.
+         * @param difference The diff result of the comparison.
+         */
         static AreSimilarEnough(difference: InnerDiff): boolean {
             var identicalChars = 0;
             var differentChars = 0;

@@ -5,16 +5,12 @@ module TypeScript {
         private _line: number = 0;
         private _character: number = 0;
 
-        /// <summary>
-        /// Initializes a new instance of a <see cref="LinePosition"/> with the given line and character.
-        /// </summary>
-        /// <param name="line">
-        /// The line of the line position. The first line in a file is defined as line 0 (zero based line numbering).
-        /// </param>
-        /// <param name="character">
-        /// The character position in the line.
-        /// </param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="line"/> or <paramref name="character"/> is less than zero. </exception>
+        /**
+         * Initializes a new instance of a LinePosition with the given line and character. ArgumentOutOfRangeException if "line" or "character" is less than zero.
+         * @param line The line of the line position. The first line in a file is defined as line 0 (zero based line numbering).
+         * @param character The character position in the line.
+         */
+        
         constructor(line: number, character: number) {
             if (line < 0) {
                 throw Errors.argumentOutOfRange("line");

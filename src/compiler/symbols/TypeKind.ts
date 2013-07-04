@@ -1,6 +1,6 @@
-/// <summary>
-/// Enumeration for possible kinds of type symbols.
-/// </summary>
+/**
+ * Enumeration for possible kinds of type symbols.
+ */
 enum TypeKind {
     Any,
     Number,

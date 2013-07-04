@@ -1,17 +1,17 @@
 
 module SymbolDisplay {
-    /// <summary>
-    /// Specifies the options for whether types are qualified when displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for whether types are qualified when displayed in the description of a symbol.
+     */
     export enum TypeQualificationStyle {
-        /// <summary>
-        /// e.g. Class1
-        /// </summary>
+        /**
+         * e.g. Class1
+         */
         NameOnly,
 
-        /// <summary>
-        /// ParentClass.NestedClass
-        /// </summary>
+        /**
+         * ParentClass.NestedClass
+         */
         NameAndContainingModules,
     }
 
@@ -21,179 +21,179 @@ module SymbolDisplay {
     }
 
     export enum GenericsOptions {
-        /// <summary>
-        /// Omit generics entirely.
-        /// </summary>
+        /**
+         * Omit generics entirely.
+         */
         None = 0,
 
-        /// <summary>
-        /// Type parameters. e.g. "Foo&lt;T&gt;".
-        /// </summary>
+        /**
+         * Type parameters. e.g. "Foo&lt;T&gt;".
+         */
         IncludeTypeArguments = 1 << 0,
 
-        /// <summary>
-        /// Type parameter constraints.  e.g. "<T extends Foo>".
-        /// </summary>
+        /**
+         * Type parameter constraints.  e.g. "<T extends Foo>".
+         */
         IncludeTypeConstraints = 1 << 1,
     }
 
-    /// <summary>
-    /// Specifies the options for how members are displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for how members are displayed in the description of a symbol.
+     */
     export enum MemberOptions {
-        /// <summary>
-        /// Display only the name of the member.
-        /// </summary>
+        /**
+         * Display only the name of the member.
+         */
         None = 0,
 
-        /// <summary>
-        /// Include the (return) type of the method/field/property.
-        /// </summary>
+        /**
+         * Include the (return) type of the method/field/property.
+         */
         IncludeType = 1 << 0,
 
-        /// <summary>
-        /// Include modifiers.  e.g. "static"
-        /// </summary>
+        /**
+         * Include modifiers.  e.g. "static"
+         */
         IncludeModifiers = 1 << 1,
 
-        /// <summary>
-        /// Include accessibility.  e.g. "public"
-        /// </summary>
+        /**
+         * Include accessibility.  e.g. "public"
+         */
         IncludeAccessibility = 1 << 2,
 
-        /// <summary>
-        /// Include method/indexer parameters.  (See ParameterFlags for fine-grained settings.)
-        /// </summary>
+        /**
+         * Include method/indexer parameters.  (See ParameterFlags for fine-grained settings.)
+         */
         IncludeParameters = 1 << 4,
 
-        /// <summary>
-        /// Include the name of the containing type.
-        /// </summary>
+        /**
+         * Include the name of the containing type.
+         */
         IncludeContainingType = 1 << 5,
 
-        /// <summary>
-        /// Include the value of the member if is a constant.
-        /// </summary>
+        /**
+         * Include the value of the member if is a constant.
+         */
         IncludeConstantValue = 1 << 6,
     }
 
-    /// <summary>
-    /// Specifies the options for how parameters are displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for how parameters are displayed in the description of a symbol.
+     */
     export enum ParameterOptions {
-        /// <summary>
-        /// If MemberFlags.IncludeParameters is set, but this value is used, then only the parentheses will be shown
-        /// (e.g. M()).
-        /// </summary>
+        /**
+         * If MemberFlags.IncludeParameters is set, but this value is used, then only the parentheses will be shown
+         * (e.g. M()).
+         */
         None = 0,
 
-        /// <summary>
-        /// Include the params/public/.../etc. parameters.
-        /// </summary>
+        /**
+         * Include the params/public/.../etc. parameters.
+         */
         IncludeModifiers = 1 << 1,
 
-        /// <summary>
-        /// Include the parameter type.
-        /// </summary>
+        /**
+         * Include the parameter type.
+         */
         IncludeType = 1 << 2,
 
-        /// <summary>
-        /// Include the parameter name.
-        /// </summary>
+        /**
+         * Include the parameter name.
+         */
         IncludeName = 1 << 3,
 
-        /// <summary>
-        /// Include the parameter default value.
-        /// </summary>
+        /**
+         * Include the parameter default value.
+         */
         IncludeDefaultValue = 1 << 4,
     }
 
-    /// <summary>
-    /// Specifies the options for how property/event accessors are displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for how property/event accessors are displayed in the description of a symbol.
+     */
     export enum AccessorStyle {
-        /// <summary>
-        /// Only show the name of the property (formatted using MemberFlags).
-        /// </summary>
+        /**
+         * Only show the name of the property (formatted using MemberFlags).
+         */
         NameOnly,
 
-        /// <summary>
-        /// Show the getter and/or setter of the property.
-        /// </summary>
+        /**
+         * Show the getter and/or setter of the property.
+         */
         ShowAccessors,
     }
 
-    /// <summary>
-    /// Specifies the options for how locals are displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for how locals are displayed in the description of a symbol.
+     */
     export enum LocalOptions {
-        /// <summary>
-        /// Only show the name of the local. (e.g. "x").
-        /// </summary>
+        /**
+         * Only show the name of the local. (e.g. "x").
+         */
         None = 0,
 
-        /// <summary>
-        /// Include the type of the local. (e.g. "x : number").
-        /// </summary>
+        /**
+         * Include the type of the local. (e.g. "x : number").
+         */
         IncludeType = 1 << 0,
 
-        /// <summary>
-        /// Include the value of the local if is a constant. (e.g. "x : number = 1").
-        /// </summary>
+        /**
+         * Include the value of the local if is a constant. (e.g. "x : number = 1").
+         */
         IncludeConstantValue = 1 << 1,
     }
 
-    /// <summary>
-    /// Specifies the options for whether the type's kind should be displayed in the description of a symbol.
-    /// </summary>
+    /**
+     * Specifies the options for whether the type's kind should be displayed in the description of a symbol.
+     */
     export enum KindOptions {
-        /// <summary>
-        /// None
-        /// </summary>
+        /**
+         * None
+         */
         None = 0,
 
-        /// <summary>
-        /// Use the type's kind.  e.g. "class M1.C1" instead of "M1.C1"
-        /// </summary>
+        /**
+         * Use the type's kind.  e.g. "class M1.C1" instead of "M1.C1"
+         */
         IncludeKind = 1 << 0,
     }
 
     export class Format {
-        /// <summary>
-        /// Determines how types are qualified (e.g. Nested vs Containing.Nested vs Namespace.Containing.Nested).
-        /// </summary>
+        /**
+         * Determines how types are qualified (e.g. Nested vs Containing.Nested vs Namespace.Containing.Nested).
+         */
         private _typeQualificationStyle: TypeQualificationStyle;
 
         private _typeOptions: TypeOptions;
 
-        /// <summary>
-        /// Determines how generics (on types and methods) should be described (i.e. level of detail).
-        /// </summary>
+        /**
+         * Determines how generics (on types and methods) should be described (i.e. level of detail).
+         */
         private _genericsOptions: GenericsOptions;
 
-        /// <summary>
-        /// Formatting options that apply to fields, properties, and methods.
-        /// </summary>
+        /**
+         * Formatting options that apply to fields, properties, and methods.
+         */
         private _memberOptions: MemberOptions;
 
-        /// <summary>
-        /// Formatting options that apply to method and indexer parameters (i.e. level of detail).
-        /// </summary>
+        /**
+         * Formatting options that apply to method and indexer parameters (i.e. level of detail).
+         */
         private _parameterOptions: ParameterOptions;
 
-        /// <summary>
-        /// Determines how properties are displayed. "Prop" vs "Prop { get; set; }"
-        /// </summary>
+        /**
+         * Determines how properties are displayed. "Prop" vs "Prop { get; set; }"
+         */
         private _accessorStyle: AccessorStyle;
 
-        /// <summary>
-        /// Determines how local variables are displayed.
-        /// </summary>
+        /**
+         * Determines how local variables are displayed.
+         */
         private _localOptions: LocalOptions;
 
-        /// <summary>
-        /// Formatting options that apply to types.
-        /// </summary>
+        /**
+         * Formatting options that apply to types.
+         */
         private _kindOptions: KindOptions;
 
         constructor(typeQualificationStyle: TypeQualificationStyle = TypeQualificationStyle.NameOnly,
@@ -240,17 +240,17 @@ module SymbolDisplay {
             ParameterOptions.IncludeModifiers | ParameterOptions.IncludeType,
             AccessorStyle.NameOnly);
 
-    /// <summary>
-    /// Fully qualified name format.
-    /// </summary>
+    /**
+     * Fully qualified name format.
+     */
     //export var fullyQualifiedFormat: Format =
     //    new Format(
     //        TypeQualificationStyle.NameAndContainingModules,
     //        GenericsOptions.IncludeTypeParameters);
 
-    /// <summary>
-    /// Format used by default when asking to minimally qualify a symbol.
-    /// </summary>
+    /**
+     * Format used by default when asking to minimally qualify a symbol.
+     */
     export var minimallyQualifiedFormat: Format =
         new Format(
             TypeQualificationStyle.NameOnly,

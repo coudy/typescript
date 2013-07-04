@@ -14,7 +14,6 @@ module GroupedItemsPage {
 
         // This function updates the ListView with new layouts
         initializeLayout: function (listView, viewState) {
-            /// <param name="listView" value="WinJS.UI.ListView.prototype" />
 
             if (viewState === appViewState.snapped) {
                 listView.itemDataSource = Data.groups.dataSource;
@@ -56,9 +55,6 @@ module GroupedItemsPage {
 
         // This function updates the page layout in response to viewState changes.
         updateLayout: function (element, viewState, lastViewState) {
-            /// <param name="element" domElement="true" />
-            /// <param name="viewState" value="Windows.UI.ViewManagement.ApplicationViewState" />
-            /// <param name="lastViewState" value="Windows.UI.ViewManagement.ApplicationViewState" />
 
             var listView = element.querySelector(".groupeditemslist").winControl;
             if (lastViewState !== viewState) {

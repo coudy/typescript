@@ -58,26 +58,25 @@ module TypeScript {
             return Math.round(temp);
         }
 
-        /* Modification of the murmurhash2 algorithm.  Code is simpler because it operates over
-        * strings instead of byte arrays.  Because each string character is two bytes, it is known
-        * that the input will be an even number of bytes (though not necessarily a multiple of 4).
-        * 
-        * This is needed over the normal 'string.GetHashCode()' because we need to be able to generate
-        * 'k' different well distributed hashes for any given string s.  Also, we want to be able to
-        * generate these hashes without allocating any memory.  My ideal solution would be to use an
-        * MD5 hash.  However, there appears to be no way to do MD5 in .Net where you can:
-        * 
-        * a) feed it individual values instead of a byte[]
-        * 
-        * b) have the hash computed into a byte[] you provide instead of a newly allocated one
-        * 
-        * Generating 'k' pieces of garbage on each insert and lookup seems very wasteful.  So,
-        * instead, we use murmur hash since it provides well distributed values, allows for a
-        * seed, and allocates no memory.
-        * 
-        * Murmur hash is public domain.  Actual code is included below as reference.
-        * </summary>
-        */
+        /** Modification of the murmurhash2 algorithm.  Code is simpler because it operates over
+         * strings instead of byte arrays.  Because each string character is two bytes, it is known
+         * that the input will be an even number of bytes (though not necessarily a multiple of 4).
+         * 
+         * This is needed over the normal 'string.GetHashCode()' because we need to be able to generate
+         * 'k' different well distributed hashes for any given string s.  Also, we want to be able to
+         * generate these hashes without allocating any memory.  My ideal solution would be to use an
+         * MD5 hash.  However, there appears to be no way to do MD5 in .Net where you can:
+         * 
+         * a) feed it individual values instead of a byte[]
+         * 
+         * b) have the hash computed into a byte[] you provide instead of a newly allocated one
+         * 
+         * Generating 'k' pieces of garbage on each insert and lookup seems very wasteful.  So,
+         * instead, we use murmur hash since it provides well distributed values, allows for a
+         * seed, and allocates no memory.
+         * 
+         * Murmur hash is public domain.  Actual code is included below as reference.
+         */
         private computeHash(key: string, seed: number): number {
             return Hash.computeMurmur2StringHashCode(key, seed);
         }

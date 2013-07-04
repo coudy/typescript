@@ -5,10 +5,10 @@ module TypeScript {
         private _start: number;
         private _length: number;
 
-        /// <summary>
-        /// Creates a TextSpan instance beginning with the position Start and having the Length
-        /// specified with length.
-        /// </summary>
+        /**
+         * Creates a TextSpan instance beginning with the position Start and having the Length
+         * specified with length.
+         */
         constructor(start: number, length: number) {
             if (start < 0) {
                 Errors.argument("start");
@@ -38,44 +38,29 @@ module TypeScript {
             return this._length === 0;
         }
 
-        /// <summary>
-        /// Determines whether the position lies within the span.
-        /// </summary>
-        /// <param name="position">
-        /// The position to check.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if the position is greater than or equal to Start and strictly less 
-        /// than End, otherwise <c>false</c>.
-        /// </returns>
+        /**
+         * Determines whether the position lies within the span. Returns true if the position is greater than or equal to Start and strictly less 
+         * than End, otherwise false.
+         * @param position The position to check.
+         */
         public containsPosition(position: number): boolean {
             return position >= this._start && position < this.end();
         }
 
-        /// <summary>
-        /// Determines whether <paramref name="span"/> falls completely within this span.
-        /// </summary>
-        /// <param name="span">
-        /// The span to check.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if the specified span falls completely within this span, otherwise <c>false</c>.
-        /// </returns>
+        /**
+         * Determines whether span falls completely within this span. Returns true if the specified span falls completely within this span, otherwise false.
+         * @param span The span to check.
+         */
         public containsTextSpan(span: TextSpan): boolean {
             return span._start >= this._start && span.end() <= this.end();
         }
 
-        /// <summary>
-        /// Determines whether <paramref name="span"/> overlaps this span. Two spans are considered to overlap 
-        /// if they have positions in common and neither is empty. Empty spans do not overlap with any 
-        /// other span.
-        /// </summary>
-        /// <param name="span">
-        /// The span to check.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if the spans overlap, otherwise <c>false</c>.
-        /// </returns>
+        /**
+         * Determines whether the given span overlaps this span. Two spans are considered to overlap 
+         * if they have positions in common and neither is empty. Empty spans do not overlap with any 
+         * other span. Returns true if the spans overlap, false otherwise.
+         * @param span The span to check.
+         */
         public overlapsWith(span: TextSpan): boolean {
             var overlapStart = MathPrototype.max(this._start, span._start);
             var overlapEnd = MathPrototype.min(this.end(), span.end());
@@ -83,15 +68,10 @@ module TypeScript {
             return overlapStart < overlapEnd;
         }
 
-        /// <summary>
-        /// Returns the overlap with the given span, or null if there is no overlap.
-        /// </summary>
-        /// <param name="span">
-        /// The span to check.
-        /// </param>
-        /// <returns>
-        /// The overlap of the spans, or null if the overlap is empty.
-        /// </returns>
+        /**
+         * Returns the overlap with the given span, or null if there is no overlap.
+         * @param span The span to check.
+         */
         public overlap(span: TextSpan): TextSpan {
             var overlapStart = MathPrototype.max(this._start, span._start);
             var overlapEnd = MathPrototype.min(this.end(), span.end());
@@ -103,17 +83,12 @@ module TypeScript {
             return null;
         }
 
-        /// <summary>
-        /// Determines whether <paramref name="span"/> intersects this span. Two spans are considered to 
-        /// intersect if they have positions in common or the end of one span 
-        /// coincides with the start of the other span.
-        /// </summary>
-        /// <param name="span">
-        /// The span to check.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if the spans intersect, otherwise <c>false</c>.
-        /// </returns>
+        /**
+         * Determines whether span intersects this span. Two spans are considered to 
+         * intersect if they have positions in common or the end of one span 
+         * coincides with the start of the other span. Returns true if the spans intersect, false otherwise.
+         * @param The span to check.
+         */
         public intersectsWithTextSpan(span: TextSpan): boolean {
             return span._start <= this.end() && span.end() >= this._start;
         }
@@ -123,30 +98,20 @@ module TypeScript {
             return start <= this.end() && end >= this._start;
         }
 
-        /// <summary>
-        /// Determines whether <paramref name="position"/> intersects this span. 
-        /// A position is considered to intersect if it is between the start and
-        /// end positions (inclusive) of this span.
-        /// </summary>
-        /// <param name="position">
-        /// The position to check.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if the position intersects, otherwise <c>false</c>.
-        /// </returns>
+        /**
+         * Determines whether the given position intersects this span. 
+         * A position is considered to intersect if it is between the start and
+         * end positions (inclusive) of this span. Returns true if the position intersects, false otherwise.
+         * @param position The position to check.
+         */
         public intersectsWithPosition(position: number): boolean {
             return position <= this.end() && position >= this._start;
         }
 
-        /// <summary>
-        /// Returns the intersection with the given span, or null if there is no intersection.
-        /// </summary>
-        /// <param name="span">
-        /// The span to check.
-        /// </param>
-        /// <returns>
-        /// The intersection of the spans, or null if the intersection is empty.
-        /// </returns>
+        /**
+         * Returns the intersection with the given span, or null if there is no intersection.
+         * @param span The span to check.
+         */
         public intersection(span: TextSpan): TextSpan {
             var intersectStart = MathPrototype.max(this._start, span._start);
             var intersectEnd = MathPrototype.min(this.end(), span.end());
@@ -158,10 +123,10 @@ module TypeScript {
             return null;
         }
 
-        /// <summary>
-        /// Creates a new <see cref="T:TextSpan"/> from <param name="start" /> and <param
-        /// name="end"/> positions as opposed to a position and length.
-        /// </summary>
+        /**
+         * Creates a new TextSpan from the given start and end positions
+         * as opposed to a position and length.
+         */
         public static fromBounds(start: number, end: number): TextSpan {
             Debug.assert(start >= 0);
             Debug.assert(end - start >= 0);

@@ -60,25 +60,25 @@ module TypeScript {
             return this._arguments;
         }
 
-        /// <summary>
-        /// Get the text of the message in the given language.
-        /// </summary>
+        /**
+         * Get the text of the message in the given language.
+         */
         public text(): string {
             return TypeScript.getLocalizedText(this._diagnosticKey, this._arguments);
         }
 
-        /// <summary>
-        /// Get the text of the message including the error code in the given language.
-        /// </summary>
+        /**
+         * Get the text of the message including the error code in the given language.
+         */
         public message(): string {
             return TypeScript.getDiagnosticMessage(this._diagnosticKey, this._arguments);
         }
 
-        /// <summary>
-        /// If a derived class has additional information about other referenced symbols, it can
-        /// expose the locations of those symbols in a general way, so they can be reported along
-        /// with the error.
-        /// </summary>
+        /**
+         * If a derived class has additional information about other referenced symbols, it can
+         * expose the locations of those symbols in a general way, so they can be reported along
+         * with the error.
+         */
         public additionalLocations(): Location[] {
             return [];
         }

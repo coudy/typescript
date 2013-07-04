@@ -7,11 +7,9 @@ module TypeScript {
         private _span: TextSpan;
         private _newLength: number;
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="T:TextChangeRange"/>.
-        /// </summary>
-        /// <param name="span"></param>
-        /// <param name="newLength"></param>
+        /**
+         * Initializes a new instance of TextChangeRange.
+         */
         constructor(span: TextSpan, newLength: number) {
             if (newLength < 0) {
                 throw Errors.argumentOutOfRange("newLength");
@@ -21,16 +19,16 @@ module TypeScript {
             this._newLength = newLength;
         }
 
-        /// <summary>
-        /// The span of text before the edit which is being changed
-        /// </summary>
+        /**
+         * The span of text before the edit which is being changed
+         */
         public span(): TextSpan {
             return this._span;
         }
 
-        /// <summary>
-        /// Width of the span after the edit.  A 0 here would represent a delete
-        /// </summary>
+        /**
+         * Width of the span after the edit.  A 0 here would represent a delete
+         */
         public newLength(): number {
             return this._newLength;
         }
@@ -43,12 +41,12 @@ module TypeScript {
             return this.span().isEmpty() && this.newLength() === 0;
         }
 
-        /// <summary>
-        /// Called to merge all the changes that occurred between one version of a script snapshot to 
-        /// the next into a single change.  i.e. say a user did a box selection and made an edit.  That
-        /// will show up as N text change ranges between version V of a script and version V+1.  This
-        /// function collapses those N changes into a single change range valid between V and V+1.
-        /// </summary>
+        /**
+         * Called to merge all the changes that occurred between one version of a script snapshot to 
+         * the next into a single change.  i.e. say a user did a box selection and made an edit.  That
+         * will show up as N text change ranges between version V of a script and version V+1.  This
+         * function collapses those N changes into a single change range valid between V and V+1.
+         */
         public static collapseChangesFromSingleVersion(changes: TextChangeRange[]): TextChangeRange {
             var diff = 0;
             var start = Constants.Max31BitInteger;
@@ -81,14 +79,14 @@ module TypeScript {
             return new TextChangeRange(combined, newLen);
         }
 
-        /// <summary>
-        /// Called to merge all the changes that occurred across several versions of a script snapshot 
-        /// into a single change.  i.e. if a user keeps making successive edits to a script we will
-        /// have a text change from V1 to V2, V2 to V3, ..., Vn.  
-        /// 
-        /// This function will then merge those changes into a single change range valid between V1 and
-        /// Vn.
-        /// </summary>
+        /**
+         * Called to merge all the changes that occurred across several versions of a script snapshot 
+         * into a single change.  i.e. if a user keeps making successive edits to a script we will
+         * have a text change from V1 to V2, V2 to V3, ..., Vn.  
+         * 
+         * This function will then merge those changes into a single change range valid between V1 and
+         * Vn.
+         */
         public static collapseChangesAcrossMultipleVersions(changes: TextChangeRange[]): TextChangeRange {
             if (changes.length === 0) {
                 return TextChangeRange.unchanged;

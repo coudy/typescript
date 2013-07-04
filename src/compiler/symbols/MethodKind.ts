@@ -1,30 +1,30 @@
-/// <summary>
-/// Enumeration for possible kinds of method symbols.
-/// </summary>
+/**
+ * Enumeration for possible kinds of method symbols.
+ */
 enum MethodKind
 {
-    /// <summary>
-    /// An anonymous method or lambda expression
-    /// </summary>
+    /**
+     * An anonymous method or lambda expression
+     */
     ArrowFunction = 0,
 
-    /// <summary>
-    /// Method is a constructor.
-    /// </summary>
+    /**
+     * Method is a constructor.
+     */
     Constructor = 1,
 
-    /// <summary>
-    /// Method is an ordinary method.
-    /// </summary>
+    /**
+     * Method is an ordinary method.
+     */
     Ordinary = 10,
 
-    /// <summary>
-    /// Method is a property get.
-    /// </summary>
+    /**
+     * Method is a property get.
+     */
     GetAccessor = 11,
 
-    /// <summary>
-    /// Method is a property set.
-    /// </summary>
+    /**
+     * Method is a property set.
+     */
     SetAccessor = 12,
 }

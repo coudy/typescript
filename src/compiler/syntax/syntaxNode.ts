@@ -214,19 +214,19 @@ module TypeScript {
             return this._data;
         }
 
-        /// <summary>
-        /// Finds a token according to the following rules:
-        /// 1) If position matches the End of the node/s FullSpan and the node is SourceUnit,
-        ///    then the EOF token is returned. 
-        /// 
-        ///  2) If node.FullSpan.Contains(position) then the token that contains given position is
-        ///     returned.
-        /// 
-        ///  3) Otherwise an ArgumentOutOfRangeException is thrown
-        ///
-        /// Note: findToken will always return a non-missing token with width greater than or equal to
-        /// 1 (except for EOF).  Empty tokens synthesized by the parser are never returned.
-        /// </summary>
+        /**
+         * Finds a token according to the following rules:
+         * 1) If position matches the End of the node/s FullSpan and the node is SourceUnit,
+         *    then the EOF token is returned. 
+         * 
+         *  2) If node.FullSpan.Contains(position) then the token that contains given position is
+         *     returned.
+         * 
+         *  3) Otherwise an ArgumentOutOfRangeException is thrown
+         *
+         * Note: findToken will always return a non-missing token with width greater than or equal to
+         * 1 (except for EOF).  Empty tokens synthesized by the parser are never returned.
+         */
         public findToken(position: number, includeSkippedTokens: boolean = false): PositionedToken {
             var endOfFileToken = this.tryGetEndOfFileAt(position);
             if (endOfFileToken !== null) {
