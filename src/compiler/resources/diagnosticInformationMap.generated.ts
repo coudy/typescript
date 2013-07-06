@@ -1445,6 +1445,10 @@ module TypeScript {
   "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
     "code": 7013,
     "category": DiagnosticCategory.Error
+  },
+  "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7014,
+    "category": DiagnosticCategory.Error
   }
 };
 }
