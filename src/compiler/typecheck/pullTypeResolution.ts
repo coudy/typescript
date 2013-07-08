@@ -751,6 +751,10 @@ module TypeScript {
                 members = lhsType.getAllMembers(declSearchKind, includePrivate);
 
                 if (lhsType.isContainer()) {
+
+                    if (lhsType.isAlias()) {
+                        lhsType = (<PullTypeAliasSymbol>lhsType).getAliasedType();
+                    }
                     var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
                     if (associatedInstance) {
                         var instanceType = associatedInstance.type;
@@ -1993,13 +1997,16 @@ module TypeScript {
                                     typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getAliasedType();
                                 }
 
-                                var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
+                                // aliased type could still be 'any' as the result of an error
+                                if (typeExprSymbol.isContainer()) {
+                                    var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
-                                if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                    typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                                }
-                                else {
-                                    typeExprSymbol = instanceSymbol.type;
+                                    if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
+                                        typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                                    }
+                                    else {
+                                        typeExprSymbol = instanceSymbol.type;
+                                    }
                                 }
                             }
                         }
