@@ -2044,6 +2044,10 @@ module TypeScript {
                 return true;
             }
 
+            if (containerSymbol.isAlias() && (<PullTypeAliasSymbol>containerSymbol).getAliasedType() == symbol) {
+                return true;
+            }
+
             var containerTypeSymbol = <PullContainerTypeSymbol>containerSymbol;
             var valueExportSymbol = containerTypeSymbol.getExportAssignedValueSymbol();
             var typeExportSymbol = containerTypeSymbol.getExportAssignedTypeSymbol();

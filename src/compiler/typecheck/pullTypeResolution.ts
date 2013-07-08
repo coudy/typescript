@@ -2144,6 +2144,14 @@ module TypeScript {
                 declParameterSymbol.setResolved();
             }
 
+            if (context.typeCheck()) {
+                if (declSymbol.kind != PullElementKind.Parameter &&
+                    (declSymbol.kind != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
+                    this.checkTypePrivacy(declSymbol, declSymbol.type, context, (typeSymbol: PullTypeSymbol) =>
+                        this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context));
+                }
+            }
+
             return declSymbol;
         }
 
