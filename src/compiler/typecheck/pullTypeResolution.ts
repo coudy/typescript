@@ -5346,7 +5346,7 @@ module TypeScript {
             var symbol = this.getSymbolForAST(callEx);
             var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
 
-            if (!symbol || !symbol.isResolved) {
+            if (!symbol || !symbol.isResolved || (additionalResults && !callResolutionData)) {
                 symbol = this.computeInvocationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
                 this.setSymbolForAST(callEx, symbol, context);
                 this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
@@ -5732,7 +5732,7 @@ module TypeScript {
             var symbol = this.getSymbolForAST(callEx);
             var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
 
-            if (!symbol || !symbol.isResolved) {
+            if (!symbol || !symbol.isResolved || (additionalResults && !callResolutionData)) {
                 symbol = this.computeObjectCreationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
                 this.setSymbolForAST(callEx, symbol, context);
                 this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
