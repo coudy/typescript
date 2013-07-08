@@ -66,7 +66,7 @@ arr_c1 = arr_c3; // should be an error - is
 
 arr_c2 = arr_c2; // should be ok - subtype relationship - is
 arr_c2 = arr_c1; // should be an error - subtype relationship - is
-arr_c2 = arr_i1; // should be ok - subtype relationship - is
+arr_c2 = arr_i1; // should be an error - subtype relationship - is
 arr_c2 = arr_c3; // should be an error - is
 
 // "clean up bug" occurs at this point
@@ -78,11 +78,8 @@ arr_c3 = arr_i1_2; // should be an error - is
 
 arr_any = f1; // should be an error - is
 arr_any = o1; // should be an error - is
-arr_any = a1; // should be an error - is
+arr_any = a1; // should be ok - is
 arr_any = c1; // should be an error - is
 arr_any = c2; // should be an error - is
 arr_any = c3; // should be an error - is
 arr_any = i1; // should be an error - is
-
-
-
