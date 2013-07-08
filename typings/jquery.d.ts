@@ -158,6 +158,11 @@ interface JQuerySupport {
     tbody?: boolean;
 }
 
+interface JQueryTransport {
+    send(headers: { [index: string]: string; }, completeCallback: (status: number, statusText: string, responses: { [dataType: string]: any; }, headers: string) => void): void;
+    abort(): void;
+}
+
 /*
     Static members of jQuery (those on $ and jQuery themselves)
 */
@@ -171,6 +176,7 @@ interface JQueryStatic {
     ajaxPrefilter(handler: (opts: any, originalOpts: any, jqXHR: JQueryXHR) => any): any;
 
     ajaxSetup(options: any);
+    ajaxTransport(dataType: string, handler: (options: JQueryAjaxSettings, originalOptions: JQueryAjaxSettings, jqXHR: JQueryXHR) => JQueryTransport): void;
 
     get(url: string, data?: any, success?: any, dataType?: any): JQueryXHR;
     getJSON(url: string, data?: any, success?: any): JQueryXHR;
