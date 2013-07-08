@@ -269,9 +269,9 @@ module TypeScript {
             var declarations = this.getDeclarations();
 
             // reset the errors for its decl
-            for (var i = 0; i < declarations.length; i++) {
-                declarations[i].resetErrors();
-            }
+            //for (var i = 0; i < declarations.length; i++) {
+            //    declarations[i].resetErrors();
+            //}
         }
 
         public hasFlag(flag: PullElementFlags): boolean {
