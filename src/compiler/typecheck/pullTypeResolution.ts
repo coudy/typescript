@@ -5224,6 +5224,11 @@ module TypeScript {
         }
 
         private computeConditionalExpressionSymbol(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+
+            if (context.typeCheck()) {
+                this.resolveAST(trinex.operand1, false, enclosingDecl, context);
+            }
+
             var leftType = this.resolveAST(trinex.operand2, false, enclosingDecl, context).type;
             var rightType = this.resolveAST(trinex.operand3, false, enclosingDecl, context).type;
 
@@ -5293,18 +5298,7 @@ module TypeScript {
 
         public computeInvocationExpressionSymbol(callEx: InvocationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
-            var isSuperCall = callEx.target.nodeType() === NodeType.SuperExpression;
-            var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
-
-            if (isSuperCall) {
-                context.isResolvingSuperConstructorTarget = true;
-            }
-
             var targetSymbol = this.resolveAST(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
-
-            if (isSuperCall) {
-                context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
-            }
 
             var targetAST = this.getLastIdentifierInTarget(callEx);
 
@@ -5327,9 +5321,12 @@ module TypeScript {
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
-            
 
-            if (isSuperCall) {
+            var isSuperCall = false;
+
+            if (callEx.target.nodeType() === NodeType.SuperExpression) {
+
+                isSuperCall = true;
 
                 if (targetTypeSymbol.isClass()) {
                     this.seenSuperConstructorCall = true;
@@ -5536,8 +5533,18 @@ module TypeScript {
                 return errorCondition;
             }
 
+            var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+
+            if (isSuperCall) {
+                context.isResolvingSuperConstructorTarget = true;
+            }
+
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
             var useBeforeResolutionSignatures = signature == null;
+
+            if (isSuperCall) {
+                context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+            }
 
             if (!signature) {
                 for (var i = 0; i < diagnostics.length; i++) {
