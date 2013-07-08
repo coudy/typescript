@@ -21,7 +21,7 @@ function filter(f, ar) {
     return ret;
 }
 
-function length(ar) {
+function length2(ar) {
     return ar.length;
 }
 
@@ -36,10 +36,10 @@ function curry1(f) {
 var cfilter = curry1(filter);
 
 function countWhere_1(pred) {
-    return compose(length, cfilter(pred));
+    return compose(length2, cfilter(pred));
 }
 
 function countWhere_2(pred) {
     var where = cfilter(pred);
-    return compose(length, where);
+    return compose(length2, where);
 }

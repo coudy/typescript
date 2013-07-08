@@ -25,7 +25,7 @@ function filter<A>(f: (a: A) => boolean, ar: A[]): A[] {
 }
 
 // length :: [a] -> Num
-function length<A>(ar: A[]): number {
+function length2<A>(ar: A[]): number {
     return ar.length;
 }
 
@@ -47,10 +47,10 @@ var cfilter = curry1(filter);
 // countWhere :: (a -> Bool) -> [a] -> Num
 
 function countWhere_1<A>(pred: (a: A) => boolean): (a: A[]) => number {
-    return compose(length, cfilter(pred));
+    return compose(length2, cfilter(pred));
 }
 
 function countWhere_2<A>(pred: (a: A) => boolean): (a: A[]) => number {
     var where = cfilter(pred);
-    return compose(length, where);
+    return compose(length2, where);
 }

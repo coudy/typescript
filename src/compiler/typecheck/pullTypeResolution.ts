@@ -1370,6 +1370,9 @@ module TypeScript {
 
             importDeclSymbol.startResolving();
 
+            var prevInImportDeclaration = context.inImportDeclaration;
+            context.inImportDeclaration = true;
+
             // the alias name may be a string literal, in which case we'll need to convert it to a type
             // reference
             if (importStatementAST.alias.nodeType() === NodeType.TypeRef) { // dotted name
@@ -1416,6 +1419,8 @@ module TypeScript {
                 // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
                 this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, aliasedType, this.unitPath);
             }
+
+            context.inImportDeclaration = prevInImportDeclaration;
 
             return importDeclSymbol;
         }
@@ -1736,16 +1741,30 @@ module TypeScript {
                 return null;
             }
 
-            var symbol = <PullTypeSymbol>this.getSymbolForAST(typeRef);
-            if (!symbol) {
-                symbol = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
+            var type = <PullTypeSymbol>this.getSymbolForAST(typeRef);
+            if (!type) {
+                type = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
 
-                if (symbol && !symbol.isGeneric()) {
-                    this.setSymbolForAST(typeRef, symbol, context);
+                if (type && !type.isGeneric()) {
+                    this.setSymbolForAST(typeRef, type, context);
                 }
             }
 
-            return symbol;
+            if (type && !type.isError() && !context.inImportDeclaration) {
+                if ((type.kind & PullElementKind.SomeType) === 0) {
+                    // Provide some helper messages for common cases.
+                    if (type.kind & PullElementKind.SomeContainer) {
+                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                            DiagnosticCode.Type_reference_cannot_refer_to_container_0, [type.toString()], enclosingDecl);
+                    }
+                    else {
+                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                            DiagnosticCode.Type_reference_cannot_must_refer_to_type, null, enclosingDecl);
+                    }
+                }
+            }
+
+            return type;
         }
 
         private computeTypeReferenceSymbol(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {

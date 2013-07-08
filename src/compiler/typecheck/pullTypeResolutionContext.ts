@@ -179,6 +179,7 @@ module TypeScript {
         public isComparingSpecializedSignatures = false;
         public isResolvingSuperConstructorTarget = false;
         public inConstructorArguments = false;
+        public inImportDeclaration = false;
 
         constructor(public inTypeCheck = false) { }
 
