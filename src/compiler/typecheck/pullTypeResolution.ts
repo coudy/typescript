@@ -1609,6 +1609,8 @@ module TypeScript {
 
             funcDeclSymbol.setResolved();
 
+            this.typeCheckFunctionOverloads(funcDeclAST, context);
+
             return funcDeclSymbol;
         }
 
@@ -8354,7 +8356,7 @@ module TypeScript {
 
                     if (!foundSubtypeSignature) {
                         // Could not find the overload signature subtype
-                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null, this.getEnclosingDecl(functionDeclaration));
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature, null, functionDeclaration);
                     }
                 }
             } else if (definitionSignature && definitionSignature != signature) {
@@ -8367,9 +8369,9 @@ module TypeScript {
                 if (!this.signatureIsAssignableToTarget(definitionSignature, signature, context, comparisonInfo)) {
                     // definition signature is not assignable to functionSignature then its incorrect overload signature
                     if (comparisonInfo.message) {
-                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition_NL_0, [comparisonInfo.message], this.getEnclosingDecl(functionDeclaration));
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition_NL_0, [comparisonInfo.message], functionDeclaration);
                     } else {
-                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition, null, this.getEnclosingDecl(functionDeclaration));
+                        context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_is_not_compatible_with_function_definition, null, functionDeclaration);
                     }
                 }
             }
@@ -8399,7 +8401,7 @@ module TypeScript {
                 }
 
                 if (errorCode) {
-                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), errorCode, null, this.getEnclosingDecl(functionDeclaration));
+                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), errorCode, null, functionDeclaration);
                 }
             }
         }
