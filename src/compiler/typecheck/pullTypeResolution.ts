@@ -1968,6 +1968,11 @@ module TypeScript {
                         else {
                             typeExprSymbol = typeExprSymbol.type;
                             if (typeExprSymbol.isContainer()) {
+
+                                if (typeExprSymbol.isAlias()) {
+                                    typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getAliasedType();
+                                }
+
                                 var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
                                 if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
@@ -2456,6 +2461,7 @@ module TypeScript {
                                 }
                             }
                         }
+                        this.typeCheckFunctionOverloads(funcDeclAST, context);
                     }
 
                     // Is it an indexer?
@@ -2538,9 +2544,10 @@ module TypeScript {
                                 context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
                             }
                         }
+                        this.typeCheckFunctionOverloads(funcDeclAST, context);
                     }
 
-                    this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    
                     this.checkFunctionTypePrivacy(funcDeclAST, false, context);
                     this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
                 });
@@ -5346,6 +5353,8 @@ module TypeScript {
             var typeReplacementMap: any = null;
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
+            var constraintDiagnostic: Diagnostic = null;
+            var diagnostics: Diagnostic[] = [];
 
             // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
@@ -5378,8 +5387,6 @@ module TypeScript {
                 var prevSpecializing: boolean = context.isSpecializingSignatureAtCallSite;
                 var beforeResolutionSignatures = signatures;
                 var triedToInferTypeArgs: boolean;
-                var constraintDiagnostic: Diagnostic = null;
-                var diagnostics: Diagnostic[] = [];
 
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
