@@ -295,8 +295,15 @@ module Services {
         // Ensure (almost) determinstic release of internal Javascript resources when 
         // some external native objects holds onto us (e.g. Com/Interop).
         public dispose(dummy: any): void {
-            this.logger.log("dispose()")
+            this.logger.log("dispose()");
             this.languageService = null;
+
+            // force a GC
+            if (debugObjectHost && debugObjectHost.CollectGarbage) {
+                debugObjectHost.CollectGarbage();
+                this.logger.log("CollectGarbage()");
+            }
+
             this.logger = null;
 
             super.dispose(dummy);
