@@ -1231,9 +1231,9 @@ module TypeScript {
                     for (var i = 0; i < indexSignatures.length; i++) {
                         this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
                     }
-                }
 
-                this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                    this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                }
             }
 
             this.setSymbolForAST(typeDeclAST.name, typeDeclSymbol, context);
@@ -1338,6 +1338,8 @@ module TypeScript {
                     constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
                 }
             }
+
+            this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
 
             return classDeclSymbol;
         }
@@ -1943,6 +1945,8 @@ module TypeScript {
             var typeExprSymbol: PullTypeSymbol = null;
             var initExprSymbol: PullSymbol = null;
             var initTypeSymbol: PullTypeSymbol = null;
+            var inConstructorArgumentList = context.inConstructorArguments;
+            context.inConstructorArguments = false;
 
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
@@ -1963,7 +1967,7 @@ module TypeScript {
                     if (typeExprSymbol.isNamedTypeSymbol() &&
                         typeExprSymbol.isGeneric() &&
                         !typeExprSymbol.isTypeParameter() &&
-                        typeExprSymbol.isResolved &&
+                        (typeExprSymbol.isResolved || (typeExprSymbol.inResolution && !context.inSpecialization)) &&
                         !typeExprSymbol.getIsSpecialized() &&
                         typeExprSymbol.getTypeParameters().length &&
                         (typeExprSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeExprSymbol)) &&
@@ -2036,7 +2040,13 @@ module TypeScript {
                     context.pushContextualType(typeExprSymbol, context.inProvisionalResolution(), null);
                 }
 
+                if (inConstructorArgumentList) {
+                    context.inConstructorArguments = inConstructorArgumentList;
+                }
+
                 initExprSymbol = this.resolveAST(varDecl.init, typeExprSymbol != null, wrapperDecl, context);
+
+                context.inConstructorArguments = false;
 
                 if (typeExprSymbol) {
                     context.popContextualType();
@@ -2140,12 +2150,21 @@ module TypeScript {
             }
 
             if (context.typeCheck()) {
+
+                if (varDecl.init && varDecl.nodeType() === NodeType.Parameter) {
+                    var containerSignature = enclosingDecl.getSignatureSymbol();
+                    if (containerSignature && !containerSignature.isDefinition()) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Default_arguments_are_not_allowed_in_an_overload_parameter, [], enclosingDecl);
+                    }
+                }
                 if (declSymbol.kind != PullElementKind.Parameter &&
                     (declSymbol.kind != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
                     this.checkTypePrivacy(declSymbol, declSymbol.type, context, (typeSymbol: PullTypeSymbol) =>
                         this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context));
                 }
             }
+
+            context.inConstructorArguments = inConstructorArgumentList;
 
             return declSymbol;
         }
@@ -2931,9 +2950,31 @@ module TypeScript {
         }
 
         private resolveUnaryArithmeticOperation(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            var nodeType = ast.nodeType();
+            if (context.typeCheck() && !(nodeType == NodeType.PlusExpression || nodeType == NodeType.NegateExpression || nodeType == NodeType.BitwiseNotExpression)) {
+                var unaryExpression = <UnaryExpression>ast;
+                var expression = this.resolveAST(unaryExpression.operand, false, enclosingDecl, context);
+                var operandType = expression.type;
 
-            if (context.typeCheck()) {
-                this.resolveAST((<UnaryExpression>ast).operand, false, enclosingDecl, context); 
+                var operandIsFit = this.isAnyOrEquivalent(operandType) || operandType === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(operandType);
+
+                if (!operandIsFit) {
+                    context.postError(this.unitPath, unaryExpression.operand.minChar, unaryExpression.operand.getLength(), DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type_any_number_or_an_enum_type, null, enclosingDecl);
+                }
+
+                switch (unaryExpression.nodeType()) {
+                    case NodeType.PostIncrementExpression:
+                    case NodeType.PreIncrementExpression:
+                    case NodeType.PostDecrementExpression:
+                    case NodeType.PreDecrementExpression:
+                        // Check that operand is classified as a reference 
+
+                        if (!this.isValidLHS(unaryExpression.operand, expression)) {
+                            context.postError(this.unitPath, unaryExpression.operand.minChar, unaryExpression.operand.getLength(), DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer, null, enclosingDecl);
+                        }
+
+                        break;
+                }
             }
 
             this.setSymbolForAST(ast, this.semanticInfoChain.numberTypeSymbol, context);
@@ -3237,18 +3278,18 @@ module TypeScript {
             var returnExpr = returnAST.returnExpression;
             var returnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
 
-            if (context.typeCheck() && returnExpr) {
+            var parentDecl = enclosingDecl;
 
-                var parentDecl = enclosingDecl;
-
-                while (parentDecl) {
-                    if (parentDecl.kind & PullElementKind.SomeFunction) {
-                        parentDecl.setFlag(PullElementFlags.HasReturnStatement);
-                        break;
-                    }
-
-                    parentDecl = parentDecl.getParentDecl();
+            while (parentDecl) {
+                if (parentDecl.kind & PullElementKind.SomeFunction) {
+                    parentDecl.setFlag(PullElementFlags.HasReturnStatement);
+                    break;
                 }
+
+                parentDecl = parentDecl.getParentDecl();
+            }
+
+            if (context.typeCheck() && returnExpr) {
 
                 //PullTypeResolver.typeCheckCallBacks.push(() => {
 
