@@ -177,6 +177,8 @@ module TypeScript {
         public isSpecializingSignatureAtCallSite = false;
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
+        public isResolvingSuperConstructorTarget = false;
+        public inConstructorArguments = false;
 
         constructor(public inTypeCheck = false) { }
 

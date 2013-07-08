@@ -2354,9 +2354,12 @@ module TypeScript {
 
                 // resolve parameter type annotations as necessary
                 if (funcDeclAST.arguments) {
+                    var prevInConstructorArguments = context.inConstructorArguments;
+                    context.inConstructorArguments = isConstructor;
                     for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
                         this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
                     }
+                    context.inConstructorArguments = prevInConstructorArguments;
                 }
 
                 if (signature.isGeneric()) {
@@ -3049,6 +3052,7 @@ module TypeScript {
             if (context.typeCheck()) {
                 this.resolveAST((<ForStatement>ast).init, false, enclosingDecl, context);
                 this.resolveAST((<ForStatement>ast).cond, false, enclosingDecl, context);
+                this.resolveAST((<ForStatement>ast).incr, false, enclosingDecl, context);
                 this.resolveAST((<ForStatement>ast).body, false, enclosingDecl, context);
             }
 
@@ -3997,6 +4001,12 @@ module TypeScript {
                 }
             }
 
+            if (context.typeCheck()) {
+                this.checkForSuperMemberAccess(dottedNameAST, nameSymbol, enclosingDecl, context) ||
+                this.checkForPrivateMemberAccess(dottedNameAST, lhsType, nameSymbol, enclosingDecl, context) ||
+                this.checkForStaticMemberAccess(dottedNameAST, lhsType, nameSymbol, enclosingDecl, context);
+            }
+
             return nameSymbol;
         }
 
@@ -4480,10 +4490,12 @@ module TypeScript {
             return symbol;
         }
 
-        private computeThisExpressionSymbol(ast: IAST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private computeThisExpressionSymbol(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (enclosingDecl) {
                 var enclosingDeclKind = enclosingDecl.kind;
                 var diagnostics: Diagnostic[];
+                var thisTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
+                var classDecl: PullDecl = null;
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
                     context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);
@@ -4515,25 +4527,64 @@ module TypeScript {
                                 break;
                             }
                             else if (declKind === PullElementKind.Class) {
-                                var classSymbol = <PullTypeSymbol>decl.getSymbol();
-                                return classSymbol;
+                                thisTypeSymbol = <PullTypeSymbol>decl.getSymbol();
+                                classDecl = decl;
+                                break;
                             }
                         }
                     }
                 }
             }
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            if (context.typeCheck()) {
+                var thisExpressionAST = <ThisExpression>ast;
+                var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
+
+                if (context.isResolvingSuperConstructorTarget &&
+                    this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
+
+                    context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
+                }
+                else if (enclosingNonLambdaDecl) {
+                    if (enclosingNonLambdaDecl.kind === PullElementKind.Class) {
+                        context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_initializers_in_a_class_body, null, enclosingDecl);
+                    }
+                    else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
+                        context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);
+                    }
+                    else if (context.inConstructorArguments) {
+                        context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments, null, enclosingDecl);
+                    }
+                }
+            }
+
+            return thisTypeSymbol;
+        }
+
+        private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+
+            if (declPath.length) {
+                for (var i = declPath.length - 1; i >= 0; i--) {
+                    var decl = declPath[i];
+                    if (!(decl.kind === PullElementKind.FunctionExpression && (decl.flags & PullElementFlags.FatArrow))) {
+                        return decl;
+                    }
+                }
+            }
+
+            return null;
         }
 
         // PULLTODO: Optimization: cache this for a given decl path
-        private resolveSuperExpression(ast: IAST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (!enclosingDecl) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
             var classSymbol: PullTypeSymbol = null;
+            var superType = this.semanticInfoChain.anyTypeSymbol;
 
             // work back up the decl path, until you can find a class
             if (declPath.length) {
@@ -4566,11 +4617,37 @@ module TypeScript {
                 var parents = classSymbol.getExtendedTypes();
 
                 if (parents.length) {
-                    return parents[0];
+                    superType = parents[0];
                 }
             }
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            if (context.typeCheck()) {
+                var nonLambdaEnclosingDecl: PullDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
+
+                if (nonLambdaEnclosingDecl) {
+
+                    var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.kind;
+                    var inSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+
+                    // Super calls are not permitted outside constructors or in local functions inside constructors.
+                    if (inSuperConstructorTarget && enclosingDecl.kind !== PullElementKind.ConstructorMethod) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors, null, enclosingDecl);
+                    }
+                    // A super property access is permitted only in a constructor, instance member function, or instance member accessor
+                    else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
+                        ((nonLambdaEnclosingDecl.flags & PullElementFlags.Static) !== 0)) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_instance_member_function_or_instance_member_accessor_of_a_derived_class, null, enclosingDecl);
+                    }
+                    // A super is permitted only in a derived class 
+                    else if (!this.enclosingClassIsDerived(enclosingDecl)) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes, null, enclosingDecl);
+                    }
+                }
+            }
+
+            this.checkForThisOrSuperCaptureInArrowFunction(ast, enclosingDecl);
+
+            return superType;
         }
 
         public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
@@ -5122,6 +5199,10 @@ module TypeScript {
         }
 
         private resolveLogicalAndExpression(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (context.typeCheck()) {
+                this.resolveAST(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+
             return this.resolveAST(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
         }
 
@@ -5205,7 +5286,19 @@ module TypeScript {
 
         public computeInvocationExpressionSymbol(callEx: InvocationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
+            var isSuperCall = callEx.target.nodeType() === NodeType.SuperExpression;
+            var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+
+            if (isSuperCall) {
+                context.isResolvingSuperConstructorTarget = true;
+            }
+
             var targetSymbol = this.resolveAST(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
+
+            if (isSuperCall) {
+                context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+            }
+
             var targetAST = this.getLastIdentifierInTarget(callEx);
 
             // don't be fooled
@@ -5228,10 +5321,8 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             
-            var isSuperCall = false;
 
-            if (callEx.target.nodeType() === NodeType.SuperExpression) {
-                isSuperCall = true;
+            if (isSuperCall) {
 
                 if (targetTypeSymbol.isClass()) {
                     this.seenSuperConstructorCall = true;
@@ -5442,6 +5533,10 @@ module TypeScript {
             var useBeforeResolutionSignatures = signature == null;
 
             if (!signature) {
+                for (var i = 0; i < diagnostics.length; i++) {
+                    context.postDiagnostic(diagnostics[i], enclosingDecl);
+                }
+
                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression, null, enclosingDecl);
 
                 // Remember the error state
@@ -5449,10 +5544,6 @@ module TypeScript {
                 errorCondition = this.getNewErrorTypeSymbol(null);
 
                 if (!signatures.length) {
-                    for (var i = 0; i < diagnostics.length; i++) {
-                        context.postDiagnostic(diagnostics[i], enclosingDecl);
-                    }
-
                     return errorCondition;
                 }
 
@@ -5767,17 +5858,17 @@ module TypeScript {
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
+
+                    for (var i = 0; i < diagnostics.length; i++) {
+                        context.postDiagnostic(diagnostics[i], enclosingDecl);
+                    }
+
                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_new_expression, null, enclosingDecl);
 
                     // Remember the error
                     errorCondition = this.getNewErrorTypeSymbol(null);
 
                     if (!constructSignatures.length) {
-
-                        for (var i = 0; i < diagnostics.length; i++) {
-                            context.postDiagnostic(diagnostics[i], enclosingDecl);
-                        }
-
                         // POST diagnostics
                         return errorCondition;
                     }
@@ -8743,6 +8834,7 @@ module TypeScript {
 
                         break;
                     }
+                    parentDecl = parentDecl.getParentDecl();
                 }
             }
 
@@ -9171,6 +9263,79 @@ module TypeScript {
             }
             else if (!expressionSymbol.isType() || expressionTypeSymbol.isArray()) {
                 return ((expressionSymbol.kind & PullElementKind.SomeLHS) != 0) && !expressionSymbol.hasFlag(TypeScript.PullElementFlags.Enum);
+            }
+
+            return false;
+        }
+
+        private checkForSuperMemberAccess(memberAccessExpression: BinaryExpression,
+            resolvedName: PullSymbol,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): boolean {
+            if (resolvedName) {
+                if (memberAccessExpression.operand1.nodeType() === NodeType.SuperExpression &&
+                    !resolvedName.isError() &&
+                    resolvedName.kind !== PullElementKind.Method) {
+
+                    context.postError(this.unitPath, memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(),
+                        DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, [], enclosingDecl);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private checkForPrivateMemberAccess(memberAccessExpression: BinaryExpression,
+            expressionType: PullTypeSymbol,
+            resolvedName: PullSymbol,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): boolean {
+            if (resolvedName) {
+                if (resolvedName.hasFlag(PullElementFlags.Private)) {
+                    var memberContainer = resolvedName.getContainer();
+                    if (memberContainer && memberContainer.kind === PullElementKind.ConstructorType) {
+                        memberContainer = memberContainer.getAssociatedContainerType();
+                    }
+
+                    if (memberContainer && memberContainer.isClass()) {
+                        // We're accessing a private member of a class.  We can only do that if we're 
+                        // actually contained within that class.
+                        var containingClass = enclosingDecl;
+
+                        while (containingClass && containingClass.kind != PullElementKind.Class) {
+                            containingClass = containingClass.getParentDecl();
+                        }
+
+                        if (!containingClass || containingClass.getSymbol() !== memberContainer) {
+                            var name = <Identifier>memberAccessExpression.operand2;
+                            context.postError(this.unitPath, name.minChar, name.getLength(), DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(null, false), name.actualText], enclosingDecl);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private checkForStaticMemberAccess(memberAccessExpression: BinaryExpression,
+            expressionType: PullTypeSymbol,
+            resolvedName: PullSymbol,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): boolean {
+            if (expressionType && resolvedName && !resolvedName.isError()) {
+                if (expressionType.isClass() || expressionType.kind === PullElementKind.ConstructorType) {
+                    var name = <Identifier>memberAccessExpression.operand2;
+
+                    if (resolvedName.hasFlag(PullElementFlags.Static) || this.isPrototypeMember(memberAccessExpression, enclosingDecl, context)) {
+                        if (expressionType.kind !== PullElementKind.ConstructorType) {
+                            context.postError(this.unitPath, name.minChar, name.getLength(),
+                                DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable, null, enclosingDecl);
+                            return true;
+                        }
+                    }
+                }
             }
 
             return false;
