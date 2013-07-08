@@ -2746,6 +2746,8 @@ module TypeScript {
                         context.postError(this.unitPath, funcNameAST.minChar, funcNameAST.getLength(), DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, enclosingDecl);
                     }
                 }
+
+                this.checkFunctionTypePrivacy(funcDeclAST, false, context);
             }
 
             return accessorSymbol;
@@ -2874,6 +2876,8 @@ module TypeScript {
                         context.postError(this.unitPath, funcNameAST.minChar, funcNameAST.getLength(), DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, enclosingDecl);
                     }
                 }
+
+                this.checkFunctionTypePrivacy(funcDeclAST, false, context);
             }
 
             return accessorSymbol;
@@ -4505,8 +4509,7 @@ module TypeScript {
                         }
                     }
 
-                    //this.typeCheckFunctionOverloads(funcDeclAST, context);
-                    //this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                    this.typeCheckFunctionOverloads(funcDeclAST, context);
                 });
             }
 
@@ -8338,7 +8341,7 @@ module TypeScript {
             if (isConstantOverloadSignature) {
                 if (signature.isDefinition()) {
                     // Report error - definition signature cannot specify constant type
-                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(),DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type, null, functionDeclaration);
+                    context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type, null, functionDeclaration);
                 } else {
                     // PERFREVIEW: Why create a new resolution context?
                     //var resolutionContext = new PullTypeResolutionContext(true);
