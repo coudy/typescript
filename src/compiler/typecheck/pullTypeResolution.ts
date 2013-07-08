@@ -1042,14 +1042,10 @@ module TypeScript {
                     this.resolveDeclaredSymbol(instanceSymbol, containerDecl.getParentDecl(), context);
                 }
 
-                // resolve any export assignments up-front
-                // (if we're in typecheck, we'll do this anyway
-                if (!context.typeCheck()) {
-                    for (var i = 0; i < members.length; i++) {
-                        if (members[i].nodeType() == NodeType.ExportAssignment) {
-                            this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
-                            break;
-                        }
+                for (var i = 0; i < members.length; i++) {
+                    if (members[i].nodeType() == NodeType.ExportAssignment) {
+                        this.resolveExportAssignmentStatement(<ExportAssignment>members[i], containerDecl, context);
+                        break;
                     }
                 }
             }
@@ -1511,24 +1507,23 @@ module TypeScript {
             }
 
             if (valueSymbol) {
-                if (!valueSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(valueSymbol, enclosingDecl, context);
-                }
                 (<PullContainerTypeSymbol>parentSymbol).setExportAssignedValueSymbol(valueSymbol);
             }
             if (typeSymbol) {
-                if (!typeSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(typeSymbol, enclosingDecl, context);
-                }
-
                 (<PullContainerTypeSymbol>parentSymbol).setExportAssignedTypeSymbol(<PullTypeSymbol>typeSymbol);
             }
             if (containerSymbol) {
-                if (!containerSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(containerSymbol, enclosingDecl, context);
-                }
-
                 (<PullContainerTypeSymbol>parentSymbol).setExportAssignedContainerSymbol(<PullContainerTypeSymbol>containerSymbol);
+            }
+
+            if (valueSymbol && !valueSymbol.isResolved) {
+                this.resolveDeclaredSymbol(valueSymbol, enclosingDecl, context);
+            }
+            if (typeSymbol && !typeSymbol.isResolved) {
+                this.resolveDeclaredSymbol(typeSymbol, enclosingDecl, context);
+            }
+            if (containerSymbol && !containerSymbol.isResolved) {
+                this.resolveDeclaredSymbol(containerSymbol, enclosingDecl, context);
             }
 
             return this.semanticInfoChain.voidTypeSymbol;
