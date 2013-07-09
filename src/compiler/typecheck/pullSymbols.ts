@@ -617,6 +617,8 @@ module TypeScript {
         public hasAGenericParameter = false;
         private stringConstantOverload: boolean = undefined;
 
+        public hasBeenChecked = false;
+
         constructor(kind: PullElementKind) {
             super("", kind);
         }

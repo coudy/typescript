@@ -2491,10 +2491,15 @@ module TypeScript {
                 }
             }
 
-            if (context.typeCheck()) {
+            if (context.inTypeCheck && (!context.inSpecialization || !signature.isGeneric())) {
                 var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
 
                 PullTypeResolver.typeCheckCallBacks.push(() => {
+
+                    if (signature.hasBeenChecked) {
+                        return;
+                    }
+
                     this.setUnitPath(funcDecl.getScriptName());
                     this.seenSuperConstructorCall = false;
 
@@ -2616,6 +2621,8 @@ module TypeScript {
                     
                     this.checkFunctionTypePrivacy(funcDeclAST, false, context);
                     this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+
+                    signature.hasBeenChecked = true;
                 });
             }
 
