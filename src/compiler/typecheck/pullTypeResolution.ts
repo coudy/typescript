@@ -2120,6 +2120,10 @@ module TypeScript {
             else if (context.typeCheck()) {
                 if (typeExprSymbol && typeExprSymbol.isContainer()) {
 
+                    if (typeExprSymbol.isAlias()) {
+                        typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getAliasedType();
+                    }
+
                     var exportedTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
 
                     if (exportedTypeSymbol) {
@@ -2139,6 +2143,10 @@ module TypeScript {
                 }
 
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
+
+                    if (initTypeSymbol.isAlias()) {
+                        initTypeSymbol = (<PullTypeAliasSymbol>initTypeSymbol).getAliasedType();
+                    }
 
                     instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol).getInstanceSymbol().type;
 
@@ -4486,24 +4494,26 @@ module TypeScript {
                 }
             }
 
-            // create a new function decl and symbol
-            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-            var declCollectionContext = new DeclCollectionContext(semanticInfo);
+            // If necessary, create a new function decl and symbol
+            if (!functionDecl) {
+                var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-            declCollectionContext.scriptName = this.unitPath;
+                declCollectionContext.scriptName = this.unitPath;
 
-            if (enclosingDecl) {
-                declCollectionContext.pushParent(enclosingDecl);
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
+
+                getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                functionDecl = this.getDeclForAST(funcDeclAST);
+                this.currentUnit.addSynthesizedDecl(functionDecl);
+
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                binder.setUnit(this.unitPath);
+                binder.bindFunctionExpressionToPullSymbol(functionDecl);
             }
-
-            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-            var functionDecl = this.getDeclForAST(funcDeclAST);
-            this.currentUnit.addSynthesizedDecl(functionDecl);
-
-            var binder = new PullSymbolBinder(this.semanticInfoChain);
-            binder.setUnit(this.unitPath);
-            binder.bindFunctionExpressionToPullSymbol(functionDecl);
 
             funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
 
