@@ -1351,6 +1351,9 @@ module TypeScript {
             }
 
             this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
+            if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+            }
 
             return classDeclSymbol;
         }
@@ -1360,7 +1363,9 @@ module TypeScript {
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
-
+            if (interfaceDeclSymbol.isResolved && !interfaceDeclSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+            }
             return interfaceDeclSymbol;
         }
 
@@ -1742,6 +1747,10 @@ module TypeScript {
             }
 
             interfaceSymbol.setResolved();
+
+            if (!interfaceSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+            }
 
             return interfaceSymbol;
         }
@@ -9045,12 +9054,12 @@ module TypeScript {
             }
         }
 
-        private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, context: PullTypeResolutionContext, enclosingDecl: PullDecl) {
+        private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, containerTypeDecl: PullDecl, context: PullTypeResolutionContext) {
             // Check all the members defined in this symbol's declarations (no base classes)
             var indexSignatures = containerType.getIndexSignatures();
 
             if (indexSignatures.length > 0) {
-                var members = enclosingDecl.getChildDecls();
+                var members = containerTypeDecl.getChildDecls();
                 for (var i = 0; i < members.length; i++) {
                     // Nothing to check if the member has no name or is a signature
                     var member = members[i];
@@ -9065,7 +9074,7 @@ module TypeScript {
                             this.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), context);
                         }
                         if ((indexSignatures[j].parameters[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
-                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), context, enclosingDecl, isMemberNumeric);
+                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, isMemberNumeric);
                             break;
                         }
                     }
