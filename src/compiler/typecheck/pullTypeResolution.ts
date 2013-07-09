@@ -1019,11 +1019,11 @@ module TypeScript {
             var containerDecl = this.getDeclForAST(ast);
             var containerSymbol = <PullContainerTypeSymbol>containerDecl.getSymbol();
 
-            if (containerSymbol.isResolved) {
+            if (containerSymbol.isResolved || containerSymbol.inResolution) {
                 return containerSymbol;
             }
 
-            containerSymbol.setResolved();
+            containerSymbol.inResolution = true;
 
             var containerDecls = containerSymbol.getDeclarations();
 
@@ -1067,6 +1067,13 @@ module TypeScript {
                     }
                 }
                 this.setUnitPath(currentPath);
+            }
+
+            if (!context.isInBaseTypeResolution()) {
+                containerSymbol.setResolved();
+            }
+            else {
+                containerSymbol.inResolution = false;
             }
 
             return containerSymbol;
@@ -3845,7 +3852,7 @@ module TypeScript {
             }
 
             // We don't want to capture an intermediate 'any' from a recursive resolution
-            if (nameSymbol /*&& !nameSymbol.inResolution*/) {
+            if (nameSymbol && nameSymbol.type != this.semanticInfoChain.anyTypeSymbol/*&& !nameSymbol.inResolution*/) {
                 this.setSymbolForAST(nameAST, nameSymbol, context);
             }
 
@@ -3919,7 +3926,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
             }
 
-            if (symbol /*&& !symbol.inResolution*/) {
+            if (symbol && symbol.type != this.semanticInfoChain.anyTypeSymbol/*&& !symbol.inResolution*/) {
                 this.setSymbolForAST(dottedNameAST, symbol, context);
                 this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
             }
