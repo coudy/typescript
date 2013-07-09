@@ -75,8 +75,13 @@ module TypeScript {
                 this.topLevelSynthesizedDecls[this.topLevelSynthesizedDecls.length] = decl;
             //}
         }
+
         public getSynthesizedDecls() {
             return this.topLevelSynthesizedDecls;
+        }
+
+        public cleanSynthesizedDecls() {
+            this.topLevelSynthesizedDecls = [];
         }
 
         public getDeclForAST(ast: AST): PullDecl {
@@ -452,7 +457,15 @@ module TypeScript {
             for (var i = 0; i < synthesizedDecls.length; i++) {
                 this.cleanDecl(synthesizedDecls[i]);
             }
-        }        
+
+            this.cleanAllSynthesizedDecls();
+        }
+
+        private cleanAllSynthesizedDecls() {
+            for (var i = 0; i < this.units.length; i++) {
+                this.units[i].cleanSynthesizedDecls();
+            }
+        }
 
         public update() {
 
