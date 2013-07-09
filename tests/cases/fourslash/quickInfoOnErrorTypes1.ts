@@ -6,4 +6,4 @@
 ////};
 
 goTo.marker('A');
-verify.quickInfoIs('{ x: number; }', "", "f", "var");
+verify.quickInfoIs('{ x: number; (): any; }', "", "f", "var");

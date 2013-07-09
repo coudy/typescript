@@ -34,7 +34,7 @@
 ////var /*18*/c3t7: {
 ////    (n: number): number;    
 ////    (s1: string): number;
-////} = function(/*19*/n) { return n; };
+////};
 ////var /*20*/c3t8: (n: number, s: string) => number = function(/*21*/n) { return n; };
 ////var /*22*/c3t9: number[][] = [[],[]];
 ////var /*23*/c3t10: IFoo[] = [<IFoo>({}),<IFoo>({})];
@@ -170,7 +170,7 @@
 ////})
 ////// CONTEXT: Contextual typing declarations
 ////// contextually typing function declarations
-////declare function EF1(a: number, b:number):number;
+////function EF1(a: number, b:number):number;
 ////function /*101*/EF1(/*102*/a,/*103*/b) { return a+b; }
 ////var efv = EF1(1,2);
 ////// contextually typing from ambient class declarations
@@ -181,11 +181,6 @@
 ////      y: number;
 ////      add(dx: number, dy: number): Point;
 ////      static origin: Point;
-////}
-////function /*104*/Point(/*105*/x, /*106*/y) {
-////    this./*107*/x = x;
-////    this./*108*/y = y;
-////    return /*109*/this;
 ////}
 ////Point./*110*/origin = new /*111*/Point(0, 0);
 ////Point.prototype./*112*/add = function (/*113*/dx, /*114*/dy) {
@@ -234,9 +229,7 @@ verify.quickInfoIs("number");
 goTo.marker('17');
 verify.quickInfoIs("string");
 goTo.marker('18');
-verify.quickInfoIs("{ (n: number): number; (s1: string): number; }");
-goTo.marker('19');
-verify.quickInfoIs("any");
+verify.quickInfoIs("(n: number): number (+ 1 overload(s))");
 goTo.marker('20');
 verify.quickInfoIs("(n: number, s: string) => number");
 goTo.marker('21');
@@ -258,7 +251,7 @@ verify.quickInfoIs("IFoo");
 goTo.marker('29');
 verify.quickInfoIs("IFoo");
 goTo.marker('30');
-verify.quickInfoIs("");
+verify.quickInfoIs("(i: any, s: any) => any");
 goTo.marker('31');
 verify.quickInfoIs("any");
 goTo.marker('32');
@@ -266,7 +259,7 @@ verify.quickInfoIs("any");
 goTo.marker('33');
 verify.quickInfoIs("IFoo");
 goTo.marker('34');
-verify.quickInfoIs("");
+verify.quickInfoIs("any[]");
 goTo.marker('35');
 verify.quickInfoIs("(i: number, s: string) => string");
 goTo.marker('36');
@@ -330,7 +323,7 @@ verify.quickInfoIs("IFoo");
 goTo.marker('65');
 verify.quickInfoIs("IFoo");
 goTo.marker('66');
-verify.quickInfoIs("");
+verify.quickInfoIs("(i: any, s: any) => any");
 goTo.marker('67');
 verify.quickInfoIs("any");
 goTo.marker('68');
@@ -338,13 +331,13 @@ verify.quickInfoIs("any");
 goTo.marker('69');
 verify.quickInfoIs("IFoo");
 goTo.marker('70');
-verify.quickInfoIs("");
+verify.quickInfoIs("any[]");
 goTo.marker('71');
 verify.quickInfoIs("number");
 goTo.marker('72');
 verify.quickInfoIs("() => (n: number) => IFoo");
 goTo.marker('73');
-verify.quickInfoIs("any");
+verify.quickInfoIs("number");
 goTo.marker('74');
 verify.quickInfoIs("number");
 goTo.marker('75');
@@ -390,7 +383,7 @@ verify.quickInfoIs("IFoo");
 goTo.marker('95');
 verify.quickInfoIs("IFoo");
 goTo.marker('96');
-verify.quickInfoIs("");
+verify.quickInfoIs("(i: any, s: any) => any");
 goTo.marker('97');
 verify.quickInfoIs("any");
 goTo.marker('98');
@@ -398,31 +391,19 @@ verify.quickInfoIs("any");
 goTo.marker('99');
 verify.quickInfoIs("IFoo");
 goTo.marker('100');
-verify.quickInfoIs("");
+verify.quickInfoIs("any[]");
 goTo.marker('101');
-verify.quickInfoIs("(a: number, b: number) => number");
+verify.quickInfoIs("(a: number, b: number): number (+ 0 overload(s))");
 goTo.marker('102');
-verify.quickInfoIs("number");
+verify.quickInfoIs("any");
 goTo.marker('103');
-verify.quickInfoIs("number");
-goTo.marker('104');
-verify.quickInfoIs("{ origin: Point; new(x: number, y: number): Point; }", "", "Point", "function");
-goTo.marker('105');
-verify.quickInfoIs("number");
-goTo.marker('106');
-verify.quickInfoIs("number");
-goTo.marker('107');
-verify.quickInfoIs("");
-goTo.marker('108');
-verify.quickInfoIs("");
-goTo.marker('109');
 verify.quickInfoIs("any");
 goTo.marker('110');
 verify.quickInfoIs("Point");
 goTo.marker('111');
-verify.quickInfoIs("(x: number, y: number) => Point");
+verify.quickInfoIs("(x: number, y: number): Point");
 goTo.marker('112');
-verify.quickInfoIs("(dx: number, dy: number) => Point");
+verify.quickInfoIs("(dx: number, dy: number): Point");
 goTo.marker('113');
 verify.quickInfoIs("number");
 goTo.marker('114');
