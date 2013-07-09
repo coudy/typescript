@@ -9,9 +9,7 @@
 ////r2./*6*/
 
 goTo.marker('1');
-// BUG 697192
-//verify.completionListContains('I');
-verify.not.completionListContains('I');
+verify.completionListContains('I');
 verify.not.completionListContains('foo');
 edit.insert('I;');
 

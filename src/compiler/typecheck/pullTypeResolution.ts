@@ -3308,11 +3308,9 @@ module TypeScript {
         }
 
         private resolveReturnStatement(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            var parentDecl = enclosingDecl;
             var returnAST = <ReturnStatement>ast;
             var returnExpr = returnAST.returnExpression;
-            var returnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
-
-            var parentDecl = enclosingDecl;
 
             while (parentDecl) {
                 if (parentDecl.kind & PullElementKind.SomeFunction) {
@@ -3323,41 +3321,45 @@ module TypeScript {
                 parentDecl = parentDecl.getParentDecl();
             }
 
+            // push contextual type
+            var inContextuallyTypedAssignment = false;
+            var enclosingDeclAST: FunctionDeclaration;
+
+            if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+                if (enclosingDeclAST.returnTypeAnnotation) {
+                    // The containing function has a type annotation, propagate it as the contextual type
+                    var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
+                    if (returnTypeAnnotationSymbol) {
+                        inContextuallyTypedAssignment = true;
+                        context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+                    }
+                }
+                else {
+                    // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                    var currentContextualType = context.getContextualType();
+                    if (currentContextualType && currentContextualType.isFunction()) {
+                        var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
+                        if (currentContextualTypeReturnTypeSymbol) {
+                            inContextuallyTypedAssignment = true;
+                            context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
+                        }
+                    }
+                }
+            }
+
+            var returnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
+
+
+            if (inContextuallyTypedAssignment) {
+                context.popContextualType();
+            }
+
             if (context.typeCheck() && returnExpr) {
 
                 //PullTypeResolver.typeCheckCallBacks.push(() => {
 
-                    // push contextual type
-                    var inContextuallyTypedAssignment = false;
-                    var enclosingDeclAST: FunctionDeclaration;
-
-                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                        enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-                        if (enclosingDeclAST.returnTypeAnnotation) {
-                            // The containing function has a type annotation, propagate it as the contextual type
-                            var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
-                            if (returnTypeAnnotationSymbol) {
-                                inContextuallyTypedAssignment = true;
-                                context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
-                            }
-                        }
-                        else {
-                            // No type annotation, check if there is a contextual type enforced on the function, and propagate that
-                            var currentContextualType = context.getContextualType();
-                            if (currentContextualType && currentContextualType.isFunction()) {
-                                var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                                var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
-                                if (currentContextualTypeReturnTypeSymbol) {
-                                    inContextuallyTypedAssignment = true;
-                                    context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
-                                }
-                            }
-                        }
-                    }
-
-                    if (inContextuallyTypedAssignment) {
-                        context.popContextualType();
-                    }
 
                     if (enclosingDecl.kind === PullElementKind.SetAccessor && returnExpr) {
                         context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null, enclosingDecl);
@@ -5971,6 +5973,11 @@ module TypeScript {
                 }
 
                 if (!constructSignatures.length) {
+
+                    if (constraintDiagnostic) {
+                        context.postDiagnostic(constraintDiagnostic, enclosingDecl);
+                    }
+
                     return this.getNewErrorTypeSymbol(null);
                 }
 
@@ -8342,7 +8349,9 @@ module TypeScript {
             var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
             var decl: PullDecl;
             var firstSymbol: PullSymbol;
+            var firstSymbolType: PullTypeSymbol;
             var symbol: PullSymbol;
+            var symbolType: PullTypeSymbol;
             var boundDeclAST: AST;
 
             for (var i = 0; i < declGroups.length; i++) {
@@ -8350,18 +8359,19 @@ module TypeScript {
                     decl = declGroups[i][j];
                     symbol = decl.getSymbol();
                     boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context);
+                    symbolType = this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context).type;
                     if (!j) {
-                        firstSymbol = decl.getSymbol();
+                        firstSymbol = symbol;
+                        firstSymbolType = symbolType;
 
-                        if (this.isAnyOrEquivalent(this.widenType(firstSymbol.type))) {
+                        if (this.isAnyOrEquivalent(this.widenType(firstSymbolType))) {
                             return;
                         }
                         continue;
                     }
 
-                    if (symbol.type && firstSymbol.type && !this.isAnyOrEquivalent(symbol.type) && !this.typesAreIdentical(symbol.type, firstSymbol.type)) {
-                        context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbol.type.toString(), symbol.type.toString()], enclosingDecl);
+                    if (symbolType && firstSymbolType && !this.isAnyOrEquivalent(symbolType) && !this.typesAreIdentical(symbolType, firstSymbolType)) {
+                        context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()], enclosingDecl);
                     }
                 }
             }

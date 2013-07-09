@@ -11,7 +11,7 @@ goTo.marker('1');
 verify.quickInfoIs('<T>(x: T) => T');
 
 goTo.marker('2');
-verify.quickInfoIs('<T>(x: any) => any');
+verify.quickInfoIs('<T>(x: T) => T');
 
 goTo.marker('3');
-verify.quickInfoIs('<T>(x: <A>(y: any) => any) => any');
+verify.quickInfoIs('<T>(x: <A>(y: A) => A) => T');
