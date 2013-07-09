@@ -27,7 +27,7 @@ verify.memberListContains("if");
 verify.memberListContains("implements");
 verify.memberListContains("import");
 verify.memberListContains("in");
-verify.memberListContains("instanceOf");
+verify.memberListContains("instanceof");
 verify.memberListContains("interface");
 verify.memberListContains("module");
 verify.memberListContains("new");

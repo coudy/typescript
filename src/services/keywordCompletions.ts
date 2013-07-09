@@ -30,7 +30,7 @@ module Services {
             "implements",
             "import",
             "in",
-            "instanceOf",
+            "instanceof",
             "interface",
             "module",
             "new",
