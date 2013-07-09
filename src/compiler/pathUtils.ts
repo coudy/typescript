@@ -126,6 +126,8 @@ module TypeScript {
             return relativePath + relativePathComponents.join("/");
         }
 
+        if (absoluteModPath.indexOf("://") === -1) {            absoluteModPath = "file:///" + absoluteModPath;        }
+
         return absoluteModPath;
     }
 
@@ -147,10 +149,10 @@ module TypeScript {
     }
 
     export function isRelative(path: string) {
-        return path.charAt(0) === ".";
+        return path.length > 0 && path.charAt(0) === ".";
     }
     export function isRooted(path: string) {
-        return path.charAt(0) === "\\" || path.charAt(0) === "/" || (path.indexOf(":\\") !== -1) || (path.indexOf(":/") !== -1);
+        return path.length > 0 && (path.charAt(0) === "\\" || path.charAt(0) === "/" || (path.indexOf(":\\") !== -1) || (path.indexOf(":/") !== -1));
     }
 
     export function getRootFilePath(outFname: string) {

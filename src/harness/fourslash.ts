@@ -274,6 +274,18 @@ module FourSlash {
             }
         }
 
+        public verifyEval(expr: string, value: any) {
+            var emit = this.languageService.getEmitOutput(this.activeFile.fileName);
+            if (emit.outputFiles.length !== 1) {
+                throw new Error("Expected exactly one output from emit of " + this.activeFile.fileName);
+            }
+
+            var evaluation = new Function(emit.outputFiles[0].text + ';\r\nreturn (' + expr + ');')();
+            if (evaluation !== value) {
+                throw new Error('Expected evaluation of expression "' + expr + '" to equal "' + value + '", but got "' + evaluation + '"');
+            }
+        }
+
         public verifyMemberListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             var members = this.getMemberListAtCaret();
 
@@ -283,7 +295,6 @@ module FourSlash {
             else {
                 throw new Error("Expected a member list, but none was provided")
             }
-
         }
 
         public verifyMemberListCount(expectedCount: number, negative: boolean) {
@@ -1164,7 +1175,7 @@ module FourSlash {
             }
         }
 
-        public verifyOccurancesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
+        public verifyOccurrencesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
             var occurances = this.languageService.getOccurrencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
 
             if (!occurances || occurances.length === 0) {
@@ -1335,7 +1346,7 @@ module FourSlash {
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(fileName: string) {
         var content = IO.readFile(fileName);
-        runFourSlashTestContent(content.contents(), fileName)
+        runFourSlashTestContent(content.contents, fileName)
     }
 
     export function runFourSlashTestContent(content: string, fileName: string) {
@@ -1364,7 +1375,7 @@ module FourSlash {
         fsOutput.reset();
         fsErrors.reset();
 
-        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents(), tsFn);
+        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents, tsFn);
         Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
         Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
 

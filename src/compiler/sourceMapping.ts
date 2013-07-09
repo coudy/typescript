@@ -30,6 +30,24 @@ module TypeScript {
         public childMappings: SourceMapping[] = [];
     }
 
+    export class SourceMapSourceInfo {
+        public jsFileName: string;
+        public tsFilePath: string;
+        public sourceMapPath: string;
+        public sourceMapDirectory: string;
+        public sourceRoot: string;
+
+        constructor(oldSourceMapSourceInfo?: SourceMapSourceInfo) {
+            if (oldSourceMapSourceInfo) {
+                this.jsFileName = oldSourceMapSourceInfo.jsFileName;
+                this.sourceMapPath = oldSourceMapSourceInfo.sourceMapPath;
+                this.sourceMapDirectory = oldSourceMapSourceInfo.sourceMapDirectory;
+
+                this.sourceRoot = oldSourceMapSourceInfo.sourceRoot;
+            }
+        }
+    }
+
     export class SourceMapper {
         static MapFileExtension = ".map";
         
@@ -39,31 +57,10 @@ module TypeScript {
         public names: string[] = [];
         public currentNameIndex: number[] = [];
 
-        public jsFileName: string;
-        public tsFileName: string;
-
-        constructor(tsFileName: string,
-                    jsFileName: string,
-                    public sourceMapFileName: string,
-                    public jsFile: ITextWriter,
-                    public sourceMapOut: ITextWriter,
-                    emitFullPathOfSourceMap: boolean) {
+        constructor(public jsFile: ITextWriter,
+            public sourceMapOut: ITextWriter,
+            public sourceMapSourceInfo: SourceMapSourceInfo) {
             this.currentMappings.push(this.sourceMappings);
-
-            jsFileName = switchToForwardSlashes(jsFileName);
-            this.jsFileName = TypeScript.getPrettyName(jsFileName, false, true);
-            
-            var removalIndex = jsFileName.lastIndexOf(this.jsFileName);
-            var fixedPath = jsFileName.substring(0, removalIndex);
-
-            if (emitFullPathOfSourceMap) {
-                if (jsFileName.indexOf("://") === -1) {
-                    jsFileName = "file:///" + jsFileName;
-                }
-                this.jsFileName = jsFileName;
-            }
-
-            this.tsFileName = TypeScript.getRelativePathToFixedPath(fixedPath, tsFileName);
         }
         
         // Generate source mapping.
@@ -74,7 +71,7 @@ module TypeScript {
 
             // Output map file name into the js file
             var sourceMapper = allSourceMappers[0];
-            sourceMapper.jsFile.WriteLine("//@ sourceMappingURL=" + sourceMapper.jsFileName + SourceMapper.MapFileExtension);
+            sourceMapper.jsFile.WriteLine("//# sourceMappingURL=" + sourceMapper.sourceMapSourceInfo.sourceMapPath);
 
             // Now output map file
             var sourceMapOut = sourceMapper.sourceMapOut;
@@ -97,7 +94,7 @@ module TypeScript {
 
                 // If there are any mappings generated
                 var currentSourceIndex = tsFiles.length;
-                tsFiles.push(sourceMapper.tsFileName);
+                tsFiles.push(sourceMapper.sourceMapSourceInfo.tsFilePath);
 
                 // Join namelist
                 if (sourceMapper.names.length > 0) {
@@ -168,7 +165,8 @@ module TypeScript {
             // Write the actual map file
             sourceMapOut.Write(JSON.stringify({
                 version: 3,
-                file: sourceMapper.jsFileName,
+                file: sourceMapper.sourceMapSourceInfo.jsFileName,
+                sourceRoot: sourceMapper.sourceMapSourceInfo.sourceRoot,
                 sources: tsFiles,
                 names: namesList,
                 mappings: mappingsString

@@ -46,6 +46,7 @@ module Services {
         getScriptFileNames(): string;
         getScriptVersion(fileName: string): number;
         getScriptIsOpen(fileName: string): boolean;
+        getScriptByteOrderMark(fileName: string): number;
         getScriptSnapshot(fileName: string): IScriptSnapshotShim;
         resolveRelativePath(path: string, directory: string): string;
         fileExists(path: string): boolean;
@@ -220,6 +221,10 @@ module Services {
 
         public getScriptIsOpen(fileName: string): boolean {
             return this.shimHost.getScriptIsOpen(fileName);
+        }
+
+        public getScriptByteOrderMark(fileName: string): ByteOrderMark {
+            return this.shimHost.getScriptByteOrderMark(fileName);
         }
 
         public getDiagnosticsObject(): ILanguageServicesDiagnostics {

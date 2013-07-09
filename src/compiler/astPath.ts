@@ -63,13 +63,13 @@ module TypeScript {
 
         public up() {
             if (this.top <= -1)
-                throw new Error("Invalid call to 'up'");
+                throw Errors.invalidOperation(getLocalizedText(DiagnosticCode.Invalid_call_to_up, null));
             this.top--;
         }
 
         public down() {
             if (this.top === this.ast.length - 1)
-                throw new Error("Invalid call to 'down'");
+                throw Errors.invalidOperation(getLocalizedText(DiagnosticCode.Invalid_call_to_down, null));
             this.top++;
         }
 

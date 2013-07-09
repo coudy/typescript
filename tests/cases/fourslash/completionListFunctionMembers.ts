@@ -8,5 +8,4 @@
 ////fnc1./**/
 
 goTo.marker();
-// bug 665591: Fourslash test doesn't get the completion list as we get manually
-//verify.memberListContains('arguments', 'any');
+verify.memberListContains('arguments', 'any');

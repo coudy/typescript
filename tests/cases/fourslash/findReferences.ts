@@ -22,41 +22,41 @@ var foo4: FourSlashInterface.Range = test.ranges().filter((range)=> range.marker
 var method2: FourSlashInterface.Range = test.ranges().filter((range)=> range.marker.data.name === "staticMethodInvocation")[0];
 
 goTo.marker('className');
-verify.occurancesAtPositionContains(foo1);
-verify.occurancesAtPositionContains(foo2);
-verify.occurancesAtPositionContains(foo3);
-verify.occurancesAtPositionContains(foo4);
+verify.occurrencesAtPositionContains(foo1);
+verify.occurrencesAtPositionContains(foo2);
+verify.occurrencesAtPositionContains(foo3);
+verify.occurrencesAtPositionContains(foo4);
 
 goTo.marker('barMethodName');
-verify.occurancesAtPositionContains(bar1);
-verify.occurancesAtPositionContains(bar2);
+verify.occurrencesAtPositionContains(bar1);
+verify.occurrencesAtPositionContains(bar2);
 
 goTo.marker('staticMethodName');
-verify.occurancesAtPositionContains(method1);
-verify.occurancesAtPositionContains(method2);
+verify.occurrencesAtPositionContains(method1);
+verify.occurrencesAtPositionContains(method2);
 
 goTo.marker('varTypeName');
-verify.occurancesAtPositionContains(foo1);
-verify.occurancesAtPositionContains(foo2);
-verify.occurancesAtPositionContains(foo3);
-verify.occurancesAtPositionContains(foo4);
+verify.occurrencesAtPositionContains(foo1);
+verify.occurrencesAtPositionContains(foo2);
+verify.occurrencesAtPositionContains(foo3);
+verify.occurrencesAtPositionContains(foo4);
 
 goTo.marker('ctorInvocation');
-verify.occurancesAtPositionContains(foo1);
-verify.occurancesAtPositionContains(foo2);
-verify.occurancesAtPositionContains(foo3);
-verify.occurancesAtPositionContains(foo4);
+verify.occurrencesAtPositionContains(foo1);
+verify.occurrencesAtPositionContains(foo2);
+verify.occurrencesAtPositionContains(foo3);
+verify.occurrencesAtPositionContains(foo4);
 
 goTo.marker('barMethodInvocation');
-verify.occurancesAtPositionContains(bar1);
-verify.occurancesAtPositionContains(bar2);
+verify.occurrencesAtPositionContains(bar1);
+verify.occurrencesAtPositionContains(bar2);
 
 goTo.marker('classNameMethodInvocation');
-verify.occurancesAtPositionContains(foo1);
-verify.occurancesAtPositionContains(foo2);
-verify.occurancesAtPositionContains(foo3);
-verify.occurancesAtPositionContains(foo4);
+verify.occurrencesAtPositionContains(foo1);
+verify.occurrencesAtPositionContains(foo2);
+verify.occurrencesAtPositionContains(foo3);
+verify.occurrencesAtPositionContains(foo4);
 
 goTo.marker('staticMethodInvocation');
-verify.occurancesAtPositionContains(method1);
-verify.occurancesAtPositionContains(method2);
+verify.occurrencesAtPositionContains(method1);
+verify.occurrencesAtPositionContains(method2);

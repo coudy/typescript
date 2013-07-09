@@ -95,7 +95,6 @@ var servicesSources = [
 	"formatting/formatter.ts", 
 	"classifier.ts",
 	"coreServices.ts",
-	"emitOutputTextWriter.ts",
 	"compilerState.ts",
 	"languageService.ts",
 	"completionHelpers.ts",

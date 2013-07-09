@@ -1,5 +1,5 @@
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","TopLevelModule1.NotExportedModule","TopLevelModule1.NotExportedModule.ClassA","TopLevelModule1.NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"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"}
+{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","TopLevelModule1.NotExportedModule","TopLevelModule1.NotExportedModule.ClassA","TopLevelModule1.NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"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"}
 define(["require", "exports"], function(require, exports) {
     (function (TopLevelModule1) {
         (function (SubModule1) {
@@ -168,144 +168,39 @@ define(["require", "exports"], function(require, exports) {
         var SubModule3 = TopLevelModule2.SubModule3;
     })(TopLevelModule2 || (TopLevelModule2 = {}));
 });
-//@ sourceMappingURL=0.js.map
-
-////[comments_ExternalModules_0.js.map]
-{"version":3,"file":"comments_ExternalModules_0.js","sources":["comments_ExternalModules_0.ts"],"names":[],"mappings":""}
-////[comments_ExternalModules_0.js]
-//@ sourceMappingURL=comments_ExternalModules_0.js.map
-
-////[comments_ExternalModules_1.js.map]
-{"version":3,"file":"comments_ExternalModules_1.js","sources":["comments_ExternalModules_1.ts"],"names":[],"mappings":""}
-////[comments_ExternalModules_1.js]
-//@ sourceMappingURL=comments_ExternalModules_1.js.map
-
-////[comments_MultiModule_MultiFile_0.js.map]
-{"version":3,"file":"comments_MultiModule_MultiFile_0.js","sources":["comments_MultiModule_MultiFile_0.ts"],"names":[],"mappings":""}
-////[comments_MultiModule_MultiFile_0.js]
-//@ sourceMappingURL=comments_MultiModule_MultiFile_0.js.map
-
-////[comments_MultiModule_MultiFile_1.js.map]
-{"version":3,"file":"comments_MultiModule_MultiFile_1.js","sources":["comments_MultiModule_MultiFile_1.ts"],"names":[],"mappings":""}
-////[comments_MultiModule_MultiFile_1.js]
-//@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
-
-////[declFileImportModuleWithExportAssignment_0.js.map]
-{"version":3,"file":"declFileImportModuleWithExportAssignment_0.js","sources":["declFileImportModuleWithExportAssignment_0.ts"],"names":[],"mappings":""}
-////[declFileImportModuleWithExportAssignment_0.js]
-//@ sourceMappingURL=declFileImportModuleWithExportAssignment_0.js.map
-
-////[declFileImportModuleWithExportAssignment_1.js.map]
-{"version":3,"file":"declFileImportModuleWithExportAssignment_1.js","sources":["declFileImportModuleWithExportAssignment_1.ts"],"names":[],"mappings":""}
-////[declFileImportModuleWithExportAssignment_1.js]
-//@ sourceMappingURL=declFileImportModuleWithExportAssignment_1.js.map
-
-////[deprecatedBool_0.js.map]
-{"version":3,"file":"deprecatedBool_0.js","sources":["deprecatedBool_0.ts"],"names":[],"mappings":""}
-////[deprecatedBool_0.js]
-//@ sourceMappingURL=deprecatedBool_0.js.map
-
-////[deprecatedBool_1.js.map]
-{"version":3,"file":"deprecatedBool_1.js","sources":["deprecatedBool_1.ts"],"names":[],"mappings":""}
-////[deprecatedBool_1.js]
-//@ sourceMappingURL=deprecatedBool_1.js.map
-
-////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map]
-{"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.ts"],"names":[],"mappings":""}
-////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js]
-//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map
-
-////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
-{"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
-////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
-//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
-
-////[errorsOnImportedSymbol_0.js.map]
-{"version":3,"file":"errorsOnImportedSymbol_0.js","sources":["errorsOnImportedSymbol_0.ts"],"names":[],"mappings":""}
-////[errorsOnImportedSymbol_0.js]
-//@ sourceMappingURL=errorsOnImportedSymbol_0.js.map
-
-////[errorsOnImportedSymbol_1.js.map]
-{"version":3,"file":"errorsOnImportedSymbol_1.js","sources":["errorsOnImportedSymbol_1.ts"],"names":[],"mappings":""}
-////[errorsOnImportedSymbol_1.js]
-//@ sourceMappingURL=errorsOnImportedSymbol_1.js.map
-
-////[exportEqualsClass_A.js.map]
-{"version":3,"file":"exportEqualsClass_A.js","sources":["exportEqualsClass_A.ts"],"names":[],"mappings":""}
-////[exportEqualsClass_A.js]
-//@ sourceMappingURL=exportEqualsClass_A.js.map
-
-////[exportEqualsClass_B.js.map]
-{"version":3,"file":"exportEqualsClass_B.js","sources":["exportEqualsClass_B.ts"],"names":[],"mappings":""}
-////[exportEqualsClass_B.js]
-//@ sourceMappingURL=exportEqualsClass_B.js.map
-
-////[exportEqualsEnum_A.js.map]
-{"version":3,"file":"exportEqualsEnum_A.js","sources":["exportEqualsEnum_A.ts"],"names":[],"mappings":""}
-////[exportEqualsEnum_A.js]
-//@ sourceMappingURL=exportEqualsEnum_A.js.map
-
-////[exportEqualsEnum_B.js.map]
-{"version":3,"file":"exportEqualsEnum_B.js","sources":["exportEqualsEnum_B.ts"],"names":[],"mappings":""}
-////[exportEqualsEnum_B.js]
-//@ sourceMappingURL=exportEqualsEnum_B.js.map
-
-////[exportEqualsFunction_A.js.map]
-{"version":3,"file":"exportEqualsFunction_A.js","sources":["exportEqualsFunction_A.ts"],"names":[],"mappings":""}
-////[exportEqualsFunction_A.js]
-//@ sourceMappingURL=exportEqualsFunction_A.js.map
-
-////[exportEqualsFunction_B.js.map]
-{"version":3,"file":"exportEqualsFunction_B.js","sources":["exportEqualsFunction_B.ts"],"names":[],"mappings":""}
-////[exportEqualsFunction_B.js]
-//@ sourceMappingURL=exportEqualsFunction_B.js.map
-
-////[exportEqualsInterface_A.js.map]
-{"version":3,"file":"exportEqualsInterface_A.js","sources":["exportEqualsInterface_A.ts"],"names":[],"mappings":""}
-////[exportEqualsInterface_A.js]
-//@ sourceMappingURL=exportEqualsInterface_A.js.map
-
-////[exportEqualsInterface_B.js.map]
-{"version":3,"file":"exportEqualsInterface_B.js","sources":["exportEqualsInterface_B.ts"],"names":[],"mappings":""}
-////[exportEqualsInterface_B.js]
-//@ sourceMappingURL=exportEqualsInterface_B.js.map
-
-////[exportEqualsModule_A.js.map]
-{"version":3,"file":"exportEqualsModule_A.js","sources":["exportEqualsModule_A.ts"],"names":[],"mappings":""}
-////[exportEqualsModule_A.js]
-//@ sourceMappingURL=exportEqualsModule_A.js.map
-
-////[exportEqualsModule_B.js.map]
-{"version":3,"file":"exportEqualsModule_B.js","sources":["exportEqualsModule_B.ts"],"names":[],"mappings":""}
-////[exportEqualsModule_B.js]
-//@ sourceMappingURL=exportEqualsModule_B.js.map
-
-////[exportEqualsVar_A.js.map]
-{"version":3,"file":"exportEqualsVar_A.js","sources":["exportEqualsVar_A.ts"],"names":[],"mappings":""}
-////[exportEqualsVar_A.js]
-//@ sourceMappingURL=exportEqualsVar_A.js.map
-
-////[exportEqualsVar_B.js.map]
-{"version":3,"file":"exportEqualsVar_B.js","sources":["exportEqualsVar_B.ts"],"names":[],"mappings":""}
-////[exportEqualsVar_B.js]
-//@ sourceMappingURL=exportEqualsVar_B.js.map
+//# sourceMappingURL=0.js.map
 
 ////[importInsideModule_file1.js.map]
-{"version":3,"file":"importInsideModule_file1.js","sources":["importInsideModule_file1.ts"],"names":[],"mappings":""}
+{"version":3,"file":"importInsideModule_file1.js","sourceRoot":"","sources":["file:///importInsideModule_file1.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
-//@ sourceMappingURL=importInsideModule_file1.js.map
+//# sourceMappingURL=importInsideModule_file1.js.map
 
 ////[importInsideModule_file2.js.map]
-{"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
+{"version":3,"file":"importInsideModule_file2.js","sourceRoot":"","sources":["file:///importInsideModule_file2.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file2.js]
-//@ sourceMappingURL=importInsideModule_file2.js.map
+//# sourceMappingURL=importInsideModule_file2.js.map
 
 ////[modulesImportedForTypeArgumentPosition_0.js.map]
-{"version":3,"file":"modulesImportedForTypeArgumentPosition_0.js","sources":["modulesImportedForTypeArgumentPosition_0.ts"],"names":[],"mappings":""}
+{"version":3,"file":"modulesImportedForTypeArgumentPosition_0.js","sourceRoot":"","sources":["file:///modulesImportedForTypeArgumentPosition_0.ts"],"names":[],"mappings":""}
 ////[modulesImportedForTypeArgumentPosition_0.js]
-//@ sourceMappingURL=modulesImportedForTypeArgumentPosition_0.js.map
+//# sourceMappingURL=modulesImportedForTypeArgumentPosition_0.js.map
 
 ////[modulesImportedForTypeArgumentPosition_1.js.map]
-{"version":3,"file":"modulesImportedForTypeArgumentPosition_1.js","sources":["modulesImportedForTypeArgumentPosition_1.ts"],"names":[],"mappings":""}
+{"version":3,"file":"modulesImportedForTypeArgumentPosition_1.js","sourceRoot":"","sources":["file:///modulesImportedForTypeArgumentPosition_1.ts"],"names":[],"mappings":""}
 ////[modulesImportedForTypeArgumentPosition_1.js]
-//@ sourceMappingURL=modulesImportedForTypeArgumentPosition_1.js.map
+//# sourceMappingURL=modulesImportedForTypeArgumentPosition_1.js.map
+
+////[typeofExternalModules_external.js.map]
+{"version":3,"file":"typeofExternalModules_external.js","sourceRoot":"","sources":["file:///typeofExternalModules_external.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_external.js]
+//# sourceMappingURL=typeofExternalModules_external.js.map
+
+////[typeofExternalModules_exportAssign.js.map]
+{"version":3,"file":"typeofExternalModules_exportAssign.js","sourceRoot":"","sources":["file:///typeofExternalModules_exportAssign.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_exportAssign.js]
+//# sourceMappingURL=typeofExternalModules_exportAssign.js.map
+
+////[typeofExternalModules_core.js.map]
+{"version":3,"file":"typeofExternalModules_core.js","sourceRoot":"","sources":["file:///typeofExternalModules_core.ts"],"names":[],"mappings":""}
+////[typeofExternalModules_core.js]
+//# sourceMappingURL=typeofExternalModules_core.js.map

@@ -42,7 +42,7 @@ verify.memberListContains("this");
 verify.memberListContains("throw");
 verify.memberListContains("true");
 verify.memberListContains("try");
-verify.memberListContains("typeOf");
+verify.memberListContains("typeof");
 verify.memberListContains("var");
 verify.memberListContains("while");
 verify.memberListContains("with");

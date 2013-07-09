@@ -7,12 +7,12 @@
     },
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 805,
+        "fullWidth": 825,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "FunctionDeclaration",
-                "fullWidth": 781,
+                "fullWidth": 801,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -130,7 +130,7 @@
                 },
                 "block": {
                     "kind": "Block",
-                    "fullWidth": 232,
+                    "fullWidth": 252,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -150,7 +150,7 @@
                     "statements": [
                         {
                             "kind": "FunctionDeclaration",
-                            "fullWidth": 74,
+                            "fullWidth": 76,
                             "modifiers": [],
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
@@ -181,10 +181,10 @@
                             },
                             "identifier": {
                                 "kind": "IdentifierName",
-                                "width": 1,
-                                "text": "a",
-                                "value": "a",
-                                "valueText": "a"
+                                "width": 3,
+                                "text": "foo",
+                                "value": "foo",
+                                "valueText": "foo"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -393,7 +393,7 @@
                         },
                         {
                             "kind": "FunctionDeclaration",
-                            "fullWidth": 54,
+                            "fullWidth": 56,
                             "modifiers": [],
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
@@ -424,10 +424,10 @@
                             },
                             "identifier": {
                                 "kind": "IdentifierName",
-                                "width": 1,
-                                "text": "b",
-                                "value": "b",
-                                "valueText": "b"
+                                "width": 3,
+                                "text": "bar",
+                                "value": "bar",
+                                "valueText": "bar"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -594,7 +594,7 @@
                         },
                         {
                             "kind": "FunctionDeclaration",
-                            "fullWidth": 29,
+                            "fullWidth": 33,
                             "modifiers": [],
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
@@ -625,10 +625,10 @@
                             },
                             "identifier": {
                                 "kind": "IdentifierName",
-                                "width": 2,
-                                "text": "ab",
-                                "value": "ab",
-                                "valueText": "ab"
+                                "width": 6,
+                                "text": "foobar",
+                                "value": "foobar",
+                                "valueText": "foobar"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -716,7 +716,7 @@
                         },
                         {
                             "kind": "ReturnStatement",
-                            "fullWidth": 68,
+                            "fullWidth": 80,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -746,22 +746,22 @@
                             },
                             "expression": {
                                 "kind": "LogicalAndExpression",
-                                "fullWidth": 54,
+                                "fullWidth": 66,
                                 "left": {
                                     "kind": "EqualsExpression",
-                                    "fullWidth": 26,
+                                    "fullWidth": 32,
                                     "left": {
                                         "kind": "InvocationExpression",
-                                        "fullWidth": 11,
+                                        "fullWidth": 17,
                                         "expression": {
                                             "kind": "MemberAccessExpression",
-                                            "fullWidth": 6,
+                                            "fullWidth": 8,
                                             "expression": {
                                                 "kind": "IdentifierName",
-                                                "width": 1,
-                                                "text": "a",
-                                                "value": "a",
-                                                "valueText": "a"
+                                                "width": 3,
+                                                "text": "foo",
+                                                "value": "foo",
+                                                "valueText": "foo"
                                             },
                                             "dotToken": {
                                                 "kind": "DotToken",
@@ -780,7 +780,7 @@
                                         },
                                         "argumentList": {
                                             "kind": "ArgumentList",
-                                            "fullWidth": 5,
+                                            "fullWidth": 9,
                                             "openParenToken": {
                                                 "kind": "OpenParenToken",
                                                 "width": 1,
@@ -791,10 +791,10 @@
                                             "arguments": [
                                                 {
                                                     "kind": "IdentifierName",
-                                                    "width": 2,
-                                                    "text": "ab",
-                                                    "value": "ab",
-                                                    "valueText": "ab"
+                                                    "width": 6,
+                                                    "text": "foobar",
+                                                    "value": "foobar",
+                                                    "valueText": "foobar"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -862,19 +862,19 @@
                                 },
                                 "right": {
                                     "kind": "EqualsExpression",
-                                    "fullWidth": 25,
+                                    "fullWidth": 31,
                                     "left": {
                                         "kind": "InvocationExpression",
-                                        "fullWidth": 11,
+                                        "fullWidth": 17,
                                         "expression": {
                                             "kind": "MemberAccessExpression",
-                                            "fullWidth": 6,
+                                            "fullWidth": 8,
                                             "expression": {
                                                 "kind": "IdentifierName",
-                                                "width": 1,
-                                                "text": "b",
-                                                "value": "b",
-                                                "valueText": "b"
+                                                "width": 3,
+                                                "text": "bar",
+                                                "value": "bar",
+                                                "valueText": "bar"
                                             },
                                             "dotToken": {
                                                 "kind": "DotToken",
@@ -893,7 +893,7 @@
                                         },
                                         "argumentList": {
                                             "kind": "ArgumentList",
-                                            "fullWidth": 5,
+                                            "fullWidth": 9,
                                             "openParenToken": {
                                                 "kind": "OpenParenToken",
                                                 "width": 1,
@@ -904,10 +904,10 @@
                                             "arguments": [
                                                 {
                                                     "kind": "IdentifierName",
-                                                    "width": 2,
-                                                    "text": "ab",
-                                                    "value": "ab",
-                                                    "valueText": "ab"
+                                                    "width": 6,
+                                                    "text": "foobar",
+                                                    "value": "foobar",
+                                                    "valueText": "foobar"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -1076,25 +1076,25 @@
             529,
             552,
             554,
-            570,
-            575,
-            594,
-            620,
-            626,
+            572,
+            577,
+            596,
+            622,
             628,
-            644,
-            649,
-            675,
-            680,
-            682,
-            699,
-            704,
-            709,
-            711,
-            777,
-            781,
-            805
+            630,
+            648,
+            653,
+            679,
+            684,
+            686,
+            707,
+            712,
+            717,
+            719,
+            797,
+            801,
+            825
         ],
-        "length": 805
+        "length": 825
     }
 }

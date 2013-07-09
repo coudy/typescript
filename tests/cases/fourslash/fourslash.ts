@@ -207,6 +207,15 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyTextAtCaretIs(text);
         }
 
+        /**
+            Compiles the current file and evaluates 'expr' in a context containing
+            the emitted output, then compares (using ===) the result of that expression
+            to 'value'. Do not use this function with external modules as it is not supported.
+        */
+        public eval(expr: string, value: any) {
+            FourSlash.currentTestState.verifyEval(expr, value);
+        }
+
         public currentLineContentIs(text: string) {
             FourSlash.currentTestState.verifyCurrentLineContent(text);
         }
@@ -287,8 +296,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
         }
 
-        public occurancesAtPositionContains(range: Range, isWriteAccess?: boolean) {
-            FourSlash.currentTestState.verifyOccurancesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
+        public occurrencesAtPositionContains(range: Range, isWriteAccess?: boolean) {
+            FourSlash.currentTestState.verifyOccurrencesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
         }
     }
    

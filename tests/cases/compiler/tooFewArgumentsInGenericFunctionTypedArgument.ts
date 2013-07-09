@@ -9,7 +9,7 @@ interface Combinators {
 }
 var c2: Collection<number, string>;
 var _: Combinators;
-var r1a = _.map(c2, (x) => { return x.toFixed() }); // should be an error
+var r1a = _.map(c2, (x) => { return x.toFixed() }); 
 var rf1 = (x: number) => { return x.toFixed() };
-var r1b = _.map(c2, rf1); // should be an error
+var r1b = _.map(c2, rf1); 
 

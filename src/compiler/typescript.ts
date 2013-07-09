@@ -334,8 +334,13 @@ module TypeScript {
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    // Its error to not have common path
-                                    return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
+                                    if (this.emitOptions.outputMany || this.emitOptions.compilationSettings.sourceRoot) {
+                                        // Its error to not have common path
+                                        return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
+                                    } else {
+                                        this.emitOptions.commonDirectoryPath = "";
+                                        return null;
+                                    }
                                 }
 
                                 break;
@@ -351,43 +356,58 @@ module TypeScript {
             }
 
             this.emitOptions.commonDirectoryPath = commonComponents.slice(0, commonComponentsLength).join("/") + "/";
-            if (this.emitOptions.compilationSettings.outputOption.charAt(this.emitOptions.compilationSettings.outputOption.length - 1) !== "/") {
-                this.emitOptions.compilationSettings.outputOption += "/";
+            if (this.emitOptions.outputMany) {
+                this.emitOptions.compilationSettings.outputOption = this.convertToDirectoryPath(this.emitOptions.compilationSettings.outputOption);
             }
 
             return null;
         }
 
+        private convertToDirectoryPath(dirPath: string) {
+            if (dirPath && dirPath.charAt(dirPath.length - 1) !== "/") {
+                dirPath += "/";
+            }
+
+            return dirPath;
+        }
+
         public parseEmitOption(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
-            if (this.emitOptions.compilationSettings.outputOption === "") {
+
+            this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
+            this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
+
+            if (!this.emitOptions.compilationSettings.outputOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
                 this.emitOptions.outputMany = true;
                 this.emitOptions.commonDirectoryPath = "";
                 return null;
             }
 
-            this.emitOptions.compilationSettings.outputOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outputOption));
-
-            // Determine if output options is directory or file
-            if (this.emitOptions.ioHost.directoryExists(this.emitOptions.compilationSettings.outputOption)) {
-                // Existing directory
+            if (this.emitOptions.compilationSettings.outputOption) {
+                this.emitOptions.compilationSettings.outputOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outputOption));
+                // Determine if output options is directory or file
+                if (this.emitOptions.ioHost.directoryExists(this.emitOptions.compilationSettings.outputOption)) {
+                    // Existing directory
+                    this.emitOptions.outputMany = true;
+                } else if (this.emitOptions.ioHost.fileExists(this.emitOptions.compilationSettings.outputOption)) {
+                    // Existing file
+                    this.emitOptions.outputMany = false;
+                }
+                else {
+                    // New File/directory
+                    this.emitOptions.outputMany = !isJSFile(this.emitOptions.compilationSettings.outputOption);
+                }
+            } else {
                 this.emitOptions.outputMany = true;
-            } else if (this.emitOptions.ioHost.fileExists(this.emitOptions.compilationSettings.outputOption)) {
-                // Existing file
-                this.emitOptions.outputMany = false;
-            }
-            else {
-                // New File/directory
-                this.emitOptions.outputMany = !isJSFile(this.emitOptions.compilationSettings.outputOption);
-            }
+            } 
 
             // Verify if options are correct
-            if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_dynamic_modules_when_emitting_into_single_file, null);
+            if (!this.emitOptions.outputMany && this.isDynamicModuleCompilation()) {
+                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_when_emitting_into_single_file, null);
             }
 
             // Parse the directory structure
-            if (this.emitOptions.outputMany) {
+            if (this.emitOptions.outputMany || this.emitOptions.compilationSettings.mapRoot || this.emitOptions.compilationSettings.sourceRoot) {
                 return this.updateCommonDirectoryPath();
             }
 
@@ -558,9 +578,10 @@ module TypeScript {
                     emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
-                        var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
-                        emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile,
-                            this.createFile(sourceMapFileName, /*writeByteOrderMark:*/ false), this.settings.emitFullSourceMapPath));
+                        // We always create map files next to the jsFiles
+                        var sourceMapFile = this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
+                        var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(typeScriptFileName, javaScriptFileName);
+                        emitter.setSourceMappings(new SourceMapper(outFile, sourceMapFile, sourceMapSourceInfo));
                     }
 
                     if (inputOutputMapper) {
@@ -569,8 +590,8 @@ module TypeScript {
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
-                    emitter.setSourceMappings(new SourceMapper(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapFileName, emitter.outfile,
-                    emitter.sourceMapper.sourceMapOut, this.settings.emitFullSourceMapPath));
+                    var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapSourceInfo);
+                    emitter.setSourceMappings(new SourceMapper(emitter.outfile, emitter.sourceMapper.sourceMapOut, sourceMapSourceInfo));
                 }
 
                 // Set location info

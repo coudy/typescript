@@ -10,6 +10,7 @@
 
 goTo.marker('1');
 verify.completionListContains('I');
+
 verify.not.completionListContains('foo');
 edit.insert('I;');
 

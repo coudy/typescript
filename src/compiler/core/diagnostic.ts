@@ -60,25 +60,25 @@ module TypeScript {
             return this._arguments;
         }
 
-        /// <summary>
-        /// Get the text of the message in the given language.
-        /// </summary>
+        /**
+         * Get the text of the message in the given language.
+         */
         public text(): string {
-            return TypeScript.getDiagnosticText(this._diagnosticKey, this._arguments);
+            return TypeScript.getLocalizedText(this._diagnosticKey, this._arguments);
         }
 
-        /// <summary>
-        /// Get the text of the message including the error code in the given language.
-        /// </summary>
+        /**
+         * Get the text of the message including the error code in the given language.
+         */
         public message(): string {
             return TypeScript.getDiagnosticMessage(this._diagnosticKey, this._arguments);
         }
 
-        /// <summary>
-        /// If a derived class has additional information about other referenced symbols, it can
-        /// expose the locations of those symbols in a general way, so they can be reported along
-        /// with the error.
-        /// </summary>
+        /**
+         * If a derived class has additional information about other referenced symbols, it can
+         * expose the locations of those symbols in a general way, so they can be reported along
+         * with the error.
+         */
         public additionalLocations(): Location[] {
             return [];
         }
@@ -113,7 +113,7 @@ module TypeScript {
         return result;
     }
 
-    export function getDiagnosticText(diagnosticKey: string, args: any[]): string {
+    export function getLocalizedText(diagnosticKey: string, args: any[]): string {
         if (LocalizedDiagnosticMessages) {
             Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
         }
@@ -121,26 +121,19 @@ module TypeScript {
         var diagnosticMessageText = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
         Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
 
-        var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
-
         var actualCount = args ? args.length : 0;
-        if (!diagnostic) {
-            throw new Error("Invalid diagnostic");
+        // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
+        // (i.e.'1').  We then need one more arg than that to be correct.
+        var expectedCount = 1 + getLargestIndex(diagnosticKey);
+
+        if (expectedCount !== actualCount) {
+            throw new Error(getLocalizedText(DiagnosticCode.Expected_0_arguments_to_message_got_1_instead, [expectedCount, actualCount]));
         }
-        else {
-            // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
-            // (i.e.'1').  We then need one more arg than that to be correct.
-            var expectedCount = 1 + getLargestIndex(diagnosticKey);
 
-            if (expectedCount !== actualCount) {
-                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
-            }
-
-            // This should also be the same number of arguments as the message text
-            var valueCount = 1 + getLargestIndex(diagnosticMessageText);
-            if (valueCount !== expectedCount) {
-                throw new Error('Expected the diagnostic message "' + diagnosticMessageText + '" to have ' + expectedCount + " arguments, but it had " + valueCount);
-            }
+        // This should also be the same number of arguments as the message text
+        var valueCount = 1 + getLargestIndex(diagnosticMessageText);
+        if (valueCount !== expectedCount) {
+            throw new Error(getLocalizedText(DiagnosticCode.Expected_the_message_0_to_have_1_arguments_but_it_had_2, [diagnosticMessageText, expectedCount, valueCount]));
         }
 
         diagnosticMessageText = diagnosticMessageText.replace(/{(\d+)}/g, function (match, num) {
@@ -158,13 +151,13 @@ module TypeScript {
 
     export function getDiagnosticMessage(diagnosticKey: string, args: any[]): string {
         var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
-        var diagnosticMessageText = getDiagnosticText(diagnosticKey, args);
+        var diagnosticMessageText = getLocalizedText(diagnosticKey, args);
 
         var message: string;
         if (diagnostic.category === DiagnosticCategory.Error) {
-            message = getDiagnosticText(DiagnosticCode.error_TS_0_1, [diagnostic.code, diagnosticMessageText]);
+            message = getLocalizedText(DiagnosticCode.error_TS_0_1, [diagnostic.code, diagnosticMessageText]);
         } else if (diagnostic.category === DiagnosticCategory.Warning) {
-            message = getDiagnosticText(DiagnosticCode.warning_TS_0_1, [diagnostic.code, diagnosticMessageText]);
+            message = getLocalizedText(DiagnosticCode.warning_TS_0_1, [diagnostic.code, diagnosticMessageText]);
         } else {
             message = diagnosticMessageText;
         }

@@ -11,27 +11,14 @@ module TypeScript {
 }
 
 enum ByteOrderMark {
-    None,
-    Utf8,
-    Utf16BigEndian,
-    Utf16LittleEndian,
+    None = 0,
+    Utf8 = 1,
+    Utf16BigEndian = 2,
+    Utf16LittleEndian = 3,
 }
 
 class FileInformation {
-    private _contents: string;
-    private _byteOrderMark: ByteOrderMark;
-
-    constructor(contents: string, byteOrderMark: ByteOrderMark) {
-        this._contents = contents;
-        this._byteOrderMark = byteOrderMark;
-    }
-
-    public contents(): string {
-        return this._contents;
-    }
-
-    public byteOrderMark(): ByteOrderMark {
-        return this._byteOrderMark;
+    constructor(public contents: string, public byteOrderMark: ByteOrderMark) {
     }
 }
 
@@ -136,7 +123,7 @@ var Environment = (function () {
                         message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Unsupported_file_encoding, null);
                     }
                     else {
-                        message = err.message;
+                        message = TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Cannot_read_file_0_1, [path, err.message]);
                     }
 
                     throw new Error(message);

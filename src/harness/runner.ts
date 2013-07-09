@@ -283,7 +283,10 @@ opts.option('dump', {
 });
 
 opts.option('root', {
-    usage: 'Sets the root for the tests")',
+    usage: {
+        locCode: 'Sets the root for the tests")',
+        args: null
+    },
     experimental: true,
     set: function (str) {
         Harness.userSpecifiedroot = str;

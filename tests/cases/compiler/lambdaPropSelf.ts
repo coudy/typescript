@@ -9,3 +9,14 @@ class Person {
 
     addChild = () => this.children.push("New child");
 }
+
+
+class T {
+     fo() {
+        var x = this;
+    }
+}
+
+module M {
+    var x = this;
+}

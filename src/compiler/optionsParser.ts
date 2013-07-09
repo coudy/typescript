@@ -20,9 +20,12 @@ module TypeScript {
         name?: string;
         flag?: boolean;
         short?: string;
-        usage?: string;
+        usage?: {
+            locCode: string; // DiagnosticCode
+            args: string[]
+        };
         set?: (s: string) => void;
-        type?: string;
+        type?: string; // DiagnosticCode
         experimental?: boolean;
     }
 
@@ -55,13 +58,17 @@ module TypeScript {
         public printUsage() {
             this.printVersion();
 
-            this.host.printLine("Syntax:   tsc [options] [file ..]");
+            var optionsWord = getLocalizedText(DiagnosticCode.options, null);
+            var fileWord = getLocalizedText(DiagnosticCode.file, null);
+            var tscSyntax = "tsc [" + optionsWord + "] [" + fileWord + " ..]";
+            var syntaxHelp = getLocalizedText(DiagnosticCode.Syntax_0, [tscSyntax]);
+            this.host.printLine(syntaxHelp);
             this.host.printLine("");
-            this.host.printLine("Examples: tsc hello.ts");
+            this.host.printLine(getLocalizedText(DiagnosticCode.Examples, null) + " tsc hello.ts");
             this.host.printLine("          tsc --out foo.js foo.ts");
             this.host.printLine("          tsc @args.txt");
             this.host.printLine("");
-            this.host.printLine("Options:");
+            this.host.printLine(getLocalizedText(DiagnosticCode.Options, null));
 
             var output = [];
             var maxLength = 0;
@@ -93,7 +100,7 @@ module TypeScript {
                 }
 
                 var usageString = "  ";
-                var type = option.type ? " " + option.type.toUpperCase() : "";
+                var type = option.type ? (" " + TypeScript.getLocalizedText(option.type, null)) : "";
 
                 if (option.short) {
                     usageString += this.DEFAULT_SHORT_FLAG + option.short + type + ", ";
@@ -101,14 +108,15 @@ module TypeScript {
 
                 usageString += this.DEFAULT_LONG_FLAG + option.name + type;
 
-                output.push([usageString, option.usage]);
+                output.push([usageString, TypeScript.getLocalizedText(option.usage.locCode, option.usage.args)]);
 
                 if (usageString.length > maxLength) {
                     maxLength = usageString.length;
                 }
             }
 
-            output.push(["  @<file>", "Insert command line options and files from a file."]);
+            var fileDescription = getLocalizedText(DiagnosticCode.Insert_command_line_options_and_files_from_a_file, null);
+            output.push(["  @<" + fileWord + ">", fileDescription]);
 
             // Print padded output
             for (i = 0; i < output.length; i++) {
@@ -118,7 +126,7 @@ module TypeScript {
 
         public printVersion() {
             if (!this.printedVersion) {
-                this.host.printLine("Version " + this.version);
+                this.host.printLine(getLocalizedText(DiagnosticCode.Version_0, [this.version]));
                 this.printedVersion = true;
             }
         }
@@ -224,14 +232,14 @@ module TypeScript {
 
                 if (match) {
                     if (match[1] === '@') {
-                        this.parseString(this.host.readFile(match[2]).contents());
+                        this.parseString(this.host.readFile(match[2]).contents);
                     } else {
                         var arg = match[2];
                         var option = this.findOption(arg);
 
                         if (option === null) {
-                            this.host.printLine("Unknown option '" + arg + "'");
-                            this.host.printLine("Use the '--help' flag to see options");
+                            this.host.printLine(getDiagnosticMessage(DiagnosticCode.Unknown_option_0, [arg]));
+                            this.host.printLine(getLocalizedText(DiagnosticCode.Use_the_0_flag_to_see_options, ["--help"]));
                         } else {
                             if (!option.flag)
                                 value = consume();

@@ -305,7 +305,12 @@ module TypeScript {
                     }
                 }
                 path[path.length] = node;
-                node = node.getContainer();
+                var nodeKind = node.getKind();
+                if (nodeKind == PullElementKind.Parameter) {
+                    break;
+                } else {
+                    node = node.getContainer();
+                }
             }
             return path;
         }
@@ -855,7 +860,7 @@ module TypeScript {
                         break;
                     }
                 }
-                var overloadString = " (+ " + (foundDefinition ? len - 2 : len - 1) + " overload(s))";
+                var overloadString = getLocalizedText(DiagnosticCode._0_overload_s, [foundDefinition ? len - 2 : len - 1]);
                 lastMemberName.add(MemberName.create(overloadString));
             }
 
@@ -1282,6 +1287,20 @@ module TypeScript {
 
                 for (var i = 0; i < this._typeArguments.length; i++) {
                     if (!this._typeArguments[i].isFixed()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else if (this.hasGenericMember) {
+                var members = this.getMembers();
+                var memberType: PullTypeSymbol = null;
+
+                for (var i = 0; i < members.length; i++) {
+                    memberType = members[i].getType();
+
+                    if (memberType && !memberType.isFixed()) {
                         return false;
                     }
                 }

@@ -150,7 +150,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            throw new Error("please implement in derived class");
+            throw Errors.abstract();
         }
 
         public docComments(): Comment[] {
@@ -190,7 +190,7 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        constructor(public members: AST[]) {
+        constructor(public members: AST[], public separatorCount?: number) {
             super();
         }
 
@@ -286,7 +286,7 @@ module TypeScript {
                     emitter.writeToOutput("true");
                     break;
                 default:
-                    throw new Error("please implement in derived class");
+                    throw Errors.abstract();
             }
         }
 
@@ -420,7 +420,7 @@ module TypeScript {
                     this.operand.emit(emitter);
                     break;
                 default:
-                    throw new Error("please implement in derived class");
+                    throw Errors.abstract();
             }
         }
 
@@ -1219,10 +1219,6 @@ module TypeScript {
         }
 
         public shouldEmit(): boolean {
-            if (hasFlag(this.getFlags(), ASTFlags.EnumMapElement)) {
-                return false;
-            }
-
             var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
             return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }
@@ -1682,7 +1678,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            throw new Error("should not emit a type query");
+            Emitter.throwEmitterError(new Error(getLocalizedText(DiagnosticCode.Should_not_emit_a_type_query, null)));
         }
 
         public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
@@ -1694,6 +1690,8 @@ module TypeScript {
     export class TypeReference extends AST {
         constructor(public term: AST, public arrayCount: number) {
             super();
+            this.minChar = term.minChar;
+            this.limChar = term.limChar;
         }
 
         public nodeType(): NodeType {
@@ -1701,7 +1699,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            throw new Error("should not emit a type ref");
+            Emitter.throwEmitterError(new Error(getLocalizedText(DiagnosticCode.Should_not_emit_a_type_reference, null)));
         }
 
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {

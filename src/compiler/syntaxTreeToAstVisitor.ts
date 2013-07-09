@@ -130,7 +130,7 @@ module TypeScript {
                 }
             }
 
-            var result = new ASTList(array);
+            var result = new ASTList(array, list.separatorCount());
             this.setSpan(result, start, list);
 
             result.setPostComments(this.previousTokenTrailingComments);
@@ -659,6 +659,7 @@ module TypeScript {
                 }
                 else {
                     var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
+                    var enumElementFullStart = this.position;
                     var memberStart = this.position + enumElement.leadingTriviaWidth();
 
                     var memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false);
@@ -671,6 +672,8 @@ module TypeScript {
 
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(declarator, memberStart, this.position);
+                    declarator.setPreComments(this.convertTokenLeadingComments(enumElement.firstToken(), enumElementFullStart));
+                    declarator.setPostComments(this.convertNodeTrailingComments(enumElement, enumElement.lastToken(), enumElementFullStart));
 
                     declarators.push(declarator);
 
@@ -1057,7 +1060,13 @@ module TypeScript {
             this.movePast(node.typeOfKeyword);
             var name = node.name.accept(this);
 
-            return new TypeReference(new TypeQuery(name), 0);
+            var typeQuery = new TypeQuery(name);
+            this.setSpan(typeQuery, start, node);
+
+            var result = new TypeReference(typeQuery, 0);
+            this.copySpan(typeQuery, result);
+
+            return result;
         }
 
         public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {

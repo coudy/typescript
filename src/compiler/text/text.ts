@@ -1,75 +1,75 @@
 ///<reference path='references.ts' />
 
-/// <summary>
-/// Represents an immutable snapshot of text.
-/// </summary>
+/**
+ * Represents an immutable snapshot of text.
+ */
 module TypeScript {
     export interface ISimpleText {
-        /// <summary>
-        /// Total number of characters in the text source.
-        /// </summary>
+        /**
+         * Total number of characters in the text source.
+         */
         length(): number;
 
-        /// <summary>
-        /// Copy the count contents of IText starting from sourceIndex to destination starting at
-        /// destinationIndex.
-        /// </summary>
+        /**
+         * Copy the count contents of IText starting from sourceIndex to destination starting at
+         * destinationIndex.
+         */
         copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void;
 
         substr(start: number, length: number, intern: boolean): string;
 
-        /// <summary>
-        /// Gets the a new IText that corresponds to the contents of this IText for the given span.
-        /// </summary>
+        /**
+         * Gets the a new IText that corresponds to the contents of this IText for the given span.
+         */
         subText(span: TextSpan): ISimpleText;
 
         charCodeAt(index: number): number;
         lineMap(): LineMap;
     }
 
-    /// <summary>
-    /// Represents an immutable snapshot of text.
-    /// </summary>
+    /**
+     * Represents an immutable snapshot of text.
+     */
     export interface IText extends ISimpleText {
-        /// <summary>
-        /// Total number of lines in the text.
-        /// </summary>
+        /**
+         * Total number of lines in the text.
+         */
         lineCount(): number;
 
-        /// <summary>
-        /// Returns the collection of line information for the <see cref="T:IText"/> instance.
-        /// </summary>
+        /**
+         * Returns the collection of line information for the IText instance.
+         */
         lines(): ITextLine[];
 
-        /// <summary>
-        /// Return the char at position in the IText.
-        /// </summary>
+        /**
+         * Return the char at position in the IText.
+         */
         charCodeAt(position: number): number;
 
-        /// <summary>
-        /// Gets the line corresponding to the provided line number.
-        /// </summary>
+        /**
+         * Gets the line corresponding to the provided line number.
+         */
         getLineFromLineNumber(lineNumber: number): ITextLine;
 
-        /// <summary>
-        /// Gets the line which encompasses the provided position.
-        /// </summary>
+        /**
+         * Gets the line which encompasses the provided position.
+         */
         getLineFromPosition(position: number): ITextLine;
 
-        /// <summary>
-        /// Gets the number of the line that contains the character at the specified position.
-        /// </summary>
+        /**
+         * Gets the number of the line that contains the character at the specified position.
+         */
         getLineNumberFromPosition(position: number): number;
 
-        /// <summary>
-        /// Gets a line number, and position within that line, for the character at the 
-        /// specified position
-        /// </summary>
+        /**
+         * Gets a line number, and position within that line, for the character at the 
+         * specified position
+         */
         getLinePosition(position: number): LineAndCharacter;
 
-        /// <summary>
-        /// Returns a string representation of the contents of this IText within the given span.
-        /// </summary>
+        /**
+         * Returns a string representation of the contents of this IText within the given span.
+         */
         toString(span?: TextSpan): string;
     }
 }

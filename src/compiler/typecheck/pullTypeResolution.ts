@@ -1690,6 +1690,22 @@ module TypeScript {
                     context.setTypeInContext(paramSymbol, contextParam.type);
                 }
                 else {
+                    // if the disallowimplicitany flag is set to be true, report an error
+                    if (this.compilationSettings.disallowImplicitAny) {
+
+                        // there is a name for function expression then use the function expression name otherwise use "lambda"
+                        var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
+                        if (functionExpressionName != "") {
+                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.actualText, functionExpressionName], enclosingDecl, true);
+                        }
+                        else {
+                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                                DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type,
+                                [argDeclAST.id.actualText], enclosingDecl, true);
+                        }
+                    }
+
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
                 }
             }
@@ -1793,6 +1809,7 @@ module TypeScript {
             // an interface
             // a dotted name
             // an array of any of the above
+            // a type query
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var diagnostic: Diagnostic = null;
@@ -1850,6 +1867,36 @@ module TypeScript {
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
                 this.currentUnit.addSynthesizedDecl(decl);
                 typeDeclSymbol.addDeclaration(decl);
+            }
+            else if (typeRef.term.nodeType() === NodeType.TypeQuery) {
+                var typeQuery = <TypeQuery>typeRef.term;
+
+                // TODO: This is a workaround if we encounter a TypeReference AST node. Remove it when we remove the AST.
+                var typeQueryTerm = typeQuery.name;
+                if (typeQueryTerm.nodeType() === NodeType.TypeRef) {
+                    typeQueryTerm = (<TypeReference>typeQueryTerm).term;
+                }
+
+                var savedResolvingTypeReference = context.resolvingTypeReference;
+                context.resolvingTypeReference = false;
+                var valueSymbolAndDiagnostic = this.resolveAST(typeQueryTerm, false, enclosingDecl, context);
+                context.resolvingTypeReference = savedResolvingTypeReference;
+
+                // If it is an alias symbol, get the instance symbol
+                var valueSymbol: PullSymbol = valueSymbolAndDiagnostic.symbol;
+                if (valueSymbol && valueSymbol.isAlias()) {
+                    var containerSymbol = <PullContainerTypeSymbol>valueSymbol.getType();
+                    valueSymbol = (containerSymbol && containerSymbol.isContainer()) ? containerSymbol.getInstanceSymbol() : null;
+                }
+
+                // Get the type of the symbol
+                if (valueSymbol) {
+                    typeDeclSymbol = valueSymbol.getType();
+                    symbolAndDiagnostic = SymbolAndDiagnostics.create(typeDeclSymbol, valueSymbolAndDiagnostic.diagnostics);
+                }
+                else {
+                    typeDeclSymbol = this.getNewErrorTypeSymbol(null);
+                }
             }
 
             if (!typeDeclSymbol) {
@@ -1918,8 +1965,29 @@ module TypeScript {
         }
 
         // Also resolves parameter declarations
-        private resolveVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
+        private resolveVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): SymbolAndDiagnostics<PullSymbol> {
+            var varSymbolAndDiagnostic = this.getSymbolAndDiagnosticsForAST(varDecl);
 
+            // If the variable decloration is not in the cached, resolve the variable decloration
+            if (!varSymbolAndDiagnostic) {
+                varSymbolAndDiagnostic = this.computeVariableDeclaration(varDecl, context, enclosingDecl);
+                this.setSymbolAndDiagnosticsForAST(varDecl, varSymbolAndDiagnostic, context);
+            }
+            else {
+                // If the variable decloration is in the cached but is not resolved yet, resolve the variable decloration
+                var varSymbol = varSymbolAndDiagnostic.symbol;
+                if (!varSymbol.isResolved()) {
+                    varSymbolAndDiagnostic = this.computeVariableDeclaration(varDecl, context, enclosingDecl);
+                    this.setSymbolAndDiagnosticsForAST(varDecl, varSymbolAndDiagnostic, context);
+                }
+                else {
+                    this.computeVariableDeclaration(varDecl, context, enclosingDecl);
+                }
+            }
+            return varSymbolAndDiagnostic;
+        }
+
+        private computeVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): SymbolAndDiagnostics<PullSymbol> {
             var decl: PullDecl = this.getDeclForAST(varDecl);
 
             // if the enlosing decl is a lambda, we may not have bound the parent symbol
@@ -1942,8 +2010,7 @@ module TypeScript {
                         valSymbol.setResolved();
                     }
                 }
-
-                return declType;
+                return SymbolAndDiagnostics.fromSymbol(declSymbol);
             }
 
             if (declSymbol.inResolution) {
@@ -1951,7 +2018,7 @@ module TypeScript {
                 if (!context.inSpecialization) {
                     declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
                     declSymbol.setResolved();
-                    return declSymbol;//this.semanticInfoChain.anyTypeSymbol;
+                    return SymbolAndDiagnostics.fromSymbol(declSymbol);
                 }
             }
 
@@ -1961,6 +2028,7 @@ module TypeScript {
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
             var diagnostic: Diagnostic = null;
+            var diagnostics: Diagnostic[] = [];
 
             var typeExprSymbol: PullTypeSymbol = null;
             var initExprSymbol: PullSymbol = null;
@@ -1994,6 +2062,7 @@ module TypeScript {
                         this.isTypeRefWithoutTypeArgs(<TypeReference>varDecl.typeExpr)) {
 
                         context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
+
                         typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
                     }
 
@@ -2097,7 +2166,27 @@ module TypeScript {
                         if (declParameterSymbol) {
                             context.setTypeInContext(declParameterSymbol, initTypeSymbol);
                         }
-                    }
+
+                    // MERGETODO
+                    // context.setTypeInContext(declSymbol, this.widenType(initExprSymbol.getType()));
+                    // initExprSymbol.addOutgoingLink(declSymbol, SymbolLinkKind.ProvidesInferredType);
+
+                    // // if the disallowimplicitany flag is set to be true, report an error
+                    // if (this.compilationSettings.disallowImplicitAny) {
+
+                    //     // initializer is resolved to any type from widening
+                    //     if ((declSymbol.getType() != initExprSymbol.getType()) && (declSymbol.getType() == this.semanticInfoChain.anyTypeSymbol)) {
+                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Variable_0_implicitly_has_an_any_type,
+                    //             [varDecl.id.actualText], enclosingDecl, true);
+                    //         diagnostics = this.addDiagnostic(diagnostics, diagnostic);
+                    //     }
+                    // }
+
+                    // if (declParameterSymbol) {
+                    //     context.setTypeInContext(declParameterSymbol, initExprSymbol.getType());
+                    //     initExprSymbol.addOutgoingLink(declParameterSymbol, SymbolLinkKind.ProvidesInferredType);
+
+                    // }
                 }
             }
 
@@ -2105,7 +2194,42 @@ module TypeScript {
             if (!(varDecl.typeExpr || varDecl.init)) {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
+
                 if (declSymbol.isVarArg) {
+                    // MERGETODO
+                    // // If the disallowimplicitany flag is set to be true, report an error
+                    // if (this.compilationSettings.disallowImplicitAny) {
+                    //     // Check what enclosingDecl the varDecl is in and report an appropriate error message
+                    //     // varDecl is a function/method/constructor/constructor signature parameter
+                    //     if (enclosingDecl.getKind() == TypeScript.PullElementKind.Function ||
+                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.Method ||
+                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.ConstructorMethod ||
+                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.ConstructSignature) {
+                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                    //             DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type,
+                    //             [varDecl.id.actualText, enclosingDecl.getName()], enclosingDecl, true);
+                    //     }
+                    //     // varDecl is a property in object type
+                    //     else if (enclosingDecl.getKind() == TypeScript.PullElementKind.ObjectType) {
+                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                    //             DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
+                    //     }
+                    //     // varDecl is a parameter in function type
+                    //     else if (enclosingDecl.getKind() == TypeScript.PullElementKind.FunctionType) {
+                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                    //             DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
+                    //     }
+                    //     // varDecl is a variable declartion or class/interface property
+                    //     else {
+                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                    //             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
+
+                    //     }
+
+                    //     diagnostics = this.addDiagnostic(diagnostics, diagnostic);
+                    // }
+
+                    // if (declSymbol.getIsVarArg()) {
                     defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
                 }
 
@@ -2485,12 +2609,53 @@ module TypeScript {
                 //     - if it's not a definition signature, set the return type to 'any'
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
-                else if (!funcDeclAST.isConstructor) {
+                else if (!funcDeclAST.isConstructor && !funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+
+                        // MERGETODO
+                        // // if the disallowimplicitany flag is set to be true, report an error
+                        // if (this.compilationSettings.disallowImplicitAny) {
+                        //     var funcDeclASTName = funcDeclAST.name;
+                        //     if (funcDeclASTName) {
+                        //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
+                        //             [funcDeclASTName.actualText], funcDecl, true);
+                        //     }
+                        //     else {
+                        //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                        //             DiagnosticCode.Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
+                        //     }
+                        // }
                     }
                     else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
+
+                        // if the disallowimplicitany flag is set to be true, report an error
+                        if (this.compilationSettings.disallowImplicitAny) {
+
+                            // without return-type annotation, if the function is resolved to have any return type, it must be implicit any return type
+                            if (signature.getReturnType() == this.semanticInfoChain.anyTypeSymbol) {
+                                var funcDeclASTName = funcDeclAST.name;
+                                if (funcDeclASTName) {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
+                                        [funcDeclASTName.actualText], funcDecl, true);
+                                }
+                                else {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                        DiagnosticCode.Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
+                                }
+                            }
+                        }
+                    }
+                } else if (funcDeclAST.isConstructMember()) {
+                    if (funcDeclAST.isSignature()) {
+                        signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+
+                        // if the disallowimplicitany flag is set to be true, report an error
+                        if (this.compilationSettings.disallowImplicitAny) {
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
+                        }
                     }
                 }
 
@@ -2715,6 +2880,14 @@ module TypeScript {
                     }
                     else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
+
+                        // if disallowimplicitany flag is set to be true, report an error
+                        if (this.compilationSettings.disallowImplicitAny && signature.getReturnType() == this.semanticInfoChain.anyTypeSymbol) {
+                            diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText],
+                                this.getEnclosingDecl(funcDecl), true);
+                            accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
+                        }
                     }
                 }
 
@@ -2889,6 +3062,19 @@ module TypeScript {
             }
             else {
                 accessorSymbol.type = accessorType;
+
+                // MERGETODO
+                // Only report disallowimplicitany error message on setter if there is no getter
+                // if the disallowimplicitany flag is set to be true, report an error
+                // if (this.compilationSettings.disallowImplicitAny) {
+                //     // if setter has an any type, it must be implicit any
+                //     if (accessorSymbol.getType() == this.semanticInfoChain.anyTypeSymbol) {
+                //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                //             DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText],
+                //             this.getEnclosingDecl(funcDecl), true);
+                //         accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
+                //     }
+                // }
             }
 
             if (context.typeCheck()) {
@@ -8280,13 +8466,14 @@ module TypeScript {
 
             var argElement = argArrayType.getElementType();
             var paramElement = parameterArrayType.getElementType();
-
-            this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
-        }
-
+            var actualsLength = args && actuals.length == args.separatorCount && actuals.length ? args.separatorCount + 1 : actuals.length;
+            
+            if ((actualsLength >= lowerBound) && (signature.hasVariableParamList() || actualsLength <= upperBound)) {
+                formalLen = (signature.hasVariableParamList() ? parameters.length : actuals.length);
+                acceptable = true;
+            }
         public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var prevSpecialize = context.specializingToAny;
-
             context.specializingToAny = true;
 
             // get the "root" unspecialized type, since even generic types may already be partially specialize

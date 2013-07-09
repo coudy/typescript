@@ -133,6 +133,7 @@ module TypeScript.Formatting {
             }
 
             static Any: TokenRange = TokenRange.AllTokens();
+            static AnyIncludingMultilineComments = TokenRange.FromTokens(TokenRange.Any.GetTokens().concat([SyntaxKind.MultiLineCommentTrivia]));
             static Keywords = TokenRange.FromRange(SyntaxKind.FirstKeyword, SyntaxKind.LastKeyword);
             static Operators = TokenRange.FromRange(SyntaxKind.SemicolonToken, SyntaxKind.SlashEqualsToken);
             static BinaryOperators = TokenRange.FromRange(SyntaxKind.LessThanToken, SyntaxKind.SlashEqualsToken);

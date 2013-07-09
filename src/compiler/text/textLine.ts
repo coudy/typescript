@@ -1,43 +1,43 @@
 ///<reference path='references.ts' />
 
-/// <summary>
-/// Immutable representation of a line in an IText instance.
-/// </summary>
+/**
+ * Immutable representation of a line in an IText instance.
+ */
 module TypeScript {
     export interface ITextLine {
-        /// <summary>
-        /// Start of the line.
-        /// </summary>
+        /**
+         * Start of the line.
+         */
         start(): number;
 
-        /// <summary>
-        /// End of the line not including the line break.
-        /// </summary>
+        /**
+         * End of the line not including the line break.
+         */
         end(): number;
 
-        /// <summary>
-        /// End of the line including the line break.
-        /// </summary>
+        /**
+         * End of the line including the line break.
+         */
         endIncludingLineBreak(): number;
 
-        /// <summary>
-        /// Extent of the line not including the line break.
-        /// </summary>
+        /**
+         * Extent of the line not including the line break.
+         */
         extent(): TextSpan;
 
-        /// <summary>
-        /// Extent of the line including the line break.
-        /// </summary>
+        /**
+         * Extent of the line including the line break.
+         */
         extentIncludingLineBreak(): TextSpan;
 
-        /// <summary>
-        /// Gets the text of the line excluding the line break.
-        /// </summary>
+        /**
+         * Gets the text of the line excluding the line break.
+         */
         toString(): string;
 
-        /// <summary>
-        /// Gets the line number for this line.
-        /// </summary>
+        /**
+         * Gets the line number for this line.
+         */
         lineNumber(): number;
     }
 }

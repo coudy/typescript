@@ -36,7 +36,7 @@ function filePath(fullPath: string) {
 }
 
 var typescriptServiceFileName = filePath(IO.getExecutingFilePath()) + "typescriptServices.js";
-var typescriptServiceFile = IO.readFile(typescriptServiceFileName).contents();
+var typescriptServiceFile = IO.readFile(typescriptServiceFileName).contents;
 if (typeof ActiveXObject === "function") {
     eval(typescriptServiceFile);
 } else if (typeof require === "function") {
@@ -755,8 +755,8 @@ module Harness {
 
         var libFolder: string = global['WScript'] ? TypeScript.filePath(global['WScript'].ScriptFullName) : (__dirname + '/');
 
-        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts").contents() : '';
-        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts").contents() : '';
+        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts").contents : '';
+        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts").contents : '';
 
         var stdout = new EmitterIOHost();
         var stderr = new WriterAggregator();
@@ -1193,7 +1193,7 @@ module Harness {
             var compiler = getCompiler(compilerInstance);
             path = switchToForwardSlashes(path);
             var fileName = path.match(/[^\/]*$/)[0];
-            var code = readFile(path).contents();
+            var code = readFile(path).contents;
 
             compileUnit(compilerInstance, code, fileName, callback, settingsCallback, context, references);
         }
@@ -1447,6 +1447,7 @@ module Harness {
             { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
             { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
             { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
+            { flag: 'disallowimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.disallowImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
         ];
     }
 
@@ -1470,10 +1471,10 @@ module Harness {
         }
 
         // Regex for parsing options in the format "@Alpha: Value of any sort"
-        var optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
+        var optionRegex = /^[\/]{2}\s*@(\w+)\s*:\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out"];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "disallowimplicitany"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
@@ -1591,7 +1592,7 @@ module Harness {
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
         public lineMap: TypeScript.LineMap = null;
 
-        constructor(public fileName: string, public content: string, public isOpen = true) {
+        constructor(public fileName: string, public content: string, public isOpen = true, public byteOrderMark: ByteOrderMark = ByteOrderMark.None) {
             this.setContent(content);
         }
 
@@ -1684,7 +1685,7 @@ module Harness {
         }
 
         public addFile(fileName: string) {
-            var code = readFile(fileName).contents();
+            var code = readFile(fileName).contents;
             this.addScript(fileName, code);
         }
 
@@ -1755,6 +1756,10 @@ module Harness {
             return this.getScriptInfo(fileName).isOpen;
         }
 
+        public getScriptByteOrderMark(fileName: string): ByteOrderMark {
+            return this.getScriptInfo(fileName).byteOrderMark;
+        }
+
         public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {
             return new LanguageServicesDiagnostics("");
         }
@@ -1801,7 +1806,7 @@ module Harness {
 
         /** Parse a file on disk given its fileName */
         public parseFile(fileName: string) {
-            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName).contents())
+            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName).contents)
             return this.parseSourceText(fileName, sourceText);
         }
 
@@ -1836,8 +1841,8 @@ module Harness {
         /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */
         public checkEdits(sourceFileName: string, baselineFileName: string, edits: Services.TextEdit[]) {
             var script = readFile(sourceFileName);
-            var formattedScript = this.applyEdits(script.contents(), edits);
-            var baseline = readFile(baselineFileName).contents();
+            var formattedScript = this.applyEdits(script.contents, edits);
+            var baseline = readFile(baselineFileName).contents;
 
             assert.noDiff(formattedScript, baseline);
             assert.equal(formattedScript, baseline);
@@ -1955,7 +1960,7 @@ module Harness {
     export module Runner {
         export function runCollateral(path: string, callback: (error: Error, result: any) => void ) {
             path = switchToForwardSlashes(path);
-            runString(Compiler.CompilerInstance.RunTime, readFile(path).contents(), path.match(/[^\/]*$/)[0], callback);
+            runString(Compiler.CompilerInstance.RunTime, readFile(path).contents, path.match(/[^\/]*$/)[0], callback);
         }
 
         export function runJSString(code: string, callback: (error: Error, result: any) => void ) {
@@ -2055,7 +2060,7 @@ module Harness {
 
             var expected = '<no content>';
             if (IO.fileExists(refFilename)) {
-                expected = IO.readFile(refFilename).contents();
+                expected = IO.readFile(refFilename).contents;
             }
 
             var lineEndingSensitive = opts && opts.LineEndingSensitive;

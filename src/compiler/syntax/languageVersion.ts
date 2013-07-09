@@ -1,6 +1,6 @@
 module TypeScript {
     export enum LanguageVersion {
-        EcmaScript3,
-        EcmaScript5,
+        EcmaScript3 = 0,
+        EcmaScript5 = 1,
     }
 }

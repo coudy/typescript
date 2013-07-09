@@ -180,6 +180,7 @@ module TypeScript {
         public isResolvingSuperConstructorTarget = false;
         public inConstructorArguments = false;
         public inImportDeclaration = false;
+        public isInStaticInitializer = false;
 
         constructor(public inTypeCheck = false) { }
 

@@ -1,11 +1,11 @@
 ///<reference path='references.ts' />
 
 module TypeScript.TextFactory {
-    /// <summary>
-    /// Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
-    /// Return startLineBreak = index,   lengthLineBreak = 1   if there is a 1-char newline at index
-    /// Return startLineBreak = index+1, lengthLineBreak = 0   if there is no newline at index.
-    /// </summary>
+    /**
+     * Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
+     * Return startLineBreak = index,   lengthLineBreak = 1   if there is a 1-char newline at index
+     * Return startLineBreak = index+1, lengthLineBreak = 0   if there is no newline at index.
+     */
     function getStartAndLengthOfLineBreakEndingAt(
         text: IText, index: number, info: LinebreakInfo): void {
 
@@ -44,9 +44,11 @@ module TypeScript.TextFactory {
         private _lineNumber: number;
 
         constructor(text: IText, body: TextSpan, lineBreakLength: number, lineNumber: number) {
-            Contract.throwIfNull(text);
-            Contract.throwIfFalse(lineBreakLength >= 0);
-            Contract.requires(lineNumber >= 0);
+            if (text === null) {
+                throw Errors.argumentNull('text');
+            }
+            Debug.assert(lineBreakLength >= 0);
+            Debug.assert(lineNumber >= 0);
             this._text = text;
             this._textSpan = body;
             this._lineBreakLength = lineBreakLength;
@@ -83,25 +85,23 @@ module TypeScript.TextFactory {
     }
 
     class TextBase implements IText {
-        /// <summary>
-        /// The line start position of each line.
-        /// </summary>
+        /**
+         * The line start position of each line.
+         */
         private lazyLineStarts: number[] = null;
 
-        /// <summary>
-        /// The length of the text represented by <see cref="T:StringText"/>.
-        /// </summary>
+        /**
+         * The length of the text represented by StringText.
+         */
         public length(): number {
             throw Errors.abstract();
         }
 
-        /// <summary>
-        /// Returns a character at given position.
-        /// </summary>
-        /// <param name="position">The position to get the character from.</param>
-        /// <returns>The character.</returns>
-        /// <exception cref="T:ArgumentOutOfRangeException">When position is negative or 
-        /// greater than <see cref="T:"/> length.</exception>
+        /**
+         * Returns a character at given position. Throws an ArgumentOutOfRangeException when position is negative or 
+         * greater than length.
+         * @param position The position to get the character from.
+         */
         public charCodeAt(position: number): number {
             throw Errors.abstract();
         }
@@ -112,10 +112,9 @@ module TypeScript.TextFactory {
             }
         }
 
-        /// <summary>
-        /// Provides a string representation of the StringText located within given span.
-        /// </summary>
-        /// <exception cref="T:ArgumentOutOfRangeException">When given span is outside of the text range.</exception>
+        /**
+         * Provides a string representation of the StringText located within given span. Throws an ArgumentOutOfRangeException when given span is outside of the text range.
+         */
         public toString(span: TextSpan = null): string {
             throw Errors.abstract();
         }
@@ -130,23 +129,23 @@ module TypeScript.TextFactory {
             throw Errors.abstract();
         }
 
-        /// <summary>
-        /// Copy a range of characters from this IText to a destination array.
-        /// </summary>
+        /**
+         * Copy a range of characters from this IText to a destination array.
+         */
         public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
             throw Errors.abstract();
         }
 
-        /// <summary>
-        /// The length of the text represented by <see cref="T:StringText"/>.
-        /// </summary>
+        /**
+         * The length of the text represented by StringText.
+         */
         public lineCount(): number {
             return this.lineStarts().length;
         }
 
-        /// <summary>
-        /// The sequence of lines represented by <see cref="T:StringText"/>.
-        /// </summary>
+        /**
+         * The sequence of lines represented by StringText.
+         */
         public lines(): ITextLine[] {
             var lines: ITextLine[] = [];
 
@@ -241,9 +240,9 @@ module TypeScript.TextFactory {
         }
     }
 
-    /// <summary>
-    /// An IText that represents a subrange of another IText.
-    /// </summary>
+    /**
+     * An IText that represents a subrange of another IText.
+     */
     class SubText extends TextBase {
         private text: IText;
         private span: TextSpan;
@@ -296,18 +295,18 @@ module TypeScript.TextFactory {
         }
     }
 
-    /// <summary>
-    /// Implementation of IText based on a <see cref="T:System.String"/> input
-    /// </summary>
+    /**
+     * Implementation of IText based on a System.String input
+     */
     class StringText extends TextBase {
-        /// <summary>
-        /// Underlying string on which this IText instance is based
-        /// </summary>
+        /**
+         * Underlying string on which this IText instance is based
+         */
         private source: string = null;
 
-        /// <summary>
-        /// Initializes an instance of <see cref="T:StringText"/> with provided data.
-        /// </summary>
+        /**
+         * Initializes an instance of StringText with provided data.
+         */
         constructor(data: string) {
             super();
 
@@ -318,20 +317,18 @@ module TypeScript.TextFactory {
             this.source = data;
         }
 
-        /// <summary>
-        /// The length of the text represented by <see cref="T:StringText"/>.
-        /// </summary>
+        /**
+         * The length of the text represented by StringText.
+         */
         public length(): number {
             return this.source.length;
         }
 
-        /// <summary>
-        /// Returns a character at given position.
-        /// </summary>
-        /// <param name="position">The position to get the character from.</param>
-        /// <returns>The character.</returns>
-        /// <exception cref="T:ArgumentOutOfRangeException">When position is negative or 
-        /// greater than <see cref="T:"/> length.</exception>
+        /**
+         * Returns a character at given position. Throws an ArgumentOutOfRangeException when position is negative or 
+         * greater than length.
+         * @param position The position to get the character from.
+         */
         public charCodeAt(position: number): number {
             if (position < 0 || position >= this.source.length) {
                 throw Errors.argumentOutOfRange("position");
@@ -344,10 +341,9 @@ module TypeScript.TextFactory {
             return this.source.substr(start, length);
         }
 
-        /// <summary>
-        /// Provides a string representation of the StringText located within given span.
-        /// </summary>
-        /// <exception cref="T:ArgumentOutOfRangeException">When given span is outside of the text range.</exception>
+        /**
+         * Provides a string representation of the StringText located within given span. Throws an ArgumentOutOfRangeException when given span is outside of the text range.
+         */
         public toString(span: TextSpan = null): string {
             if (span === null) {
                 span = new TextSpan(0, this.length());
@@ -373,9 +369,9 @@ module TypeScript.TextFactory {
 }
 
 module TypeScript.SimpleText {
-    /// <summary>
-    /// An IText that represents a subrange of another IText.
-    /// </summary>
+    /**
+     * An IText that represents a subrange of another IText.
+     */
     class SimpleSubText implements ISimpleText {
         private text: ISimpleText = null;
         private span: TextSpan = null;

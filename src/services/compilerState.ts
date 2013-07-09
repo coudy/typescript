@@ -26,7 +26,8 @@ module Services {
             private fileName: string,
             private host: ILanguageServiceHost,
             public version: number,
-            public isOpen: boolean) {
+            public isOpen: boolean,
+            public byteOrderMark: ByteOrderMark) {
             this._sourceText = null;
         }
         
@@ -55,7 +56,7 @@ module Services {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 this.map.add(fileName, new HostCacheEntry(
-                    fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName)));
+                    fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName), this.host.getScriptByteOrderMark(fileName)));
             }
         }
 
@@ -73,6 +74,10 @@ module Services {
 
         public isOpen(fileName: string): boolean {
             return this.map.lookup(fileName).isOpen;
+        }
+
+        public getByteOrderMark(fileName: string): ByteOrderMark {
+            return this.map.lookup(fileName).byteOrderMark;
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
@@ -127,7 +132,7 @@ module Services {
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             compiler.addSourceUnit(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
-                ByteOrderMark.None,
+                this.hostCache.getByteOrderMark(fileName),
                 this.hostCache.getVersion(fileName),
                 this.hostCache.isOpen(fileName));
         }
@@ -284,9 +289,11 @@ module Services {
 
             var emitterIOHost: TypeScript.EmitterIOHost = {
                 writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
-                    var outputFile = new EmitOutputTextWriter(fileName, writeByteOrderMark);
-                    outputFile.Write(contents);
-                    result.outputFiles.push(outputFile);
+                    result.outputFiles.push({
+                        name: fileName,
+                        text: contents,
+                        writeByteOrderMark: writeByteOrderMark
+                    });
                 },
                 directoryExists: (fileName: string) => this.host.directoryExists(fileName),
                 fileExists: (fileName: string) => this.host.fileExists(fileName),
@@ -412,7 +419,9 @@ module Services {
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
             var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
-            if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration || decl.kind != TypeScript.PullElementKind.Variable)) {
+
+            if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration ||
+                (<TypeScript.ModuleDeclaration>ast).isEnum() || decl.kind != TypeScript.PullElementKind.Variable)) {
                 return ast.docComments();
             }
 

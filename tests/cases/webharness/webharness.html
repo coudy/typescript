@@ -8,10 +8,9 @@
     <script>
         var repeat = 10;
         var batch;
-
-
-        var languageService = batch.createLanguageService();
-        languageService.refresh();
+        if (!batch) {
+            batch = new BatchCompiler();
+        }
 
         var languageService = batch.createLanguageService();
         languageService.refresh();

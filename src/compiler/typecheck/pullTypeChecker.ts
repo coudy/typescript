@@ -200,6 +200,9 @@ module TypeScript {
                 case NodeType.TypeRef:
                     return this.typeCheckTypeReference(<TypeReference>ast, typeCheckContext);
 
+                case NodeType.TypeQuery:
+                    return this.typeCheckTypeQuery(<TypeQuery>ast, typeCheckContext);
+
                 case NodeType.ExportAssignment:
                     return this.typeCheckExportAssignment(ast, typeCheckContext);
 
@@ -420,6 +423,7 @@ module TypeScript {
         //  - lhs and rhs types agree (if lhs has no type annotation)
         private typeCheckBoundDecl(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var boundDeclAST = <BoundDecl>ast;
+            var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -457,7 +461,9 @@ module TypeScript {
                     this.context.pushContextualType(typeExprSymbol, this.context.inProvisionalResolution(), null);
                 }
 
+                this.context.isInStaticInitializer = (decl.getFlags() & PullElementFlags.Static) != 0;
                 var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, !!typeExprSymbol);
+                this.context.isInStaticInitializer = false;
 
                 if (typeExprSymbol) {
                     this.context.popContextualType();
@@ -486,12 +492,22 @@ module TypeScript {
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
                     instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.type).getInstanceSymbol().type;
 
-                    if (!instanceTypeSymbol) {
+                    if (!instanceSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
                         initTypeSymbol = null;
                     }
                     else {
-                        initTypeSymbol = instanceTypeSymbol.type;
+                        initTypeSymbol = instanceSymbol.type;
+                    }
+                }
+
+                // if disallowimplicitany flag is set to be true, report an error
+                if (this.compilationSettings.disallowImplicitAny) {
+
+                    // No type expression; if the initializer is resolved into any type, it must be implicit any
+                    if (!typeExprSymbol && (initTypeSymbol.type == this.semanticInfoChain.anyTypeSymbol || initTypeSymbol.getElementType() == this.semanticInfoChain.anyTypeSymbol)) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName,
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [boundDeclAST.id.actualText], enclosingDecl);
                     }
                 }
 
@@ -512,7 +528,6 @@ module TypeScript {
 
             // now resolve the actual symbol, but supress the errors since we've already surfaced them above
             var prevSupressErrors = this.context.suppressErrors;
-            this.context.suppressErrors = true;
             var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
 
             var varTypeSymbol = this.resolveSymbolAndReportDiagnostics(boundDeclAST, false, enclosingDecl).type;
@@ -607,9 +622,12 @@ module TypeScript {
 
                 if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getDisplayName();
-                    funcName = funcName ? "'" + funcName + "'" : "expression";
-
-                    this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], typeCheckContext.getEnclosingDecl());
+                    if (funcName) {
+                        this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], typeCheckContext.getEnclosingDecl());
+                    }
+                    else {
+                        this.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, DiagnosticCode.Function_expression_declared_a_non_void_return_type_but_has_no_return_expression, null, typeCheckContext.getEnclosingDecl());
+                    }
                 }
             }
 
@@ -1177,7 +1195,7 @@ module TypeScript {
             // Report error
             if (foundError) {
                 var errorCode = implementedType.isClass() ?
-                    DiagnosticCode.Class_0_declares_class_1_as_an_implemented_interface_but_does_not_implement_it_NL_2 :
+                    DiagnosticCode.Class_0_declares_class_1_as_an_interface_but_does_not_implement_it_NL_2 :
                     DiagnosticCode.Class_0_declares_interface_1_but_does_not_implement_it_NL_2;
 
                 this.postError(classDecl.name.minChar, classDecl.name.getLength(), typeCheckContext.scriptName, errorCode, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message], typeCheckContext.getEnclosingDecl());
@@ -1472,11 +1490,13 @@ module TypeScript {
 
                     if (contextualType) {
                         var text: string;
-                        if (binex.operand1.nodeType() === NodeType.Name) {
+                        var nodeType = binex.operand1.nodeType();
+                        if (nodeType === NodeType.Name) {
                             text = (<Identifier>binex.operand1).text();
-                        }
-                        else if (binex.operand1.nodeType() === NodeType.StringLiteral) {
+                        } else if (nodeType === NodeType.StringLiteral) {
                             text = (<StringLiteral>binex.operand1).text();
+                        } else if (nodeType === NodeType.NumericLiteral) {
+                            text = (<NumberLiteral>binex.operand1).text();
                         }
 
                         member = contextualType.findMember(text);
@@ -1651,11 +1671,20 @@ module TypeScript {
                             // If we're accessing 'this' in a class, then the class constructor 
                             // needs to be marked as capturing 'this'.
                             if (declKind === PullElementKind.Class) {
-                                decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
-                                    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
+                                //decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
+                                //    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
+
+                                var constructorSymbol = (<PullTypeSymbol> decl.getSymbol()).getConstructorMethod();
+                                var constructorDecls = constructorSymbol.getDeclarations();
+                                for (var i = 0; i < constructorDecls.length; i++) {
+                                    constructorDecls[i].flags = constructorDecls[i].flags| PullElementFlags.MustCaptureThis;
+                                }
                             }
                             break;
                         }
+                    }
+                    else if (declKind === PullElementKind.Function || declKind === PullElementKind.FunctionExpression) {
+                        break;
                     }
                 }
             }
@@ -1674,8 +1703,8 @@ module TypeScript {
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
             }
             else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.kind === PullElementKind.Class) {
-                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_initializers_in_a_class_body, null, enclosingDecl);
+                if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class && this.context.isInStaticInitializer) {
+                    this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body, null, enclosingDecl);
                 }
                 else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);
@@ -2057,6 +2086,33 @@ module TypeScript {
             return this.semanticInfoChain.stringTypeSymbol;
         }
 
+        private typeCheckTypeQuery(typeQuery: TypeQuery, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            // TODO: This is a workaround if we encounter a TypeReference AST node. Remove it when we remove the AST.
+            var typeQueryTerm = typeQuery.name;
+            if (typeQueryTerm.nodeType() === NodeType.TypeRef) {
+                typeQueryTerm = (<TypeReference>typeQueryTerm).term;
+            }
+
+            var savedResolvingTypeReference = this.context.resolvingTypeReference;
+            this.context.resolvingTypeReference = false;
+            var type = this.typeCheckAST(typeQueryTerm, typeCheckContext, false);
+            this.context.resolvingTypeReference = savedResolvingTypeReference;
+
+            // If it's a module, get the instance type
+            if (type && type.isContainer()) {
+                var instanceSymbol = (<PullContainerTypeSymbol>type).getInstanceSymbol();
+                if (!instanceSymbol) {
+                    this.postError(typeQuery.minChar, typeQuery.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_query_type_of_uninitialized_module_0, [type.toString()], typeCheckContext.getEnclosingDecl());
+                    type = null;
+                }
+                else {
+                    type = instanceSymbol.getType();
+                }
+            }
+
+            return type;
+        }
+
         // Type reference expression
         // validate:
         //  -
@@ -2092,7 +2148,7 @@ module TypeScript {
                         }
                         else {
                             this.postError(typeRef.minChar, typeRef.getLength(), typeCheckContext.scriptName,
-                                DiagnosticCode.Type_reference_cannot_must_refer_to_type, null, typeCheckContext.getEnclosingDecl());
+                                DiagnosticCode.Type_reference_must_refer_to_type, null, typeCheckContext.getEnclosingDecl());
                         }
                     }
                 }
@@ -2217,7 +2273,7 @@ module TypeScript {
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
-                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_contain_a_type_annotation, null, typeCheckContext.getEnclosingDecl());
+                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation, null, typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -2233,7 +2289,7 @@ module TypeScript {
             }
 
             if (!isValidRHS) {
-                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_operand_of_a_for_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
+                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
             }
 
             this.typeCheckAST(forInStatement.body, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
@@ -2270,11 +2326,11 @@ module TypeScript {
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context));
 
             if (!isValidLHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_left_hand_side_of_an_instanceOf_expression_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter, null, typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_an_instanceOf_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type, null, typeCheckContext.getEnclosingDecl());
+                this.postError(binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), typeCheckContext.scriptName, DiagnosticCode.The_right_hand_side_of_an_instanceof_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type, null, typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.booleanTypeSymbol;

@@ -19,20 +19,7 @@
 
 module TypeScript {
     class SourceFile {
-        private _scriptSnapshot: IScriptSnapshot;
-        private _byteOrderMark: ByteOrderMark;
-
-        constructor(scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark) {
-            this._scriptSnapshot = scriptSnapshot;
-            this._byteOrderMark = byteOrderMark;
-        }
-
-        public scriptSnapshot(): IScriptSnapshot {
-            return this._scriptSnapshot;
-        }
-
-        public byteOrderMark(): ByteOrderMark {
-            return this._byteOrderMark;
+        constructor(public scriptSnapshot: IScriptSnapshot, public byteOrderMark: ByteOrderMark) {
         }
     }
 
@@ -50,7 +37,7 @@ module TypeScript {
     }
 
     export class BatchCompiler implements IReferenceResolverHost, IDiagnosticReporter, EmitterIOHost {
-        public compilerVersion = "0.9.0.0";
+        public compilerVersion = "0.9.0.1";
         private inputFiles: string[] = [];
         private compilationSettings: CompilationSettings;
         private resolvedFiles: IResolvedFile[] = [];
@@ -205,7 +192,7 @@ module TypeScript {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var resolvedFile = this.resolvedFiles[i];
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);
@@ -290,7 +277,7 @@ module TypeScript {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot(), sourceFile.byteOrderMark(), /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
+                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this);
@@ -326,7 +313,7 @@ module TypeScript {
                     var sourceFile = this.getSourceFile(resolvedFile.path);
                     this.ioHost.stdout.WriteLine("**** Update type check and errors for " + resolvedFile.path + ":");
 
-                    compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot(), /*version:*/ 0, /*isOpen:*/ true, null);
+                    compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot, /*version:*/ 0, /*isOpen:*/ true, null);
                     // resolve the file to simulate an IDE-driven pull
                     //compiler.pullResolveFile(lastTypecheckedFileName);
                     semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
@@ -341,9 +328,21 @@ module TypeScript {
         private run() {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var outputFileName: string = this.inputFileNameToOutputFileName.lookup(this.resolvedFiles[i].path);
-                if (this.ioHost.fileExists(outputFileName)) {
+                if (outputFileName && this.ioHost.fileExists(outputFileName)) {
                     var outputFileInformation = this.ioHost.readFile(outputFileName);
-                    this.ioHost.run(outputFileInformation.contents(), outputFileName);
+
+                    try {
+                        this.ioHost.run(outputFileInformation.contents, outputFileName);
+                    }
+                    catch (e) {
+                        this.hasErrors = true;
+                        this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Error_while_executing_file_0, [outputFileName]));
+                        if (e.stack) {
+                            this.ioHost.stderr.WriteLine(e.stack);
+                        }
+
+                        break;
+                    }
                 }
             }
         }
@@ -351,33 +350,53 @@ module TypeScript {
         // Parse command line options
         private parseOptions() {
             var opts = new OptionsParser(this.ioHost, this.compilerVersion);
-            var printedUsage = false;
 
             opts.option('out', {
-                usage: 'Concatenate and emit output to single file | Redirect output structure to the directory',
-                type: 'file|directory',
+                usage: {
+                    locCode: DiagnosticCode.Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory, 
+                    args: null
+                },
+                type: DiagnosticCode.FILE_DIRECTORY,
                 set: (str) => {
                     this.compilationSettings.outputOption = str;
                 }
             });
 
             opts.flag('sourcemap', {
-                usage: 'Generates corresponding .map file',
+                usage: {
+                    locCode: DiagnosticCode.Generates_corresponding_0_file,
+                    args: ['.map']
+                },
                 set: () => {
                     this.compilationSettings.mapSourceFiles = true;
                 }
             });
 
-            opts.flag('fullSourceMapPath', {
-                usage: 'Writes the full path of map file in the generated js file',
-                experimental: true,
-                set: () => {
-                    this.compilationSettings.emitFullSourceMapPath = true;
+            opts.flag('mapRoot', {
+                usage: {
+                    locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations,
+                    args: null
+                },
+                set: (str) => {
+                    this.compilationSettings.mapRoot = str;
+                }
+            });
+
+            opts.flag('sourceRoot', {
+                usage: {
+                    locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations,
+                    args: null
+                },
+                set: (str) => {
+                    this.compilationSettings.sourceRoot = str;
                 }
             });
 
             opts.flag('declaration', {
-                usage: 'Generates corresponding .d.ts file',
+                usage: {
+                    locCode: DiagnosticCode.Generates_corresponding_0_file,
+                    args: ['.d.ts']
+                },
                 set: () => {
                     this.compilationSettings.generateDeclarationFiles = true;
                 }
@@ -385,7 +404,10 @@ module TypeScript {
 
             if (this.ioHost.watchFile) {
                 opts.flag('watch', {
-                    usage: 'Watch input files',
+                    usage: {
+                        locCode: DiagnosticCode.Watch_input_files,
+                        args: null
+                    },
                     set: () => {
                         this.compilationSettings.watch = true;
                     }
@@ -393,33 +415,48 @@ module TypeScript {
             }
 
             opts.flag('exec', {
-                usage: 'Execute the script after compilation',
+                usage: {
+                    locCode: DiagnosticCode.Execute_the_script_after_compilation,
+                    args: null
+                },
                 set: () => {
                     this.compilationSettings.exec = true;
                 }
             }, 'e');
 
             opts.flag('minw', {
-                usage: 'Minimize whitespace',
+                usage: {
+                    locCode: DiagnosticCode.Minimize_whitespace,
+                    args: null
+                },
                 experimental: true,
                 set: () => { this.compilationSettings.minWhitespace = true; }
             }, 'mw');
 
             opts.flag('const', {
-                usage: 'Propagate constants to emitted code',
+                usage: {
+                    locCode: DiagnosticCode.Propagate_constants_to_emitted_code,
+                    args: null
+                },
                 experimental: true,
                 set: () => { this.compilationSettings.propagateConstants = true; }
             });
 
             opts.flag('comments', {
-                usage: 'Emit comments to output',
+                usage: {
+                    locCode: DiagnosticCode.Emit_comments_to_output,
+                    args: null
+                },
                 set: () => {
                     this.compilationSettings.emitComments = true;
                 }
             }, 'c');
 
             opts.flag('noresolve', {
-                usage: 'Skip resolution and preprocessing',
+                usage: {
+                    locCode: DiagnosticCode.Skip_resolution_and_preprocessing,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.resolve = false;
@@ -427,7 +464,10 @@ module TypeScript {
             });
 
             opts.flag('debug', {
-                usage: 'Print debug output',
+                usage: {
+                    locCode: DiagnosticCode.Print_debug_output,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     CompilerDiagnostics.debug = true;
@@ -435,14 +475,20 @@ module TypeScript {
             });
 
             opts.flag('nolib', {
-                usage: 'Do not include a default lib.d.ts with global declarations',
+                usage: {
+                    locCode: DiagnosticCode.Do_not_include_a_default_0_with_global_declarations,
+                    args: ['lib.d.ts']
+                },
                 set: () => {
                     this.compilationSettings.useDefaultLib = false;
                 }
             });
 
             opts.flag('diagnostics', {
-                usage: 'gather diagnostic info about the compilation process',
+                usage: {
+                    locCode: DiagnosticCode.Gather_diagnostic_info_about_the_compilation_process,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.gatherDiagnostics = true;
@@ -450,7 +496,10 @@ module TypeScript {
             });
 
             opts.flag('update', {
-                usage: 'Typecheck each file as an update on the first',
+                usage: {
+                    locCode: DiagnosticCode.Typecheck_each_file_as_an_update_on_the_first,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.updateTC = true;
@@ -458,8 +507,11 @@ module TypeScript {
             });
 
             opts.option('target', {
-                usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',
-                type: 'VER',
+                usage: {
+                    locCode: DiagnosticCode.Specify_ECMAScript_target_version_0_default_or_1,
+                    args: ['ES3', 'ES5']
+                },
+                type: DiagnosticCode.VERSION,
                 set: (type) => {
                     type = type.toLowerCase();
 
@@ -477,8 +529,11 @@ module TypeScript {
             });
 
             opts.option('module', {
-                usage: 'Specify module code generation: "commonjs" (default) or "amd"',
-                type: 'kind',
+                usage: {
+                    locCode: DiagnosticCode.Specify_module_code_generation_0_default_or_1,
+                    args: ['commonjs', 'amd']
+                },
+                type: DiagnosticCode.KIND,
                 set: (type) => {
                     type = type.toLowerCase();
 
@@ -495,38 +550,53 @@ module TypeScript {
                 }
             });
 
+            var needsHelp = false;
             opts.flag('help', {
-                usage: 'Print this message',
+                usage: {
+                    locCode: DiagnosticCode.Print_this_message,
+                    args: null
+                },
                 set: () => {
-                    opts.printUsage();
-                    printedUsage = true;
+                    needsHelp = true;
                 }
             }, 'h');
 
             opts.flag('useCaseSensitiveFileResolution', {
-                usage: 'Force file resolution to be case sensitive',
+                usage: {
+                    locCode: DiagnosticCode.Force_file_resolution_to_be_case_sensitive,
+                    args: null
+                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.useCaseSensitiveFileResolution = true;
                 }
             });
-
+            var shouldPrintVersionOnly = false;
             opts.flag('version', {
-                usage: 'Print the compiler\'s version: ' + this.compilerVersion,
+                usage: {
+                    locCode: DiagnosticCode.Print_the_compiler_s_version_0,
+                    args: [this.compilerVersion]
+                },
                 set: () => {
-                    opts.printVersion();
+                    shouldPrintVersionOnly = true;
                 }
             }, 'v');
 
             opts.flag('allowbool', {
-                usage: 'Allow use of deprecated "bool" type',
+                usage: {
+                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_type,
+                    args: ['bool']
+                },
                 set: () => {
                     this.compilationSettings.allowBool = true;
                 }
             }, 'b');
 
             opts.flag('allowimportmodule', {
-                usage: 'Allow use of deprecated "module" keyword when referencing an external module',
+                usage: {
+                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module,
+                    args: ['module']
+                },
                 set: () => {
                     this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
                 }
@@ -534,17 +604,25 @@ module TypeScript {
 
             var locale: string = null;
             opts.option('locale', {
-                usage: "Specify locale for errors and messages. For example 'en' or 'ja-jp'.",
-                type: 'string',
+                usage: {
+                    locCode: DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_0_or_1,
+                    args: ['en', 'ja-jp']
+                },
+                type: DiagnosticCode.STRING,
                 set: (value) => {
                     locale = value;
                 }
             });
 
-            opts.flag('noemit', {
-                usage: '',
-                set: () => { this.tcOnly = true; }
-            });
+            opts.flag('disallowimplicitany', {
+                usage: {
+                    locCode: DiagnosticCode.Warn_on_expressions_and_declarations_with_an_implied_any_type,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.disallowImplicitAny = true;
+                }
+            }, 'i');
 
             opts.parse(this.ioHost.arguments);
 
@@ -559,11 +637,12 @@ module TypeScript {
             }
 
             // If no source files provided to compiler - print usage information
-            if (this.inputFiles.length === 0) {
-                if (!printedUsage) {
-                    opts.printUsage();
-                    return false;
-                }
+            if (this.inputFiles.length === 0 || needsHelp) {
+                opts.printUsage();
+                return false;
+            }
+            else if (shouldPrintVersionOnly) {
+                opts.printVersion();
             }
 
             return true;
@@ -572,7 +651,7 @@ module TypeScript {
         private setLocale(locale: string): boolean {
             var matchResult = /^([a-z]+)([_\-]([a-z]+))?$/.exec(locale.toLowerCase());
             if (!matchResult) {
-                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_en_or_ja_jp, null));
+                this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1, ['en', 'ja-jp']));
                 return false;
             }
 
@@ -607,7 +686,7 @@ module TypeScript {
             }
 
             var fileContents = this.ioHost.readFile(filePath);
-            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents());
+            TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents);
             return true;
         }
 
@@ -615,7 +694,7 @@ module TypeScript {
         private watchFiles() {
             if (!this.ioHost.watchFile) {
                 this.addDiagnostic(
-                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_w_atch_option, null));
+                    new Diagnostic(null, 0, 0, DiagnosticCode.Current_host_does_not_support_0_option, ['-w[atch]']));
                 return;
             }
 
@@ -690,9 +769,9 @@ module TypeScript {
 
                 // Print header
                 if (!firstTime) {
-                    this.ioHost.printLine("");
-                    this.ioHost.printLine("Recompiling (" + new Date() + "): ");
-                    lastResolvedFileSet.forEach((f) => this.ioHost.printLine("    " + f));
+                    var fileNames = "";
+                    lastResolvedFileSet.forEach((f) => { fileNames += Environment.newLine + "    " + f; });
+                    this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, [fileNames]));
                 }
                 else {
                     firstTime = false;
@@ -703,12 +782,7 @@ module TypeScript {
 
                 if (!this.hasErrors) {
                     if (this.compilationSettings.exec) {
-                        try {
-                            this.run();
-                        }
-                        catch (e) {
-                            this.ioHost.stderr.WriteLine('Execution Failed.\n' + (e.stack || ""));
-                        }
+                        this.run();
                     }
                 }
             };
@@ -733,8 +807,8 @@ module TypeScript {
                     fileInformation = new FileInformation("", ByteOrderMark.None);
                 }
 
-                var snapshot = ScriptSnapshot.fromString(fileInformation.contents());
-                var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark());
+                var snapshot = ScriptSnapshot.fromString(fileInformation.contents);
+                var sourceFile = new SourceFile(snapshot, fileInformation.byteOrderMark);
                 this.fileNameToSourceFile.add(fileName, sourceFile);
             }
 
@@ -751,7 +825,7 @@ module TypeScript {
 
         /// IReferenceResolverHost methods
         getScriptSnapshot(fileName: string): IScriptSnapshot {
-            return this.getSourceFile(fileName).scriptSnapshot();
+            return this.getSourceFile(fileName).scriptSnapshot;
         }
 
         resolveRelativePath(path: string, directory: string): string {

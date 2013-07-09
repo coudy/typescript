@@ -62,7 +62,7 @@ module TypeScript {
     "code": 1012,
     "category": DiagnosticCategory.Error
   },
-  "A catch clause variable cannot have a type annotation.": {
+  "Catch clause parameter cannot have a type annotation.": {
     "code": 1013,
     "category": DiagnosticCategory.Error
   },
@@ -114,7 +114,7 @@ module TypeScript {
     "code": 1025,
     "category": DiagnosticCategory.Error
   },
-  "Class can only extend single type.": {
+  "Classes can only extend a single class.": {
     "code": 1026,
     "category": DiagnosticCategory.Error
   },
@@ -146,7 +146,7 @@ module TypeScript {
     "code": 1034,
     "category": DiagnosticCategory.Error
   },
-  "Non ambient modules cannot use quoted names.": {
+  "Only ambient modules can use quoted names.": {
     "code": 1035,
     "category": DiagnosticCategory.Error
   },
@@ -166,7 +166,7 @@ module TypeScript {
     "code": 1039,
     "category": DiagnosticCategory.Error
   },
-  "Overload and ambient signatures cannot specify parameter properties.": {
+  "Parameter property declarations can only be used in constructors.": {
     "code": 1040,
     "category": DiagnosticCategory.Error
   },
@@ -198,7 +198,7 @@ module TypeScript {
     "code": 1047,
     "category": DiagnosticCategory.Error
   },
-  "Rest parameter cannot have initializer.": {
+  "Rest parameter cannot have an initializer.": {
     "code": 1048,
     "category": DiagnosticCategory.Error
   },
@@ -214,7 +214,7 @@ module TypeScript {
     "code": 1051,
     "category": DiagnosticCategory.Error
   },
-  "'set' accessor parameter cannot have initializer.": {
+  "'set' accessor parameter cannot have an initializer.": {
     "code": 1052,
     "category": DiagnosticCategory.Error
   },
@@ -230,7 +230,7 @@ module TypeScript {
     "code": 1055,
     "category": DiagnosticCategory.Error
   },
-  "Accessors are only when targeting EcmaScript5 and higher.": {
+  "Accessors are only available when targeting ECMAScript 5 and higher.": {
     "code": 1056,
     "category": DiagnosticCategory.Error
   },
@@ -258,7 +258,7 @@ module TypeScript {
     "code": 1062,
     "category": DiagnosticCategory.Warning
   },
-  "Export assignments cannot be used in internal modules.": {
+  "Export assignment cannot be used in internal modules.": {
     "code": 1063,
     "category": DiagnosticCategory.Error
   },
@@ -674,7 +674,7 @@ module TypeScript {
     "code": 2087,
     "category": DiagnosticCategory.Error
   },
-  "Unable to invoke type with no call signatures.": {
+  "Cannot invoke an expression whose type lacks a call signature.": {
     "code": 2088,
     "category": DiagnosticCategory.Error
   },
@@ -758,10 +758,6 @@ module TypeScript {
     "code": 2108,
     "category": DiagnosticCategory.Error
   },
-  "'this' must only be used inside a function or script context.": {
-    "code": 2109,
-    "category": DiagnosticCategory.Error
-  },
   "Invalid '+' expression - types not known to support the addition operator.": {
     "code": 2111,
     "category": DiagnosticCategory.Error
@@ -778,7 +774,7 @@ module TypeScript {
     "code": 2114,
     "category": DiagnosticCategory.Error
   },
-  "Variable declarations of a 'for' statement cannot contain a type annotation.": {
+  "Variable declarations of a 'for' statement cannot use a type annotation.": {
     "code": 2115,
     "category": DiagnosticCategory.Error
   },
@@ -786,7 +782,7 @@ module TypeScript {
     "code": 2116,
     "category": DiagnosticCategory.Error
   },
-  "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
+  "The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter.": {
     "code": 2117,
     "category": DiagnosticCategory.Error
   },
@@ -798,11 +794,11 @@ module TypeScript {
     "code": 2119,
     "category": DiagnosticCategory.Error
   },
-  "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.": {
+  "The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.": {
     "code": 2120,
     "category": DiagnosticCategory.Error
   },
-  "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
+  "The right-hand side of an 'instanceof' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
     "code": 2121,
     "category": DiagnosticCategory.Error
   },
@@ -810,7 +806,7 @@ module TypeScript {
     "code": 2122,
     "category": DiagnosticCategory.Error
   },
-  "Tried to set variable type to container type '{0}'.": {
+  "Tried to query type of uninitialized module '{0}'.": {
     "code": 2123,
     "category": DiagnosticCategory.Error
   },
@@ -818,7 +814,7 @@ module TypeScript {
     "code": 2124,
     "category": DiagnosticCategory.Error
   },
-  "Function {0} declared a non-void return type, but has no return expression.": {
+  "Function '{0}' declared a non-void return type, but has no return expression.": {
     "code": 2125,
     "category": DiagnosticCategory.Error
   },
@@ -862,7 +858,7 @@ module TypeScript {
     "code": 2137,
     "category": DiagnosticCategory.Error
   },
-  "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}": {
+  "Class {0} declares class {1} as an interface but does not implement it:{NL}{2}": {
     "code": 2138,
     "category": DiagnosticCategory.Error
   },
@@ -870,7 +866,7 @@ module TypeScript {
     "code": 2139,
     "category": DiagnosticCategory.Error
   },
-  "'this' cannot be referenced in initializers in a class body.": {
+  "'this' cannot be referenced in static initializers in a class body.": {
     "code": 2140,
     "category": DiagnosticCategory.Error
   },
@@ -1010,6 +1006,10 @@ module TypeScript {
     "code": 2175,
     "category": DiagnosticCategory.Error
   },
+  "Function expression declared a non-void return type, but has no return expression.": {
+    "code": 2176,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
@@ -1070,7 +1070,7 @@ module TypeScript {
     "code": 4014,
     "category": DiagnosticCategory.NoPrefix
   },
-  "Could not apply type'{0}' to argument {1} which is of type '{2}'.": {
+  "Could not apply type '{0}' to argument {1} which is of type '{2}'.": {
     "code": 4015,
     "category": DiagnosticCategory.NoPrefix
   },
@@ -1102,7 +1102,7 @@ module TypeScript {
     "code": 4022,
     "category": DiagnosticCategory.Error
   },
-  "Type reference cannot must refer to type.": {
+  "Type reference must refer to type.": {
     "code": 4023,
     "category": DiagnosticCategory.Error
   },
@@ -1110,7 +1110,11 @@ module TypeScript {
     "code": 4024,
     "category": DiagnosticCategory.Error
   },
-  "Current host does not support -w[atch] option.": {
+  " (+ {0} overload(s))": {
+    "code": 4025,
+    "category": DiagnosticCategory.Message
+  },
+  "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error
   },
@@ -1138,7 +1142,7 @@ module TypeScript {
     "code": 5009,
     "category": DiagnosticCategory.Error
   },
-  "Cannot compile dynamic modules when emitting into single file.": {
+  "Cannot compile external modules when emitting into single file.": {
     "code": 5010,
     "category": DiagnosticCategory.Error
   },
@@ -1154,12 +1158,296 @@ module TypeScript {
     "code": 5013,
     "category": DiagnosticCategory.NoPrefix
   },
-  "Locale must be of the form <language> or <language>-<territory>. For example 'en' or 'ja-jp'.": {
+  "Locale must be of the form <language> or <language>-<territory>. For example '{0}' or '{1}'.": {
     "code": 5014,
     "category": DiagnosticCategory.Error
   },
   "Unsupported locale: '{0}'.": {
     "code": 5015,
+    "category": DiagnosticCategory.Error
+  },
+  "Execution Failed.{NL}": {
+    "code": 5016,
+    "category": DiagnosticCategory.Error
+  },
+  "Should not emit a type query": {
+    "code": 5017,
+    "category": DiagnosticCategory.Error
+  },
+  "Should not emit a type reference": {
+    "code": 5018,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid call to 'up'": {
+    "code": 5019,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid call to 'down'": {
+    "code": 5020,
+    "category": DiagnosticCategory.Error
+  },
+  "Base64 value '{0}' finished with a continuation bit": {
+    "code": 5021,
+    "category": DiagnosticCategory.Error
+  },
+  "Key was already in table": {
+    "code": 5022,
+    "category": DiagnosticCategory.Error
+  },
+  "Unknown option '{0}'": {
+    "code": 5023,
+    "category": DiagnosticCategory.Error
+  },
+  "Expected {0} arguments to message, got {1} instead": {
+    "code": 5024,
+    "category": DiagnosticCategory.Error
+  },
+  "Expected the message '{0}' to have {1} arguments, but it had {2}": {
+    "code": 5025,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid argument: {0}. {1}": {
+    "code": 5026,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid argument: {0}.": {
+    "code": 5027,
+    "category": DiagnosticCategory.Error
+  },
+  "Argument out of range: {0}.": {
+    "code": 5028,
+    "category": DiagnosticCategory.Error
+  },
+  "Argument null: {0}.": {
+    "code": 5029,
+    "category": DiagnosticCategory.Error
+  },
+  "Operation not implemented properly by subclass.": {
+    "code": 5030,
+    "category": DiagnosticCategory.Error
+  },
+  "Not yet implemented.": {
+    "code": 5031,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid operation: {0}": {
+    "code": 5032,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid operation.": {
+    "code": 5033,
+    "category": DiagnosticCategory.Error
+  },
+  "Couldn't delete file '{0}'": {
+    "code": 5034,
+    "category": DiagnosticCategory.Error
+  },
+  "Couldn't create directory '{0}'": {
+    "code": 5035,
+    "category": DiagnosticCategory.Error
+  },
+  "Error while executing file '{0}': ": {
+    "code": 5036,
+    "category": DiagnosticCategory.Error
+  },
+  "Concatenate and emit output to single file | Redirect output structure to the directory": {
+    "code": 6001,
+    "category": DiagnosticCategory.Message
+  },
+  "Generates corresponding {0} file": {
+    "code": 6002,
+    "category": DiagnosticCategory.Message
+  },
+  "Specifies the location where debugger should locate map files instead of generated locations.": {
+    "code": 6003,
+    "category": DiagnosticCategory.Message
+  },
+  "Specifies the location where debugger should locate TypeScript files instead of source locations.": {
+    "code": 6004,
+    "category": DiagnosticCategory.Message
+  },
+  "Watch input files": {
+    "code": 6005,
+    "category": DiagnosticCategory.Message
+  },
+  "Execute the script after compilation": {
+    "code": 6006,
+    "category": DiagnosticCategory.Message
+  },
+  "Minimize whitespace": {
+    "code": 6007,
+    "category": DiagnosticCategory.Message
+  },
+  "Propagate constants to emitted code": {
+    "code": 6008,
+    "category": DiagnosticCategory.Message
+  },
+  "Emit comments to output": {
+    "code": 6009,
+    "category": DiagnosticCategory.Message
+  },
+  "Skip resolution and preprocessing": {
+    "code": 6010,
+    "category": DiagnosticCategory.Message
+  },
+  "Print debug output": {
+    "code": 6011,
+    "category": DiagnosticCategory.Message
+  },
+  "Do not include a default {0} with global declarations": {
+    "code": 6012,
+    "category": DiagnosticCategory.Message
+  },
+  "Gather diagnostic info about the compilation process": {
+    "code": 6013,
+    "category": DiagnosticCategory.Message
+  },
+  "Typecheck each file as an update on the first": {
+    "code": 6014,
+    "category": DiagnosticCategory.Message
+  },
+  "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
+    "code": 6015,
+    "category": DiagnosticCategory.Message
+  },
+  "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+    "code": 6016,
+    "category": DiagnosticCategory.Message
+  },
+  "Print this message": {
+    "code": 6017,
+    "category": DiagnosticCategory.Message
+  },
+  "Force file resolution to be case sensitive": {
+    "code": 6018,
+    "category": DiagnosticCategory.Message
+  },
+  "Print the compiler's version: {0}": {
+    "code": 6019,
+    "category": DiagnosticCategory.Message
+  },
+  "Allow use of deprecated \"{0}\" type": {
+    "code": 6020,
+    "category": DiagnosticCategory.Message
+  },
+  "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
+    "code": 6021,
+    "category": DiagnosticCategory.Message
+  },
+  "Specify locale for errors and messages. For example '{0}' or '{1}'": {
+    "code": 6022,
+    "category": DiagnosticCategory.Message
+  },
+  "Syntax:   {0}": {
+    "code": 6023,
+    "category": DiagnosticCategory.Message
+  },
+  "options": {
+    "code": 6024,
+    "category": DiagnosticCategory.Message
+  },
+  "file": {
+    "code": 6025,
+    "category": DiagnosticCategory.Message
+  },
+  "Examples:": {
+    "code": 6026,
+    "category": DiagnosticCategory.Message
+  },
+  "Options:": {
+    "code": 6027,
+    "category": DiagnosticCategory.Message
+  },
+  "Insert command line options and files from a file.": {
+    "code": 6030,
+    "category": DiagnosticCategory.Message
+  },
+  "Version {0}": {
+    "code": 6029,
+    "category": DiagnosticCategory.Message
+  },
+  "Use the '{0}' flag to see options": {
+    "code": 6031,
+    "category": DiagnosticCategory.Message
+  },
+  "{NL}Recompiling ({0}):": {
+    "code": 6032,
+    "category": DiagnosticCategory.Message
+  },
+  "STRING": {
+    "code": 6033,
+    "category": DiagnosticCategory.Message
+  },
+  "KIND": {
+    "code": 6034,
+    "category": DiagnosticCategory.Message
+  },
+  "FILE|DIRECTORY": {
+    "code": 6035,
+    "category": DiagnosticCategory.Message
+  },
+  "VERSION": {
+    "code": 6036,
+    "category": DiagnosticCategory.Message
+  },
+  "This version of the Javascript runtime doesn't support the '{0}' function.": {
+    "code": 7000,
+    "category": DiagnosticCategory.Error
+  },
+  "Looking up path for identifier token did not result in an identifer.": {
+    "code": 7001,
+    "category": DiagnosticCategory.Error
+  },
+  "Unknown rule": {
+    "code": 7002,
+    "category": DiagnosticCategory.Error
+  },
+  "Invalid line number ({0})": {
+    "code": 7003,
+    "category": DiagnosticCategory.Error
+  },
+  "Warn on expressions and declarations with an implied 'any' type.": {
+    "code": 7004,
+    "category": DiagnosticCategory.Message
+  },
+  "Variable '{0}' implicitly has an any type.": {
+    "code": 7005,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of '{1}' implicitly has an any type.": {
+    "code": 7006,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of function type implicitly has an any type.": {
+    "code": 7007,
+    "category": DiagnosticCategory.Error
+  },
+  "Member '{0}' of object type implicitly has an any type.": {
+    "code": 7008,
+    "category": DiagnosticCategory.Error
+  },
+  "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+    "code": 7009,
+    "category": DiagnosticCategory.Error
+  },
+  "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7010,
+    "category": DiagnosticCategory.Error
+  },
+  "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7011,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter '{0}' of lambda function implicitly has an any type.": {
+    "code": 7012,
+    "category": DiagnosticCategory.Error
+  },
+  "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7013,
+    "category": DiagnosticCategory.Error
+  },
+  "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+    "code": 7014,
     "category": DiagnosticCategory.Error
   }
 };

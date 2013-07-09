@@ -11,24 +11,24 @@
 interface ISymbol {
     kind(): SymbolKind;
 
-    /// <summary>
-    /// Gets the symbol name. Returns the empty string if unnamed.
-    /// </summary>
+    /**
+     * Gets the symbol name. Returns the empty string if unnamed.
+     */
     name(): string;
 
-    /// <summary>
-    /// Gets the immediately containing symbol.
-    /// </summary>
+    /**
+     * Gets the immediately containing symbol.
+     */
     containingSymbol(): ISymbol;
 
-    /// <summary>
-    /// Gets the containing type. Returns null if the symbol is not contained within a type.
-    /// </summary>
+    /**
+     * Gets the containing type. Returns null if the symbol is not contained within a type.
+     */
     containingType(): IObjectTypeSymbol;
 
-    /// <summary>
-    /// Gets the nearest enclosing module. Returns null if the symbol isn't contained in a module.
-    /// </summary>
+    /**
+     * Gets the nearest enclosing module. Returns null if the symbol isn't contained in a module.
+     */
     containingModule(): IModuleSymbol;
 
     locations(): ILocation[];
@@ -37,10 +37,10 @@ interface ISymbol {
     // symbol).
     isDefinition(): boolean;
 
-    /// <summary>
-    /// Gets the the original definition of the symbol. If this symbol is derived from another symbol,
-    /// by type substitution for instance, this gets the original symbol, as it was defined in source.
-    /// </summary>
+    /**
+     * Gets the the original definition of the symbol. If this symbol is derived from another symbol,
+     * by type substitution for instance, this gets the original symbol, as it was defined in source.
+     */
     originalDefinition(): ISymbol;
 
     // True if this symbol was automatically generated based on the absense of the normal construct
@@ -69,61 +69,61 @@ interface ISymbol {
 
 /// Represents any symbol that has type parameters.
 interface IGenericSymbol extends ISymbol {
-    /// <summary>
-    /// Returns the type parameters that this type has. If this is a non-generic type,
-    /// returns an empty ReadOnlyArray.  
-    /// </summary>
+    /**
+     * Returns the type parameters that this type has. If this is a non-generic type,
+     * returns an empty ReadOnlyArray.  
+     */
     typeParameters(): ITypeParameterSymbol[];
 
-    /// <summary>
-    /// Returns the type arguments that have been substituted for the type parameters. 
-    /// If nothing has been substituted for a give type parameters,
-    /// then the type parameter itself is consider the type argument.
-    /// </summary>
+    /**
+     * Returns the type arguments that have been substituted for the type parameters. 
+     * If nothing has been substituted for a give type parameters,
+     * then the type parameter itself is consider the type argument.
+     */
     typeArguments(): ITypeSymbol[];
 
-    /// <summary>
-    /// Get the original definition of this type symbol. If this symbol is derived from another
-    /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
-    /// source.
-    /// </summary>
+    /**
+     * Get the original definition of this type symbol. If this symbol is derived from another
+     * symbol by (say) type substitution, this gets the original symbol, as it was defined in
+     * source.
+     */
     originalDefinition(): IGenericSymbol;
 }
 
-/// <summary>
-/// Represents a parameter of a method or property.
-/// </summary>
+/**
+ * Represents a parameter of a method or property.
+ */
 interface IParameterSymbol extends ISymbol {
-    /// <summary>
-    /// Returns true if the parameter was declared as a parameter array. 
-    /// </summary>
+    /**
+     * Returns true if the parameter was declared as a parameter array. 
+     */
     isRest(): boolean;
 
-    /// <summary>
-    /// Returns true if the parameter is optional.
-    /// </summary>
+    /**
+     * Returns true if the parameter is optional.
+     */
     isOptional(): boolean;
 
-    /// <summary>
-    /// Gets the type of the parameter.
-    /// </summary>
+    /**
+     * Gets the type of the parameter.
+     */
     type(): ITypeSymbol;
 
-    /// <summary>
-    /// Gets the ordinal position of the parameter. The first parameter has ordinal zero.
-    /// </summary>
+    /**
+     * Gets the ordinal position of the parameter. The first parameter has ordinal zero.
+     */
     ordinal(): number;
 
-    /// <summary>
-    /// Returns true if the parameter specifies a default value to be passed
-    /// when no value is provided as an argument to a call. The default value
-    /// can be obtained with the DefaultValue property.
-    /// </summary>
+    /**
+     * Returns true if the parameter specifies a default value to be passed
+     * when no value is provided as an argument to a call. The default value
+     * can be obtained with the DefaultValue property.
+     */
     hasValue(): boolean;
 
-    /// <summary>
-    /// Returns the default value of the parameter. 
-    /// </summary>
+    /**
+     * Returns the default value of the parameter. 
+     */
     value(): any;
 
     /// The associated variable if this parameter caused a field to be generated.

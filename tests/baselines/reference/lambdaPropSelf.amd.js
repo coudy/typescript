@@ -9,3 +9,17 @@ var Person = (function () {
     }
     return Person;
 })();
+
+var T = (function () {
+    function T() {
+    }
+    T.prototype.fo = function () {
+        var x = this;
+    };
+    return T;
+})();
+
+var M;
+(function (M) {
+    var x = this;
+})(M || (M = {}));

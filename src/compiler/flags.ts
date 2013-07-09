@@ -31,7 +31,6 @@ module TypeScript {
         OptionalName = 1 << 2,
         TypeReference = 1 << 3,
         EnumElement = 1 << 4,
-        EnumMapElement = 1 << 5,
     }
 
     export enum DeclFlags {

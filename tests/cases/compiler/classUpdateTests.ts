@@ -74,11 +74,11 @@ class M extends G {
 }
 
 //
-// test error conditions on field initializers
+// test this reference in field initializers
 //
 class N {
 	public p1 = 0;
-	public p2 = this.p1;  // ERROR
+	public p2 = this.p1;
 
 	constructor() {
 		this.p2 = 0;

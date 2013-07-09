@@ -4,9 +4,9 @@
 ///<reference path='ISymbol.ts' />
 
 interface ICompilation {
-    /// <summary>
-    /// Gets the syntax trees (parsed from source code) that this compilation was created with.
-    /// </summary>
+    /**
+     * Gets the syntax trees (parsed from source code) that this compilation was created with.
+     */
     syntaxTrees(): SyntaxTree[];
 
     getSemanticModel(syntaxTree: SyntaxTree): ISemanticModel;
@@ -30,10 +30,10 @@ interface ICompilation {
     nullType(): INullTypeSymbol;
     undefinedType(): IUndefinedTypeSymbol;
 
-    /// <summary>
-    /// Gets all the diagnostics for the compilation, including syntax, declaration, and
-    /// binding. Does not include any diagnostics that might be produced during emit.
-    /// </summary>
+    /**
+     * Gets all the diagnostics for the compilation, including syntax, declaration, and
+     * binding. Does not include any diagnostics that might be produced during emit.
+     */
     getDiagnostics(cancellationToken: ICancellationToken): Diagnostic[];
 
     // TODO: add parameters here to control emitting.

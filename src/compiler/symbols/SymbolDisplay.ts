@@ -49,14 +49,12 @@ module SymbolDisplay {
         }
     }
 
-    /// <summary>
-    /// Convert a symbol to an array of string parts, each of which has a kind. Useful for
-    /// colorizing the display string.
-    /// </summary>
-    /// <param name="symbol">Symbol to be displayed.</param>
-    /// <param name="format">Formatting rules - null implies
-    /// Format.ErrorMessageFormat.</param>
-    /// <returns>A read-only array of string parts.</returns>
+    /**
+     * Convert a symbol to an array of string parts, each of which has a kind. Useful for
+     * colorizing the display string. Returns a read-only array of string parts.
+     * @param symbol Symbol to be displayed.
+     * @param format Formatting rules - null implies Format.ErrorMessageFormat.
+     */
     export function toDisplayParts(symbol: ISymbol, format: Format = null): Part[] {
         // null indicates the default format (as in IFormattable.ToString)
         format = format || errorMessageFormat;
@@ -64,17 +62,14 @@ module SymbolDisplay {
                 symbol, /*location:*/ null, /*semanticModel:*/ null, format, /*minimal:*/ false);
     }
 
-    /// <summary>
-    /// Convert a symbol to an array of string parts, each of which has a kind. May be tailored
-    /// to a specific location in the source code. Useful for colorizing the display string.
-    /// </summary>
-    /// <param name="symbol">Symbol to be displayed.</param>
-    /// <param name="location">A location in the source code (context).</param>
-    /// <param name="semanticModel">Binding information (for determining names appropriate to
-    /// the context).</param>
-    /// <param name="format">Formatting rules - null implies
-    /// Format.MinimallyQualifiedFormat.</param>
-    /// <returns>A read-only array of string parts.</returns>
+    /**
+     * Convert a symbol to an array of string parts, each of which has a kind. May be tailored
+     * to a specific location in the source code. Useful for colorizing the display string. Returns a read-only array of string parts.
+     * @param symbol Symbol to be displayed.
+     * @param location A location in the source code (context).
+     * @param semanticModel Binding information (for determining names appropriate to the context).
+     * @param format Formatting rules - null implies Format.MinimallyQualifiedFormat.
+     */
     export function toMinimalDisplayParts(symbol: ISymbol,
         location: ILocation,
         semanticModel: ISemanticModel,
