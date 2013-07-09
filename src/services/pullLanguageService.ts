@@ -1128,7 +1128,7 @@ module Services {
                     } else if (declKind == TypeScript.PullElementKind.Enum) {
                         return ScriptElementKind.enumElement;
                     } else if (declKind == TypeScript.PullElementKind.Variable) {
-                        var declFlags = declarations[i].getFlags();
+                        var declFlags = declarations[i].flags;
                         if (declFlags & TypeScript.PullElementFlags.InitializedModule) {
                             return ScriptElementKind.moduleElement;
                         } else if (declFlags & TypeScript.PullElementFlags.InitializedEnum) {

@@ -461,7 +461,7 @@ module TypeScript {
                     this.context.pushContextualType(typeExprSymbol, this.context.inProvisionalResolution(), null);
                 }
 
-                this.context.isInStaticInitializer = (decl.getFlags() & PullElementFlags.Static) != 0;
+                this.context.isInStaticInitializer = (decl.flags & PullElementFlags.Static) != 0;
                 var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, !!typeExprSymbol);
                 this.context.isInStaticInitializer = false;
 
@@ -480,7 +480,7 @@ module TypeScript {
                         var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.type).getInstanceSymbol().type;
 
                         if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
-                            this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_container_type_0, [typeExprSymbol.toString()], enclosingDecl);
+                            this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [typeExprSymbol.toString()], enclosingDecl);
                             typeExprSymbol = null;
                         }
                         else {
@@ -492,12 +492,12 @@ module TypeScript {
                 if (initTypeSymbol && initTypeSymbol.isContainer()) {
                     instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol.type).getInstanceSymbol().type;
 
-                    if (!instanceSymbol) {
+                    if (!instanceTypeSymbol) {
                         this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
                         initTypeSymbol = null;
                     }
                     else {
-                        initTypeSymbol = instanceSymbol.type;
+                        initTypeSymbol = instanceTypeSymbol;
                     }
                 }
 
@@ -1703,7 +1703,7 @@ module TypeScript {
                 this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
             }
             else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.getKind() === PullElementKind.Class && this.context.isInStaticInitializer) {
+                if (enclosingNonLambdaDecl.kind === PullElementKind.Class && this.context.isInStaticInitializer) {
                     this.postError(thisExpressionAST.minChar, thisExpressionAST.getLength(), typeCheckContext.scriptName, DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body, null, enclosingDecl);
                 }
                 else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
@@ -2106,7 +2106,7 @@ module TypeScript {
                     type = null;
                 }
                 else {
-                    type = instanceSymbol.getType();
+                    type = instanceSymbol.type;
                 }
             }
 

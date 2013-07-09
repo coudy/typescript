@@ -305,7 +305,7 @@ module TypeScript {
                     }
                 }
                 path[path.length] = node;
-                var nodeKind = node.getKind();
+                var nodeKind = node.kind;
                 if (nodeKind == PullElementKind.Parameter) {
                     break;
                 } else {
@@ -1293,12 +1293,12 @@ module TypeScript {
 
                 return true;
             }
-            else if (this.hasGenericMember) {
+            else if (this._hasGenericMember) {
                 var members = this.getMembers();
                 var memberType: PullTypeSymbol = null;
 
                 for (var i = 0; i < members.length; i++) {
-                    memberType = members[i].getType();
+                    memberType = members[i].type;
 
                     if (memberType && !memberType.isFixed()) {
                         return false;
