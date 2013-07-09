@@ -2974,9 +2974,13 @@ module TypeScript {
 
         private resolveUnaryArithmeticOperation(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var nodeType = ast.nodeType();
-            if (context.typeCheck() && !(nodeType == NodeType.PlusExpression || nodeType == NodeType.NegateExpression || nodeType == NodeType.BitwiseNotExpression)) {
+            if (context.typeCheck()) {
                 var unaryExpression = <UnaryExpression>ast;
                 var expression = this.resolveAST(unaryExpression.operand, false, enclosingDecl, context);
+
+                if (nodeType == NodeType.PlusExpression || nodeType == NodeType.NegateExpression || nodeType == NodeType.BitwiseNotExpression) {
+                    return this.semanticInfoChain.numberTypeSymbol;
+                }
                 var operandType = expression.type;
 
                 var operandIsFit = this.isAnyOrEquivalent(operandType) || operandType === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(operandType);
@@ -3460,7 +3464,7 @@ module TypeScript {
         }
         // Expression resolution
 
-        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, specializingSignature=false): PullSymbol {
             globalSemanticInfoChain = this.semanticInfoChain;
 
             if (globalBinder) {
@@ -3471,7 +3475,7 @@ module TypeScript {
                 return;
             }
 
-            var symbol = this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
+            var symbol = specializingSignature ? null : this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
 
             //if (context.typeCheck()) {
             //    if (symbol && symbol.type && (symbol.isPrimitive() || ast.typeCheckPhase >= PullTypeResolver.globalTypeCheckPhase)) {
@@ -4029,12 +4033,14 @@ module TypeScript {
 
             if (this.isPrototypeMember(dottedNameAST, enclosingDecl, context)) {
                 if (lhsType.isClass()) {
+                    this.checkForStaticMemberAccess(dottedNameAST, lhsType, lhsType, enclosingDecl, context);
                     return lhsType;
                 }
                 else {
                     var classInstanceType = lhsType.getAssociatedContainerType();
 
                     if (classInstanceType && classInstanceType.isClass()) {
+                        this.checkForStaticMemberAccess(dottedNameAST, lhsType, classInstanceType, enclosingDecl, context);
                         return classInstanceType;
                     }
                 }
@@ -4597,11 +4603,11 @@ module TypeScript {
 
                 if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
                     context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);
-                    return this.getNewErrorTypeSymbol(null);
+                    thisTypeSymbol = this.getNewErrorTypeSymbol(null);
                 }
                 else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
                     context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_must_only_be_used_inside_a_function_or_script_context, null, enclosingDecl);
-                    return this.getNewErrorTypeSymbol(null);
+                    thisTypeSymbol = this.getNewErrorTypeSymbol(null);
                 }
                 else {
                     var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
@@ -5371,7 +5377,9 @@ module TypeScript {
 
             if (!symbol || !symbol.isResolved || (additionalResults && !callResolutionData)) {
                 symbol = this.computeInvocationExpressionSymbol(callEx, inContextuallyTypedAssignment, enclosingDecl, context, additionalResults);
-                this.setSymbolForAST(callEx, symbol, context);
+                if (symbol != this.semanticInfoChain.anyTypeSymbol) {
+                    this.setSymbolForAST(callEx, symbol, context);
+                }
                 this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
             }
             else {

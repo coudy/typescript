@@ -2733,7 +2733,7 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
-                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -2803,7 +2803,7 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
-                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -2875,7 +2875,7 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
-                resolver.resolveAST(declAST, false, newTypeDecl, context);
+                resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
