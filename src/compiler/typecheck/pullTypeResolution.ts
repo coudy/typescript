@@ -1363,7 +1363,7 @@ module TypeScript {
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
-            if (interfaceDeclSymbol.isResolved && !interfaceDeclSymbol.hasBaseTypeConflict()) {
+            if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
             }
             return interfaceDeclSymbol;
