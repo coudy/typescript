@@ -8,6 +8,7 @@
     <script>
         var repeat = 10;
         var batch;
+
         if (!batch) {
             batch = new BatchCompiler();
         }
@@ -109,7 +110,7 @@
             });
         }
 
-        function completion() {
+        function memberCompletion() {
             //run(function () {
             var start = new Date().getTime();
 
@@ -122,9 +123,43 @@
                 var info = languageService.getCompletionsAtPosition(compilerFileName, index2, /*isMemberCompletion:*/ true);
 
                 var end = new Date().getTime();
-                appendTime("Completions " + info.entries.length, end - start);
+                appendTime("Member Completions " + info.entries.length, end - start);
             });
             //});
+        }
+
+        function globalCompletion() {
+            //run(function () {
+            var start = new Date().getTime();
+
+            var index = compilerString.indexOf("walker.options.goChildren = AstWalkerCallback(true, cur, callback);");
+
+            run(function() {
+                var start = new Date().getTime();
+                languageService.compilerState.compiler.semanticInfoChain.update();
+                var info = languageService.getCompletionsAtPosition(compilerFileName, index, /*isMemberCompletion:*/ true);
+
+                if (!containsCompletionEntry(info.entries, "walker")) {
+                    throw new Error("Could not find completion entry for: " + "walker");
+                }
+
+                var end = new Date().getTime();
+                appendTime("Global Completions " + info.entries.length, end - start);
+            });
+            //});
+        }
+
+        function containsCompletionEntry(list, entryName) {
+            if (list && list.length) {
+                for (var i = 0; i < list.length; i++) {
+                    var entry = list[i];
+                    if (entry.name === entryName) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         function typeCheck() {
@@ -163,7 +198,8 @@
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
     <button onclick="fullCompile()">Compile</button>
-    <button onclick="completion()">Completion</button>
+    <button onclick="memberCompletion()">Member Completion</button>
+    <button onclick="globalCompletion()">Global Completion</button>
     <button onclick="clear1()">Clear</button>
 </body>
 </html>

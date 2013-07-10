@@ -505,12 +505,11 @@ module TypeScript {
             var decl: PullDecl = null;
             var childDecls: PullDecl[];
             var pathDeclKind: PullElementKind;
-            var parameters: PullTypeParameterSymbol[];
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
                 pathDeclKind = decl.kind;
-                var declSymbol = <PullTypeSymbol>decl.getSymbol();
+               
                 var declKind = decl.kind;
 
                 // First add locals
@@ -523,20 +522,18 @@ module TypeScript {
                     case PullElementKind.Container:
                     case PullElementKind.DynamicModule:
                         // Add members from other instances
-                        if (declSymbol) {
-                            var otherDecls = declSymbol.getDeclarations();
-                            for (var j = 0, m = otherDecls.length; j < m; j++) {
-                                var otherDecl = otherDecls[j];
-                                if (otherDecl === decl) {
-                                    continue;
-                                }
+                        var otherDecls = this.semanticInfoChain.findDeclsFromPath(declPath.slice(0, i + 1), PullElementKind.SomeContainer);
+                        for (var j = 0, m = otherDecls.length; j < m; j++) {
+                            var otherDecl = otherDecls[j];
+                            if (otherDecl === decl) {
+                                continue;
+                            }
 
-                                var otherDeclChildren = otherDecl.getChildDecls();
-                                for (var k = 0, s = otherDeclChildren.length; k < s; k++) {
-                                    var otherDeclChild = otherDeclChildren[k];
-                                    if ((otherDeclChild.flags & PullElementFlags.Exported) && (otherDeclChild.kind & declSearchKind)) {
-                                        result.push(otherDeclChild);
-                                    }
+                            var otherDeclChildren = otherDecl.getChildDecls();
+                            for (var k = 0, s = otherDeclChildren.length; k < s; k++) {
+                                var otherDeclChild = otherDeclChildren[k];
+                                if ((otherDeclChild.flags & PullElementFlags.Exported) && (otherDeclChild.kind & declSearchKind)) {
+                                    result.push(otherDeclChild);
                                 }
                             }
                         }
@@ -546,41 +543,27 @@ module TypeScript {
                     case PullElementKind.Class:
                     case PullElementKind.Interface:
                         // Add generic types prameters
-                        if (declSymbol && declSymbol.isGeneric()) {
-                            parameters = declSymbol.getTypeParameters();
-                            for (var k = 0; k < parameters.length; k++) {
-                                result.push(parameters[k].getDeclarations()[0]);
-                            }
+                        var parameters = decl.getTypeParameters();
+                        if (parameters && parameters.length) {
+                            this.addFilteredDecls(parameters, declSearchKind, result);
                         }
 
                         break;
 
                     case PullElementKind.FunctionExpression:
                         var functionExpressionName = (<PullFunctionExpressionDecl>decl).getFunctionExpressionName();
-                        if (declSymbol && functionExpressionName) {
-                            result.push(declSymbol.getDeclarations()[0]);
+                        if (functionExpressionName) {
+                            result.push(decl);
                         }
                     // intentional fall through
 
                     case PullElementKind.Function:
                     case PullElementKind.ConstructorMethod:
                     case PullElementKind.Method:
-                        if (declSymbol) {
-                            var functionType = declSymbol.type;
-                            if (functionType.getHasGenericSignature()) {
-                                var signatures = (pathDeclKind === PullElementKind.ConstructorMethod) ? functionType.getConstructSignatures() : functionType.getCallSignatures();
-                                if (signatures && signatures.length) {
-                                    for (var j = 0; j < signatures.length; j++) {
-                                        var signature = signatures[j];
-                                        if (signature.isGeneric()) {
-                                            parameters = signature.getTypeParameters();
-                                            for (var k = 0; k < parameters.length; k++) {
-                                                result.push(parameters[k].getDeclarations()[0]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        // Add generic types prameters
+                        var parameters = decl.getTypeParameters();
+                        if (parameters && parameters.length) {
+                            this.addFilteredDecls(parameters, declSearchKind, result);
                         }
 
                         break;

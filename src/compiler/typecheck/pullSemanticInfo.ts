@@ -370,6 +370,20 @@ module TypeScript {
             return decls;
         }
 
+        public findDeclsFromPath(declPath: PullDecl[], declKind: PullElementKind): PullDecl[]{
+            var declString: string[] = [];
+
+            for (var i = 0, n = declPath.length; i < n; i++) {
+                if (declPath[i].kind & PullElementKind.Script) {
+                    continue;
+                }
+
+                declString.push(declPath[i].name);
+            }
+            
+            return this.findDecls(declString, declKind);
+        }
+
         public findSymbol(declPath: string[], declType: PullElementKind): PullSymbol {
 
             var cacheID = this.getDeclPathCacheID(declPath, declType);
