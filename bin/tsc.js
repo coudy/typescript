@@ -28132,7 +28132,6 @@ var TypeScript;
             _super.apply(this, arguments);
             this.moduleElements = null;
             this.referencedFiles = new Array();
-            this.requiresExtendsBlock = false;
             this.isDeclareFile = false;
             this.topLevelMod = null;
         }
@@ -28142,7 +28141,7 @@ var TypeScript;
 
         Script.prototype.emit = function (emitter) {
             if (!this.isDeclareFile) {
-                emitter.emitScriptElements(this, this.requiresExtendsBlock);
+                emitter.emitScriptElements(this);
             }
         };
 
@@ -31780,7 +31779,7 @@ var TypeScript;
             }
         };
 
-        Emitter.prototype.emitScriptElements = function (script, requiresExtendsBlock) {
+        Emitter.prototype.emitScriptElements = function (script) {
             var list = script.moduleElements;
             this.emitComments(list, true);
 
@@ -31795,7 +31794,7 @@ var TypeScript;
                 this.writeLineToOutput("");
             }
 
-            this.emitPrologue(script, requiresExtendsBlock);
+            this.emitPrologue(script);
             var lastEmittedNode = null;
 
             for (; i < n; i++) {
@@ -32075,9 +32074,29 @@ var TypeScript;
             }
         };
 
-        Emitter.prototype.emitPrologue = function (script, requiresExtendsBlock) {
+        Emitter.prototype.requiresExtendsBlock = function (moduleElements) {
+            for (var i = 0, n = moduleElements.members.length; i < n; i++) {
+                var moduleElement = moduleElements.members[i];
+
+                if (moduleElement.nodeType() === 16 /* ModuleDeclaration */) {
+                    if (this.requiresExtendsBlock((moduleElement).members)) {
+                        return true;
+                    }
+                } else if (moduleElement.nodeType() === 14 /* ClassDeclaration */) {
+                    var classDeclaration = moduleElement;
+
+                    if (classDeclaration.extendsList && classDeclaration.extendsList.members.length > 0) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        };
+
+        Emitter.prototype.emitPrologue = function (script) {
             if (!this.extendsPrologueEmitted) {
-                if (requiresExtendsBlock) {
+                if (this.requiresExtendsBlock(script.moduleElements)) {
                     this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];");
@@ -52785,7 +52804,6 @@ var TypeScript;
             this.lineMap = lineMap;
             this.compilationSettings = compilationSettings;
             this.position = 0;
-            this.requiresExtendsBlock = false;
             this.previousTokenTrailingComments = null;
         }
         SyntaxTreeToAstVisitor.visit = function (syntaxTree, fileName, compilationSettings, incrementalAST) {
@@ -53109,7 +53127,6 @@ var TypeScript;
             result.moduleElements = bod;
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = TypeScript.isDTSFile(this.fileName);
-            result.requiresExtendsBlock = this.requiresExtendsBlock;
 
             return result;
         };
@@ -53176,8 +53193,6 @@ var TypeScript;
         };
 
         SyntaxTreeToAstVisitor.prototype.completeClassDeclaration = function (node, result) {
-            this.requiresExtendsBlock = this.requiresExtendsBlock || (result.extendsList && result.extendsList.members.length > 0);
-
             var flags = result.getVarFlags();
             if (TypeScript.SyntaxUtilities.containsToken(node.modifiers, 47 /* ExportKeyword */)) {
                 flags = flags | 1 /* Exported */;
