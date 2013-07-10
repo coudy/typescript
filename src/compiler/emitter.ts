@@ -162,6 +162,7 @@ module TypeScript {
         private exportAssignmentIdentifier: string = null;
 
         public document: Document = null;
+        private copyrightElement: AST = null;
 
         constructor(public emittingFileName: string,
             public outfile: ITextWriter,
@@ -349,7 +350,22 @@ module TypeScript {
         }
 
         public emitComments(ast: AST, pre: boolean) {
-            var comments = pre ? ast.preComments() : ast.postComments();
+            var comments: Comment[];
+            if (pre) {
+                var preComments = ast.preComments();
+                if (preComments && ast === this.copyrightElement) {
+                    // We're emitting the comments for the first script element.  Skip any 
+                    // copyright comments, as we'll already have emitted those.
+                    var copyrightComments = this.getCopyrightComments();
+                    comments = preComments.slice(copyrightComments.length);
+                }
+                else {
+                    comments = preComments;
+                }
+            }
+            else {
+                comments = ast.postComments();
+            }
 
             this.emitCommentsArray(comments);
         }
@@ -1570,8 +1586,70 @@ module TypeScript {
             }
         }
 
+        // We consider a sequence of comments to be a copyright header if there are no blank lines 
+        // between them, and there is a blank line after the last one and the node they're attached 
+        // to.
+        private getCopyrightComments(): Comment[] {
+            var preComments = this.copyrightElement.preComments();
+            if (preComments) {
+                var lineMap = this.document.lineMap;
+
+                var copyrightComments: Comment[] = [];
+                var lastComment: Comment = null;
+
+                for (var i = 0, n = preComments.length; i < n; i++) {
+                    var comment = preComments[i];
+
+                    if (lastComment) {
+                        var lastCommentLine = lineMap.getLineNumberFromPosition(lastComment.limChar);
+                        var commentLine = lineMap.getLineNumberFromPosition(comment.minChar);
+
+                        if (commentLine >= lastCommentLine + 2) {
+                            // There was a blank line between the last comment and this comment.  This
+                            // comment is not part of the copyright comments.  Return what we have so 
+                            // far.
+                            return copyrightComments;
+                        }
+                    }
+
+                    copyrightComments.push(comment);
+                    lastComment = comment;
+                }
+
+                // All comments look like they could have been part of the copyright header.  Make
+                // sure there is at least one blank line between it and the node.  If not, it's not
+                // a copyright header.
+                var lastCommentLine = lineMap.getLineNumberFromPosition(ArrayUtilities.last(copyrightComments).limChar);
+                var astLine = lineMap.getLineNumberFromPosition(this.copyrightElement.minChar);
+                if (astLine >= lastCommentLine + 2) {
+                    return copyrightComments;
+                }
+            }
+
+            // No usable copyright comments found.
+            return [];
+        }
+
+        private emitPossibleCopyrightHeaders(script: Script): void {
+            var list = script.moduleElements;
+            if (list.members.length > 0) {
+                var firstElement = list.members[0];
+                if (firstElement.nodeType() === NodeType.ModuleDeclaration) {
+                    var moduleDeclaration = <ModuleDeclaration>firstElement;
+                    if (moduleDeclaration.isWholeFile()) {
+                        firstElement = moduleDeclaration.members.members[0];
+                    }
+                }
+
+                this.copyrightElement = firstElement;
+                this.emitCommentsArray(this.getCopyrightComments());
+            }
+        }
+
         public emitScriptElements(script: Script) {
             var list = script.moduleElements;
+
+            this.emitPossibleCopyrightHeaders(script);
 
             // First, emit all the prologue elements.
             for (var i = 0, n = list.members.length; i < n; i++) {
