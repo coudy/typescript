@@ -2416,15 +2416,16 @@ module TypeScript {
                         }
                     }
 
+                    var functionDecl = this.getDeclForAST(funcDeclAST);
+                    var functionSymbol = functionDecl.getSymbol();
+                    if (functionSymbol && functionSymbol.type == returnType) {
+                        // If recursive typing, use return type as any
+                        returnType = this.semanticInfoChain.anyTypeSymbol;
+                    }
                     signature.returnType = returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol;
 
-                    if (this.isTypeArgumentOrWrapper(returnType)) {
-                        var functionDecl = this.getDeclForAST(funcDeclAST);
-                        var functionSymbol = functionDecl.getSymbol();
-
-                        if (functionSymbol) {
-                            functionSymbol.type.setHasGenericSignature();
-                        }
+                    if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
+                        functionSymbol.type.setHasGenericSignature();
                     }
                 }
             }
@@ -4654,8 +4655,9 @@ module TypeScript {
             }
 
             funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
-
-            var signature = funcDeclSymbol.type.getCallSignatures()[0];
+            var funcDeclType = funcDeclSymbol.type;
+            var signature = funcDeclType.getCallSignatures()[0];
+            funcDeclSymbol.startResolving();
 
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
@@ -4706,7 +4708,9 @@ module TypeScript {
                     this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, functionDecl, context);
                 }
             }
-
+            // reset the type to the one we already had, 
+            // this makes sure if we had short - circuited the type of this symbol to any, we would get back to the function type
+            funcDeclSymbol.type = funcDeclType;
             funcDeclSymbol.setResolved();
 
             if (context.typeCheck()) {
