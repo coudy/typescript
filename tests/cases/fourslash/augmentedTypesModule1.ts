@@ -10,13 +10,7 @@
 
 goTo.marker('1');
 verify.completionListContains('I');
+verify.not.completionListContains('foo');
 
-// BUG 696913
-//edit.insert('.');
-//// BUG 693937
-////verify.not.completionListContains('foo');
-//verify.completionListContains('foo');
-//edit.backspace(1);
-
-//goTo.marker('2');
-//verify.quickInfoIs('number');
+goTo.marker('2');
+verify.quickInfoIs('number');

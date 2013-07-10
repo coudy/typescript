@@ -1,6 +1,6 @@
   declare function $(selector: string): $;  
   interface $ {
-    addClass(className: string): $;
+      addClass(className: string): $;
   }
   module $ {
     export interface AjaxSettings {
