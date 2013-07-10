@@ -4144,6 +4144,11 @@ module TypeScript {
                 return lhsType;
             }
 
+            // this could happen if a module exports an import statement
+            if (lhsType.isAlias()) {
+                lhsType = (<PullTypeAliasSymbol>lhsType).getAliasedType();
+            }
+
             if (!lhsType) {
                 context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [(<Identifier>dottedNameAST.operand2).actualText], enclosingDecl);
                 return this.getNewErrorTypeSymbol(null);
