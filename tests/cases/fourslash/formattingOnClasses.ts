@@ -160,9 +160,7 @@ verify.currentLineContentIs("    constructor(n: number);");
 goTo.marker("40");
 verify.currentLineContentIs("    constructor(s: string);");
 goTo.marker("41");
-//bug 716606 expect result : "    public pgF(): void;" actual result : "    public pgF(): void ;"
-//verify.currentLineContentIs("    public pgF(): void;");
-verify.currentLineContentIs("    public pgF(): void ;");
+verify.currentLineContentIs("    public pgF(): void;");
 goTo.marker("42");
 verify.currentLineContentIs("    public pv;");
 goTo.marker("43");

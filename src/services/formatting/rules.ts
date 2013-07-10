@@ -93,6 +93,7 @@ module TypeScript.Formatting {
         public NoSpaceBeforeOpenParenInFuncCall: Rule;
         public SpaceAfterFunctionInFuncDecl: Rule;
         public NoSpaceBeforeOpenParenInFuncDecl: Rule;
+        public SpaceAfterVoidOperator: Rule;
 
         public NoSpaceBetweenReturnAndSemicolon: Rule;
 
@@ -279,10 +280,11 @@ module TypeScript.Formatting {
 
             this.NoSpaceBeforeComma = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CommaToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
-            this.SpaceAfterCertainKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.VarKeyword, SyntaxKind.ThrowKeyword, SyntaxKind.NewKeyword, SyntaxKind.DeleteKeyword, SyntaxKind.ReturnKeyword, SyntaxKind.VoidKeyword, SyntaxKind.TypeOfKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceAfterCertainKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.VarKeyword, SyntaxKind.ThrowKeyword, SyntaxKind.NewKeyword, SyntaxKind.DeleteKeyword, SyntaxKind.ReturnKeyword, SyntaxKind.TypeOfKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
             this.NoSpaceBeforeOpenParenInFuncCall = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), RuleAction.Delete));
             this.SpaceAfterFunctionInFuncDecl = new Rule(RuleDescriptor.create3(SyntaxKind.FunctionKeyword, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
             this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionDeclContext), RuleAction.Delete));
+            this.SpaceAfterVoidOperator = new Rule(RuleDescriptor.create3(SyntaxKind.VoidKeyword, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsVoidOpContext), RuleAction.Space));
 
             this.NoSpaceBetweenReturnAndSemicolon = new Rule(RuleDescriptor.create1(SyntaxKind.ReturnKeyword, SyntaxKind.SemicolonToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
             
@@ -354,6 +356,7 @@ module TypeScript.Formatting {
                 this.SpaceAfterCertainKeywords,
                 this.NoSpaceBeforeOpenParenInFuncCall,
                 this.SpaceBeforeBinaryKeywordOperator, this.SpaceAfterBinaryKeywordOperator,
+                this.SpaceAfterVoidOperator,
 
                 // TypeScript-specific rules
                 this.NoSpaceAfterConstructor, this.NoSpaceAfterModuleImport,
@@ -666,6 +669,10 @@ module TypeScript.Formatting {
         static IsTypeArgumentOrParameterContext(context: FormattingContext): boolean {
             return Rules.IsTypeArgumentOrParameter(context.currentTokenSpan.kind(), context.currentTokenParent.kind()) ||
                 Rules.IsTypeArgumentOrParameter(context.nextTokenSpan.kind(), context.nextTokenParent.kind());
+        }
+
+        static IsVoidOpContext(context: FormattingContext): boolean {
+            return context.currentTokenSpan.kind() === SyntaxKind.VoidKeyword && context.currentTokenParent.kind() === SyntaxKind.VoidExpression;
         }
     }
 }
