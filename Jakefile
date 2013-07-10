@@ -174,7 +174,7 @@ function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 		var dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
 		var cmd = (process.env.host || process.env.TYPESCRIPT_HOST || "node") + " " + dir + "tsc.js -const -declaration " + sources.join(" ") + " -out " + outFile;
 		if (useDebugMode) {
-			cmd = cmd + " -sourcemap -fullSourceMapPath";
+			cmd = cmd + " -sourcemap -mapRoot file:///" + path.resolve(path.dirname(outFile));
 		}
 		console.log(cmd + "\n");
 		var ex = jake.createExec([cmd]);

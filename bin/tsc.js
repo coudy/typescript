@@ -58164,7 +58164,7 @@ var TypeScript;
                 }
             });
 
-            opts.flag('mapRoot', {
+            opts.option('mapRoot', {
                 usage: {
                     locCode: TypeScript.DiagnosticCode.Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations,
                     args: null
@@ -58174,7 +58174,7 @@ var TypeScript;
                 }
             });
 
-            opts.flag('sourceRoot', {
+            opts.option('sourceRoot', {
                 usage: {
                     locCode: TypeScript.DiagnosticCode.Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations,
                     args: null
