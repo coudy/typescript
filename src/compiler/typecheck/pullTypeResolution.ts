@@ -4989,8 +4989,11 @@ module TypeScript {
                         actualText = (<StringLiteral>id).actualText;
                         text = (<StringLiteral>id).text();
                     }
+                    else if (id.nodeType() === NodeType.NumericLiteral) {
+                        actualText = text = (<NumberLiteral>id).text();
+                    }
                     else {
-                        // TODO: no error for this?  What if it's a numeric literal?
+                        // TODO: no error for this?
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
