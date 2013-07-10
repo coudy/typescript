@@ -1572,7 +1572,6 @@ module TypeScript {
 
         public emitScriptElements(script: Script) {
             var list = script.moduleElements;
-            this.emitComments(list, true);
 
             // First, emit all the prologue elements.
             for (var i = 0, n = list.members.length; i < n; i++) {
@@ -1603,8 +1602,6 @@ module TypeScript {
                     lastEmittedNode = node;
                 }
             }
-
-            this.emitComments(list, false);
         }
 
         public emitConstructorStatements(funcDecl: FunctionDeclaration) {
