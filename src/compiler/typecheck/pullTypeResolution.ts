@@ -1121,7 +1121,6 @@ module TypeScript {
                 }
             }
 
-
             var wasInBaseTypeResolution = context.startBaseTypeResolution();
 
             // if it's a "split" interface type, we'll need to consider constituent extends lists separately
@@ -5562,7 +5561,7 @@ module TypeScript {
                 // resolve any arguments
                 this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                if (callEx.typeArguments) {
+                if (targetSymbol != this.semanticInfoChain.anyTypeSymbol && callEx.typeArguments) {
                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null, enclosingDecl)
                     return this.getNewErrorTypeSymbol(null);
                 }
