@@ -7765,7 +7765,8 @@ module TypeScript {
             var formalLen = lowerBound;
             var acceptable = false;
 
-            if ((actuals.length >= lowerBound) && (signature.hasVarArgs || actuals.length <= upperBound)) {
+            var actualsLength = args && actuals.length == args.separatorCount && actuals.length ? args.separatorCount + 1 : actuals.length;
+            if ((actualsLength >= lowerBound) && (signature.hasVarArgs || actualsLength <= upperBound)) {
                 formalLen = (signature.hasVarArgs ? parameters.length : actuals.length);
                 acceptable = true;
             }
@@ -7778,7 +7779,7 @@ module TypeScript {
                     formalLen -= 1;
                     repeatType = parameters[formalLen].type;
                     repeatType = repeatType.getElementType();
-                    acceptable = actuals.length >= (formalLen < lowerBound ? formalLen : lowerBound);
+                    acceptable = actualsLength >= (formalLen < lowerBound ? formalLen : lowerBound);
                 }
                 var len = actuals.length;
 
