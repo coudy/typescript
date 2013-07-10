@@ -1671,9 +1671,6 @@ module TypeScript {
                             // If we're accessing 'this' in a class, then the class constructor 
                             // needs to be marked as capturing 'this'.
                             if (declKind === PullElementKind.Class) {
-                                //decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
-                                //    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
-
                                 var constructorSymbol = (<PullTypeSymbol> decl.getSymbol()).getConstructorMethod();
                                 var constructorDecls = constructorSymbol.getDeclarations();
                                 for (var i = 0; i < constructorDecls.length; i++) {

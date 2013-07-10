@@ -14,7 +14,6 @@ var Bug = (function () {
 
 var A = (function () {
     function A() {
-        var _this = this;
         this.prop1 = function () {
             this;
         };

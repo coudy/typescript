@@ -4758,8 +4758,7 @@ module TypeScript {
                 var thisTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
                 var classDecl: PullDecl = null;
 
-                if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
-                    context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
+                if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock | PullElementKind.Class))) {
                     thisTypeSymbol = this.getNewErrorTypeSymbol(null);
                 }
                 else {
@@ -4769,13 +4768,14 @@ module TypeScript {
                     // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
                     // PULLTODO: Why is this 'obviously not completely correct'.  
                     if (declPath.length) {
+                        var isStaticContext = false;
                         for (var i = declPath.length - 1; i >= 0; i--) {
                             var decl = declPath[i];
                             var declKind = decl.kind;
                             var declFlags = decl.flags;
 
                             if (declFlags & PullElementFlags.Static) {
-                                break;
+                                isStaticContext = true;
                             }
                             else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
                                 break;
@@ -4784,8 +4784,20 @@ module TypeScript {
                                 break;
                             }
                             else if (declKind === PullElementKind.Class) {
-                                thisTypeSymbol = <PullTypeSymbol>decl.getSymbol();
-                                classDecl = decl;
+                                if (context.isInStaticInitializer) {
+                                    thisTypeSymbol = this.getNewErrorTypeSymbol(null);
+                                }
+                                else {
+                                    var classSymbol = <PullTypeSymbol>decl.getSymbol();
+                                    classDecl = decl;
+                                    if (isStaticContext) {
+                                        var constructorSymbol = classSymbol.getConstructorMethod();
+                                        thisTypeSymbol = constructorSymbol.type;
+                                    }
+                                    else {
+                                        thisTypeSymbol = classSymbol;
+                                    }
+                                }
                                 break;
                             }
                         }
@@ -9211,14 +9223,20 @@ module TypeScript {
 
                                 decl.setFlags(decl.flags | PullElementFlags.MustCaptureThis);
 
-                            // If we're accessing 'this' in a class, then the class constructor 
-                            // needs to be marked as capturing 'this'.
-                            if (declKind === PullElementKind.Class) {
-                                decl.getChildDecls().filter(d => d.kind === PullElementKind.ConstructorMethod)
-                                    .map(d => d.setFlags(d.flags | PullElementFlags.MustCaptureThis));
-                            }
-                            break;
+                                // If we're accessing 'this' in a class, then the class constructor 
+                                // needs to be marked as capturing 'this'.
+                                if (declKind === PullElementKind.Class) {
+                                    var constructorSymbol = (<PullTypeSymbol> decl.getSymbol()).getConstructorMethod();
+                                    var constructorDecls = constructorSymbol.getDeclarations();
+                                    for (var i = 0; i < constructorDecls.length; i++) {
+                                        constructorDecls[i].flags = constructorDecls[i].flags | PullElementFlags.MustCaptureThis;
+                                    }
+                                }
+                                break;
                         }
+                    }
+                    else if (declKind === PullElementKind.Function || declKind === PullElementKind.FunctionExpression) {
+                        break;
                     }
                 }
             }
