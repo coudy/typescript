@@ -4,7 +4,6 @@ module TypeScript {
     export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
         public position = 0;
 
-        public requiresExtendsBlock: boolean = false;
         public previousTokenTrailingComments: Comment[] = null;
 
         private static protoString = "__proto__";
@@ -362,7 +361,6 @@ module TypeScript {
             result.moduleElements = bod;
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDTSFile(this.fileName);
-            result.requiresExtendsBlock = this.requiresExtendsBlock;
 
             return result;
         }
@@ -430,8 +428,6 @@ module TypeScript {
         }
 
         public completeClassDeclaration(node: ClassDeclarationSyntax, result: ClassDeclaration): void {
-            this.requiresExtendsBlock = this.requiresExtendsBlock || (result.extendsList && result.extendsList.members.length > 0);
-
             var flags = result.getVarFlags();
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | VariableFlags.Exported;

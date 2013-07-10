@@ -1523,7 +1523,7 @@ module TypeScript {
             }
         }
 
-        public emitScriptElements(script: Script, requiresExtendsBlock: boolean) {
+        public emitScriptElements(script: Script) {
             var list = script.moduleElements;
             this.emitComments(list, true);
 
@@ -1540,7 +1540,7 @@ module TypeScript {
             }
 
             // Now emit __extends or a _this capture if necessary.
-            this.emitPrologue(script, requiresExtendsBlock);
+            this.emitPrologue(script);
             var lastEmittedNode = null;
 
                 // Now emit the rest of the script elements
@@ -1834,9 +1834,30 @@ module TypeScript {
             }
         }
 
-        public emitPrologue(script: Script, requiresExtendsBlock: boolean) {
+        private requiresExtendsBlock(moduleElements: ASTList): boolean {
+            for (var i = 0, n = moduleElements.members.length; i < n; i++) {
+                var moduleElement = moduleElements.members[i];
+
+                if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
+                    if (this.requiresExtendsBlock((<ModuleDeclaration>moduleElement).members)) {
+                        return true;
+                    }
+                }
+                else if (moduleElement.nodeType() === NodeType.ClassDeclaration) {
+                    var classDeclaration = <ClassDeclaration>moduleElement;
+
+                    if (classDeclaration.extendsList && classDeclaration.extendsList.members.length > 0) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public emitPrologue(script: Script) {
             if (!this.extendsPrologueEmitted) {
-                if (requiresExtendsBlock) {
+                if (this.requiresExtendsBlock(script.moduleElements)) {
                     this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];");

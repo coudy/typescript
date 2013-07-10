@@ -932,7 +932,6 @@ module TypeScript {
     export class Script extends AST {
         public moduleElements: ASTList = null;
         public referencedFiles= new Array<string>();
-        public requiresExtendsBlock = false;
         public isDeclareFile = false;
         public topLevelMod: ModuleDeclaration = null;
 
@@ -942,7 +941,7 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             if (!this.isDeclareFile) {
-                emitter.emitScriptElements(this, this.requiresExtendsBlock);
+                emitter.emitScriptElements(this);
             }
         }
 
