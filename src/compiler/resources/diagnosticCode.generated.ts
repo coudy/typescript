@@ -348,6 +348,7 @@ module TypeScript {
         KIND: "KIND",
         FILE_DIRECTORY: "FILE|DIRECTORY",
         VERSION: "VERSION",
+        LOCATION: "LOCATION",
         This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: "This version of the Javascript runtime doesn't support the '{0}' function.",
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: "Looking up path for identifier token did not result in an identifer.",
         Unknown_rule: "Unknown rule",

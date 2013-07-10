@@ -377,6 +377,7 @@ module TypeScript {
                     locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations,
                     args: null
                 },
+                type: DiagnosticCode.LOCATION,
                 set: (str) => {
                     this.compilationSettings.mapRoot = str;
                 }
@@ -387,6 +388,7 @@ module TypeScript {
                     locCode: DiagnosticCode.Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations,
                     args: null
                 },
+                type: DiagnosticCode.LOCATION,
                 set: (str) => {
                     this.compilationSettings.sourceRoot = str;
                 }
