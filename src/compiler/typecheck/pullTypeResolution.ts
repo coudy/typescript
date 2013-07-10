@@ -1872,7 +1872,7 @@ module TypeScript {
                 context.resolvingTypeReference = savedResolvingTypeReference;
 
                 if (valueSymbol && valueSymbol.isAlias()) {
-                    var containerSymbol = <PullContainerTypeSymbol>valueSymbol.type;
+                    var containerSymbol = <PullContainerTypeSymbol>(<PullTypeAliasSymbol>valueSymbol).getAliasedType();
                     valueSymbol = (containerSymbol && containerSymbol.isContainer()) ? containerSymbol.getInstanceSymbol() : null;
                 }
 
@@ -2099,7 +2099,9 @@ module TypeScript {
                     context.inConstructorArguments = inConstructorArgumentList;
                 }
 
+                context.isInStaticInitializer = (decl.flags & PullElementFlags.Static) != 0;
                 initExprSymbol = this.resolveAST(varDecl.init, typeExprSymbol != null, wrapperDecl, context);
+                context.isInStaticInitializer = false;
 
                 context.inConstructorArguments = false;
 
@@ -2746,7 +2748,7 @@ module TypeScript {
 
                             if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
                                 var funcName = funcDecl.getDisplayName();
-                                funcName = funcName ? "'" + funcName + "'" : "expression";
+                                funcName = funcName ? funcName : "expression";
 
                                 context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName], enclosingDecl);
                             }
@@ -4769,11 +4771,7 @@ module TypeScript {
                 var thisTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
                 var classDecl: PullDecl = null;
 
-                if (enclosingDeclKind === PullElementKind.Container) { // Dynamic modules are ok, though
-                    context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null, enclosingDecl);
-                    thisTypeSymbol = this.getNewErrorTypeSymbol(null);
-                }
-                else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
+                if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script | PullElementKind.SomeBlock))) {
                     context.postError(this.currentUnit.getPath(), ast.minChar, ast.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
                     thisTypeSymbol = this.getNewErrorTypeSymbol(null);
                 }
@@ -4818,7 +4816,7 @@ module TypeScript {
                     context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null, enclosingDecl);
                 }
                 else if (enclosingNonLambdaDecl) {
-                    if (enclosingNonLambdaDecl.kind === PullElementKind.Class) {
+                    if (enclosingNonLambdaDecl.kind === PullElementKind.Class && context.isInStaticInitializer) {
                         context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body, null, enclosingDecl);
                     }
                     else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {

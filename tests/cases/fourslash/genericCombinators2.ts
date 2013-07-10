@@ -107,7 +107,7 @@ goTo.marker('15');
 verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('17');
-verify.quickInfoIs('Collection<number, Date>');
+verify.quickInfoIs('any');
 
 goTo.marker('18');
 verify.quickInfoIs('Collection<number, Date>');
