@@ -504,16 +504,6 @@ module TypeScript {
                     }
                 }
 
-                // if disallowimplicitany flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny) {
-
-                    // No type expression; if the initializer is resolved into any type, it must be implicit any
-                    if (!typeExprSymbol && (initTypeSymbol.type == this.semanticInfoChain.anyTypeSymbol || initTypeSymbol.getElementType() == this.semanticInfoChain.anyTypeSymbol)) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName,
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [boundDeclAST.id.actualText], enclosingDecl);
-                    }
-                }
-
                 if (initTypeSymbol && typeExprSymbol) {
                     var comparisonInfo = new TypeComparisonInfo();
 
