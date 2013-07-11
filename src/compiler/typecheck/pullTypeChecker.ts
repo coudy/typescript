@@ -13,7 +13,6 @@ module TypeScript {
         public inSuperConstructorTarget = false;
         public seenSuperConstructorCall = false;
         public inConstructorArguments = false;
-        public inImportDeclaration = false;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) {
         }
@@ -552,12 +551,6 @@ module TypeScript {
 
         private typeCheckImportDeclaration(importDeclaration: ImportDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var result = <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(importDeclaration, /*inContextuallyTypedAssignment:*/ false, typeCheckContext.getEnclosingDecl());
-
-            var savedInImportDeclaration = typeCheckContext.inImportDeclaration;
-            typeCheckContext.inImportDeclaration = true;
-            this.typeCheckAST(importDeclaration.alias, typeCheckContext, /*inContextuallyTypedAssignment:*/ false);
-            typeCheckContext.inImportDeclaration = savedInImportDeclaration;
-
             return result;
         }
 
@@ -2136,7 +2129,7 @@ module TypeScript {
                 var type = this.typeCheckAST(typeRef.term, typeCheckContext, /*inContextuallyTypedAssignment*/ false);
 
                 // A type reference must refer to a type.
-                if (type && !type.isError() && !typeCheckContext.inImportDeclaration) {
+                if (type && !type.isError()) {
                     if ((type.kind & PullElementKind.SomeType) === 0) {
                         // Provide some helper messages for common cases.
                         if (type.kind & PullElementKind.SomeContainer) {

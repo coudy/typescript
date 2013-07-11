@@ -809,7 +809,7 @@ module TypeScript {
                     this.declFile.Write("import ");
 
                     this.declFile.Write(importDeclAST.id.actualText + " = ");
-                    if (importDeclAST.isDynamicImport) {
+                    if (importDeclAST.isExternalImportDeclaration()) {
                         this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
                     }
                     else {

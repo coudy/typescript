@@ -111,12 +111,12 @@ module TypeScript {
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
-        public setAliasSymbolForAST(ast: AST, symbol: PullSymbol): void {
+        public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
             this.astAliasSymbolMap.link(ast.astIDString, symbol);
         }
 
-        public getAliasSymbolForAST(ast: IAST): PullSymbol {
-            return <PullSymbol>this.astAliasSymbolMap.read(ast.astIDString);
+        public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
+            return <PullTypeAliasSymbol>this.astAliasSymbolMap.read(ast.astIDString);
         }
 
         public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
@@ -548,7 +548,7 @@ module TypeScript {
             }
         }
 
-        public getAliasSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
+        public getAliasSymbolForAST(ast: IAST, unitPath: string): PullTypeAliasSymbol {
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {

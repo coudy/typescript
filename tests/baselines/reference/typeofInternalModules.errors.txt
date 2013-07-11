@@ -2,5 +2,5 @@
 0.ts line 17 col 9: error TS4022: Type reference cannot refer to container 'Outer'.
 0.ts line 19 col 1: error TS2012: Cannot convert 'Outer' to 'Outer.instantiated':
 	Type 'Outer' is missing property 'Outer.instantiated.C' from type 'Outer.instantiated'.
-0.ts line 23 col 1: error TS2012: Cannot convert 'importInst' to 'Outer':
-	Type 'importInst' is missing property 'Outer.instantiated' from type 'Outer'.
+0.ts line 23 col 1: error TS2012: Cannot convert 'Outer.instantiated' to 'Outer':
+	Type 'Outer.instantiated' is missing property 'Outer.instantiated' from type 'Outer'.

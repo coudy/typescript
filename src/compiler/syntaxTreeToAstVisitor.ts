@@ -784,8 +784,6 @@ module TypeScript {
             var result = new ImportDeclaration(name, alias);
             this.setCommentsAndSpan(result, start, node);
 
-            result.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
-
             return result;
         }
 

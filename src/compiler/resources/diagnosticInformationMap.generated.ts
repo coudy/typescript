@@ -1010,6 +1010,22 @@ module TypeScript {
     "code": 2176,
     "category": DiagnosticCategory.Error
   },
+  "Import declaration referencing identifier from internal module can only be made with variables, functions, classes, interfaces, enums and internal modules.": {
+    "code": 2177,
+    "category": DiagnosticCategory.Error
+  },
+  "Could not find symbol '{0}' in module '{1}'.": {
+    "code": 2178,
+    "category": DiagnosticCategory.Error
+  },
+  "Unable to resolve module reference '{0}'.": {
+    "code": 2179,
+    "category": DiagnosticCategory.Error
+  },
+  "Could not find module '{0}' in module '{1}'.": {
+    "code": 2180,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

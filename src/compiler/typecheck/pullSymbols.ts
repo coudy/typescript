@@ -1926,10 +1926,6 @@ module TypeScript {
 
             return isVisible;
         }
-
-        public setType(type: PullTypeSymbol) {
-            Debug.assert(false, "tried to set type of type");
-        }
     }
 
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
@@ -2001,9 +1997,9 @@ module TypeScript {
     export class PullContainerTypeSymbol extends PullTypeSymbol {
         public instanceSymbol: PullSymbol = null;
 
-        private _exportAssignedValueSymbol: PullSymbol = null;
-        private _exportAssignedTypeSymbol: PullTypeSymbol = null;
-        private _exportAssignedContainerSymbol: PullContainerTypeSymbol = null;
+        private assignedValue: PullSymbol = null;
+        private assignedType: PullTypeSymbol = null;
+        private assignedContainer: PullContainerTypeSymbol = null;
 
         constructor(name: string, kind = PullElementKind.Container) {
             super(name, kind);
@@ -2028,32 +2024,33 @@ module TypeScript {
             super.invalidate();
         }
 
-        public setExportAssignedValueSymbol(symbol: PullSymbol): void {
-
-            this._exportAssignedValueSymbol = symbol;
+        public setExportAssignedValueSymbol(symbol: PullSymbol) {
+            this.assignedValue = symbol; 
         }
-        public getExportAssignedValueSymbol(): PullSymbol {
-            return this._exportAssignedValueSymbol;
-        }
-
-        public setExportAssignedTypeSymbol(type: PullTypeSymbol): void {
-            this._exportAssignedTypeSymbol = type;
-        }
-        public getExportAssignedTypeSymbol(): PullTypeSymbol {
-            return this._exportAssignedTypeSymbol;
+        public getExportAssignedValueSymbol() {
+            return this.assignedValue;
         }
 
-        public setExportAssignedContainerSymbol(container: PullContainerTypeSymbol): void {
-            this._exportAssignedContainerSymbol = container;
+        public setExportAssignedTypeSymbol(type: PullTypeSymbol) {
+            this.assignedType = type;
         }
-        public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
-            return this._exportAssignedContainerSymbol;
+
+        public getExportAssignedTypeSymbol() {
+            return this.assignedType;
+        }
+
+        public setExportAssignedContainerSymbol(container: PullContainerTypeSymbol) {
+            this.assignedContainer = container;
+        }
+
+        public getExportAssignedContainerSymbol() {
+            return this.assignedContainer;
         }
 
         public resetExportAssignedSymbols() {
-            this._exportAssignedContainerSymbol = null;
-            this._exportAssignedTypeSymbol = null;
-            this._exportAssignedValueSymbol = null;
+            this.assignedValue = null;
+            this.assignedType = null;
+            this.assignedContainer = null;
         }
 
         static usedAsSymbol(containerSymbol: PullSymbol, symbol: PullSymbol) {
@@ -2062,10 +2059,6 @@ module TypeScript {
             }
 
             if (containerSymbol.type == symbol) {
-                return true;
-            }
-
-            if (containerSymbol.isAlias() && (<PullTypeAliasSymbol>containerSymbol).getAliasedType() == symbol) {
                 return true;
             }
 
@@ -2082,8 +2075,10 @@ module TypeScript {
     }
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {
+        public assignedValue: PullSymbol = null;
+        public assignedType: PullTypeSymbol = null;
+        public assignedContainer: PullContainerTypeSymbol = null;
 
-        public aliasedType: PullTypeSymbol = null;
         private isUsedAsValue = false;
         private typeUsedExternally = false;
         private retrievingExportAssignment = false;
@@ -2095,76 +2090,79 @@ module TypeScript {
         public isAlias() { return true; }
         public isContainer() { return true; }
 
-        public setAliasedType(type: PullTypeSymbol) {
-            Debug.assert(!type.isError(), "Attempted to alias an error");
-
-            this.aliasedType = type;
+        public setAssignedValueSymbol(symbol: PullSymbol): void {
+            this.assignedValue = symbol;
         }
 
         public getExportAssignedValueSymbol(): PullSymbol {
-            if (!this.aliasedType) {
-                return null;
+            if (this.assignedValue) {
+                return this.assignedValue;
             }
 
             if (this.retrievingExportAssignment) {
                 return null;
             }
 
-            if (this.aliasedType.isContainer()) {
+            if (this.assignedContainer) {
                 this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedValueSymbol();
+                var sym = this.assignedContainer.getExportAssignedValueSymbol();
                 this.retrievingExportAssignment = false;
                 return sym;
             }
 
             return null;
+        }
+
+        public setAssignedTypeSymbol(type: PullTypeSymbol): void {
+            this.assignedType = type;
         }
 
         public getExportAssignedTypeSymbol(): PullTypeSymbol {
-            if (!this.aliasedType) {
-                return null;
-            }
-
             if (this.retrievingExportAssignment) {
                 return null;
             }
 
-            if (this.aliasedType.isContainer()) {
-                this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedTypeSymbol();
-                this.retrievingExportAssignment = false;
-                return sym;
+            if (this.assignedType) {
+                if (this.assignedType.isAlias()) {
+                    this.retrievingExportAssignment = true;
+                    var sym = (<PullTypeAliasSymbol>this.assignedType).getExportAssignedTypeSymbol();
+                    this.retrievingExportAssignment = false;
+                } else if (this.assignedType != this.assignedContainer) {
+                    return this.assignedType;
+                }
             }
 
-            return null;
+            if (this.assignedContainer) {
+                this.retrievingExportAssignment = true;
+                var sym = this.assignedContainer.getExportAssignedTypeSymbol();
+                this.retrievingExportAssignment = false;
+                if (sym) {
+                    return sym;
+                }
+            }
+
+            return this.assignedContainer;
+        }
+
+        public setAssignedContainerSymbol(container: PullContainerTypeSymbol): void {
+            this.assignedContainer = container;
         }
 
         public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
-            if (!this.aliasedType) {
-                return null;
-            }
-
             if (this.retrievingExportAssignment) {
                 return null;
             }
 
-            if (this.aliasedType.isContainer()) {
+            if (this.assignedContainer) {
                 this.retrievingExportAssignment = true;
-                var sym = (<PullContainerTypeSymbol>this.aliasedType).getExportAssignedContainerSymbol();
+                var sym = this.assignedContainer.getExportAssignedContainerSymbol();
                 this.retrievingExportAssignment = false;
-                return sym;
+                if (sym) {
+                    return sym;
+                }
             }
 
-            return null;
-        }
-
-        public getAliasedType(): PullTypeSymbol {
-
-            return this.aliasedType;
-        }
-
-        public setType(type: PullTypeSymbol) {
-            this.setAliasedType(type);
+            return this.assignedContainer;
         }
 
         public setIsUsedAsValue() {
@@ -2184,56 +2182,56 @@ module TypeScript {
         }
 
         public getMembers(): PullSymbol[] {
-            if (this.aliasedType) {
-                return this.aliasedType.getMembers();
+            if (this.assignedType) {
+                return this.assignedType.getMembers();
             }
 
             return sentinelEmptyArray;
         }
 
         public getCallSignatures(): PullSignatureSymbol[] {
-            if (this.aliasedType) {
-                return this.aliasedType.getCallSignatures();
+            if (this.assignedType) {
+                return this.assignedType.getCallSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public getConstructSignatures(): PullSignatureSymbol[] {
-            if (this.aliasedType) {
-                return this.aliasedType.getConstructSignatures();
+            if (this.assignedType) {
+                return this.assignedType.getConstructSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public getIndexSignatures(): PullSignatureSymbol[] {
-            if (this.aliasedType) {
-                return this.aliasedType.getIndexSignatures();
+            if (this.assignedType) {
+                return this.assignedType.getIndexSignatures();
             }
 
             return sentinelEmptyArray;
         }
 
         public findMember(name: string): PullSymbol {
-            if (this.aliasedType) {
-                return this.aliasedType.findMember(name);
+            if (this.assignedType) {
+                return this.assignedType.findMember(name);
             }
 
             return null;
         }
 
         public findNestedType(name: string): PullTypeSymbol {
-            if (this.aliasedType) {
-                return this.aliasedType.findNestedType(name);
+            if (this.assignedType) {
+                return this.assignedType.findNestedType(name);
             }
 
             return null;
         }
 
         public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
-            if (this.aliasedType) {
-                return this.aliasedType.getAllMembers(searchDeclKind, includePrivate);
+            if (this.assignedType) {
+                return this.assignedType.getAllMembers(searchDeclKind, includePrivate);
             }
 
             return sentinelEmptyArray;

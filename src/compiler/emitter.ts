@@ -212,12 +212,18 @@ module TypeScript {
         }
 
         public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): boolean {
-            if (!importDeclAST.isDynamicImport) {
-                return true;
-            }
-
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
             var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+            if (!importDeclAST.isExternalImportDeclaration()) { 
+                if (pullSymbol.getExportAssignedValueSymbol()) {
+                    return true;
+                } 
+                var containerSymbol = pullSymbol.getExportAssignedContainerSymbol();
+                if (containerSymbol && containerSymbol.getInstanceSymbol()) {
+                    return true;
+                }
+            }
+
             return pullSymbol.getIsUsedAsValue();
         }
 
@@ -1264,13 +1270,23 @@ module TypeScript {
             if (!name.isMissing()) {
                 this.setTypeCheckerUnit(this.document.fileName);
                 var pullSymbol = this.semanticInfoChain.getSymbolForAST(name, this.document.fileName);
-
                 if (!pullSymbol) {
                     pullSymbol = this.resolvingContext.resolvingTypeReference
                         ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
                         : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
                 }
                 var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
+                if (pullSymbol && pullSymbolAlias) {
+                    var symbolToCompare = this.resolvingContext.resolvingTypeReference ?
+                        pullSymbolAlias.getExportAssignedTypeSymbol() :
+                        pullSymbolAlias.getExportAssignedValueSymbol(); 
+
+                    if (pullSymbol == symbolToCompare) {
+                        pullSymbol = pullSymbolAlias;
+                        pullSymbolAlias = null;
+                    }
+                }
+                
                 var pullSymbolKind = pullSymbol.kind;
                 var isLocalAlias = pullSymbolAlias && (pullSymbolAlias.getDeclarations()[0].getParentDecl() == this.getEnclosingDecl());
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {

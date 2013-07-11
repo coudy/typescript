@@ -24,15 +24,15 @@ var provide = foo;
 var booz = foo.bar.baz;
 var beez = foo.bar;
 
-var m = no;
-var m2 = no.mod;
-var n = ;
+
+
+
 5;
-var o = ;
+
 "s";
-var q = ;
+
 null;
-var r = undefined;
+
 
 var p = new provide.Provide();
 

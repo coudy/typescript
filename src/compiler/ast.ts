@@ -701,8 +701,6 @@ module TypeScript {
     }
 
     export class ImportDeclaration extends AST {
-        public isDynamicImport = false;
-
         constructor(public id: Identifier, public alias: AST) {
             super();
         }
@@ -712,6 +710,15 @@ module TypeScript {
         }
 
         public isDeclaration() { return true; }
+
+        public isExternalImportDeclaration() {
+            if (this.alias.nodeType() == NodeType.Name) {
+                var text = (<Identifier>this.alias).actualText;
+                return isQuoted(text);
+            }
+
+            return false;
+        }
 
         public emit(emitter: Emitter) {
             // REVIEW: Only modules may be aliased for now, though there's no real
