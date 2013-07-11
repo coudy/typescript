@@ -16,6 +16,8 @@ module TypeScript {
     export var symbolCacheHit = 0;
     export var symbolCacheMiss = 0;
 
+    var sentinalEmptyArray = [];
+
     export class SemanticInfo {
         private compilationUnitPath: string;  // the "file" this is associated with
 
@@ -335,26 +337,29 @@ module TypeScript {
                         }
                     }
 
-                    return [];
+                    return sentinelEmptyArray;
                 }
             }
 
             var declsToSearch = this.collectAllTopLevelDecls();
 
-            var decls: PullDecl[] = [];
+            var decls: PullDecl[] = sentinelEmptyArray;
             var path: string;
-            var foundDecls: PullDecl[] = [];
+            var foundDecls: PullDecl[] = sentinelEmptyArray;
             var keepSearching = (declKind & PullElementKind.SomeContainer) || (declKind & PullElementKind.Interface);
 
             for (var i = 0; i < declPath.length; i++) {
                 path = declPath[i];
-                decls = [];
+                decls = sentinelEmptyArray;
 
                 for (var j = 0; j < declsToSearch.length; j++) {
                     //var kind = (i === declPath.length - 1) ? declKind : PullElementKind.SomeType;
                     foundDecls = declsToSearch[j].searchChildDecls(path, declKind);
 
                     for (var k = 0; k < foundDecls.length; k++) {
+                        if (decls == sentinelEmptyArray) {
+                            decls = [];
+                        }
                         decls[decls.length] = foundDecls[k];
                     }
 
