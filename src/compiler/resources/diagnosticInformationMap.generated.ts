@@ -1422,43 +1422,47 @@ module TypeScript {
     "code": 7004,
     "category": DiagnosticCategory.Message
   },
-  "Variable '{0}' implicitly has an any type.": {
+  "Variable '{0}' implicitly has an 'any' type.": {
     "code": 7005,
     "category": DiagnosticCategory.Error
   },
-  "Parameter '{0}' of '{1}' implicitly has an any type.": {
+  "Parameter '{0}' of '{1}' implicitly has an 'any' type.": {
     "code": 7006,
     "category": DiagnosticCategory.Error
   },
-  "Parameter '{0}' of function type implicitly has an any type.": {
+  "Parameter '{0}' of function type implicitly has an 'any' type.": {
     "code": 7007,
     "category": DiagnosticCategory.Error
   },
-  "Member '{0}' of object type implicitly has an any type.": {
+  "Member '{0}' of object type implicitly has an 'any' type.": {
     "code": 7008,
     "category": DiagnosticCategory.Error
   },
-  "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+  "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.": {
     "code": 7009,
     "category": DiagnosticCategory.Error
   },
-  "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+  "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.": {
     "code": 7010,
     "category": DiagnosticCategory.Error
   },
-  "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+  "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.": {
     "code": 7011,
     "category": DiagnosticCategory.Error
   },
-  "Parameter '{0}' of lambda function implicitly has an any type.": {
+  "Parameter '{0}' of lambda function implicitly has an 'any' type.": {
     "code": 7012,
     "category": DiagnosticCategory.Error
   },
-  "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+  "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.": {
     "code": 7013,
     "category": DiagnosticCategory.Error
   },
-  "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+  "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.": {
+    "code": 7014,
+    "category": DiagnosticCategory.Error
+  },
+  "Array Literal implicitly has an 'any' type from widening.": {
     "code": 7014,
     "category": DiagnosticCategory.Error
   }
