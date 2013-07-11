@@ -1,3 +1,4 @@
+// interface then interface
 var i2 = (function () {
     function i2() {
     }

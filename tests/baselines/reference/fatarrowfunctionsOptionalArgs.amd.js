@@ -1,93 +1,57 @@
-<<<<<<< HEAD
 // valid
 // no params
-// valid
+(// valid
 // no params
 function () {
-=======
-(function () {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 1;
 });
 
-<<<<<<< HEAD
 // one param, no type
-// one param, no type
+(// one param, no type
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 2;
 });
 
-<<<<<<< HEAD
 // one param, no type
-function (arg) {
-=======
 (function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 2;
 });
 
-<<<<<<< HEAD
 // one param, no type with default value
-// one param, no type with default value
+(// one param, no type with default value
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     if (typeof arg === "undefined") { arg = 1; }
     return 3;
 });
 
-<<<<<<< HEAD
 // one param, no type, optional
-// one param, no type, optional
+(// one param, no type, optional
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 4;
 });
 
-<<<<<<< HEAD
 // typed param
-// typed param
+(// typed param
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 5;
 });
 
-<<<<<<< HEAD
 // typed param with default value
-// typed param with default value
+(// typed param with default value
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     if (typeof arg === "undefined") { arg = 0; }
     return 6;
 });
 
-<<<<<<< HEAD
 // optional param
-// optional param
+(// optional param
 function (arg) {
-=======
-(function (arg) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 7;
 });
 
-<<<<<<< HEAD
 // var arg param
-// var arg param
+(// var arg param
 function () {
-=======
-(function () {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
@@ -95,13 +59,9 @@ function () {
     return 8;
 });
 
-<<<<<<< HEAD
 // multiple arguments
-// multiple arguments
+(// multiple arguments
 function (arg1, arg2) {
-=======
-(function (arg1, arg2) {
->>>>>>> Wrap a function expression in parens so it will properly parse.
     return 12;
 });
 (function (arg1, arg2) {
