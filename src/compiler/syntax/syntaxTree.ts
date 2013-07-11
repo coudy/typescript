@@ -517,11 +517,13 @@ module TypeScript {
                 var inConstructorOverloadChain = false;
 
                 var functionOverloadChainName: string = null;
+                var isInStaticOverloadChain: boolean = null;
                 var memberFunctionDeclaration: MemberFunctionDeclarationSyntax = null;
 
                 for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
                     var classElement = <IClassElementSyntax>node.classElements.childAt(i);
                     var lastElement = i === (n - 1);
+                    var isStaticOverload: boolean = null;
 
                     if (inFunctionOverloadChain) {
                         if (classElement.kind() !== SyntaxKind.MemberFunctionDeclaration) {
@@ -535,6 +537,14 @@ module TypeScript {
                             var propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
                             this.pushDiagnostic1(propertyNameFullStart, memberFunctionDeclaration.propertyName,
                                 DiagnosticCode.Function_overload_name_must_be_0, [functionOverloadChainName]);
+                            return true;
+                        }
+                        isStaticOverload = SyntaxUtilities.containsToken(memberFunctionDeclaration.modifiers, SyntaxKind.StaticKeyword);
+                        if (isStaticOverload !== isInStaticOverloadChain) {
+                            propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
+                            var diagnostic = isInStaticOverloadChain ? DiagnosticCode.Function_overload_must_be_static : DiagnosticCode.Function_overload_must_not_be_static;
+                            this.pushDiagnostic1(propertyNameFullStart, memberFunctionDeclaration.propertyName,
+                                diagnostic, null);
                             return true;
                         }
                     }
@@ -551,6 +561,7 @@ module TypeScript {
 
                         inFunctionOverloadChain = memberFunctionDeclaration.block === null;
                         functionOverloadChainName = memberFunctionDeclaration.propertyName.valueText();
+                        isInStaticOverloadChain = SyntaxUtilities.containsToken(memberFunctionDeclaration.modifiers, SyntaxKind.StaticKeyword);
 
                         if (lastElement && inFunctionOverloadChain) {
                             this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),

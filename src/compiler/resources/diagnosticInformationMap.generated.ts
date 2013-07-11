@@ -326,6 +326,14 @@ module TypeScript {
     "code": 1079,
     "category": DiagnosticCategory.Error
   },
+  "Function overload must be static": {
+    "code": 1080,
+    "category": DiagnosticCategory.Error
+  },
+  "Function overload must not be static": {
+    "code": 1081,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

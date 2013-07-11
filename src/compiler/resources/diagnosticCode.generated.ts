@@ -82,6 +82,8 @@ module TypeScript {
         type: "type",
         type_parameter: "type parameter",
         declare_modifier_not_allowed_on_import_declaration: "'declare' modifier not allowed on import declaration.",
+        Function_overload_must_be_static: "Function overload must be static",
+        Function_overload_must_not_be_static: "Function overload must not be static",
         Duplicate_identifier_0: "Duplicate identifier '{0}'.",
         The_name_0_does_not_exist_in_the_current_scope: "The name '{0}' does not exist in the current scope.",
         The_name_0_does_not_refer_to_a_value: "The name '{0}' does not refer to a value.",
