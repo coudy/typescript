@@ -21,16 +21,20 @@ var RegisteredUser = (function (_super) {
         _super.call(this);
         this.name = "Frank";
 
+        // super call in a constructor
         _super.prototype.sayHello.call(this);
 
+        // super call in a lambda in a constructor
         var x = function () {
             return _super.prototype.sayHello.call(_this);
         };
     }
     RegisteredUser.prototype.sayHello = function () {
         var _this = this;
+        // super call in a method
         _super.prototype.sayHello.call(this);
 
+        // super call in a lambda in a method
         var x = function () {
             return _super.prototype.sayHello.call(_this);
         };
@@ -44,6 +48,7 @@ var RegisteredUser2 = (function (_super) {
         _super.call(this);
         this.name = "Joe";
 
+        // super call in a nested lambda in a constructor
         var x = function () {
             return function () {
                 return function () {
@@ -54,6 +59,7 @@ var RegisteredUser2 = (function (_super) {
     }
     RegisteredUser2.prototype.sayHello = function () {
         var _this = this;
+        // super call in a nested lambda in a method
         var x = function () {
             return function () {
                 return function () {
@@ -72,6 +78,7 @@ var RegisteredUser3 = (function (_super) {
         _super.call(this);
         this.name = "Sam";
 
+        // super property in a nested lambda in a constructor
         var superName = function () {
             return function () {
                 return function () {
@@ -82,6 +89,7 @@ var RegisteredUser3 = (function (_super) {
     }
     RegisteredUser3.prototype.sayHello = function () {
         var _this = this;
+        // super property in a nested lambda in a method
         var superName = function () {
             return function () {
                 return function () {
@@ -100,6 +108,7 @@ var RegisteredUser4 = (function (_super) {
         _super.call(this);
         this.name = "Mark";
 
+        // super in a nested lambda in a constructor
         var x = function () {
             return function () {
                 return _super.prototype;
@@ -108,6 +117,7 @@ var RegisteredUser4 = (function (_super) {
     }
     RegisteredUser4.prototype.sayHello = function () {
         var _this = this;
+        // super in a nested lambda in a method
         var x = function () {
             return function () {
                 return _super.prototype;

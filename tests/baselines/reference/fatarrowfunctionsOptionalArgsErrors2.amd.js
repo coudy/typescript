@@ -1,3 +1,4 @@
+/// Bug 512325
 var tt1 = (a, (b, c));
 function (__missing) {
     return a + b + c;

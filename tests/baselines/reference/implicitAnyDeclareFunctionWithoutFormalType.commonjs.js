@@ -1,3 +1,4 @@
+// these should be errors
 function foo(x) {
 }
 ;
@@ -20,6 +21,7 @@ function func4(z, w) {
 }
 ;
 
+// these shouldn't be errors
 function noError1(x, y) {
     if (typeof x === "undefined") { x = 3; }
     if (typeof y === "undefined") { y = 2; }

@@ -29,4 +29,5 @@ var c;
 a.bar();
 c.bar();
 A.bar();
-C2.bar();
+C2.bar();// valid
+

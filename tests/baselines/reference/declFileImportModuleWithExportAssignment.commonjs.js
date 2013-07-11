@@ -5,6 +5,7 @@ module.exports = m2;
 
 
 ////[declFileImportModuleWithExportAssignment_1.js]
+/**This is on import declaration*/
 var a1 = require("./declFileImportModuleWithExportAssignment_0");
 exports.a = a1;
 exports.a.test1(null, null, null);
@@ -28,6 +29,7 @@ declare var m2: {
 export = m2;
 
 ////[declFileImportModuleWithExportAssignment_1.d.ts]
+/**This is on import declaration*/
 import a1 = require("declFileImportModuleWithExportAssignment_0");
 export declare var a: {
     test1: a1.connectModule;

@@ -4,6 +4,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+//
+// test codegen for instance properties
+//
 var A = (function () {
     function A() {
         this.p1 = 0;
@@ -31,6 +34,9 @@ var C = (function () {
     return C;
 })();
 
+//
+// test requirements for super calls
+//
 var D = (function () {
     function D() {
     }
@@ -115,6 +121,9 @@ var M = (function (_super) {
     return M;
 })(G);
 
+//
+// test this reference in field initializers
+//
 var N = (function () {
     function N() {
         this.p1 = 0;
@@ -124,6 +133,9 @@ var N = (function () {
     return N;
 })();
 
+//
+// test error on property declarations within class constructors
+//
 var O = (function () {
     function O() {
         this.p1 = 0;

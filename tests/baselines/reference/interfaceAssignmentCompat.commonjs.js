@@ -27,6 +27,7 @@ var M;
 
         x = x.sort(CompareYeux);
 
+        // type of z inferred from specialized array type
         var z = x.sort(CompareEyes);
 
         for (var i = 0, len = z.length; i < len; i++) {

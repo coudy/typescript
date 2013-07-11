@@ -1,7 +1,9 @@
+// function then var
 function y1() {
 }
 var y1 = 1;
 
+// function then function
 function y2() {
 }
 function y2() {
@@ -12,6 +14,7 @@ function y2a() {
 var y2a = function () {
 };
 
+// function then class
 function y3() {
 }
 var y3 = (function () {
@@ -30,6 +33,7 @@ var y3a = (function () {
     return y3a;
 })();
 
+// function then enum
 function y4() {
 }
 var y4;
@@ -37,6 +41,7 @@ var y4;
     y4[y4["One"] = 0] = "One";
 })(y4 || (y4 = {}));
 
+// function then internal module
 function y5() {
 }
 

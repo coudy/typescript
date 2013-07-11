@@ -1,4 +1,17 @@
 define(["require", "exports"], function(require, exports) {
+    /*
+    Prefixes
+    p -> public
+    r -> private
+    i -> import
+    e -> export
+    a -> ambient
+    t -> static
+    s -> set
+    g -> get
+    
+    MAX DEPTH 3 LEVELS
+    */
     var V;
     function F() {
     }

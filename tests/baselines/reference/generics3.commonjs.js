@@ -7,7 +7,8 @@ var C = (function () {
 var a;
 var b;
 
-a = b;
+a = b;// Ok - should be identical
+
 
 ////[0.d.ts]
 declare class C<T> {

@@ -4,6 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+// test basic configurations
 var C1 = (function () {
     function C1(v, p) {
         if (typeof v === "undefined") { v = 1; }
@@ -18,12 +19,14 @@ var C1 = (function () {
         return C1M2A1;
     };
 
+    // C1M3 contains all optional parameters
     C1.prototype.C1M3 = function (C1M3A1, C1M3A2) {
         if (typeof C1M3A1 === "undefined") { C1M3A1 = 0; }
         if (typeof C1M3A2 === "undefined") { C1M3A2 = C1M3A1; }
         return C1M3A1 + C1M3A2;
     };
 
+    // C1M4 contains a mix of optional and non-optional parameters
     C1.prototype.C1M4 = function (C1M4A1, C1M4A2) {
         return C1M4A1 + C1M4A2;
     };
@@ -33,6 +36,8 @@ var C1 = (function () {
         return C1M5A1 + C1M5A2;
     };
 
+    // Negative test
+    // "Optional parameters may only be followed by other optional parameters"
     C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
         if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
         return C1M5A1 + C1M5A2;
@@ -82,40 +87,48 @@ var L4 = function (L4A1, L4A2) {
 var c1o1 = new C1(5);
 var i1o1 = new C1(5);
 
+// Valid
 c1o1.C1M1();
 var f1v1 = F1();
 var l1v1 = L1();
 
+// Valid
 c1o1.C1M2(1);
 i1o1.C1M2(1);
 var f2v1 = F2(1);
 var l2v1 = L2(1);
 
+// Valid
 c1o1.C1M3(1, 2);
 i1o1.C1M3(1, 2);
 var f3v1 = F3(1, 2);
 var l3v1 = L3(1, 2);
 
+// Valid
 c1o1.C1M4(1, 2);
 i1o1.C1M4(1, 2);
 var f4v1 = F4(1, 2);
 var l4v1 = L4(1, 2);
 
+// Valid
 c1o1.C1M3(1);
 i1o1.C1M3(1);
 var f3v2 = F3(1);
 var l3v2 = L3(1);
 
+// Valid
 c1o1.C1M3();
 i1o1.C1M3();
 var f3v3 = F3();
 var l3v3 = L3();
 
+// Valid
 c1o1.C1M4(1);
 i1o1.C1M4(1);
 var f4v2 = F4(1);
 var l4v2 = L4(1);
 
+// Negative tests - we expect these cases to fail
 c1o1.C1M1(1);
 i1o1.C1M1(1);
 F1(1);

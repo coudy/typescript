@@ -13,6 +13,7 @@ var Bar = (function () {
     return Bar;
 })();
 
+// new-style class
 var Foo = (function (_super) {
     __extends(Foo, _super);
     function Foo(x, y, z) {

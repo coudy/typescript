@@ -1,3 +1,4 @@
+//// class then function
 var c2 = (function () {
     function c2() {
     }

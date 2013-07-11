@@ -1,5 +1,6 @@
 
 
+// these 3 should be errors
 var x = function (w1) {
 };
 var y = function (w2) {

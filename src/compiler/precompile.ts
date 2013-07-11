@@ -19,18 +19,18 @@ module TypeScript {
 
     /// Compiler settings
     export class CompilationSettings {
-        public propagateConstants = false;
+        public propagateEnumConstants = false;
         public minWhitespace = false;
-        public emitComments = false;
+        public removeComments = false;
         public watch = false;
         public exec = false;
-        public resolve = true;
+        public noResolve = false;
         public allowBool = false;
         public allowAutomaticSemicolonInsertion = true;
         public allowModuleKeywordInExternalModuleReference = false;
-        public disallowImplicitAny = false;
+        public noImplicitAny = false;
 
-        public useDefaultLib = true;
+        public noLib = false;
 
         public codeGenTarget = LanguageVersion.EcmaScript3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;

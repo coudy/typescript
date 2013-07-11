@@ -1,3 +1,5 @@
+// Import this module when test harness supports external modules. Also remove the internal module below.
+// import Foo = require("interfaceDeclaration5")
 var Foo;
 (function (Foo) {
     var C1 = (function () {
@@ -14,6 +16,7 @@ var C1 = (function () {
     return C1;
 })();
 
+// Err - not implemented item
 var C2 = (function () {
     function C2() {
     }

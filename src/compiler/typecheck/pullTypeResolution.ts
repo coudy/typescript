@@ -1,4 +1,3 @@
-
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
@@ -1670,7 +1669,7 @@ module TypeScript {
                 }
                 else {
                     // if the disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny) {
+                    if (this.compilationSettings.noImplicitAny) {
 
                         // there is a name for function expression then use the function expression name otherwise use "lambda"
                         var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
@@ -2579,7 +2578,7 @@ module TypeScript {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
 
                         // if the disallowimplicitany flag is set to be true, report an error
-                        if (this.compilationSettings.disallowImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny) {
 
                             // without return-type annotation, if the function is resolved to have any return type, it must be implicit any return type
                             if (signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
@@ -2600,7 +2599,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if the disallowimplicitany flag is set to be true, report an error
-                        if (this.compilationSettings.disallowImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny) {
                             context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
                                 DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
                         }
@@ -2830,7 +2829,7 @@ module TypeScript {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
 
                         // if disallowimplicitany flag is set to be true, report an error
-                        if (this.compilationSettings.disallowImplicitAny && signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
+                        if (this.compilationSettings.noImplicitAny && signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
                             diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
                                 DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText],
                                 this.getEnclosingDecl(funcDecl), true);

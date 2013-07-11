@@ -1,5 +1,6 @@
 var thing = create([{ name: "bob", id: 24 }, { name: "doug", id: 32 }]);
 
+// Below should all be OK
 thing.doSomething(function (x, y) {
     return x.name.charAt(0);
 });
@@ -13,6 +14,7 @@ thing.doSomething(function (x, y) {
     return y.id.toExponential(0);
 });
 
+// Below should all be in error
 thing.doSomething(function (x, y) {
     return x.foo;
 });

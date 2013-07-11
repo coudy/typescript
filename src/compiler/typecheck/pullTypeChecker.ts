@@ -502,7 +502,7 @@ module TypeScript {
                 }
 
                 // if disallowimplicitany flag is set to be true, report an error
-                if (this.compilationSettings.disallowImplicitAny) {
+                if (this.compilationSettings.noImplicitAny) {
 
                     // No type expression; if the initializer is resolved into any type, it must be implicit any
                     if (!typeExprSymbol && (initTypeSymbol.type == this.semanticInfoChain.anyTypeSymbol || initTypeSymbol.getElementType() == this.semanticInfoChain.anyTypeSymbol)) {

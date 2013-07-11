@@ -26,5 +26,6 @@ b = a = new B();
 
 a.id = b.value = null;
 
+// error cases
 b = a = new A();
 a = b = new A();

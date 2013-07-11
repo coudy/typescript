@@ -1,3 +1,4 @@
+// class then module
 var c5 = (function () {
     function c5() {
     }
@@ -30,6 +31,7 @@ var c5b;
     c5b.y = 2;
 })(c5b || (c5b = {}));
 
+//// class then import
 var c5c = (function () {
     function c5c() {
     }

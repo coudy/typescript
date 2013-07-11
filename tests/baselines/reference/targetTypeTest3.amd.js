@@ -1,3 +1,4 @@
+// Test target typing for array literals and call expressions
 var a = [1, 2, "3"];
 
 function func1(stuff) {

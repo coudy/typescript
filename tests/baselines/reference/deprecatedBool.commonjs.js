@@ -1,4 +1,5 @@
 ////[deprecatedBool_0.js]
+// Should only report error once per file
 var b;
 var b2;
 var b3;

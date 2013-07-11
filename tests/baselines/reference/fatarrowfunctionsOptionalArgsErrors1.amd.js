@@ -30,6 +30,8 @@ function () {
     return 105;
 };
 
+// Non optional parameter following an optional one
+// Non optional parameter following an optional one
 function (arg1, arg2) {
     if (typeof arg1 === "undefined") { arg1 = 1; }
     return 1;

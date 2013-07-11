@@ -5,4 +5,5 @@ foo4("");
 function foo5(test) {
     return null;
 }
-foo5("");
+foo5("");// error
+

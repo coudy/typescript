@@ -1,3 +1,4 @@
+// this capture only in getter
 var GetterOnly = (function () {
     function GetterOnly() {
     }
@@ -17,6 +18,7 @@ var GetterOnly = (function () {
     return GetterOnly;
 })();
 
+// this capture only in setter
 var SetterOnly = (function () {
     function SetterOnly() {
     }
@@ -36,6 +38,7 @@ var SetterOnly = (function () {
     return SetterOnly;
 })();
 
+// this capture only in both setter and getter
 var GetterAndSetter = (function () {
     function GetterAndSetter() {
     }

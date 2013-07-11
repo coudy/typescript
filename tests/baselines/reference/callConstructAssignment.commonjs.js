@@ -3,4 +3,5 @@ var foo;
 var bar;
 
 foo = bar;
-bar = foo;
+bar = foo;// error
+

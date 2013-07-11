@@ -1,1 +1,2 @@
-var y;
+var y// Error
+;

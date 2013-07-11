@@ -3,6 +3,7 @@ define(["require", "exports", "module", "Test2"], function(require, exports, __m
     var b = __b__;
 
     exports.a = function () {
+        //var x = mod.id; // TODO needed hack that mod is loaded
         b.b(mod);
     };
 });

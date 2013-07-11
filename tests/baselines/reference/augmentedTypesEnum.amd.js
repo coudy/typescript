@@ -1,9 +1,11 @@
+// enum then var
 var e1111;
 (function (e1111) {
     e1111[e1111["One"] = 0] = "One";
 })(e1111 || (e1111 = {}));
 var e1111 = 1;
 
+// enum then function
 var e2;
 (function (e2) {
     e2[e2["One"] = 0] = "One";
@@ -18,6 +20,7 @@ var e3;
 var e3 = function () {
 };
 
+// enum then class
 var e4;
 (function (e4) {
     e4[e4["One"] = 0] = "One";
@@ -30,6 +33,7 @@ var e4 = (function () {
     return e4;
 })();
 
+// enum then enum
 var e5;
 (function (e5) {
     e5[e5["One"] = 0] = "One";
@@ -48,6 +52,7 @@ var e5a;
     e5a[e5a["One"] = 0] = "One";
 })(e5a || (e5a = {}));
 
+// enum then internal module
 var e6;
 (function (e6) {
     e6[e6["One"] = 0] = "One";

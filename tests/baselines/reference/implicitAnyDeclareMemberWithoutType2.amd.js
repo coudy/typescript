@@ -1,3 +1,4 @@
+// this should be an error
 var C = (function () {
     function C(c1, c2, c3) {
         this.x = null;

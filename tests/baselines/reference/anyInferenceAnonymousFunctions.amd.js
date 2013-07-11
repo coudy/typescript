@@ -1,3 +1,4 @@
+// bug 662421: 'any' not correct infered on array reduction function
 var paired;
 
 paired.reduce(function (a1, a2) {

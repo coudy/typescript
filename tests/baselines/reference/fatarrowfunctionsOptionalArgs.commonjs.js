@@ -1,37 +1,56 @@
+// valid
+// no params
+// valid
+// no params
 function () {
     return 1;
 };
 
+// one param, no type
+// one param, no type
 function (arg) {
     return 2;
 };
 
+// one param, no type
 function (arg) {
     return 2;
 };
 
+// one param, no type with default value
+// one param, no type with default value
 function (arg) {
     if (typeof arg === "undefined") { arg = 1; }
     return 3;
 };
 
+// one param, no type, optional
+// one param, no type, optional
 function (arg) {
     return 4;
 };
 
+// typed param
+// typed param
 function (arg) {
     return 5;
 };
 
+// typed param with default value
+// typed param with default value
 function (arg) {
     if (typeof arg === "undefined") { arg = 0; }
     return 6;
 };
 
+// optional param
+// optional param
 function (arg) {
     return 7;
 };
 
+// var arg param
+// var arg param
 function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
@@ -40,6 +59,8 @@ function () {
     return 8;
 };
 
+// multiple arguments
+// multiple arguments
 function (arg1, arg2) {
     return 12;
 };
@@ -73,6 +94,7 @@ function (arg1, arg2) {
     return 19;
 };
 
+// in paren
 (function () {
     return 21;
 });
@@ -104,10 +126,12 @@ function (arg1, arg2) {
     return 28;
 });
 
+// in multiple paren
 ((((function (arg) {
     return 32;
 }))));
 
+// in ternary exression
 false ? function () {
     return 41;
 } : null;
@@ -139,6 +163,7 @@ false ? function () {
     return 48;
 } : null;
 
+// in ternary exression within paren
 false ? (function () {
     return 51;
 }) : null;
@@ -170,6 +195,7 @@ false ? (function () {
     return 58;
 }) : null;
 
+// ternary exression's else clause
 false ? null : function () {
     return 61;
 };
@@ -201,6 +227,8 @@ false ? null : function () {
     return 68;
 };
 
+// nested ternary expressions
+// nested ternary expressions
 function (a) {
     return a;
 } ? function (b) {
@@ -209,6 +237,8 @@ function (a) {
     return c;
 };
 
+//multiple levels
+//multiple levels
 function (a) {
     return a;
 } ? function (b) {
@@ -221,6 +251,7 @@ function (a) {
     };
 };
 
+// In Expressions
 (function (arg) {
     return 90;
 }) instanceof Function;
@@ -320,6 +351,7 @@ function (a) {
     return 108;
 };
 
+// Function Parameters
 function foo() {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {

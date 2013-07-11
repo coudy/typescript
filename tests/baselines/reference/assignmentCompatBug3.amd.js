@@ -6,6 +6,8 @@ function makePoint(x, y) {
         get y() {
             return y;
         },
+        //x: "yo",
+        //y: "boo",
         dist: function () {
             return Math.sqrt(x * x + y * y);
         }

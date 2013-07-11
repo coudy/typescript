@@ -742,7 +742,7 @@ module TypeScript {
                 var value = token.value();
                 return value && expression.kind() === SyntaxKind.NegateExpression ? -value : value;
             }
-            else if (this.compilationSettings.propagateConstants) {
+            else if (this.compilationSettings.propagateEnumConstants) {
                 switch (expression.kind()) {
                     case SyntaxKind.IdentifierName:
                         // If it's a name, see if we already had an enum value named this.  If so,

@@ -47,6 +47,7 @@ function m2b() {
 }
 ;
 
+// should be errors to have function first
 function m2c() {
 }
 ;
@@ -121,6 +122,8 @@ var m3d;
     m3d.y = 2;
 })(m3d || (m3d = {}));
 
+// REVIEW: why not the same as previous case?
+// BUG 694373
 var m3e;
 (function (m3e) {
     m3e.y = 2;
@@ -180,11 +183,13 @@ var m4d;
     m4d[m4d["One"] = 0] = "One";
 })(m4d || (m4d = {}));
 
+//// module then module
 var m5;
 (function (m5) {
     m5.y = 2;
 })(m5 || (m5 = {}));
 
+// module then import
 var m6;
 (function (m6) {
     m6.y = 2;

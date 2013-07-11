@@ -298,7 +298,7 @@ module TypeScript {
         }
 
         public emitComment(comment: Comment) {
-            if (!this.emitOptions.compilationSettings.emitComments) {
+            if (this.emitOptions.compilationSettings.removeComments) {
                 return;
             }
 
@@ -349,7 +349,7 @@ module TypeScript {
         }
 
         public emitCommentsArray(comments: Comment[]): void {
-            if (this.emitOptions.compilationSettings.emitComments && comments) {
+            if (!this.emitOptions.compilationSettings.removeComments && comments) {
                 for (var i = 0, n = comments.length; i < n; i++) {
                     this.emitComment(comments[i]);
                 }
@@ -470,7 +470,7 @@ module TypeScript {
         }
 
         public tryEmitConstant(dotExpr: BinaryExpression) {
-            if (!this.emitOptions.compilationSettings.propagateConstants) {
+            if (!this.emitOptions.compilationSettings.propagateEnumConstants) {
                 return false;
             }
             var propertyName = <Identifier>dotExpr.operand2;

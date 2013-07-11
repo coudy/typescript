@@ -11,6 +11,7 @@ var cb = function (x) {
     return 1;
 };
 
+// BUG 669572
 x2(1, cb);
 x2(1, function (x) {
     return 1;

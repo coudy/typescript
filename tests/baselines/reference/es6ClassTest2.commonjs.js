@@ -11,6 +11,7 @@ var BasicMonster = (function () {
         this.isAlive = true;
     }
     BasicMonster.prototype.attack = function (target) {
+        // WScript.Echo("Attacks " + target);
     };
     return BasicMonster;
 })();
@@ -20,16 +21,21 @@ var m2 = new BasicMonster("2", 100);
 m1.attack(m2);
 m1.health = 0;
 
+// console.log((<any>m5.isAlive).toString());
 var GetSetMonster = (function () {
     function GetSetMonster(name, _health) {
         this.name = name;
         this._health = _health;
     }
     GetSetMonster.prototype.attack = function (target) {
+        // WScript.Echo("Attacks " + target);
     };
 
     Object.defineProperty(GetSetMonster.prototype, "isAlive", {
-        get: function () {
+        get: // The contextual keyword "get" followed by an identifier and
+        // a curly body defines a getter in the same way that "get"
+        // defines one in an object literal.
+        function () {
             return this._health > 0;
         },
         enumerable: true,
@@ -37,7 +43,8 @@ var GetSetMonster = (function () {
     });
 
     Object.defineProperty(GetSetMonster.prototype, "health", {
-        set: function (value) {
+        set: // Likewise, "set" can be used to define setters.
+        function (value) {
             if (value < 0) {
                 throw new Error('Health must be non-negative.');
             }
@@ -166,6 +173,7 @@ var BaseClassWithConstructor = (function () {
     return BaseClassWithConstructor;
 })();
 
+// used to test codegen
 var ChildClassWithoutConstructor = (function (_super) {
     __extends(ChildClassWithoutConstructor, _super);
     function ChildClassWithoutConstructor() {

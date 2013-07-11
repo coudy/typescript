@@ -122,6 +122,7 @@ var Editor;
             if (entry == null) {
                 return null;
             } else if (entry.isHead) {
+                // Can't remove the head of a list!
                 return null;
             } else {
                 entry.next.prev = entry.prev;

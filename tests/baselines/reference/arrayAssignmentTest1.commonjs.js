@@ -35,6 +35,17 @@ var C3 = (function () {
     return C3;
 })();
 
+/*
+
+This behaves unexpectedly with the following types:
+
+Type 1 of any[]:
+
+* Type 2 of the following throws an error but shouldn't: () => void[], SomeClass[], and {one: 1}[].
+
+* Type 2 of the following doesn't throw an error but should: {one: 1}, new() => SomeClass, SomeClass.
+
+*/
 var a1 = null;
 var c1 = new C1();
 var i1 = c1;
@@ -79,6 +90,9 @@ arr_c2 = arr_c1;
 arr_c2 = arr_i1;
 arr_c2 = arr_c3;
 
+// "clean up bug" occurs at this point
+// if you move these three expressions to another file, they raise an error
+// something to do with state from the above propagating forward?
 arr_c3 = arr_c2_2;
 arr_c3 = arr_c1_2;
 arr_c3 = arr_i1_2;
@@ -89,4 +103,5 @@ arr_any = a1;
 arr_any = c1;
 arr_any = c2;
 arr_any = c3;
-arr_any = i1;
+arr_any = i1;// should be an error - is
+

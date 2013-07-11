@@ -23,6 +23,7 @@ false ? (function () {
     return null;
 }) : null;
 
+// missing fatarrow
 var x1 = function () {
 };
 var x2 = function (a) {

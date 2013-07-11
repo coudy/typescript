@@ -10,5 +10,6 @@ var B;
 var a;
 var b;
 
+// both errors
 a = b;
 b = a;

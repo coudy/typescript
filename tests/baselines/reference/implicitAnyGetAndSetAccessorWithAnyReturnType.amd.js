@@ -1,3 +1,4 @@
+// these should be errors
 var GetAndSet = (function () {
     function GetAndSet() {
         this.getAndSet = null;
@@ -6,7 +7,8 @@ var GetAndSet = (function () {
         get: function () {
             return this.getAndSet;
         },
-        set: function (value) {
+        set: // this shouldn't be an error
+        function (value) {
             this.getAndSet = value;
         },
         enumerable: true,

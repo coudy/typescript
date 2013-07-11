@@ -16,5 +16,6 @@ for (j in arr2) {
 }
 
 for (var l in arr) {
+    // error in the body
     k[l] = 1;
 }

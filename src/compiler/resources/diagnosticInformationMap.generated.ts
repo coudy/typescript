@@ -1278,11 +1278,7 @@ module TypeScript {
     "code": 6007,
     "category": DiagnosticCategory.Message
   },
-  "Propagate constants to emitted code": {
-    "code": 6008,
-    "category": DiagnosticCategory.Message
-  },
-  "Emit comments to output": {
+  "Do not emit comments to output": {
     "code": 6009,
     "category": DiagnosticCategory.Message
   },
@@ -1292,18 +1288,6 @@ module TypeScript {
   },
   "Print debug output": {
     "code": 6011,
-    "category": DiagnosticCategory.Message
-  },
-  "Do not include a default {0} with global declarations": {
-    "code": 6012,
-    "category": DiagnosticCategory.Message
-  },
-  "Gather diagnostic info about the compilation process": {
-    "code": 6013,
-    "category": DiagnosticCategory.Message
-  },
-  "Typecheck each file as an update on the first": {
-    "code": 6014,
     "category": DiagnosticCategory.Message
   },
   "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
@@ -1316,10 +1300,6 @@ module TypeScript {
   },
   "Print this message": {
     "code": 6017,
-    "category": DiagnosticCategory.Message
-  },
-  "Force file resolution to be case sensitive": {
-    "code": 6018,
     "category": DiagnosticCategory.Message
   },
   "Print the compiler's version: {0}": {

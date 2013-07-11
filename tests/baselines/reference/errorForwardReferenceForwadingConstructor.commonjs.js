@@ -4,6 +4,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+// bug 17136: Error when forward-referencing derived class forwarding constructor
+// Error forward referencing derived class with forwarding constructor
 function f() {
     var d1 = new derived();
     var d2 = new derived(4);

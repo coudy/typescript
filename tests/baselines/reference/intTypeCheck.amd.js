@@ -1,5 +1,8 @@
 var anyVar;
 
+//
+// Property signatures
+//
 var obj0;
 var obj1 = {
     p: null,
@@ -20,10 +23,14 @@ var obj5 = null;
 var obj6 = function () {
 };
 
+//var obj7: i1 = function foo() { };
 var obj8 = anyVar;
 var obj9 = new anyVar();
 var obj10 = new {}();
 
+//
+// Call signatures
+//
 var obj11;
 var obj12 = {};
 var obj13 = new Object();
@@ -34,10 +41,14 @@ var obj17 = function () {
     return 0;
 };
 
+//var obj18: i2 = function foo() { };
 var obj19 = anyVar;
 var obj20 = new anyVar();
 var obj21 = new {}();
 
+//
+// Construct Signatures
+//
 var obj22;
 var obj23 = {};
 var obj24 = new Object();
@@ -47,10 +58,14 @@ var obj27 = null;
 var obj28 = function () {
 };
 
+//var obj29: i3 = function foo() { };
 var obj30 = anyVar;
 var obj31 = new anyVar();
 var obj32 = new {}();
 
+//
+// Index Signatures
+//
 var obj33;
 var obj34 = {};
 var obj35 = new Object();
@@ -60,10 +75,14 @@ var obj38 = null;
 var obj39 = function () {
 };
 
+//var obj40: i4 = function foo() { };
 var obj41 = anyVar;
 var obj42 = new anyVar();
 var obj43 = new {}();
 
+//
+// Interface Derived I1
+//
 var obj44;
 var obj45 = {};
 var obj46 = new Object();
@@ -73,10 +92,14 @@ var obj49 = null;
 var obj50 = function () {
 };
 
+//var obj51: i5 = function foo() { };
 var obj52 = anyVar;
 var obj53 = new anyVar();
 var obj54 = new {}();
 
+//
+// Interface Derived I2
+//
 var obj55;
 var obj56 = {};
 var obj57 = new Object();
@@ -86,10 +109,14 @@ var obj60 = null;
 var obj61 = function () {
 };
 
+//var obj62: i6 = function foo() { };
 var obj63 = anyVar;
 var obj64 = new anyVar();
 var obj65 = new {}();
 
+//
+// Interface Derived I3
+//
 var obj66;
 var obj67 = {};
 var obj68 = new Object();
@@ -99,10 +126,14 @@ var obj71 = null;
 var obj72 = function () {
 };
 
+//var obj73: i7 = function foo() { };
 var obj74 = anyVar;
 var obj75 = new anyVar();
 var obj76 = new {}();
 
+//
+// Interface Derived I4
+//
 var obj77;
 var obj78 = {};
 var obj79 = new Object();
@@ -112,6 +143,7 @@ var obj82 = null;
 var obj83 = function () {
 };
 
+//var obj84: i8 = function foo() { };
 var obj85 = anyVar;
 var obj86 = new anyVar();
 var obj87 = new {}();

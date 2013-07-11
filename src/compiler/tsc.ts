@@ -127,18 +127,18 @@ module TypeScript {
 
         private resolve() {
             // Resolve file dependencies, if requested
-            var includeDefaultLibrary = this.compilationSettings.useDefaultLib;
+            var includeDefaultLibrary = !this.compilationSettings.noLib;
             var resolvedFiles: IResolvedFile[] = [];
 
             var start = new Date().getTime();
 
-            if (this.compilationSettings.resolve) {
+            if (!this.compilationSettings.noResolve) {
                 // Resolve references
                 var resolutionResults = ReferenceResolver.resolve(this.inputFiles, this, this.compilationSettings);
                 resolvedFiles = resolutionResults.resolvedFiles;
 
                 // Only include the library if useDefaultLib is set to true and did not see any 'no-default-lib' comments
-                includeDefaultLibrary = this.compilationSettings.useDefaultLib && !resolutionResults.seenNoDefaultLibTag;
+                includeDefaultLibrary = !this.compilationSettings.noLib && !resolutionResults.seenNoDefaultLibTag;
 
                 // Populate any diagnostic messages generated during resolution
                 for (var i = 0, n = resolutionResults.diagnostics.length; i < n; i++) {
@@ -436,33 +436,28 @@ module TypeScript {
                 set: () => { this.compilationSettings.minWhitespace = true; }
             }, 'mw');
 
-            opts.flag('const', {
-                usage: {
-                    locCode: DiagnosticCode.Propagate_constants_to_emitted_code,
-                    args: null
-                },
+            opts.flag('propagateEnumConstants', {
                 experimental: true,
-                set: () => { this.compilationSettings.propagateConstants = true; }
+                set: () => { this.compilationSettings.propagateEnumConstants = true; }
             });
 
-            opts.flag('comments', {
+            opts.flag('removeComments', {
                 usage: {
-                    locCode: DiagnosticCode.Emit_comments_to_output,
+                    locCode: DiagnosticCode.Do_not_emit_comments_to_output,
                     args: null
                 },
                 set: () => {
-                    this.compilationSettings.emitComments = true;
+                    this.compilationSettings.removeComments = true;
                 }
-            }, 'c');
+            });
 
-            opts.flag('noresolve', {
+            opts.flag('noResolve', {
                 usage: {
                     locCode: DiagnosticCode.Skip_resolution_and_preprocessing,
                     args: null
                 },
-                experimental: true,
                 set: () => {
-                    this.compilationSettings.resolve = false;
+                    this.compilationSettings.noResolve = true;
                 }
             });
 
@@ -477,21 +472,14 @@ module TypeScript {
                 }
             });
 
-            opts.flag('nolib', {
-                usage: {
-                    locCode: DiagnosticCode.Do_not_include_a_default_0_with_global_declarations,
-                    args: ['lib.d.ts']
-                },
+            opts.flag('noLib', {
+                experimental: true,
                 set: () => {
-                    this.compilationSettings.useDefaultLib = false;
+                    this.compilationSettings.noLib = true;
                 }
             });
 
             opts.flag('diagnostics', {
-                usage: {
-                    locCode: DiagnosticCode.Gather_diagnostic_info_about_the_compilation_process,
-                    args: null
-                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.gatherDiagnostics = true;
@@ -499,10 +487,6 @@ module TypeScript {
             });
 
             opts.flag('update', {
-                usage: {
-                    locCode: DiagnosticCode.Typecheck_each_file_as_an_update_on_the_first,
-                    args: null
-                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.updateTC = true;
@@ -529,7 +513,7 @@ module TypeScript {
                             new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version_0_not_supported_Using_default_1_code_generation, [type, "ES3"]));
                     }
                 }
-            });
+            }, 't');
 
             opts.option('module', {
                 usage: {
@@ -551,7 +535,7 @@ module TypeScript {
                             new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation_0_not_supported_Using_default_1_code_generation, [type, "commonjs"]));
                     }
                 }
-            });
+            }, 'm');
 
             var needsHelp = false;
             opts.flag('help', {
@@ -565,10 +549,6 @@ module TypeScript {
             }, 'h');
 
             opts.flag('useCaseSensitiveFileResolution', {
-                usage: {
-                    locCode: DiagnosticCode.Force_file_resolution_to_be_case_sensitive,
-                    args: null
-                },
                 experimental: true,
                 set: () => {
                     this.compilationSettings.useCaseSensitiveFileResolution = true;
@@ -617,15 +597,15 @@ module TypeScript {
                 }
             });
 
-            opts.flag('disallowimplicitany', {
+            opts.flag('noImplicitAny', {
                 usage: {
                     locCode: DiagnosticCode.Warn_on_expressions_and_declarations_with_an_implied_any_type,
                     args: null
                 },
                 set: () => {
-                    this.compilationSettings.disallowImplicitAny = true;
+                    this.compilationSettings.noImplicitAny = true;
                 }
-            }, 'i');
+            });
 
             opts.parse(this.ioHost.arguments);
 

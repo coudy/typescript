@@ -35,6 +35,17 @@ var C3 = (function () {
     return C3;
 })();
 
+/*
+
+This behaves unexpectedly with teh following types:
+
+Type 1 of any[]:
+
+* Type 2 of the following throws an error but shouldn't: () => void[], SomeClass[], and {one: 1}[].
+
+* Type 2 of the following doesn't throw an error but should: {one: 1}, new() => SomeClass, SomeClass.
+
+*/
 var a1 = null;
 var c1 = new C1();
 var i1 = c1;
@@ -54,6 +65,7 @@ var arr_c1_2 = [];
 var arr_c2_2 = [];
 var arr_c3 = [];
 
+// "clean up bug" occurs at this point
 arr_c3 = arr_c2_2;
 arr_c3 = arr_c1_2;
 arr_c3 = arr_i1_2;

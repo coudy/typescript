@@ -1,3 +1,4 @@
+// these should be errors for implicit any parameter
 var lambda = function (l1) {
 };
 var lambd2 = function (ll1, ll2) {
@@ -8,6 +9,7 @@ var lamda4 = function () {
     return null;
 };
 
+// these should be error for implicit any return type
 var lambda5 = function temp() {
     return null;
 };
@@ -21,6 +23,7 @@ var lambda8 = function () {
     return undefined;
 };
 
+// this shouldn't be an error
 var lambda9 = function () {
     return 5;
 };

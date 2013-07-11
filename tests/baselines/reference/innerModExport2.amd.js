@@ -1,5 +1,6 @@
 var Outer;
 (function (Outer) {
+    // inner mod 1
     var non_export_var;
     module;
      {

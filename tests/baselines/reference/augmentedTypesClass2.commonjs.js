@@ -1,3 +1,5 @@
+// Checking class with other things in type space not value space
+// class then interface
 var c11 = (function () {
     function c11() {
     }
@@ -7,6 +9,8 @@ var c11 = (function () {
     return c11;
 })();
 
+// class then class - covered
+// class then enum
 var c33 = (function () {
     function c33() {
     }
@@ -21,6 +25,7 @@ var c33;
 })(c33 || (c33 = {}));
 ;
 
+// class then import
 var c44 = (function () {
     function c44() {
     }

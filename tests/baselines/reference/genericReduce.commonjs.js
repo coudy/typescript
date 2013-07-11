@@ -18,4 +18,5 @@ var n3 = b.reduce(function (x, y) {
     return x + y;
 }, "");
 n3.toExponential(2);
-n3.charAt(0);
+n3.charAt(0);// should not error if 'n3' is correctly type 'string'
+

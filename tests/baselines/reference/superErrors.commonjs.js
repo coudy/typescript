@@ -6,6 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 function foo() {
     var _this = this;
+    // super in a non class context
     var x = _super.prototype;
     var y = function () {
         return _super.prototype;
@@ -35,10 +36,12 @@ var RegisteredUser = (function (_super) {
         _super.call(this);
         this.name = "Frank";
 
+        // super call in an inner function in a constructor
         function inner() {
             _super.prototype.sayHello.call(_this);
         }
 
+        // super call in a lambda in an inner function in a constructor
         function inner2() {
             var _this = this;
             var x = function () {
@@ -46,6 +49,7 @@ var RegisteredUser = (function (_super) {
             };
         }
 
+        // super call in a lambda in a function expression in a constructor
         (function () {
             var _this = this;
             return function () {
@@ -54,8 +58,10 @@ var RegisteredUser = (function (_super) {
         })();
     }
     RegisteredUser.prototype.sayHello = function () {
+        // super call in a method
         _super.prototype.sayHello.call(this);
 
+        // super call in a lambda in an inner function in a method
         function inner() {
             var _this = this;
             var x = function () {
@@ -63,6 +69,7 @@ var RegisteredUser = (function (_super) {
             };
         }
 
+        // super call in a lambda in a function expression in a constructor
         (function () {
             var _this = this;
             return function () {
@@ -72,6 +79,7 @@ var RegisteredUser = (function (_super) {
     };
     RegisteredUser.staticFunction = function () {
         var _this = this;
+        // super in static functions
         var s = _super.prototype;
         var x = function () {
             return _super.prototype;

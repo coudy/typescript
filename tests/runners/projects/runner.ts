@@ -22,6 +22,8 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         this.compilationSettings.outputOption = outputOption;
         this.compilationSettings.mapRoot = mapRoot;
         this.compilationSettings.sourceRoot = sourceRoot;
+        //todo: change this and update baselines
+        this.compilationSettings.removeComments = true;
         this.errout = new Harness.Compiler.WriterAggregator();
     }
 
@@ -38,7 +40,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         }
 
         // Add the library file if needed
-        if (this.compilationSettings.useDefaultLib && !resolutionResults.seenNoDefaultLibTag) {
+        if (!this.compilationSettings.noLib && !resolutionResults.seenNoDefaultLibTag) {
             var libraryPath = Harness.userSpecifiedroot + 'tests/minimal.lib.d.ts';
             resolvedFiles.unshift({ path: libraryPath, referencedFiles: [], importedFiles: [] });
         }

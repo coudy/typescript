@@ -1,3 +1,4 @@
+// classes
 var C = (function () {
     function C() {
         this.fooBack = "";
@@ -43,6 +44,7 @@ C.Bar = "barv";
 var baz = c.Baz;
 c.Baz = "bazv";
 
+// The Foo accessors' return and param types should be contextually typed to the Foo field
 var o = { get Foo() {
         return 0;
     }, set Foo(val) {

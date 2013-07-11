@@ -68,6 +68,7 @@ exports.TestRunner = TestRunner;
 exports.tests = (function () {
     var testRunner = new TestRunner();
 
+    // First 3 are for simple harness validation
     testRunner.addTest(new TestCase("Basic test", function () {
         return true;
     }));
@@ -86,6 +87,7 @@ exports.tests = (function () {
         return !TestRunner.arrayCompare([3, 2, 3], [1, 2, 3]);
     }));
 
+    // File detection tests
     testRunner.addTest(new TestCase("Check file exists", function () {
         return FileManager.DirectoryManager.fileExists(TestFileDir + "\\Test.txt");
     }));
@@ -93,6 +95,7 @@ exports.tests = (function () {
         return !FileManager.DirectoryManager.fileExists(TestFileDir + "\\Test2.txt");
     }));
 
+    // File pattern matching tests
     testRunner.addTest(new TestCase("Check text file match", function () {
         return (FileManager.FileBuffer.isTextFile("C:\\somedir\\readme.txt") && FileManager.FileBuffer.isTextFile("C:\\spaces path\\myapp.str") && FileManager.FileBuffer.isTextFile("C:\\somedir\\code.js"));
     }));
@@ -103,6 +106,7 @@ exports.tests = (function () {
         return (!FileManager.FileBuffer.isTextFile("C:\\somedir\\app.exe") && !FileManager.FileBuffer.isTextFile("C:\\somedir\\my lib.dll"));
     }));
 
+    // Command-line parameter tests
     testRunner.addTest(new TestCase("Check App defaults", function () {
         var app = new App.App([]);
         return (app.fixLines === false && app.recurse === true && app.lineEndings === "CRLF" && app.matchPattern === undefined && app.rootDirectory === ".\\" && app.encodings[0] === "ascii" && app.encodings[1] === "utf8nobom");
@@ -112,6 +116,7 @@ exports.tests = (function () {
         return (app.fixLines === true && app.lineEndings === "LF" && app.recurse === false && app.matchPattern === undefined && app.rootDirectory === "C:\\test dir" && app.encodings[0] === "utf16be" && app.encodings[1] === "ascii" && app.encodings.length === 2);
     }));
 
+    // File BOM detection tests
     testRunner.addTest(new TestCase("Check encoding detection no BOM", function () {
         var fb = new FileManager.FileBuffer(TestFileDir + "\\noBOM.txt");
         return fb.bom === 'none' && fb.encoding === 'utf8';
@@ -137,6 +142,7 @@ exports.tests = (function () {
         return fb.bom === 'none' && fb.encoding === 'utf8';
     }));
 
+    // UTF8 encoding tests
     testRunner.addTest(new TestCase("Check byte reader", function () {
         var fb = new FileManager.FileBuffer(TestFileDir + "\\UTF8BOM.txt");
         var chars = [];
@@ -171,6 +177,7 @@ exports.tests = (function () {
         return TestRunner.arrayCompare(bytes, expected);
     }));
 
+    // Test reading and writing files
     testRunner.addTest(new TestCase("Check saving a file", function () {
         var filename = TestFileDir + "\\tmpUTF16LE.txt";
         var fb = new FileManager.FileBuffer(14);
@@ -207,6 +214,7 @@ exports.tests = (function () {
         return true;
     }, "write beyond buffer length"));
 
+    // Non-BMP unicode char tests
     testRunner.addTest(new TestCase("Read non-BMP utf16 chars", function () {
         var savedFile = new FileManager.FileBuffer(TestFileDir + "\\utf16leNonBmp.txt");
         if (savedFile.encoding !== 'utf16le') {
@@ -294,6 +302,7 @@ exports.tests = (function () {
         return true;
     }, "Trail surrogate has an invalid value"));
 
+    // Count of CRs & LFs
     testRunner.addTest(new TestCase("Count character occurrences", function () {
         var filename = TestFileDir + "\\charCountASCII.txt";
         var fb = new FileManager.FileBuffer(filename);
@@ -301,6 +310,7 @@ exports.tests = (function () {
         return result;
     }));
 
+    // Control characters in text
     testRunner.addTest(new TestCase("Test file with control character", function () {
         var filename = TestFileDir + "\\controlChar.txt";
         var fb = new FileManager.FileBuffer(filename);

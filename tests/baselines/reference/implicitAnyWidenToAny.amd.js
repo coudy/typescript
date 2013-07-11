@@ -1,8 +1,10 @@
+// these should be errors
 var x = null;
 var x1 = undefined;
 var widenArray = [null, undefined];
 var emptyArray = [];
 
+// these should not be error
 var AnimalObj = (function () {
     function AnimalObj() {
     }

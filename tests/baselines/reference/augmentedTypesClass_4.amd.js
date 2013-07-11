@@ -1,3 +1,4 @@
+//// class then class
 var c3aa = (function () {
     function c3aa() {
     }

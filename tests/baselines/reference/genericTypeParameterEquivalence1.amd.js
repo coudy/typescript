@@ -13,6 +13,7 @@ define(["require", "exports"], function(require, exports) {
     var i;
     var i2;
 
+    // no error since the type parameters come from different declarations, considered assignment compatible
     a = i;
     i = a;
 
