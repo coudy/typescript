@@ -18,9 +18,9 @@ var CCC = (function () {
 })();
 
 var a = (x ?  = 0 : );
-function (__missing) {
+(function (__missing) {
     return 1;
-};
+});
 var b = function (x, y) {
     if (typeof y === "undefined") { y = 2; }
     x;

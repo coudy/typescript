@@ -16,9 +16,9 @@ foo(function (x) {
     return x;
 });
 var y = x, number;
-function (__missing) {
+(function (__missing) {
     return x * x;
-};
+});
 false ? (function () {
     return null;
 }) : null;

@@ -1,4 +1,4 @@
 var f = ('hi');
-function (__missing) {
+(function (__missing) {
     return 1;
-};
+});

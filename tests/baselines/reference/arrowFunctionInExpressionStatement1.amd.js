@@ -1,2 +1,3 @@
 (function () {
+    return 0;
 });

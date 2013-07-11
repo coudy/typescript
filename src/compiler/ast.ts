@@ -1154,7 +1154,19 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            var isArrowExpression = this.expression.nodeType() === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>this.expression).getFunctionFlags(), FunctionFlags.IsFatArrowFunction);
+
+            if (isArrowExpression) {
+                emitter.writeToOutput("(");
+            }
+
             this.expression.emit(emitter);
+
+            if (isArrowExpression) {
+                emitter.writeToOutput(")");
+            }
+
             emitter.writeToOutput(";");
         }
 

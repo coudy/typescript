@@ -17,8 +17,8 @@ function foo7(test) {
 1 > function (test) {
 };
 1;
-function (test) {
-};
+(function (test) {
+});
 null > function (test) {
 };
 function foo12(test) {
