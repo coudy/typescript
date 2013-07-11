@@ -1,0 +1,8 @@
+0.ts line 17 col 1: error TS2012: Cannot convert '(x: string) => string' to '(s1: string) => number':
+	Call signatures of types '(x: string) => string' and '(s1: string) => number' are incompatible.
+0.ts line 19 col 1: error TS2012: Cannot convert '(x: number) => number' to '(s1: string) => number':
+	Call signatures of types '(x: number) => number' and '(s1: string) => number' are incompatible.
+0.ts line 21 col 1: error TS2012: Cannot convert '{ (x: string): string; (x: number): number; }' to '(s1: string) => number':
+	Call signatures of types '{ (x: string): string; (x: number): number; }' and '(s1: string) => number' are incompatible.
+0.ts line 30 col 1: error TS2012: Cannot convert '{ new(x: string): C; }' to 'new(x: number) => void':
+	Construct signatures of types '{ new(x: string): C; }' and 'new(x: number) => void' are incompatible.

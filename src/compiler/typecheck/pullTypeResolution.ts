@@ -7716,17 +7716,19 @@ module TypeScript {
             var nSig: PullSignatureSymbol = null;
             var foundMatch = false;
 
+            var targetExcludeDefinition = targetSG.length > 1;
+            var sourceExcludeDefinition = sourceSG.length > 1;
             for (var iMSig = 0; iMSig < targetSG.length; iMSig++) {
                 mSig = targetSG[iMSig];
 
-                if (mSig.isStringConstantOverloadSignature()) {
+                if (mSig.isStringConstantOverloadSignature() || (targetExcludeDefinition && mSig.isDefinition())) {
                     continue;
                 }
 
                 for (var iNSig = 0; iNSig < sourceSG.length; iNSig++) {
                     nSig = sourceSG[iNSig];
 
-                    if (nSig.isStringConstantOverloadSignature()) {
+                    if (nSig.isStringConstantOverloadSignature() || (sourceExcludeDefinition && nSig.isDefinition())) {
                         continue;
                     }
 
