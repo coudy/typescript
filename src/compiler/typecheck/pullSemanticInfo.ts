@@ -38,8 +38,6 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        private dynamicModuleImports: PullTypeAliasSymbol[] = [];
-
         private properties = new SemanticInfoProperties();
 
         private hasBeenTypeChecked = false;
@@ -144,16 +142,7 @@ module TypeScript {
             }
         }
 
-        public addDynamicModuleImport(importSymbol: PullTypeAliasSymbol) {
-            this.dynamicModuleImports[this.dynamicModuleImports.length] = importSymbol;
-        }
-
-        public getDynamicModuleImports() {
-            return this.dynamicModuleImports;
-        }
-
         public getDiagnostics(semanticErrors: Diagnostic[]) {
-
             for (var i = 0; i < this.topLevelDecls.length; i++) {
                 getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }

@@ -1140,31 +1140,6 @@ module Services {
             return ScriptElementKind.unknown;
         }
 
-        private isDynamicModule(symbol: TypeScript.PullSymbol) {
-            var symbolType = symbol.type;
-            var associatedSymbol = symbolType && symbolType.getAssociatedContainerType();
-            return associatedSymbol && associatedSymbol.kind === TypeScript.PullElementKind.Container;
-        }
-
-        private isConstructorMethod(symbol: TypeScript.PullSymbol): boolean {
-            return symbol.hasFlag(TypeScript.PullElementFlags.ClassConstructorVariable | TypeScript.PullElementFlags.Constructor);
-        }
-
-        private isClass(symbol: TypeScript.PullSymbol): boolean {
-            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Class);
-        }
-
-        private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): boolean {
-            var decls = symbol.getDeclarations();
-            for (var i = 0; i < decls.length; i++) {
-                if (decls[i].kind === kind) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private mapPullElementKind(kind: TypeScript.PullElementKind, symbol?: TypeScript.PullSymbol, useConstructorAsClass?: boolean, varIsFunction?: boolean, functionIsConstructor?: boolean): string {
             if (functionIsConstructor) {
                 return ScriptElementKind.constructorImplementationElement;

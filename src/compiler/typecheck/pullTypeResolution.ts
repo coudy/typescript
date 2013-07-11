@@ -1388,10 +1388,7 @@ module TypeScript {
 
                     aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeContainer));
 
-                    if (aliasedType) {
-                        this.currentUnit.addDynamicModuleImport(importDeclSymbol);
-                    }
-                    else {
+                    if (!aliasedType) {
                         importDecl.addDiagnostic(
                             new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [text]));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
@@ -1995,6 +1992,9 @@ module TypeScript {
                 }
                 else if (typeExprSymbol.isError()) {
                     context.setTypeInContext(declSymbol, typeExprSymbol);
+                    if (declParameterSymbol) {
+                        context.setTypeInContext(declParameterSymbol, typeExprSymbol);
+                    }
                 }
                 else {
                     if (typeExprSymbol.isNamedTypeSymbol() &&
@@ -4047,6 +4047,16 @@ module TypeScript {
                 }
             }
 
+            // Try looking up a type alias with an associated instance type
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
+
+                // Modules are also picked up when searching for aliases
+                if (nameSymbol && !nameSymbol.isAlias()) {
+                    nameSymbol = null;
+                }
+            }
+
             if (!nameSymbol) {
                 context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText], enclosingDecl);
                 return this.getNewErrorTypeSymbol(null, id);
@@ -4433,12 +4443,16 @@ module TypeScript {
                             typeArg.getTypeParameters().length &&
                             (typeArg.getTypeArguments() == null && !this.isArrayOrEquivalent(typeArg)) &&
                             this.isTypeRefWithoutTypeArgs(<TypeReference>genericTypeAST.typeArguments.members[i])) {
-
                             context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
                             typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
                         }
 
-                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {   
+                            typeArgs[i] = context.findSpecializationForType(typeArg);   
+                        }   
+                        else {   
+                            typeArgs[i] = typeArg;   
+                        }  
                     }
                 }
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;

@@ -503,7 +503,7 @@ module SymbolDisplay {
         }
 
         private addLiteralValue(value: any): void {
-            var stringified = JSON2.stringify(value);
+            var stringified = JSON.stringify(value);
             this.builder.push(new Part(typeof value === 'number' ? PartKind.NumericLiteral : PartKind.StringLiteral,
                 stringified, null));
         }

@@ -709,26 +709,57 @@ module TypeScript {
             }
         }
 
+        private getImportDecls(fileName: string): PullDecl[] {
+            var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
+            var result: PullDecl[] = [];
+
+            var queue: PullDecl[] = semanticInfo.getTopLevelDecls();
+
+            while (queue.length > 0) {
+                var decl = queue.shift();
+
+                if (decl.kind & PullElementKind.TypeAlias) {
+                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(decl);
+                    if (importStatementAST.alias.nodeType() === NodeType.Name) { // name or dynamic module name
+                        var text = (<Identifier>importStatementAST.alias).actualText;
+                        if (isQuoted(text)) { // dynamic module name (string literal)
+                            var symbol = decl.getSymbol();
+                            var typeSymbol = symbol && symbol.type;
+                            if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
+                                result.push(decl);
+                            }
+                        }
+                    }
+                }
+
+                // visit children
+                queue = queue.concat(decl.getChildDecls());
+            }
+
+            return result;
+        }
+
         public getModuleImportAndDependencyList(moduleDecl: ModuleDeclaration) {
             var importList = "";
             var dependencyList = "";
 
             var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
-            var imports = semanticInfo.getDynamicModuleImports();
+            var importDecls = this.getImportDecls(this.document.fileName);
 
             // all dependencies are quoted
-            if (imports.length) {
-                for (var i = 0; i < imports.length; i++) {
-                    var importStatement = imports[i];
-                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(importStatement.getDeclarations()[0]);
+            if (importDecls.length) {
+                for (var i = 0; i < importDecls.length; i++) {
+                    var importStatementDecl = importDecls[i];
+                    var importStatementSymbol = <PullTypeAliasSymbol>importStatementDecl.getSymbol();
+                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(importStatementDecl);
 
-                    if (importStatement.getIsUsedAsValue()) {
-                        if (i <= imports.length - 1) {
+                    if (importStatementSymbol.getIsUsedAsValue()) {
+                        if (i <= importDecls.length - 1) {
                             dependencyList += ", ";
                             importList += ", ";
                         }
 
-                        importList += "__" + importStatement.getName() + "__";
+                        importList += "__" + importStatementDecl.name + "__";
                         dependencyList += importStatementAST.firstAliasedModToString();
                     }
                 }
@@ -1258,19 +1289,19 @@ module TypeScript {
                                 this.writeToOutput(".");
                             }
                         }
-                        else if (pullSymbolContainerKind === PullElementKind.Container || pullSymbolContainerKind === PullElementKind.Enum ||
+                        else if (PullHelpers.symbolIsModule(pullSymbolContainer) || pullSymbolContainerKind === PullElementKind.Enum ||
                                  pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
-                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
                                      pullSymbolKind === PullElementKind.Variable &&
-                                     !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
-                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                                !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
+                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
-                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
                             // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
                             //             pullSymbolKind !== PullElementKind.Class && 

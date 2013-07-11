@@ -1817,7 +1817,7 @@ module TypeScript {
                 typars = this.getTypeParameters();
             }
 
-            builder.add(PullSymbol.getTypeParameterStringEx(typars, this, getTypeParamMarkerInfo, useConstraintInName));
+            builder.add(PullSymbol.getTypeParameterStringEx(typars, scopeSymbol, getTypeParamMarkerInfo, useConstraintInName));
 
             return builder;
         }
@@ -2754,6 +2754,13 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                // if the signature is not yet specialized, specialize the signature using an empty context first - that way, no type parameters
+                // will be accidentally specialized
+                if (!(signature.isResolved || signature.inResolution)) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext());
+                }   
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
@@ -2824,6 +2831,11 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                if (!(signature.isResolved || signature.inResolution)) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext());
+                } 
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
@@ -2896,6 +2908,11 @@ module TypeScript {
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
+
+                if (!(signature.isResolved || signature.inResolution)) {
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext());
+                } 
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 

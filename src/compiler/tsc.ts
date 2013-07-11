@@ -223,6 +223,7 @@ module TypeScript {
                     this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
                 };
 
+
                 // TODO: if there are any emit diagnostics.  Don't proceed.
                 var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
                 compiler.reportDiagnostics(emitDiagnostics, this);

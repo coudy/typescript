@@ -116,6 +116,14 @@ module TypeScript {
             }
 
             parent = parentDecl.getSymbol();
+            if (parent) {
+                var parentDeclKind = parentDecl.kind;
+                if (parentDeclKind == PullElementKind.GetAccessor) {
+                    parent = (<PullAccessorSymbol>parent).getGetter();
+                } else if (parentDeclKind == PullElementKind.SetAccessor) {
+                    parent = (<PullAccessorSymbol>parent).getSetter();
+                }
+            }
 
             if (parent) {
                 if (returnInstanceType && parent.isType() && parent.isContainer()) {
