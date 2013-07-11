@@ -1522,8 +1522,11 @@ module TypeScript {
 
             emitter.writeToOutput("; ");
             emitter.emitJavascript(this.cond, false);
-            emitter.writeToOutput("; ");
-            emitter.emitJavascript(this.incr, false);
+            emitter.writeToOutput(";");
+            if (this.incr) {
+                emitter.writeToOutput(" ");
+                emitter.emitJavascript(this.incr, false);
+            }
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
         }
