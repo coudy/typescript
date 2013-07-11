@@ -9,3 +9,4 @@ func(x);
 var bar = 3;            
 var bar1: any;          
 declare var bar2: any; 
+var x1: any; var y1 = new x1;
