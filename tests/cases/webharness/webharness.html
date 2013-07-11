@@ -121,8 +121,13 @@
                 var start = new Date().getTime();
                 languageService.compilerState.compiler.semanticInfoChain.update();
                 var info = languageService.getCompletionsAtPosition(compilerFileName, index2, /*isMemberCompletion:*/ true);
-
                 var end = new Date().getTime();
+
+                // Verify
+                if (!containsCompletionEntry(info.entries, "options")) {
+                    throw new Error("Could not find completion entry for: " + "walker");
+                }
+
                 appendTime("Member Completions " + info.entries.length, end - start);
             });
             //});
@@ -138,12 +143,13 @@
                 var start = new Date().getTime();
                 languageService.compilerState.compiler.semanticInfoChain.update();
                 var info = languageService.getCompletionsAtPosition(compilerFileName, index, /*isMemberCompletion:*/ true);
+                var end = new Date().getTime();
 
+                // Verify
                 if (!containsCompletionEntry(info.entries, "walker")) {
                     throw new Error("Could not find completion entry for: " + "walker");
                 }
 
-                var end = new Date().getTime();
                 appendTime("Global Completions " + info.entries.length, end - start);
             });
             //});

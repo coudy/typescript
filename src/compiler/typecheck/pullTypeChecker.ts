@@ -75,7 +75,11 @@ module TypeScript {
         }
 
         public setUnit(unitPath: string) {
-            this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath, true);
+            if (!this.resolver) {
+                this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
+            }
+
+            this.resolver.setUnitPath(unitPath);
         }
 
         private getScriptDecl(fileName: string): PullDecl {

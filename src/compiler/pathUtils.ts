@@ -16,8 +16,9 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
+    var quoteRegEx = /["']/g;
     export function stripQuotes(str: string) {
-        return str.replace(/"/g, "").replace(/'/g, "");
+        return str.replace(quoteRegEx, "");
     }
 
     export function isSingleQuoted(str: string) {
@@ -46,8 +47,9 @@ module TypeScript {
         return str;
     }
 
+    var switchToForwardSlashesRegEx = /\\/g;
     export function switchToForwardSlashes(path: string) {
-        return path.replace(/\\/g, "/");
+        return path.replace(switchToForwardSlashesRegEx, "/");
     }
 
     export function trimModName(modName: string) {
@@ -176,9 +178,10 @@ module TypeScript {
         return path.join("/") + "/";
     }
 
+    var normalizePathRegEx = /^\\\\[^\\]/;
     export function normalizePath(path: string): string {
         // If it's a UNC style path (i.e. \\server\share), convert to a URI style (i.e. file://server/share)
-        if(/^\\\\[^\\]/.test(path)) {
+        if (normalizePathRegEx.test(path)) {
             path = "file:" + path;
         }
         var parts = this.getPathComponents(switchToForwardSlashes(path));

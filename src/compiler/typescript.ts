@@ -1158,7 +1158,7 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromPath(path: AstPath, document: Document, resolveSymbolsAlongPath: boolean = true): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
+        private extractResolutionContextFromPath(path: AstPath, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
@@ -1187,7 +1187,7 @@ module TypeScript {
 
                 switch (current.nodeType()) {
                     case NodeType.FunctionDeclaration:
-                        if (resolveSymbolsAlongPath) {
+                        if (propagateContextualTypes) {
                             if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
                                 this.pullTypeChecker.resolver.resolveAST((<FunctionDeclaration>current), true, enclosingDecl, resolutionContext);
                             }
@@ -1199,19 +1199,21 @@ module TypeScript {
                         var assigningAST = <VariableDeclarator> current;
                         inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
 
-                        if (resolveSymbolsAlongPath) {
-                            this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
-                            var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                        if (inContextuallyTypedAssignment) {
+                            if (propagateContextualTypes) {
+                                this.pullTypeChecker.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
+                                var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
 
-                            var contextualType: PullTypeSymbol = null;
-                            if (varSymbol && inContextuallyTypedAssignment) {
-                                contextualType = varSymbol.type;
-                            }
+                                var contextualType: PullTypeSymbol = null;
+                                if (varSymbol && inContextuallyTypedAssignment) {
+                                    contextualType = varSymbol.type;
+                                }
 
-                            resolutionContext.pushContextualType(contextualType, false, null);
+                                resolutionContext.pushContextualType(contextualType, false, null);
 
-                            if (assigningAST.init) {
-                                this.pullTypeChecker.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                if (assigningAST.init) {
+                                    this.pullTypeChecker.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                }
                             }
                         }
 
@@ -1219,7 +1221,7 @@ module TypeScript {
 
                     case NodeType.InvocationExpression:
                     case NodeType.ObjectCreationExpression:
-                        if (resolveSymbolsAlongPath) {
+                        if (propagateContextualTypes) {
                             var isNew = current.nodeType() === NodeType.ObjectCreationExpression;
                             var callExpression = <InvocationExpression>current;
                             var contextualType: PullTypeSymbol = null;
@@ -1266,9 +1268,7 @@ module TypeScript {
                         break;
 
                     case NodeType.ArrayLiteralExpression:
-                        if (resolveSymbolsAlongPath) {
-                            this.pullTypeChecker.resolver.resolveAST(current, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
-
+                        if (propagateContextualTypes) {
                             // Propagate the child element type
                             var contextualType: PullTypeSymbol = null;
                             var currentContextualType = resolutionContext.getContextualType();
@@ -1282,7 +1282,7 @@ module TypeScript {
                         break;
 
                     case NodeType.ObjectLiteralExpression:
-                        if (resolveSymbolsAlongPath) {
+                        if (propagateContextualTypes) {
                             var objectLiteralExpression = <UnaryExpression>current;
                             var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
                             this.pullTypeChecker.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
@@ -1312,7 +1312,7 @@ module TypeScript {
                         break;
 
                     case NodeType.AssignmentExpression:
-                        if (resolveSymbolsAlongPath) {
+                        if (propagateContextualTypes) {
                             var assignmentExpression = <BinaryExpression>current;
                             var contextualType: PullTypeSymbol = null;
 
@@ -1337,24 +1337,25 @@ module TypeScript {
                             // We are inside the cast term
                             resolutionContext.resolvingTypeReference = true;
                         }
+                        else {
+                            if (propagateContextualTypes) {
+                                var contextualType: PullTypeSymbol = null;
+                                var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
 
-                        if (resolveSymbolsAlongPath) {
-                            var contextualType: PullTypeSymbol = null;
-                            var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                // Set the context type
+                                if (typeSymbol) {
+                                    inContextuallyTypedAssignment = true;
+                                    contextualType = typeSymbol;
+                                }
 
-                            // Set the context type
-                            if (typeSymbol) {
-                                inContextuallyTypedAssignment = true;
-                                contextualType = typeSymbol;
+                                resolutionContext.pushContextualType(contextualType, false, null);
                             }
-
-                            resolutionContext.pushContextualType(contextualType, false, null);
                         }
 
                         break;
 
                     case NodeType.ReturnStatement:
-                        if (resolveSymbolsAlongPath) {
+                        if (propagateContextualTypes) {
                             var returnStatement = <ReturnStatement>current;
                             var contextualType: PullTypeSymbol = null;
 
@@ -1450,7 +1451,7 @@ module TypeScript {
         }
 
         public pullGetSymbolInformationFromPath(path: AstPath, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromPath(path, document);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1479,7 +1480,7 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1512,7 +1513,7 @@ module TypeScript {
 
             var isNew = (path.ast().nodeType() === NodeType.ObjectCreationExpression);
 
-            var context = this.extractResolutionContextFromPath(path, document);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1548,7 +1549,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document, false);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1571,7 +1572,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document, false);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ false);
             if (!context) {
                 return null;
             }
@@ -1593,7 +1594,7 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1607,7 +1608,7 @@ module TypeScript {
         }
 
         public pullGetDeclInformation(decl: PullDecl, path: AstPath, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromPath(path, document);
+            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }

@@ -234,7 +234,7 @@ module TypeScript {
             return this._cachedRegExpInterfaceType;
         }
 
-        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, public inTypeCheck: boolean) {
+        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
 
             this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
@@ -1195,6 +1195,7 @@ module TypeScript {
                 return typeDeclSymbol;
             }
 
+
             if (!typeDeclSymbol.isResolved) {
 
                 // Resolve members
@@ -1204,8 +1205,10 @@ module TypeScript {
                     globalBinder.resetTypeParameterCache();
                 }
 
-                for (var i = 0; i < typeDeclMembers.length; i++) {
-                    this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
+                if (context.typeCheck()) {
+                    for (var i = 0; i < typeDeclMembers.length; i++) {
+                        this.resolveDeclaredSymbol(typeDeclMembers[i], typeDecl, context);
+                    }
                 }
 
                 if (!typeDeclIsClass) {
@@ -1228,6 +1231,7 @@ module TypeScript {
                     this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
                 }
             }
+
 
             this.setSymbolForAST(typeDeclAST.name, typeDeclSymbol, context);
             this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
@@ -8670,8 +8674,8 @@ module TypeScript {
 
             var scriptDecl = unit.getTopLevelDecls()[0];
 
-            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName, /*inTypeCheck*/ true);
-            var context = new PullTypeResolutionContext(true);
+            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+            var context = new PullTypeResolutionContext(/*inTypeCheck*/ true);
 
             resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
 
