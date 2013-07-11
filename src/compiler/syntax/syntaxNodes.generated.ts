@@ -227,7 +227,8 @@ module TypeScript {
 
     export class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
-        constructor(public importKeyword: ISyntaxToken,
+        constructor(public modifiers: ISyntaxList,
+                    public importKeyword: ISyntaxToken,
                     public identifier: ISyntaxToken,
                     public equalsToken: ISyntaxToken,
                     public moduleReference: ModuleReferenceSyntax,
@@ -246,16 +247,17 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 5;
+        return 6;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.importKeyword;
-            case 1: return this.identifier;
-            case 2: return this.equalsToken;
-            case 3: return this.moduleReference;
-            case 4: return this.semicolonToken;
+            case 0: return this.modifiers;
+            case 1: return this.importKeyword;
+            case 2: return this.identifier;
+            case 3: return this.equalsToken;
+            case 4: return this.moduleReference;
+            case 5: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -264,21 +266,30 @@ module TypeScript {
         return true;
     }
 
-    public update(importKeyword: ISyntaxToken,
+    public update(modifiers: ISyntaxList,
+                  importKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   equalsToken: ISyntaxToken,
                   moduleReference: ModuleReferenceSyntax,
                   semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
-        if (this.importKeyword === importKeyword && this.identifier === identifier && this.equalsToken === equalsToken && this.moduleReference === moduleReference && this.semicolonToken === semicolonToken) {
+        if (this.modifiers === modifiers && this.importKeyword === importKeyword && this.identifier === identifier && this.equalsToken === equalsToken && this.moduleReference === moduleReference && this.semicolonToken === semicolonToken) {
             return this;
         }
 
-        return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new ImportDeclarationSyntax(modifiers, importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(importKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         equalsToken: ISyntaxToken,
+                         moduleReference: ModuleReferenceSyntax,
+                         semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
+        return new ImportDeclarationSyntax(Syntax.emptyList, importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken,
                           moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
-        return new ImportDeclarationSyntax(Syntax.token(SyntaxKind.ImportKeyword), identifier, Syntax.token(SyntaxKind.EqualsToken), moduleReference, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+        return new ImportDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.ImportKeyword), identifier, Syntax.token(SyntaxKind.EqualsToken), moduleReference, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ImportDeclarationSyntax {
@@ -289,24 +300,32 @@ module TypeScript {
         return <ImportDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withModifiers(modifiers: ISyntaxList): ImportDeclarationSyntax {
+        return this.update(modifiers, this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
+    }
+
+    public withModifier(modifier: ISyntaxToken): ImportDeclarationSyntax {
+        return this.withModifiers(Syntax.list([modifier]));
+    }
+
     public withImportKeyword(importKeyword: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(importKeyword, this.identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
+        return this.update(this.modifiers, importKeyword, this.identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this.importKeyword, identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
+        return this.update(this.modifiers, this.importKeyword, identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withEqualsToken(equalsToken: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this.importKeyword, this.identifier, equalsToken, this.moduleReference, this.semicolonToken);
+        return this.update(this.modifiers, this.importKeyword, this.identifier, equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withModuleReference(moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
-        return this.update(this.importKeyword, this.identifier, this.equalsToken, moduleReference, this.semicolonToken);
+        return this.update(this.modifiers, this.importKeyword, this.identifier, this.equalsToken, moduleReference, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
+        return this.update(this.modifiers, this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
     }
 
     public isTypeScriptSpecific(): boolean {

@@ -1677,19 +1677,32 @@ module TypeScript.Parser {
         }
 
         private isImportDeclaration(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.ImportKeyword;
+            var index = this.modifierCount();
+
+            // If we have at least one modifier, and we see 'import', then consider this an import
+            // declaration.
+            if (index > 0 &&
+                this.peekToken(index).tokenKind === SyntaxKind.ImportKeyword) {
+                return true;
+            }
+
+            // 'import' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
+            // that we're actually looking at a import construct and not some javascript expression.
+            return this.currentToken().tokenKind === SyntaxKind.ImportKeyword &&
+                this.isIdentifier(this.peekToken(1));
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
             // Debug.assert(this.isImportDeclaration());
 
+            var modifiers = this.parseModifiers();
             var importKeyword = this.eatKeyword(SyntaxKind.ImportKeyword);
             var identifier = this.eatIdentifierToken();
             var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
             var moduleReference = this.parseModuleReference();
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return this.factory.importDeclaration(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+            return this.factory.importDeclaration(modifiers, importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
         }
 
         private isExportAssignment(): boolean {

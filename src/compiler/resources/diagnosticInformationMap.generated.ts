@@ -322,6 +322,10 @@ module TypeScript {
     "code": 1078,
     "category": DiagnosticCategory.NoPrefix
   },
+  "'declare' modifier not allowed on import declaration.": {
+    "code": 1079,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

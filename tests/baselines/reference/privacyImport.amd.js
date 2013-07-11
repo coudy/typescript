@@ -72,6 +72,7 @@ define(["require", "exports", "glo_M2_public", "glo_M4_private", "m1_M3_public",
         var m1_im4_private_v3_private = m1_im4_private.f1;
         var m1_im4_private_v4_private = m1_im4_private.f1();
 
+        // Parse error to export module
         var m1_im1_public = m1_M1_public;
         var m1_im2_public = m1_M2_private;
         
@@ -153,6 +154,7 @@ define(["require", "exports", "glo_M2_public", "glo_M4_private", "m1_M3_public",
         var m1_im4_private_v3_private = m1_im4_private.f1;
         var m1_im4_private_v4_private = m1_im4_private.f1();
 
+        // Parse error to export module
         var m1_im1_public = m2_M1_public;
         var m1_im2_public = m2_M2_private;
         
@@ -231,6 +233,7 @@ define(["require", "exports", "glo_M2_public", "glo_M4_private", "m1_M3_public",
     var glo_im4_private_v3_private = glo_im4_private.f1;
     var glo_im4_private_v4_private = glo_im4_private.f1();
 
+    // Parse error to export module
     var glo_im1_public = glo_M1_public;
     var glo_im2_public = glo_M3_private;
     

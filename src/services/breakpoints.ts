@@ -783,7 +783,7 @@ module Services.Breakpoints {
 
             var memberVariableDeclaration = <TypeScript.MemberVariableDeclarationSyntax>memberVarDeclarationNode.node();
             if (this.canHaveBreakpointInVariableDeclarator(<TypeScript.PositionedNode>memberVarDeclarationNode.getPositionedChild(memberVariableDeclaration.variableDeclarator))) {
-                return createBreakpointSpanInfo(memberVarDeclarationNode);
+                return createBreakpointSpanInfo(memberVarDeclarationNode, memberVariableDeclaration.modifiers, memberVariableDeclaration.variableDeclarator);
             } else {
                 return null;
             }
@@ -795,7 +795,7 @@ module Services.Breakpoints {
             }
 
             var importSyntax = <TypeScript.ImportDeclarationSyntax>importDeclarationNode.node();
-            return createBreakpointSpanInfo(importDeclarationNode, importSyntax.importKeyword, importSyntax.identifier, importSyntax.equalsToken, importSyntax.moduleReference);
+            return createBreakpointSpanInfo(importDeclarationNode, importSyntax.modifiers, importSyntax.importKeyword, importSyntax.identifier, importSyntax.equalsToken, importSyntax.moduleReference);
         }
 
         private breakpointSpanOfEnumDeclaration(enumDeclarationNode: TypeScript.PositionedNode): SpanInfo {

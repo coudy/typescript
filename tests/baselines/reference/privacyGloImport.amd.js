@@ -72,6 +72,7 @@ var m1;
     var m1_im4_private_v3_private = m1_im4_private.f1;
     var m1_im4_private_v4_private = m1_im4_private.f1();
 
+    // Parse error to export module
     var m1_im1_public = m1_M1_public;
     var m1_im2_public = m1_M2_private;
     

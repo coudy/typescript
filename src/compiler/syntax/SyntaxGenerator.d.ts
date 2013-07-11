@@ -1,4 +1,1799 @@
 declare module TypeScript {
+    var DiagnosticCode: {
+        error_TS_0_1: string;
+        warning_TS_0_1: string;
+        Unrecognized_escape_sequence: string;
+        Unexpected_character_0: string;
+        Missing_close_quote_character: string;
+        Identifier_expected: string;
+        _0_keyword_expected: string;
+        _0_expected: string;
+        Identifier_expected_0_is_a_keyword: string;
+        Automatic_semicolon_insertion_not_allowed: string;
+        Unexpected_token_0_expected: string;
+        Trailing_separator_not_allowed: string;
+        AsteriskSlash_expected: string;
+        public_or_private_modifier_must_precede_static: string;
+        Unexpected_token: string;
+        A_catch_clause_variable_cannot_have_a_type_annotation: string;
+        Rest_parameter_must_be_last_in_list: string;
+        Parameter_cannot_have_question_mark_and_initializer: string;
+        Required_parameter_cannot_follow_optional_parameter: string;
+        Index_signatures_cannot_have_rest_parameters: string;
+        Index_signature_parameter_cannot_have_accessibility_modifiers: string;
+        Index_signature_parameter_cannot_have_a_question_mark: string;
+        Index_signature_parameter_cannot_have_an_initializer: string;
+        Index_signature_must_have_a_type_annotation: string;
+        Index_signature_parameter_must_have_a_type_annotation: string;
+        Index_signature_parameter_type_must_be_string_or_number: string;
+        extends_clause_already_seen: string;
+        extends_clause_must_precede_implements_clause: string;
+        Class_can_only_extend_single_type: string;
+        implements_clause_already_seen: string;
+        Accessibility_modifier_already_seen: string;
+        _0_modifier_must_precede_1_modifier: string;
+        _0_modifier_already_seen: string;
+        _0_modifier_cannot_appear_on_a_class_element: string;
+        Interface_declaration_cannot_have_implements_clause: string;
+        super_invocation_cannot_have_type_arguments: string;
+        Non_ambient_modules_cannot_use_quoted_names: string;
+        Statements_are_not_allowed_in_ambient_contexts: string;
+        Implementations_are_not_allowed_in_ambient_contexts: string;
+        declare_modifier_not_allowed_for_code_already_in_an_ambient_context: string;
+        Initializers_are_not_allowed_in_ambient_contexts: string;
+        Overload_and_ambient_signatures_cannot_specify_parameter_properties: string;
+        Function_implementation_expected: string;
+        Constructor_implementation_expected: string;
+        Function_overload_name_must_be_0: string;
+        _0_modifier_cannot_appear_on_a_module_element: string;
+        declare_modifier_cannot_appear_on_an_interface_declaration: string;
+        declare_modifier_required_for_top_level_element: string;
+        Rest_parameter_cannot_be_optional: string;
+        Rest_parameter_cannot_have_initializer: string;
+        set_accessor_must_have_one_and_only_one_parameter: string;
+        set_accessor_parameter_cannot_have_accessibility_modifier: string;
+        set_accessor_parameter_cannot_be_optional: string;
+        set_accessor_parameter_cannot_have_initializer: string;
+        set_accessor_cannot_have_rest_parameter: string;
+        get_accessor_cannot_have_parameters: string;
+        Modifiers_cannot_appear_here: string;
+        Accessors_are_only_when_targeting_EcmaScript5_and_higher: string;
+        Class_name_cannot_be_0: string;
+        Interface_name_cannot_be_0: string;
+        Enum_name_cannot_be_0: string;
+        Module_name_cannot_be_0: string;
+        Enum_member_must_have_initializer: string;
+        module_is_deprecated_Use_require_instead: string;
+        Export_assignments_cannot_be_used_in_internal_modules: string;
+        Export_assignment_not_allowed_in_module_with_exported_element: string;
+        Module_cannot_have_multiple_export_assignments: string;
+        Ambient_enum_elements_can_only_have_integer_literal_initializers: string;
+        module_class_interface_enum_import_or_statement: string;
+        constructor_function_accessor_or_variable: string;
+        statement: string;
+        case_or_default_clause: string;
+        identifier: string;
+        call_construct_index_property_or_function_signature: string;
+        expression: string;
+        type_name: string;
+        property_or_accessor: string;
+        parameter: string;
+        type: string;
+        type_parameter: string;
+        Duplicate_identifier_0: string;
+        The_name_0_does_not_exist_in_the_current_scope: string;
+        The_name_0_does_not_refer_to_a_value: string;
+        super_can_only_be_used_inside_a_class_instance_method: string;
+        The_left_hand_side_of_an_assignment_expression_must_be_a_variable_property_or_indexer: string;
+        Value_of_type_0_is_not_callable_Did_you_mean_to_include_new: string;
+        Value_of_type_0_is_not_callable: string;
+        Value_of_type_0_is_not_newable: string;
+        Value_of_type_0_is_not_indexable_by_type_1: string;
+        Operator_0_cannot_be_applied_to_types_1_and_2: string;
+        Operator_0_cannot_be_applied_to_types_1_and_2_3: string;
+        Cannot_convert_0_to_1: string;
+        Cannot_convert_0_to_1_NL_2: string;
+        Expected_var_class_interface_or_module: string;
+        Operator_0_cannot_be_applied_to_type_1: string;
+        Getter_0_already_declared: string;
+        Setter_0_already_declared: string;
+        Accessors_cannot_have_type_parameters: string;
+        Exported_class_0_extends_private_class_1: string;
+        Exported_class_0_implements_private_interface_1: string;
+        Exported_interface_0_extends_private_interface_1: string;
+        Exported_class_0_extends_class_from_inaccessible_module_1: string;
+        Exported_class_0_implements_interface_from_inaccessible_module_1: string;
+        Exported_interface_0_extends_interface_from_inaccessible_module_1: string;
+        Public_static_property_0_of_exported_class_has_or_is_using_private_type_1: string;
+        Public_property_0_of_exported_class_has_or_is_using_private_type_1: string;
+        Property_0_of_exported_interface_has_or_is_using_private_type_1: string;
+        Exported_variable_0_has_or_is_using_private_type_1: string;
+        Public_static_property_0_of_exported_class_is_using_inaccessible_module_1: string;
+        Public_property_0_of_exported_class_is_using_inaccessible_module_1: string;
+        Property_0_of_exported_interface_is_using_inaccessible_module_1: string;
+        Exported_variable_0_is_using_inaccessible_module_1: string;
+        Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1: string;
+        Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1: string;
+        Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1: string;
+        Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1: string;
+        Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1: string;
+        Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1: string;
+        Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1: string;
+        Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1: string;
+        Parameter_0_of_exported_function_has_or_is_using_private_type_1: string;
+        Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1: string;
+        Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1: string;
+        Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1: string;
+        Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1: string;
+        Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1: string;
+        Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1: string;
+        Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1: string;
+        Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1: string;
+        Parameter_0_of_exported_function_is_using_inaccessible_module_1: string;
+        Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type_0: string;
+        Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type_0: string;
+        Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0: string;
+        Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0: string;
+        Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0: string;
+        Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type_0: string;
+        Return_type_of_public_method_from_exported_class_has_or_is_using_private_type_0: string;
+        Return_type_of_method_from_exported_interface_has_or_is_using_private_type_0: string;
+        Return_type_of_exported_function_has_or_is_using_private_type_0: string;
+        Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module_0: string;
+        Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module_0: string;
+        Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0: string;
+        Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0: string;
+        Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0: string;
+        Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module_0: string;
+        Return_type_of_public_method_from_exported_class_is_using_inaccessible_module_0: string;
+        Return_type_of_method_from_exported_interface_is_using_inaccessible_module_0: string;
+        Return_type_of_exported_function_is_using_inaccessible_module_0: string;
+        new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead: string;
+        A_parameter_list_must_follow_a_generic_type_argument_list_expected: string;
+        Multiple_constructor_implementations_are_not_allowed: string;
+        Unable_to_resolve_external_module_0: string;
+        Module_cannot_be_aliased_to_a_non_module_type: string;
+        A_class_may_only_extend_another_class: string;
+        A_class_may_only_implement_another_class_or_interface: string;
+        An_interface_may_only_extend_another_class_or_interface: string;
+        An_interface_cannot_implement_another_type: string;
+        Unable_to_resolve_type: string;
+        Unable_to_resolve_type_of_0: string;
+        Unable_to_resolve_type_parameter_constraint: string;
+        Type_parameter_constraint_cannot_be_a_primitive_type: string;
+        Supplied_parameters_do_not_match_any_signature_of_call_target: string;
+        Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0: string;
+        Invalid_new_expression: string;
+        Call_signatures_used_in_a_new_expression_must_have_a_void_return_type: string;
+        Could_not_select_overload_for_new_expression: string;
+        Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2: string;
+        Could_not_select_overload_for_call_expression: string;
+        Unable_to_invoke_type_with_no_call_signatures: string;
+        Calls_to_super_are_only_valid_inside_a_class: string;
+        Generic_type_0_requires_1_type_argument_s: string;
+        Type_of_conditional_expression_cannot_be_determined_Best_common_type_could_not_be_found_between_0_and_1: string;
+        Type_of_array_literal_cannot_be_determined_Best_common_type_could_not_be_found_for_array_elements: string;
+        Could_not_find_enclosing_symbol_for_dotted_name_0: string;
+        The_property_0_does_not_exist_on_value_of_type_1: string;
+        Could_not_find_symbol_0: string;
+        get_and_set_accessor_must_have_the_same_type: string;
+        this_cannot_be_referenced_in_current_location: string;
+        Use_of_deprecated_type_bool_Use_boolean_instead: string;
+        Static_methods_cannot_reference_class_type_parameters: string;
+        Class_0_is_recursively_referenced_as_a_base_type_of_itself: string;
+        Interface_0_is_recursively_referenced_as_a_base_type_of_itself: string;
+        super_property_access_is_permitted_only_in_a_constructor_instance_member_function_or_instance_member_accessor_of_a_derived_class: string;
+        super_cannot_be_referenced_in_non_derived_classes: string;
+        A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties: string;
+        Constructors_for_derived_classes_must_contain_a_super_call: string;
+        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: string;
+        _0_1_is_inaccessible: string;
+        this_cannot_be_referenced_within_module_bodies: string;
+        Invalid_expression_types_not_known_to_support_the_addition_operator: string;
+        The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type: string;
+        The_left_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type: string;
+        The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type_any_number_or_an_enum_type: string;
+        Variable_declarations_of_a_for_statement_cannot_contain_a_type_annotation: string;
+        Variable_declarations_of_a_for_statement_must_be_of_types_string_or_any: string;
+        The_right_operand_of_a_for_statement_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
+        The_left_hand_side_of_an_in_expression_must_be_of_types_string_or_any: string;
+        The_right_hand_side_of_an_in_expression_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
+        The_left_hand_side_of_an_instanceOf_expression_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
+        The_right_hand_side_of_an_instanceOf_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type: string;
+        Setters_cannot_return_a_value: string;
+        Tried_to_set_variable_type_to_container_type_0: string;
+        Tried_to_set_variable_type_to_uninitialized_module_type_0: string;
+        Function_0_declared_a_non_void_return_type_but_has_no_return_expression: string;
+        Getters_must_return_a_value: string;
+        Getter_and_setter_accessors_do_not_agree_in_visibility: string;
+        Invalid_left_hand_side_of_assignment_expression: string;
+        Function_declared_a_non_void_return_type_but_has_no_return_expression: string;
+        Cannot_resolve_return_type_reference: string;
+        Constructors_cannot_have_a_return_type_of_void: string;
+        Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2: string;
+        All_symbols_within_a_with_block_will_be_resolved_to_any: string;
+        Import_declarations_in_an_internal_module_cannot_reference_an_external_module: string;
+        Class_0_declares_interface_1_but_does_not_implement_it_NL_2: string;
+        Class_0_declares_class_1_as_an_implemented_interface_but_does_not_implement_it_NL_2: string;
+        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer: string;
+        this_cannot_be_referenced_in_static_initializers_in_a_class_body: string;
+        Class_0_cannot_extend_class_1_NL_2: string;
+        Interface_0_cannot_extend_class_1_NL_2: string;
+        Interface_0_cannot_extend_interface_1_NL_2: string;
+        Duplicate_overload_signature_for_0: string;
+        Duplicate_constructor_overload_signature: string;
+        Duplicate_overload_call_signature: string;
+        Duplicate_overload_construct_signature: string;
+        Overload_signature_is_not_compatible_with_function_definition: string;
+        Overload_signature_is_not_compatible_with_function_definition_NL_0: string;
+        Overload_signatures_must_all_be_public_or_private: string;
+        Overload_signatures_must_all_be_exported_or_local: string;
+        Overload_signatures_must_all_be_ambient_or_non_ambient: string;
+        Overload_signatures_must_all_be_optional_or_required: string;
+        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: string;
+        this_cannot_be_referenced_in_constructor_arguments: string;
+        Static_member_cannot_be_accessed_off_an_instance_variable: string;
+        Instance_member_cannot_be_accessed_off_a_class: string;
+        Untyped_function_calls_may_not_accept_type_arguments: string;
+        Non_generic_functions_may_not_accept_type_arguments: string;
+        A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters: string;
+        Rest_parameters_must_be_array_types: string;
+        Overload_signature_implementation_cannot_use_specialized_type: string;
+        Export_assignments_may_only_be_used_at_the_top_level_of_external_modules: string;
+        Export_assignments_may_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules: string;
+        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: string;
+        Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1: string;
+        Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2: string;
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0: string;
+        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0_NL_1: string;
+        All_named_properties_must_be_subtypes_of_string_indexer_type_0: string;
+        All_named_properties_must_be_subtypes_of_string_indexer_type_0_NL_1: string;
+        Generic_type_references_must_include_all_type_arguments: string;
+        Default_arguments_are_not_allowed_in_an_overload_parameter: string;
+        Overloads_cannot_differ_only_by_return_type: string;
+        Function_expression_declared_a_non_void_return_type_but_has_no_return_expression: string;
+        Import_declaration_referencing_identifier_from_internal_module_can_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules: string;
+        Could_not_find_symbol_0_in_module_1: string;
+        Unable_to_resolve_module_reference_0: string;
+        Could_not_find_module_0_in_module_1: string;
+        Type_0_is_missing_property_1_from_type_2: string;
+        Types_of_property_0_of_types_1_and_2_are_incompatible: string;
+        Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: string;
+        Property_0_defined_as_private_in_type_1_is_defined_as_public_in_type_2: string;
+        Property_0_defined_as_public_in_type_1_is_defined_as_private_in_type_2: string;
+        Types_0_and_1_define_property_2_as_private: string;
+        Call_signatures_of_types_0_and_1_are_incompatible: string;
+        Call_signatures_of_types_0_and_1_are_incompatible_NL_2: string;
+        Type_0_requires_a_call_signature_but_type_1_lacks_one: string;
+        Construct_signatures_of_types_0_and_1_are_incompatible: string;
+        Construct_signatures_of_types_0_and_1_are_incompatible_NL_2: string;
+        Type_0_requires_a_construct_signature_but_type_1_lacks_one: string;
+        Index_signatures_of_types_0_and_1_are_incompatible: string;
+        Index_signatures_of_types_0_and_1_are_incompatible_NL_2: string;
+        Call_signature_expects_0_or_fewer_parameters: string;
+        Could_not_apply_type_0_to_argument_1_which_is_of_type_2: string;
+        Class_0_defines_instance_member_accessor_1_but_extended_class_2_defines_it_as_instance_member_function: string;
+        Class_0_defines_instance_member_property_1_but_extended_class_2_defines_it_as_instance_member_function: string;
+        Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_accessor: string;
+        Class_0_defines_instance_member_function_1_but_extended_class_2_defines_it_as_instance_member_property: string;
+        Types_of_static_property_0_of_class_1_and_class_2_are_incompatible: string;
+        Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3: string;
+        Type_reference_cannot_refer_to_container_0: string;
+        Type_reference_cannot_must_refer_to_type: string;
+        Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element: string;
+        _0_overload_s: string;
+        Current_host_does_not_support_0_option: string;
+        ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: string;
+        Module_code_generation_0_not_supported_Using_default_1_code_generation: string;
+        Could_not_find_file_0: string;
+        A_file_cannot_have_a_reference_to_itself: string;
+        Cannot_resolve_referenced_file_0: string;
+        Cannot_find_the_common_subdirectory_path_for_the_input_files: string;
+        Cannot_compile_dynamic_modules_when_emitting_into_single_file: string;
+        Emit_Error_0: string;
+        Cannot_read_file_0_1: string;
+        Unsupported_file_encoding: string;
+        Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1: string;
+        Unsupported_locale_0: string;
+        Execution_Failed_NL: string;
+        Should_not_emit_a_type_query: string;
+        Should_not_emit_a_type_reference: string;
+        Invalid_call_to_up: string;
+        Invalid_call_to_down: string;
+        Base64_value_0_finished_with_a_continuation_bit: string;
+        Key_was_already_in_table: string;
+        Unknown_option_0: string;
+        Expected_0_arguments_to_message_got_1_instead: string;
+        Expected_the_message_0_to_have_1_arguments_but_it_had_2: string;
+        Invalid_argument_0_1: string;
+        Invalid_argument_0: string;
+        Argument_out_of_range_0: string;
+        Argument_null_0: string;
+        Operation_not_implemented_properly_by_subclass: string;
+        Not_yet_implemented: string;
+        Invalid_operation_0: string;
+        Invalid_operation: string;
+        Couldn_t_delete_file_0: string;
+        Couldn_t_create_directory_0: string;
+        Error_while_executing_file_0: string;
+        Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory: string;
+        Generates_corresponding_0_file: string;
+        Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: string;
+        Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations: string;
+        Watch_input_files: string;
+        Execute_the_script_after_compilation: string;
+        Minimize_whitespace: string;
+        Propagate_constants_to_emitted_code: string;
+        Emit_comments_to_output: string;
+        Skip_resolution_and_preprocessing: string;
+        Print_debug_output: string;
+        Do_not_include_a_default_0_with_global_declarations: string;
+        Gather_diagnostic_info_about_the_compilation_process: string;
+        Typecheck_each_file_as_an_update_on_the_first: string;
+        Specify_ECMAScript_target_version_0_default_or_1: string;
+        Specify_module_code_generation_0_default_or_1: string;
+        Print_this_message: string;
+        Force_file_resolution_to_be_case_sensitive: string;
+        Print_the_compiler_s_version_0: string;
+        Allow_use_of_deprecated_0_type: string;
+        Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module: string;
+        Specify_locale_for_errors_and_messages_For_example_0_or_1: string;
+        Syntax_0: string;
+        options: string;
+        file: string;
+        Examples: string;
+        Options: string;
+        Insert_command_line_options_and_files_from_a_file: string;
+        Version_0: string;
+        Use_the_0_flag_to_see_options: string;
+        NL_Recompiling_0: string;
+        STRING: string;
+        KIND: string;
+        FILE_DIRECTORY: string;
+        VERSION: string;
+        This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: string;
+        Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: string;
+        Unknown_rule: string;
+        Invalid_line_number_0: string;
+    };
+}
+declare module TypeScript {
+    enum DiagnosticCategory {
+        Warning,
+        Error,
+        Message,
+        NoPrefix,
+    }
+}
+declare module TypeScript {
+    var diagnosticInformationMap: {
+        "error TS{0}: {1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "warning TS{0}: {1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unrecognized escape sequence.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unexpected character {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Missing close quote character.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Identifier expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' keyword expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Identifier expected; '{0}' is a keyword.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Automatic semicolon insertion not allowed.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unexpected token; '{0}' expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Trailing separator not allowed.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'*/' expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'public' or 'private' modifier must precede 'static'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unexpected token.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A catch clause variable cannot have a type annotation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Rest parameter must be last in list.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter cannot have question mark and initializer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Required parameter cannot follow optional parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signatures cannot have rest parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature parameter cannot have accessibility modifiers.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature parameter cannot have a question mark.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature parameter cannot have an initializer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature must have a type annotation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature parameter must have a type annotation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signature parameter type must be 'string' or 'number'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'extends' clause already seen.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'extends' clause must precede 'implements' clause.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class can only extend single type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'implements' clause already seen.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Accessibility modifier already seen.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' modifier must precede '{1}' modifier.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' modifier already seen.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' modifier cannot appear on a class element.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Interface declaration cannot have 'implements' clause.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'super' invocation cannot have type arguments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Non ambient modules cannot use quoted names.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Statements are not allowed in ambient contexts.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Implementations are not allowed in ambient contexts.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'declare' modifier not allowed for code already in an ambient context.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Initializers are not allowed in ambient contexts.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload and ambient signatures cannot specify parameter properties.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function implementation expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Constructor implementation expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function overload name must be '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}' modifier cannot appear on a module element.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'declare' modifier cannot appear on an interface declaration.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'declare' modifier required for top level element.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Rest parameter cannot be optional.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Rest parameter cannot have initializer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'set' accessor must have one and only one parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'set' accessor parameter cannot have accessibility modifier.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'set' accessor parameter cannot be optional.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'set' accessor parameter cannot have initializer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'set' accessor cannot have rest parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'get' accessor cannot have parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Modifiers cannot appear here.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Accessors are only when targeting EcmaScript5 and higher.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class name cannot be '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Interface name cannot be '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Enum name cannot be '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Module name cannot be '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Enum member must have initializer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'module(...)' is deprecated. Use 'require(...)' instead.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Export assignments cannot be used in internal modules.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Export assignment not allowed in module with exported element.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Module cannot have multiple export assignments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Ambient enum elements can only have integer literal initializers.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "module, class, interface, enum, import or statement": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "constructor, function, accessor or variable": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "statement": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "case or default clause": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "identifier": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "call, construct, index, property or function signature": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "expression": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "type name": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "property or accessor": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "parameter": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "type": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "type parameter": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Duplicate identifier '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The name '{0}' does not exist in the current scope.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The name '{0}' does not refer to a value.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'super' can only be used inside a class instance method.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The left-hand side of an assignment expression must be a variable, property or indexer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Value of type '{0}' is not callable. Did you mean to include 'new'?": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Value of type '{0}' is not callable.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Value of type '{0}' is not newable.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Value of type '{0}' is not indexable by type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Operator '{0}' cannot be applied to types '{1}' and '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot convert '{0}' to '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot convert '{0}' to '{1}':{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Expected var, class, interface, or module.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Operator '{0}' cannot be applied to type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Getter '{0}' already declared.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Setter '{0}' already declared.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Accessors cannot have type parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported class '{0}' extends private class '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported class '{0}' implements private interface '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported interface '{0}' extends private interface '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported class '{0}' extends class from inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported class '{0}' implements interface from inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported interface '{0}' extends interface from inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Public static property '{0}' of exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Public property '{0}' of exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Property '{0}' of exported interface has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported variable '{0}' has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Public static property '{0}' of exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Public property '{0}' of exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Property '{0}' of exported interface is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Exported variable '{0}' is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of constructor from exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public static property setter from exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public property setter from exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of constructor signature from exported interface has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of call signature from exported interface has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public static method from exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public method from exported class has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of method from exported interface has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of exported function has or is using private type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of constructor from exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public static property setter from exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public property setter from exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of constructor signature from exported interface is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of call signature from exported interface is using inaccessible module {1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public static method from exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of public method from exported class is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of method from exported interface is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of exported function is using inaccessible module {1}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public static property getter from exported class has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public property getter from exported class has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of constructor signature from exported interface has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of call signature from exported interface has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of index signature from exported interface has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public static method from exported class has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public method from exported class has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of method from exported interface has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of exported function has or is using private type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public static property getter from exported class is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public property getter from exported class is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of constructor signature from exported interface is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of call signature from exported interface is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of index signature from exported interface is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public static method from exported class is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of public method from exported class is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of method from exported interface is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Return type of exported function is using inaccessible module {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A parameter list must follow a generic type argument list. '(' expected.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Multiple constructor implementations are not allowed.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to resolve external module '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Module cannot be aliased to a non-module type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A class may only extend another class.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A class may only implement another class or interface.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "An interface may only extend another class or interface.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "An interface cannot implement another type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to resolve type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to resolve type of '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to resolve type parameter constraint.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type parameter constraint cannot be a primitive type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Supplied parameters do not match any signature of call target.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Supplied parameters do not match any signature of call target:{NL}{0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid 'new' expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Call signatures used in a 'new' expression must have a 'void' return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not select overload for 'new' expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type '{0}' does not satisfy the constraint '{1}' for type parameter '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not select overload for 'call' expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to invoke type with no call signatures.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Calls to 'super' are only valid inside a class.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Generic type '{0}' requires {1} type argument(s).": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type of conditional expression cannot be determined. Best common type could not be found between '{0}' and '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type of array literal cannot be determined. Best common type could not be found for array elements.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not find enclosing symbol for dotted name '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The property '{0}' does not exist on value of type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not find symbol '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'get' and 'set' accessor must have the same type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'this' cannot be referenced in current location.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Use of deprecated type 'bool'. Use 'boolean' instead.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Static methods cannot reference class type parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' is recursively referenced as a base type of itself.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Interface '{0}' is recursively referenced as a base type of itself.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'super' cannot be referenced in non-derived classes.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Constructors for derived classes must contain a 'super' call.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Super calls are not permitted outside constructors or in local functions inside constructors.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}.{1}' is inaccessible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'this' cannot be referenced within module bodies.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid '+' expression - types not known to support the addition operator.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Variable declarations of a 'for' statement cannot contain a type annotation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Variable declarations of a 'for' statement must be of types 'string' or 'any'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The left-hand side of an 'in' expression must be of types 'string' or 'any'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Setters cannot return a value.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Tried to set variable type to container type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Tried to set variable type to uninitialized module type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function '{0}' declared a non-void return type, but has no return expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Getters must return a value.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Getter and setter accessors do not agree in visibility.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid left-hand side of assignment expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function declared a non-void return type, but has no return expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot resolve return type reference.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Constructors cannot have a return type of 'void'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Subsequent variable declarations must have the same type.  Variable '{0}' must be of type '{1}', but here has type '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "All symbols within a with block will be resolved to 'any'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Import declarations in an internal module cannot reference an external module.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class {0} declares interface {1} but does not implement it:{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "The operand of an increment or decrement operator must be a variable, property or indexer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'this' cannot be referenced in static initializers in a class body.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' cannot extend class '{1}':{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Interface '{0}' cannot extend class '{1}':{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Interface '{0}' cannot extend interface '{1}':{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Duplicate overload signature for '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Duplicate constructor overload signature.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Duplicate overload call signature.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Duplicate overload construct signature.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signature is not compatible with function definition.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signature is not compatible with function definition:{NL}{0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signatures must all be public or private.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signatures must all be exported or local.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signatures must all be ambient or non-ambient.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signatures must all be optional or required.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specialized overload signature is not subtype of any non-specialized signature.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'this' cannot be referenced in constructor arguments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Static member cannot be accessed off an instance variable.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Instance member cannot be accessed off a class.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Untyped function calls may not accept type arguments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Non-generic functions may not accept type arguments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A generic type may not reference itself with a wrapped form of its own type parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Rest parameters must be array types.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overload signature implementation cannot use specialized type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Export assignments may only be used at the top-level of external modules.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Only public instance methods of the base class are accessible via the 'super' keyword.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Numeric indexer type '{0}' must be a subtype of string indexer type '{1}':{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "All numerically named properties must be subtypes of numeric indexer type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "All numerically named properties must be subtypes of numeric indexer type '{0}':{NL}{1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "All named properties must be subtypes of string indexer type '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "All named properties must be subtypes of string indexer type '{0}':{NL}{1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Generic type references must include all type arguments.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Default arguments are not allowed in an overload parameter.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Overloads cannot differ only by return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function expression declared a non-void return type, but has no return expression.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Import declaration referencing identifier from internal module can only be made with variables, functions, classes, interfaces, enums and internal modules.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not find symbol '{0}' in module '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unable to resolve module reference '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not find module '{0}' in module '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type '{0}' is missing property '{1}' from type '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Types of property '{0}' of types '{1}' and '{2}' are incompatible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Types '{0}' and '{1}' define property '{2}' as private.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Call signatures of types '{0}' and '{1}' are incompatible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Call signatures of types '{0}' and '{1}' are incompatible:{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type '{0}' requires a call signature, but type '{1}' lacks one.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Construct signatures of types '{0}' and '{1}' are incompatible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type '{0}' requires a construct signature, but type '{1}' lacks one.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signatures of types '{0}' and '{1}' are incompatible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Index signatures of types '{0}' and '{1}' are incompatible:{NL}{2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Call signature expects {0} or fewer parameters.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not apply type'{0}' to argument {1} which is of type '{2}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' defines instance member accessor '{1}', but extended class '{2}' defines it as instance member function.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' defines instance member property '{1}', but extended class '{2}' defines it as instance member function.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member accessor.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Class '{0}' defines instance member function '{1}', but extended class '{2}' defines it as instance member property.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Types of static property '{0}' of class '{1}' and class '{2}' are incompatible:{NL}{3}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type reference cannot refer to container '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Type reference cannot must refer to type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Enums with multiple declarations must provide an initializer for the first enum element.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        " (+ {0} overload(s))": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Current host does not support '{0}' option.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Could not find file: '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "A file cannot have a reference to itself.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot resolve referenced file: '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot find the common subdirectory path for the input files.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot compile dynamic modules when emitting into single file.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Emit Error: {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Cannot read file '{0}': {1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unsupported file encoding.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Locale must be of the form <language> or <language>-<territory>. For example '{0}' or '{1}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unsupported locale: '{0}'.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Execution Failed.{NL}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Should not emit a type query": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Should not emit a type reference": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid call to 'up'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid call to 'down'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Base64 value '{0}' finished with a continuation bit": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Key was already in table": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unknown option '{0}'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Expected {0} arguments to message, got {1} instead": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Expected the message '{0}' to have {1} arguments, but it had {2}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid argument: {0}. {1}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid argument: {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Argument out of range: {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Argument null: {0}.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Operation not implemented properly by subclass.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Not yet implemented.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid operation: {0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid operation.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Couldn't delete file '{0}'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Couldn't create directory '{0}'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Error while executing file '{0}': ": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Concatenate and emit output to single file | Redirect output structure to the directory": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Generates corresponding {0} file": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specifies the location where debugger should locate map files instead of generated locations.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specifies the location where debugger should locate TypeScript files instead of source locations.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Watch input files": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Execute the script after compilation": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Minimize whitespace": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Propagate constants to emitted code": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Emit comments to output": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Skip resolution and preprocessing": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Print debug output": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Do not include a default {0} with global declarations": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Gather diagnostic info about the compilation process": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Typecheck each file as an update on the first": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Print this message": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Force file resolution to be case sensitive": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Print the compiler's version: {0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Allow use of deprecated \"{0}\" type": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Specify locale for errors and messages. For example '{0}' or '{1}'": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Syntax:   {0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "options": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "file": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Examples:": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Options:": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Insert command line options and files from a file.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Version {0}": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Use the '{0}' flag to see options": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "{NL}Recompiling ({0}):": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "STRING": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "KIND": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "FILE|DIRECTORY": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "VERSION": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "This version of the Javascript runtime doesn't support the '{0}' function.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Looking up path for identifier token did not result in an identifer.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Unknown rule": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Invalid line number ({0})": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+    };
+}
+declare module JSON3 {
+    function stringify(source, filter?, width?);
+    function parse(source: string, callback?);
+}
+declare module TypeScript {
     class ArrayUtilities {
         static isArray(value: any): boolean;
         static sequenceEquals(array1: any[], array2: any[], equals: (v1: any, v2: any) => boolean): boolean;
@@ -22,15 +1817,8 @@ declare module TypeScript {
 }
 declare module TypeScript {
     enum Constants {
-        Max31BitInteger,
+        Max31BitInteger = 1073741823,
         Min31BitInteger,
-    }
-}
-declare module TypeScript {
-    class Contract {
-        static requires(expression: boolean): void;
-        static throwIfFalse(expression: boolean): void;
-        static throwIfNull(value: any): void;
     }
 }
 declare module TypeScript {
@@ -39,575 +1827,11 @@ declare module TypeScript {
     }
 }
 declare module TypeScript {
-    enum DiagnosticCategory {
-        Warning,
-        Error,
-        Message,
-        NoPrefix,
-    }
-}
-declare module TypeScript {
-    enum DiagnosticCode {
-        error_TS_0__1,
-        warning_TS_0__1,
-        _0__NL__1_TB__2,
-        _0_TB__1,
-        Unrecognized_escape_sequence,
-        Unexpected_character_0,
-        Missing_closing_quote_character,
-        Identifier_expected,
-        _0_keyword_expected,
-        _0_expected,
-        Identifier_expected__0__is_a_keyword,
-        Automatic_semicolon_insertion_not_allowed,
-        Unexpected_token__0_expected,
-        Trailing_separator_not_allowed,
-        _StarSlash__expected,
-        _public_or_private_modifier_must_precede__static_,
-        Unexpected_token_,
-        A_catch_clause_variable_cannot_have_a_type_annotation,
-        Rest_parameter_must_be_last_in_list,
-        Parameter_cannot_have_question_mark_and_initializer,
-        Required_parameter_cannot_follow_optional_parameter,
-        Index_signatures_cannot_have_rest_parameters,
-        Index_signature_parameter_cannot_have_accessibility_modifiers,
-        Index_signature_parameter_cannot_have_a_question_mark,
-        Index_signature_parameter_cannot_have_an_initializer,
-        Index_signature_must_have_a_type_annotation,
-        Index_signature_parameter_must_have_a_type_annotation,
-        Index_signature_parameter_type_must_be__string__or__number_,
-        _extends__clause_already_seen,
-        _extends__clause_must_precede__implements__clause,
-        Class_can_only_extend_single_type,
-        _implements__clause_already_seen,
-        Accessibility_modifier_already_seen,
-        _0__modifier_must_precede__1__modifier,
-        _0__modifier_already_seen,
-        _0__modifier_cannot_appear_on_a_class_element,
-        Interface_declaration_cannot_have__implements__clause,
-        _super__invocation_cannot_have_type_arguments,
-        Non_ambient_modules_cannot_use_quoted_names,
-        Statements_are_not_allowed_in_ambient_contexts,
-        Implementations_are_not_allowed_in_ambient_contexts,
-        _declare__modifier_not_allowed_for_code_already_in_an_ambient_context,
-        Initializers_are_not_allowed_in_ambient_contexts,
-        Overload_and_ambient_signatures_cannot_specify_parameter_properties,
-        Function_implementation_expected,
-        Constructor_implementation_expected,
-        Function_overload_name_must_be__0_,
-        _0__modifier_cannot_appear_on_a_module_element,
-        _declare__modifier_cannot_appear_on_an_interface_declaration,
-        _declare__modifier_required_for_top_level_element,
-        _set__accessor_must_have_only_one_parameter,
-        _set__accessor_parameter_cannot_have_accessibility_modifier,
-        _set__accessor_parameter_cannot_be_optional,
-        _set__accessor_parameter_cannot_have_initializer,
-        _set__accessor_cannot_have_rest_parameter,
-        _get__accessor_cannot_have_parameters,
-        Rest_parameter_cannot_be_optional,
-        Rest_parameter_cannot_have_initializer,
-        Modifiers_cannot_appear_here,
-        Accessors_are_only_available_when_targeting_EcmaScript5_and_higher,
-        Class_name_cannot_be__0_,
-        Interface_name_cannot_be__0_,
-        Enum_name_cannot_be__0_,
-        Module_name_cannot_be__0_,
-        Enum_member_must_have_initializer,
-        _module_______is_deprecated__Use__require_______instead,
-        Export_assignments_cannot_be_used_in_internal_modules,
-        Export_assignment_not_allowed_in_module_with_exported_element,
-        Module_cannot_have_multiple_export_assignments,
-        Ambient_enum_elements_can_only_have_integer_literal_initializers,
-        Duplicate_identifier__0_,
-        The_name__0__does_not_exist_in_the_current_scope,
-        The_name__0__does_not_refer_to_a_value,
-        Keyword__super__can_only_be_used_inside_a_class_instance_method,
-        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer,
-        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__,
-        Value_of_type__0__is_not_callable,
-        Value_of_type__0__is_not_newable,
-        Value_of_type__0__is_not_indexable_by_type__1_,
-        Operator__0__cannot_be_applied_to_types__1__and__2_,
-        Operator__0__cannot_be_applied_to_types__1__and__2__3,
-        Cannot_convert__0__to__1_,
-        Cannot_convert__0__to__1__NL__2,
-        Expected_var__class__interface__or_module,
-        Operator__0__cannot_be_applied_to_type__1_,
-        Getter__0__already_declared,
-        Setter__0__already_declared,
-        Accessor_cannot_have_type_parameters,
-        Exported_class__0__extends_private_class__1_,
-        Exported_class__0__implements_private_interface__1_,
-        Exported_interface__0__extends_private_interface__1_,
-        Exported_class__0__extends_class_from_inaccessible_module__1_,
-        Exported_class__0__implements_interface_from_inaccessible_module__1_,
-        Exported_interface__0__extends_interface_from_inaccessible_module__1_,
-        Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_,
-        Public_property__0__of__exported_class_has_or_is_using_private_type__1_,
-        Property__0__of__exported_interface_has_or_is_using_private_type__1_,
-        Exported_variable__0__has_or_is_using_private_type__1_,
-        Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_,
-        Public_property__0__of__exported_class_is_using_inaccessible_module__1_,
-        Property__0__of__exported_interface_is_using_inaccessible_module__1_,
-        Exported_variable__0__is_using_inaccessible_module__1_,
-        Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_,
-        Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_,
-        Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_,
-        Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_,
-        Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_,
-        Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_,
-        Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_,
-        Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_,
-        Parameter__0__of_exported_function_has_or_is_using_private_type__1_,
-        Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_,
-        Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_,
-        Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_,
-        Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_,
-        Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_,
-        Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_,
-        Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_,
-        Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_,
-        Parameter__0__of_exported_function_is_using_inaccessible_module__1_,
-        Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_,
-        Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_,
-        Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_,
-        Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_,
-        Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_,
-        Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_,
-        Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_,
-        Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_,
-        Return_type_of_exported_function_has_or_is_using_private_type__0_,
-        Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_,
-        Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_,
-        Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_,
-        Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_,
-        Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_,
-        Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_,
-        Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_,
-        Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_,
-        Return_type_of_exported_function_is_using_inaccessible_module__0_,
-        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead,
-        A_parameter_list_must_follow_a_generic_type_argument_list______expected,
-        Multiple_constructor_implementations_are_not_allowed,
-        Unable_to_resolve_external_module__0_,
-        Module_cannot_be_aliased_to_a_non_module_type,
-        A_class_may_only_extend_another_class,
-        A_class_may_only_implement_another_class_or_interface,
-        An_interface_may_only_extend_another_class_or_interface,
-        An_interface_cannot_implement_another_type,
-        Unable_to_resolve_type,
-        Unable_to_resolve_type_of__0_,
-        Unable_to_resolve_type_parameter_constraint,
-        Type_parameter_constraint_cannot_be_a_primitive_type,
-        Supplied_parameters_do_not_match_any_signature_of_call_target,
-        Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0,
-        Invalid__new__expression,
-        Call_signatures_used_in_a__new__expression_must_have_a__void__return_type,
-        Could_not_select_overload_for__new__expression,
-        Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_,
-        Could_not_select_overload_for__call__expression,
-        Unable_to_invoke_type_with_no_call_signatures,
-        Calls_to__super__are_only_valid_inside_a_class,
-        Generic_type__0__requires_1_type_argument_s_,
-        Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_,
-        Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements,
-        Could_not_find_enclosing_symbol_for_dotted_name__0_,
-        The_property__0__does_not_exist_on_value_of_type__1__,
-        Could_not_find_symbol__0_,
-        _get__and__set__accessor_must_have_the_same_type,
-        _this__cannot_be_referenced_in_current_location,
-        Use_of_deprecated__bool__type__Use__boolean__instead,
-        Class__0__is_recursively_referenced_as_a_base_type_of_itself,
-        Interface__0__is_recursively_referenced_as_a_base_type_of_itself,
-        _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class,
-        _super__cannot_be_referenced_in_non_derived_classes,
-        A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties,
-        Constructors_for_derived_classes_must_contain_a__super__call,
-        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors,
-        _0_1__is_inaccessible,
-        _this__cannot_be_referenced_within_module_bodies,
-        _this__must_only_be_used_inside_a_function_or_script_context,
-        Invalid__addition__expression___types_do_not_agree,
-        The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
-        The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type,
-        The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type,
-        Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation,
-        Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_,
-        The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter,
-        The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_,
-        The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter,
-        The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter,
-        The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type,
-        Setters_cannot_return_a_value,
-        Tried_to_set_variable_type_to_module_type__0__,
-        Tried_to_set_variable_type_to_uninitialized_module_type__0__,
-        Function__0__declared_a_non_void_return_type__but_has_no_return_expression,
-        Getters_must_return_a_value,
-        Getter_and_setter_accessors_do_not_agree_in_visibility,
-        Invalid_left_hand_side_of_assignment_expression,
-        Function_declared_a_non_void_return_type__but_has_no_return_expression,
-        Cannot_resolve_return_type_reference,
-        Constructors_cannot_have_a_return_type_of__void_,
-        Subsequent_variable_declarations_must_have_the_same_type___Variable__0__must_be_of_type__1___but_here_has_type___2_,
-        All_symbols_within_a__with__block_will_be_resolved_to__any__,
-        Import_declarations_in_an_internal_module_cannot_reference_an_external_module,
-        Class__0__declares_interface__1__but_does_not_implement_it__NL__2,
-        Class__0__declares_class__1__but_does_not_implement_it__NL__2,
-        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer,
-        _this__cannot_be_referenced_in_initializers_in_a_class_body,
-        Class__0__cannot_extend_class__1__NL__2,
-        Interface__0__cannot_extend_class__1__NL__2,
-        Interface__0__cannot_extend_interface__1__NL__2,
-        Duplicate_overload_signature_for__0_,
-        Duplicate_constructor_overload_signature,
-        Duplicate_overload_call_signature,
-        Duplicate_overload_construct_signature,
-        Overload_signature_is_not_compatible_with_function_definition,
-        Overload_signature_is_not_compatible_with_function_definition__NL__0,
-        Overload_signatures_must_all_be_public_or_private,
-        Overload_signatures_must_all_be_exported_or_local,
-        Overload_signatures_must_all_be_ambient_or_non_ambient,
-        Overload_signatures_must_all_be_optional_or_required,
-        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature,
-        _this__cannot_be_referenced_in_constructor_arguments,
-        Static_member_cannot_be_accessed_off_an_instance_variable,
-        Instance_member_cannot_be_accessed_off_a_class,
-        Untyped_function_calls_may_not_accept_type_arguments,
-        Non_generic_functions_may_not_accept_type_arguments,
-        A_generic_type_may_not_reference_itself_with_its_own_type_parameters,
-        Static_methods_cannot_reference_class_type_parameters,
-        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___,
-        Rest_parameters_must_be_array_types,
-        Overload_signature_implementation_cannot_use_specialized_type,
-        Export_assignments_may_only_be_used_in_External_modules,
-        Export_assignments_may_only_be_made_with_acceptable_kinds,
-        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword,
-        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__,
-        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2,
-        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__,
-        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1,
-        All_named_properties_must_be_subtypes_of_string_indexer_type___0__,
-        All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1,
-        Generic_type_references_must_include_all_type_arguments,
-        Default_arguments_are_not_allowed_in_an_overload_parameter,
-        Overloads_cannot_differ_only_by_return_type,
-        Type__0__is_missing_property__1__from_type__2_,
-        Types_of_property__0__of_types__1__and__2__are_incompatible,
-        Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3,
-        Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_,
-        Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_,
-        Types__0__and__1__define_property__2__as_private,
-        Call_signatures_of_types__0__and__1__are_incompatible,
-        Call_signatures_of_types__0__and__1__are_incompatible__NL__2,
-        Type__0__requires_a_call_signature__but_Type__1__lacks_one,
-        Construct_signatures_of_types__0__and__1__are_incompatible,
-        Construct_signatures_of_types__0__and__1__are_incompatible__NL__2,
-        Type__0__requires_a_construct_signature__but_Type__1__lacks_one,
-        Index_signatures_of_types__0__and__1__are_incompatible,
-        Index_signatures_of_types__0__and__1__are_incompatible__NL__2,
-        Call_signature_expects__0__or_fewer_parameters,
-        Could_not_apply_type__0__to_argument__1__which_is_of_type__2_,
-        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function,
-        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function,
-        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor,
-        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property,
-        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible,
-        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3,
-        Type_reference_cannot_refer_to_container__0_,
-        Type_reference_must_refer_to_type,
-        Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element,
-        Current_host_does_not_support__w_atch_option,
-        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation,
-        Module_code_generation__0__not_supported___Using_default__1__code_generation,
-        Could_not_find_file___0_,
-        A_file_cannot_have_a_reference_to_itself,
-        Cannot_resolve_referenced_file___0_,
-        Cannot_find_the_common_subdirectory_path_for_the_input_files,
-        Cannot_compile_dynamic_modules_when_emitting_into_single_file,
-        Emit_Error__0,
-        Cannot_read_file__0__1,
-        Unsupported_file_encoding,
-    }
-}
-declare module TypeScript {
     interface DiagnosticInfo {
         category: TypeScript.DiagnosticCategory;
         message: string;
         code: number;
     }
-}
-declare module TypeScript {
-    interface IDiagnosticMessages {
-        error_TS_0__1: TypeScript.DiagnosticInfo;
-        warning_TS_0__1: TypeScript.DiagnosticInfo;
-        _0__NL__1_TB__2: TypeScript.DiagnosticInfo;
-        _0_TB__1: TypeScript.DiagnosticInfo;
-        Unrecognized_escape_sequence: TypeScript.DiagnosticInfo;
-        Unexpected_character_0: TypeScript.DiagnosticInfo;
-        Missing_closing_quote_character: TypeScript.DiagnosticInfo;
-        Identifier_expected: TypeScript.DiagnosticInfo;
-        _0_keyword_expected: TypeScript.DiagnosticInfo;
-        _0_expected: TypeScript.DiagnosticInfo;
-        Identifier_expected__0__is_a_keyword: TypeScript.DiagnosticInfo;
-        Automatic_semicolon_insertion_not_allowed: TypeScript.DiagnosticInfo;
-        Unexpected_token__0_expected: TypeScript.DiagnosticInfo;
-        Trailing_separator_not_allowed: TypeScript.DiagnosticInfo;
-        _StarSlash__expected: TypeScript.DiagnosticInfo;
-        _public_or_private_modifier_must_precede__static_: TypeScript.DiagnosticInfo;
-        Unexpected_token_: TypeScript.DiagnosticInfo;
-        A_catch_clause_variable_cannot_have_a_type_annotation: TypeScript.DiagnosticInfo;
-        Rest_parameter_must_be_last_in_list: TypeScript.DiagnosticInfo;
-        Parameter_cannot_have_question_mark_and_initializer: TypeScript.DiagnosticInfo;
-        Required_parameter_cannot_follow_optional_parameter: TypeScript.DiagnosticInfo;
-        Index_signatures_cannot_have_rest_parameters: TypeScript.DiagnosticInfo;
-        Index_signature_parameter_cannot_have_accessibility_modifiers: TypeScript.DiagnosticInfo;
-        Index_signature_parameter_cannot_have_a_question_mark: TypeScript.DiagnosticInfo;
-        Index_signature_parameter_cannot_have_an_initializer: TypeScript.DiagnosticInfo;
-        Index_signature_must_have_a_type_annotation: TypeScript.DiagnosticInfo;
-        Index_signature_parameter_must_have_a_type_annotation: TypeScript.DiagnosticInfo;
-        Index_signature_parameter_type_must_be__string__or__number_: TypeScript.DiagnosticInfo;
-        _extends__clause_already_seen: TypeScript.DiagnosticInfo;
-        _extends__clause_must_precede__implements__clause: TypeScript.DiagnosticInfo;
-        Class_can_only_extend_single_type: TypeScript.DiagnosticInfo;
-        _implements__clause_already_seen: TypeScript.DiagnosticInfo;
-        Accessibility_modifier_already_seen: TypeScript.DiagnosticInfo;
-        _0__modifier_must_precede__1__modifier: TypeScript.DiagnosticInfo;
-        _0__modifier_already_seen: TypeScript.DiagnosticInfo;
-        _0__modifier_cannot_appear_on_a_class_element: TypeScript.DiagnosticInfo;
-        Interface_declaration_cannot_have__implements__clause: TypeScript.DiagnosticInfo;
-        _super__invocation_cannot_have_type_arguments: TypeScript.DiagnosticInfo;
-        Non_ambient_modules_cannot_use_quoted_names: TypeScript.DiagnosticInfo;
-        Statements_are_not_allowed_in_ambient_contexts: TypeScript.DiagnosticInfo;
-        Implementations_are_not_allowed_in_ambient_contexts: TypeScript.DiagnosticInfo;
-        _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: TypeScript.DiagnosticInfo;
-        Initializers_are_not_allowed_in_ambient_contexts: TypeScript.DiagnosticInfo;
-        Overload_and_ambient_signatures_cannot_specify_parameter_properties: TypeScript.DiagnosticInfo;
-        Function_implementation_expected: TypeScript.DiagnosticInfo;
-        Constructor_implementation_expected: TypeScript.DiagnosticInfo;
-        Function_overload_name_must_be__0_: TypeScript.DiagnosticInfo;
-        _0__modifier_cannot_appear_on_a_module_element: TypeScript.DiagnosticInfo;
-        _declare__modifier_cannot_appear_on_an_interface_declaration: TypeScript.DiagnosticInfo;
-        _declare__modifier_required_for_top_level_element: TypeScript.DiagnosticInfo;
-        Rest_parameter_cannot_be_optional: TypeScript.DiagnosticInfo;
-        Rest_parameter_cannot_have_initializer: TypeScript.DiagnosticInfo;
-        _set__accessor_parameter_cannot_have_accessibility_modifier: TypeScript.DiagnosticInfo;
-        _set__accessor_parameter_cannot_be_optional: TypeScript.DiagnosticInfo;
-        _set__accessor_parameter_cannot_have_initializer: TypeScript.DiagnosticInfo;
-        _set__accessor_cannot_have_rest_parameter: TypeScript.DiagnosticInfo;
-        _get__accessor_cannot_have_parameters: TypeScript.DiagnosticInfo;
-        Modifiers_cannot_appear_here: TypeScript.DiagnosticInfo;
-        Accessors_are_only_available_when_targeting_EcmaScript5_and_higher: TypeScript.DiagnosticInfo;
-        Enum_member_must_have_initializer: TypeScript.DiagnosticInfo;
-        _module_______is_deprecated__Use__require_______instead: TypeScript.DiagnosticInfo;
-        Export_assignments_cannot_be_used_in_internal_modules: TypeScript.DiagnosticInfo;
-        Export_assignment_not_allowed_in_module_with_exported_element: TypeScript.DiagnosticInfo;
-        Module_cannot_have_multiple_export_assignments: TypeScript.DiagnosticInfo;
-        Ambient_enum_elements_can_only_have_integer_literal_initializers: TypeScript.DiagnosticInfo;
-        Duplicate_identifier__0_: TypeScript.DiagnosticInfo;
-        The_name__0__does_not_exist_in_the_current_scope: TypeScript.DiagnosticInfo;
-        The_name__0__does_not_refer_to_a_value: TypeScript.DiagnosticInfo;
-        Keyword__super__can_only_be_used_inside_a_class_instance_method: TypeScript.DiagnosticInfo;
-        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: TypeScript.DiagnosticInfo;
-        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: TypeScript.DiagnosticInfo;
-        Value_of_type__0__is_not_callable: TypeScript.DiagnosticInfo;
-        Value_of_type__0__is_not_newable: TypeScript.DiagnosticInfo;
-        Value_of_type__0__is_not_indexable_by_type__1_: TypeScript.DiagnosticInfo;
-        Operator__0__cannot_be_applied_to_types__1__and__2_: TypeScript.DiagnosticInfo;
-        Operator__0__cannot_be_applied_to_types__1__and__2__3: TypeScript.DiagnosticInfo;
-        Cannot_convert__0__to__1_: TypeScript.DiagnosticInfo;
-        Cannot_convert__0__to__1__NL__2: TypeScript.DiagnosticInfo;
-        Expected_var__class__interface__or_module: TypeScript.DiagnosticInfo;
-        Operator__0__cannot_be_applied_to_type__1_: TypeScript.DiagnosticInfo;
-        Getter__0__already_declared: TypeScript.DiagnosticInfo;
-        Setter__0__already_declared: TypeScript.DiagnosticInfo;
-        Accessor_cannot_have_type_parameters: TypeScript.DiagnosticInfo;
-        _set__accessor_must_have_only_one_parameter: TypeScript.DiagnosticInfo;
-        Use_of_deprecated__bool__type__Use__boolean__instead: TypeScript.DiagnosticInfo;
-        Exported_class__0__extends_private_class__1_: TypeScript.DiagnosticInfo;
-        Exported_class__0__implements_private_interface__1_: TypeScript.DiagnosticInfo;
-        Exported_interface__0__extends_private_interface__1_: TypeScript.DiagnosticInfo;
-        Exported_class__0__extends_class_from_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Exported_class__0__implements_interface_from_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Exported_interface__0__extends_interface_from_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Public_property__0__of__exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Property__0__of__exported_interface_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Exported_variable__0__has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Public_property__0__of__exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Property__0__of__exported_interface_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Exported_variable__0__is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_exported_function_has_or_is_using_private_type__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Parameter__0__of_exported_function_is_using_inaccessible_module__1_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_exported_function_has_or_is_using_private_type__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: TypeScript.DiagnosticInfo;
-        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: TypeScript.DiagnosticInfo;
-        A_parameter_list_must_follow_a_generic_type_argument_list______expected: TypeScript.DiagnosticInfo;
-        Multiple_constructor_implementations_are_not_allowed: TypeScript.DiagnosticInfo;
-        Unable_to_resolve_external_module__0_: TypeScript.DiagnosticInfo;
-        Module_cannot_be_aliased_to_a_non_module_type: TypeScript.DiagnosticInfo;
-        A_class_may_only_extend_another_class: TypeScript.DiagnosticInfo;
-        A_class_may_only_implement_another_class_or_interface: TypeScript.DiagnosticInfo;
-        An_interface_may_only_extend_another_class_or_interface: TypeScript.DiagnosticInfo;
-        An_interface_cannot_implement_another_type: TypeScript.DiagnosticInfo;
-        Unable_to_resolve_type: TypeScript.DiagnosticInfo;
-        Unable_to_resolve_type_of__0_: TypeScript.DiagnosticInfo;
-        Unable_to_resolve_type_parameter_constraint: TypeScript.DiagnosticInfo;
-        Type_parameter_constraint_cannot_be_a_primitive_type: TypeScript.DiagnosticInfo;
-        Supplied_parameters_do_not_match_any_signature_of_call_target: TypeScript.DiagnosticInfo;
-        Supplied_parameters_do_not_match_any_signature_of_call_target__NL__0: TypeScript.DiagnosticInfo;
-        Invalid__new__expression: TypeScript.DiagnosticInfo;
-        Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: TypeScript.DiagnosticInfo;
-        Could_not_select_overload_for__new__expression: TypeScript.DiagnosticInfo;
-        Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_: TypeScript.DiagnosticInfo;
-        Could_not_select_overload_for__call__expression: TypeScript.DiagnosticInfo;
-        Unable_to_invoke_type_with_no_call_signatures: TypeScript.DiagnosticInfo;
-        Calls_to__super__are_only_valid_inside_a_class: TypeScript.DiagnosticInfo;
-        Generic_type__0__requires_1_type_argument_s_: TypeScript.DiagnosticInfo;
-        Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_: TypeScript.DiagnosticInfo;
-        Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements: TypeScript.DiagnosticInfo;
-        Could_not_find_enclosing_symbol_for_dotted_name__0_: TypeScript.DiagnosticInfo;
-        The_property__0__does_not_exist_on_value_of_type__1__: TypeScript.DiagnosticInfo;
-        Could_not_find_symbol__0_: TypeScript.DiagnosticInfo;
-        _get__and__set__accessor_must_have_the_same_type: TypeScript.DiagnosticInfo;
-        _this__cannot_be_referenced_in_current_location: TypeScript.DiagnosticInfo;
-        Class__0__is_recursively_referenced_as_a_base_type_of_itself: TypeScript.DiagnosticInfo;
-        Interface__0__is_recursively_referenced_as_a_base_type_of_itself: TypeScript.DiagnosticInfo;
-        _super__property_access_is_permitted_only_in_a_constructor__instance_member_function__or_instance_member_accessor_of_a_derived_class: TypeScript.DiagnosticInfo;
-        _super__cannot_be_referenced_in_non_derived_classes: TypeScript.DiagnosticInfo;
-        A__super__call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_intialized_properties_or_has_parameter_properties: TypeScript.DiagnosticInfo;
-        Constructors_for_derived_classes_must_contain_a__super__call: TypeScript.DiagnosticInfo;
-        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: TypeScript.DiagnosticInfo;
-        _0_1__is_inaccessible: TypeScript.DiagnosticInfo;
-        _this__cannot_be_referenced_within_module_bodies: TypeScript.DiagnosticInfo;
-        _this__must_only_be_used_inside_a_function_or_script_context: TypeScript.DiagnosticInfo;
-        Invalid__addition__expression___types_do_not_agree: TypeScript.DiagnosticInfo;
-        The_right_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: TypeScript.DiagnosticInfo;
-        The_left_hand_side_of_an_arithmetic_operation_must_be_of_type__any____number__or_an_enum_type: TypeScript.DiagnosticInfo;
-        The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type__any____number__or_an_enum_type: TypeScript.DiagnosticInfo;
-        Variable_declarations_for_for_in_expressions_cannot_contain_a_type_annotation: TypeScript.DiagnosticInfo;
-        Variable_declarations_for_for_in_expressions_must_be_of_types__string__or__any_: TypeScript.DiagnosticInfo;
-        The_right_operand_of_a_for_in_expression_must_be_of_type__any____an_object_type_or_a_type_parameter: TypeScript.DiagnosticInfo;
-        The_left_hand_side_of_an__in__expression_must_be_of_types__string__or__any_: TypeScript.DiagnosticInfo;
-        The_right_hand_side_of_an__in__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: TypeScript.DiagnosticInfo;
-        The_left_hand_side_of_an__instanceOf__expression_must_be_of_type__any___an_object_type_or_a_type_parameter: TypeScript.DiagnosticInfo;
-        The_right_hand_side_of_an__instanceOf__expression_must_be_of_type__any__or_a_subtype_of_the__Function__interface_type: TypeScript.DiagnosticInfo;
-        Setters_cannot_return_a_value: TypeScript.DiagnosticInfo;
-        Tried_to_set_variable_type_to_module_type__0__: TypeScript.DiagnosticInfo;
-        Tried_to_set_variable_type_to_uninitialized_module_type__0__: TypeScript.DiagnosticInfo;
-        Function__0__declared_a_non_void_return_type__but_has_no_return_expression: TypeScript.DiagnosticInfo;
-        Getters_must_return_a_value: TypeScript.DiagnosticInfo;
-        Getter_and_setter_accessors_do_not_agree_in_visibility: TypeScript.DiagnosticInfo;
-        Invalid_left_hand_side_of_assignment_expression: TypeScript.DiagnosticInfo;
-        Function_declared_a_non_void_return_type__but_has_no_return_expression: TypeScript.DiagnosticInfo;
-        Cannot_resolve_return_type_reference: TypeScript.DiagnosticInfo;
-        Constructors_cannot_have_a_return_type_of__void_: TypeScript.DiagnosticInfo;
-        Import_declarations_in_an_internal_module_cannot_reference_an_external_module: TypeScript.DiagnosticInfo;
-        Class__0__declares_interface__1__but_does_not_implement_it__NL__2: TypeScript.DiagnosticInfo;
-        Class__0__declares_class__1__but_does_not_implement_it__NL__2: TypeScript.DiagnosticInfo;
-        The_operand_of_an_increment_or_decrement_operator_must_be_a_variable__property_or_indexer: TypeScript.DiagnosticInfo;
-        _this__cannot_be_referenced_in_initializers_in_a_class_body: TypeScript.DiagnosticInfo;
-        Class__0__cannot_extend_class__1__NL__2: TypeScript.DiagnosticInfo;
-        Interface__0__cannot_extend_class__1__NL__2: TypeScript.DiagnosticInfo;
-        Interface__0__cannot_extend_interface__1__NL__2: TypeScript.DiagnosticInfo;
-        Duplicate_overload_signature_for__0_: TypeScript.DiagnosticInfo;
-        Duplicate_constructor_overload_signature: TypeScript.DiagnosticInfo;
-        Duplicate_overload_call_signature: TypeScript.DiagnosticInfo;
-        Duplicate_overload_construct_signature: TypeScript.DiagnosticInfo;
-        Overload_signature_is_not_compatible_with_function_definition: TypeScript.DiagnosticInfo;
-        Overload_signature_is_not_compatible_with_function_definition__NL__0: TypeScript.DiagnosticInfo;
-        Overload_signatures_must_all_be_public_or_private: TypeScript.DiagnosticInfo;
-        Overload_signatures_must_all_be_exported_or_local: TypeScript.DiagnosticInfo;
-        Overload_signatures_must_all_be_ambient_or_non_ambient: TypeScript.DiagnosticInfo;
-        Overload_signatures_must_all_be_optional_or_required: TypeScript.DiagnosticInfo;
-        Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: TypeScript.DiagnosticInfo;
-        _this__cannot_be_referenced_in_constructor_arguments: TypeScript.DiagnosticInfo;
-        Static_member_cannot_be_accessed_off_an_instance_variable: TypeScript.DiagnosticInfo;
-        Instance_member_cannot_be_accessed_off_a_class: TypeScript.DiagnosticInfo;
-        Untyped_function_calls_may_not_accept_type_arguments: TypeScript.DiagnosticInfo;
-        Non_generic_functions_may_not_accept_type_arguments: TypeScript.DiagnosticInfo;
-        Static_methods_cannot_reference_class_type_parameters: TypeScript.DiagnosticInfo;
-        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new___: TypeScript.DiagnosticInfo;
-        Rest_parameters_must_be_array_types: TypeScript.DiagnosticInfo;
-        Overload_signature_implementation_cannot_use_specialized_type: TypeScript.DiagnosticInfo;
-        Export_assignments_may_only_be_used_in_External_modules: TypeScript.DiagnosticInfo;
-        Export_assignments_may_only_be_made_with_acceptable_kinds: TypeScript.DiagnosticInfo;
-        Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword: TypeScript.DiagnosticInfo;
-        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1__: TypeScript.DiagnosticInfo;
-        Numeric_indexer_type___0___must_be_a_subtype_of_string_indexer_type___1____NL__2: TypeScript.DiagnosticInfo;
-        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0__: TypeScript.DiagnosticInfo;
-        All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type___0____NL__1: TypeScript.DiagnosticInfo;
-        All_named_properties_must_be_subtypes_of_string_indexer_type___0__: TypeScript.DiagnosticInfo;
-        All_named_properties_must_be_subtypes_of_string_indexer_type___0____NL__1: TypeScript.DiagnosticInfo;
-        Generic_type_references_must_include_all_type_arguments: TypeScript.DiagnosticInfo;
-        Default_arguments_are_not_allowed_in_an_overload_parameter: TypeScript.DiagnosticInfo;
-        Overloads_cannot_differ_only_by_return_type: TypeScript.DiagnosticInfo;
-        Type__0__is_missing_property__1__from_type__2_: TypeScript.DiagnosticInfo;
-        Types_of_property__0__of_types__1__and__2__are_incompatible: TypeScript.DiagnosticInfo;
-        Types_of_property__0__of_types__1__and__2__are_incompatible__NL__3: TypeScript.DiagnosticInfo;
-        Property__0__defined_as_private_in_type__1__is_defined_as_public_in_type__2_: TypeScript.DiagnosticInfo;
-        Property__0__defined_as_public_in_type__1__is_defined_as_private_in_type__2_: TypeScript.DiagnosticInfo;
-        Types__0__and__1__define_property__2__as_private: TypeScript.DiagnosticInfo;
-        Call_signatures_of_types__0__and__1__are_incompatible: TypeScript.DiagnosticInfo;
-        Call_signatures_of_types__0__and__1__are_incompatible__NL__2: TypeScript.DiagnosticInfo;
-        Type__0__requires_a_call_signature__but_Type__1__lacks_one: TypeScript.DiagnosticInfo;
-        Construct_signatures_of_types__0__and__1__are_incompatible: TypeScript.DiagnosticInfo;
-        Construct_signatures_of_types__0__and__1__are_incompatible__NL__2: TypeScript.DiagnosticInfo;
-        Type__0__requires_a_construct_signature__but_Type__1__lacks_one: TypeScript.DiagnosticInfo;
-        Index_signatures_of_types__0__and__1__are_incompatible: TypeScript.DiagnosticInfo;
-        Index_signatures_of_types__0__and__1__are_incompatible__NL__2: TypeScript.DiagnosticInfo;
-        Call_signature_expects__0__or_fewer_parameters: TypeScript.DiagnosticInfo;
-        Could_not_apply_type__0__to_argument__1__which_is_of_type__2_: TypeScript.DiagnosticInfo;
-        Class__0__defines_instance_member_accessor__1___but_extended_class__2__defines_it_as_instance_member_function: TypeScript.DiagnosticInfo;
-        Class__0__defines_instance_member_property__1___but_extended_class__2__defines_it_as_instance_member_function: TypeScript.DiagnosticInfo;
-        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_accessor: TypeScript.DiagnosticInfo;
-        Class__0__defines_instance_member_function__1___but_extended_class__2__defines_it_as_instance_member_property: TypeScript.DiagnosticInfo;
-        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible: TypeScript.DiagnosticInfo;
-        Types_of_static_property__0__of_class__1__and_class__2__are_incompatible__NL__3: TypeScript.DiagnosticInfo;
-        Current_host_does_not_support__w_atch_option: TypeScript.DiagnosticInfo;
-        ECMAScript_target_version__0__not_supported___Using_default__1__code_generation: TypeScript.DiagnosticInfo;
-        Module_code_generation__0__not_supported___Using_default__1__code_generation: TypeScript.DiagnosticInfo;
-        Could_not_find_file___0_: TypeScript.DiagnosticInfo;
-        A_file_cannot_have_a_reference_to_itself: TypeScript.DiagnosticInfo;
-        Cannot_resolve_referenced_file___0_: TypeScript.DiagnosticInfo;
-        Cannot_find_the_common_subdirectory_path_for_the_input_files: TypeScript.DiagnosticInfo;
-        Cannot_compile_dynamic_modules_when_emitting_into_single_file: TypeScript.DiagnosticInfo;
-        Emit_Error__0: TypeScript.DiagnosticInfo;
-        Cannot_read_file__0__1: TypeScript.DiagnosticInfo;
-        Unsupported_file_encoding: TypeScript.DiagnosticInfo;
-    }
-    var diagnosticMessages: IDiagnosticMessages;
 }
 declare module TypeScript {
     class Errors {
@@ -654,37 +1878,29 @@ declare module TypeScript.Collections {
     function identityHashCode(value: any): number;
 }
 declare module TypeScript {
-    interface IDiagnostic {
-        fileName(): string;
-        start(): number;
-        length(): number;
-        diagnosticCode(): TypeScript.DiagnosticCode;
-        text(): string;
-        message(): string;
-    }
-    class Diagnostic implements IDiagnostic {
+    var LocalizedDiagnosticMessages: any;
+    function newLine(): string;
+    class Diagnostic {
         private _fileName;
         private _start;
-        private _originalStart;
         private _length;
-        private _diagnosticCode;
+        private _diagnosticKey;
         private _arguments;
-        constructor(fileName: string, start: number, length: number, diagnosticCode: TypeScript.DiagnosticCode, arguments?: any[]);
+        constructor(fileName: string, start: number, length: number, diagnosticKey: string, arguments?: any[]);
         public toJSON(key);
         public fileName(): string;
         public start(): number;
         public length(): number;
-        public diagnosticCode(): TypeScript.DiagnosticCode;
+        public diagnosticKey(): string;
         public arguments(): any[];
         public text(): string;
         public message(): string;
-        public adjustOffset(pos: number): void;
         public additionalLocations(): Location[];
         static equals(diagnostic1: Diagnostic, diagnostic2: Diagnostic): boolean;
     }
-    function getDiagnosticInfoFromCode(diagnosticCode: DiagnosticCode): DiagnosticInfo;
-    function getDiagnosticText(diagnosticCode: DiagnosticCode, args: any[]): string;
-    function getDiagnosticMessage(diagnosticCode: DiagnosticCode, args: any[]): string;
+    function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo;
+    function getLocalizedText(diagnosticKey: string, args: any[]): string;
+    function getDiagnosticMessage(diagnosticKey: string, args: any[]): string;
 }
 declare class Enumerator {
     public atEnd(): boolean;
@@ -713,17 +1929,15 @@ declare module TypeScript {
     var nodeWriteFileSyncTime: number;
 }
 declare enum ByteOrderMark {
-    None,
-    Utf8,
-    Utf16BigEndian,
-    Utf16LittleEndian,
+    None = 0,
+    Utf8 = 1,
+    Utf16BigEndian = 2,
+    Utf16LittleEndian = 3,
 }
 declare class FileInformation {
-    private _contents;
-    private _byteOrderMark;
+    public contents: string;
+    public byteOrderMark: ByteOrderMark;
     constructor(contents: string, byteOrderMark: ByteOrderMark);
-    public contents(): string;
-    public byteOrderMark(): ByteOrderMark;
 }
 interface IEnvironment {
     readFile(path: string): FileInformation;
@@ -737,6 +1951,7 @@ interface IEnvironment {
     arguments: string[];
     standardOut: ITextWriter;
     currentDirectory(): string;
+    newLine: string;
 }
 declare var Environment: IEnvironment;
 declare module TypeScript {

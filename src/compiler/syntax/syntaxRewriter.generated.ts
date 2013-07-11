@@ -81,6 +81,7 @@ module TypeScript {
 
         public visitImportDeclaration(node: ImportDeclarationSyntax): any {
             return node.update(
+                this.visitList(node.modifiers),
                 this.visitToken(node.importKeyword),
                 this.visitToken(node.identifier),
                 this.visitToken(node.equalsToken),

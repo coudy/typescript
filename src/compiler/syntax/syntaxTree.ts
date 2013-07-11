@@ -992,6 +992,26 @@ module TypeScript {
             return false;
         }
 
+        private checkForDisallowedDeclareModifierOnImportDeclaration(modifiers: ISyntaxList): boolean {
+            var declareToken = SyntaxUtilities.getToken(modifiers, SyntaxKind.DeclareKeyword);
+
+            if (declareToken) {
+                this.pushDiagnostic1(this.childFullStart(modifiers, declareToken), declareToken,
+                    DiagnosticCode.declare_modifier_not_allowed_on_import_declaration);
+                return true;
+            }
+        }
+
+        public visitImportDeclaration(node: ImportDeclarationSyntax): any {
+            if (this.checkForDisallowedDeclareModifierOnImportDeclaration(node.modifiers) ||
+                this.checkModuleElementModifiers(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitImportDeclaration(node);
+        }
+
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForReservedName(node, node.moduleName, DiagnosticCode.Module_name_cannot_be_0) ||
                 this.checkForDisallowedDeclareModifier(node.modifiers) ||

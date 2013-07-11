@@ -741,7 +741,7 @@ class ProjectRunner extends RunnerBase {
                     , outputFiles: ['mExported.js', 'mNonExported.js']
                     , negative: true
                     , skipRun: true
-                    , errors: [TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(1,1): error TS1008: Unexpected token; 'module, class, interface, enum, import or statement' expected."]
+                    , errors: []
             });
 
             tests.push({
