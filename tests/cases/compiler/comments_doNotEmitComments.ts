@@ -1,5 +1,6 @@
 // @target: ES5
 // @declaration: true
+// @comments: false
 
 /** Variable comments*/
 var myVariable = 10;
