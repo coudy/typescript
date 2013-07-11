@@ -337,8 +337,6 @@ module TypeScript {
                 topLevelMod.setModuleFlags(moduleFlags);
 
                 topLevelMod.prettyName = getPrettyName(correctedFileName);
-                //topLevelMod.containsUnicodeChar = this.scanner.seenUnicodeChar;
-                //topLevelMod.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
 
                 var leadingComments = this.getLeadingComments(node);
                 for (var i = 0, n = leadingComments.length; i < n; i++) {
@@ -348,8 +346,6 @@ module TypeScript {
                         topLevelMod.amdDependencies.push(amdDependency);
                     }
                 }
-
-                // topLevelMod.amdDependencies = this.amdDependencies;
 
                 bod = new ASTList([topLevelMod]);
                 this.setSpanExplicit(bod, start, this.position);
@@ -876,8 +872,6 @@ module TypeScript {
                 var funcDecl = <FunctionDeclaration>init;
                 funcDecl.hint = name.actualText;
             }
-
-            // TODO: more flags
 
             return result;
         }
@@ -2107,9 +2101,6 @@ module TypeScript {
 
             this.movePast(node.tryKeyword);
             var tryBody = node.block.accept(this);
-
-            // var tryPart: AST = new Try(block);
-            // this.setSpanExplicit(tryPart, start, this.position);
 
             var catchClause: CatchClause = null;
             if (node.catchClause !== null) {
