@@ -319,12 +319,32 @@ module TypeScript {
 
             declCacheMiss++;
 
+            if (declKind == PullElementKind.DynamicModule && declPath.length == 1) {
+                // we can start by searching the unit cache
+                var path = declPath[0];
+
+                if (isRooted(path)) {
+                    var unit = <SemanticInfo>this.unitCache[path];
+
+                    if (unit) {
+                        // the dynamic module will be the only child
+                        var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
+
+                        if (decl.kind == PullElementKind.DynamicModule) {
+                            return decl;
+                        }
+                    }
+
+                    return [];
+                }
+            }
+
             var declsToSearch = this.collectAllTopLevelDecls();
 
             var decls: PullDecl[] = [];
             var path: string;
             var foundDecls: PullDecl[] = [];
-            var keepSearching = (declKind & PullElementKind.Container) || (declKind & PullElementKind.Interface);
+            var keepSearching = (declKind & PullElementKind.SomeContainer) || (declKind & PullElementKind.Interface);
 
             for (var i = 0; i < declPath.length; i++) {
                 path = declPath[i];

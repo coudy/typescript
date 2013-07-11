@@ -1558,7 +1558,13 @@ module TypeScript {
                 var modPath = (<StringLiteral>importStatementAST.alias).actualText;
                 var declPath = getPathToDecl(enclosingDecl);
 
-                aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeContainer));
+                aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.semanticInfoChain.findSymbol([s], PullElementKind.DynamicModule));
+
+                // If we could not resolve the symbol using a simple search, the module either does not exist or is ambient.  Should this be the case, we'll try to
+                // resolve the symbol in a more conventional manner
+                if (!aliasedType) {
+                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.DynamicModule));
+                }
                 if (!aliasedType) {
                     importDecl.addDiagnostic(
                         new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [modPath]));
@@ -1586,7 +1592,8 @@ module TypeScript {
                 // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
                 this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, aliasedType, this.unitPath);
             }
-            importDeclSymbol.setResolved();
+
+            importDeclSymbol.setResolved();
             return importDeclSymbol;
         }
 

@@ -128,7 +128,9 @@ module TypeScript {
             return relativePath + relativePathComponents.join("/");
         }
 
-        if (absoluteModPath.indexOf("://") === -1) {            absoluteModPath = "file:///" + absoluteModPath;        }
+        if (absoluteModPath.indexOf("://") === -1) {
+            absoluteModPath = "file:///" + absoluteModPath;
+        }
 
         return absoluteModPath;
     }
