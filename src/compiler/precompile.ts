@@ -27,7 +27,6 @@ module TypeScript {
         public noResolve = false;
         public allowBool = false;
         public allowAutomaticSemicolonInsertion = true;
-        public allowModuleKeywordInExternalModuleReference = false;
         public noImplicitAny = false;
 
         public noLib = false;
@@ -223,7 +222,7 @@ module TypeScript {
     }
 
     export function getParseOptions(settings: CompilationSettings): ParseOptions {
-        return new ParseOptions(settings.allowAutomaticSemicolonInsertion, settings.allowModuleKeywordInExternalModuleReference);
+        return new ParseOptions(settings.allowAutomaticSemicolonInsertion);
     }
 
 } // Tools

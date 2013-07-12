@@ -15,7 +15,7 @@ declare module TypeScript {
         AsteriskSlash_expected: string;
         public_or_private_modifier_must_precede_static: string;
         Unexpected_token: string;
-        A_catch_clause_variable_cannot_have_a_type_annotation: string;
+        Catch_clause_parameter_cannot_have_a_type_annotation: string;
         Rest_parameter_must_be_last_in_list: string;
         Parameter_cannot_have_question_mark_and_initializer: string;
         Required_parameter_cannot_follow_optional_parameter: string;
@@ -28,7 +28,7 @@ declare module TypeScript {
         Index_signature_parameter_type_must_be_string_or_number: string;
         extends_clause_already_seen: string;
         extends_clause_must_precede_implements_clause: string;
-        Class_can_only_extend_single_type: string;
+        Classes_can_only_extend_a_single_class: string;
         implements_clause_already_seen: string;
         Accessibility_modifier_already_seen: string;
         _0_modifier_must_precede_1_modifier: string;
@@ -36,12 +36,12 @@ declare module TypeScript {
         _0_modifier_cannot_appear_on_a_class_element: string;
         Interface_declaration_cannot_have_implements_clause: string;
         super_invocation_cannot_have_type_arguments: string;
-        Non_ambient_modules_cannot_use_quoted_names: string;
+        Only_ambient_modules_can_use_quoted_names: string;
         Statements_are_not_allowed_in_ambient_contexts: string;
         Implementations_are_not_allowed_in_ambient_contexts: string;
         declare_modifier_not_allowed_for_code_already_in_an_ambient_context: string;
         Initializers_are_not_allowed_in_ambient_contexts: string;
-        Overload_and_ambient_signatures_cannot_specify_parameter_properties: string;
+        Parameter_property_declarations_can_only_be_used_in_constructors: string;
         Function_implementation_expected: string;
         Constructor_implementation_expected: string;
         Function_overload_name_must_be_0: string;
@@ -49,22 +49,22 @@ declare module TypeScript {
         declare_modifier_cannot_appear_on_an_interface_declaration: string;
         declare_modifier_required_for_top_level_element: string;
         Rest_parameter_cannot_be_optional: string;
-        Rest_parameter_cannot_have_initializer: string;
+        Rest_parameter_cannot_have_an_initializer: string;
         set_accessor_must_have_one_and_only_one_parameter: string;
         set_accessor_parameter_cannot_have_accessibility_modifier: string;
         set_accessor_parameter_cannot_be_optional: string;
-        set_accessor_parameter_cannot_have_initializer: string;
+        set_accessor_parameter_cannot_have_an_initializer: string;
         set_accessor_cannot_have_rest_parameter: string;
         get_accessor_cannot_have_parameters: string;
         Modifiers_cannot_appear_here: string;
-        Accessors_are_only_when_targeting_EcmaScript5_and_higher: string;
+        Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher: string;
         Class_name_cannot_be_0: string;
         Interface_name_cannot_be_0: string;
         Enum_name_cannot_be_0: string;
         Module_name_cannot_be_0: string;
         Enum_member_must_have_initializer: string;
         module_is_deprecated_Use_require_instead: string;
-        Export_assignments_cannot_be_used_in_internal_modules: string;
+        Export_assignment_cannot_be_used_in_internal_modules: string;
         Export_assignment_not_allowed_in_module_with_exported_element: string;
         Module_cannot_have_multiple_export_assignments: string;
         Ambient_enum_elements_can_only_have_integer_literal_initializers: string;
@@ -80,6 +80,9 @@ declare module TypeScript {
         parameter: string;
         type: string;
         type_parameter: string;
+        declare_modifier_not_allowed_on_import_declaration: string;
+        Function_overload_must_be_static: string;
+        Function_overload_must_not_be_static: string;
         Duplicate_identifier_0: string;
         The_name_0_does_not_exist_in_the_current_scope: string;
         The_name_0_does_not_refer_to_a_value: string;
@@ -168,7 +171,7 @@ declare module TypeScript {
         Could_not_select_overload_for_new_expression: string;
         Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2: string;
         Could_not_select_overload_for_call_expression: string;
-        Unable_to_invoke_type_with_no_call_signatures: string;
+        Cannot_invoke_an_expression_whose_type_lacks_a_call_signature: string;
         Calls_to_super_are_only_valid_inside_a_class: string;
         Generic_type_0_requires_1_type_argument_s: string;
         Type_of_conditional_expression_cannot_be_determined_Best_common_type_could_not_be_found_between_0_and_1: string;
@@ -193,15 +196,15 @@ declare module TypeScript {
         The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type: string;
         The_left_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type: string;
         The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type_any_number_or_an_enum_type: string;
-        Variable_declarations_of_a_for_statement_cannot_contain_a_type_annotation: string;
+        Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation: string;
         Variable_declarations_of_a_for_statement_must_be_of_types_string_or_any: string;
-        The_right_operand_of_a_for_statement_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
+        The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
         The_left_hand_side_of_an_in_expression_must_be_of_types_string_or_any: string;
         The_right_hand_side_of_an_in_expression_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
-        The_left_hand_side_of_an_instanceOf_expression_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
-        The_right_hand_side_of_an_instanceOf_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type: string;
+        The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter: string;
+        The_right_hand_side_of_an_instanceof_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type: string;
         Setters_cannot_return_a_value: string;
-        Tried_to_set_variable_type_to_container_type_0: string;
+        Tried_to_query_type_of_uninitialized_module_0: string;
         Tried_to_set_variable_type_to_uninitialized_module_type_0: string;
         Function_0_declared_a_non_void_return_type_but_has_no_return_expression: string;
         Getters_must_return_a_value: string;
@@ -214,7 +217,7 @@ declare module TypeScript {
         All_symbols_within_a_with_block_will_be_resolved_to_any: string;
         Import_declarations_in_an_internal_module_cannot_reference_an_external_module: string;
         Class_0_declares_interface_1_but_does_not_implement_it_NL_2: string;
-        Class_0_declares_class_1_as_an_implemented_interface_but_does_not_implement_it_NL_2: string;
+        Class_0_declares_class_1_as_an_interface_but_does_not_implement_it_NL_2: string;
         The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer: string;
         this_cannot_be_referenced_in_static_initializers_in_a_class_body: string;
         Class_0_cannot_extend_class_1_NL_2: string;
@@ -279,7 +282,7 @@ declare module TypeScript {
         Types_of_static_property_0_of_class_1_and_class_2_are_incompatible: string;
         Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3: string;
         Type_reference_cannot_refer_to_container_0: string;
-        Type_reference_cannot_must_refer_to_type: string;
+        Type_reference_must_refer_to_type: string;
         Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element: string;
         _0_overload_s: string;
         Current_host_does_not_support_0_option: string;
@@ -289,7 +292,7 @@ declare module TypeScript {
         A_file_cannot_have_a_reference_to_itself: string;
         Cannot_resolve_referenced_file_0: string;
         Cannot_find_the_common_subdirectory_path_for_the_input_files: string;
-        Cannot_compile_dynamic_modules_when_emitting_into_single_file: string;
+        Cannot_compile_external_modules_when_emitting_into_single_file: string;
         Emit_Error_0: string;
         Cannot_read_file_0_1: string;
         Unsupported_file_encoding: string;
@@ -323,17 +326,12 @@ declare module TypeScript {
         Watch_input_files: string;
         Execute_the_script_after_compilation: string;
         Minimize_whitespace: string;
-        Propagate_constants_to_emitted_code: string;
-        Emit_comments_to_output: string;
+        Do_not_emit_comments_to_output: string;
         Skip_resolution_and_preprocessing: string;
         Print_debug_output: string;
-        Do_not_include_a_default_0_with_global_declarations: string;
-        Gather_diagnostic_info_about_the_compilation_process: string;
-        Typecheck_each_file_as_an_update_on_the_first: string;
         Specify_ECMAScript_target_version_0_default_or_1: string;
         Specify_module_code_generation_0_default_or_1: string;
         Print_this_message: string;
-        Force_file_resolution_to_be_case_sensitive: string;
         Print_the_compiler_s_version_0: string;
         Allow_use_of_deprecated_0_type: string;
         Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module: string;
@@ -351,10 +349,22 @@ declare module TypeScript {
         KIND: string;
         FILE_DIRECTORY: string;
         VERSION: string;
+        LOCATION: string;
         This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: string;
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: string;
         Unknown_rule: string;
         Invalid_line_number_0: string;
+        Warn_on_expressions_and_declarations_with_an_implied_any_type: string;
+        Variable_0_implicitly_has_an_any_type: string;
+        Parameter_0_of_1_implicitly_has_an_any_type: string;
+        Parameter_0_of_function_type_implicitly_has_an_any_type: string;
+        Member_0_of_object_type_implicitly_has_an_any_type: string;
+        New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type: string;
+        _0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
+        Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
+        Parameter_0_of_lambda_function_implicitly_has_an_any_type: string;
+        Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
+        Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
     };
 }
 declare module TypeScript {
@@ -427,7 +437,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "A catch clause variable cannot have a type annotation.": {
+        "Catch clause parameter cannot have a type annotation.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -479,7 +489,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Class can only extend single type.": {
+        "Classes can only extend a single class.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -511,7 +521,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Non ambient modules cannot use quoted names.": {
+        "Only ambient modules can use quoted names.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -531,7 +541,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Overload and ambient signatures cannot specify parameter properties.": {
+        "Parameter property declarations can only be used in constructors.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -563,7 +573,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Rest parameter cannot have initializer.": {
+        "Rest parameter cannot have an initializer.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -579,7 +589,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "'set' accessor parameter cannot have initializer.": {
+        "'set' accessor parameter cannot have an initializer.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -595,7 +605,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Accessors are only when targeting EcmaScript5 and higher.": {
+        "Accessors are only available when targeting ECMAScript 5 and higher.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -623,7 +633,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Export assignments cannot be used in internal modules.": {
+        "Export assignment cannot be used in internal modules.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -684,6 +694,18 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "type parameter": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'declare' modifier not allowed on import declaration.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function overload must be static": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function overload must not be static": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1039,7 +1061,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Unable to invoke type with no call signatures.": {
+        "Cannot invoke an expression whose type lacks a call signature.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1139,7 +1161,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Variable declarations of a 'for' statement cannot contain a type annotation.": {
+        "Variable declarations of a 'for' statement cannot use a type annotation.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1147,7 +1169,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "The right operand of a 'for' statement must be of type 'any', an object type or a type parameter.": {
+        "The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1159,11 +1181,11 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter.": {
+        "The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "The right-hand side of an 'instanceOf' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
+        "The right-hand side of an 'instanceof' expression must be of type 'any' or a subtype of the 'Function' interface type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1171,7 +1193,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Tried to set variable type to container type '{0}'.": {
+        "Tried to query type of uninitialized module '{0}'.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1223,7 +1245,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Class {0} declares class {1} as an implemented interface but does not implement it:{NL}{2}": {
+        "Class {0} declares class {1} as an interface but does not implement it:{NL}{2}": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1451,7 +1473,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Could not apply type'{0}' to argument {1} which is of type '{2}'.": {
+        "Could not apply type '{0}' to argument {1} which is of type '{2}'.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1483,7 +1505,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Type reference cannot must refer to type.": {
+        "Type reference must refer to type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1523,7 +1545,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Cannot compile dynamic modules when emitting into single file.": {
+        "Cannot compile external modules when emitting into single file.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1659,11 +1681,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Propagate constants to emitted code": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Emit comments to output": {
+        "Do not emit comments to output": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1672,18 +1690,6 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "Print debug output": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Do not include a default {0} with global declarations": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Gather diagnostic info about the compilation process": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Typecheck each file as an update on the first": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1696,10 +1702,6 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "Print this message": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Force file resolution to be case sensitive": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1771,6 +1773,10 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
+        "LOCATION": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
         "This version of the Javascript runtime doesn't support the '{0}' function.": {
             "code": number;
             "category": DiagnosticCategory;
@@ -1784,6 +1790,50 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "Invalid line number ({0})": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Warn on expressions and declarations with an implied 'any' type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Variable '{0}' implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of '{1}' implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of function type implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Member '{0}' of object type implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Parameter '{0}' of lambda function implicitly has an any type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1893,8 +1943,19 @@ declare module TypeScript {
         public length(): number;
         public diagnosticKey(): string;
         public arguments(): any[];
+        /**
+        * Get the text of the message in the given language.
+        */
         public text(): string;
+        /**
+        * Get the text of the message including the error code in the given language.
+        */
         public message(): string;
+        /**
+        * If a derived class has additional information about other referenced symbols, it can
+        * expose the locations of those symbols in a general way, so they can be reported along
+        * with the error.
+        */
         public additionalLocations(): Location[];
         static equals(diagnostic1: Diagnostic, diagnostic2: Diagnostic): boolean;
     }
@@ -1914,9 +1975,11 @@ declare module process {
     function on(event: string, handler: (any: any) => void): void;
     module stdout {
         function write(str: string);
+        function on(event: string, action: () => void);
     }
     module stderr {
         function write(str: string);
+        function on(event: string, action: () => void);
     }
     module mainModule {
         var filename: string;

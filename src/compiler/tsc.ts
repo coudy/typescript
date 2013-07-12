@@ -575,16 +575,6 @@ module TypeScript {
                 }
             }, 'b');
 
-            opts.flag('allowimportmodule', {
-                usage: {
-                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module,
-                    args: ['module']
-                },
-                set: () => {
-                    this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
-                }
-            }, 'm');
-
             var locale: string = null;
             opts.option('locale', {
                 usage: {

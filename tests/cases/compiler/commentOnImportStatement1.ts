@@ -1,4 +1,4 @@
 // @comments: true
 /* Copyright */
 
-import foo = module('./foo');
+import foo = require('./foo');

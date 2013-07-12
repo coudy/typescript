@@ -64,7 +64,6 @@ module TypeScript {
         Enum_name_cannot_be_0: "Enum name cannot be '{0}'.",
         Module_name_cannot_be_0: "Module name cannot be '{0}'.",
         Enum_member_must_have_initializer: "Enum member must have initializer.",
-        module_is_deprecated_Use_require_instead: "'module(...)' is deprecated. Use 'require(...)' instead.",
         Export_assignment_cannot_be_used_in_internal_modules: "Export assignment cannot be used in internal modules.",
         Export_assignment_not_allowed_in_module_with_exported_element: "Export assignment not allowed in module with exported element.",
         Module_cannot_have_multiple_export_assignments: "Module cannot have multiple export assignments.",

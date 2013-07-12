@@ -1732,7 +1732,7 @@ module TypeScript.Parser {
 
         private isExternalModuleReference(): boolean {
             var token0 = this.currentToken();
-            if (token0.tokenKind === SyntaxKind.ModuleKeyword || token0.tokenKind === SyntaxKind.RequireKeyword) {
+            if (token0.tokenKind === SyntaxKind.RequireKeyword) {
                 return this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
             }
 
@@ -1742,12 +1742,12 @@ module TypeScript.Parser {
         private parseExternalModuleReference(): ExternalModuleReferenceSyntax {
             // Debug.assert(this.isExternalModuleReference());
 
-            var moduleOrRequireKeyword = this.eatAnyToken();
+            var requireKeyword = this.eatKeyword(SyntaxKind.RequireKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return this.factory.externalModuleReference(moduleOrRequireKeyword, openParenToken, stringLiteral, closeParenToken);
+            return this.factory.externalModuleReference(requireKeyword, openParenToken, stringLiteral, closeParenToken);
         }
 
         private parseModuleNameModuleReference(): ModuleNameModuleReferenceSyntax {

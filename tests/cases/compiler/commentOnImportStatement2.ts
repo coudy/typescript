@@ -1,3 +1,3 @@
 // @comments: true
 /* not copyright */
-import foo = module('./foo');
+import foo = require('./foo');

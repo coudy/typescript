@@ -254,10 +254,6 @@ module TypeScript {
     "code": 1061,
     "category": DiagnosticCategory.Error
   },
-  "'module(...)' is deprecated. Use 'require(...)' instead.": {
-    "code": 1062,
-    "category": DiagnosticCategory.Warning
-  },
   "Export assignment cannot be used in internal modules.": {
     "code": 1063,
     "category": DiagnosticCategory.Error
