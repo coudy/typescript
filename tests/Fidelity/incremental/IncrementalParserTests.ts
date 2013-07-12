@@ -42,10 +42,10 @@ module TypeScript {
     // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
     // unavoidable.  If it does decrease an investigation 
     function compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number = -1): void {
-        var oldTree = Parser.parse("", oldText, false, LanguageVersion.EcmaScript5, new ParseOptions(true, true));
+        var oldTree = Parser.parse("", oldText, false, LanguageVersion.EcmaScript5, new ParseOptions(true));
         var oldAST = SyntaxTreeToAstVisitor.visit(oldTree, "", new CompilationSettings(), /*incrementalAST:*/ true);
 
-        var newTree = Parser.parse("", newText, false, LanguageVersion.EcmaScript5, new ParseOptions(true, true));
+        var newTree = Parser.parse("", newText, false, LanguageVersion.EcmaScript5, new ParseOptions(true));
         var newAST = SyntaxTreeToAstVisitor.visit(newTree, "", new CompilationSettings(), /*incrementalAST:*/ true);
 
         var incrementalNewTree = Parser.incrementalParse(oldTree, textChangeRange, newText);

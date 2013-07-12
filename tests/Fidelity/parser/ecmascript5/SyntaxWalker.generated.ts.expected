@@ -2,10 +2,17 @@
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
-        "allowAutomaticSemicolonInsertion": true,
-        "allowModuleKeywordInExternalModuleReference": true
+        "allowAutomaticSemicolonInsertion": true
     },
     "diagnostics": [
+        {
+            "start": 228,
+            "length": 1,
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                ";"
+            ]
+        },
         {
             "start": 5180,
             "length": 8,
@@ -658,7 +665,8 @@
             },
             {
                 "kind": "ImportDeclaration",
-                "fullWidth": 29,
+                "fullWidth": 20,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "importKeyword": {
                     "kind": "ImportKeyword",
@@ -714,15 +722,29 @@
                     ]
                 },
                 "moduleReference": {
-                    "kind": "ExternalModuleReference",
-                    "fullWidth": 12,
-                    "moduleOrRequireKeyword": {
-                        "kind": "ModuleKeyword",
+                    "kind": "ModuleNameModuleReference",
+                    "fullWidth": 6,
+                    "isIncrementallyUnusable": true,
+                    "moduleName": {
+                        "kind": "IdentifierName",
                         "width": 6,
                         "text": "module",
                         "value": "module",
                         "valueText": "module"
-                    },
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 9,
+                "expression": {
+                    "kind": "ParenthesizedExpression",
+                    "fullWidth": 6,
                     "openParenToken": {
                         "kind": "OpenParenToken",
                         "width": 1,
@@ -730,7 +752,7 @@
                         "value": "(",
                         "valueText": "("
                     },
-                    "stringLiteral": {
+                    "expression": {
                         "kind": "StringLiteral",
                         "width": 4,
                         "text": "\"fs\"",

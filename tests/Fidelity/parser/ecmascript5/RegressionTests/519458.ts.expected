@@ -2,9 +2,18 @@
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
-        "allowAutomaticSemicolonInsertion": true,
-        "allowModuleKeywordInExternalModuleReference": true
+        "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 20,
+            "length": 1,
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                ";"
+            ]
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 58,
@@ -12,7 +21,8 @@
         "moduleElements": [
             {
                 "kind": "ImportDeclaration",
-                "fullWidth": 30,
+                "fullWidth": 20,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "importKeyword": {
                     "kind": "ImportKeyword",
@@ -60,15 +70,29 @@
                     ]
                 },
                 "moduleReference": {
-                    "kind": "ExternalModuleReference",
-                    "fullWidth": 14,
-                    "moduleOrRequireKeyword": {
-                        "kind": "ModuleKeyword",
+                    "kind": "ModuleNameModuleReference",
+                    "fullWidth": 6,
+                    "isIncrementallyUnusable": true,
+                    "moduleName": {
+                        "kind": "IdentifierName",
                         "width": 6,
                         "text": "module",
                         "value": "module",
                         "valueText": "module"
-                    },
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 10,
+                "expression": {
+                    "kind": "ParenthesizedExpression",
+                    "fullWidth": 8,
                     "openParenToken": {
                         "kind": "OpenParenToken",
                         "width": 1,
@@ -76,7 +100,7 @@
                         "value": "(",
                         "valueText": "("
                     },
-                    "stringLiteral": {
+                    "expression": {
                         "kind": "StringLiteral",
                         "width": 6,
                         "text": "\"rect\"",
