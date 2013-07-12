@@ -782,8 +782,7 @@ module TypeScript {
                 var document = this.getDocument(fileName);
                 var semanticInfo = new SemanticInfo(fileName);
 
-                declCollectionContext = new DeclCollectionContext(semanticInfo);
-                declCollectionContext.scriptName = fileName;
+                declCollectionContext = new DeclCollectionContext(semanticInfo, fileName);
 
                 // create decls
                 getAstWalkerFactory().walk(document.script, preCollectDecls, postCollectDecls, null, declCollectionContext);
@@ -828,9 +827,7 @@ module TypeScript {
 
                 lastBoundPullDeclId = pullDeclID;
 
-                var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo);
-
-                declCollectionContext.scriptName = oldDocument.fileName;
+                var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo, oldDocument.fileName);
 
                 // create decls
                 getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);

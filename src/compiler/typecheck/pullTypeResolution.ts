@@ -1701,9 +1701,7 @@ module TypeScript {
             if (!functionDecl || !functionDecl.hasSymbol()) {
 
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-                declCollectionContext.scriptName = this.unitPath;
+                var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -1866,9 +1864,7 @@ module TypeScript {
             if (!interfaceDecl) {
 
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-                declCollectionContext.scriptName = this.unitPath;
+                var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -4826,9 +4822,7 @@ module TypeScript {
             // If necessary, create a new function decl and symbol
             if (!functionDecl) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-                declCollectionContext.scriptName = this.unitPath;
+                var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -5233,9 +5227,7 @@ module TypeScript {
                     if (isAccessor) {
                         var funcDeclAST = <FunctionDeclaration>binex.operand2;
                         var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                        var declCollectionContext = new DeclCollectionContext(semanticInfo);
-
-                        declCollectionContext.scriptName = this.unitPath;
+                        var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
                         declCollectionContext.pushParent(objectLitDecl);
 
