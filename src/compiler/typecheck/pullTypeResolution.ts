@@ -5440,13 +5440,10 @@ module TypeScript {
 
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
-            //if (callEx.operand2.nodeType() === NodeType.StringLiteral || callEx.operand2.nodeType() === NodeType.NumericLiteral) {
-            //    var memberName = callEx.operand2.nodeType() === NodeType.StringLiteral ? (<StringLiteral>callEx.operand2).actualText :
-            //        quoteStr((<NumberLiteral>callEx.operand2).value.toString());
             if (callEx.operand2.nodeType() === NodeType.StringLiteral || callEx.operand2.nodeType() === NodeType.NumericLiteral) {
                 var memberName = callEx.operand2.nodeType() === NodeType.StringLiteral
                     ? stripQuotes((<StringLiteral>callEx.operand2).actualText)
-                    : quoteStr((<NumberLiteral>callEx.operand2).value.toString()); // numeric literals are still quoted
+                    : (<NumberLiteral>callEx.operand2).value.toString(); 
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 
