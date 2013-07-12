@@ -2645,7 +2645,32 @@ module TypeScript {
                         // If recursive typing, use return type as any
                         returnType = this.semanticInfoChain.anyTypeSymbol;
                     }
-                    signature.returnType = returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol;
+
+                    if (returnType) {
+                        var previousReturnType = returnType;
+                        var newReturnType = this.widenType(returnType);
+                        signature.returnType = newReturnType;
+
+                        // if disallowimplicitany flag is set to be true and return statements are not cast expressions, report an error
+                        if (this.compilationSettings.noImplicitAny) {
+                            // if the returnType got widen to Any
+                            if (previousReturnType != newReturnType) {
+                                var functionName = enclosingDecl.name;
+                                if (functionName == "" ) {
+                                    functionName= (<PullFunctionExpressionDecl>enclosingDecl).getFunctionExpressionName();
+                                }
+
+                                if (functionName != "") {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                        DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [functionName], enclosingDecl);
+                                }
+                                else {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
+                                        DiagnosticCode.Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], enclosingDecl);
+                                }
+                            }
+                        }
+                    }
 
                     if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
                         functionSymbol.type.setHasGenericSignature();
@@ -3028,12 +3053,6 @@ module TypeScript {
                     }
                     else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
-
-                        // if noImplicitAny flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny && signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                                DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText], this.getEnclosingDecl(funcDecl), true);
-                        }
                     }
                 }
 
@@ -4911,21 +4930,6 @@ module TypeScript {
                 }
                 else {
                     this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, functionDecl, context);
-
-                    // if disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny && signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
-                        var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
-
-                        // if there is a function name for the funciton expression, report an error with that name
-                        if (functionExpressionName != "") {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                                DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [functionExpressionName], functionDecl);
-                        }
-                        else {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                                DiagnosticCode.Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], functionDecl);
-                        }
-                    }
                 }
             }
             // reset the type to the one we already had, 
@@ -5419,7 +5423,7 @@ module TypeScript {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
                     // if disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny) {
+                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
@@ -5428,7 +5432,7 @@ module TypeScript {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
                     // if disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny) {
+                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
