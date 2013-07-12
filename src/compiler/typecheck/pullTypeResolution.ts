@@ -5296,8 +5296,21 @@ module TypeScript {
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
 
-                if (contextualType && contextualType.isArray()) {
-                    contextualElementType = contextualType.getElementType();
+                if (contextualType) {
+                    if (contextualType.isArray()) {
+                        contextualElementType = contextualType.getElementType();
+                    }
+                    else {
+                        // Collect the index signatures
+                        var indexSignatures = contextualType.getIndexSignatures();
+                        for (var i = 0; i < indexSignatures.length; i++) {
+                            var signature = indexSignatures[i];
+                            if (signature.parameters[0].type === this.semanticInfoChain.numberTypeSymbol) {
+                                contextualElementType = signature.returnType;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -5366,10 +5379,10 @@ module TypeScript {
                 if (!elementType) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
-                else if (contextualType && !contextualType.isTypeParameter()) {
+                else if (contextualElementType && !contextualElementType.isTypeParameter()) {
                     // for the case of zero-length 'any' arrays, we still want to set the contextual type, if   
                     // need be   
-                    if (this.sourceIsAssignableToTarget(elementType, contextualType, context)) {
+                    if (this.sourceIsAssignableToTarget(elementType, contextualElementType, context)) {
                         elementType = contextualType;
                     }
                 }
