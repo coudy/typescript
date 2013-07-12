@@ -5,5 +5,5 @@ module X {
     export interface Y { }
 }
 
-var x: X.Y.Z;
+var x: X.Y.Z; // Should be ok (Bug 736713)
 var x2: X.Y;

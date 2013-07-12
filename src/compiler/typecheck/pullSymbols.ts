@@ -1670,8 +1670,7 @@ module TypeScript {
                 }
             }
 
-            // when all else fails, look for a nested type name
-            return this.findNestedType(name);
+            return null;
         }
 
         public findNestedType(name: string, kind = PullElementKind.None): PullTypeSymbol {

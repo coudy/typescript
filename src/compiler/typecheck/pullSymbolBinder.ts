@@ -620,7 +620,7 @@ module TypeScript {
             var acceptableSharedKind = PullElementKind.Interface; // | PullElementKind.Class | PullElementKind.Enum;
 
             if (parent) {
-                interfaceSymbol = parent.findNestedType(interfaceName);
+                interfaceSymbol = parent.findNestedType(interfaceName, PullElementKind.SomeType);
             }
             else if (!(interfaceDecl.flags & PullElementFlags.Exported)) {
                 interfaceSymbol = <PullTypeSymbol>findSymbolInContext(interfaceName, acceptableSharedKind, interfaceDecl);
