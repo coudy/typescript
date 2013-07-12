@@ -969,6 +969,7 @@ interface Array<T> {
 
     length: number;
 
+    [n: number]: T;
 }
 declare var Array: {
     new <T>(arrayLength: number): T[];
