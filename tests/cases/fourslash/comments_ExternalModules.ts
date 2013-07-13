@@ -27,7 +27,7 @@
 
 // @Filename: file_1.ts
 /////**This is on import declaration*/
-////import ex/*9*/tMod = module("file_0");
+////import ex/*9*/tMod = require("file_0");
 /////*10*/extMod./*11*/m1./*12*/fooExp/*13q*/ort(/*13*/);
 ////var new/*14*/Var = new extMod.m1.m2./*15*/c();
 

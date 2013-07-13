@@ -5,7 +5,7 @@
 ////var topic = Topic.One;
 
 //@file_1.ts
-////import t = module('file_0');
+////import t = require('file_0');
 ////var topic = t.Topic./*1*/
 
 goTo.file("file_1.ts");

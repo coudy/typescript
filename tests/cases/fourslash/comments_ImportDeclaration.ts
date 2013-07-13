@@ -19,7 +19,7 @@
 ////    }
 ////}
 /////** Import declaration*/
-////import e/*3*/xtMod = module("e/*4*/xtMod");
+////import e/*3*/xtMod = require("e/*4*/xtMod");
 /////*5*/extMod./*6*/m1./*7*/fooEx/*8q*/port(/*8*/);
 ////var new/*9*/Var = new extMod.m1.m2./*10*/c();
 
