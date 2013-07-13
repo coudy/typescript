@@ -246,6 +246,9 @@ module TypeScript {
     export var globalSemanticInfoChain: SemanticInfoChain = null;
     export var globalBinder: PullSymbolBinder = null;
     export var globalLogger: ILogger = null;
+
+    export var inBatchCompilation = false;
+
     export class TypeScriptCompiler {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;

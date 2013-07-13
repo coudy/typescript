@@ -71,6 +71,10 @@ module TypeScript {
         public astIDString: string = astID.toString();
         public astID: number = astID++;
 
+        public symbol: PullSymbol = null; 
+        public aliasSymbol: PullSymbol = null;
+        public decl: PullDecl = null;
+
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
         private _docComments: Comment[] = null;
@@ -436,9 +440,11 @@ module TypeScript {
         typeArguments: ASTList;
         arguments: ASTList;
         closeParenSpan: ASTSpan;
+        callResolutionData: PullAdditionalCallResolutionData;
     }
 
     export class ObjectCreationExpression extends AST implements ICallExpression {
+        callResolutionData: PullAdditionalCallResolutionData = null;
         constructor(public target: AST,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
@@ -463,6 +469,7 @@ module TypeScript {
     }
 
     export class InvocationExpression extends AST implements ICallExpression {
+        callResolutionData: PullAdditionalCallResolutionData = null;
         constructor(public target: AST,
                     public typeArguments: ASTList,
                     public arguments: ASTList,

@@ -54,6 +54,8 @@ module TypeScript {
 
         public hashCode = -1;
 
+        public ast: AST = null;
+
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.name = declName;
             this.kind = kind;
@@ -232,11 +234,18 @@ module TypeScript {
             // find the decl with the optional type
             // if necessary, cache the decl
             // may be wise to return a chain of decls, or take a parent decl as a parameter
-            var cache = (searchKind & PullElementKind.SomeType) ? this.childDeclTypeCache :
-                (searchKind & PullElementKind.SomeContainer) ? this.childDeclNamespaceCache :
-                this.childDeclValueCache;
-            
-            var cacheVal = <PullDecl[]>cache[declName];
+
+            var cacheVal: PullDecl[] = null;
+
+            if (searchKind & PullElementKind.SomeType) {
+                cacheVal = <PullDecl[]>this.childDeclTypeCache[declName];
+            }
+            else if (searchKind & PullElementKind.SomeContainer) {
+                cacheVal = <PullDecl[]>this.childDeclNamespaceCache[declName];
+            }
+            else {
+                cacheVal = <PullDecl[]>this.childDeclValueCache[declName];
+            }
 
             if (cacheVal) {
                 return cacheVal;

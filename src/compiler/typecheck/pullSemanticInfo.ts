@@ -83,61 +83,96 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
+
+            if (inBatchCompilation) {
+                return ast.decl;
+            }
+
             return this.astDeclMap.read(ast.astIDString);
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
+
+            if (inBatchCompilation) {
+                ast.decl = decl;
+                return;
+            }
+
             this.astDeclMap.link(ast.astIDString, decl);
         }
 
         public getASTForDecl(decl: PullDecl): AST {
+            if (inBatchCompilation) {
+                return decl.ast;
+            }
+
             return this.declASTMap.read(decl.declIDString);
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
+
+            if (inBatchCompilation) {
+                decl.ast = ast;
+                return;
+            }
+
             this.declASTMap.link(decl.declIDString, ast);
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
+
+            if (inBatchCompilation) {
+                ast.symbol = symbol;
+                symbol.ast = ast;
+                return;
+            }
+
             this.astSymbolMap.link(ast.astIDString, symbol);
             this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
+            if (inBatchCompilation) {
+                return (<AST>ast).symbol;
+            }
             return <PullSymbol>this.astSymbolMap.read(ast.astIDString);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
+            if (inBatchCompilation) {
+                return symbol.ast;
+            }
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
+            if (inBatchCompilation) {
+                ast.aliasSymbol = symbol;
+                return;
+            }
             this.astAliasSymbolMap.link(ast.astIDString, symbol);
         }
 
         public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
+            if (inBatchCompilation) {
+                return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
+            }
             return <PullTypeAliasSymbol>this.astAliasSymbolMap.read(ast.astIDString);
         }
 
-        public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
-            return <ISyntaxElement> this.symbolSyntaxElementMap.read(symbol.pullSymbolIDString);
-        }
-
-        public getSymbolForSyntaxElement(syntaxElement: ISyntaxElement): PullSymbol {
-            return <PullSymbol>this.syntaxElementSymbolMap.read(Collections.identityHashCode(syntaxElement).toString());
-        }
-
-        public setSymbolForSyntaxElement(syntaxElement: ISyntaxElement, symbol: PullSymbol) {
-            this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
-            this.symbolSyntaxElementMap.link(symbol.pullSymbolIDString, syntaxElement);
-        }
-
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
+            if (inBatchCompilation) {
+                return (<InvocationExpression>ast).callResolutionData;
+            }
             return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
         }
 
         public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
             if (callResolutionData) {
+                if (inBatchCompilation) {
+                    (<InvocationExpression>ast).callResolutionData = callResolutionData;
+                    return;
+                }
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         }
@@ -155,7 +190,6 @@ module TypeScript {
         private declCache = <any>new BlockIntrinsics();
         private symbolCache = <any>new BlockIntrinsics();
         private unitCache = <any>new BlockIntrinsics();
-        private declSymbolMap: DataMap = new DataMap();
 
         public anyTypeSymbol: PullTypeSymbol = null;
         public booleanTypeSymbol: PullTypeSymbol = null;
@@ -533,6 +567,11 @@ module TypeScript {
         }
 
         public getSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
+
+            if (inBatchCompilation) {
+                return (<AST>ast).symbol;
+            }
+
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
@@ -543,6 +582,11 @@ module TypeScript {
         }
 
         public getASTForSymbol(symbol: PullSymbol, unitPath: string) {
+
+            if (inBatchCompilation) {
+                return symbol.ast;
+            }
+
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
@@ -553,6 +597,11 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol, unitPath: string): void {
+            if (inBatchCompilation) {
+                ast.symbol = symbol;
+                return;
+            }
+
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
@@ -561,6 +610,10 @@ module TypeScript {
         }
 
         public getAliasSymbolForAST(ast: IAST, unitPath: string): PullTypeAliasSymbol {
+            if (inBatchCompilation) {
+                return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
+            }
+
             var unit = <SemanticInfo>this.unitCache[unitPath];
 
             if (unit) {
@@ -568,13 +621,6 @@ module TypeScript {
             }
 
             return null;
-        }
-
-        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
-            this.declSymbolMap.link(decl.declIDString, symbol);
-        }
-        public getSymbolForDecl(decl): PullSymbol {
-            return <PullSymbol>this.declSymbolMap.read(decl.declIDString);
         }
 
         public removeSymbolFromCache(symbol: PullSymbol) {

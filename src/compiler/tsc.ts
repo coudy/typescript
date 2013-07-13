@@ -36,6 +36,8 @@ module TypeScript {
         }
     }
 
+    inBatchCompilation = true;
+
     export class BatchCompiler implements IReferenceResolverHost, IDiagnosticReporter, EmitterIOHost {
         public compilerVersion = "0.9.1.0";
         private inputFiles: string[] = [];

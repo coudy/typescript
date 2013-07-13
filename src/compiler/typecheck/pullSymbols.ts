@@ -49,7 +49,7 @@ module TypeScript {
 
         public isPrinting = false;
 
-        public typeCheckPhase = -1;
+        public ast: AST = null;
 
         public isType() {
             return (this.kind & PullElementKind.SomeType) != 0;

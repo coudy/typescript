@@ -156,7 +156,6 @@ module TypeScript {
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
         public varListCountStack: number[] = [0];
-        private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
         private resolvingContext = new PullTypeResolutionContext();
         private exportAssignmentIdentifier: string = null;
@@ -170,7 +169,6 @@ module TypeScript {
             private semanticInfoChain: SemanticInfoChain) {
                 globalSemanticInfoChain = semanticInfoChain;
                 globalBinder.semanticInfoChain = semanticInfoChain;
-            this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
         private pushDecl(decl: PullDecl) {
@@ -189,15 +187,6 @@ module TypeScript {
             var declStackLen = this.declStack.length;
             var enclosingDecl = declStackLen > 0 ? this.declStack[declStackLen - 1] : null;
             return enclosingDecl;
-        }
-
-        private setTypeCheckerUnit(fileName: string) {
-            if (!this.pullTypeChecker.resolver) {
-                this.pullTypeChecker.setUnit(fileName);
-                return;
-            }
-
-            this.pullTypeChecker.resolver.setUnitPath(fileName);
         }
 
         public setExportAssignmentIdentifier(id: string) {
@@ -439,10 +428,8 @@ module TypeScript {
             var init = boundDeclInfo.boundDecl.init;
             var ident = <Identifier>init;
 
-            this.setTypeCheckerUnit(this.document.fileName);
-            var pullSymbol = this.resolvingContext.resolvingTypeReference
-                ? this.pullTypeChecker.resolver.resolveTypeNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext)
-                : this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), this.resolvingContext);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDeclInfo.boundDecl, this.document.fileName);
+
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -458,8 +445,7 @@ module TypeScript {
         }
 
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
-            this.setTypeCheckerUnit(this.document.fileName);
-            var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), this.resolvingContext);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr, this.document.fileName);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -1267,12 +1253,9 @@ module TypeScript {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
-                this.setTypeCheckerUnit(this.document.fileName);
                 var pullSymbol = this.semanticInfoChain.getSymbolForAST(name, this.document.fileName);
                 if (!pullSymbol) {
-                    pullSymbol = this.resolvingContext.resolvingTypeReference
-                        ? this.pullTypeChecker.resolver.resolveTypeNameExpression(name, this.getEnclosingDecl(), this.resolvingContext)
-                        : this.pullTypeChecker.resolver.resolveNameExpression(name, this.getEnclosingDecl(), this.resolvingContext);
+                    pullSymbol = this.semanticInfoChain.anyTypeSymbol;
                 }
                 var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
                 if (pullSymbol && pullSymbolAlias) {
@@ -1319,7 +1302,6 @@ module TypeScript {
                                 this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
                             // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
-                            //             pullSymbolKind !== PullElementKind.Class && 
                             //             pullSymbolKind !== PullElementKind.ConstructorMethod && 
                             //             !pullSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
                             //         this.writeToOutput(pullSymbolContainer.getName() + ".");
